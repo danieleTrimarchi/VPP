@@ -27,11 +27,18 @@ class Plotter {
 		void plotXY(); 
 
 		/// Produce a 2d plot from Eigen vectors
-		void plotPolar(VectorXd& theta, VectorXd val);
+		void plotPolar();
 
 	private:
 
-		void testParabolicFcn(double xmin, double xmax, double ymin, double ymax);
+		/// Compute test values for the XY plot given the bounds
+		void setTestParabolicFcn(double xmin, double xmax, double ymin, double ymax);
+
+		/// Number of points the plot is made of
+		int nValues_;
+
+		/// Primitive arrays plplot is feed with
+		double* x_, * y_;
 
 };
 

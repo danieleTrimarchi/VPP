@@ -16,48 +16,41 @@ using namespace Eigen;
 // Directives for BOOST
 #include "boost/shared_ptr.hpp"
 
+// ------------------------
 // Plotting utility
 #include "Plotter.h"
 
 // ------------------------
-// Directives for OPT++
-//
-//#include "OPT++_config.h"
-//#include "newmat.h"
-//#include "NLF.h"
-//#include "NLP.h"
-//#include "OptQNewton.h"
-//
-//using NEWMAT::ColumnVector;
-//using namespace OPTPP;
-//
-//// The following two lines serve as the declarations of the pointers to the subroutines that initialize the problem and evaluate the objective function, respectively
-//void init_rosen(int ndim, ColumnVector& x){
-// if (ndim != 2)
-//    exit (1);
-//
-// // ColumnVectors are indexed from 1, and they use parentheses around
-// // the index.
-//
-//  x(1) = -1.2;
-//  x(2) =  1.0;
-//}
-//
-//void rosen(int ndim, const ColumnVector& x, double& fx, int& result){
-//
-//  double f1, f2, x1, x2;
-//
-//  if (ndim != 2)
-//    exit (1);
-//
-//  x1 = x(1);
-//  x2 = x(2);
-//  f1 = (x2 - x1 * x1);
-//  f2 = 1. - x1;
-//
-//  fx  = 100.* f1*f1 + f2*f2;
-//  result = NLPFunction;
-//}
+// Directives for NLOPT
+#include <math.h>
+#include <nlopt.h>
+
+// Objective function
+double myfunc(unsigned n, const double *x, double *grad, void *my_func_data)
+{
+    if (grad) {
+        grad[0] = 0.0;
+        grad[1] = 0.5 / sqrt(x[1]);
+    }
+    return sqrt(x[1]);
+}
+
+typedef struct {
+    double a, b;
+} my_constraint_data;
+
+// Constraint function
+double myconstraint(unsigned n, const double *x, double *grad, void *data)
+{
+    my_constraint_data *d = (my_constraint_data *) data;
+    double a = d->a, b = d->b;
+    if (grad) {
+        grad[0] = 3 * a * (a*x[0] + b) * (a*x[0] + b);
+        grad[1] = -1.0;
+    }
+    return ((a*x[0] + b) * (a*x[0] + b) * (a*x[0] + b) - x[1]);
+ }
+
 
 // MAIN
 int main(int argc, const char *argv[]) {
@@ -96,44 +89,47 @@ int main(int argc, const char *argv[]) {
     for (i = 0 ; i < n ; i++) printf ("x [%d] = %g\n", i, x [i]) ; 
     printf("-------------\n");
 	
-
-//    printf("\n-- OPT++ TESTS -- See output in example1.out -----------\n");
-//
-//    int ndim = 2;
-//    FDNLF1 nlp(ndim, rosen, init_rosen);
-//
-//    OptQNewton objfcn(&nlp);
-//
-//    objfcn.setSearchStrategy(TrustRegion);
-//    objfcn.setMaxFeval(200);
-//    objfcn.setFcnTol(1.e-4);
-//
-//    // The "0" in the second argument says to create a new file.  A "1"
-//    // would signify appending to an existing file.
-//    if (!objfcn.setOutputFile("example1.out", 0))
-//      cerr << "main: output file open failed" << endl;
-//
-//    objfcn.optimize();
-//
-//    objfcn.printStatus("Solution from quasi-newton");
-//    objfcn.cleanup();
- 
 	
     printf("\n-- BOOST TESTS -----------\n");
     boost::shared_ptr<int> p(new int);
 
+
+    printf("\n-- PLOTTER TESTS -----------\n");
+    // Instantiate a plotter
     Plotter plotter;
+
+    // plot a XY test plot
     plotter.plotXY();
 
-    // BUILD A PROJECT TREE WITH SRC etc..
+    // plot a polar test plot
+    plotter.plotPolar();
 
-    // SEGREGATE PLPLOT AND OPT++, THAT SOMEHOW CONFLICT
+    printf("\n-- NLOPT TESTS -----------\n");
+
+    double lb[2] = { -HUGE_VAL, 0 }; /* lower bounds */
+    nlopt_opt opt;
+    opt = nlopt_create(NLOPT_LD_MMA, 2); /* algorithm and dimensionality */
+    nlopt_set_lower_bounds(opt, lb);
+    nlopt_set_min_objective(opt, myfunc, NULL);
+    my_constraint_data data[2] = { {2,0}, {-1,1} };
+    nlopt_add_inequality_constraint(opt, myconstraint, &data[0], 1e-8);
+    nlopt_add_inequality_constraint(opt, myconstraint, &data[1], 1e-8);
+    nlopt_set_xtol_rel(opt, 1e-4);
+    double xp[2] = { 1.234, 5.678 };  /* some initial guess */
+    double minf; /* the minimum objective value, upon return */
+    if (nlopt_optimize(opt, xp, &minf) < 0) {
+        printf("nlopt failed!\n");
+    }
+    else {
+        printf("found minimum at f(%g,%g) = %0.10g\n", xp[0], xp[1], minf);
+    }
+    nlopt_destroy(opt);
+
+    // BUILD A PROJECT TREE WITH SRC etc..
 
     // MAKE A CPPUNIT TEST SUITE AND BUILD A SPECIFIC TARGET IN SCONSTRUCT
 	
     // PLACE ALL PREVIOUS TESTS IN CPPUNIT TESTS
-
-    // HOST THE SVN PROJECT TO A SERVER
 
     return (0);
 	

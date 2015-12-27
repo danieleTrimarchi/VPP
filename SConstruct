@@ -5,10 +5,9 @@ THIRD_PARTY_INCS=[
 			'/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Include',
 			'/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config',
 			'/Users/daniele/third_party/SuiteSparse-4.4.6/AMD/Include',
-			'/Users/daniele/third_party/optpp-2.4/include',
-			'/Users/daniele/third_party/optpp-2.4/newmat11',
 			'/Users/daniele/third_party/boost_1_59_0',
-			'/opt/local/include',												#macPorts include path
+			'/Users/daniele/third_party/nlopt-2.4.2/api',
+			'/opt/local/include',												# macPorts and nlopt include path
 			'/opt/local/share/plplot5.11.1/examples/c',							#include path for plplot example
 			'/opt/local/include/plplot'
 		]
@@ -23,11 +22,9 @@ THIRD_PARTY_LIBS=[
 			'colamd',
 			'umfpack',
 			'plplotcxx',  #libs required by plplot
-			'plplot'
+			'plplot',
+			'nlopt'
 		]
-#			'opt', 			#optpp lib
-#			'newmat',		#optpp lib
-#			'base'			#optpp lib
 			
 					
 THIRD_PARTY_LIBPATH=[
@@ -37,10 +34,8 @@ THIRD_PARTY_LIBPATH=[
 			'/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config',
 			'/Users/daniele/third_party/SuiteSparse-4.4.6/COLAMD/Lib',
 			'/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Lib',
-			'/opt/local/lib' #macPorts lib path
+			'/opt/local/lib' # macPorts and lnopt lib path
 		]
-		#	'/Users/daniele/third_party/optpp-2.4/lib/.libs',
-		#	'/Users/daniele/third_party/optpp-2.4/src/Base/.libs'
 
 
 #This must be a way to define the path where the executable searches for the dyLib, but for the moment it does not seems to work
