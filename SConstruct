@@ -1,50 +1,28 @@
-#Remember the macports command:  port contents packageName
+# Let's define a common build environment first...
+common_env = Environment()
+common_env.Append(CPPDEFINES={'VERSION': 1})
 
-THIRD_PARTY_INCS=[
-			'/Users/daniele/third_party/eigen-3.2.7',
-			'/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Include',
-			'/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config',
-			'/Users/daniele/third_party/SuiteSparse-4.4.6/AMD/Include',
-			'/Users/daniele/third_party/boost_1_59_0',
-			'/Users/daniele/third_party/nlopt-2.4.2/api',
-			'/opt/local/include',												# macPorts and nlopt include path
-			'/opt/local/share/plplot5.11.1/examples/c',							#include path for plplot example
-			'/opt/local/include/plplot'
-		]
+# Our release build is derived from the common build environment...
+release_env = common_env.Clone()
 
+# ... and adds a RELEASE preprocessor symbol ...
+release_env.Append(CPPDEFINES=['RELEASE'])
 
+# ... and release builds end up in the "build/release" dir
+release_env.VariantDir('build/release', 'src')
 
-THIRD_PARTY_LIBS=[
-			'goto2_penrynp-r1.13',
-			'amd',
-			'cholmod',
-			'suitesparseconfig',
-			'colamd',
-			'umfpack',
-			'plplotcxx',  #libs required by plplot
-			'plplot',
-			'nlopt'
-		]
-			
-					
-THIRD_PARTY_LIBPATH=[
-			'/Users/daniele/third_party/SuiteSparse-4.4.6/AMD/Lib',
-			'/Users/daniele/third_party/GotoBLAS2',
-			'/Users/daniele/third_party/SuiteSparse-4.4.6/CHOLMOD/Lib',
-			'/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config',
-			'/Users/daniele/third_party/SuiteSparse-4.4.6/COLAMD/Lib',
-			'/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Lib',
-			'/opt/local/lib' # macPorts and lnopt lib path
-		]
+# We define our debug build environment in a similar fashion...
+#debug_env = common_env.Clone()
+#debug_env.Append(CPPDEFINES=['DEBUG'])
+#debug_env.VariantDir('build/debug', 'src')
 
-
-#This must be a way to define the path where the executable searches for the dyLib, but for the moment it does not seems to work
-env = DefaultEnvironment()
-
-
-env.Program('VPP',
-		['main.cpp','Plotter.cpp'],
-		CPPPATH = THIRD_PARTY_INCS,
-		LIBS=THIRD_PARTY_LIBS,
-		LIBPATH=THIRD_PARTY_LIBPATH
-	)
+# Now that all build environment have been defined, let's iterate over
+# them and invoke the lower level SConscript files.
+#for mode, env in dict(release=release_env, 
+#    	       	      debug=debug_env).iteritems():
+#	print 'Mode= ', mode,'  env = ', env
+#	env.SConscript('build/%s/SConscript' % mode, {'env': env})
+	
+mode = 'release'
+env  = release_env		  
+env.SConscript('build/%s/SConscript' % mode, {'env': env})
