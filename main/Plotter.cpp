@@ -6,6 +6,10 @@ Plotter::Plotter(int nValues) :
 {
 	x_ = new double[nValues_];
 	y_ = new double[nValues_];
+
+	// Specify the output device (aquaterm)
+	plsdev("aqt");
+
 }
 
 // Destructor
@@ -32,15 +36,33 @@ void Plotter::setTestParabolicFcn(double xmin, double xmax, double ymin, double 
 
 }
 
+/// Find the min of the specified c-style array
+double Plotter::min(double* arr) {
+
+	double val=1E+20;
+	for(size_t i=0; i<nValues_; i++){
+		if(arr[i]<val)
+			val=arr[i];
+	}
+	return val;
+}
+
+/// Find the max of the specified c-style array
+double Plotter::max(double* arr) {
+	double val=-1E+20;
+	for(size_t i=0; i<nValues_; i++){
+		if(arr[i]>val)
+			val=arr[i];
+	}
+	return val;
+}
+
 // Produce a 2d plot from Eigen vectors
 void Plotter::plot() {
 
 	// compute the values to plot
 	double xmin = 0., xmax = 1., ymin = 0., ymax = 100.;
 	setTestParabolicFcn(xmin, xmax, ymin, ymax);
-
-	// Specify the output device (aquaterm)
-	plsdev("aqt");
 
 	// Specify the background color (rgb) and its transparency
 	plscolbga(255,255,255,0.6);
@@ -49,10 +71,12 @@ void Plotter::plot() {
 	plinit();
 
 	// Create a labeled box to hold the plot.
-	plenv( xmin, xmax, ymin, ymax, 0, 0 );
-	pllab( "x", "y=100 x#u2#d", "Simple PLplot demo of a 2D line plot" );
+	plcol0( color::grey );
+	plenv( min(x_), max(x_), min(y_), max(y_), 0, 0 );
+	pllab( "x", "y", "2D Plot Example" );
 
 	// Plot the data that was prepared above.
+	plcol0( color::blue );
 	plline( nValues_, x_, y_ );
 
 	// Close PLplot library
@@ -72,35 +96,11 @@ PolarPlotter::~PolarPlotter() {
 	// Do nothing
 }
 
-/// Find the min of the specified c-style array
-double PolarPlotter::min(double* arr) {
-
-	double val=1E+20;
-	for(size_t i=0; i<nValues_; i++){
-		if(arr[i]<val)
-			val=arr[i];
-	}
-	return val;
-}
-
-/// Find the max of the specified c-style array
-double PolarPlotter::max(double* arr) {
-	double val=-1E+20;
-	for(size_t i=0; i<nValues_; i++){
-		if(arr[i]>val)
-			val=arr[i];
-	}
-	return val;
-}
-
 void PolarPlotter::plot() {
 
 	// Set orientation to portrait - note not all device drivers
 	// support this, in particular most interactive drivers do not
 	plsori( 1 );
-
-	// Specify the output device (aquaterm)
-	plsdev("aqt");
 
 	// Specify the background color (rgb) and its transparency
 	plscolbga(255,255,255,.5);

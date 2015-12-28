@@ -33,6 +33,12 @@ class Plotter {
 
 	protected:
 
+		/// Find the min of the specified c-style array
+		double min(double*);
+
+		/// Find the max of the specified c-style array
+		double max(double*);
+
 		/// Define colors -- see plplot_5.11 guide 18.13: plCol0
 		enum color{
 			black,
@@ -75,12 +81,6 @@ class PolarPlotter : public Plotter {
 		virtual void plot();
 
 	private:
-
-		/// Find the min of the specified c-style array
-		double min(double*);
-
-		/// Find the max of the specified c-style array
-		double max(double*);
 
 		/// Pi in radians
 		double pi_;
