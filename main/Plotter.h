@@ -14,31 +14,70 @@ using namespace Eigen;
 
 /// Wrapper class for ploPlot
 class Plotter {
-	
+
 	public:
 		
 		/// Constructor
-		Plotter(); 
+		Plotter(int nValues=101);
 		
 		/// Destructor
-		~Plotter(); 
+		virtual ~Plotter();
 		
 		/// Produce a 2d plot from Eigen vectors
-		void plotXY(); 
-
-		/// Produce a 2d plot from Eigen vectors
-		void plotPolar();
+		virtual void plot();
 
 	private:
 
 		/// Compute test values for the XY plot given the bounds
 		void setTestParabolicFcn(double xmin, double xmax, double ymin, double ymax);
 
+	protected:
+
+		/// Define colors -- see plplot_5.11 guide 18.13: plCol0
+		enum color{
+			black,
+			red,
+			yellow,
+			green,
+			aquamarine,
+			pink,
+			wheat,
+			grey,
+			brown,
+			blue,
+			BlueViolet,
+			cyan,
+			turquoise,
+			magenta,
+			salmon,
+			white
+		};
+
 		/// Number of points the plot is made of
 		int nValues_;
 
 		/// Primitive arrays plplot is feed with
 		double* x_, * y_;
+
+};
+
+class PolarPlotter : public Plotter {
+
+	public:
+
+		/// Constructor
+		PolarPlotter();
+
+		/// Destructor
+		~PolarPlotter();
+
+		/// Implement the abstract method plot
+		virtual void plot();
+
+	private:
+
+		/// Pi in radians
+		double pi_;
 
 };
 

@@ -42,8 +42,8 @@ int main(int argc, const char *argv[]) {
 
 
     printf("\n-- UMFPACK TESTS -----------\n");
-    Solver solver;
-    solver.run();
+//    Solver solver;
+//    solver.run();
     printf("-------------\n");
 	
 	
@@ -56,14 +56,16 @@ int main(int argc, const char *argv[]) {
     Plotter plotter;
 
     // plot a XY test plot
-    plotter.plotXY();
+    plotter.plot();
+
+    PolarPlotter polarPlotter;
 
     // plot a polar test plot
-    plotter.plotPolar();
+    polarPlotter.plot();
 
-    printf("\n-- NLOPT TESTS -----------\n");
-    Optimizer optimizer;
-    optimizer.run();
+//    printf("\n-- NLOPT TESTS -----------\n");
+//    Optimizer optimizer;
+//    optimizer.run();
 
     return (0);
 	
