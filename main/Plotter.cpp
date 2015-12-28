@@ -35,9 +35,8 @@ void Plotter::setTestParabolicFcn(double xmin, double xmax, double ymin, double 
 // Produce a 2d plot from Eigen vectors
 void Plotter::plot() {
 
-	double xmin = 0., xmax = 1., ymin = 0., ymax = 100.;
-
 	// compute the values to plot
+	double xmin = 0., xmax = 1., ymin = 0., ymax = 100.;
 	setTestParabolicFcn(xmin, xmax, ymin, ymax);
 
 	// Specify the output device (aquaterm)
@@ -73,6 +72,27 @@ PolarPlotter::~PolarPlotter() {
 	// Do nothing
 }
 
+/// Find the min of the specified c-style array
+double PolarPlotter::min(double* arr) {
+
+	double val=1E+20;
+	for(size_t i=0; i<nValues_; i++){
+		if(arr[i]<val)
+			val=arr[i];
+	}
+	return val;
+}
+
+/// Find the max of the specified c-style array
+double PolarPlotter::max(double* arr) {
+	double val=-1E+20;
+	for(size_t i=0; i<nValues_; i++){
+		if(arr[i]>val)
+			val=arr[i];
+	}
+	return val;
+}
+
 void PolarPlotter::plot() {
 
 	// Set orientation to portrait - note not all device drivers
@@ -88,23 +108,42 @@ void PolarPlotter::plot() {
 	// Initialize plplot
 	plinit();
 
+	// Fill the values array
+	for ( size_t i = 0; i < nValues_; i++ )
+	{
+		double r    = pi_ * ( .1 * i );
+		x_[i] = cos( pi_ * i ) * r;
+		y_[i] = sin( pi_ * i ) * r;
+	}
+
+	// Compute the min/max and set symmetric bounds for this plot
+	double xRange = std::max(fabs(min(x_)),fabs(max(x_)));
+	double yRange = std::max(fabs(min(y_)),fabs(max(y_)));
+	double allrange = std::max(xRange,yRange);
+
 	// Set up viewport and window, but do not draw box
-	plenv( -1.3, 1.3, -1.3, 1.3, 1, -2 );
+	plenv( -allrange, allrange, -allrange, allrange, 1, -2 );
 
 	plcol0( color::grey );
 
-	// Draw circles for polar grid
-	for ( size_t i = 1; i <= 10; i++ )
-	{
+	// Draw a number of circles for polar grid
+	int nCircles = allrange / 0.1;
+	for ( size_t i = 1; i <= nCircles; i++ ) {
+		// Add the arc
 		plarc( 0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0.0, 0 );
+		// Add a label
+		char title[256];
+		sprintf(title,"%2.1f",0.1*i);
+
+		plptex(0,0.1*i,0.1,0.1 * i,0, title);
 	}
 
-	// Set the color for the radial lines
+	// Set the radial lines
 	for ( size_t i = 0; i <= 11; i++ )
 	{
 		double theta = 30.0 * i;
-		double dx    = cos( pi_ * theta );
-		double dy    = sin( pi_ * theta );
+		double dx    = allrange * cos( pi_ * theta );
+		double dy    = allrange * sin( pi_ * theta );
 
 		// Draw radial spokes for polar grid and add the text
 		pljoin( 0.0, 0.0, dx, dy );
@@ -129,23 +168,36 @@ void PolarPlotter::plot() {
 			plptex( dx, dy, -dx, -dy, 1. + offset, text );
 	}
 
-	// Draw the graph
-	for ( size_t i = 0; i < nValues_; i++ )
-	{
-		double r    = pi_ * ( .1 * i );
-		x_[i] = cos( pi_ * i ) * r;
-		y_[i] = sin( pi_ * i ) * r;
-	}
-
 	// Set the color for the data line
 	plcol0( color::blue );
 	plline( nValues_, x_, y_ );
 
 	// set the color
 	plcol0( color::red	);
-	plmtex( "t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh" );
+	plmtex( "t", -1., 0., 0.5, "Polar Plot Example" );
 
 	// Close the plot at end
 	plend();
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

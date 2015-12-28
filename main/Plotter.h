@@ -76,6 +76,12 @@ class PolarPlotter : public Plotter {
 
 	private:
 
+		/// Find the min of the specified c-style array
+		double min(double*);
+
+		/// Find the max of the specified c-style array
+		double max(double*);
+
 		/// Pi in radians
 		double pi_;
 
