@@ -1,0 +1,7 @@
+syntax: glob
+.cproject
+.DS_Store
+.project
+.pydevproject
+.sconsign.dblite
+.DS_Store
