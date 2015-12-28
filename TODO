@@ -1,4 +1,4 @@
-
+- Add ignore list to mercurial
 - Segregate the nlopt example into a separate class
 - improve the Plotter class -- make some 2d plot with vectors
 - use cppunit to make a test suite in main/test
@@ -6,5 +6,5 @@
 - move the Optimizer to a separate src/optimizer folder structure
 - make autotests for every action
 
-- start writing a 2dofs VPP with 2 decision variables
+- start writing a 2dofs VPP with 2 decision variables…
 
