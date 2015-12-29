@@ -6,19 +6,22 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <vector>
+
+using namespace std;
 
 /// Helper struct for named
 /// variables
 struct variable {
 
 		/// Name of this variable
-		std::string varName_;
+		string varName_;
 
 		/// Value of this variable
 		double val_;
 
 		/// Implicit copy constructor used to cast a variable to its name
-		variable(const std::string& varName = "", const double& val = 0.)
+		variable(const string& varName = "", const double& val = 0.)
 	  : varName_(varName),
 	    val_(val) {}
 
@@ -33,7 +36,7 @@ struct variable {
 	  }
 
 		/// Overload operator << to printout variable name and value
-		friend std::ostream& operator << (std::ostream&os, const variable& var) {
+		friend ostream& operator << ( ostream&os, const variable& var) {
 			os <<"  "<< var.varName_ <<"  "<<var.val_;
 		}
 
@@ -46,7 +49,7 @@ class VariableFileParser {
 	public:
 
 		/// Constructor
-		VariableFileParser(std::string);
+		VariableFileParser(string);
 
 		/// Destructor
 		~VariableFileParser();
@@ -61,9 +64,13 @@ class VariableFileParser {
 	private:
 
 		/// Name of the file to be opened
-		std::string fileName_;
+		string fileName_;
 
-		std::set<variable> variables_;
+		/// Set of variables read from input file
+		set<variable> variables_;
+
+		/// Collection of all variables requested for the analysis
+		std::vector<std::string> requiredVariables_;
 
 };
 

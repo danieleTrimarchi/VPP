@@ -31,9 +31,11 @@ int main(int argc, const char *argv[]) {
 	try{
 
 		// TRIVIAL TEST
-		printf("\nVPP PROGRAM\n");
+		printf("\n=======================\n");
+		printf("===  V++ PROGRAM  =====\n");
+		printf("=======================\n");
 
-		printf("\n-- EIGEN TEST -----------\n");
+	//	printf("\n-- EIGEN TEST -----------\n");
 		//    int rows=5, cols=5;
 		//    MatrixXf m(rows,cols);
 		//    m << (Matrix3f() << 1, 2, 3, 4, 5, 6, 7, 8, 9).finished(),
@@ -41,20 +43,20 @@ int main(int argc, const char *argv[]) {
 		//    MatrixXf::Zero(rows-3,3),
 		//    MatrixXf::Identity(rows-3,cols-3);
 		//    cout << m << endl;
-		printf("-------------\n");
+	//	printf("-------------\n");
 
 
-		printf("\n-- UMFPACK TESTS -----------\n");
+	//	printf("\n-- UMFPACK TESTS -----------\n");
 		//    Solver solver;
 		//    solver.run();
-		printf("-------------\n");
+	//	printf("-------------\n");
 
 
-		printf("\n-- BOOST TESTS -----------\n");
+		//printf("\n-- BOOST TESTS -----------\n");
 		boost::shared_ptr<int> p(new int);
 
 
-		printf("\n-- PLOTTER TESTS -----------\n");
+		//printf("\n-- PLOTTER TESTS -----------\n");
 //		// Instantiate a plotter
 //		Plotter plotter;
 //
@@ -70,7 +72,7 @@ int main(int argc, const char *argv[]) {
 		//    Optimizer optimizer;
 		//    optimizer.run();
 
-		printf("\n-- VariableFileParser TESTS -----------\n");
+		//printf("\n-- VariableFileParser TESTS -----------\n");
 
 		VariableFileParser variableFileParser("variableFile.txt");
 		variableFileParser.parse();
@@ -78,8 +80,15 @@ int main(int argc, const char *argv[]) {
 
 
 
-	} catch(...) {
-		cout << "Exception occurred\n";
+	} catch(std::exception& e) {
+		std::cout<<"\n-----------------------------------------"<<std::endl;
+		std::cout<<" Exception caught in Main:  "<<std::endl;
+		std::cout<<" --> "<<e.what()<<std::endl;
+		std::cout<<" The program is terminated. "<<std::endl;
+		std::cout<<"-----------------------------------------\n"<<std::endl;
+
+	}	catch(...) {
+		cout << "Unknown Exception occurred\n";
 	}
 
 	return (0);
