@@ -37,13 +37,14 @@ THIRD_PARTY_LIBPATH=[
 			'/opt/local/lib' # macPorts and lnopt lib path
 		]
 
+#CPPFLAGS = ['-Wc++11-extensions']
 
 #This must be a way to define the path where the executable searches for the dyLib, but for the moment it does not seems to work
 env = DefaultEnvironment()
 
 
 env.Program('VPP',
-		['main.cpp','Plotter.cpp','Solver.cpp','Optimizer.cpp'],
+		['main.cpp','Plotter.cpp','Solver.cpp','Optimizer.cpp','VariableFileParser.cpp'],
 		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,
 		LIBPATH=THIRD_PARTY_LIBPATH

@@ -23,6 +23,7 @@ using namespace Eigen;
 // Plotting utility
 #include "Plotter.h"
 
+#include "VariableFileParser.h"
 
 // MAIN
 int main(int argc, const char *argv[]) {
@@ -54,20 +55,28 @@ int main(int argc, const char *argv[]) {
 
 
 		printf("\n-- PLOTTER TESTS -----------\n");
-		// Instantiate a plotter
-		Plotter plotter;
-
-		// plot a XY test plot
-		plotter.plot();
-
-		PolarPlotter polarPlotter;
-
-		// plot a polar test plot
-		polarPlotter.plot();
+//		// Instantiate a plotter
+//		Plotter plotter;
+//
+//		// plot a XY test plot
+//		plotter.plot();
+//
+//		PolarPlotter polarPlotter;
+//
+//		// plot a polar test plot
+//		polarPlotter.plot();
 
 		//    printf("\n-- NLOPT TESTS -----------\n");
 		//    Optimizer optimizer;
 		//    optimizer.run();
+
+		printf("\n-- VariableFileParser TESTS -----------\n");
+
+		VariableFileParser variableFileParser("variableFile.txt");
+		variableFileParser.parse();
+
+
+
 
 	} catch(...) {
 		cout << "Exception occurred\n";
