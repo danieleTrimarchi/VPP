@@ -74,7 +74,7 @@ int main(int argc, const char *argv[]) {
 
 		VariableFileParser variableFileParser("variableFile.txt");
 		variableFileParser.parse();
-
+		variableFileParser.check();
 
 
 

@@ -44,8 +44,27 @@ void VariableFileParser::parse() {
 			variables_.insert(newVariable);
 		}
 	}
+}
 
+// Check that all the required variables have been
+// prompted into the file. Otherwise throws
+void VariableFileParser::check() {
 
+  std::set<variable>::iterator it;
+  it=variables_.find(std::string("MROACH"));
+  if(it != variables_.end()) {
+  	std::cout<<"found variable "<<*it<<std::endl;
+  } else {
+  	std::cout<<" Variable MROACH not found !"<<std::endl;
+  }
+
+  it=variables_.find(std::string("PIPPO"));
+  if(it != variables_.end()) {
+  	std::cout<<"found variable "<<*it<<std::endl;
+  } else {
+  	std::cout<<" Variable PIPPO not found !"<<std::endl;
+  }
 
 }
+
 
