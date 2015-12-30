@@ -1,5 +1,7 @@
 #include "VariableFileParser.h"
 #include <stdio.h>
+#include <cmath>
+#include "Warning.h"
 
 // Constructor
 VariableFileParser::VariableFileParser(std::string fileName) :
@@ -7,7 +9,22 @@ VariableFileParser::VariableFileParser(std::string fileName) :
 
 	// Set the variable the user must define in the input file.
 	// Method check() will assure all variables have been defined
-	requiredVariables_.reserve(50);
+	requiredVariables_.reserve(61);
+
+	// %%%%%%% VPP CONFIGURATION %%%%%%%%
+	requiredVariables_.push_back("V_MIN");
+	requiredVariables_.push_back("V_MAX");
+	requiredVariables_.push_back("PHI_MIN");
+	requiredVariables_.push_back("PHI_MAX");
+	requiredVariables_.push_back("B_MIN");
+	requiredVariables_.push_back("B_MAX");
+	requiredVariables_.push_back("F_MIN");
+	requiredVariables_.push_back("F_MAX");
+	// %%%%%%% WIND %%%%%%%%
+	requiredVariables_.push_back("V_TW");
+	requiredVariables_.push_back("ALPHA_TW");
+
+	// %%%%%%% HULL %%%%%%%%
 	requiredVariables_.push_back("DIVCAN"); 	// [m^3] Displaced volume of canoe body
 	requiredVariables_.push_back("LWL");   		// [m]  Design waterline's length
 	requiredVariables_.push_back("BWL");     	// [m]  Design waterline's beam
@@ -108,7 +125,7 @@ void VariableFileParser::parse() {
 // prompted into the file. Otherwise throws
 void VariableFileParser::check() {
 
-	// Loop on the required variables and make sure all have
+	// Loop on all the required variables and make sure all have
 	// been defined in the input file
 	for(size_t iVar=0; iVar<requiredVariables_.size(); iVar++) {
 
@@ -120,6 +137,31 @@ void VariableFileParser::check() {
 	  	throw std::logic_error(msg);
 	  }
 	}
+
+	// Add some check on the variables: are they within the model validity?
+	// todo dtrimarchi : add the source of these limitations: possibly Delft
+	if( variables_["LWL"]/variables_["BWL"] <=  2.73 ||
+			variables_["LWL"]/variables_["BWL"] >=  5.00 )
+		Warning("LWL/BWL is out of valuable interval");
+
+	if( variables_["BWL"]/variables_["TCAN"] <=  2.46 ||
+			variables_["BWL"]/variables_["TCAN"] >=  19.38 )
+		Warning("BWL/TCAN is out of valuable interval");
+
+	if( variables_["LWL"]/std::pow(variables_["DIVCAN"],1./3) <=   4.34 ||
+				variables_["LWL"]/std::pow(variables_["DIVCAN"],1./3) >=  8.50 )
+		Warning("LWL/DIVCAN^(1/3) is out of valuable interval");
+
+	if( variables_["CPL"] <= 0.52 || variables_["CPL"] >= 0.6 )
+		Warning("CPL is out of valuable interval");
+
+	if( variables_["CMS"] <= 0.65 || variables_["CMS"] >= 0.78 )
+		Warning("CMS is out of valuable interval");
+
+	if( variables_["AW"]/std::pow(variables_["DIVCAN"],2./3) <= 3.78 ||
+			variables_["AW"]/std::pow(variables_["DIVCAN"],2./3) >= 12.67 )
+		Warning("Loading Factor is out of valuable data");
+
 }
 
 

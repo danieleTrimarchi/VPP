@@ -35,10 +35,28 @@ struct variable {
 	    return varName_ == rhs.varName_;
 	  }
 
+	  /// Self cast operator, returns the underlying value
+	  operator double() const {
+	  	return val_;
+	  }
+
 		/// Overload operator << to printout variable name and value
 		friend ostream& operator << ( ostream&os, const variable& var) {
 			os <<"  "<< var.varName_ <<"  "<<var.val_;
 		}
+
+};
+
+/// Utility class that derives from set and overloads the
+/// operator [] with set::find
+class VarSet : public set<variable> {
+
+	public:
+
+		variable operator [] (string varName){
+			return *(find(varName));
+		}
+
 
 };
 
@@ -67,7 +85,7 @@ class VariableFileParser {
 		string fileName_;
 
 		/// Set of variables read from input file
-		set<variable> variables_;
+		VarSet variables_;
 
 		/// Collection of all variables requested for the analysis
 		std::vector<std::string> requiredVariables_;

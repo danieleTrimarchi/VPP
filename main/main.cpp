@@ -86,7 +86,6 @@ int main(int argc, const char *argv[]) {
 		std::cout<<" --> "<<e.what()<<std::endl;
 		std::cout<<" The program is terminated. "<<std::endl;
 		std::cout<<"-----------------------------------------\n"<<std::endl;
-
 	}	catch(...) {
 		cout << "Unknown Exception occurred\n";
 	}

@@ -44,7 +44,7 @@ env = DefaultEnvironment()
 
 
 env.Program('VPP',
-		['main.cpp','Plotter.cpp','Solver.cpp','Optimizer.cpp','VariableFileParser.cpp'],
+		['main.cpp','Plotter.cpp','Solver.cpp','Optimizer.cpp','VariableFileParser.cpp','Warning.cpp'],
 		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,
 		LIBPATH=THIRD_PARTY_LIBPATH
