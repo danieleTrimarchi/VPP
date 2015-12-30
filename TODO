@@ -1,3 +1,6 @@
+- Variables should not live in the parser
+- we are at vppmycon calling vpp_aero
+- scons structuire suggested Stephane
 
 - use cppunit to make a test suite in main/test -> see howto in MEMSp
 - move the Plotter to a separate src/plotUtil folder structure

@@ -11,18 +11,24 @@ VariableFileParser::VariableFileParser(std::string fileName) :
 	// Method check() will assure all variables have been defined
 	requiredVariables_.reserve(61);
 
-	// %%%%%%% VPP CONFIGURATION %%%%%%%%
-	requiredVariables_.push_back("V_MIN");
-	requiredVariables_.push_back("V_MAX");
-	requiredVariables_.push_back("PHI_MIN");
-	requiredVariables_.push_back("PHI_MAX");
-	requiredVariables_.push_back("B_MIN");
-	requiredVariables_.push_back("B_MAX");
-	requiredVariables_.push_back("F_MIN");
-	requiredVariables_.push_back("F_MAX");
+	// %%%%%%% SETUP THE DESIGN SPACE FOR THE OPTIMIZER %%%%%%%%
+	requiredVariables_.push_back("V_MIN");   // Constraint the min boat speed
+	requiredVariables_.push_back("V_MAX");   // Constraint the max boat speed
+	requiredVariables_.push_back("PHI_MIN"); // Constraint the min heel angle
+	requiredVariables_.push_back("PHI_MAX"); // Constraint the max heel angle
+	requiredVariables_.push_back("B_MIN");   // Constraint the min Reef (0, thus this must be the min nReef (int) ) todo dtrimarchi
+	requiredVariables_.push_back("B_MAX");   // Constraint the max Reef (3, thus this must be the max nReef (int) ) todo dtrimarchi
+	requiredVariables_.push_back("F_MIN");   // Constraint the min Flattening factor
+	requiredVariables_.push_back("F_MAX");   // Constraint the max Flattening factor
+
 	// %%%%%%% WIND %%%%%%%%
-	requiredVariables_.push_back("V_TW");
-	requiredVariables_.push_back("ALPHA_TW");
+	requiredVariables_.push_back("V_TW_MIN");	// Min true wind velocity [m/s]
+	requiredVariables_.push_back("V_TW_MAX");	// Max true wind velocity [m/s]
+	requiredVariables_.push_back("N_TWV");		// Number of wind velocities in range [-]
+
+	requiredVariables_.push_back("ALPHA_TW_MIN"); // Min true wind angle [m/s]
+	requiredVariables_.push_back("ALPHA_TW_MAX"); // True wind angle [m/s]
+	requiredVariables_.push_back("N_ALPHA_TW"); 	// Number of wind angles in range [-]
 
 	// %%%%%%% HULL %%%%%%%%
 	requiredVariables_.push_back("DIVCAN"); 	// [m^3] Displaced volume of canoe body
