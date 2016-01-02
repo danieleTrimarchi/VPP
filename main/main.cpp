@@ -68,15 +68,15 @@ int main(int argc, const char *argv[]) {
 //		// plot a polar test plot
 //		polarPlotter.plot();
 
-		//    printf("\n-- NLOPT TESTS -----------\n");
-		//    Optimizer optimizer;
-		//    optimizer.run();
+		    printf("\n-- NLOPT TESTS -----------\n");
+		    Optimizer optimizer;
+		    optimizer.run();
 
 		//printf("\n-- VariableFileParser TESTS -----------\n");
 
-		VariableFileParser variableFileParser("variableFile.txt");
-		variableFileParser.parse();
-		variableFileParser.check();
+//		VariableFileParser variableFileParser("variableFile.txt");
+//		variableFileParser.parse();
+//		variableFileParser.check();
 
 
 

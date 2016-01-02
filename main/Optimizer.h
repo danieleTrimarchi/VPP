@@ -6,7 +6,7 @@
 #include <fstream>
 #include <math.h>
 
-#include <nlopt.h>
+#include <nlopt.hpp>
 
 using namespace std;
 
@@ -23,6 +23,9 @@ class Optimizer {
 		~Optimizer();
 
 		/// Execute example 1
+		void runExample1();
+
+		/// Execute example 1
 		void run();
 
 	private:
@@ -33,7 +36,8 @@ class Optimizer {
 		/// Function requested for example1. Set the constraint function
 		static double myconstraint(unsigned n, const double *x, double *grad, void *data);
 
-		/// Struct requested by example1
+		/// Struct requested by example1. Coefficient for each constraint in the
+		/// shape : y >= (ax+b)^3
 		typedef struct {
 		    double a, b;
 		} my_constraint_data;
