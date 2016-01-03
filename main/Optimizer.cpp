@@ -94,7 +94,7 @@ void Optimizer::runExample1() {
 }
 
 // Execute example 2: COBYLA derivative-free algorithm
-void Optimizer::run() {
+void Optimizer::runExample2() {
 
   // Instantiate a NLOpobject and set the COBYLA (Constrained Optimization BY Linear Approximations)
  	// algorithm and the dimensionality.
@@ -142,3 +142,71 @@ void Optimizer::run() {
    }
 
 }
+
+// Try with ISRES global optimization
+void Optimizer::run() {
+
+
+  // Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
+	// algorithm for nonlinearly-constrained global optimization
+	///GN_ISRES
+	nlopt::opt opt(nlopt::GN_ISRES,2);
+
+//	This produce an exception for an invalid argument.
+//	See the example for DIRECT-L global optimisation algorithm in
+//	/Users/daniele/third_party/nlopt-2.4.2/test/testopt.cpp
+//	and see if from that I can drive other global optimisation algs!
+//	... then I still need to find a way to apply the alg to the VPP eqs!
+
+ 	// Set the and apply the lower and the upper bounds
+   std::vector<double> lb(2),ub(2);
+   lb[0] = 0;
+   lb[1] = 0;
+   ub[0] = 10.;
+   ub[1] = 10.;
+
+   opt.set_lower_bounds(lb);
+   opt.set_upper_bounds(ub);
+
+   std::vector<double> lboundCheck = opt.get_lower_bounds();
+   std::vector<double> uboundCheck = opt.get_upper_bounds();
+
+   for(size_t i=0; i<lboundCheck.size(); i++){
+  	 std::cout<<"lboundCheck["<<i<<"]= "<<lboundCheck[i]<<std::endl;
+  	 std::cout<<"uboundCheck["<<i<<"]= "<<uboundCheck[i]<<"\n---\n"<<std::endl;
+   }
+   // Set the objective function to be minimized (or maximized, using set_max_objective)
+   opt.set_min_objective(myfunc, NULL);
+
+   // Set the coefficients for the constraint equations :
+   // a1 = 2, b1=0, a2=-1, b2=1
+   my_constraint_data data[2] = { {2,0}, {-1,1} };
+
+   // Set the constraint equations
+   opt.add_inequality_constraint(myconstraint, &data[0], 1e-8);
+   opt.add_inequality_constraint(myconstraint, &data[1], 1e-8);
+
+   // Set the relative tolerance
+   opt.set_xtol_rel(1e-4);
+
+   // Set some initial guess
+   std::vector<double> xp(2);
+   xp[0]= 1.234;
+   xp[1]= 5.678;
+
+   // Instantiate the minimum objective value, upon return
+   double minf;
+
+   // Launch the optimization; negative retVal implies failure
+   nlopt::result result = opt.optimize(xp, minf);
+
+   if (result < 0) {
+       printf("nlopt failed!\n");
+   }
+   else {
+   		printf("found minimum after %d evaluations\n", optIterations);
+       printf("found minimum at f(%g,%g) = %0.10g\n", xp[0], xp[1], minf);
+   }
+
+}
+

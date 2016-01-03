@@ -25,7 +25,10 @@ class Optimizer {
 		/// Execute example 1
 		void runExample1();
 
-		/// Execute example 1
+		/// Execute example 2
+		void runExample2();
+
+		/// Execute
 		void run();
 
 	private:
