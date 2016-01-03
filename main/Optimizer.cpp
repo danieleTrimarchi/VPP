@@ -222,8 +222,8 @@ double Optimizer::myconstraint_g06(unsigned n, const double *x, double *grad, vo
 	g06_constraint_data *d = (g06_constraint_data *) data;
 
 	return (
-					std::pow((-1),d->s1) * std::pow(x[0]+d->a,2) +
-					std::pow((-1),d->s2) * std::pow(x[1]+d->b,2) +
+					d->s1 * std::pow(x[0]+d->a,2) +
+					d->s2 * std::pow(x[1]+d->b,2) +
 					d->c
 				);
 }
@@ -252,10 +252,10 @@ void Optimizer::run() {
 	// 		guess!
 
    std::vector<double> lb(dimension),ub(dimension);
-  	 lb[0] = 13;
-  	 ub[0] = 100;
-  	 lb[1] = 0;
-  	 ub[1] = 100;
+   lb[0] = 13;
+   ub[0] = 100;
+   lb[1] = 0;
+   ub[1] = 100;
 
    // Set the bounds for the constraints
    opt.set_lower_bounds(lb);
@@ -273,13 +273,13 @@ void Optimizer::run() {
    // Set the relative tolerance
    opt.set_xtol_rel(1e-4);
 
-   opt.set_maxeval(500000);
+   opt.set_maxeval(100000);
 
    // Set some initial guess. Make sure it is within the
    // bounds that have been set
    std::vector<double> xp(dimension);
-   xp[0]= 14;
-   xp[1]= 0.8;
+   xp[0]= 13.5;
+   xp[1]= 0.1;
 
    // Instantiate the minimum objective value, upon return
    double minf;
