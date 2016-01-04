@@ -33,7 +33,12 @@ class Optimizer {
 		/// can use for the VPP
 		void runISRES();
 
-		/// Execute
+		/// Execute benchmark case g06
+		void run_g06();
+
+		/// Execute benchmark case g13 -> FAILS!
+		void run_g13();
+
 		void run();
 
 	private:
@@ -44,11 +49,25 @@ class Optimizer {
 		// Same but for benchmark g06
 		static double myfunc_g06(unsigned n, const double *x, double *grad, void *my_func_data);
 
+		// Same but for benchmark g11
+		static double myfunc_g11(unsigned n, const double *x, double *grad, void *my_func_data);
+
+		// Same but for benchmark g13
+		static double myfunc_g13(unsigned n, const double *x, double *grad, void *my_func_data);
+
 		/// Function requested for example1. Set the constraint function
 		static double myconstraint(unsigned n, const double *x, double *grad, void *data);
 
 		/// Function requested for benchmark g06
 		static double myconstraint_g06(unsigned n, const double *x, double *grad, void *data);
+
+		/// Function requested for benchmark g11
+		static double myconstraint_g11(unsigned n, const double *x, double *grad, void *data);
+
+		/// Function requested for benchmark g13
+		static double myconstraint_h1_g13(unsigned n, const double *x, double *grad, void *data);
+		static double myconstraint_h2_g13(unsigned n, const double *x, double *grad, void *data);
+		static double myconstraint_h3_g13(unsigned n, const double *x, double *grad, void *data);
 
 		/// Struct requested by example1. Coefficient for each constraint in the
 		/// shape : y >= (ax+b)^3
@@ -56,10 +75,8 @@ class Optimizer {
 		    double a, b;
 		} my_constraint_data;
 
-		/// Struct requested by example1. Coefficient for each constraint in the
-		/// shape : y >= (ax+b)^3
+		/// Struct requested by benchmark g06
 		typedef struct {
-
 				int s1;
 		    double a;
 				int s2;
