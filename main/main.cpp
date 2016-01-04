@@ -68,15 +68,25 @@ int main(int argc, const char *argv[]) {
 //		// plot a polar test plot
 //		polarPlotter.plot();
 
-		    printf("\n-- NLOPT TESTS -----------\n");
-		    Optimizer optimizer;
-		    optimizer.run_g13();
+//		    printf("\n-- NLOPT TESTS -----------\n");
+//		    Optimizer optimizer;
+//		    optimizer.run();
 
 		//printf("\n-- VariableFileParser TESTS -----------\n");
 
-//		VariableFileParser variableFileParser("variableFile.txt");
-//		variableFileParser.parse();
-//		variableFileParser.check();
+		// Get the variables
+		VariableFileParser parser("variableFile.txt");
+		parser.parse();
+		parser.check();
+
+		// Loop on the wind VELOCITIES and ANGLES
+		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++)
+			for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++){
+
+				Optimizer optimizer(parser,vTW,aTW);
+				optimizer.run();
+
+			}
 
 
 

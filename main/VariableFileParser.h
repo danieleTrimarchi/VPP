@@ -79,6 +79,9 @@ class VariableFileParser {
 		/// prompted into the file. Otherwise throws
 		void check();
 
+		/// Get the value of a variable
+		const double get(std::string);
+
 	private:
 
 		/// Name of the file to be opened

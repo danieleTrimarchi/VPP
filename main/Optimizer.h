@@ -36,11 +36,14 @@ class Optimizer {
 		/// Execute benchmark case g06
 		void run_g06();
 
-		/// Execute benchmark case g13 -> FAILS!
+		/// Execute benchmark case g13
 		void run_g13();
 
 		/// Execute benchmark case g11
 		void run_g11();
+
+		/// Execute a VPP-like analysis
+		void run();
 
 	private:
 
@@ -56,6 +59,9 @@ class Optimizer {
 		// Same but for benchmark g13
 		static double myfunc_g13(unsigned n, const double *x, double *grad, void *my_func_data);
 
+		// Boat velocity objective function
+		static double VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data);
+
 		/// Function requested for example1. Set the constraint function
 		static double myconstraint(unsigned n, const double *x, double *grad, void *data);
 
@@ -69,6 +75,8 @@ class Optimizer {
 		static double myconstraint_h1_g13(unsigned n, const double *x, double *grad, void *data);
 		static double myconstraint_h2_g13(unsigned n, const double *x, double *grad, void *data);
 		static double myconstraint_h3_g13(unsigned n, const double *x, double *grad, void *data);
+
+		static void VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* f_data);
 
 		/// Struct requested by example1. Coefficient for each constraint in the
 		/// shape : y >= (ax+b)^3
@@ -84,6 +92,11 @@ class Optimizer {
 				double b, c;
 		} g06_constraint_data;
 
+		typedef struct {
+				Wind wind_;
+
+
+		} VPP_data;
 };
 
 #endif

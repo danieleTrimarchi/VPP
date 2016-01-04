@@ -170,8 +170,10 @@ void VariableFileParser::check() {
 
 }
 
-
-
+/// Get the value of a variable
+const double VariableFileParser::get(std::string varName) {
+	return variables_[varName];
+}
 
 
 
