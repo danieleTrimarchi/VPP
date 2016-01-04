@@ -376,12 +376,12 @@ void Optimizer::run_g13() {
    opt.set_min_objective(myfunc_g13, NULL);
 
    // Set the constraint equations
-   opt.add_equality_constraint(myconstraint_h1_g13, NULL, 1e-5);
-   opt.add_equality_constraint(myconstraint_h2_g13, NULL, 1e-5);
-   opt.add_equality_constraint(myconstraint_h3_g13, NULL, 1e-5);
+   opt.add_equality_constraint(myconstraint_h1_g13, NULL, 1e-1);
+   opt.add_equality_constraint(myconstraint_h2_g13, NULL, 1e-1);
+   opt.add_equality_constraint(myconstraint_h3_g13, NULL, 1e-1);
 
    // Set the relative tolerance
-   opt.set_xtol_rel(1e-4);
+   opt.set_xtol_rel(1e-1);
 
    // Set the max number of evaluations
    opt.set_maxeval(100000);
@@ -389,7 +389,7 @@ void Optimizer::run_g13() {
    // Set some initial guess. Make sure it is within the
    // bounds that have been set
    std::vector<double> xp(dimension);
-   double eps=.0;
+   double eps=.1;
    xp[0]= -1.717143+3*eps;
    xp[1]=  1.595709-eps;
    xp[2]=  1.827247-4*eps;
@@ -398,6 +398,8 @@ void Optimizer::run_g13() {
 
    // Instantiate the minimum objective value, upon return
    double minf;
+
+   opt.set_population(1000);
 
    // Launch the optimization; negative retVal implies failure
    nlopt::result result = opt.optimize(xp, minf);
@@ -431,7 +433,7 @@ double Optimizer::myconstraint_g11(unsigned n, const double *x, double *grad, vo
 	return x[1] - x[0] * x[0];
 }
 
-void Optimizer::run() {
+void Optimizer::run_g11() {
 
 	// Benchmark case 11:
 	// f(x) = (x1)^2 + ( x2 - 1 )^2
@@ -486,6 +488,14 @@ void Optimizer::run() {
 
    // Instantiate the minimum objective value, upon return
    double minf;
+
+   std::vector<double> dx(dimension);
+   opt.get_initial_step(xp, dx);
+   for(size_t i=0; i<dx.size(); i++){
+  	 std::cout<<"dx["<<i<<"]= "<<dx[i]<<std::endl;
+   }
+
+   opt.set_population(1000);
 
    // Launch the optimization; negative retVal implies failure
    nlopt::result result = opt.optimize(xp, minf);

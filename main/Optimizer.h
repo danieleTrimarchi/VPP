@@ -39,7 +39,8 @@ class Optimizer {
 		/// Execute benchmark case g13 -> FAILS!
 		void run_g13();
 
-		void run();
+		/// Execute benchmark case g11
+		void run_g11();
 
 	private:
 

@@ -70,7 +70,7 @@ int main(int argc, const char *argv[]) {
 
 		    printf("\n-- NLOPT TESTS -----------\n");
 		    Optimizer optimizer;
-		    optimizer.run();
+		    optimizer.run_g13();
 
 		//printf("\n-- VariableFileParser TESTS -----------\n");
 
