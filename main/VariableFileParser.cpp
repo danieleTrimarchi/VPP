@@ -117,7 +117,7 @@ void VariableFileParser::parse() {
 			// use stringstream to read the name of the variable and its value
 			std::stringstream ss(line);
 
-			variable newVariable;
+			Variable newVariable;
 			ss >> newVariable.varName_;
 			ss >> newVariable.val_;
 			//std::cout<< "Read: "<<newVariable<<std::endl;
@@ -135,7 +135,7 @@ void VariableFileParser::check() {
 	// been defined in the input file
 	for(size_t iVar=0; iVar<requiredVariables_.size(); iVar++) {
 
-		std::set<variable>::iterator it;
+		std::set<Variable>::iterator it;
 	  it=variables_.find(requiredVariables_[iVar]);
 	  if(it == variables_.end()) {
 	  	char msg[256];
@@ -171,8 +171,13 @@ void VariableFileParser::check() {
 }
 
 /// Get the value of a variable
-const double VariableFileParser::get(std::string varName) {
+double VariableFileParser::get(std::string varName) {
 	return variables_[varName];
+}
+
+// Get the variables contained in the parser
+const VarSet* VariableFileParser::getVariables() const {
+	return &variables_;
 }
 
 

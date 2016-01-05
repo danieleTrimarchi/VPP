@@ -92,11 +92,6 @@ class Optimizer {
 				double b, c;
 		} g06_constraint_data;
 
-		typedef struct {
-				Wind wind_;
-
-
-		} VPP_data;
 };
 
 #endif

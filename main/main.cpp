@@ -23,7 +23,9 @@ using namespace Eigen;
 // Plotting utility
 #include "Plotter.h"
 
+
 #include "VariableFileParser.h"
+#include "SailSet.h"
 
 // MAIN
 int main(int argc, const char *argv[]) {
@@ -51,11 +53,6 @@ int main(int argc, const char *argv[]) {
 		//    solver.run();
 	//	printf("-------------\n");
 
-
-		//printf("\n-- BOOST TESTS -----------\n");
-		boost::shared_ptr<int> p(new int);
-
-
 		//printf("\n-- PLOTTER TESTS -----------\n");
 //		// Instantiate a plotter
 //		Plotter plotter;
@@ -79,11 +76,30 @@ int main(int argc, const char *argv[]) {
 		parser.parse();
 		parser.check();
 
+		// Compute the sail configuration based on the variables that have been read in
+		boost::shared_ptr<SailSet> sails( SailSet::SailSetFactory(parser ) );
+
+		// Instantiate a container for all the quantities used in the equations
+		// to be solved. This is an ITEM, all the quantities derive from. It has
+		// a pure virtual update(vTW,aTW) that recursively updates all the childrens
+		// for the current location in the polar plot
+
 		// Loop on the wind VELOCITIES and ANGLES
 		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++)
 			for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++){
 
-				Optimizer optimizer(parser,vTW,aTW);
+				// instantiate a container for the physical quantities
+				// able to be passed to the optimizer that will compute the
+				// max speed.
+				// this contains
+				// - access to variables
+				// - wind
+				// - sailSet (sail geometry, coefficients and interpolator)
+				// - forces: aero and Resistance (-> hence all the resistance components)
+				// - Moments : heeling and righting moments
+
+				// this must take the
+				Optimizer optimizer;
 				optimizer.run();
 
 			}
