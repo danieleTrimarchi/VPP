@@ -48,14 +48,13 @@ class VarSet : public set<Variable> {
 	public:
 
 		/// Overload operator [] - non const variety
-		Variable operator [] (string varName){
-			return *(find(varName));
-		}
+		Variable operator [] (string varName);
 
 		/// Overload operator [] - const variety
-		const Variable operator [] (string varName) const {
-			return *(find(varName));
-		}
+		const Variable operator [] (string varName) const;
+
+		/// Iterate in the set and printout the variables
+		void print();
 
 };
 

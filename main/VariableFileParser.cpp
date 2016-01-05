@@ -180,6 +180,11 @@ const VarSet* VariableFileParser::getVariables() const {
 	return &variables_;
 }
 
+// Printout the list of all variables we have collected
+void VariableFileParser::printVariables() {
+	variables_.print();
+}
+
 
 
 

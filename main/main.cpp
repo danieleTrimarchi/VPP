@@ -75,6 +75,7 @@ int main(int argc, const char *argv[]) {
 		VariableFileParser parser("variableFile.txt");
 		parser.parse();
 		parser.check();
+		parser.printVariables();
 
 		// Compute the sail configuration based on the variables that have been read in
 		boost::shared_ptr<SailSet> sails( SailSet::SailSetFactory(parser ) );
@@ -99,8 +100,8 @@ int main(int argc, const char *argv[]) {
 				// - Moments : heeling and righting moments
 
 				// this must take the
-				Optimizer optimizer;
-				optimizer.run();
+				//Optimizer optimizer;
+				//optimizer.run();
 
 			}
 

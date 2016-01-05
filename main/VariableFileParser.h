@@ -36,6 +36,9 @@ class VariableFileParser {
 		/// Get the variables contained in the parser
 		const VarSet* getVariables() const;
 
+		/// Printout the list of all variables we have collected
+		void printVariables();
+
 	private:
 
 		/// Name of the file to be opened
