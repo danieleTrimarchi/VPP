@@ -182,7 +182,11 @@ const VarSet* VariableFileParser::getVariables() const {
 
 // Printout the list of all variables we have collected
 void VariableFileParser::printVariables() {
+
+	std::cout<<"====== PRINTOUT USER VARIABLES ================ "<<std::endl;
 	variables_.print();
+	std::cout<<"==================================================\n"<<std::endl;
+
 }
 
 

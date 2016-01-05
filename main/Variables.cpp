@@ -37,9 +37,7 @@ const Variable VarSet::operator [] (string varName) const {
 // Iterate in the set and printout the variables
 void VarSet::print() {
 
-	std::cout<<"===== PRINTOUT ALL VARIABLES IN PARSER: ========== "<<std::endl;
 	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it){
 		std::cout<< it->varName_ << ":  "<< it->val_ <<std::endl;
 	}
-	std::cout<<"================================================== "<<std::endl;
 }

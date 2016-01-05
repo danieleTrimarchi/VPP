@@ -4,9 +4,9 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>276</x>
-      <y>102</y>
-      <w>126</w>
+      <x>384</x>
+      <y>78</y>
+      <w>138</w>
       <h>60</h>
     </coordinates>
     <panel_attributes>VPPItem
@@ -21,8 +21,8 @@ vector&lt;VPPItem*&gt; VPPItems_</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>186</x>
-      <y>240</y>
+      <x>306</x>
+      <y>216</y>
       <w>114</w>
       <h>48</h>
     </coordinates>
@@ -35,8 +35,8 @@ vector&lt;VPPItem*&gt; VPPItems_</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>450</x>
-      <y>240</y>
+      <x>570</x>
+      <y>216</y>
       <w>114</w>
       <h>48</h>
     </coordinates>
@@ -49,8 +49,8 @@ Mheel</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>312</x>
-      <y>240</y>
+      <x>432</x>
+      <y>216</y>
       <w>114</w>
       <h>78</h>
     </coordinates>
@@ -67,8 +67,8 @@ fside</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>222</x>
-      <y>384</y>
+      <x>342</x>
+      <y>360</y>
       <w>126</w>
       <h>36</h>
     </coordinates>
@@ -78,8 +78,8 @@ fside</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>342</x>
-      <y>312</y>
+      <x>462</x>
+      <y>288</y>
       <w>42</w>
       <h>96</h>
     </coordinates>
@@ -89,8 +89,8 @@ fside</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>420</x>
-      <y>258</y>
+      <x>540</x>
+      <y>234</y>
       <w>42</w>
       <h>18</h>
     </coordinates>
@@ -100,8 +100,8 @@ fside</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>240</x>
-      <y>156</y>
+      <x>360</x>
+      <y>132</y>
       <w>108</w>
       <h>96</h>
     </coordinates>
@@ -111,8 +111,8 @@ fside</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>330</x>
-      <y>156</y>
+      <x>450</x>
+      <y>132</y>
       <w>54</w>
       <h>96</h>
     </coordinates>
@@ -122,8 +122,8 @@ fside</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>330</x>
-      <y>156</y>
+      <x>450</x>
+      <y>132</y>
       <w>192</w>
       <h>96</h>
     </coordinates>
@@ -133,8 +133,8 @@ fside</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>54</x>
-      <y>384</y>
+      <x>174</x>
+      <y>360</y>
       <w>126</w>
       <h>36</h>
     </coordinates>
@@ -144,8 +144,8 @@ fside</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>174</x>
-      <y>396</y>
+      <x>294</x>
+      <y>372</y>
       <w>60</w>
       <h>18</h>
     </coordinates>
@@ -155,9 +155,9 @@ fside</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>606</x>
-      <y>240</y>
-      <w>222</w>
+      <x>726</x>
+      <y>216</y>
+      <w>216</w>
       <h>108</h>
     </coordinates>
     <panel_attributes>HydroForcesItem
@@ -178,8 +178,8 @@ Rvr     = vpp_Rvr(V,geom,phys,Rconf.Rvr);
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>840</x>
-      <y>240</y>
+      <x>960</x>
+      <y>216</y>
       <w>96</w>
       <h>66</h>
     </coordinates>
@@ -192,8 +192,8 @@ Rvr     = vpp_Rvr(V,geom,phys,Rconf.Rvr);
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>54</x>
-      <y>330</y>
+      <x>174</x>
+      <y>306</y>
       <w>72</w>
       <h>30</h>
     </coordinates>
@@ -204,8 +204,8 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>120</x>
-      <y>312</y>
+      <x>240</x>
+      <y>288</y>
       <w>234</w>
       <h>48</h>
     </coordinates>
@@ -215,8 +215,8 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>420</x>
-      <y>252</y>
+      <x>540</x>
+      <y>228</y>
       <w>198</w>
       <h>66</h>
     </coordinates>
@@ -226,8 +226,8 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>24</x>
-      <y>264</y>
+      <x>144</x>
+      <y>240</y>
       <w>594</w>
       <h>210</h>
     </coordinates>
@@ -237,8 +237,8 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>330</x>
-      <y>156</y>
+      <x>450</x>
+      <y>132</y>
       <w>348</w>
       <h>96</h>
     </coordinates>
@@ -248,8 +248,8 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>330</x>
-      <y>156</y>
+      <x>450</x>
+      <y>132</y>
       <w>582</w>
       <h>96</h>
     </coordinates>
@@ -259,8 +259,8 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>0</x>
-      <y>264</y>
+      <x>120</x>
+      <y>240</y>
       <w>966</w>
       <h>228</h>
     </coordinates>
@@ -270,13 +270,24 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>396</x>
-      <y>102</y>
+      <x>516</x>
+      <y>78</y>
       <w>150</w>
       <h>66</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 one instance per child</panel_attributes>
     <additional_attributes>10.0;90.0;80.0;90.0;80.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>240</x>
+      <y>258</y>
+      <w>150</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>230.0;10.0;230.0;90.0;10.0;90.0</additional_attributes>
   </element>
 </diagram>

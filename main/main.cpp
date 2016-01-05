@@ -8,21 +8,7 @@ using namespace std;
 #include <Eigen/Core>
 using namespace Eigen;
 
-// ------------------------
-// Solver utility
-#include "Solver.h"
-
-// Optimizer utility
-#include "Optimizer.h"
-
-// ------------------------
-// Directives for BOOST
 #include "boost/shared_ptr.hpp"
-
-// ------------------------
-// Plotting utility
-#include "Plotter.h"
-
 
 #include "VariableFileParser.h"
 #include "SailSet.h"
@@ -32,44 +18,9 @@ int main(int argc, const char *argv[]) {
 
 	try{
 
-		// TRIVIAL TEST
 		printf("\n=======================\n");
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
-
-	//	printf("\n-- EIGEN TEST -----------\n");
-		//    int rows=5, cols=5;
-		//    MatrixXf m(rows,cols);
-		//    m << (Matrix3f() << 1, 2, 3, 4, 5, 6, 7, 8, 9).finished(),
-		//    MatrixXf::Zero(3.,cols-3),
-		//    MatrixXf::Zero(rows-3,3),
-		//    MatrixXf::Identity(rows-3,cols-3);
-		//    cout << m << endl;
-	//	printf("-------------\n");
-
-
-	//	printf("\n-- UMFPACK TESTS -----------\n");
-		//    Solver solver;
-		//    solver.run();
-	//	printf("-------------\n");
-
-		//printf("\n-- PLOTTER TESTS -----------\n");
-//		// Instantiate a plotter
-//		Plotter plotter;
-//
-//		// plot a XY test plot
-//		plotter.plot();
-//
-//		PolarPlotter polarPlotter;
-//
-//		// plot a polar test plot
-//		polarPlotter.plot();
-
-//		    printf("\n-- NLOPT TESTS -----------\n");
-//		    Optimizer optimizer;
-//		    optimizer.run();
-
-		//printf("\n-- VariableFileParser TESTS -----------\n");
 
 		// Get the variables
 		VariableFileParser parser("variableFile.txt");
@@ -78,11 +29,12 @@ int main(int argc, const char *argv[]) {
 		parser.printVariables();
 
 		// Compute the sail configuration based on the variables that have been read in
-		boost::shared_ptr<SailSet> sails( SailSet::SailSetFactory(parser ) );
+		boost::shared_ptr<SailSet> pSails( SailSet::SailSetFactory(parser ) );
+		pSails->printVariables();
 
 		// Instantiate a container for all the quantities used in the equations
 		// to be solved. This is an ITEM, all the quantities derive from. It has
-		// a pure virtual update(vTW,aTW) that recursively updates all the childrens
+		// a pure virtual update(vTW,aTW) that recursively updates all the children
 		// for the current location in the polar plot
 
 		// Loop on the wind VELOCITIES and ANGLES

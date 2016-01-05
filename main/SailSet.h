@@ -28,6 +28,9 @@ class SailSet {
 		/// Destructor
 		~SailSet();
 
+		/// Printout the list of all variables we have computed
+		void printVariables();
+
 	protected:
 
 		/// Parser storing all the variables read
