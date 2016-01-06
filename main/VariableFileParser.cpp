@@ -168,6 +168,9 @@ void VariableFileParser::check() {
 			variables_["AW"]/std::pow(variables_["DIVCAN"],2./3) >= 12.67 )
 		Warning("Loading Factor is out of valuable data");
 
+	if(variables_["V_TW_MAX"] <= variables_["V_TW_MIN"] )
+		throw logic_error("V_TW_MIN is larger than V_TW_MAX!");
+
 }
 
 /// Get the value of a variable
