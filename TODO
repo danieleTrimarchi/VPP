@@ -1,5 +1,4 @@
-- Variables should not live in the parser
-- we are at vppmycon calling vpp_aero
+
 - scons structuire suggested Stephane
 
 - use cppunit to make a test suite in main/test -> see howto in MEMSp
@@ -7,5 +6,4 @@
 - move the Optimizer to a separate src/optimizer folder structure
 - make autotests for every action
 
-- start writing a 2dofs VPP with 2 decision variables…
-
+- download and install Doxygen
