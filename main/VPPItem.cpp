@@ -9,18 +9,6 @@ PHI_(0),
 b_(0),
 f_(0) {
 
-	// Instantiate the wind
-	boost::shared_ptr<WindItem> pWind(new WindItem(pParser_,pSailSet_));
-
-	// Push it back to the children vector
-	vppItems_.push_back( pWind );
-
-	// Instantiate the sail coefficients
-	boost::shared_ptr<SailCoefficientItem> pSailCoeffItem(new SailCoefficientItem(pWind.get()));
-
-	// Push it back to the children vector
-	vppItems_.push_back( pSailCoeffItem );
-
 }
 
 // Destructor
@@ -49,8 +37,8 @@ void VPPItem::update(int vTW, int aTW, const double* x) {
 	f_= x[3];
 
 	// Loop on the children and call update
-	for(size_t iChild=0; iChild<vppItems_.size(); iChild++)
-		vppItems_[iChild]->update(vTW,aTW);
+	//for(size_t iChild=0; iChild<vppItems_.size(); iChild++)
+	//	vppItems_[iChild]->update(vTW,aTW);
 
 }
 
@@ -61,6 +49,34 @@ void VPPItem::update(int vTW, int aTW) {
 
 void VPPItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of VPPItem "<<std::endl;
+}
+
+//=================================================================
+
+// Constructor
+VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) {
+
+	//Instantiate the wind
+	boost::shared_ptr<WindItem> pWind(new WindItem(pParser,pSailSet));
+
+	// Push it back to the children vector
+	vppItems_.push_back( pWind );
+
+	// Instantiate the sail coefficients
+	boost::shared_ptr<SailCoefficientItem> pSailCoeffItem(new SailCoefficientItem(pWind.get()));
+
+	// Push it back to the children vector
+	vppItems_.push_back( pSailCoeffItem );
+
+	// for all of the instantiated, print whoAmI:
+	for(size_t iItem=0; iItem<vppItems_.size(); iItem++){
+		vppItems_[iItem]->printWhoAmI();
+	}
+}
+
+// Destructor
+VPPItemFactory::~VPPItemFactory(){
+
 }
 
 
@@ -165,14 +181,14 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 
 	}
 
-	// We only dispose of one drag coeff array for the moment
-	cd_.resize(6,4);
-	cl_.row(0) << 0,  	0,   	0,   	0;
-	cl_.row(1) << 27, 	0.02,	0.02,	0;
-	cl_.row(2) << 50, 	0.15,	0.25,	0.25;
-	cl_.row(3) << 80, 	0.8, 	0.15,	0.9;
-	cl_.row(4) << 100,	1.0, 	0.0, 	1.2;
-	cl_.row(5) << 180,	0.9, 	0.0, 	0.66;
+		// We only dispose of one drag coeff array for the moment
+		cd_.resize(6,4);
+		cd_.row(0) << 0,  	0,   	0,   	0;
+		cd_.row(1) << 27, 	0.02,	0.02,	0;
+		cd_.row(2) << 50, 	0.15,	0.25,	0.25;
+		cd_.row(3) << 80, 	0.8, 	0.15,	0.9;
+		cd_.row(4) << 100,	1.0, 	0.0, 	1.2;
+		cd_.row(5) << 180,	0.9, 	0.0, 	0.66;
 
 }
 
@@ -191,6 +207,17 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 // Print the class name -> in this case SailCoefficientItem
 void SailCoefficientItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of SailCoefficientItem "<<std::endl;
+
+	printCoefficients();
+}
+
+/// PrintOut the coefficient matrices
+void SailCoefficientItem::printCoefficients() {
+
+	std::cout<<"\n=== Sail Coefficients: ============\n "<<std::endl;
+	std::cout<<"Cl= \n"<<cl_<<std::endl;
+	std::cout<<"Cd= \n"<<cd_<<std::endl;
+	std::cout<<"\n===================================\n "<<std::endl;
 }
 
 //=================================================================

@@ -12,6 +12,7 @@ using namespace Eigen;
 
 #include "VariableFileParser.h"
 #include "SailSet.h"
+#include "VPPItem.h"
 
 // MAIN
 int main(int argc, const char *argv[]) {
@@ -32,26 +33,19 @@ int main(int argc, const char *argv[]) {
 		boost::shared_ptr<SailSet> pSails( SailSet::SailSetFactory(parser ) );
 		pSails->printVariables();
 
-		// Instantiate a container for all the quantities used in the equations
-		// to be solved. This is an ITEM, all the quantities derive from. It has
-		// a pure virtual update(vTW,aTW) that recursively updates all the children
-		// for the current location in the polar plot
+		// Instantiate a container for all the quantities function of the state variables
+		boost::shared_ptr<VPPItemFactory> pVppItems( new VPPItemFactory(&parser,pSails) );
 
 		// Loop on the wind VELOCITIES and ANGLES
 		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++)
 			for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++){
 
-				// instantiate a container for the physical quantities
-				// able to be passed to the optimizer that will compute the
-				// max speed.
-				// this contains
-				// - access to variables
-				// - wind
-				// - sailSet (sail geometry, coefficients and interpolator)
-				// - forces: aero and Resistance (-> hence all the resistance components)
-				// - Moments : heeling and righting moments
+				// and now I need to manage the way the vppItems gets updated.
+				// See the original idea in VPPItem::update(int,int,double*)
+				// Probably best is to define VPPItemFactory::update(vTW,aTW,double*)
+				// that calls update on the (pure) virtuals of the VPPItems that take
+				// the same signature
 
-				// this must take the
 				//Optimizer optimizer;
 				//optimizer.run();
 

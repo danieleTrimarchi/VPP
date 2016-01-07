@@ -11,6 +11,7 @@
 using namespace std;
 using namespace Eigen;
 
+
 /// Generic base class for all the VPP items
 class VPPItem {
 
@@ -60,10 +61,27 @@ class VPPItem {
 
 		/// Update the items for the current step (wind velocity and angle),
 		/// the value of the state vector x computed by the optimizer
-		virtual void update(int vTW, int aTW) =0;
+		virtual void update(int vTW, int aTW)=0;
 
-		/// Vector of VPPItem ptrs
-		vector<boost::shared_ptr<VPPItem> > vppItems_;
+};
+
+//=================================================================
+
+class VPPItemFactory {
+
+	public:
+
+		/// Constructor
+		VPPItemFactory(VariableFileParser*, boost::shared_ptr<SailSet>);
+
+		/// Destructor
+		~VPPItemFactory();
+
+	private:
+
+		/// Vector storing all the Children of VPPItem
+		std::vector<boost::shared_ptr<VPPItem> > vppItems_;
+
 
 };
 
@@ -135,6 +153,9 @@ class SailCoefficientItem : public VPPItem {
 		/// Print the class name -> in this case SailCoefficientItem
 		virtual void printWhoAmI();
 
+		/// PrintOut the coefficient matrices
+		void printCoefficients();
+
 	private:
 
 		/// Update the item for the current step (wind velocity and angle),
@@ -143,7 +164,7 @@ class SailCoefficientItem : public VPPItem {
 		virtual void update(int vTW, int aTW);
 
 		/// static arrays with the sail coefficients
-		Eigen::ArrayXd cl_,cd_;
+		Eigen::MatrixXd cl_,cd_;
 
 		/// Ptr to the wind item
 		WindItem* pWindItem_;
@@ -179,5 +200,7 @@ class AeroForcesItem : public VPPItem {
 		boost::shared_ptr<SailCoefficientItem> pSailCoeffs_;
 
 };
+
+//=================================================================
 
 #endif
