@@ -36,6 +36,9 @@ int main(int argc, const char *argv[]) {
 		// Instantiate a container for all the quantities function of the state variables
 		boost::shared_ptr<VPPItemFactory> pVppItems( new VPPItemFactory(&parser,pSails) );
 
+		// Instantiate an optimizer
+		Optimizer optimizer(pVppItems);
+
 		// Loop on the wind VELOCITIES and ANGLES
 		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++)
 			for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++){
@@ -46,8 +49,7 @@ int main(int argc, const char *argv[]) {
 				// that calls update on the (pure) virtuals of the VPPItems that take
 				// the same signature
 
-				//Optimizer optimizer;
-				//optimizer.run();
+				optimizer.run(vTW,aTW);
 
 			}
 

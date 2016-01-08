@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
+#include "VPPItem.h"
 
 #include <nlopt.hpp>
 
@@ -17,80 +18,29 @@ class Optimizer {
 	public:
 
 		/// Constructor
-		Optimizer();
+		Optimizer(boost::shared_ptr<VPPItemFactory>);
 
 		/// Destructor
 		~Optimizer();
 
-		/// Execute example 1
-		void runExample1();
-
-		/// Execute example 2
-		void runExample2();
-
-		/// Execute an example running ISRES "Improved Stochastic Ranking Evolution Strategy"
-		/// this is the global optimization algorithm with non-linear equality constraints we
-		/// can use for the VPP
-		void runISRES();
-
-		/// Execute benchmark case g06
-		void run_g06();
-
-		/// Execute benchmark case g13
-		void run_g13();
-
-		/// Execute benchmark case g11
-		void run_g11();
-
 		/// Execute a VPP-like analysis
-		void run();
+		void run(int TWV, int TWA);
 
 	private:
 
-		/// Function required for example1. Set the objective function
-		static double myfunc(unsigned n, const double *x, double *grad, void *my_func_data);
+		/// Ptr to the VPPItemFactory that contains all of the ingredients
+		/// required to compute the optimization constraints
+		boost::shared_ptr<VPPItemFactory> vppItemsContainer_;
 
-		// Same but for benchmark g06
-		static double myfunc_g06(unsigned n, const double *x, double *grad, void *my_func_data);
-
-		// Same but for benchmark g11
-		static double myfunc_g11(unsigned n, const double *x, double *grad, void *my_func_data);
-
-		// Same but for benchmark g13
-		static double myfunc_g13(unsigned n, const double *x, double *grad, void *my_func_data);
+		// Struct used to drive twv and twa into the update methods of the VPPItems
+		typedef struct {
+				double twv, twa;
+		} Loop_data;
 
 		// Boat velocity objective function
 		static double VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data);
 
-		/// Function requested for example1. Set the constraint function
-		static double myconstraint(unsigned n, const double *x, double *grad, void *data);
-
-		/// Function requested for benchmark g06
-		static double myconstraint_g06(unsigned n, const double *x, double *grad, void *data);
-
-		/// Function requested for benchmark g11
-		static double myconstraint_g11(unsigned n, const double *x, double *grad, void *data);
-
-		/// Function requested for benchmark g13
-		static double myconstraint_h1_g13(unsigned n, const double *x, double *grad, void *data);
-		static double myconstraint_h2_g13(unsigned n, const double *x, double *grad, void *data);
-		static double myconstraint_h3_g13(unsigned n, const double *x, double *grad, void *data);
-
-		static void VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* f_data);
-
-		/// Struct requested by example1. Coefficient for each constraint in the
-		/// shape : y >= (ax+b)^3
-		typedef struct {
-		    double a, b;
-		} my_constraint_data;
-
-		/// Struct requested by benchmark g06
-		typedef struct {
-				int s1;
-		    double a;
-				int s2;
-				double b, c;
-		} g06_constraint_data;
+		void VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* f_data);
 
 };
 

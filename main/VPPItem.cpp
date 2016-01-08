@@ -36,9 +36,9 @@ void VPPItem::update(int vTW, int aTW, const double* x) {
 	b_= x[2];
 	f_= x[3];
 
-	// Loop on the children and call update
-	//for(size_t iChild=0; iChild<vppItems_.size(); iChild++)
-	//	vppItems_[iChild]->update(vTW,aTW);
+	// Now call the implementation of the pure virtual update(int,int)
+	// for every child
+	update(vTW,aTW);
 
 }
 
@@ -79,6 +79,15 @@ VPPItemFactory::~VPPItemFactory(){
 
 }
 
+// Update the VPPItems for the current step (wind velocity and angle),
+// the value of the state vector x computed by the optimizer
+void VPPItemFactory::update(int vTW, int aTW, const double* x) {
+
+	// for all of the instantiated, print whoAmI:
+	for(size_t iItem=0; iItem<vppItems_.size(); iItem++)
+		vppItems_[iItem]->update(vTW,aTW,x);
+
+}
 
 //=========================================================
 

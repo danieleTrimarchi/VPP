@@ -77,6 +77,10 @@ class VPPItemFactory {
 		/// Destructor
 		~VPPItemFactory();
 
+		/// Update the VPPItems for the current step (wind velocity and angle),
+		/// the value of the state vector x computed by the optimizer
+		void update(int vTW, int aTW, const double* x);
+
 	private:
 
 		/// Vector storing all the Children of VPPItem
