@@ -50,7 +50,7 @@ int main(int argc, const char *argv[]) {
 				// that calls update on the (pure) virtuals of the VPPItems that take
 				// the same signature
 
-				optimizer.run(vTW,aTW);
+				optimizer.test(vTW,aTW);
 
 			}
 

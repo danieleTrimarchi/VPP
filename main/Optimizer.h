@@ -27,6 +27,9 @@ class Optimizer {
 		/// Execute a VPP-like analysis
 		void run(int TWV, int TWA);
 
+		/// Just test the update method of the VPPItems
+		void test(int TWV, int TWA);
+
 	private:
 
 		/// Ptr to the VPPItemFactory that contains all of the ingredients
@@ -38,10 +41,14 @@ class Optimizer {
 				double twv, twa;
 		} Loop_data;
 
-		// Boat velocity objective function
+		/// Boat velocity objective function
 		static double VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data);
 
+		/// Set the constraint: dF=0 and dM=0
 		static void VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* f_data);
+
+		/// Fake a static fcn to test for the update mechanism of the VPPItems
+		static void testStaticFcn(double* x, void* loopData);
 
 };
 

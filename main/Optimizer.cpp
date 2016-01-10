@@ -41,7 +41,8 @@ void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const doub
 
 	// Compute the residuals for force and moment
 	//	dF e dM devono essere iniettati in result,  array di taglia m (num of constraints, in questo caso 2)
-	//
+	// Compute df
+	// compute dM
 
 }
 
@@ -51,11 +52,10 @@ typedef void ( Optimizer::*FUNC ) (unsigned,double*,unsigned,const double*,doubl
 void Optimizer::run(int TWV, int TWA) {
 
 	// Set the dimension of this problem (result vector size)
-	size_t dimension=4; //  v, phi, reef, flat
+	size_t dimension=4; // --> v, phi, reef, flat
 
   // Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
-	///GN_ISRES
 	nlopt::opt opt(nlopt::GN_ISRES,dimension);
 
  	// Set the and apply the lower and the upper bounds
@@ -76,7 +76,7 @@ void Optimizer::run(int TWV, int TWA) {
   opt.set_upper_bounds(ub);
 
   std::vector<double> tol(dimension);
-  tol[0]=tol[1]=1e-1;
+  tol[0]=tol[1]=1.e-1;
 
   // Drive the loop info to the struct
   Loop_data loopData={TWV,TWA};
@@ -121,6 +121,30 @@ void Optimizer::run(int TWV, int TWA) {
   }
 }
 
+/// Fake a static fcn to test for the update mechanism of the VPPItems
+void Optimizer::testStaticFcn(double* x, void* loopData) {
+
+	// Retrieve the loop data for this call with a c-style cast
+	Loop_data* d = (Loop_data*)loopData;
+
+	int twv= d-> twv;
+	int twa= d-> twa;
+
+	// Now call update on the VPPItem container
+	vppItemsContainer_->update(twv,twa,x);
+
+}
+
+// Just test the update method of the VPPItems
+void Optimizer::test(int TWV, int TWA){
+
+  // Drive the loop info to the struct
+  Loop_data loopData={TWV,TWA};
+  double x[4];
+
+  Optimizer::testStaticFcn(x,&loopData);
+
+}
 
 
 
