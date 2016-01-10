@@ -20,6 +20,25 @@ Plotter::~Plotter() {
 
 }
 
+void Plotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
+
+	// make sure the buffers x_ and y_ are init
+	delete x_;
+	delete y_;
+
+	nValues_=x.size();
+
+	x_ = new double[nValues_];
+	y_ = new double[nValues_];
+
+	for ( int i = 0; i < nValues_; i++ )
+	{
+		x_[i] = x(i);
+		y_[i] = y(i);
+	}
+
+}
+
 void Plotter::setTestParabolicFcn(double xmin, double xmax, double ymin, double ymax) {
 
 	// make sure the buffers x_ and y_ are init
@@ -83,6 +102,38 @@ void Plotter::plot() {
 	plend();
 
 }
+
+
+// Produce a 2d plot from Eigen vectors
+void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
+
+	// Check the size of x and y are consistent
+	if(x.size() != y.size())
+		throw std::logic_error("In Plotter::plot(x,y). Array sizes mismatch");
+
+	// Copy the values from the incoming arrays into plplot compatible containers
+	setValues(x,y);
+
+	// Specify the background color (rgb) and its transparency
+	plscolbga(255,255,255,0.6);
+
+	// Initialize plplot
+	plinit();
+
+	// Create a labeled box to hold the plot.
+	plcol0( color::grey );
+	plenv( min(x_), max(x_), min(y_), max(y_), 0, 0 );
+	pllab( "x", "y", "2D Plot Example" );
+
+	// Plot the data that was prepared above.
+	plcol0( color::blue );
+	plline( nValues_, x_, y_ );
+
+	// Close PLplot library
+	plend();
+
+}
+
 
 //=====================================================================
 

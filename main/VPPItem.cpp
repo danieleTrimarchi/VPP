@@ -68,6 +68,8 @@ VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<Sa
 	// Push it back to the children vector
 	vppItems_.push_back( pSailCoeffItem );
 
+	// ----
+
 	// for all of the instantiated, print whoAmI:
 	for(size_t iItem=0; iItem<vppItems_.size(); iItem++){
 		vppItems_[iItem]->printWhoAmI();
@@ -170,35 +172,38 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 	// Pick the lift coefficient for this main (full batten or not)
 	if( pParser_->get("MFBL") ) {
 
-		cl_.resize(6,4);
-		cl_.row(0) << 0, 		0, 			0, 		0   ;
-		cl_.row(1) << 27, 	1.725,	1.5,	0   ;
-		cl_.row(2) << 50, 	1.5, 		0.5,	1.5 ;
-		cl_.row(3) << 80,		0.95, 	0.3,	1.0 ;
-		cl_.row(4) << 100,	0.85, 	0.0,	0.85;
-		cl_.row(5) << 180,	0, 			0, 		0		;
+		clMat_.resize(6,4);
+		clMat_.row(0) << 0, 		0, 			0, 		0   ;
+		clMat_.row(1) << 27, 	1.725,	1.5,	0   ;
+		clMat_.row(2) << 50, 	1.5, 		0.5,	1.5 ;
+		clMat_.row(3) << 80,		0.95, 	0.3,	1.0 ;
+		clMat_.row(4) << 100,	0.85, 	0.0,	0.85;
+		clMat_.row(5) << 180,	0, 			0, 		0		;
 
 	} else {
 
-		cl_.resize(6,4);
-		cl_.row(0) << 0, 		0, 	 	0 , 	0;
-		cl_.row(1) << 27, 	1.5, 	1.5,	0;
-		cl_.row(2) << 50, 	1.5, 	0.5,	1.5;
-		cl_.row(3) << 80, 	0.95,	0.3,	1.0;
-		cl_.row(4) << 100,	0.85,	0.0,	0.85;
-		cl_.row(5) << 180,	0, 	 	0,	 	0;
+		clMat_.resize(6,4);
+		clMat_.row(0) << 0, 		0, 	 	0 , 	0;
+		clMat_.row(1) << 27, 	1.5, 	1.5,	0;
+		clMat_.row(2) << 50, 	1.5, 	0.5,	1.5;
+		clMat_.row(3) << 80, 	0.95,	0.3,	1.0;
+		clMat_.row(4) << 100,	0.85,	0.0,	0.85;
+		clMat_.row(5) << 180,	0, 	 	0,	 	0;
 
 	}
 
 		// We only dispose of one drag coeff array for the moment
-		cd_.resize(6,4);
-		cd_.row(0) << 0,  	0,   	0,   	0;
-		cd_.row(1) << 27, 	0.02,	0.02,	0;
-		cd_.row(2) << 50, 	0.15,	0.25,	0.25;
-		cd_.row(3) << 80, 	0.8, 	0.15,	0.9;
-		cd_.row(4) << 100,	1.0, 	0.0, 	1.2;
+		cdMat_.resize(6,4);
+		cdMat_.row(0) << 0,  	0,   	0,   	0;
+		cdMat_.row(1) << 27, 	0.02,	0.02,	0;
+		cdMat_.row(2) << 50, 	0.15,	0.25,	0.25;
+		cdMat_.row(3) << 80, 	0.8, 	0.15,	0.9;
+		cdMat_.row(4) << 100,	1.0, 	0.0, 	1.2;
 		cd_.row(5) << 180,	0.9, 	0.0, 	0.66;
 
+		// resize cl_ and cd_ for storing the interpolated values
+		cl_.resize(3);
+		cd_.resize(3);
 }
 
 // Destructor
@@ -210,6 +215,34 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 
 	/// Get the current value of the apparent wind angle
 	double awa= pWindItem_->getAWA();
+
+	Eigen::ArrayXd x, y;
+	// Interpolate the values of the sail coefficients for the MainSail
+	x=clMat_.col(0);
+	y=clMat_.col(1);
+	cl_(0) = interpolator_.interpolate(awa,x,y);
+
+	x=cdMat_.col(0);
+	y=cdMat_.col(1);
+	cd_(0) = interpolator_.interpolate(awa,x,y);
+
+	// Interpolate the values of the sail coefficients for the Jib
+	x=clMat_.col(0);
+	y=clMat_.col(2);
+	cl_(1) = interpolator_.interpolate(awa,x,y);
+
+	x=cdMat_.col(0);
+	y=cdMat_.col(2);
+	cd_(1) = interpolator_.interpolate(awa,x,y);
+
+	// Interpolate the values of the sail coefficients for the Spi
+	x=clMat_.col(0);
+	y=clMat_.col(3);
+	cl_(2) = interpolator_.interpolate(awa,x,y);
+
+	x=cdMat_.col(0);
+	y=cdMat_.col(3);
+	cd_(2) = interpolator_.interpolate(awa,x,y);
 
 }
 
@@ -224,7 +257,7 @@ void SailCoefficientItem::printWhoAmI() {
 void SailCoefficientItem::printCoefficients() {
 
 	std::cout<<"\n=== Sail Coefficients: ============\n "<<std::endl;
-	std::cout<<"Cl= \n"<<cl_<<std::endl;
+	std::cout<<"Cl= \n"<<clMat_<<std::endl;
 	std::cout<<"Cd= \n"<<cd_<<std::endl;
 	std::cout<<"\n===================================\n "<<std::endl;
 }

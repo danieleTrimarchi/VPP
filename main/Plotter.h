@@ -26,10 +26,16 @@ class Plotter {
 		/// Produce a 2d plot from Eigen vectors
 		virtual void plot();
 
+		/// Plot the points of some given arrays
+		void plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y);
+
 	private:
 
 		/// Compute test values for the XY plot given the bounds
 		void setTestParabolicFcn(double xmin, double xmax, double ymin, double ymax);
+
+		/// Copy the values into plplot compatible containers
+		void setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& y);
 
 	protected:
 

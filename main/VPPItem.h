@@ -7,6 +7,7 @@
 
 #include "VariableFileParser.h"
 #include "SailSet.h"
+#include "Interpolator.h"
 
 using namespace std;
 using namespace Eigen;
@@ -167,11 +168,21 @@ class SailCoefficientItem : public VPPItem {
 		/// already been treated by the parent
 		virtual void update(int vTW, int aTW);
 
-		/// static arrays with the sail coefficients
-		Eigen::MatrixXd cl_,cd_;
+		/// Arrays with the sail coefficients
+		Eigen::ArrayXXd clMat_,cdMat_;
+
+		/// Current values of the lift and drag coefficients for Main,
+		/// Jib and Spi. The values are updated by update and interpolated
+		/// with the current awa computed by the WindItem with the actual
+		/// boat velocity from the state vector of the optimizer
+		Eigen::Vector3d cl_, cd_;
 
 		/// Ptr to the wind item
 		WindItem* pWindItem_;
+
+		/// Interpolator used to return the value of the sailcoefficients
+		/// Interpolated on the current apparent wind angle
+		Interpolator interpolator_;
 
 };
 
