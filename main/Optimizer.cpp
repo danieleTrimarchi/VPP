@@ -1,12 +1,20 @@
 #include "Optimizer.h"
 
+// Init static member
+boost::shared_ptr<VPPItemFactory> Optimizer::vppItemsContainer_;
+int optIterations=0;
+
 // Constructor
-Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-vppItemsContainer_(VPPItemFactory){
-	// make nothing
+Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
+
+	// Init the static member vppItemsContainer
+	vppItemsContainer_=VPPItemFactory;
 }
 
-int optIterations=0;
+// Destructor
+Optimizer::~Optimizer() {
+	// make nothing
+}
 
 // Set the objective function for tutorial g13
 double Optimizer::VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data) {
@@ -78,8 +86,7 @@ void Optimizer::run(int TWV, int TWA) {
   opt.set_max_objective(VPP_speed, NULL);
 
   // Make a ptr to the non static member function VPPconstraint
-	FUNC f = &Optimizer::VPPconstraint;
-  opt.add_equality_mconstraint(f, loopData, tol);
+  opt.add_equality_mconstraint(VPPconstraint, &loopData, tol);
 
   // Set the relative tolerance
   opt.set_xtol_rel(1e-1);
@@ -108,7 +115,7 @@ void Optimizer::run(int TWV, int TWA) {
       printf("nlopt failed!\n");
   }
   else {
-  		printf("found minimum after %d, %d, %d evaluations\n", optIterations,optConstrIterations,optConstrIterations2);
+  		printf("found minimum after %d evaluations\n", optIterations);
   		printf("found minimum at f(%g,%g,%g,%g) = %0.10g\n",
      		 xp[0],xp[1],xp[2],xp[3],minf);
   }

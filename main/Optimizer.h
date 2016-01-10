@@ -5,9 +5,10 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
-#include "VPPItem.h"
 
 #include <nlopt.hpp>
+
+#include "VPPItem.h"
 
 using namespace std;
 
@@ -30,7 +31,7 @@ class Optimizer {
 
 		/// Ptr to the VPPItemFactory that contains all of the ingredients
 		/// required to compute the optimization constraints
-		boost::shared_ptr<VPPItemFactory> vppItemsContainer_;
+		static boost::shared_ptr<VPPItemFactory> vppItemsContainer_;
 
 		// Struct used to drive twv and twa into the update methods of the VPPItems
 		typedef struct {
@@ -40,7 +41,7 @@ class Optimizer {
 		// Boat velocity objective function
 		static double VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data);
 
-		void VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* f_data);
+		static void VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* f_data);
 
 };
 

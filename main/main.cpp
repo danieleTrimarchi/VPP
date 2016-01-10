@@ -13,6 +13,7 @@ using namespace Eigen;
 #include "VariableFileParser.h"
 #include "SailSet.h"
 #include "VPPItem.h"
+#include "Optimizer.h"
 
 // MAIN
 int main(int argc, const char *argv[]) {
