@@ -1,3 +1,6 @@
+- Allow for plotting multiple sets on the same graph
+- Remove the plotting test for squared function
+- Allow for the plotter to get direcly x.row(0), x.row(1)
 
 - scons structuire suggested Stephane
 

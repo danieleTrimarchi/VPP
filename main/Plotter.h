@@ -29,6 +29,10 @@ class Plotter {
 		/// Plot the points of some given arrays
 		void plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y);
 
+		/// Plot the points of two given array sets
+		void plot(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Eigen::ArrayXd& y1);
+
+
 	private:
 
 		/// Compute test values for the XY plot given the bounds

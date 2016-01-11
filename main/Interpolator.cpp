@@ -24,19 +24,35 @@ double Interpolator::interpolate(double val,Eigen::ArrayXd& X,Eigen::ArrayXd& Y)
 
 	// Find index of the the second closest value
 	int secondIndex=0;
+	bool reversed=false;
 	if( X(closest)<=val )
 		secondIndex = closest+1;
-	else
+	else {
+		reversed=true;
 		secondIndex = closest-1;
+	}
 
 	// Fix the case in which secondIndex is > than the size of the vector
 	if(secondIndex>=X.size())
 		secondIndex = closest-1;
 
-	// Find the normalized distance mu=(x-x1)/(x2-x1)
+	// Find the normalized distance mu=(x-x1)/(x2-x1). Note that mu does
+	// not necessarily reaches one, because X(closest) and (secondIndex)
+	// might be reversed and in this case it returns to zero in the second
+	// part of the abscissa
 	double mu = fabs(( val - X(closest) )/( X(secondIndex) - X(closest) ));
 
-	return CosineInterpolate(double(Y(closest)),double(Y(secondIndex)),mu);
+	// In the very first range use linear interpolation, then pass to cosine
+	// that preserves c1 continuity on the rest of the plot
+	bool useLinearInterp = (
+			val<=X(1) &&
+			 !reversed ? mu<=0.5 : (1-mu)<=0.5  );
+
+	// Use linear for the very first trait, cosine for the rest
+	if(useLinearInterp)
+		return LinearInterpolate(double(Y(closest)),double(Y(secondIndex)),mu);
+	else
+		return CosineInterpolate(double(Y(closest)),double(Y(secondIndex)),mu);
 
 }
 
@@ -67,7 +83,7 @@ void Interpolator::test() {
 	VALS(1,0) = 3.5;
 	// Define point X1,Y1
 	VALS(0,1) = 3;
-	VALS(1,1) = 7;
+	VALS(1,1) = 4;
 	// Define point X2,Y2
 	VALS(0,2) = 5;
 	VALS(1,2) = 7;
@@ -76,7 +92,7 @@ void Interpolator::test() {
 	VALS(1,3) = 2.5;
 	// Define point X3,Y3
 	VALS(0,4) = 10;
-	VALS(1,4) = 4.5;
+	VALS(1,4) = 1.5;
 
 	// compute a dx dividing the range by 1000
 	double dx = ( VALS(0,4) - VALS(0,0) ) / 100;
@@ -98,16 +114,14 @@ void Interpolator::test() {
 
 	}
 
-	std::cout<<"before calling the Plotter "<<std::endl;
-
 	// Now plot the interpolated values
+
+	ArrayXd x0=VALS.row(0);
+	ArrayXd y0=VALS.row(1);
+	ArrayXd x1=InterpVals.row(0);
+	ArrayXd y1=InterpVals.row(1);
+
 	Plotter plotter;
-	ArrayXd x=InterpVals.row(0);
-	ArrayXd y=InterpVals.row(1);
-
-	std::cout<<"after calling the Plotter "<<std::endl;
-
-
-	plotter.plot(x,y);
+	plotter.plot(x0,y0,x1,y1);
 
 }

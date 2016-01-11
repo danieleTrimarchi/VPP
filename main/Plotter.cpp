@@ -134,6 +134,50 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 
 }
 
+void Plotter::plot(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Eigen::ArrayXd& y1) {
+
+	// Check the size of x and y are consistent
+	if(x0.size() != y0.size())
+		throw std::logic_error("In Plotter::plot(x,y). Array _0_ sizes mismatch");
+
+	// Check the size of x and y are consistent
+	if(x1.size() != y1.size())
+		throw std::logic_error("In Plotter::plot(x,y). Array _1_ sizes mismatch");
+
+	// Specify the background color (rgb) and its transparency
+	plscolbga(255,255,255,0.6);
+
+	// Initialize plplot
+	plinit();
+
+	// Create a labeled box to hold the plot.
+	plcol0( color::grey );
+
+	// Copy the values from the incoming arrays into plplot compatible containers
+	setValues(x0,y0);
+
+	plenv( min(x_), max(x_), min(y_), max(y_), 0, 0 );
+
+	// Plot the data that was prepared above.
+	plcol0( color::blue );
+	plline( nValues_, x_, y_ );
+
+	// ---
+
+	// Now repeat for X1 and Y1
+	// Copy the values from the incoming arrays into plplot compatible containers
+	setValues(x1,y1);
+
+	// Plot the data that was prepared above.
+	plcol0( color::red );
+	plline( nValues_, x_, y_ );
+
+	// Close PLplot library
+	pllab( "x", "y", "2D Plot Example" );
+	plend();
+
+}
+
 
 //=====================================================================
 
