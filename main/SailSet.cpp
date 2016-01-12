@@ -73,6 +73,11 @@ void SailSet::printVariables() {
 
 }
 
+// Get the value of a variable
+double SailSet::get(std::string varName) {
+	return sailVariables_[varName];
+}
+
 //////////////////////////////////////////////////////////
 
 // Constructor
@@ -86,6 +91,12 @@ MainOnlySailSet::MainOnlySailSet(const VariableFileParser& parser) :
 	sailVariables_.insert( Variable("ZCE", sailVariables_["ZCEM"] ) );
 
 }
+
+// Return the Id of this SailSet (this is the enum sailConfig)
+size_t MainOnlySailSet::getType() {
+	return sailConfig::mainOnly;
+}
+
 
 //////////////////////////////////////////////////////////
 
@@ -105,6 +116,11 @@ MainAndJibSailSet::MainAndJibSailSet(const VariableFileParser& parser) :
 
 }
 
+// Return the Id of this SailSet (this is the enum sailConfig)
+size_t MainAndJibSailSet::getType() {
+	return sailConfig::mainAndJib;
+}
+
 //////////////////////////////////////////////////////////
 
 // Constructor
@@ -121,7 +137,11 @@ MainAndSpiSailSet::MainAndSpiSailSet(const VariableFileParser& parser):
 	sailVariables_.insert( Variable("ZCE",
 			(sv["ZCEM"] * sv["AM"] + sv["ZCES"] * sv["AS"] ) / ( sv["AM"] + sv["AS"] ) ) );
 
+}
 
+// Return the Id of this SailSet (this is the enum sailConfig)
+size_t MainAndSpiSailSet::getType() {
+	return sailConfig::mainAndSpi;
 }
 
 //////////////////////////////////////////////////////////
@@ -141,5 +161,10 @@ MainJibAndSpiSailSet::MainJibAndSpiSailSet(const VariableFileParser& parser):
 			(sv["ZCEM"] * sv["AM"] + sv["ZCEJ"] * sv["AJ"] + sv["ZCES"] * sv["AS"] ) /
 			( sv["AM"] + sv["AJ"] + sv["AS"] ) ) );
 
+}
+
+// Return the Id of this SailSet (this is the enum sailConfig)
+size_t MainJibAndSpiSailSet::getType() {
+	return sailConfig::mainJibAndSpi;
 }
 

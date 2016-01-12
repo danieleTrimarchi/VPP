@@ -42,11 +42,6 @@ void VPPItem::update(int vTW, int aTW, const double* x) {
 
 }
 
-// Implement the pure virtual to allow instantiating this class
-void VPPItem::update(int vTW, int aTW) {
-	// make nothing
-}
-
 void VPPItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of VPPItem "<<std::endl;
 }
@@ -164,7 +159,14 @@ const Eigen::Vector2d WindItem::getAWV() const {
 // Constructor
 SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 				VPPItem(pWindItem->getParser(), pWindItem->getSailSet()),
-				pWindItem_(pWindItem) {
+				pWindItem_(pWindItem),
+				awa_(0),
+				ar_(0),
+				cl_(0),
+				cdp_(0),
+				cdI_(0),
+				cd0_(0),
+				cd_(0) {
 
 	// Init static members with values from: Hazer Cl-Cd coefficients, 1999
 	// Cols: rwa_, Main_Cl, Jib_Cl, Spi_Cl
@@ -172,38 +174,38 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 	// Pick the lift coefficient for this main (full batten or not)
 	if( pParser_->get("MFBL") ) {
 
-		clMat_.resize(6,4);
-		clMat_.row(0) << 0, 		0, 			0, 		0   ;
-		clMat_.row(1) << 27, 	1.725,	1.5,	0   ;
-		clMat_.row(2) << 50, 	1.5, 		0.5,	1.5 ;
-		clMat_.row(3) << 80,		0.95, 	0.3,	1.0 ;
-		clMat_.row(4) << 100,	0.85, 	0.0,	0.85;
-		clMat_.row(5) << 180,	0, 			0, 		0		;
+		clMat0_.resize(6,4);
+		clMat0_.row(0) << 0, 		0, 			0, 		0   ;
+		clMat0_.row(1) << 27, 	1.725,	1.5,	0   ;
+		clMat0_.row(2) << 50, 	1.5, 		0.5,	1.5 ;
+		clMat0_.row(3) << 80,		0.95, 	0.3,	1.0 ;
+		clMat0_.row(4) << 100,	0.85, 	0.0,	0.85;
+		clMat0_.row(5) << 180,	0, 			0, 		0		;
 
 	} else {
 
-		clMat_.resize(6,4);
-		clMat_.row(0) << 0, 		0, 	 	0 , 	0;
-		clMat_.row(1) << 27, 	1.5, 	1.5,	0;
-		clMat_.row(2) << 50, 	1.5, 	0.5,	1.5;
-		clMat_.row(3) << 80, 	0.95,	0.3,	1.0;
-		clMat_.row(4) << 100,	0.85,	0.0,	0.85;
-		clMat_.row(5) << 180,	0, 	 	0,	 	0;
+		clMat0_.resize(6,4);
+		clMat0_.row(0) << 0, 		0, 	 	0 , 	0;
+		clMat0_.row(1) << 27, 	1.5, 	1.5,	0;
+		clMat0_.row(2) << 50, 	1.5, 	0.5,	1.5;
+		clMat0_.row(3) << 80, 	0.95,	0.3,	1.0;
+		clMat0_.row(4) << 100,	0.85,	0.0,	0.85;
+		clMat0_.row(5) << 180,	0, 	 	0,	 	0;
 
 	}
 
 		// We only dispose of one drag coeff array for the moment
-		cdMat_.resize(6,4);
-		cdMat_.row(0) << 0,  	0,   	0,   	0;
-		cdMat_.row(1) << 27, 	0.02,	0.02,	0;
-		cdMat_.row(2) << 50, 	0.15,	0.25,	0.25;
-		cdMat_.row(3) << 80, 	0.8, 	0.15,	0.9;
-		cdMat_.row(4) << 100,	1.0, 	0.0, 	1.2;
-		cd_.row(5) << 180,	0.9, 	0.0, 	0.66;
+		cdpMat0_.resize(6,4);
+		cdpMat0_.row(0) << 0,  	0,   	0,   	0;
+		cdpMat0_.row(1) << 27, 	0.02,	0.02,	0;
+		cdpMat0_.row(2) << 50, 	0.15,	0.25,	0.25;
+		cdpMat0_.row(3) << 80, 	0.8, 	0.15,	0.9;
+		cdpMat0_.row(4) << 100,	1.0, 	0.0, 	1.2;
+		allCd_.row(5) << 180,	0.9, 	0.0, 	0.66;
 
 		// resize cl_ and cd_ for storing the interpolated values
-		cl_.resize(3);
-		cd_.resize(3);
+		allCl_.resize(3);
+		allCd_.resize(3);
 }
 
 // Destructor
@@ -211,39 +213,101 @@ SailCoefficientItem::~SailCoefficientItem() {
 
 }
 
+// Implement the pure virtual. Called by the children as a decorator
 void SailCoefficientItem::update(int vTW, int aTW) {
 
-	/// Get the current value of the apparent wind angle
-	double awa= pWindItem_->getAWA();
+	// Update the local copy of the the apparent wind angle
+	awa_= pWindItem_->getAWA();
+
+	// create aliases for code readability
+	VariableFileParser* p = pParser_;
+	boost::shared_ptr<SailSet> s= pSailSet_;
+
+	// Update the Aspect Ratio
+	double h;
+	if(awa_ < 45)  // todo dtrimarchi: verify that awa is in deg... Which I doubt!
+		// h = mast height above deck + Average freeboard
+		h= p->get("EHM") + p->get("AVGFREB");
+	else
+		// h = mast height above deck
+		h= p->get("EHM");
+
+	// Compute the aspect ratio for this awa_
+	ar_ = 1.1 * h * h / s->get("AN");
+
+	// Compute cd0
+	cd0_= 1.13 * ( (p->get("B") * p->get("AVGFREB")) + (p->get("AVGFREB")*p->get("AVGFREB") ) ) / s->get("AN");
+
+}
+
+// Called by the children as a decorator for update.
+// Do all is required after cl and cdp have been computed
+void SailCoefficientItem::postUpdate() {
+
+	// Reduce cl with the flattening factor of the state vector
+	cl_ = cl_ * f_;
+
+	// Compute the induced resistance
+	cdI_ = cl_ * cl_ * ( 1. / (M_PI * ar_) + 0.005 );
+
+	// Compute the total sail drag coefficient now
+	cd_ = cdp_ + cd0_ + cdI_;
+}
+
+void SailCoefficientItem::computeForMain() {
 
 	Eigen::ArrayXd x, y;
-	// Interpolate the values of the sail coefficients for the MainSail
-	x=clMat_.col(0);
-	y=clMat_.col(1);
-	cl_(0) = interpolator_.interpolate(awa,x,y);
 
-	x=cdMat_.col(0);
-	y=cdMat_.col(1);
-	cd_(0) = interpolator_.interpolate(awa,x,y);
+	// Interpolate the values of the sail coefficients for the MainSail
+	x=clMat0_.col(0);
+	y=clMat0_.col(1);
+	allCl_(0) = interpolator_.interpolate(awa_,x,y);
+
+	x=cdpMat0_.col(0);
+	y=cdpMat0_.col(1);
+	allCd_(0) = interpolator_.interpolate(awa_,x,y);
+
+}
+
+void SailCoefficientItem::computeForJib() {
+
+	Eigen::ArrayXd x, y;
 
 	// Interpolate the values of the sail coefficients for the Jib
-	x=clMat_.col(0);
-	y=clMat_.col(2);
-	cl_(1) = interpolator_.interpolate(awa,x,y);
+	x=clMat0_.col(0);
+	y=clMat0_.col(2);
+	allCl_(1) = interpolator_.interpolate(awa_,x,y);
 
-	x=cdMat_.col(0);
-	y=cdMat_.col(2);
-	cd_(1) = interpolator_.interpolate(awa,x,y);
+	x=cdpMat0_.col(0);
+	y=cdpMat0_.col(2);
+	allCd_(1) = interpolator_.interpolate(awa_,x,y);
+
+}
+
+void SailCoefficientItem::computeForSpi() {
+
+	Eigen::ArrayXd x, y;
 
 	// Interpolate the values of the sail coefficients for the Spi
-	x=clMat_.col(0);
-	y=clMat_.col(3);
-	cl_(2) = interpolator_.interpolate(awa,x,y);
+	x=clMat0_.col(0);
+	y=clMat0_.col(3);
+	allCl_(2) = interpolator_.interpolate(awa_,x,y);
 
-	x=cdMat_.col(0);
-	y=cdMat_.col(3);
-	cd_(2) = interpolator_.interpolate(awa,x,y);
+	x=cdpMat0_.col(0);
+	y=cdpMat0_.col(3);
+	allCd_(2) = interpolator_.interpolate(awa_,x,y);
 
+}
+
+// Returns the current value of the lift coefficient for
+// the current sail
+const double SailCoefficientItem::getCl() const {
+	return cl_;
+}
+
+// Returns the current value of the lift coefficient
+const double SailCoefficientItem::getCd() const {
+	return cdp_;
 }
 
 // Print the class name -> in this case SailCoefficientItem
@@ -257,9 +321,154 @@ void SailCoefficientItem::printWhoAmI() {
 void SailCoefficientItem::printCoefficients() {
 
 	std::cout<<"\n=== Sail Coefficients: ============\n "<<std::endl;
-	std::cout<<"Cl= \n"<<clMat_<<std::endl;
-	std::cout<<"Cd= \n"<<cd_<<std::endl;
+	std::cout<<"Cl= \n"<<clMat0_<<std::endl;
+	std::cout<<"Cd= \n"<<allCd_<<std::endl;
 	std::cout<<"\n===================================\n "<<std::endl;
+}
+
+//=================================================================
+
+// Constructor
+MainOnlySailCoefficientItem::MainOnlySailCoefficientItem(WindItem* pWind) :
+		SailCoefficientItem(pWind) {
+	// do nothing
+}
+
+// Destructor
+MainOnlySailCoefficientItem::~MainOnlySailCoefficientItem() {
+
+}
+
+// Update the item for the current step (wind velocity and angle),
+// the values of the state vector x computed by the optimizer have
+// already been treated by the parent
+void MainOnlySailCoefficientItem::update(int vTW, int aTW) {
+
+	// Decorate the parent class method that updates the value of awa_
+	SailCoefficientItem::update(vTW,aTW);
+
+	// Compute the sail coefficients for the main sail
+	computeForMain();
+
+	// In this case the lift/drag coeffs are just what was computed for main
+	cl_ = allCl_(0);
+	cdp_ = allCd_(0);
+
+	// Call the parent method that computes the effective cd=cdp+cd0+cdI
+	SailCoefficientItem::postUpdate();
+
+}
+
+//=================================================================
+
+// Constructor
+MainAndJibCoefficientItem::MainAndJibCoefficientItem(WindItem* pWind) :
+		SailCoefficientItem(pWind) {
+	// do nothing
+}
+
+// Destructor
+MainAndJibCoefficientItem::~MainAndJibCoefficientItem() {
+
+}
+
+// Update the item for the current step (wind velocity and angle),
+// the values of the state vector x computed by the optimizer have
+// already been treated by the parent
+void MainAndJibCoefficientItem::update(int vTW, int aTW) {
+
+	// Decorate the parent class method that updates the value of awa_
+	SailCoefficientItem::update(vTW,aTW);
+
+	// Compute the sail coefficients for the main sail and the Jib
+	computeForMain();
+	computeForJib();
+
+	// create an alias for code readability
+	boost::shared_ptr<SailSet> ps= pSailSet_;
+
+	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
+	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") ) /  ps->get("AN");
+	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") ) /  ps->get("AN");
+
+	// Call the parent method that computes the effective cd=cdp+cd0+cdI
+	SailCoefficientItem::postUpdate();
+
+}
+
+//=================================================================
+
+// Constructor
+MainAndSpiCoefficientItem::MainAndSpiCoefficientItem(WindItem* pWind) :
+		SailCoefficientItem(pWind) {
+	// do nothing
+}
+
+// Destructor
+MainAndSpiCoefficientItem::~MainAndSpiCoefficientItem() {
+
+}
+
+// Update the item for the current step (wind velocity and angle),
+// the values of the state vector x computed by the optimizer have
+// already been treated by the parent
+void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
+
+	// Decorate the parent class method that updates the value of awa_
+	SailCoefficientItem::update(vTW,aTW);
+
+	// Compute the sail coefficients for the main sail and the Jib
+	computeForMain();
+	computeForSpi();
+
+	// create an alias for code readability
+	boost::shared_ptr<SailSet> ps= pSailSet_;
+
+	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
+	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
+	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
+
+	// Call the parent method that computes the effective cd=cdp+cd0+cdI
+	SailCoefficientItem::postUpdate();
+
+}
+
+//=================================================================
+
+// Constructor
+MainJibAndSpiCoefficientItem::MainJibAndSpiCoefficientItem(WindItem* pWind) :
+		SailCoefficientItem(pWind) {
+	// do nothing
+}
+
+// Destructor
+MainJibAndSpiCoefficientItem::~MainJibAndSpiCoefficientItem() {
+
+}
+
+// Update the item for the current step (wind velocity and angle),
+// the values of the state vector x computed by the optimizer have
+// already been treated by the parent
+void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
+
+	// Decorate the parent class method that updates the value of awa_
+	SailCoefficientItem::update(vTW,aTW);
+
+	// Compute the sail coefficients for the main sail and the Jib
+	computeForMain();
+	computeForJib();
+	computeForSpi();
+
+	// create an alias for code readability
+	boost::shared_ptr<SailSet> ps= pSailSet_;
+
+	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
+	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
+	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
+
+	// Call the parent method that computes the effective cd=cdp+cd0+cdI
+	SailCoefficientItem::postUpdate();
+
 }
 
 //=================================================================

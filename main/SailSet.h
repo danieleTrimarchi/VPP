@@ -26,10 +26,16 @@ class SailSet {
 		static SailSet* SailSetFactory(VariableFileParser& parser);
 
 		/// Destructor
-		~SailSet();
+		virtual ~SailSet();
 
 		/// Printout the list of all variables we have computed
 		void printVariables();
+
+		/// Return the Id of this SailSet (this is the enum sailConfig)
+		virtual size_t getType()=0;
+
+		/// Get the value of a variable
+		double get(std::string);
 
 	protected:
 
@@ -49,6 +55,9 @@ class MainOnlySailSet : public SailSet {
 		/// Constructor
 		MainOnlySailSet(const VariableFileParser& parser);
 
+		/// Return the Id of this SailSet (this is the enum sailConfig)
+		virtual size_t getType();
+
 };
 
 class MainAndJibSailSet : public SailSet {
@@ -57,6 +66,9 @@ class MainAndJibSailSet : public SailSet {
 
 		/// Constructor
 		MainAndJibSailSet(const VariableFileParser& parser);
+
+		/// Return the Id of this SailSet (this is the enum sailConfig)
+		virtual size_t getType();
 
 };
 
@@ -67,6 +79,9 @@ class MainAndSpiSailSet : public SailSet {
 		/// Constructor
 		MainAndSpiSailSet(const VariableFileParser& parser);
 
+		/// Return the Id of this SailSet (this is the enum sailConfig)
+		virtual size_t getType();
+
 };
 
 class MainJibAndSpiSailSet : public SailSet {
@@ -75,6 +90,9 @@ class MainJibAndSpiSailSet : public SailSet {
 
 		/// Constructor
 		MainJibAndSpiSailSet(const VariableFileParser& parser);
+
+		/// Return the Id of this SailSet (this is the enum sailConfig)
+		virtual size_t getType();
 
 };
 

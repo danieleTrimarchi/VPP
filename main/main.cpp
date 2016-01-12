@@ -24,15 +24,15 @@ int main(int argc, const char *argv[]) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-//		// Get the variables
-//		VariableFileParser parser("variableFile.txt");
-//		parser.parse();
-//		parser.check();
-//		parser.printVariables();
-//
-//		// Compute the sail configuration based on the variables that have been read in
-//		boost::shared_ptr<SailSet> pSails( SailSet::SailSetFactory(parser ) );
-//		pSails->printVariables();
+		// Get the variables
+		VariableFileParser parser("variableFile.txt");
+		parser.parse();
+		parser.check();
+		parser.printVariables();
+
+				// Compute the sail configuration based on the variables that have been read in
+			boost::shared_ptr<SailSet> pSails( SailSet::SailSetFactory(parser) );
+			pSails->printVariables();
 //
 //		// Instantiate a container for all the quantities function of the state variables
 //		boost::shared_ptr<VPPItemFactory> pVppItems( new VPPItemFactory(&parser,pSails) );

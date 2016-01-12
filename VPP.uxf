@@ -4,7 +4,7 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>440</x>
+      <x>368</x>
       <y>56</y>
       <w>184</w>
       <h>80</h>
@@ -21,7 +21,7 @@ vector&lt;VPPItem*&gt; VPPItems_</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>240</x>
+      <x>168</x>
       <y>240</y>
       <w>152</w>
       <h>64</h>
@@ -35,7 +35,7 @@ vector&lt;VPPItem*&gt; VPPItems_</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>752</x>
+      <x>680</x>
       <y>240</y>
       <w>152</w>
       <h>64</h>
@@ -49,7 +49,7 @@ Mheel</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>584</x>
+      <x>512</x>
       <y>240</y>
       <w>136</w>
       <h>104</h>
@@ -67,7 +67,7 @@ fside</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>440</x>
+      <x>368</x>
       <y>240</y>
       <w>112</w>
       <h>56</h>
@@ -80,7 +80,7 @@ fside</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>712</x>
+      <x>640</x>
       <y>264</y>
       <w>56</w>
       <h>24</h>
@@ -91,7 +91,7 @@ fside</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>312</x>
+      <x>240</x>
       <y>128</y>
       <w>240</w>
       <h>128</h>
@@ -102,7 +102,7 @@ fside</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>528</x>
+      <x>456</x>
       <y>128</y>
       <w>136</w>
       <h>128</h>
@@ -113,7 +113,7 @@ fside</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>528</x>
+      <x>456</x>
       <y>128</y>
       <w>320</w>
       <h>128</h>
@@ -124,7 +124,7 @@ fside</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>72</x>
+      <x>0</x>
       <y>328</y>
       <w>152</w>
       <h>80</h>
@@ -135,7 +135,7 @@ fside</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>216</x>
+      <x>144</x>
       <y>280</y>
       <w>240</w>
       <h>96</h>
@@ -146,7 +146,7 @@ fside</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>960</x>
+      <x>888</x>
       <y>240</y>
       <w>288</w>
       <h>144</h>
@@ -169,7 +169,7 @@ Rvr     = vpp_Rvr(V,geom,phys,Rconf.Rvr);
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1272</x>
+      <x>1200</x>
       <y>240</y>
       <w>128</w>
       <h>88</h>
@@ -183,7 +183,7 @@ Rvr     = vpp_Rvr(V,geom,phys,Rconf.Rvr);
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>248</x>
+      <x>176</x>
       <y>96</y>
       <w>96</w>
       <h>40</h>
@@ -195,7 +195,7 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>336</x>
+      <x>264</x>
       <y>120</y>
       <w>120</w>
       <h>24</h>
@@ -206,7 +206,7 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>712</x>
+      <x>640</x>
       <y>280</y>
       <w>264</w>
       <h>64</h>
@@ -217,7 +217,7 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>528</x>
+      <x>456</x>
       <y>128</y>
       <w>528</w>
       <h>128</h>
@@ -228,7 +228,7 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>528</x>
+      <x>456</x>
       <y>128</y>
       <w>824</w>
       <h>128</h>
@@ -239,7 +239,7 @@ State vector</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>616</x>
+      <x>544</x>
       <y>56</y>
       <w>200</w>
       <h>88</h>
@@ -251,7 +251,7 @@ one instance per child</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>384</x>
+      <x>312</x>
       <y>264</y>
       <w>72</w>
       <h>24</h>
@@ -262,7 +262,7 @@ one instance per child</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>248</x>
+      <x>176</x>
       <y>0</y>
       <w>136</w>
       <h>40</h>
@@ -273,7 +273,7 @@ one instance per child</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>376</x>
+      <x>304</x>
       <y>8</y>
       <w>80</w>
       <h>104</h>
@@ -284,7 +284,7 @@ one instance per child</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>248</x>
+      <x>176</x>
       <y>48</y>
       <w>136</w>
       <h>40</h>
@@ -295,7 +295,7 @@ one instance per child</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>376</x>
+      <x>304</x>
       <y>56</y>
       <w>80</w>
       <h>72</h>
@@ -306,7 +306,7 @@ one instance per child</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>544</x>
+      <x>472</x>
       <y>264</y>
       <w>56</w>
       <h>24</h>
@@ -317,7 +317,7 @@ one instance per child</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>488</x>
+      <x>416</x>
       <y>128</y>
       <w>64</w>
       <h>128</h>
@@ -328,12 +328,100 @@ one instance per child</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>896</x>
+      <x>824</x>
       <y>264</y>
       <w>80</w>
       <h>24</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>248</x>
+      <y>400</y>
+      <w>136</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>MainOnlySailCoeffItem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>392</x>
+      <y>400</y>
+      <w>152</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>mainAndJibSailCoeffItem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>552</x>
+      <y>400</y>
+      <w>152</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>mainAndSpiSailCoeffItem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>712</x>
+      <y>400</y>
+      <w>176</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>mainJibAndSpiSailCoeffItem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>304</x>
+      <y>288</y>
+      <w>144</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>160.0;10.0;160.0;120.0;10.0;120.0;10.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>424</x>
+      <y>288</y>
+      <w>72</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0;70.0;120.0;70.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>424</x>
+      <y>288</y>
+      <w>232</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0;270.0;120.0;270.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>424</x>
+      <y>288</y>
+      <w>384</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0;460.0;120.0;460.0;140.0</additional_attributes>
   </element>
 </diagram>

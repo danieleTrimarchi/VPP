@@ -80,8 +80,8 @@ VariableFileParser::VariableFileParser(std::string fileName) :
 	requiredVariables_.push_back("J"); 				// [m]  Foretriangle base
 	requiredVariables_.push_back("LPG"); 			// [m]  Perpendicular of longest jib
 	requiredVariables_.push_back("SL"); 			// [m]  Spinnaker length
-	requiredVariables_.push_back("EHM"); 			// [m]  Mast?s height above deck
-	requiredVariables_.push_back("EMDC");			// [m]  Mast?s average diameter
+	requiredVariables_.push_back("EHM"); 			// [m]  Mast's height above deck
+	requiredVariables_.push_back("EMDC");			// [m]  Mast's average diameter
 	//%%%%%%% CREW %%%%%%%%%%
 	requiredVariables_.push_back("MMVBLCRW"); // [kg] Movable Crew Mass
 
