@@ -63,8 +63,12 @@ void VPPItem::printWhoAmI() {
 // Constructor
 VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) {
 
+	std::cout<<"Beginning of VPPItemFactory"<<std::endl;
+
 	//Instantiate the wind
 	boost::shared_ptr<WindItem> pWind(new WindItem(pParser,pSailSet));
+
+	std::cout<<"Wind Instantiated"<<std::endl;
 
 	// Push it back to the children vector
 	vppItems_.push_back( pWind );
@@ -72,11 +76,15 @@ VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<Sa
 	// Instantiate the sail coefficients
 	boost::shared_ptr<SailCoefficientItem> pSailCoeffItem(new SailCoefficientItem(pWind.get()));
 
+	std::cout<<"SailCoeff instantiated"<<std::endl;
+
 	// Push it back to the children vector
 	vppItems_.push_back( pSailCoeffItem );
 
 	// Instantiate the aero force Item
 	boost::shared_ptr<AeroForcesItem> pAeroForcesItem(new AeroForcesItem(pSailCoeffItem.get()));
+
+	std::cout<<"AeroForces Instantiated"<<std::endl;
 
 	// Push it back to the children vector
 	vppItems_.push_back( pAeroForcesItem );
@@ -87,6 +95,9 @@ VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<Sa
 	for(size_t iItem=0; iItem<vppItems_.size(); iItem++){
 		vppItems_[iItem]->printWhoAmI();
 	}
+
+	std::cout<<"End of VPPItemFactory"<<std::endl;
+
 }
 
 // Destructor
@@ -223,7 +234,7 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 		cdpMat0_.row(2) << 50, 	0.15,	0.25,	0.25;
 		cdpMat0_.row(3) << 80, 	0.8, 	0.15,	0.9;
 		cdpMat0_.row(4) << 100,	1.0, 	0.0, 	1.2;
-		allCd_.row(5) << 180,	0.9, 	0.0, 	0.66;
+		cdpMat0_.row(5) << 180,	0.9, 	0.0, 	0.66;
 
 		// resize cl_ and cd_ for storing the interpolated values
 		allCl_.resize(3);
