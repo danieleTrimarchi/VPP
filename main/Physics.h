@@ -4,14 +4,14 @@
 namespace Physic {
 
 	// %%%%%% WATER %%%%%%%
-	double rho_w = 1025.9;
-	double ni_w = 1.18838E-6;
+	static double rho_w = 1025.9;
+	static double ni_w = 1.18838E-6;
 
 	// %%%%%% AIR %%%%%%%%%
-	double rho_a = 1.125;
+	static double rho_a = 1.125;
 
 	// %%%%%% GENERAL %%%%%
-	double g = 9.80665;
+	static double g = 9.80665;
 
 }
 

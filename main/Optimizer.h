@@ -8,7 +8,7 @@
 
 #include <nlopt.hpp>
 
-#include "VPPItem.h"
+#include "VPPItemFactory.h"
 
 using namespace std;
 
