@@ -1,11 +1,23 @@
 #include "VPPItem.h"
+#include "Physics.h"
+
+// Define a static utility function to be used to convert deg to rad
+double toRad( double deg ){
+	return deg * M_PI / 180.0;
+};
+
+// Define a static utility function to be used to convert rad to deg
+double toDeg( double rad ){
+	return rad * 180.0 / M_PI;
+};
+
 
 // Constructor
 VPPItem::VPPItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
 pParser_(pParser),
 pSailSet_(pSailSet),
 V_(0),
-PHI_(0),
+PHI_(0), // Note that PHI is in deg
 b_(0),
 f_(0) {
 
@@ -32,7 +44,7 @@ void VPPItem::update(int vTW, int aTW, const double* x) {
 
 	// Update the local copy of the state variables
 	V_= x[0];
-	PHI_= x[1];
+	PHI_= x[1]; // Note that PHI_ is in deg
 	b_= x[2];
 	f_= x[3];
 
@@ -62,6 +74,12 @@ VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<Sa
 
 	// Push it back to the children vector
 	vppItems_.push_back( pSailCoeffItem );
+
+	// Instantiate the aero force Item
+	boost::shared_ptr<AeroForcesItem> pAeroForcesItem(new AeroForcesItem(pSailCoeffItem.get()));
+
+	// Push it back to the children vector
+	vppItems_.push_back( pAeroForcesItem );
 
 	// ----
 
@@ -94,8 +112,7 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 				twv_(0),
 				twa_(0),
 				awa_(0),
-				awv_(Eigen::Vector2d::Zero()),
-				pi_(M_PI / 180.0){
+				awv_(Eigen::Vector2d::Zero()) {
 
 }
 
@@ -121,8 +138,8 @@ void WindItem::update(int vTW, int aTW) {
 	twa_= v["ALPHA_TW_MIN"] + vTW * ( ( v["ALPHA_TW_MAX"] - v["ALPHA_TW_MIN"] ) / ( v["N_ALPHA_TW"] - 2 ) - 1 );
 
 	// Update the apparent wind velocity vector
-	awv_(0)= V_ + twv_ * cos( twa_ * pi_  );
-	awv_(1)= twv_ * sin( twa_ * pi_  ) * cos( PHI_ * pi_);
+	awv_(0)= V_ + twv_ * cos( toRad(twa_)  );
+	awv_(1)= twv_ * sin( toRad(twa_) ) * cos( toRad(PHI_) );
 
 	// Update the apparent wind angle - todo dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
@@ -134,12 +151,12 @@ void WindItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of WindItem "<<std::endl;
 }
 
-/// Returns the true wind velocity for this step
+// Returns the true wind velocity for this step
 const double WindItem::getTWV() const {
 	return twv_;
 }
 
-/// Returns the true wind angle for this step
+// Returns the true wind angle for this step
 const double WindItem::getTWA() const {
 	return twa_;
 }
@@ -149,9 +166,14 @@ const double WindItem::getAWA() const {
 	return awa_;
 }
 
-/// Returns the apparent wind velocity vector for this step
+// Returns the apparent wind velocity vector for this step
 const Eigen::Vector2d WindItem::getAWV() const {
 	return awv_;
+}
+
+// Returns the apparent wind velocity vector norm for this step
+const double WindItem::getAWNorm() const {
+	return awv_.norm();
 }
 
 //=================================================================
@@ -253,6 +275,12 @@ void SailCoefficientItem::postUpdate() {
 	// Compute the total sail drag coefficient now
 	cd_ = cdp_ + cd0_ + cdI_;
 }
+
+/// Returns a ptr to the wind Item
+WindItem* SailCoefficientItem::getWindItem() const {
+	return pWindItem_;
+}
+
 
 void SailCoefficientItem::computeForMain() {
 
@@ -474,12 +502,17 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 //=================================================================
 
 // Constructor
-AeroForcesItem::AeroForcesItem(WindItem* pWindItem) :
-		VPPItem(pWindItem->getParser(), pWindItem->getSailSet() ),
-		pWindItem_(pWindItem) {
-
-	// Instantiate the sail coefficients
-	pSailCoeffs_= boost::shared_ptr<SailCoefficientItem>(new SailCoefficientItem(pWindItem_));
+AeroForcesItem::AeroForcesItem(SailCoefficientItem* sailCoeffItem) :
+		VPPItem(sailCoeffItem->getParser(), sailCoeffItem->getSailSet() ),
+		pSailCoeffs_(sailCoeffItem),
+		pWindItem_(pSailCoeffs_->getWindItem()),
+		lift_(0),
+		drag_(0),
+		fDrive_(0),
+		fHeel_(0),
+		fSide_(0),
+		mHeel(0) {
+	// do nothing
 }
 
 // Destructor
@@ -490,6 +523,33 @@ AeroForcesItem::~AeroForcesItem() {
 /// Update the items for the current step (wind velocity and angle)
 void AeroForcesItem::update(int vTW, int aTW) {
 
+	using namespace Physic;
+
+	// Gets the value of the apparent wind velocity
+	double awv = pWindItem_->getAWNorm();
+
+	double awa = pWindItem_->getAWA();
+
+	// Updates Lift = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cl;
+	lift_ = 0.5 * rho_a * awv * awv * pSailSet_->get("AN") * pSailCoeffs_->getCl();
+
+	// Updates Drag = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cd;
+	drag_ = 0.5 * rho_a * awv * awv * pSailSet_->get("AN") * pSailCoeffs_->getCd();
+
+	// Updates Fdrive = lift_ * sin(alfa_eff) - D * cos(alfa_eff);
+	fDrive_ = lift_ * sin(awa) - drag_ * cos(awa);
+
+	// Updates Fheel = L * cos(alfa_eff) + D * sin(alfa_eff);
+	fHeel_ = lift_ * cos(awa) + drag_ * sin(awa);
+
+	// Updates Mheel = Fheel*(ZCE + geom.T - geom.ZCBK);
+	// todo dtrimarchi: verify the original comment
+	// attenzione: il centro di spinta della deriva e' stato messo nel centro
+	// di galleggiamento. l'ipotesi e' corretta?
+	mHeel = fHeel_ * ( pSailSet_->get("ZCE") + pParser_->get("T") - pParser_->get("ZCBK") );
+
+	// Updates Fside_ = Fheel*cos(phi*pi/180). Note PHI_ is in degrees
+	fSide_ = fHeel_ * cos( toRad(PHI_) );
 
 }
 

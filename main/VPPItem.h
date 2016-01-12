@@ -43,7 +43,7 @@ class VPPItem {
 		/// Velocity value in the state vector
 		double V_;
 
-		/// Heeling angle value in the state vector
+		/// Heeling angle value in the state vector in degrees
 		double PHI_;
 
 		/// b value in the sate vector (reef..?)
@@ -119,6 +119,9 @@ class WindItem : public VPPItem {
 		/// Returns the apparent wind velocity vector for this step
 		const Eigen::Vector2d getAWV() const;
 
+		/// Returns the apparent wind velocity vector norm for this step
+		const double getAWNorm() const;
+
 	private:
 
 		/// Update the item for the current step (wind velocity and angle),
@@ -130,13 +133,11 @@ class WindItem : public VPPItem {
 		double twv_;
 
 		/// True and apparent wind angles (wrt the boat's longitudinal axis)
+		/// Expressed in degrees
 		double twa_, awa_;
 
 		// Apparent wind velocity vector (x/y components)
 		Eigen::Vector2d awv_;
-
-		/// Pi in radians
-		double pi_;
 
 };
 
@@ -161,6 +162,9 @@ class SailCoefficientItem : public VPPItem {
 
 		/// Returns the current value of the lift coefficient
 		const double getCd() const;
+
+		/// Returns a ptr to the wind Item
+		WindItem* getWindItem() const;
 
 		/// Print the class name -> in this case SailCoefficientItem
 		virtual void printWhoAmI();
@@ -314,7 +318,7 @@ class AeroForcesItem : public VPPItem {
 	public:
 
 		/// Constructor
-		AeroForcesItem(WindItem*);
+		AeroForcesItem(SailCoefficientItem* pSailCoeffItem);
 
 		/// Destructor
 		virtual ~AeroForcesItem();
@@ -329,19 +333,16 @@ class AeroForcesItem : public VPPItem {
 		/// already been treated by the parent
 		virtual void update(int vTW, int aTW);
 
-		/// Define SailType - used to query for the force coefficients
-		enum sailType {
-			Main,
-			Jib,
-			Spi
-		};
+		/// The AeroForcesItem owns the sail coefficients
+		SailCoefficientItem* pSailCoeffs_;
 
-		/// Store a ptr to the windItem
+		/// Ptr to the WindItem that knows the twv
 		WindItem* pWindItem_;
 
-		/// The AeroForcesItem owns the sail coefficients
-		boost::shared_ptr<SailCoefficientItem> pSailCoeffs_;
-
+		double lift_, drag_,		//< Lift and Drag
+					fDrive_, fHeel_,	//< Drive and Heel forces, ie lift and drag projected to the boat's route
+					fSide_, 					//< Side force, or fHeel projected on the sea plane
+					mHeel;						//< Heel moment due to fHeel
 };
 
 //=================================================================
