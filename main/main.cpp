@@ -55,7 +55,7 @@ int main(int argc, const char *argv[]) {
 //			}
 
 		Interpolator interpolator;
-		interpolator.test();
+		interpolator.testSpline();
 
 
 	} catch(std::exception& e) {

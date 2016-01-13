@@ -4,6 +4,7 @@
 // http://paulbourke.net/miscellaneous/interpolation/
 
 #include "Eigen/Core"
+#include "Spline.h"
 
 class Interpolator {
 
@@ -21,6 +22,9 @@ class Interpolator {
 		/// Test the interpolator on some simple function
 		void test();
 
+		/// Test the spline header from http://kluge.in-chemnitz.de/opensource/spline/
+		void testSpline();
+
 	private:
 
 		/// Linearly interpolate
@@ -28,7 +32,6 @@ class Interpolator {
 
 		/// Interpolate using cosines
 		double CosineInterpolate(double y1,double y2,double mu);
-
 
 };
 
