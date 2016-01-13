@@ -54,7 +54,7 @@ int main(int argc, const char *argv[]) {
 //
 //			}
 
-		Interpolator interpolator;
+		SplineInterpolator interpolator;
 		interpolator.testSpline();
 
 
