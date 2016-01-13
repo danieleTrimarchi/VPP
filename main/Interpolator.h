@@ -42,7 +42,7 @@ class Interpolator {
 		virtual ~Interpolator();
 
 		/// Interpolate the function X-Y for the value val
-		virtual double interpolate(double val,Eigen::ArrayXd& X,Eigen::ArrayXd& Y);
+		double interpolate(double val,Eigen::ArrayXd& X,Eigen::ArrayXd& Y);
 
 		/// Test the interpolator on some simple function
 		void test();
@@ -63,26 +63,27 @@ class SplineInterpolator {
 
 	public:
 
-		/// Constructor
+		/// Default constructor used to test
 		SplineInterpolator();
+
+		/// Constructor for Eigen::ArrayXd
+		SplineInterpolator(Eigen::ArrayXd&,Eigen::ArrayXd&);
+
+		/// Constructor for std::vector
+		SplineInterpolator(std::vector<double>&, std::vector<double>&);
 
 		/// Destructor
 		virtual ~SplineInterpolator();
 
-		/// Interpolate the function X-Y for the value val
-		virtual double interpolate(double val,Eigen::ArrayXd& X,Eigen::ArrayXd& Y);
-
-		// Interpolate the function X-Y for the value val
-		double interpolate(double val,std::vector<double>& x, std::vector<double>& y );
-
-		// Interpolate on an already compute spline
-		double get(double val);
-
-		/// Test the spline header from http://kluge.in-chemnitz.de/opensource/spline/
-		void testSpline();
+		/// Interpolate the function X-Y using the underlying spline for the value val
+		double interpolate(double);
 
 	private:
 
+		/// Generate the underlying spline
+		void generate(std::vector<double>&, std::vector<double>&);
+
+		/// Underlying spline
 		tk::spline s_;
 
 };

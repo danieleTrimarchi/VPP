@@ -3,6 +3,7 @@
 
 #include "VPPItem.h"
 #include "Physics.h"
+#include "boost/shared_ptr.hpp"
 
 using namespace Physic;
 
@@ -96,9 +97,6 @@ class SailCoefficientItem : public VPPItem {
 		/// Value of the apparent wind angle updated by the WindItem
 		double awa_;
 
-		/// Arrays with the sail coefficients
-		Eigen::ArrayXXd clMat0_,cdpMat0_;
-
 		/// Compute the coefficients for the MainSail
 		void computeForMain();
 
@@ -132,9 +130,10 @@ class SailCoefficientItem : public VPPItem {
 		/// Ptr to the wind item
 		WindItem* pWindItem_;
 
-		/// Interpolator used to return the value of the sailcoefficients
-		/// Interpolated on the current apparent wind angle
-		Interpolator interpolator_;
+		/// Interpolator vectors -- store a cubic spline that interpolates
+		/// the values of the sail coefficients
+		vector< boost::shared_ptr<SplineInterpolator> > interpClVec_;
+		vector< boost::shared_ptr<SplineInterpolator> > interpCdVec_;
 
 };
 

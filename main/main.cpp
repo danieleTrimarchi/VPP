@@ -14,6 +14,7 @@ using namespace Eigen;
 #include "SailSet.h"
 #include "VPPItem.h"
 #include "Optimizer.h"
+#include "Interpolator.h"
 
 // MAIN
 int main(int argc, const char *argv[]) {
@@ -55,7 +56,6 @@ int main(int argc, const char *argv[]) {
 //			}
 
 		SplineInterpolator interpolator;
-		interpolator.testSpline();
 
 
 	} catch(std::exception& e) {

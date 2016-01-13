@@ -161,66 +161,15 @@ void Interpolator::test() {
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-// Constructor
+// Default constructor (test)
 SplineInterpolator::SplineInterpolator() {
-
-}
-
-// Destructor
-SplineInterpolator::~SplineInterpolator() {
-
-}
-
-// Interpolate the function X-Y for the value val
-double SplineInterpolator::interpolate(double val,Eigen::ArrayXd& X0,Eigen::ArrayXd& Y0) {
-
-	if(X0.size() != Y0.size())
-		throw std::logic_error("In SplineInterpolator::interpolate. Size mismatch");
-
-	// transform the Eigen arrays into vectors
-	std::vector<double> X(X0.size()), Y(Y0.size());
-
-	// Copy the values
-	for(size_t i=0; i<X0.size(); i++){
-		X[i]=X0(i);
-		Y[i]=Y0(i);
-	}
-
-	return interpolate(val,X,Y);
-
-}
-
-// Interpolate the function X-Y for the value val
-double SplineInterpolator::interpolate(double val,std::vector<double>& x, std::vector<double>& y ) {
-
-	// Instantiate a sorter to be able to sort y based on the values of x
-	Sorter sorter(&x,&y);
-
-	// sort y
-	std::sort(y.begin(),y.end(), sorter);
-
-	// and now sort x
-	std::sort (x.begin(),x.end());
-
-	// Instantiate a spline out of the xy vectors
-	s_.set_points(x,y);
-
-	return s_(val);
-}
-
-double SplineInterpolator::get(double val) {
-
-	return s_(val);
-}
-
-void SplineInterpolator::testSpline() {
 
 	std::vector<double> X(5), Y(5);
 	X[0]=0.1; X[1]=0.4; X[2]=1.2; X[3]=1.8; X[4]=2.0;
 	Y[0]=0.1; Y[1]=0.7; Y[2]=1.5; Y[3]=1.1; Y[4]=0.9;
 
-	tk::spline s;
-	s.set_points(X,Y);    // currently it is required that X is already sorted
+	// Generate the underlying spline
+	generate(X,Y);
 
 	size_t nPoints=50;
 
@@ -238,10 +187,70 @@ void SplineInterpolator::testSpline() {
 
 	for(size_t i=0; i<nPoints; i++){
 		x1(i)=X[0]+i*dx-0.5;
-		y1(i)= s( x1(i) );
+		y1(i)= s_( x1(i) );
 	}
 
 	Plotter plotter;
 	plotter.plot(x0,y0,x1,y1);
 
 }
+
+// Constructor
+SplineInterpolator::SplineInterpolator(Eigen::ArrayXd& X0,Eigen::ArrayXd& Y0) {
+
+	if(X0.size() != Y0.size())
+		throw std::logic_error("In SplineInterpolator: Size mismatch");
+
+	// transform the Eigen arrays into vectors
+	std::vector<double> X(X0.size()), Y(Y0.size());
+
+	// Copy the values
+	for(size_t i=0; i<X0.size(); i++){
+		X[i]=X0(i);
+		Y[i]=Y0(i);
+	}
+
+	// Generate the underlying spline
+	generate(X,Y);
+
+}
+
+SplineInterpolator::SplineInterpolator(std::vector<double>& x, std::vector<double>& y) {
+
+	if(x.size() != y.size())
+		throw std::logic_error("In SplineInterpolator: Size mismatch");
+
+	// Generate the underlying spline
+	generate(x,y);
+
+}
+
+// Interpolate the function X-Y for the value val
+void SplineInterpolator::generate(std::vector<double>& x, std::vector<double>& y ) {
+
+	// Instantiate a sorter to be able to sort y based on the values of x
+	Sorter sorter(&x,&y);
+
+	// sort y
+	std::sort(y.begin(),y.end(), sorter);
+
+	// and now sort x
+	std::sort (x.begin(),x.end());
+
+	// Instantiate a spline out of the xy vectors
+	s_.set_points(x,y);
+
+}
+
+
+// Destructor
+SplineInterpolator::~SplineInterpolator() {
+
+}
+
+
+double SplineInterpolator::interpolate(double val) {
+
+	return s_(val);
+}
+

@@ -96,38 +96,57 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 
 	// Init static members with values from: Hazer Cl-Cd coefficients, 1999
 	// Cols: rwa_, Main_Cl, Jib_Cl, Spi_Cl
+	Eigen::ArrayXXd clMat0,cdpMat0;
 
 	// Pick the lift coefficient for this main (full batten or not)
 	if( pParser_->get("MFBL") ) {
 
-		clMat0_.resize(6,4);
-		clMat0_.row(0) << 0, 		0, 			0, 		0   ;
-		clMat0_.row(1) << 27, 	1.725,	1.5,	0   ;
-		clMat0_.row(2) << 50, 	1.5, 		0.5,	1.5 ;
-		clMat0_.row(3) << 80,		0.95, 	0.3,	1.0 ;
-		clMat0_.row(4) << 100,	0.85, 	0.0,	0.85;
-		clMat0_.row(5) << 180,	0, 			0, 		0		;
+		clMat0.resize(6,4);
+		clMat0.row(0) << 0, 		0, 			0, 		0   ;
+		clMat0.row(1) << 27, 	1.725,	1.5,	0   ;
+		clMat0.row(2) << 50, 	1.5, 		0.5,	1.5 ;
+		clMat0.row(3) << 80,		0.95, 	0.3,	1.0 ;
+		clMat0.row(4) << 100,	0.85, 	0.0,	0.85;
+		clMat0.row(5) << 180,	0, 			0, 		0		;
 
 	} else {
 
-		clMat0_.resize(6,4);
-		clMat0_.row(0) << 0, 		0, 	 	0 , 	0;
-		clMat0_.row(1) << 27, 	1.5, 	1.5,	0;
-		clMat0_.row(2) << 50, 	1.5, 	0.5,	1.5;
-		clMat0_.row(3) << 80, 	0.95,	0.3,	1.0;
-		clMat0_.row(4) << 100,	0.85,	0.0,	0.85;
-		clMat0_.row(5) << 180,	0, 	 	0,	 	0;
+		clMat0.resize(6,4);
+		clMat0.row(0) << 0, 		0, 	 	0 , 	0;
+		clMat0.row(1) << 27, 	1.5, 	1.5,	0;
+		clMat0.row(2) << 50, 	1.5, 	0.5,	1.5;
+		clMat0.row(3) << 80, 	0.95,	0.3,	1.0;
+		clMat0.row(4) << 100,	0.85,	0.0,	0.85;
+		clMat0.row(5) << 180,	0, 	 	0,	 	0;
 
 	}
 
 		// We only dispose of one drag coeff array for the moment
-		cdpMat0_.resize(6,4);
-		cdpMat0_.row(0) << 0,  	0,   	0,   	0;
-		cdpMat0_.row(1) << 27, 	0.02,	0.02,	0;
-		cdpMat0_.row(2) << 50, 	0.15,	0.25,	0.25;
-		cdpMat0_.row(3) << 80, 	0.8, 	0.15,	0.9;
-		cdpMat0_.row(4) << 100,	1.0, 	0.0, 	1.2;
-		cdpMat0_.row(5) << 180,	0.9, 	0.0, 	0.66;
+		cdpMat0.resize(6,4);
+		cdpMat0.row(0) << 0,  	0,   	0,   	0;
+		cdpMat0.row(1) << 27, 	0.02,	0.02,	0;
+		cdpMat0.row(2) << 50, 	0.15,	0.25,	0.25;
+		cdpMat0.row(3) << 80, 	0.8, 	0.15,	0.9;
+		cdpMat0.row(4) << 100,	1.0, 	0.0, 	1.2;
+		cdpMat0.row(5) << 180,	0.9, 	0.0, 	0.66;
+
+		// Reset the interpolator vectors before filling them
+		interpClVec_.clear();
+		interpCdVec_.clear();
+
+		Eigen::ArrayXd x, y;
+		x=clMat0.col(0);
+		// Interpolate the values of the sail coefficients for the MainSail
+		for(size_t i=1; i<4; i++){
+			y=clMat0.col(i);
+			interpClVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y) ) );
+		}
+		x=cdpMat0.col(0);
+		// Interpolate the values of the sail coefficients for the MainSail
+		for(size_t i=1; i<4; i++){
+			y=cdpMat0.col(i);
+			interpCdVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
+		}
 
 		// resize cl_ and cd_ for storing the interpolated values
 		allCl_.resize(3);
@@ -136,7 +155,6 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 
 // Destructor
 SailCoefficientItem::~SailCoefficientItem() {
-
 }
 
 // Implement the pure virtual. Called by the children as a decorator
@@ -191,13 +209,8 @@ void SailCoefficientItem::computeForMain() {
 	Eigen::ArrayXd x, y;
 
 	// Interpolate the values of the sail coefficients for the MainSail
-	x=clMat0_.col(0);
-	y=clMat0_.col(1);
-	allCl_(0) = interpolator_.interpolate(awa_,x,y);
-
-	x=cdpMat0_.col(0);
-	y=cdpMat0_.col(1);
-	allCd_(0) = interpolator_.interpolate(awa_,x,y);
+	allCl_(0) = interpClVec_[0]->interpolate(awa_);
+	allCd_(0) = interpCdVec_[0]->interpolate(awa_);
 
 }
 
@@ -206,13 +219,8 @@ void SailCoefficientItem::computeForJib() {
 	Eigen::ArrayXd x, y;
 
 	// Interpolate the values of the sail coefficients for the Jib
-	x=clMat0_.col(0);
-	y=clMat0_.col(2);
-	allCl_(1) = interpolator_.interpolate(awa_,x,y);
-
-	x=cdpMat0_.col(0);
-	y=cdpMat0_.col(2);
-	allCd_(1) = interpolator_.interpolate(awa_,x,y);
+	allCl_(1) = interpClVec_[1]->interpolate(awa_);
+	allCd_(1) = interpCdVec_[1]->interpolate(awa_);
 
 }
 
@@ -221,13 +229,8 @@ void SailCoefficientItem::computeForSpi() {
 	Eigen::ArrayXd x, y;
 
 	// Interpolate the values of the sail coefficients for the Spi
-	x=clMat0_.col(0);
-	y=clMat0_.col(3);
-	allCl_(2) = interpolator_.interpolate(awa_,x,y);
-
-	x=cdpMat0_.col(0);
-	y=cdpMat0_.col(3);
-	allCd_(2) = interpolator_.interpolate(awa_,x,y);
+	allCl_(1) = interpClVec_[2]->interpolate(awa_);
+	allCd_(2) = interpCdVec_[2]->interpolate(awa_);
 
 }
 
@@ -253,7 +256,7 @@ void SailCoefficientItem::printWhoAmI() {
 void SailCoefficientItem::printCoefficients() {
 
 	std::cout<<"\n=== Sail Coefficients: ============\n "<<std::endl;
-	std::cout<<"Cl= \n"<<clMat0_<<std::endl;
+	std::cout<<"Cl= \n"<<allCl_<<std::endl;
 	std::cout<<"Cd= \n"<<allCd_<<std::endl;
 	std::cout<<"\n===================================\n "<<std::endl;
 }
