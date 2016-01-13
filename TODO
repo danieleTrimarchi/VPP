@@ -1,12 +1,10 @@
-- Allow for plotting multiple sets on the same graph
-- Remove the plotting test for squared function
-- Allow for the plotter to get direcly x.row(0), x.row(1)
+- Port install octave
+- How to add include paths to XCode projects? => compile tinySpline
+
+- Allow for the plotter to get direcly x.row(0), x.row(1), perhaps I simply need to pass ptrs instead of &
 
 - scons structuire suggested Stephane
 
 - use cppunit to make a test suite in main/test -> see howto in MEMSp
-- move the Plotter to a separate src/plotUtil folder structure
-- move the Optimizer to a separate src/optimizer folder structure
-- make autotests for every action
 
 - download and install Doxygen

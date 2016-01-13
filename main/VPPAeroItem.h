@@ -237,6 +237,9 @@ class AeroForcesItem : public VPPItem {
 		/// Destructor
 		virtual ~AeroForcesItem();
 
+		/// Get the value of the side force
+		const double getFSide() const;
+
 		/// Print the class name -> in this case AeroForcesItem
 		virtual void printWhoAmI();
 

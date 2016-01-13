@@ -12,7 +12,6 @@
 using namespace std;
 using namespace Eigen;
 
-
 /// Generic base class for all the VPP items
 class VPPItem {
 
@@ -66,6 +65,5 @@ class VPPItem {
 
 };
 
-//=================================================================
 
 #endif

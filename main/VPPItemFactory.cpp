@@ -4,6 +4,8 @@
 // Constructor
 VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) {
 
+	// -- INSTATIATE THE AERO ITEMS
+
 	//Instantiate the wind
 	boost::shared_ptr<WindItem> pWind(new WindItem(pParser,pSailSet));
 
@@ -21,6 +23,10 @@ VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<Sa
 
 	// Push it back to the children vector
 	vppItems_.push_back( pAeroForcesItem );
+
+	// -- INSTATIATE THE RESISTANCE ITEMS
+
+	// 9 components of the resistance
 
 	// ----
 

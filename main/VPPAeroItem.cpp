@@ -455,6 +455,12 @@ void AeroForcesItem::update(int vTW, int aTW) {
 
 }
 
+/// Get the value of the side force
+const double AeroForcesItem::getFSide() const {
+	return fSide_;
+}
+
+
 void AeroForcesItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of AeroForcesItem "<<std::endl;
 }

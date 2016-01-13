@@ -1,16 +1,53 @@
 #include "Plotter.h"
 
 // Constructor
-Plotter::Plotter(int nValues) :
-	nValues_(nValues)
-{
-	x_ = new double[nValues_];
-	y_ = new double[nValues_];
+Plotter::Plotter():
+	minX_(1E20),
+	minY_(1E20),
+	maxX_(-1E20),
+	maxY_(-1E20),
+	nValues_(0),
+	x_(0), y_(0) {
 
 	// Specify the output device (aquaterm)
 	plsdev("aqt");
 
 }
+
+// Reset the ranges to very big values
+void Plotter::initRanges() {
+
+	minX_=1E20;
+	minY_=1E20;
+	maxX_=-1E20;
+	maxY_=-1E20;
+
+}
+
+void Plotter::resetRanges(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
+
+	// Set the ranges for the first array
+	if(x.minCoeff()<minX_)
+		minX_=x.minCoeff();
+	if(y.minCoeff()<minY_)
+		minY_=y.minCoeff();
+	if(x.maxCoeff()>maxX_)
+		maxX_=x.maxCoeff();
+	if(y.maxCoeff()>maxY_)
+		maxY_=y.maxCoeff();
+
+}
+
+// Reset the ranges so that it can contain all of the plot
+void Plotter::resetRanges(Eigen::ArrayXd& x0,Eigen::ArrayXd& y0,Eigen::ArrayXd& x1,Eigen::ArrayXd& y1) {
+
+	resetRanges(x0,y0);
+	resetRanges(x1,y1);
+
+	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
+
+}
+
 
 // Destructor
 Plotter::~Plotter() {
@@ -39,22 +76,6 @@ void Plotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 
 }
 
-void Plotter::setTestParabolicFcn(double xmin, double xmax, double ymin, double ymax) {
-
-	// make sure the buffers x_ and y_ are init
-	delete x_;
-	delete y_;
-	x_ = new double[nValues_];
-	y_ = new double[nValues_];
-
-	for ( int i = 0; i < nValues_; i++ )
-	{
-		x_[i] = (double) ( i ) / (double) ( nValues_ - 1 );
-		y_[i] = ymax * x_[i] * x_[i];
-	}
-
-}
-
 /// Find the min of the specified c-style array
 double Plotter::min(double* arr) {
 
@@ -76,36 +97,12 @@ double Plotter::max(double* arr) {
 	return val;
 }
 
-// Produce a 2d plot from Eigen vectors
-void Plotter::plot() {
-
-	// compute the values to plot
-	double xmin = 0., xmax = 1., ymin = 0., ymax = 100.;
-	setTestParabolicFcn(xmin, xmax, ymin, ymax);
-
-	// Specify the background color (rgb) and its transparency
-	plscolbga(255,255,255,0.6);
-
-	// Initialize plplot
-	plinit();
-
-	// Create a labeled box to hold the plot.
-	plcol0( color::grey );
-	plenv( min(x_), max(x_), min(y_), max(y_), 0, 0 );
-	pllab( "x", "y", "2D Plot Example" );
-
-	// Plot the data that was prepared above.
-	plcol0( color::blue );
-	plline( nValues_, x_, y_ );
-
-	// Close PLplot library
-	plend();
-
-}
-
 
 // Produce a 2d plot from Eigen vectors
 void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
+
+	// Reset the ranges at the very beginning of the plot
+	initRanges();
 
 	// Check the size of x and y are consistent
 	if(x.size() != y.size())
@@ -122,8 +119,12 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 
 	// Create a labeled box to hold the plot.
 	plcol0( color::grey );
-	plenv( min(x_), max(x_), min(y_), max(y_), 0, 0 );
-	pllab( "x", "y", "2D Plot Example" );
+
+	// Reset the range for the plot to contain all data
+	resetRanges(x,y);
+
+	// Add labels
+ 	pllab( "x", "y", "2D Plot Example" );
 
 	// Plot the data that was prepared above.
 	plcol0( color::blue );
@@ -135,6 +136,9 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 }
 
 void Plotter::plot(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Eigen::ArrayXd& y1) {
+
+	// Reset the ranges at the very beginning of the plot
+	initRanges();
 
 	// Check the size of x and y are consistent
 	if(x0.size() != y0.size())
@@ -156,11 +160,13 @@ void Plotter::plot(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Ei
 	// Copy the values from the incoming arrays into plplot compatible containers
 	setValues(x0,y0);
 
-	plenv( min(x_), max(x_), min(y_), max(y_), 0, 0 );
+	// Reset the plot margins so that it can contain the plot
+	resetRanges(x0,y0,x1,y1);
 
 	// Plot the data that was prepared above.
 	plcol0( color::blue );
 	plline( nValues_, x_, y_ );
+	plpoin( nValues_, x_, y_, 5 );
 
 	// ---
 
@@ -171,6 +177,7 @@ void Plotter::plot(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Ei
 	// Plot the data that was prepared above.
 	plcol0( color::red );
 	plline( nValues_, x_, y_ );
+	plpoin( nValues_, x_, y_, 5 );
 
 	// Close PLplot library
 	pllab( "x", "y", "2D Plot Example" );
@@ -178,20 +185,22 @@ void Plotter::plot(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Ei
 
 }
 
-
 //=====================================================================
 
 PolarPlotter::PolarPlotter() :
-		Plotter(361),
+		Plotter(),
 		pi_(M_PI / 180.0) {
 
+	nValues_=361;
+	x_= new double[nValues_];
+	y_= new double[nValues_];
 }
 
 PolarPlotter::~PolarPlotter() {
 	// Do nothing
 }
 
-void PolarPlotter::plot() {
+void PolarPlotter::testPlot() {
 
 	// Set orientation to portrait - note not all device drivers
 	// support this, in particular most interactive drivers do not

@@ -15,6 +15,10 @@ Interpolator::~Interpolator() {
 // Interpolate the function X-Y for the value val
 double Interpolator::interpolate(double val,Eigen::ArrayXd& X,Eigen::ArrayXd& Y) {
 
+	// throw if out of bounds
+	if( val<X(0) || val>X(X.size()-1) )
+		throw std::logic_error("the interpolator is not supposed to extrapolate!");
+
 	// Subtract XMinusVal = (X^2 - val^2)^2
 	Eigen::ArrayXd XMinusVal= (X.square() - val*val).square();
 
@@ -94,23 +98,31 @@ void Interpolator::test() {
 	VALS(0,4) = 10;
 	VALS(1,4) = 1.5;
 
+	size_t nVals=100;
+	size_t extrapVals=20;
+
 	// compute a dx dividing the range by 1000
-	double dx = ( VALS(0,4) - VALS(0,0) ) / 100;
+	double dx = ( VALS(0,4) - VALS(0,0) ) / nVals;
 
 	// Define a container for the interpolated values
 	Eigen::ArrayXXd InterpVals;
-	InterpVals.resize(2,101);
+	InterpVals.resize(2,nVals+extrapVals);
 
-	for(size_t i=0; i<InterpVals.cols();i++) {
+	Eigen::ArrayXd x=VALS.row(0);
+	Eigen::ArrayXd y=VALS.row(1);
+
+	for(size_t i=0; i<nVals;i++) {
 
 		InterpVals(0,i) = i*dx;
+		InterpVals(1,i) = interpolate(i*dx,x,y);
 
-		Eigen::ArrayXd x=VALS.row(0);
-		Eigen::ArrayXd y=VALS.row(1);
+	}
 
-		double interp=interpolate(i*dx,x,y);
+	// Now append 20 values that are to be extrapolated
+	for(size_t i=nVals; i<nVals+extrapVals;i++) {
 
-		InterpVals(1,i) = interp;
+		InterpVals(0,i) = i*dx;
+		InterpVals(1,i) = interpolate(i*dx,x,y);;
 
 	}
 
