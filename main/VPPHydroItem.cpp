@@ -79,15 +79,8 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 
   // Properly interpolate then values of TeD for the current value
   // of the state variable PHI_ (heeling angle)
-  double Te;
-  if( PHI_ <= phiD_.maxCoeff() ){
-    Interpolator interpolator;
-  	Te = interpolator.interpolate(PHI_,phiD_,TeD);
-  }
-  //else { todo dtrimarchi: perhaps the interpolator can be also extrapolator?
-  //	 Extrapolator extrapolator;
-  //	 Te = extrapolator(phiD,TeD,phi);
-  //}
+  SplineInterpolator interpolator(phiD_,TeD);
+  double Te= interpolator.interpolate(PHI_);
 
   // Get the aerodynamic side force
   double fHeel= pAeroForcesItem_->getFSide();

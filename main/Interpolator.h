@@ -7,30 +7,6 @@
 #include "Spline.h"
 #include <vector>
 
-/// Utility class used to sort a vector based on the ordering of the second.
-
-class Sorter {
-
-	public:
-
-		// Constructor
-		Sorter(std::vector<double>*px,std::vector<double>*py);
-
-		/// Define operator () used by std::sort
-		bool operator() (int i,int j);
-
-		// Destructor
-		~Sorter();
-
-	private:
-
-		/// Ptrs to the arrays to be sorted
-		std::vector<double>* px_, * py_;
-
-};
-
-/////////////////////////////////////////////////////////////////
-
 class Interpolator {
 
 	public:
@@ -77,6 +53,8 @@ class SplineInterpolator {
 
 		/// Interpolate the function X-Y using the underlying spline for the value val
 		double interpolate(double);
+
+		void testSort();
 
 	private:
 

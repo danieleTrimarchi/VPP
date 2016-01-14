@@ -55,9 +55,6 @@ int main(int argc, const char *argv[]) {
 //
 //			}
 
-		SplineInterpolator interpolator;
-
-
 	} catch(std::exception& e) {
 		std::cout<<"\n-----------------------------------------"<<std::endl;
 		std::cout<<" Exception caught in Main:  "<<std::endl;

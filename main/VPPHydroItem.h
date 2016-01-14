@@ -49,7 +49,6 @@ class InducedResistanceItem : public ResistanceItem {
 		Eigen::ArrayXXd coeffA_, coeffB_;
 	  Eigen::ArrayXd phiD_, vectA_, Tegeo_;
 
-
 };
 
 #endif

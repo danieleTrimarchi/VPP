@@ -3,27 +3,6 @@
 #include "Plotter.h"
 
 // Constructor
-Sorter::Sorter(std::vector<double>* px,std::vector<double>* py):
-	px_(px), py_(py) {
-
-	if(px_->size()!=py->size())
-		throw std::logic_error("In Sorter constructor, the two vector sizes mismatch!");
-
-};
-
-// Define operator () used by std::sort
-bool Sorter::operator() (int i,int j) {
-	return (px_->at(i)<px_->at(j));
-}
-
-// Destructor
-Sorter::~Sorter(){
-	// make nothing
-};
-
-////////////////////////////////////////////////////////////////////////////
-
-// Constructor
 Interpolator::Interpolator() {
 	// Make nothing
 }
@@ -164,34 +143,34 @@ void Interpolator::test() {
 // Default constructor (test)
 SplineInterpolator::SplineInterpolator() {
 
-	std::vector<double> X(5), Y(5);
-	X[0]=0.1; X[1]=0.4; X[2]=1.2; X[3]=1.8; X[4]=2.0;
-	Y[0]=0.1; Y[1]=0.7; Y[2]=1.5; Y[3]=1.1; Y[4]=0.9;
-
-	// Generate the underlying spline
-	generate(X,Y);
-
-	size_t nPoints=50;
-
-	ArrayXd x0(5);
-	ArrayXd y0(5);
-	for(size_t i=0; i<5; i++){
-		x0(i)=X[i];
-		y0(i)=Y[i];
-	}
-
-	ArrayXd x1(nPoints);
-	ArrayXd y1(nPoints);
-
-	double dx= (X[4]-X[0])/(nPoints-1);
-
-	for(size_t i=0; i<nPoints; i++){
-		x1(i)=X[0]+i*dx-0.5;
-		y1(i)= s_( x1(i) );
-	}
-
-	Plotter plotter;
-	plotter.plot(x0,y0,x1,y1);
+//	std::vector<double> X(5), Y(5);
+//	X[0]=0.1; X[1]=0.4; X[2]=1.2; X[3]=1.8; X[4]=2.0;
+//	Y[0]=0.1; Y[1]=0.7; Y[2]=1.5; Y[3]=1.1; Y[4]=0.9;
+//
+//	// Generate the underlying spline
+//	generate(X,Y);
+//
+//	size_t nPoints=50;
+//
+//	ArrayXd x0(5);
+//	ArrayXd y0(5);
+//	for(size_t i=0; i<5; i++){
+//		x0(i)=X[i];
+//		y0(i)=Y[i];
+//	}
+//
+//	ArrayXd x1(nPoints);
+//	ArrayXd y1(nPoints);
+//
+//	double dx= (X[4]-X[0])/(nPoints-1);
+//
+//	for(size_t i=0; i<nPoints; i++){
+//		x1(i)=X[0]+i*dx-0.5;
+//		y1(i)= s_( x1(i) );
+//	}
+//
+//	Plotter plotter;
+//	plotter.plot(x0,y0,x1,y1);
 
 }
 
@@ -228,14 +207,10 @@ SplineInterpolator::SplineInterpolator(std::vector<double>& x, std::vector<doubl
 // Interpolate the function X-Y for the value val
 void SplineInterpolator::generate(std::vector<double>& x, std::vector<double>& y ) {
 
-	// Instantiate a sorter to be able to sort y based on the values of x
-	Sorter sorter(&x,&y);
-
-	// sort y
-	std::sort(y.begin(),y.end(), sorter);
-
-	// and now sort x
-	std::sort (x.begin(),x.end());
+	// throw if x is not sorted (todo dtrimarchi: instantiate a sorter)
+	for(size_t i=1; i<x.size(); i++)
+		if(x[i]<=x[i-1])
+			throw std::logic_error("In SplineInterpolator, vector not sorted");
 
 	// Instantiate a spline out of the xy vectors
 	s_.set_points(x,y);
@@ -253,4 +228,3 @@ double SplineInterpolator::interpolate(double val) {
 
 	return s_(val);
 }
-
