@@ -41,7 +41,7 @@ VariableFileParser::VariableFileParser(std::string fileName) :
 	requiredVariables_.push_back("CPL");     	// [-]  Longitudinal prismatic coefficient
 	requiredVariables_.push_back("HULLFF");  	// [-]  Hull form factor
 	requiredVariables_.push_back("AW");   	 	// [m^2] Design waterplane's area
-	requiredVariables_.push_back("SC");     	// [m^2] Wetted surface?s area of canoe body
+	requiredVariables_.push_back("SC");     	// [m^2] Wetted surface area of canoe body
 	requiredVariables_.push_back("CMS");    	// [-]  Midship section coefficient
 	requiredVariables_.push_back("T");     		// [m]  Total draft
 	requiredVariables_.push_back("TCAN"); 		// [m]  Draft of canoe body

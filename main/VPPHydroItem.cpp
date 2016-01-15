@@ -368,7 +368,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 //=================================================================
 
 // Constructor
-ViscousResistanceItem::ViscousResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+FrictionalResistanceItem::FrictionalResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 		ResistanceItem(pParser,pSailSet),
 		rv_(0) {
 
@@ -381,12 +381,12 @@ ViscousResistanceItem::ViscousResistanceItem(VariableFileParser* pParser, boost:
 }
 
 // Destructor
-ViscousResistanceItem::~ViscousResistanceItem() {
+FrictionalResistanceItem::~FrictionalResistanceItem() {
 
 }
 
 // Implement pure virtual method of the parent class
-void ViscousResistanceItem::update(int vTW, int aTW) {
+void FrictionalResistanceItem::update(int vTW, int aTW) {
 
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
