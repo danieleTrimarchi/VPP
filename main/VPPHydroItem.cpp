@@ -1,5 +1,7 @@
 #include "VPPHydroItem.h"
 #include "Warning.h"
+#include "mathUtils.h"
+using namespace mathUtils;
 
 // Constructor
 ResistanceItem::ResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
@@ -58,8 +60,8 @@ InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
   vectA_.resize(16);
   vectA_ << tCan/t, (tCan/t)*(tCan/t), bwl/tCan, chtpk/chrtk;
 
-  // coeffA(4x4) * vectA'(4x1) = Tegeo(4x1)
-  Tegeo_ = coeffA_.matrix() * vectA_.matrix().transpose();
+  // coeffA(4x4) * vectA(4x1) = Tegeo(4x1)
+  Tegeo_ = coeffA_.matrix() * vectA_.matrix();
 
 }
 
@@ -77,10 +79,10 @@ void InducedResistanceItem::update(int vTW, int aTW) {
   Eigen::ArrayXd vectB(2);
   vectB << 1, fN_;
 
-  // coeffB(4x2) * vectB'(2x1) => TeFn(4x1)
+  // coeffB(4x2) * vectB(2x1) => TeFn(4x1)
   // todo dtrimarchi - WARNING : is this going to do the right
   // operation or shall we be using MatrixXd??
-  Eigen::ArrayXd TeFn = coeffB_.matrix() * vectB.matrix().transpose();
+  Eigen::ArrayXd TeFn = coeffB_.matrix() * vectB.matrix();
 
   // Note that this is a coefficient-wise operation Tegeo(4x1) * TeFn(4x1) -> TeD(4x1)
   Eigen::ArrayXd TeD = pParser_->get("T") * Tegeo_ * TeFn;
@@ -119,6 +121,8 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
              0.0495,  1.5618, -6.0661,  0.8641,  1.1702,  1.7610,  0.9176, -2.1191,  5.4281,
              0.0808, -5.3233, -1.1513,  0.9663,  1.6084,  2.7459,  0.8491,  4.7129,  1.1089;
 
+	// Define the vector with the physical quantities multiplying the
+	// polynomial coefficients
 	//  vect = [geom.LWL./geom.DIVCAN^(1/3),
 	//   				geom.XFB./geom.LWL,
 	//   				geom.CPL,
@@ -128,8 +132,6 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 	//   				geom.XFB./geom.XFF,
 	//   				(geom.XFB./geom.LWL).^2,
 	//   				geom.CPL.^2]';
-	/// Vector with the physical quantities multiplying the
-	/// polynomial coefficients
 	Eigen::VectorXd vect(9);
 	vect << pParser_->get("LWL") / std::pow(pParser_->get("DIVCAN"),1./3),
 					pParser_->get("XBF") / pParser_->get("LWL") ,
@@ -148,7 +150,7 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 	// Residuary resistance values for each Froude number
 	Eigen::VectorXd RrhD = 	(pParser_->get("DIVCAN") * Physic::g * Physic::rho_w) *
 													( std::pow(pParser_->get("DIVCAN"),1./3) / pParser_->get("LWL") ) *
-													coeff * vect.transpose() ;
+													coeff * vect ;
 
 	// Values of the froude number on which the coefficients of the
 	// residuary resistance are computed
@@ -176,4 +178,192 @@ void ResiduaryResistanceItem::update(int vTW, int aTW) {
 	rrh_ = pInterpolator_->interpolate(fN_);
 
 }
+
+//=================================================================
+
+// Constructor
+Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
+		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
+		ResistanceItem(pParser,pSailSet),
+		dRRH_(0){
+
+	// Define an array of coefficients and instantiate an interpolator over it
+	Eigen::MatrixXd coeff(7,6);
+	coeff <<	-0.0268, -0.0014, -0.0057, 0.0016, -0.0070, -0.0017,
+      			 0.6628, -0.0632,	-0.0699, 0.0069,  0.0459, -0.0004,
+						 1.6433, -0.2144,	-0.1640, 0.0199, -0.0540, -0.0268,
+						-0.8659, -0.0354,  0.2226, 0.0188, -0.5800, -0.1133,
+						-3.2715,	0.1372,	 0.5547, 0.0268, -1.0064, -0.2026,
+						-0.1976, -0.1480,	-0.6593, 0.1862, -0.7489, -0.1648,
+						 1.5873, -0.3749,	-0.7105, 0.2146, -0.4818, -0.1174;
+
+	// Divided the coefficients by 10^3, as stated in the article table6
+	coeff /= 1000.;
+
+	// Define the vector with the physical quantities multiplying the
+	// polynomial coefficients
+	// vect = [	1
+	//					geom.LWL./geom.BWL
+	//					geom.BWL./geom.TCAN
+	//					(geom.BWL./geom.TCAN).^2
+	//					geom.XFB./geom.LWL
+	//					(geom.XFB./geom.LWL).^2];
+	Eigen::VectorXd vect(6);
+	vect << 1,
+					pParser_->get("LWL") / pParser_->get("BWL"),
+					pParser_->get("BWL") / pParser_->get("TCAN"),
+					std::pow(pParser_->get("BWL") / pParser_->get("TCAN"),2),
+					pParser_->get("XFB") / pParser_->get("LWL"),
+					std::pow(pParser_->get("XFB") / pParser_->get("LWL"),2);
+
+	// Compute the resistance @PHI=20deg for each Fn
+	// RrhH20D = (geom.DIVCAN.*phys.g.*phys.rho_w) .* coeff*vect';
+	Eigen::ArrayXd RrhH20D=
+			pParser_->get("DIVCAN") * Physic::g * Physic::rho_w *
+			coeff * vect;
+
+	// Values of the froude number on which the coefficients of the
+	// residuary resistance are computed
+	Eigen::ArrayXd fnD(7);
+	fnD << .25, .3, .35, .4, .45, .5, .55;
+
+	// generate the cubic spline values for the coefficients
+	Eigen::ArrayXd RrhH20DArr=RrhH20D.array();
+	pInterpolator_.reset( new SplineInterpolator(fnD,RrhH20DArr) );
+
+}
+
+// Destructor
+Delta_ResiduaryResistance_HeelItem::~Delta_ResiduaryResistance_HeelItem() {
+	// make nothing
+}
+
+// Implement pure virtual method of the parent class
+void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
+
+	// Call the parent class update to update the Froude number
+	ResistanceItem::update(vTW,aTW);
+
+	// Compute the residuary resistance for the current froude number
+	// RrhH = RrhH20 .* 6 .* ( toRad(phi) ).^1.7;
+	dRRH_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( toRad(PHI_),1.7) ;
+
+}
+
+//=================================================================
+
+// Constructor
+ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+		ResistanceItem(pParser,pSailSet),
+		rrk_(0) {
+
+	// Define an array of coefficients and instantiate an interpolator over it
+	Eigen::MatrixXd coeff(9,4);
+	coeff <<	-0.00104, 0.00172, 0.00117, -0.00008,
+						-0.00550, 0.00597, 0.00390, -0.00009,
+						-0.01110, 0.01421, 0.00069,  0.00021,
+						-0.00713, 0.02632,-0.00232,  0.00039,
+						-0.03581, 0.08649, 0.00999,  0.00017,
+						-0.00470, 0.11592,-0.00064,  0.00035,
+						 0.00553, 0.07371, 0.05991, -0.00114,
+						 0.04822, 0.00660, 0.07048, -0.00035,
+						 0.01021, 0.14173, 0.06409, -0.00192;
+
+	// Define the vector with the physical quantities multiplying the
+	// polynomial coefficients
+	// vect = [	1
+	//					geom.T./geom.BWL
+	//					(geom.T-geom.ZCBK)./geom.DVK.^(1/3)
+	//					geom.DIVCAN./geom.DVK];
+	Eigen::VectorXd vect(4);
+	vect << 1,
+					pParser_->get("T")/pParser_->get("BWL"),
+					(pParser_->get("T")-pParser_->get("ZCBK")) / std::pow(pParser_->get("DVK"),1./3),
+					pParser_->get("DIVCAN")/pParser_->get("DVK");
+
+	// Compute the Keel Residuary Resistance / Fn vector
+	// RrkD = (geom.DVK.*phys.rho_w.*phys.g).* coeff*vect;
+	Eigen::ArrayXd RrkD=
+			pParser_->get("DVK") * Physic::rho_w * Physic::g *
+			coeff * vect;
+
+	// Values of the froude number on which the coefficients of the
+	// residuary resistance are computed
+	Eigen::ArrayXd fnD(9);
+	fnD << .2, .25, .3, .35, .4, .45, .5, .55, .6;
+
+	// generate the cubic spline values for the coefficients
+	Eigen::ArrayXd RrkDArr=RrkD.array();
+	pInterpolator_.reset( new SplineInterpolator(fnD,RrkDArr) );
+
+}
+
+// Destructor
+ResiduaryResistanceKeelItem::~ResiduaryResistanceKeelItem() {
+
+}
+
+// Implement pure virtual method of the parent class
+void ResiduaryResistanceKeelItem::update(int vTW, int aTW) {
+
+	// Call the parent class update to update the Froude number
+	ResistanceItem::update(vTW,aTW);
+
+	// Updates the value of the Residuary Resistance due to the Keel
+	rrk_= pInterpolator_->interpolate(fN_);
+
+}
+
+//=================================================================
+
+// Constructor
+Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
+		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+		ResistanceItem(pParser,pSailSet),
+		dRRKH_(0) {
+
+	// Define an array of coefficients and instantiate an interpolator over it
+	Eigen::Vector4d coeff;
+	coeff << -3.5837, -0.0518,	0.5958,	0.2055;
+
+	// Define the vector with the physical quantities multiplying the
+	// polynomial coefficients
+	//vect = [
+	//				geom.TCAN./geom.T
+	//				geom.BWL./geom.TCAN
+	//				(geom.BWL.*geom.TCAN)./(geom.T.*geom.TCAN)
+	//				geom.LWL./geom.DIVCAN.^1/3 ];
+	Eigen::Vector4d vect;
+	vect << pParser_->get("TCAN")/pParser_->get("T"),
+					pParser_->get("BWL")/pParser_->get("TCAN"),
+					(pParser_->get("BWL")*pParser_->get("TCAN"))/(pParser_->get("T")*pParser_->get("TCAN")),
+					pParser_->get("LWL")/(std::pow(pParser_->get("DIVCAN"),1./3));
+
+	// Express the resistance coefficient
+	Ch_ = coeff.transpose() * vect;
+
+	// And multiply for the const coefficients :
+	// Ch_ = Ch_ *  (geom.DVK.*phys.rho_w.*phys.g.*Ch.)
+	Ch_ *= pParser_->get("DVK") * Physic::rho_w * Physic::g;
+
+}
+
+// Destructor
+Delta_ResiduaryResistanceKeel_HeelItem::~Delta_ResiduaryResistanceKeel_HeelItem() {
+
+}
+
+// Implement pure virtual method of the parent class
+void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
+
+	// Call the parent class update to update the Froude number
+	ResistanceItem::update(vTW,aTW);
+
+	// Compute the resistance
+	// RrkH = (geom.DVK.*phys.rho_w.*phys.g.*Ch)*Fn.^2.*phi*pi/180;
+	dRRKH_= Ch_ * fN_ * fN_ * toRad(PHI_);
+
+}
+
+//=================================================================
 

@@ -1,14 +1,6 @@
 #include "VPPAeroItem.h"
-
-// Define a static utility function to be used to convert deg to rad
-double toRad( double deg ){
-	return deg * M_PI / 180.0;
-};
-
-// Define a static utility function to be used to convert rad to deg
-double toDeg( double rad ){
-	return rad * 180.0 / M_PI;
-};
+#include "mathUtils.h"
+using namespace mathUtils;
 
 /// Constructor
 WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :

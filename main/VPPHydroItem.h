@@ -77,4 +77,79 @@ class ResiduaryResistanceItem : public ResistanceItem {
 		boost::shared_ptr<SplineInterpolator> pInterpolator_;
 };
 
+//=================================================================
+
+class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
+
+	public:
+
+		/// Constructor
+		Delta_ResiduaryResistance_HeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+
+		/// Destructor
+		~Delta_ResiduaryResistance_HeelItem();
+
+	private:
+
+		/// Implement pure virtual method of the parent class
+		virtual void update(int vTW, int aTW);
+
+		/// Value of the delta induced resistance due to heel
+		double dRRH_;
+
+		/// Interpolator that stores the residuary resistance curve for all froude numbers
+		boost::shared_ptr<SplineInterpolator> pInterpolator_;
+
+};
+
+//=================================================================
+
+class ResiduaryResistanceKeelItem : public ResistanceItem {
+
+	public:
+
+		/// Constructor
+		ResiduaryResistanceKeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+
+		/// Destructor
+		~ResiduaryResistanceKeelItem();
+
+	private:
+
+		/// Implement pure virtual method of the parent class
+		virtual void update(int vTW, int aTW);
+
+		/// Value of the induced resistance
+		double rrk_;
+
+		/// Interpolator that stores the residuary resistance curve for all froude numbers
+		boost::shared_ptr<SplineInterpolator> pInterpolator_;
+};
+
+//=================================================================
+
+class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
+
+	public:
+
+		/// Constructor
+		Delta_ResiduaryResistanceKeel_HeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+
+		/// Destructor
+		~Delta_ResiduaryResistanceKeel_HeelItem();
+
+	private:
+
+		/// Implement pure virtual method of the parent class
+		virtual void update(int vTW, int aTW);
+
+		/// Resistance coefficient
+		double Ch_;
+
+		/// Value of the induced resistance
+		double dRRKH_;
+
+};
+
+
 #endif
