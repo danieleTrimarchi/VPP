@@ -409,3 +409,78 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 
 //=================================================================
 
+// Constructor
+Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
+		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+				ResistanceItem(pParser,pSailSet),
+				dFRKH_(0) {
+
+	// Pre-compute the velocity independent part of rN_
+	rN0_= pParser->get("LWL") * 0.7 / Physic::ni_w;
+
+	// Define an array of coefficients and instantiate an interpolator over it
+	Eigen::MatrixXd coeff(8,4);
+	coeff <<	0.000,	0.000,	0.000,	0.000,
+					 -4.112,	0.054, -0.027,	6.329,
+					 -4.522, -0.132, -0.077,	8.738,
+					 -3.291, -0.389, -0.118,	8.949,
+					  1.850, -1.200, -0.109,	5.364,
+						6.510, -2.305, -0.066,	3.443,
+					 12.334, -3.911,	0.024,	1.767,
+					 14.648, -5.182,	0.102,	3.497;
+
+	// Define the vector with the physical quantities multiplying the
+	// polynomial coefficients
+	//vect = [1
+	//				geom.BWL./geom.TCAN
+	//				(geom.BWL./geom.TCAN).^2
+	//				geom.CMS];
+	Eigen::VectorXd vect(4);
+	vect << 1,
+					pParser_->get("BWL")/pParser_->get("TCAN"),
+					std::pow( (pParser_->get("BWL") / pParser_->get("TCAN")),2),
+					pParser_->get("CMS");
+
+	// Values of the heel angle on which the coefficients
+	Eigen::ArrayXd phiD(9);
+	phiD << 0, 5, 10, 15, 20, 25, 30, 35;
+
+	// Compute the coefficients for the current geometry
+	Eigen::ArrayXd SCphiDArr = pParser_->get("SC") *
+			( 1 + 1./100. * (coeff * vect).array() );
+
+	// generate the cubic spline values for the coefficients
+	pInterpolator_.reset( new SplineInterpolator(phiD,SCphiDArr) );
+
+}
+
+// Destructor
+Delta_FrictionalResistance_HeelItem::~Delta_FrictionalResistance_HeelItem() {
+
+}
+
+// Implement pure virtual method of the parent class
+void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
+
+	// Call the parent class update to update the Froude number
+	ResistanceItem::update(vTW,aTW);
+
+	// Compute the Reynolds number
+	// Rn = geom.LWL .* 0.7 .* V ./ phys.ni_w;
+	double rN = rN0_ * V_;
+
+	// Compute the Frictional coefficient
+	double cF = 0.075 / std::pow( (std::log10(rN) - 2), 2);
+
+	// Compute the interpolated value of the change in wetted area wrt PHI
+	double SCphi = pInterpolator_->interpolate(PHI_);
+
+	// Compute the Frictional resistance of the bare hull
+	// Rfh = 1/2 .* phys.rho_w .* V.^2 .* geom.SC .* Cf;
+	double rfhH = 0.5 * Physic::rho_w * V_ * V_ * cF * (SCphi-pParser_->get("SC"));
+
+	// todo dtrimarchi: does it make sense to use the same hull form factor both for the upright and the heeled hull?
+	dFRKH_ = rfhH * pParser_->get("HULLFF");
+
+}
+

@@ -146,7 +146,7 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 		/// Resistance coefficient
 		double Ch_;
 
-		/// Value of the induced resistance
+		/// Value of the delta induced resistance due to heel
 		double dRRKH_;
 
 };
@@ -176,6 +176,32 @@ class FrictionalResistanceItem : public ResistanceItem {
 
 //=================================================================
 
+class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
 
+	public:
+
+		/// Constructor
+		Delta_FrictionalResistance_HeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+
+		/// Destructor
+		~Delta_FrictionalResistance_HeelItem();
+
+	private:
+
+		/// Implement pure virtual method of the parent class
+		virtual void update(int vTW, int aTW);
+
+		/// Value of the delta frictional resistance due to heel
+		double dFRKH_;
+
+		//< Velocity Independent part of the Reynolds number
+		double 	rN0_;
+
+		/// Interpolator that stores the residuary resistance curve for all froude numbers
+		boost::shared_ptr<SplineInterpolator> pInterpolator_;
+
+};
+
+//=================================================================
 
 #endif

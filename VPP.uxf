@@ -565,4 +565,17 @@ lt=&lt;&lt;&lt;&lt;-</panel_attributes>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;80.0;940.0;80.0;940.0;100.0</additional_attributes>
   </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1864</x>
+      <y>456</y>
+      <w>232</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>Delta_FrectionalResistanceHeel_HeelItem
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
 </diagram>
