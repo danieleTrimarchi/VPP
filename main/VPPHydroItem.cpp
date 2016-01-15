@@ -367,3 +367,45 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 
 //=================================================================
 
+// Constructor
+ViscousResistanceItem::ViscousResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+		ResistanceItem(pParser,pSailSet),
+		rv_(0) {
+
+	// Pre-compute the velocity independent part of rN_
+	rN0_= pParser->get("LWL") * 0.7 / Physic::ni_w;
+
+	// Pre-compute the velocity independent part of rF_
+	rfh0_= 0.5 * Physic::rho_w * pParser_->get("SC");
+
+}
+
+// Destructor
+ViscousResistanceItem::~ViscousResistanceItem() {
+
+}
+
+// Implement pure virtual method of the parent class
+void ViscousResistanceItem::update(int vTW, int aTW) {
+
+	// Call the parent class update to update the Froude number
+	ResistanceItem::update(vTW,aTW);
+
+	// Compute the Reynolds number
+	// Rn = geom.LWL .* 0.7 .* V ./ phys.ni_w;
+	double rN = rN0_ * V_;
+
+	// Compute the Frictional coefficient
+	double cF = 0.075 / std::pow( (std::log10(rN) - 2), 2);
+
+	// Compute the Frictional resistance of the bare hull
+	// Rfh = 1/2 .* phys.rho_w .* V.^2 .* geom.SC .* Cf;
+	double rfh = rfh0_ * V_ * V_ * cF;
+
+	// Compute the viscous resistance
+	rv_ = rfh * pParser_->get("HULLFF");
+
+}
+
+//=================================================================
+

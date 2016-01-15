@@ -151,5 +151,31 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 
 };
 
+//=================================================================
+
+class ViscousResistanceItem : public ResistanceItem {
+
+	public:
+
+		/// Constructor
+		ViscousResistanceItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+
+		/// Destructor
+		~ViscousResistanceItem();
+
+	private:
+
+		/// Implement pure virtual method of the parent class
+		virtual void update(int vTW, int aTW);
+
+		double 	rN0_, //< Velocity Independent part of the Reynolds number
+						rfh0_, //< Velocity Independent part of the Frictional resistance of the bare hull
+						rv_; //< Viscous resistance
+
+};
+
+//=================================================================
+
+
 
 #endif
