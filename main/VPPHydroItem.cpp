@@ -27,6 +27,10 @@ ResistanceItem::~ResistanceItem() {
 
 }
 
+void ResistanceItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of ResistanceItem "<<std::endl;
+}
+
 //=========================================================
 
 // Constructor
@@ -98,6 +102,10 @@ void InducedResistanceItem::update(int vTW, int aTW) {
   // Compute the induced resistance Ri = Fheel^2 / (0.5 * pi * rho_w * Te^2 * V^2)
   ri_ = fHeel * fHeel / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
 
+}
+
+void InducedResistanceItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of InducedResistanceItem "<<std::endl;
 }
 
 //=================================================================
@@ -179,6 +187,10 @@ void ResiduaryResistanceItem::update(int vTW, int aTW) {
 
 }
 
+void ResiduaryResistanceItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of ResiduaryResistanceItem "<<std::endl;
+}
+
 //=================================================================
 
 // Constructor
@@ -250,6 +262,10 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 
 }
 
+void Delta_ResiduaryResistance_HeelItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of Delta_ResiduaryResistance_HeelItem "<<std::endl;
+}
+
 //=================================================================
 
 // Constructor
@@ -314,6 +330,10 @@ void ResiduaryResistanceKeelItem::update(int vTW, int aTW) {
 
 }
 
+void ResiduaryResistanceKeelItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of ResiduaryResistanceKeelItem "<<std::endl;
+}
+
 //=================================================================
 
 // Constructor
@@ -365,6 +385,10 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 
 }
 
+void Delta_ResiduaryResistanceKeel_HeelItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of Delta_ResiduaryResistanceKeel_HeelItem "<<std::endl;
+}
+
 //=================================================================
 
 // Constructor
@@ -405,6 +429,10 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 	// Compute the viscous resistance
 	rv_ = rfh * pParser_->get("HULLFF");
 
+}
+
+void FrictionalResistanceItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of FrictionalResistanceItem "<<std::endl;
 }
 
 //=================================================================
@@ -483,4 +511,77 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	dFRKH_ = rfhH * pParser_->get("HULLFF");
 
 }
+
+void Delta_FrictionalResistance_HeelItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of Delta_FrictionalResistance_HeelItem "<<std::endl;
+}
+
+//=================================================================
+
+// Constructor
+ViscousResistanceKeelItem::ViscousResistanceKeelItem(
+		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+								ResistanceItem(pParser,pSailSet),
+								rvk_(0) {
+}
+
+// Destructor
+ViscousResistanceKeelItem::~ViscousResistanceKeelItem() {
+
+}
+
+// Implement pure virtual method of the parent class
+void ViscousResistanceKeelItem::update(int vTW, int aTW) {
+
+	// Call the parent class update to update the Froude number
+	ResistanceItem::update(vTW,aTW);
+
+  double rN = pParser_->get("CHMEK") * V_ / Physic::ni_w;
+  double cf = 0.075 / std::pow((std::log10(rN) - 2),2);
+  double rfk= 0.5 * Physic::rho_w * V_ * V_ * pParser_->get("SK") * cf;
+
+  // todo dtrimarchi : this form factor can be computed from the
+  // Keel geometry (see DSYHS99) Ch.3.2.11
+  rvk_ = rfk * pParser_->get("KEELFF");
+
+}
+
+void ViscousResistanceKeelItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of ViscousResistanceKeelItem "<<std::endl;
+}
+
+//=================================================================
+
+// Constructor
+ViscousResistanceRudderItem::ViscousResistanceRudderItem(
+		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+														ResistanceItem(pParser,pSailSet),
+														vrr_(0) {
+}
+
+// Destructor
+ViscousResistanceRudderItem::~ViscousResistanceRudderItem() {
+
+}
+
+		/// Implement pure virtual method of the parent class
+void ViscousResistanceRudderItem::update(int vTW, int aTW) {
+
+	// Call the parent class update to update the Froude number
+	ResistanceItem::update(vTW,aTW);
+
+  double rN = pParser_->get("CHMEK") * V_ / Physic::ni_w;
+  double cf = 0.075 / std::pow((std::log10(rN) - 2),2);
+  double rfr= 0.5 * Physic::rho_w * V_ * V_ * pParser_->get("SK") * cf;
+
+  // todo dtrimarchi : this form factor can be computed from the
+  // Rudder geometry (see DSYHS99) Ch.3.2.11
+  vrr_ = rfr * pParser_->get("RUDDFF");
+
+}
+
+void ViscousResistanceRudderItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of ViscousResistanceRudderItem "<<std::endl;
+}
+
 

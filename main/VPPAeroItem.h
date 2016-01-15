@@ -17,9 +17,6 @@ class WindItem : public VPPItem {
 		/// Destructor
 		virtual ~WindItem();
 
-		/// Print the class name -> in this case WindItem
-		virtual void printWhoAmI();
-
 		/// Own methods:
 
 		/// Returns the true wind velocity for this step
@@ -36,6 +33,9 @@ class WindItem : public VPPItem {
 
 		/// Returns the apparent wind velocity vector norm for this step
 		const double getAWNorm() const;
+
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
 
 	private:
 
@@ -81,11 +81,11 @@ class SailCoefficientItem : public VPPItem {
 		/// Returns a ptr to the wind Item
 		WindItem* getWindItem() const;
 
-		/// Print the class name -> in this case SailCoefficientItem
-		virtual void printWhoAmI();
-
 		/// PrintOut the coefficient matrices
 		void printCoefficients();
+
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
 
 	protected:
 
@@ -149,6 +149,8 @@ class MainOnlySailCoefficientItem : public SailCoefficientItem {
 		/// Destructor
 		~MainOnlySailCoefficientItem();
 
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
 
 	private:
 
@@ -171,6 +173,8 @@ class MainAndJibCoefficientItem : public SailCoefficientItem {
 		/// Destructor
 		~MainAndJibCoefficientItem();
 
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
 
 	private:
 
@@ -193,6 +197,8 @@ class MainAndSpiCoefficientItem : public SailCoefficientItem {
 		/// Destructor
 		~MainAndSpiCoefficientItem();
 
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
 
 	private:
 
@@ -215,6 +221,8 @@ class MainJibAndSpiCoefficientItem : public SailCoefficientItem {
 		/// Destructor
 		~MainJibAndSpiCoefficientItem();
 
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
 
 	private:
 

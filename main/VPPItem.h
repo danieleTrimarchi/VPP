@@ -29,7 +29,7 @@ class VPPItem {
 		void update(int vTW, int aTW, const double* x);
 
 		/// Print the class name -> in this case VPPItem
-		virtual void printWhoAmI();
+		virtual void printWhoAmI()=0;
 
 		/// Returns a ptr to the parser
 		VariableFileParser* getParser() const;

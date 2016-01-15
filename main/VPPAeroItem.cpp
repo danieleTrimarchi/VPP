@@ -286,6 +286,12 @@ void MainOnlySailCoefficientItem::update(int vTW, int aTW) {
 
 }
 
+// Print the class name - implement the pure virtual of VPPItem
+void MainOnlySailCoefficientItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of MainOnlySailCoefficientItem "<<std::endl;
+}
+
+
 //=================================================================
 
 // Constructor
@@ -321,6 +327,11 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
 
+}
+
+// Print the class name - implement the pure virtual of VPPItem
+void MainAndJibCoefficientItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of MainAndJibCoefficientItem "<<std::endl;
 }
 
 //=================================================================
@@ -360,6 +371,11 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 
 }
 
+// Print the class name - implement the pure virtual of VPPItem
+void MainAndSpiCoefficientItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of MainAndSpiCoefficientItem "<<std::endl;
+}
+
 //=================================================================
 
 // Constructor
@@ -396,6 +412,11 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
 
+}
+
+// Print the class name - implement the pure virtual of VPPItem
+void MainJibAndSpiCoefficientItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of MainJibAndSpiCoefficientItem "<<std::endl;
 }
 
 //=================================================================

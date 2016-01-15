@@ -43,8 +43,4 @@ void VPPItem::update(int vTW, int aTW, const double* x) {
 
 }
 
-void VPPItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of VPPItem "<<std::endl;
-}
-
 

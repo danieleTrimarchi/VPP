@@ -4,12 +4,18 @@
 #include "VPPItem.h"
 #include "VPPAeroItem.h"
 
+// todo dtrimarchi : we are not considering the resistance
+// contribution of the rudder. Add it!
+
 class ResistanceItem : public VPPItem {
 
 	public:
 
 		/// Destructor
 		~ResistanceItem();
+
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
 
 	protected:
 
@@ -35,6 +41,9 @@ class InducedResistanceItem : public ResistanceItem {
 
 		/// Destructor
 		~InducedResistanceItem();
+
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
 
 	private:
 
@@ -65,6 +74,9 @@ class ResiduaryResistanceItem : public ResistanceItem {
 		/// Destructor
 		~ResiduaryResistanceItem();
 
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
+
 	private:
 
 		/// Implement pure virtual method of the parent class
@@ -88,6 +100,9 @@ class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 
 		/// Destructor
 		~Delta_ResiduaryResistance_HeelItem();
+
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
 
 	private:
 
@@ -114,6 +129,9 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 		/// Destructor
 		~ResiduaryResistanceKeelItem();
 
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
+
 	private:
 
 		/// Implement pure virtual method of the parent class
@@ -137,6 +155,9 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 
 		/// Destructor
 		~Delta_ResiduaryResistanceKeel_HeelItem();
+
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
 
 	private:
 
@@ -163,6 +184,9 @@ class FrictionalResistanceItem : public ResistanceItem {
 		/// Destructor
 		~FrictionalResistanceItem();
 
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
+
 	private:
 
 		/// Implement pure virtual method of the parent class
@@ -186,6 +210,9 @@ class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
 		/// Destructor
 		~Delta_FrictionalResistance_HeelItem();
 
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
+
 	private:
 
 		/// Implement pure virtual method of the parent class
@@ -199,6 +226,54 @@ class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
 
 		/// Interpolator that stores the residuary resistance curve for all froude numbers
 		boost::shared_ptr<SplineInterpolator> pInterpolator_;
+
+};
+
+//=================================================================
+
+class ViscousResistanceKeelItem : public ResistanceItem {
+
+	public:
+
+		/// Constructor
+		ViscousResistanceKeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+
+		/// Destructor
+		~ViscousResistanceKeelItem();
+
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
+
+	private:
+
+		/// Implement pure virtual method of the parent class
+		virtual void update(int vTW, int aTW);
+
+		double rvk_;
+
+};
+
+//=================================================================
+
+class ViscousResistanceRudderItem : public ResistanceItem {
+
+	public:
+
+		/// Constructor
+		ViscousResistanceRudderItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+
+		/// Destructor
+		~ViscousResistanceRudderItem();
+
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
+
+	private:
+
+		/// Implement pure virtual method of the parent class
+		virtual void update(int vTW, int aTW);
+
+		double vrr_;
 
 };
 

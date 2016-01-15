@@ -472,32 +472,6 @@ lt=&lt;&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>1944</x>
-      <y>456</y>
-      <w>160</w>
-      <h>56</h>
-    </coordinates>
-    <panel_attributes>ViscousResistanceKeelItem
---
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>2112</x>
-      <y>456</y>
-      <w>192</w>
-      <h>56</h>
-    </coordinates>
-    <panel_attributes>ViscousResistanceRudderItem
---
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
     <id>Relation</id>
     <coordinates>
       <x>976</x>
@@ -573,9 +547,43 @@ lt=&lt;&lt;&lt;&lt;-</panel_attributes>
       <w>232</w>
       <h>56</h>
     </coordinates>
-    <panel_attributes>Delta_FrectionalResistanceHeel_HeelItem
+    <panel_attributes>Delta_FrictionalResistance_HeelItem
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1032</x>
+      <y>376</y>
+      <w>960</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0;1180.0;80.0;1180.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2104</x>
+      <y>456</y>
+      <w>168</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>ViscousResistanceRudderItem
 --
 </panel_attributes>
     <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1032</x>
+      <y>376</y>
+      <w>1200</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0;1480.0;80.0;1480.0;100.0</additional_attributes>
   </element>
 </diagram>
