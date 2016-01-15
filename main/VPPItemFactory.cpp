@@ -19,7 +19,7 @@ VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<Sa
 	boost::shared_ptr<AeroForcesItem> pAeroForcesItem(new AeroForcesItem(pSailCoeffItem.get()));
 	vppItems_.push_back( pAeroForcesItem );
 
-	// -- INSTANTIATE THE RESISTANCE ITEMS
+	// -- INSTANTIATE THE 9 RESISTANCE ITEMS
 
 	// Instantiate a InducedResistanceItem and push it back to the children vector
 	boost::shared_ptr<InducedResistanceItem> pInducedResistance(new InducedResistanceItem(pAeroForcesItem.get()));

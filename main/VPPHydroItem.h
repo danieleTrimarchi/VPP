@@ -57,8 +57,8 @@ class InducedResistanceItem : public ResistanceItem {
 		double ri_;
 
 		/// Instantiate some utility arrays
-		Eigen::ArrayXXd coeffA_, coeffB_;
-	  Eigen::ArrayXd phiD_, vectA_, Tegeo_;
+		Eigen::MatrixXd coeffA_, coeffB_;
+		Eigen::VectorXd phiD_, vectA_, Tegeo_;
 
 };
 

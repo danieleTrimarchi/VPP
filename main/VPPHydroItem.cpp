@@ -61,11 +61,11 @@ InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
   double chrtk= pParser_->get("CHRTK");
 
   //geom.TCAN./geom.T (geom.TCAN./geom.T).^2 geom.BWL./geom.TCAN geom.CHTPK./geom.CHRTK;
-  vectA_.resize(16);
+  vectA_.resize(4);
   vectA_ << tCan/t, (tCan/t)*(tCan/t), bwl/tCan, chtpk/chrtk;
 
   // coeffA(4x4) * vectA(4x1) = Tegeo(4x1)
-  Tegeo_ = coeffA_.matrix() * vectA_.matrix();
+  Tegeo_ = coeffA_ * vectA_;
 
 }
 
@@ -80,20 +80,21 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
 
-  Eigen::ArrayXd vectB(2);
+  Eigen::VectorXd vectB(2);
   vectB << 1, fN_;
 
   // coeffB(4x2) * vectB(2x1) => TeFn(4x1)
   // todo dtrimarchi - WARNING : is this going to do the right
   // operation or shall we be using MatrixXd??
-  Eigen::ArrayXd TeFn = coeffB_.matrix() * vectB.matrix();
+  Eigen::ArrayXd TeFn = coeffB_ * vectB;
 
   // Note that this is a coefficient-wise operation Tegeo(4x1) * TeFn(4x1) -> TeD(4x1)
-  Eigen::ArrayXd TeD = pParser_->get("T") * Tegeo_ * TeFn;
+  Eigen::ArrayXd TeD = pParser_->get("T") * Tegeo_.array() * TeFn;
 
   // Properly interpolate then values of TeD for the current value
   // of the state variable PHI_ (heeling angle)
-  SplineInterpolator interpolator(phiD_,TeD);
+  Eigen::ArrayXd phiDArr=phiD_.array();
+  SplineInterpolator interpolator(phiDArr,TeD);
   double Te= interpolator.interpolate(PHI_);
 
   // Get the aerodynamic side force
@@ -470,7 +471,7 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 					pParser_->get("CMS");
 
 	// Values of the heel angle on which the coefficients
-	Eigen::ArrayXd phiD(9);
+	Eigen::ArrayXd phiD(8);
 	phiD << 0, 5, 10, 15, 20, 25, 30, 35;
 
 	// Compute the coefficients for the current geometry
