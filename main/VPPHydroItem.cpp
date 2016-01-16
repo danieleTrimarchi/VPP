@@ -6,7 +6,8 @@ using namespace mathUtils;
 // Constructor
 ResistanceItem::ResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
 	VPPItem(pParser,pSailSet),
-	fN_(0) {
+	fN_(0),
+	res_(0){
 	// make nothing
 }
 
@@ -27,6 +28,11 @@ ResistanceItem::~ResistanceItem() {
 
 }
 
+// Get the value of the resistance for this ResistanceItem
+const double ResistanceItem::get() const {
+	return res_;
+}
+
 void ResistanceItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of ResistanceItem "<<std::endl;
 }
@@ -36,8 +42,7 @@ void ResistanceItem::printWhoAmI() {
 // Constructor
 InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 		ResistanceItem(pAeroForcesItem->getParser(), pAeroForcesItem->getSailSet()),
-		pAeroForcesItem_(pAeroForcesItem),
-		ri_(0) {
+		pAeroForcesItem_(pAeroForcesItem) {
 
   coeffA_.resize(4,4);
   coeffA_ << 	3.7455,	-3.6246,	0.0589,	-0.0296,
@@ -101,7 +106,7 @@ void InducedResistanceItem::update(int vTW, int aTW) {
   double fHeel= pAeroForcesItem_->getFSide();
 
   // Compute the induced resistance Ri = Fheel^2 / (0.5 * pi * rho_w * Te^2 * V^2)
-  ri_ = fHeel * fHeel / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
+  res_ = fHeel * fHeel / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
 
 }
 
@@ -113,8 +118,7 @@ void InducedResistanceItem::printWhoAmI() {
 
 // Constructor
 ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-		ResistanceItem(pParser, pSailSet),
-		rrh_(0) {
+		ResistanceItem(pParser, pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(11,9);
@@ -184,7 +188,7 @@ void ResiduaryResistanceItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Compute the residuary resistance for the current froude number
-	rrh_ = pInterpolator_->interpolate(fN_);
+	res_ = pInterpolator_->interpolate(fN_);
 
 }
 
@@ -197,8 +201,7 @@ void ResiduaryResistanceItem::printWhoAmI() {
 // Constructor
 Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
-		ResistanceItem(pParser,pSailSet),
-		dRRH_(0){
+		ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(7,6);
@@ -259,7 +262,7 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 
 	// Compute the residuary resistance for the current froude number
 	// RrhH = RrhH20 .* 6 .* ( toRad(phi) ).^1.7;
-	dRRH_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( toRad(PHI_),1.7) ;
+	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( toRad(PHI_),1.7) ;
 
 }
 
@@ -271,8 +274,7 @@ void Delta_ResiduaryResistance_HeelItem::printWhoAmI() {
 
 // Constructor
 ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-		ResistanceItem(pParser,pSailSet),
-		rrk_(0) {
+		ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(9,4);
@@ -327,7 +329,7 @@ void ResiduaryResistanceKeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Updates the value of the Residuary Resistance due to the Keel
-	rrk_= pInterpolator_->interpolate(fN_);
+	res_= pInterpolator_->interpolate(fN_);
 
 }
 
@@ -340,8 +342,7 @@ void ResiduaryResistanceKeelItem::printWhoAmI() {
 // Constructor
 Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-		ResistanceItem(pParser,pSailSet),
-		dRRKH_(0) {
+		ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::Vector4d coeff;
@@ -382,7 +383,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 
 	// Compute the resistance
 	// RrkH = (geom.DVK.*phys.rho_w.*phys.g.*Ch)*Fn.^2.*phi*pi/180;
-	dRRKH_= Ch_ * fN_ * fN_ * toRad(PHI_);
+	res_= Ch_ * fN_ * fN_ * toRad(PHI_);
 
 }
 
@@ -394,8 +395,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::printWhoAmI() {
 
 // Constructor
 FrictionalResistanceItem::FrictionalResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-		ResistanceItem(pParser,pSailSet),
-		rv_(0) {
+		ResistanceItem(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_
 	rN0_= pParser->get("LWL") * 0.7 / Physic::ni_w;
@@ -428,7 +428,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 	double rfh = rfh0_ * V_ * V_ * cF;
 
 	// Compute the viscous resistance
-	rv_ = rfh * pParser_->get("HULLFF");
+	res_ = rfh * pParser_->get("HULLFF");
 
 }
 
@@ -441,8 +441,7 @@ void FrictionalResistanceItem::printWhoAmI() {
 // Constructor
 Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-				ResistanceItem(pParser,pSailSet),
-				dFRKH_(0) {
+				ResistanceItem(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_
 	rN0_= pParser->get("LWL") * 0.7 / Physic::ni_w;
@@ -509,7 +508,7 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	double rfhH = 0.5 * Physic::rho_w * V_ * V_ * cF * (SCphi-pParser_->get("SC"));
 
 	// todo dtrimarchi: does it make sense to use the same hull form factor both for the upright and the heeled hull?
-	dFRKH_ = rfhH * pParser_->get("HULLFF");
+	res_ = rfhH * pParser_->get("HULLFF");
 
 }
 
@@ -522,8 +521,7 @@ void Delta_FrictionalResistance_HeelItem::printWhoAmI() {
 // Constructor
 ViscousResistanceKeelItem::ViscousResistanceKeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-								ResistanceItem(pParser,pSailSet),
-								rvk_(0) {
+								ResistanceItem(pParser,pSailSet) {
 }
 
 // Destructor
@@ -543,7 +541,7 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 
   // todo dtrimarchi : this form factor can be computed from the
   // Keel geometry (see DSYHS99) Ch.3.2.11
-  rvk_ = rfk * pParser_->get("KEELFF");
+  res_ = rfk * pParser_->get("KEELFF");
 
 }
 
@@ -556,8 +554,7 @@ void ViscousResistanceKeelItem::printWhoAmI() {
 // Constructor
 ViscousResistanceRudderItem::ViscousResistanceRudderItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-														ResistanceItem(pParser,pSailSet),
-														vrr_(0) {
+														ResistanceItem(pParser,pSailSet) {
 }
 
 // Destructor
@@ -577,7 +574,7 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 
   // todo dtrimarchi : this form factor can be computed from the
   // Rudder geometry (see DSYHS99) Ch.3.2.11
-  vrr_ = rfr * pParser_->get("RUDDFF");
+  res_ = rfr * pParser_->get("RUDDFF");
 
 }
 

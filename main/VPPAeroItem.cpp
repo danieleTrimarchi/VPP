@@ -149,7 +149,7 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 SailCoefficientItem::~SailCoefficientItem() {
 }
 
-// Implement the pure virtual. Called by the children as a decorator
+// Implement the pure virtual
 void SailCoefficientItem::update(int vTW, int aTW) {
 
 	// Update the local copy of the the apparent wind angle
@@ -431,7 +431,7 @@ AeroForcesItem::AeroForcesItem(SailCoefficientItem* sailCoeffItem) :
 		fDrive_(0),
 		fHeel_(0),
 		fSide_(0),
-		mHeel(0) {
+		mHeel_(0) {
 	// do nothing
 }
 
@@ -464,7 +464,7 @@ void AeroForcesItem::update(int vTW, int aTW) {
 	// todo dtrimarchi: verify the original comment
 	// attenzione: il centro di spinta della deriva e' stato messo nel centro
 	// di galleggiamento. l'ipotesi e' corretta?
-	mHeel = fHeel_ * ( pSailSet_->get("ZCE") + pParser_->get("T") - pParser_->get("ZCBK") );
+	mHeel_ = fHeel_ * ( pSailSet_->get("ZCE") + pParser_->get("T") - pParser_->get("ZCBK") );
 
 	// Updates Fside_ = Fheel*cos(phi*pi/180). Note PHI_ is in degrees
 	fSide_ = fHeel_ * cos( toRad(PHI_) );
@@ -476,6 +476,15 @@ const double AeroForcesItem::getFSide() const {
 	return fSide_;
 }
 
+// Get the value of the drive force
+const double AeroForcesItem::getFDrive() const {
+	return fDrive_;
+}
+
+/// Get the value of the heel moment
+const double AeroForcesItem::getMHeel() const {
+	return mHeel_;
+}
 
 void AeroForcesItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of AeroForcesItem "<<std::endl;

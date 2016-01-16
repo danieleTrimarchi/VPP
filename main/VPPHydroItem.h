@@ -14,6 +14,9 @@ class ResistanceItem : public VPPItem {
 		/// Destructor
 		~ResistanceItem();
 
+		// Get the value of the resistance for this ResistanceItem
+		const double get() const;
+
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
@@ -27,6 +30,9 @@ class ResistanceItem : public VPPItem {
 
 		/// Froude number
 		double fN_;
+
+		/// Value of the resistance
+		double res_;
 
 };
 
@@ -52,9 +58,6 @@ class InducedResistanceItem : public ResistanceItem {
 
 		/// Pointer to the aerodynamic forces item
 		AeroForcesItem* pAeroForcesItem_;
-
-		/// Value of the induced resistance
-		double ri_;
 
 		/// Instantiate some utility arrays
 		Eigen::MatrixXd coeffA_, coeffB_;
@@ -82,9 +85,6 @@ class ResiduaryResistanceItem : public ResistanceItem {
 		/// Implement pure virtual method of the parent class
 		virtual void update(int vTW, int aTW);
 
-		/// Value of the induced resistance
-		double rrh_;
-
 		/// Interpolator that stores the residuary resistance curve for all froude numbers
 		boost::shared_ptr<SplineInterpolator> pInterpolator_;
 };
@@ -108,9 +108,6 @@ class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 
 		/// Implement pure virtual method of the parent class
 		virtual void update(int vTW, int aTW);
-
-		/// Value of the delta induced resistance due to heel
-		double dRRH_;
 
 		/// Interpolator that stores the residuary resistance curve for all froude numbers
 		boost::shared_ptr<SplineInterpolator> pInterpolator_;
@@ -136,9 +133,6 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 
 		/// Implement pure virtual method of the parent class
 		virtual void update(int vTW, int aTW);
-
-		/// Value of the induced resistance
-		double rrk_;
 
 		/// Interpolator that stores the residuary resistance curve for all froude numbers
 		boost::shared_ptr<SplineInterpolator> pInterpolator_;
@@ -167,9 +161,6 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 		/// Resistance coefficient
 		double Ch_;
 
-		/// Value of the delta induced resistance due to heel
-		double dRRKH_;
-
 };
 
 //=================================================================
@@ -193,8 +184,7 @@ class FrictionalResistanceItem : public ResistanceItem {
 		virtual void update(int vTW, int aTW);
 
 		double 	rN0_,  //< Velocity Independent part of the Reynolds number
-						rfh0_, //< Velocity Independent part of the Frictional resistance of the bare hull
-						rv_;   //< Frictional resistance value
+						rfh0_; //< Velocity Independent part of the Frictional resistance of the bare hull
 
 };
 
@@ -217,9 +207,6 @@ class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
 
 		/// Implement pure virtual method of the parent class
 		virtual void update(int vTW, int aTW);
-
-		/// Value of the delta frictional resistance due to heel
-		double dFRKH_;
 
 		//< Velocity Independent part of the Reynolds number
 		double 	rN0_;
@@ -249,8 +236,6 @@ class ViscousResistanceKeelItem : public ResistanceItem {
 		/// Implement pure virtual method of the parent class
 		virtual void update(int vTW, int aTW);
 
-		double rvk_;
-
 };
 
 //=================================================================
@@ -272,8 +257,6 @@ class ViscousResistanceRudderItem : public ResistanceItem {
 
 		/// Implement pure virtual method of the parent class
 		virtual void update(int vTW, int aTW);
-
-		double vrr_;
 
 };
 

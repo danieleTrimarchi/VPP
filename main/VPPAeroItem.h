@@ -247,6 +247,12 @@ class AeroForcesItem : public VPPItem {
 		/// Get the value of the side force
 		const double getFSide() const;
 
+		/// Get the value of the drive force
+		const double getFDrive() const;
+
+		/// Get the value of the heel moment
+		const double getMHeel() const;
+
 		/// Print the class name -> in this case AeroForcesItem
 		virtual void printWhoAmI();
 
@@ -266,7 +272,7 @@ class AeroForcesItem : public VPPItem {
 		double lift_, drag_,		//< Lift and Drag
 					fDrive_, fHeel_,	//< Drive and Heel forces, ie lift and drag projected to the boat's route
 					fSide_, 					//< Side force, or fHeel projected on the sea plane
-					mHeel;						//< Heel moment due to fHeel
+					mHeel_;						//< Heel moment due to fHeel
 };
 
 

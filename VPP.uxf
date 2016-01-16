@@ -138,20 +138,6 @@ Rvr     = vpp_Rvr(V,geom,phys,Rconf.Rvr);
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1200</x>
-      <y>240</y>
-      <w>128</w>
-      <h>88</h>
-    </coordinates>
-    <panel_attributes>HydroMomentItem
---
-
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
       <x>176</x>
       <y>96</y>
       <w>96</w>
@@ -182,17 +168,6 @@ State vector</panel_attributes>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;110.0;720.0;110.0;720.0;140.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>456</x>
-      <y>128</y>
-      <w>824</w>
-      <h>128</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;110.0;1010.0;110.0;1010.0;140.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -585,5 +560,27 @@ lt=&lt;&lt;&lt;&lt;-</panel_attributes>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;80.0;1480.0;80.0;1480.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1232</x>
+      <y>240</y>
+      <w>136</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>RightingMomentItem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>456</x>
+      <y>128</y>
+      <w>864</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;110.0;1060.0;110.0;1060.0;140.0</additional_attributes>
   </element>
 </diagram>
