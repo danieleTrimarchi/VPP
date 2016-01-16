@@ -121,6 +121,8 @@ void Optimizer::run(int TWV, int TWA) {
   }
 }
 
+//////////////
+
 /// Fake a static fcn to test for the update mechanism of the VPPItems
 void Optimizer::testStaticFcn(double* x, void* loopData) {
 
@@ -141,6 +143,10 @@ void Optimizer::test(int TWV, int TWA){
   // Drive the loop info to the struct
   Loop_data loopData={TWV,TWA};
   double x[4];
+  x[0] = 2.2; // Speed [m/s]
+  x[1] = 12;  // PHI [deg]
+  x[2] = 1;
+  x[1] = .44;
 
   Optimizer::testStaticFcn(x,&loopData);
 

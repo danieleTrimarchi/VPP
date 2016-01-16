@@ -38,8 +38,32 @@ void Plotter::resetRanges(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 
 }
 
+void Plotter::resetRanges(std::vector<double>& x, std::vector<double>& y) {
+
+	// Set the ranges for the first array
+	if(min(x)<minX_)
+		minX_=x.min(x);
+	if(min(y)<minY_)
+		minY_=min(y);
+	if(max(x)>maxX_)
+		maxX_=max(x);
+	if(max(y)>maxY_)
+		maxY_=max(y);
+
+}
+
 // Reset the ranges so that it can contain all of the plot
 void Plotter::resetRanges(Eigen::ArrayXd& x0,Eigen::ArrayXd& y0,Eigen::ArrayXd& x1,Eigen::ArrayXd& y1) {
+
+	resetRanges(x0,y0);
+	resetRanges(x1,y1);
+
+	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
+
+}
+
+// Reset the ranges so that it can contain all of the plot
+void Plotter::resetRanges(std::vector<double>& x0,std::vector<double>& y0,std::vector<double>& x1,std::vector<double>& y1) {
 
 	resetRanges(x0,y0);
 	resetRanges(x1,y1);
@@ -57,6 +81,7 @@ Plotter::~Plotter() {
 
 }
 
+// Copy the values into plplot compatible containers
 void Plotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 
 	// make sure the buffers x_ and y_ are init
@@ -76,13 +101,44 @@ void Plotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 
 }
 
-/// Find the min of the specified c-style array
+// Copy the values into plplot compatible containers
+void Plotter::setValues(std::vector<double>& x, std::vector<double>& y) {
+
+// make sure the buffers x_ and y_ are init
+delete x_;
+delete y_;
+
+nValues_=x.size();
+
+x_ = new double[nValues_];
+y_ = new double[nValues_];
+
+for ( int i = 0; i < nValues_; i++ )
+{
+	x_[i] = x[i];
+	y_[i] = y[i];
+}
+
+}
+
+// Find the min of the specified c-style array
 double Plotter::min(double* arr) {
 
 	double val=1E+20;
 	for(size_t i=0; i<nValues_; i++){
 		if(arr[i]<val)
 			val=arr[i];
+	}
+	return val;
+}
+
+// Find the min of the specified c-style array
+double Plotter::min(std::vector<double>& vec) {
+
+	double val=1E+20;
+	for(size_t i=0; i<vec.size(); i++){
+		if(vec[i]<val)
+			val=vec[i];
 	}
 	return val;
 }
@@ -97,6 +153,15 @@ double Plotter::max(double* arr) {
 	return val;
 }
 
+/// Find the max of the specified c-style array
+double Plotter::max(std::vector<double>& vec) {
+	double val=-1E+20;
+	for(size_t i=0; i<vec.size(); i++){
+		if(vec[i]>val)
+			val=vec[i];
+	}
+	return val;
+}
 
 // Produce a 2d plot from Eigen vectors
 void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {

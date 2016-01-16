@@ -17,9 +17,12 @@ void ResistanceItem::update(int vTW, int aTW) {
 	// Update the Froude number using the state variable boat velocity
 	fN_= fabs(V_) / sqrt(Physic::g * pParser_->get("LWL"));
 
-	if(fN_ > 0.6)
-		Warning warning("The value of the Froude Number exceeds the limit value 0.6! "
-				"Results might be incorrect.");
+	if(fN_ > 0.6) {
+		char msg[256];
+		sprintf(msg,"The value of the Froude Number %f exceeds the limit value 0.6! "
+				"Results might be incorrect.",fN_);
+		Warning warning(msg);
+	}
 
 }
 
@@ -89,8 +92,6 @@ void InducedResistanceItem::update(int vTW, int aTW) {
   vectB << 1, fN_;
 
   // coeffB(4x2) * vectB(2x1) => TeFn(4x1)
-  // todo dtrimarchi - WARNING : is this going to do the right
-  // operation or shall we be using MatrixXd??
   Eigen::ArrayXd TeFn = coeffB_ * vectB;
 
   // Note that this is a coefficient-wise operation Tegeo(4x1) * TeFn(4x1) -> TeD(4x1)

@@ -99,4 +99,15 @@ double VPPItemFactory::getResistance() {
 	return resistance;
 }
 
+void VPPItemFactory::computeResiduals() {
+
+	// compute deltaF = (Fdrive - Rtot)
+	double dF = (pAeroForcesItem_->getFDrive() - getResistance());
+
+	// compute deltaM = (Mheel  - Mright)
+	double deltaM = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+
+}
+
+
 

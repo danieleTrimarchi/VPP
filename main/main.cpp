@@ -38,22 +38,17 @@ int main(int argc, const char *argv[]) {
 		// Instantiate a container for all the quantities function of the state variables
 		boost::shared_ptr<VPPItemFactory> pVppItems( new VPPItemFactory(&parser,pSails) );
 
-//		// Instantiate an optimizer
-//		Optimizer optimizer(pVppItems);
-//
-//		// Loop on the wind VELOCITIES and ANGLES
-//		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++)
-//			for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++){
-//
-//				// and now I need to manage the way the vppItems gets updated.
-//				// See the original idea in VPPItem::update(int,int,double*)
-//				// Probably best is to define VPPItemFactory::update(vTW,aTW,double*)
-//				// that calls update on the (pure) virtuals of the VPPItems that take
-//				// the same signature
-//
-//				optimizer.test(vTW,aTW);
-//
-//			}
+		// Instantiate an optimizer
+		Optimizer optimizer(pVppItems);
+
+		// Loop on the wind VELOCITIES and ANGLES
+		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++)
+			for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++){
+
+				// Run the optimizer for the current wind speed/angle
+				optimizer.test(vTW,aTW);
+
+			}
 
 	} catch(std::exception& e) {
 		std::cout<<"\n-----------------------------------------"<<std::endl;

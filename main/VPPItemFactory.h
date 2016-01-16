@@ -29,6 +29,9 @@ class VPPItemFactory {
 		/// Compute the resistance by summing up all the contributions
 		double getResistance();
 
+		/// void computeResiduals todo dtrimarchi: allow for a useful interface
+		void computeResiduals();
+
 	private:
 
 		/// Vector storing all the Children of VPPItem

@@ -5,6 +5,7 @@
 
 #include "Eigen/Core"
 #include "Spline.h"
+#include "Plotter.h"
 #include <vector>
 
 class Interpolator {
@@ -54,7 +55,8 @@ class SplineInterpolator {
 		/// Interpolate the function X-Y using the underlying spline for the value val
 		double interpolate(double);
 
-		void testSort();
+		/// Plot the spline and its underlying source points
+		void plot(double minVal,double maxVal,int nVals);
 
 	private:
 
