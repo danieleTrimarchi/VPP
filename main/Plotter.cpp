@@ -42,7 +42,7 @@ void Plotter::resetRanges(std::vector<double>& x, std::vector<double>& y) {
 
 	// Set the ranges for the first array
 	if(min(x)<minX_)
-		minX_=x.min(x);
+		minX_=min(x);
 	if(min(y)<minY_)
 		minY_=min(y);
 	if(max(x)>maxX_)
@@ -200,7 +200,10 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 
 }
 
-void Plotter::plot(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Eigen::ArrayXd& y1) {
+void Plotter::plot(	Eigen::ArrayXd& x0,
+										Eigen::ArrayXd& y0,
+										Eigen::ArrayXd& x1,
+										Eigen::ArrayXd& y1) {
 
 	// Reset the ranges at the very beginning of the plot
 	initRanges();
@@ -250,6 +253,59 @@ void Plotter::plot(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Ei
 
 }
 
+void Plotter::plot(	std::vector<double>& x0,
+										std::vector<double>& y0,
+										std::vector<double>& x1,
+										std::vector<double>& y1,
+										std::string title) {
+
+	// Reset the ranges at the very beginning of the plot
+	initRanges();
+
+	// Check the size of x and y are consistent
+	if(x0.size() != y0.size())
+		throw std::logic_error("In Plotter::plot(x,y). Array _0_ sizes mismatch");
+
+	// Check the size of x and y are consistent
+	if(x1.size() != y1.size())
+		throw std::logic_error("In Plotter::plot(x,y). Array _1_ sizes mismatch");
+
+	// Specify the background color (rgb) and its transparency
+	plscolbga(255,255,255,0.6);
+
+	// Initialize plplot
+	plinit();
+
+	// Create a labeled box to hold the plot.
+	plcol0( color::grey );
+
+	// Copy the values from the incoming arrays into plplot compatible containers
+	setValues(x0,y0);
+
+	// Reset the plot margins so that it can contain the plot
+	resetRanges(x0,y0,x1,y1);
+
+	// Plot the data that was prepared above.
+	plcol0( color::blue );
+	plline( nValues_, x_, y_ );
+	plpoin( nValues_, x_, y_, 5 );
+
+	// ---
+
+	// Now repeat for X1 and Y1
+	// Copy the values from the incoming arrays into plplot compatible containers
+	setValues(x1,y1);
+
+	// Plot the data that was prepared above.
+	plcol0( color::red );
+	plline( nValues_, x_, y_ );
+	plpoin( nValues_, x_, y_, 5 );
+
+	// Close PLplot library
+	pllab( "x", "y", title.c_str() );
+	plend();
+
+}
 //=====================================================================
 
 PolarPlotter::PolarPlotter() :

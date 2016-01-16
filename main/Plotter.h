@@ -28,10 +28,19 @@ class Plotter {
 		void plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y);
 
 		/// Plot the points of two given array sets
-		void plot(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Eigen::ArrayXd& y1);
+		void plot(Eigen::ArrayXd& x0,
+							Eigen::ArrayXd& y0,
+							Eigen::ArrayXd& x1,
+							Eigen::ArrayXd& y1
+							);
 
 		/// Plot the points of two given array sets
-		void plot(std::vector<double>& x0,std::vector<double>& y0,std::vector<double>& x1,std::vector<double>& y1);
+		void plot(std::vector<double>& x0,
+							std::vector<double>& y0,
+							std::vector<double>& x1,
+							std::vector<double>& y1,
+							std::string title
+							);
 
 	protected:
 

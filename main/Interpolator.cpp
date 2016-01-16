@@ -230,7 +230,7 @@ double SplineInterpolator::interpolate(double val) {
 }
 
 // Plot the spline and its underlying source points
-void SplineInterpolator::plot(double minVal,double maxVal,int nVals) {
+void SplineInterpolator::plot(double minVal,double maxVal,int nVals,string title) {
 
 	std::vector<double> x(nVals), y(nVals);
 	double dx= (maxVal-minVal)/(nVals+1);
@@ -243,6 +243,9 @@ void SplineInterpolator::plot(double minVal,double maxVal,int nVals) {
 
 	// ask the plotter to plot the curves
 	Plotter plotter;
-	plotter.plot(s_.get_points(0),s_.get_points(1),x,y);
+	std::vector<double> x0(s_.get_points(0));
+	std::vector<double> y0(s_.get_points(1));
+
+	plotter.plot(x0,y0,x,y,title);
 
 }

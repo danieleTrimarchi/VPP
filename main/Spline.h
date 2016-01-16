@@ -110,7 +110,7 @@ public:
                       bool force_linear_extrapolation=false);
     void set_points(const std::vector<double>& x,
                     const std::vector<double>& y, bool cubic_spline=true);
-    std::vector<double>& get_points(size_t pos);
+    std::vector<double> get_points(size_t pos);
     double operator() (double x) const;
 };
 
@@ -375,7 +375,7 @@ void spline::set_points(const std::vector<double>& x,
 
 
 /// Get references to the underlying source points
-std::vector<double>& spline::get_points(size_t pos) {
+std::vector<double> spline::get_points(size_t pos) {
 
 	assert(pos<2);
 	if(pos==0)

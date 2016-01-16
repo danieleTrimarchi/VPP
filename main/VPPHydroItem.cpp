@@ -103,6 +103,9 @@ void InducedResistanceItem::update(int vTW, int aTW) {
   SplineInterpolator interpolator(phiDArr,TeD);
   double Te= interpolator.interpolate(PHI_);
 
+  // Make a check plot for the induced resistance
+  interpolator.plot(0,30,20,"Induced Resistance");
+
   // Get the aerodynamic side force
   double fHeel= pAeroForcesItem_->getFSide();
 
@@ -174,6 +177,9 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 	// generate the cubic spline values for the coefficients
 	Eigen::ArrayXd RrhDArr=RrhD.array();
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrhDArr) );
+
+  // Make a check plot for the induced resistance
+	pInterpolator_->plot(0,1,20,"Residuary Resistance");
 
 }
 
@@ -248,6 +254,9 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 	Eigen::ArrayXd RrhH20DArr=RrhH20D.array();
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrhH20DArr) );
 
+  // Make a check plot for the induced resistance
+	pInterpolator_->plot(0,.7,20,"Delta Residuary Resistance");
+
 }
 
 // Destructor
@@ -315,6 +324,9 @@ ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pPa
 	// generate the cubic spline values for the coefficients
 	Eigen::ArrayXd RrkDArr=RrkD.array();
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrkDArr) );
+
+  // Make a check plot for the Residuary resistance
+	pInterpolator_->plot(0,.8,20,"Residuary Resistance Keel");
 
 }
 
@@ -480,6 +492,9 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 
 	// generate the cubic spline values for the coefficients
 	pInterpolator_.reset( new SplineInterpolator(phiD,SCphiDArr) );
+
+  // Make a check plot for the induced resistance
+	pInterpolator_->plot(0,40,20,"Frictional Resistance due to HEEL");
 
 }
 
