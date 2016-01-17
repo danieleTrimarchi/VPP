@@ -91,7 +91,7 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 	Eigen::ArrayXXd clMat0,cdpMat0;
 
 	// Pick the lift coefficient for this main (full batten or not)
-	if( pParser_->get("MFBL") ) {
+	if( pParser_->get("MFLB") ) {
 
 		clMat0.resize(6,4);
 		clMat0.row(0) << 0, 		0, 			0, 		0   ;

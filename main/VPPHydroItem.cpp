@@ -156,7 +156,7 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 	//   				geom.CPL.^2]';
 	Eigen::VectorXd vect(9);
 	vect << pParser_->get("LWL") / std::pow(pParser_->get("DIVCAN"),1./3),
-					pParser_->get("XBF") / pParser_->get("LWL") ,
+					pParser_->get("XFB") / pParser_->get("LWL") ,
 					pParser_->get("CPL"),
 					std::pow(pParser_->get("DIVCAN"),2./3) / pParser_->get("AW"),
 					pParser_->get("BWL") / pParser_->get("LWL"),
