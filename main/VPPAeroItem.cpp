@@ -20,26 +20,38 @@ WindItem::~WindItem() {
 /// Update the items for the current step (wind velocity and angle)
 void WindItem::update(int vTW, int aTW) {
 
+	std::cout<<"Updating WindItem"<<std::endl;
+
 	// Get a reference to the varSet
 	const VarSet& v = *(pParser_->getVariables());
 
 	// todo dtrimarchi : it this method is called n times by the optimizer, so it is
-	// stupid to re-compute twv_ e twa_ at each time!
+	// stupid to re-compute twv_ e twa_ at each time! But it is the only place where I
+	// can update.
+
+	il problema sembra essere qui, probabilmente il gioco della const ref non funziona!
 
 	// Update the true wind velocity
 	// vmin to vmax in N steps : vMin + vTW * ( (vMax-vMin)/(nSteps-2) - 1 )
 	twv_= v["V_TW_MIN"] + vTW * ( ( v["V_TW_MAX"] - v["V_TW_MIN"] ) / ( v["N_TWV"] - 2 ) - 1 );
-
+	std::cout<<"TWV= "<<twv_<<std::endl;
 	// Update the true wind angle: make as per the velocity
 	twa_= v["ALPHA_TW_MIN"] + vTW * ( ( v["ALPHA_TW_MAX"] - v["ALPHA_TW_MIN"] ) / ( v["N_ALPHA_TW"] - 2 ) - 1 );
+	std::cout<<"TWA= "<<twa_<<std::endl;
 
 	// Update the apparent wind velocity vector
 	awv_(0)= V_ + twv_ * cos( toRad(twa_)  );
 	awv_(1)= twv_ * sin( toRad(twa_) ) * cos( toRad(PHI_) );
+	std::cout<<"awv_(0)= "<<awv_(0)<<std::endl;
+	std::cout<<"awv_(1)= "<<awv_(1)<<std::endl;
 
 	// Update the apparent wind angle - todo dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
 	awa_= atan( double(awv_(1)/awv_(0)) );
+	if(isnan(awa_)){
+		std::cout<<"awa_ is NAN!"<<std::endl;
+		throw logic_error("awa_ is NAN!");
+	}
 
 }
 
@@ -445,30 +457,60 @@ void AeroForcesItem::update(int vTW, int aTW) {
 
 	// Gets the value of the apparent wind velocity
 	double awv = pWindItem_->getAWNorm();
+	if(isnan(awv)){
+		std::cout<<"awv is NAN!"<<std::endl;
+		throw logic_error("awv is NAN!");
+	}
 
 	double awa = pWindItem_->getAWA();
+	if(isnan(awa)){
+		std::cout<<"awa is NAN!"<<std::endl;
+		throw logic_error("awa is NAN!");
+	}
 
 	// Updates Lift = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cl;
-	lift_ = 0.5 * rho_a * awv * awv * pSailSet_->get("AN") * pSailCoeffs_->getCl();
+	lift_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * pSailCoeffs_->getCl();
+	if(isnan(lift_)){
+		std::cout<<"lift_ is NAN!"<<std::endl;
+		throw logic_error("lift_ is NAN!");
+	}
 
 	// Updates Drag = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cd;
 	drag_ = 0.5 * rho_a * awv * awv * pSailSet_->get("AN") * pSailCoeffs_->getCd();
+	if(isnan(drag_)){
+		std::cout<<"drag_ is NAN!"<<std::endl;
+		throw logic_error("drag_ is NAN!");
+	}
 
 	// Updates Fdrive = lift_ * sin(alfa_eff) - D * cos(alfa_eff);
 	fDrive_ = lift_ * sin(awa) - drag_ * cos(awa);
+	if(isnan(fDrive_)){
+		std::cout<<"fDrive_ is NAN!"<<std::endl;
+		throw logic_error("fDrive_ is NAN!");
+	}
 
 	// Updates Fheel = L * cos(alfa_eff) + D * sin(alfa_eff);
 	fHeel_ = lift_ * cos(awa) + drag_ * sin(awa);
+	if(isnan(fHeel_)){
+		std::cout<<"fHeel_ is NAN!"<<std::endl;
+		throw logic_error("fHeel_ is NAN!");
+	}
 
 	// Updates Mheel = Fheel*(ZCE + geom.T - geom.ZCBK);
 	// todo dtrimarchi: verify the original comment
 	// attenzione: il centro di spinta della deriva e' stato messo nel centro
 	// di galleggiamento. l'ipotesi e' corretta?
 	mHeel_ = fHeel_ * ( pSailSet_->get("ZCE") + pParser_->get("T") - pParser_->get("ZCBK") );
-
+	if(isnan(mHeel_)){
+		std::cout<<"mHeel_ is NAN!"<<std::endl;
+		throw logic_error("mHeel_ is NAN!");
+	}
 	// Updates Fside_ = Fheel*cos(phi*pi/180). Note PHI_ is in degrees
 	fSide_ = fHeel_ * cos( toRad(PHI_) );
-
+	if(isnan(fSide_)){
+		std::cout<<"fSide is NAN!"<<std::endl;
+		throw logic_error("fSide is NAN!");
+	}
 }
 
 /// Get the value of the side force

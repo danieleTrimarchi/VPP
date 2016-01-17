@@ -102,6 +102,11 @@ double VPPItemFactory::getResistance() {
 	for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
 		resistance += vppHydroItems_[iItem]->get();
 
+	if(isnan(resistance)){
+		std::cout<<"Resistance is NAN"<<std::endl;
+		throw logic_error("Resistance is NAN");
+	}
+
 	return resistance;
 }
 
@@ -109,9 +114,10 @@ void VPPItemFactory::computeResiduals(double& dF, double& dM) {
 
 	// compute deltaF = (Fdrive - Rtot)
 	dF = (pAeroForcesItem_->getFDrive() - getResistance());
-
+	std::cout<<"dF= "<<dF<<std::endl;
 	// compute deltaM = (Mheel  - Mright)
-	deltaM = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+	dM = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+	std::cout<<"dM= "<<dM<<std::endl;
 
 }
 

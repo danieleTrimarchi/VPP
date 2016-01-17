@@ -50,9 +50,6 @@ void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const doub
 
 }
 
-// Declare a ptr to a function
-typedef void ( Optimizer::*FUNC ) (unsigned,double*,unsigned,const double*,double*,void*);
-
 void Optimizer::run(int TWV, int TWA) {
 
   // Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
@@ -93,7 +90,7 @@ void Optimizer::run(int TWV, int TWA) {
   opt.set_xtol_rel(1e-1);
 
   // Set the max number of evaluations
-  opt.set_maxeval(200);
+  opt.set_maxeval(20);
 
   // Set some initial guess. Make sure it is within the
   // bounds that have been set
@@ -107,7 +104,7 @@ void Optimizer::run(int TWV, int TWA) {
   double minf;
 
   // Set an initial population of 1000 points
-  opt.set_population(1000);
+  opt.set_population(10);
 
   // Launch the optimization; negative retVal implies failure
   nlopt::result result = opt.optimize(xp, minf);
@@ -121,38 +118,6 @@ void Optimizer::run(int TWV, int TWA) {
      		 xp[0],xp[1],xp[2],xp[3],minf);
   }
 }
-
-//////////////
-
-/// Fake a static fcn to test for the update mechanism of the VPPItems
-void Optimizer::testStaticFcn(double* x, void* loopData) {
-
-	// Retrieve the loop data for this call with a c-style cast
-	Loop_data* d = (Loop_data*)loopData;
-
-	int twv= d-> twv;
-	int twa= d-> twa;
-
-	// Now call update on the VPPItem container
-	vppItemsContainer_->update(twv,twa,x);
-
-}
-
-// Just test the update method of the VPPItems
-void Optimizer::test(int TWV, int TWA){
-
-  // Drive the loop info to the struct
-  Loop_data loopData={TWV,TWA};
-  double x[4];
-  x[0] = 2.2; // Speed [m/s]
-  x[1] = 12;  // PHI [deg]
-  x[2] = 1;
-  x[1] = .44;
-
-  Optimizer::testStaticFcn(x,&loopData);
-
-}
-
 
 
 
