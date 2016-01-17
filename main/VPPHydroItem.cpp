@@ -73,7 +73,7 @@ InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
   vectA_ << tCan/t, (tCan/t)*(tCan/t), bwl/tCan, chtpk/chrtk;
 
   // coeffA(4x4) * vectA(4x1) = Tegeo(4x1)
-  Tegeo_ = coeffA_ * vectA_;
+  Tegeo_ = (coeffA_ * vectA_).array();
 
 }
 
@@ -95,16 +95,21 @@ void InducedResistanceItem::update(int vTW, int aTW) {
   Eigen::ArrayXd TeFn = coeffB_ * vectB;
 
   // Note that this is a coefficient-wise operation Tegeo(4x1) * TeFn(4x1) -> TeD(4x1)
-  Eigen::ArrayXd TeD = pParser_->get("T") * Tegeo_.array() * TeFn;
+  Eigen::ArrayXd TeD = pParser_->get("T") * Tegeo_ * TeFn;
 
   // Properly interpolate then values of TeD for the current value
   // of the state variable PHI_ (heeling angle)
-  Eigen::ArrayXd phiDArr=phiD_.array();
-  SplineInterpolator interpolator(phiDArr,TeD);
+  SplineInterpolator interpolator(phiD_,TeD);
   double Te= interpolator.interpolate(PHI_);
 
+//  std::cout<<"phiDArr= "<<phiD_<<std::endl;
+//  std::cout<<"TeD= "<<TeD<<std::endl;
+//
+//  Plotter plotter;
+//  plotter.plot(phiD_,TeD);
+
   // Make a check plot for the induced resistance
-  interpolator.plot(0,30,20,"Induced Resistance");
+  //interpolator.plot(0,30,20,"Induced Resistance");
 
   // Get the aerodynamic side force
   double fHeel= pAeroForcesItem_->getFSide();
@@ -159,6 +164,7 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 					pParser_->get("XFB") / pParser_->get("XFF"),
 					std::pow(pParser_->get("XFB") / pParser_->get("LWL"),2),
 					std::pow(pParser_->get("CPL"),2);
+	std::cout<<"vect= "<<vect.transpose()<<std::endl;
 
 	// Compute the the residuary resistance for all froude numbers
 	//  RrhD = (geom.DIVCAN.*phys.g.*phys.rho_w) .* ( coeff * vect' ) .* (geom.DIVCAN.^(1/3)./geom.LWL);
@@ -179,7 +185,9 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrhDArr) );
 
   // Make a check plot for the induced resistance
-	pInterpolator_->plot(0,1,20,"Residuary Resistance");
+	std::cout<<"fnD= "<<fnD.transpose()<<std::endl;
+	std::cout<<"RrhDArr= "<<RrhDArr.transpose()<<std::endl;
+	pInterpolator_->plot(0,1,50,"Residuary Resistance");
 
 }
 
@@ -255,7 +263,7 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrhH20DArr) );
 
   // Make a check plot for the induced resistance
-	pInterpolator_->plot(0,.7,20,"Delta Residuary Resistance");
+	//pInterpolator_->plot(0,.7,20,"Delta Residuary Resistance");
 
 }
 
@@ -326,7 +334,7 @@ ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pPa
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrkDArr) );
 
   // Make a check plot for the Residuary resistance
-	pInterpolator_->plot(0,.8,20,"Residuary Resistance Keel");
+	//pInterpolator_->plot(0,.8,20,"Residuary Resistance Keel");
 
 }
 
@@ -440,7 +448,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 	// Rfh = 1/2 .* phys.rho_w .* V.^2 .* geom.SC .* Cf;
 	double rfh = rfh0_ * V_ * V_ * cF;
 
-	// Compute the viscous resistance
+	// Compute the frictional resistance
 	res_ = rfh * pParser_->get("HULLFF");
 
 }
@@ -494,7 +502,7 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 	pInterpolator_.reset( new SplineInterpolator(phiD,SCphiDArr) );
 
   // Make a check plot for the induced resistance
-	pInterpolator_->plot(0,40,20,"Frictional Resistance due to HEEL");
+	//pInterpolator_->plot(0,40,20,"Frictional Resistance due to HEEL");
 
 }
 

@@ -26,12 +26,25 @@ Variable::operator double() const {
 
 // Overload operator [] - non const variety
 Variable VarSet::operator [] (string varName){
-	return *(find(varName));
+
+	VarSet::iterator it = find(varName);
+	if(it == VarSet::end() ) {
+		char msg[256];
+		sprintf(msg,"Cannot find variable named: %s",varName.c_str());
+		throw logic_error(msg);
+	}
+	return *it;
 }
 
 // Overload operator [] - const variety
 const Variable VarSet::operator [] (string varName) const {
-	return *(find(varName));
+	VarSet::iterator it = find(varName);
+	if(it == VarSet::end() ) {
+		char msg[256];
+		sprintf(msg,"Cannot find variable named: %s",varName.c_str());
+		throw logic_error(msg);
+	}
+	return *it;
 }
 
 // Iterate in the set and printout the variables

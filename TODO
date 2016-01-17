@@ -1,7 +1,7 @@
+- Verify the values for the ResiduaryResistanceItem by hand
+	something is clearly fucked up!
+	
 - Port install octave
-- How to add include paths to XCode projects? => compile tinySpline
-
-- Allow for the plotter to get direcly x.row(0), x.row(1), perhaps I simply need to pass ptrs instead of &
 
 - scons structuire suggested Stephane
 

@@ -173,9 +173,6 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 	if(x.size() != y.size())
 		throw std::logic_error("In Plotter::plot(x,y). Array sizes mismatch");
 
-	// Copy the values from the incoming arrays into plplot compatible containers
-	setValues(x,y);
-
 	// Specify the background color (rgb) and its transparency
 	plscolbga(255,255,255,0.6);
 
@@ -185,15 +182,19 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 	// Create a labeled box to hold the plot.
 	plcol0( color::grey );
 
+	// Copy the values from the incoming arrays into plplot compatible containers
+	setValues(x,y);
+
 	// Reset the range for the plot to contain all data
 	resetRanges(x,y);
-
-	// Add labels
- 	pllab( "x", "y", "2D Plot Example" );
+	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
 
 	// Plot the data that was prepared above.
 	plcol0( color::blue );
 	plline( nValues_, x_, y_ );
+
+	// Add labels
+ 	pllab( "x", "y", "2D Plot Example" );
 
 	// Close PLplot library
 	plend();
@@ -233,7 +234,6 @@ void Plotter::plot(	Eigen::ArrayXd& x0,
 
 	// Plot the data that was prepared above.
 	plcol0( color::blue );
-	plline( nValues_, x_, y_ );
 	plpoin( nValues_, x_, y_, 5 );
 
 	// ---
@@ -245,7 +245,6 @@ void Plotter::plot(	Eigen::ArrayXd& x0,
 	// Plot the data that was prepared above.
 	plcol0( color::red );
 	plline( nValues_, x_, y_ );
-	plpoin( nValues_, x_, y_, 5 );
 
 	// Close PLplot library
 	pllab( "x", "y", "2D Plot Example" );
@@ -287,7 +286,6 @@ void Plotter::plot(	std::vector<double>& x0,
 
 	// Plot the data that was prepared above.
 	plcol0( color::blue );
-	plline( nValues_, x_, y_ );
 	plpoin( nValues_, x_, y_, 5 );
 
 	// ---
@@ -299,7 +297,6 @@ void Plotter::plot(	std::vector<double>& x0,
 	// Plot the data that was prepared above.
 	plcol0( color::red );
 	plline( nValues_, x_, y_ );
-	plpoin( nValues_, x_, y_, 5 );
 
 	// Close PLplot library
 	pllab( "x", "y", title.c_str() );
