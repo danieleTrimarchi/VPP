@@ -26,37 +26,37 @@ VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<Sa
 	// Instantiate a ResiduaryResistanceItem and push it back to the children vector
 	boost::shared_ptr<ResiduaryResistanceItem> pResiduaryResistance(new ResiduaryResistanceItem(pParser,pSailSet));
 	vppHydroItems_.push_back( pResiduaryResistance );
-//
-//	// Instantiate a Delta_ResiduaryResistance_HeelItem Item push it back to the children vector
-//	boost::shared_ptr<Delta_ResiduaryResistance_HeelItem> pDelta_ResiduaryResistance_HeelItem(new Delta_ResiduaryResistance_HeelItem(pParser,pSailSet));
-//	vppHydroItems_.push_back( pDelta_ResiduaryResistance_HeelItem );
-//
-//	// Instantiate a ResiduaryResistanceKeelItem Item and push it back to the children vector
-//	boost::shared_ptr<ResiduaryResistanceKeelItem> pResiduaryResistanceKeelItem(new ResiduaryResistanceKeelItem(pParser,pSailSet));
-//	vppHydroItems_.push_back( pResiduaryResistanceKeelItem );
-//
-//	// Instantiate a Delta_ResiduaryResistanceKeel_HeelItem Item and push it back to the children vector
-//	boost::shared_ptr<Delta_ResiduaryResistanceKeel_HeelItem> pDelta_ResiduaryResistanceKeel_HeelItem(new Delta_ResiduaryResistanceKeel_HeelItem(pParser,pSailSet));
-//	vppHydroItems_.push_back( pDelta_ResiduaryResistanceKeel_HeelItem );
-//
-//	// Instantiate a FrictionalResistanceItem Item and push it back to the children vector
-//	boost::shared_ptr<FrictionalResistanceItem> pFrictionalResistanceItem(new FrictionalResistanceItem(pParser,pSailSet));
-//	vppHydroItems_.push_back( pFrictionalResistanceItem );
-//
-//	// Instantiate a Delta_FrictionalResistance_HeelItem Item and push it back to the children vector
-//	boost::shared_ptr<Delta_FrictionalResistance_HeelItem> pDelta_FrictionalResistance_HeelItem(new Delta_FrictionalResistance_HeelItem(pParser,pSailSet));
-//	vppHydroItems_.push_back( pDelta_FrictionalResistance_HeelItem );
-//
-//	// Instantiate a ViscousResistanceKeelItem Item and push it back to the children vector
-//	boost::shared_ptr<ViscousResistanceKeelItem> pViscousResistanceKeelItem(new ViscousResistanceKeelItem(pParser,pSailSet));
-//	vppHydroItems_.push_back( pViscousResistanceKeelItem );
-//
-//	// Instantiate a ViscousResistanceKeelItem Item and push it back to the children vector
-//	boost::shared_ptr<ViscousResistanceRudderItem> pViscousResistanceRudderItem(new ViscousResistanceRudderItem(pParser,pSailSet));
-//	vppHydroItems_.push_back( pViscousResistanceRudderItem );
-//
-//	/// Instantiate a righting moment item
-//	pRightingMomentItem_.reset(new RightingMomentItem(pParser,pSailSet));
+
+	// Instantiate a Delta_ResiduaryResistance_HeelItem Item push it back to the children vector
+	boost::shared_ptr<Delta_ResiduaryResistance_HeelItem> pDelta_ResiduaryResistance_HeelItem(new Delta_ResiduaryResistance_HeelItem(pParser,pSailSet));
+	vppHydroItems_.push_back( pDelta_ResiduaryResistance_HeelItem );
+
+	// Instantiate a ResiduaryResistanceKeelItem Item and push it back to the children vector
+	boost::shared_ptr<ResiduaryResistanceKeelItem> pResiduaryResistanceKeelItem(new ResiduaryResistanceKeelItem(pParser,pSailSet));
+	vppHydroItems_.push_back( pResiduaryResistanceKeelItem );
+
+	// Instantiate a Delta_ResiduaryResistanceKeel_HeelItem Item and push it back to the children vector
+	boost::shared_ptr<Delta_ResiduaryResistanceKeel_HeelItem> pDelta_ResiduaryResistanceKeel_HeelItem(new Delta_ResiduaryResistanceKeel_HeelItem(pParser,pSailSet));
+	vppHydroItems_.push_back( pDelta_ResiduaryResistanceKeel_HeelItem );
+
+	// Instantiate a FrictionalResistanceItem Item and push it back to the children vector
+	boost::shared_ptr<FrictionalResistanceItem> pFrictionalResistanceItem(new FrictionalResistanceItem(pParser,pSailSet));
+	vppHydroItems_.push_back( pFrictionalResistanceItem );
+
+	// Instantiate a Delta_FrictionalResistance_HeelItem Item and push it back to the children vector
+	boost::shared_ptr<Delta_FrictionalResistance_HeelItem> pDelta_FrictionalResistance_HeelItem(new Delta_FrictionalResistance_HeelItem(pParser,pSailSet));
+	vppHydroItems_.push_back( pDelta_FrictionalResistance_HeelItem );
+
+	// Instantiate a ViscousResistanceKeelItem Item and push it back to the children vector
+	boost::shared_ptr<ViscousResistanceKeelItem> pViscousResistanceKeelItem(new ViscousResistanceKeelItem(pParser,pSailSet));
+	vppHydroItems_.push_back( pViscousResistanceKeelItem );
+
+	// Instantiate a ViscousResistanceKeelItem Item and push it back to the children vector
+	boost::shared_ptr<ViscousResistanceRudderItem> pViscousResistanceRudderItem(new ViscousResistanceRudderItem(pParser,pSailSet));
+	vppHydroItems_.push_back( pViscousResistanceRudderItem );
+
+	/// Instantiate a righting moment item
+	pRightingMomentItem_.reset(new RightingMomentItem(pParser,pSailSet));
 
 }
 
