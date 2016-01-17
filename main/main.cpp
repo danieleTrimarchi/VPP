@@ -38,19 +38,19 @@ int main(int argc, const char *argv[]) {
 		// Instantiate a container for all the quantities function of the state variables
 		boost::shared_ptr<VPPItemFactory> pVppItems( new VPPItemFactory(&parser,pSails) );
 
-//		// Instantiate an optimizer
-//		Optimizer optimizer(pVppItems);
+		// Instantiate an optimizer
+		Optimizer optimizer(pVppItems);
 //
 //		// Loop on the wind VELOCITIES and ANGLES
 //		//for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++)
 //		//	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++){
-//		for(size_t vTW=0; vTW<2; vTW++)
-//			for(size_t aTW=0; aTW<2; aTW++){
-//
-//				// Run the optimizer for the current wind speed/angle
-//				optimizer.test(vTW,aTW);
-//
-//			}
+		for(size_t vTW=0; vTW<2; vTW++)
+			for(size_t aTW=0; aTW<2; aTW++){
+
+				// Run the optimizer for the current wind speed/angle
+				optimizer.run(vTW,aTW);
+
+			}
 
 	} catch(std::exception& e) {
 		std::cout<<"\n-----------------------------------------"<<std::endl;

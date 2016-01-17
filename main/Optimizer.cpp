@@ -5,10 +5,16 @@ boost::shared_ptr<VPPItemFactory> Optimizer::vppItemsContainer_;
 int optIterations=0;
 
 // Constructor
-Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
+Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
+		dimension_(4) {
 
 	// Init the static member vppItemsContainer
-	vppItemsContainer_=VPPItemFactory;
+	vppItemsContainer_= VPPItemFactory;
+
+	// Set the parser
+	pParser_= vppItemsContainer_->getParser();
+
+
 }
 
 // Destructor
@@ -39,10 +45,8 @@ void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const doub
 	// Now call update on the VPPItem container
 	vppItemsContainer_->update(twv,twa,x);
 
-	// Compute the residuals for force and moment
-	//	dF e dM devono essere iniettati in result,  array di taglia m (num of constraints, in questo caso 2)
-	// Compute df
-	// compute dM
+	// And compute the residuals for force and moment
+	vppItemsContainer_->computeResiduals(result[0],result[1]);
 
 }
 
@@ -51,31 +55,28 @@ typedef void ( Optimizer::*FUNC ) (unsigned,double*,unsigned,const double*,doubl
 
 void Optimizer::run(int TWV, int TWA) {
 
-	// Set the dimension of this problem (result vector size)
-	size_t dimension=4; // --> v, phi, reef, flat
-
   // Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
-	nlopt::opt opt(nlopt::GN_ISRES,dimension);
+	nlopt::opt opt(nlopt::GN_ISRES,dimension_);
 
  	// Set the and apply the lower and the upper bounds
 	// -> make sure the bounds are larger than the initial
 	// 		guess!
-  std::vector<double> lb(dimension),ub(dimension);
-  lb[0] = 1;
-  ub[0] = 10;
-  lb[1] = 0;
-  ub[1] = 80;
-  lb[2] = 0;
-  ub[2] = 0.3;
-  lb[3] = 0.4;
-  ub[3] = 1;
+  std::vector<double> lb(dimension_),ub(dimension_);
+  lb[0] = pParser_->get("V_MIN");   // Lower velocity
+  ub[0] = pParser_->get("V_MAX"); ;	// Upper velocity
+  lb[1] = pParser_->get("PHI_MIN"); // Lower PHI
+  ub[1] = pParser_->get("PHI_MAX"); // Upper PHI
+  lb[2] = pParser_->get("B_MIN"); ;	// lower reef
+  ub[2] = pParser_->get("B_MAX"); ;	// upper reef
+  lb[3] = pParser_->get("F_MIN"); ;	// lower FLAT
+  ub[3] = pParser_->get("F_MAX"); ;	// upper FLAT
 
   // Set the bounds for the constraints
   opt.set_lower_bounds(lb);
   opt.set_upper_bounds(ub);
 
-  std::vector<double> tol(dimension);
+  std::vector<double> tol(dimension_);
   tol[0]=tol[1]=1.e-1;
 
   // Drive the loop info to the struct
@@ -92,14 +93,14 @@ void Optimizer::run(int TWV, int TWA) {
   opt.set_xtol_rel(1e-1);
 
   // Set the max number of evaluations
-  opt.set_maxeval(500000);
+  opt.set_maxeval(200);
 
   // Set some initial guess. Make sure it is within the
   // bounds that have been set
-  std::vector<double> xp(dimension);
-  xp[0]= 0.7;
-  xp[1]= 0.5;
-  xp[2]= 0.5;
+  std::vector<double> xp(dimension_);
+  xp[0]= 3.;
+  xp[1]= 10.;
+  xp[2]= 1.5;
   xp[3]= 0.5;
 
   // Instantiate the minimum objective value, upon return

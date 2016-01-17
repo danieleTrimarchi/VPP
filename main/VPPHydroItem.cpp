@@ -164,7 +164,6 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 					pParser_->get("XFB") / pParser_->get("XFF"),
 					std::pow(pParser_->get("XFB") / pParser_->get("LWL"),2),
 					std::pow(pParser_->get("CPL"),2);
-	std::cout<<"vect= "<<vect.transpose()<<std::endl;
 
 	// Compute the the residuary resistance for all froude numbers
 	//  RrhD = (geom.DIVCAN.*phys.g.*phys.rho_w) .* ( coeff * vect' ) .* (geom.DIVCAN.^(1/3)./geom.LWL);
@@ -185,9 +184,7 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrhDArr) );
 
   // Make a check plot for the induced resistance
-	std::cout<<"fnD= "<<fnD.transpose()<<std::endl;
-	std::cout<<"RrhDArr= "<<RrhDArr.transpose()<<std::endl;
-	pInterpolator_->plot(0,1,50,"Residuary Resistance");
+	//pInterpolator_->plot(0,1,50,"Residuary Resistance");
 
 }
 
@@ -334,7 +331,7 @@ ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pPa
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrkDArr) );
 
   // Make a check plot for the Residuary resistance
-	//pInterpolator_->plot(0,.8,20,"Residuary Resistance Keel");
+	//pInterpolator_->plot(0,.8,40,"Residuary Resistance Keel");
 
 }
 

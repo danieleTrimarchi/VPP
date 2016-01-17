@@ -32,9 +32,15 @@ class Optimizer {
 
 	private:
 
+		/// Size of the problem this Optimizer is handling
+		size_t dimension_; // --> v, phi, reef, flat
+
 		/// Ptr to the VPPItemFactory that contains all of the ingredients
 		/// required to compute the optimization constraints
 		static boost::shared_ptr<VPPItemFactory> vppItemsContainer_;
+
+		/// Ptr to the variableFileParser
+		VariableFileParser* pParser_;
 
 		// Struct used to drive twv and twa into the update methods of the VPPItems
 		typedef struct {

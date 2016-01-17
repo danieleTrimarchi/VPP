@@ -23,6 +23,9 @@ class VPPItemFactory {
 		/// the value of the state vector x computed by the optimizer
 		void update(int vTW, int aTW, const double* x);
 
+		/// Returns a ptr to the variableFileParser
+		VariableFileParser* getParser();
+
 		/// Getter for the aero forces item that stores the driving forces
 		boost::shared_ptr<AeroForcesItem> getAeroForcesItem();
 
@@ -30,9 +33,12 @@ class VPPItemFactory {
 		double getResistance();
 
 		/// void computeResiduals todo dtrimarchi: allow for a useful interface
-		void computeResiduals();
+		void computeResiduals(double& dF, double& dM);
 
 	private:
+
+		/// ptr to the VariableFileParser
+		VariableFileParser* pParser_;
 
 		/// Vector storing all the Children of VPPItem
 		std::vector<boost::shared_ptr<VPPItem> > vppAeroItems_;
