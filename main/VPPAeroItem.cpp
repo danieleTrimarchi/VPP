@@ -10,6 +10,14 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 				awa_(0),
 				awv_(Eigen::Vector2d::Zero()) {
 
+	v_tw_min_= pParser_->get("V_TW_MIN");
+	v_tw_max_= pParser_->get("V_TW_MAX");
+	n_twv_= pParser_->get("N_TWV");
+
+	alpha_tw_min_= pParser_->get("ALPHA_TW_MIN");
+	alpha_tw_max_= pParser_->get("ALPHA_TW_MAX");
+	n_alpha_tw_= pParser_->get("N_ALPHA_TW");
+
 }
 
 /// Destructor
@@ -29,21 +37,16 @@ void WindItem::update(int vTW, int aTW) {
 	// stupid to re-compute twv_ e twa_ at each time! But it is the only place where I
 	// can update.
 
-	il problema sembra essere qui, probabilmente il gioco della const ref non funziona!
-
 	// Update the true wind velocity
 	// vmin to vmax in N steps : vMin + vTW * ( (vMax-vMin)/(nSteps-2) - 1 )
-	twv_= v["V_TW_MIN"] + vTW * ( ( v["V_TW_MAX"] - v["V_TW_MIN"] ) / ( v["N_TWV"] - 2 ) - 1 );
-	std::cout<<"TWV= "<<twv_<<std::endl;
+	twv_= v_tw_min_ + vTW * ( ( v_tw_max_ - v_tw_min_ ) / n_twv_ );
+
 	// Update the true wind angle: make as per the velocity
-	twa_= v["ALPHA_TW_MIN"] + vTW * ( ( v["ALPHA_TW_MAX"] - v["ALPHA_TW_MIN"] ) / ( v["N_ALPHA_TW"] - 2 ) - 1 );
-	std::cout<<"TWA= "<<twa_<<std::endl;
+	twa_= alpha_tw_min_ + vTW * ( ( alpha_tw_max_ - alpha_tw_min_ ) /  n_alpha_tw_ );
 
 	// Update the apparent wind velocity vector
 	awv_(0)= V_ + twv_ * cos( toRad(twa_)  );
 	awv_(1)= twv_ * sin( toRad(twa_) ) * cos( toRad(PHI_) );
-	std::cout<<"awv_(0)= "<<awv_(0)<<std::endl;
-	std::cout<<"awv_(1)= "<<awv_(1)<<std::endl;
 
 	// Update the apparent wind angle - todo dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
