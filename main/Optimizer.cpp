@@ -14,6 +14,20 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	// Set the parser
 	pParser_= vppItemsContainer_->getParser();
 
+ 	// Set the and apply the lower and the upper bounds
+	// -> make sure the bounds are larger than the initial
+	// 		guess!
+	lowerBounds_.resize(dimension_);
+	upperBounds_.resize(dimension_);
+
+	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
+	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
+  lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
+  upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
+  lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
+  upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
+  lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
+  upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
 
 }
 
@@ -23,7 +37,7 @@ Optimizer::~Optimizer() {
 }
 
 // Set the objective function for tutorial g13
-double Optimizer::VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data) {
+double Optimizer::VPP_speed(unsigned n, const double* x, double *grad, void *my_func_data) {
 
 		// Increment the number of iterations for each call of the objective function
 		++optIterations;
@@ -54,24 +68,12 @@ void Optimizer::run(int TWV, int TWA) {
 
   // Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
-	nlopt::opt opt(nlopt::GN_ISRES,dimension_);
-
- 	// Set the and apply the lower and the upper bounds
-	// -> make sure the bounds are larger than the initial
-	// 		guess!
-  std::vector<double> lb(dimension_),ub(dimension_);
-  lb[0] = pParser_->get("V_MIN");   // Lower velocity
-  ub[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-  lb[1] = pParser_->get("PHI_MIN"); // Lower PHI
-  ub[1] = pParser_->get("PHI_MAX"); // Upper PHI
-  lb[2] = pParser_->get("B_MIN"); ;	// lower reef
-  ub[2] = pParser_->get("B_MAX"); ;	// upper reef
-  lb[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-  ub[3] = pParser_->get("F_MAX"); ;	// upper FLAT
+	//nlopt::opt opt(nlopt::GN_ISRES,dimension_);
+	nlopt::opt opt(nlopt::LN_COBYLA,dimension_);
 
   // Set the bounds for the constraints
-  opt.set_lower_bounds(lb);
-  opt.set_upper_bounds(ub);
+  opt.set_lower_bounds(lowerBounds_);
+  opt.set_upper_bounds(upperBounds_);
 
   std::vector<double> tol(dimension_);
   tol[0]=tol[1]=1.e-1;
@@ -90,7 +92,7 @@ void Optimizer::run(int TWV, int TWA) {
   opt.set_xtol_rel(1e-1);
 
   // Set the max number of evaluations
-  opt.set_maxeval(20);
+  opt.set_maxeval(5000);
 
   // Set some initial guess. Make sure it is within the
   // bounds that have been set
@@ -100,22 +102,22 @@ void Optimizer::run(int TWV, int TWA) {
   xp[2]= 1.5;
   xp[3]= 0.5;
 
-  // Instantiate the minimum objective value, upon return
-  double minf;
+  // Instantiate the maximum objective value, upon return
+  double maxf;
 
   // Set an initial population of 1000 points
-  opt.set_population(10);
+  opt.set_population(1000);
 
   // Launch the optimization; negative retVal implies failure
-  nlopt::result result = opt.optimize(xp, minf);
+  nlopt::result result = opt.optimize(xp, maxf);
 
   if (result < 0) {
       printf("nlopt failed!\n");
   }
   else {
-  		printf("found minimum after %d evaluations\n", optIterations);
-  		printf("found minimum at f(%g,%g,%g,%g) = %0.10g\n",
-     		 xp[0],xp[1],xp[2],xp[3],minf);
+  		printf("found maximum after %d evaluations\n", optIterations);
+  		printf("found maximum at f(%g,%g,%g,%g) = %0.10g\n",
+     		 xp[0],xp[1],xp[2],xp[3],maxf);
   }
 }
 

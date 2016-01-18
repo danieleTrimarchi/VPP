@@ -15,6 +15,7 @@ using namespace Eigen;
 #include "VPPItem.h"
 #include "Optimizer.h"
 #include "Interpolator.h"
+#include "VPPException.h"
 
 // MAIN
 int main(int argc, const char *argv[]) {
@@ -24,6 +25,8 @@ int main(int argc, const char *argv[]) {
 		printf("\n=======================\n");
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
+
+		throw VPPException(HERE, "Test");
 
 		// Get the variables
 		VariableFileParser parser("variableFile.txt");
@@ -40,12 +43,15 @@ int main(int argc, const char *argv[]) {
 
 		// Instantiate an optimizer
 		Optimizer optimizer(pVppItems);
+
 //
 //		// Loop on the wind VELOCITIES and ANGLES
 //		//for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++)
 //		//	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++){
-		for(size_t vTW=0; vTW<2; vTW++)
-			for(size_t aTW=0; aTW<2; aTW++){
+		for(size_t vTW=0; vTW<1; vTW++)
+			for(size_t aTW=0; aTW<1; aTW++){
+
+				std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
 
 				// Run the optimizer for the current wind speed/angle
 				optimizer.run(vTW,aTW);

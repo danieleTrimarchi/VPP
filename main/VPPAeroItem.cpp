@@ -10,10 +10,12 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 				awa_(0),
 				awv_(Eigen::Vector2d::Zero()) {
 
+	// Get the max/min wind velocities from the parser
 	v_tw_min_= pParser_->get("V_TW_MIN");
 	v_tw_max_= pParser_->get("V_TW_MAX");
 	n_twv_= pParser_->get("N_TWV");
 
+	// Get the max/min wind angles from the parser
 	alpha_tw_min_= pParser_->get("ALPHA_TW_MIN");
 	alpha_tw_max_= pParser_->get("ALPHA_TW_MAX");
 	n_alpha_tw_= pParser_->get("N_ALPHA_TW");
@@ -27,8 +29,6 @@ WindItem::~WindItem() {
 
 /// Update the items for the current step (wind velocity and angle)
 void WindItem::update(int vTW, int aTW) {
-
-	std::cout<<"Updating WindItem"<<std::endl;
 
 	// Get a reference to the varSet
 	const VarSet& v = *(pParser_->getVariables());

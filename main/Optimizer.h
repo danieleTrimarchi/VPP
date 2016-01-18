@@ -32,6 +32,9 @@ class Optimizer {
 		/// Size of the problem this Optimizer is handling
 		size_t dimension_; // --> v, phi, reef, flat
 
+		/// lower and upper bounds for the state variables
+	  std::vector<double> lowerBounds_,upperBounds_;
+
 		/// Ptr to the VPPItemFactory that contains all of the ingredients
 		/// required to compute the optimization constraints
 		static boost::shared_ptr<VPPItemFactory> vppItemsContainer_;
