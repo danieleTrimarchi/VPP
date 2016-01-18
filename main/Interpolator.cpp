@@ -1,6 +1,7 @@
 #include "Interpolator.h"
 #include <math.h>
 #include "Plotter.h"
+#include "VPPException.h"
 
 // Constructor
 Interpolator::Interpolator() {
@@ -17,7 +18,7 @@ double Interpolator::interpolate(double val,Eigen::ArrayXd& X,Eigen::ArrayXd& Y)
 
 	// throw if out of bounds
 	if( val<X(0) || val>X(X.size()-1) )
-		throw std::logic_error("the interpolator is not supposed to extrapolate!");
+		throw VPPException(HERE,"the interpolator is not supposed to extrapolate!");
 
 	// Subtract XMinusVal = (X^2 - val^2)^2
 	Eigen::ArrayXd XMinusVal= (X.square() - val*val).square();
@@ -178,7 +179,7 @@ SplineInterpolator::SplineInterpolator() {
 SplineInterpolator::SplineInterpolator(Eigen::ArrayXd& X0,Eigen::ArrayXd& Y0) {
 
 	if(X0.size() != Y0.size())
-		throw std::logic_error("In SplineInterpolator: Size mismatch");
+		throw VPPException(HERE,"In SplineInterpolator: Size mismatch");
 
 	// transform the Eigen arrays into vectors
 	std::vector<double> X(X0.size()), Y(Y0.size());
@@ -197,7 +198,7 @@ SplineInterpolator::SplineInterpolator(Eigen::ArrayXd& X0,Eigen::ArrayXd& Y0) {
 SplineInterpolator::SplineInterpolator(std::vector<double>& x, std::vector<double>& y) {
 
 	if(x.size() != y.size())
-		throw std::logic_error("In SplineInterpolator: Size mismatch");
+		throw VPPException(HERE,"In SplineInterpolator: Size mismatch");
 
 	// Generate the underlying spline
 	generate(x,y);
@@ -210,7 +211,7 @@ void SplineInterpolator::generate(std::vector<double>& x, std::vector<double>& y
 	// throw if x is not sorted (todo dtrimarchi: instantiate a sorter)
 	for(size_t i=1; i<x.size(); i++)
 		if(x[i]<=x[i-1])
-			throw std::logic_error("In SplineInterpolator, vector not sorted");
+			throw VPPException(HERE,"In SplineInterpolator, vector not sorted");
 
 	// Instantiate a spline out of the xy vectors
 	s_.set_points(x,y);

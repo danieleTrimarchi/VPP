@@ -1,4 +1,5 @@
 #include "VPPItemFactory.h"
+#include "VPPException.h"
 
 // Constructor
 VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
@@ -102,10 +103,8 @@ double VPPItemFactory::getResistance() {
 	for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
 		resistance += vppHydroItems_[iItem]->get();
 
-	if(isnan(resistance)){
-		std::cout<<"Resistance is NAN"<<std::endl;
-		throw logic_error("Resistance is NAN");
-	}
+	if(isnan(resistance))
+		throw VPPException(HERE,"Resistance is NAN");
 
 	return resistance;
 }

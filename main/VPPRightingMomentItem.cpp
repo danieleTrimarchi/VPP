@@ -2,6 +2,7 @@
 #include "Physics.h"
 #include "mathUtils.h"
 using namespace mathUtils;
+#include "VPPException.h"
 
 // Constructor
 RightingMomentItem::RightingMomentItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> sailSet):
@@ -35,10 +36,9 @@ void RightingMomentItem::update(int vTW, int aTW) {
 	//Mright = M1+M2;
 	val_ = m10_ * std::sin( toRad(PHI_)) + m20_ * b_ * std::cos( toRad(PHI_)) ;
 
-	if(isnan(val_)){
-		std::cout<<"Righting moment is NAN"<<std::endl;
-		throw logic_error("Righting moment is NAN");
-	}
+	if(isnan(val_))
+		throw VPPException(HERE,"Righting moment is NAN");
+
 }
 
 // Print the class name -> in this case SailCoefficientItem

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <cmath>
 #include "Warning.h"
+#include "VPPException.h"
 
 // Constructor
 VariableFileParser::VariableFileParser(std::string fileName) :
@@ -140,7 +141,7 @@ void VariableFileParser::check() {
 	  if(it == variables_.end()) {
 	  	char msg[256];
 	  	sprintf(msg,"Variable \"%s\" was not defined in file \"%s\"",requiredVariables_[iVar].c_str(),fileName_.c_str());
-	  	throw std::logic_error(msg);
+	  	throw VPPException(HERE,msg);
 	  }
 	}
 
@@ -169,7 +170,7 @@ void VariableFileParser::check() {
 		Warning("Loading Factor is out of valuable data");
 
 	if(variables_["V_TW_MAX"] <= variables_["V_TW_MIN"] )
-		throw logic_error("V_TW_MIN is larger than V_TW_MAX!");
+		throw VPPException(HERE,"V_TW_MIN is larger than V_TW_MAX!");
 
 }
 

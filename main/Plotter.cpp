@@ -1,4 +1,5 @@
 #include "Plotter.h"
+#include "VPPException.h"
 
 // Constructor
 Plotter::Plotter():
@@ -171,7 +172,7 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 
 	// Check the size of x and y are consistent
 	if(x.size() != y.size())
-		throw std::logic_error("In Plotter::plot(x,y). Array sizes mismatch");
+		throw VPPException(HERE,"In Plotter::plot(x,y). Array sizes mismatch");
 
 	// Specify the background color (rgb) and its transparency
 	plscolbga(255,255,255,0.6);
@@ -211,11 +212,11 @@ void Plotter::plot(	Eigen::ArrayXd& x0,
 
 	// Check the size of x and y are consistent
 	if(x0.size() != y0.size())
-		throw std::logic_error("In Plotter::plot(x,y). Array _0_ sizes mismatch");
+		throw VPPException(HERE,"In Plotter::plot(x,y). Array _0_ sizes mismatch");
 
 	// Check the size of x and y are consistent
 	if(x1.size() != y1.size())
-		throw std::logic_error("In Plotter::plot(x,y). Array _1_ sizes mismatch");
+		throw VPPException(HERE,"In Plotter::plot(x,y). Array _1_ sizes mismatch");
 
 	// Specify the background color (rgb) and its transparency
 	plscolbga(255,255,255,0.6);
@@ -263,11 +264,11 @@ void Plotter::plot(	std::vector<double>& x0,
 
 	// Check the size of x and y are consistent
 	if(x0.size() != y0.size())
-		throw std::logic_error("In Plotter::plot(x,y). Array _0_ sizes mismatch");
+		throw VPPException(HERE,"In Plotter::plot(x,y). Array _0_ sizes mismatch");
 
 	// Check the size of x and y are consistent
 	if(x1.size() != y1.size())
-		throw std::logic_error("In Plotter::plot(x,y). Array _1_ sizes mismatch");
+		throw VPPException(HERE,"In Plotter::plot(x,y). Array _1_ sizes mismatch");
 
 	// Specify the background color (rgb) and its transparency
 	plscolbga(255,255,255,0.6);
