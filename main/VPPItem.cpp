@@ -37,6 +37,7 @@ void VPPItem::update(int vTW, int aTW, const double* x) {
 	b_= x[2];
 	f_= x[3];
 
+	std::cout<<"--X--="<<x[0]<<" "<<x[1]<<" "<<x[2]<<" "<<x[3]<<std::endl;
 	// Now call the implementation of the pure virtual update(int,int)
 	// for every child
 	update(vTW,aTW);

@@ -1,4 +1,5 @@
 #include "Optimizer.h"
+#include "VPPException.h"
 
 // Init static member
 boost::shared_ptr<VPPItemFactory> Optimizer::vppItemsContainer_;
@@ -76,7 +77,7 @@ void Optimizer::run(int TWV, int TWA) {
   opt.set_upper_bounds(upperBounds_);
 
   std::vector<double> tol(dimension_);
-  tol[0]=tol[1]=1.e-1;
+  tol[0]=tol[1]=1.e-8;
 
   // Drive the loop info to the struct
   Loop_data loopData={TWV,TWA};
@@ -89,7 +90,7 @@ void Optimizer::run(int TWV, int TWA) {
   opt.add_equality_mconstraint(VPPconstraint, &loopData, tol);
 
   // Set the relative tolerance
-  opt.set_xtol_rel(1e-1);
+  opt.set_xtol_rel(1e-8);
 
   // Set the max number of evaluations
   opt.set_maxeval(5000);
@@ -97,9 +98,9 @@ void Optimizer::run(int TWV, int TWA) {
   // Set some initial guess. Make sure it is within the
   // bounds that have been set
   std::vector<double> xp(dimension_);
-  xp[0]= 3.;
-  xp[1]= 10.;
-  xp[2]= 1.5;
+  xp[0]= 1.;
+  xp[1]= 0.;
+  xp[2]= 0.5;
   xp[3]= 0.5;
 
   // Instantiate the maximum objective value, upon return

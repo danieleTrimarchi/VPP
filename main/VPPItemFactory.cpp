@@ -113,10 +113,10 @@ void VPPItemFactory::computeResiduals(double& dF, double& dM) {
 
 	// compute deltaF = (Fdrive - Rtot)
 	dF = (pAeroForcesItem_->getFDrive() - getResistance());
-	std::cout<<"dF= "<<dF<<std::endl;
 	// compute deltaM = (Mheel  - Mright)
 	dM = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
-	std::cout<<"dM= "<<dM<<std::endl;
+
+	std::cout<<"dF= "<<dF<<"  dM= "<<dM<<std::endl;
 
 }
 

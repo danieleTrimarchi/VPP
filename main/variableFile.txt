@@ -3,7 +3,7 @@
 % all data must be provided at zero speed
 
 %%%% VPP CONFIGURATION %%%%%%%%%
-V_MIN	1		% ??? [m/s] Min true wind velocity
+V_MIN	0		% ??? [m/s] Min true wind velocity
 V_MAX	10		% ??? [m/s] Max true wind velocity
 PHI_MIN	0		% ??? [deg] Min true wind angle
 PHI_MAX	80		% ??? [deg] Max true wind angle

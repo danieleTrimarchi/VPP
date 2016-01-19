@@ -33,9 +33,6 @@ WindItem::~WindItem() {
 /// Update the items for the current step (wind velocity and angle)
 void WindItem::update(int vTW, int aTW) {
 
-	// Get a reference to the varSet
-	const VarSet& v = *(pParser_->getVariables());
-
 	// todo dtrimarchi : it this method is called n times by the optimizer, so it is
 	// stupid to re-compute twv_ e twa_ at each time! But it is the only place where I
 	// can update.
@@ -43,19 +40,25 @@ void WindItem::update(int vTW, int aTW) {
 	// Update the true wind velocity
 	// vmin to vmax in N steps : vMin + vTW * ( (vMax-vMin)/(nSteps-2) - 1 )
 	twv_= v_tw_min_ + vTW * ( ( v_tw_max_ - v_tw_min_ ) / n_twv_ );
+	if(isnan(twv_)) throw VPPException(HERE,"twv_ is NAN!");
 
 	// Update the true wind angle: make as per the velocity
 	twa_= alpha_tw_min_ + vTW * ( ( alpha_tw_max_ - alpha_tw_min_ ) /  n_alpha_tw_ );
+	if(isnan(twa_)) throw VPPException(HERE,"twa_ is NAN!");
 
 	// Update the apparent wind velocity vector
 	awv_(0)= V_ + twv_ * cos( toRad(twa_)  );
+	std::cout<<"V_= "<<V_<<std::endl;
+	std::cout<<"awv_(0)= "<<awv_(0)<<std::endl;
+	if(isnan(awv_(0))) throw VPPException(HERE,"awv_(0) is NAN!");
+
 	awv_(1)= twv_ * sin( toRad(twa_) ) * cos( toRad(PHI_) );
+	if(isnan(awv_(1))) throw VPPException(HERE,"awv_(1) is NAN!");
 
 	// Update the apparent wind angle - todo dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
 	awa_= atan( double(awv_(1)/awv_(0)) );
-	if(isnan(awa_))
-		throw VPPException(HERE,"awa_ is NAN!");
+	if(isnan(awa_))	throw VPPException(HERE,"awa_ is NAN!");
 
 
 }
@@ -171,6 +174,7 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 
 	// Update the local copy of the the apparent wind angle
 	awa_= pWindItem_->getAWA();
+	if(isnan(awa_)) throw VPPException(HERE,"awa_ is nan");
 
 	// create aliases for code readability
 	VariableFileParser* p = pParser_;
@@ -199,12 +203,15 @@ void SailCoefficientItem::postUpdate() {
 
 	// Reduce cl with the flattening factor of the state vector
 	cl_ = cl_ * f_;
+	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
 
 	// Compute the induced resistance
 	cdI_ = cl_ * cl_ * ( 1. / (M_PI * ar_) + 0.005 );
 
 	// Compute the total sail drag coefficient now
 	cd_ = cdp_ + cd0_ + cdI_;
+	if(isnan(cd_)) throw VPPException(HERE,"cd_ is nan");
+
 }
 
 /// Returns a ptr to the wind Item
@@ -341,6 +348,9 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") ) /  ps->get("AN");
 	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") ) /  ps->get("AN");
 
+	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
+	if(isnan(cdp_)) throw VPPException(HERE,"cdp_ is nan");
+
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
 
@@ -382,6 +392,8 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
 	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
+	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
+	if(isnan(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
@@ -425,6 +437,8 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
 	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
+	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
+	if(isnan(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
@@ -462,36 +476,30 @@ void AeroForcesItem::update(int vTW, int aTW) {
 
 	// Gets the value of the apparent wind velocity
 	double awv = pWindItem_->getAWNorm();
-	if(isnan(awv))
-		throw VPPException(HERE,"awv is NAN!");
+	if(isnan(awv)) throw VPPException(HERE,"awv is NAN!");
 
 	double awa = pWindItem_->getAWA();
-	if(isnan(awa))
-		throw VPPException(HERE,"awa is NAN!");
+	if(isnan(awa)) throw VPPException(HERE,"awa is NAN!");
 
 
 	// Updates Lift = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cl;
 	lift_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * pSailCoeffs_->getCl();
-	if(isnan(lift_))
-		throw VPPException(HERE,"lift_ is NAN!");
+	if(isnan(lift_)) throw VPPException(HERE,"lift_ is NAN!");
 
 
 	// Updates Drag = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cd;
 	drag_ = 0.5 * rho_a * awv * awv * pSailSet_->get("AN") * pSailCoeffs_->getCd();
-	if(isnan(drag_))
-		throw VPPException(HERE,"drag_ is NAN!");
+	if(isnan(drag_)) throw VPPException(HERE,"drag_ is NAN!");
 
 
 	// Updates Fdrive = lift_ * sin(alfa_eff) - D * cos(alfa_eff);
 	fDrive_ = lift_ * sin(awa) - drag_ * cos(awa);
-	if(isnan(fDrive_))
-		throw VPPException(HERE,"fDrive_ is NAN!");
+	if(isnan(fDrive_)) throw VPPException(HERE,"fDrive_ is NAN!");
 
 
 	// Updates Fheel = L * cos(alfa_eff) + D * sin(alfa_eff);
 	fHeel_ = lift_ * cos(awa) + drag_ * sin(awa);
-	if(isnan(fHeel_))
-		throw VPPException(HERE,"fHeel_ is NAN!");
+	if(isnan(fHeel_)) throw VPPException(HERE,"fHeel_ is NAN!");
 
 
 	// Updates Mheel = Fheel*(ZCE + geom.T - geom.ZCBK);
@@ -499,13 +507,11 @@ void AeroForcesItem::update(int vTW, int aTW) {
 	// attenzione: il centro di spinta della deriva e' stato messo nel centro
 	// di galleggiamento. l'ipotesi e' corretta?
 	mHeel_ = fHeel_ * ( pSailSet_->get("ZCE") + pParser_->get("T") - pParser_->get("ZCBK") );
-	if(isnan(mHeel_))
-		throw VPPException(HERE,"mHeel_ is NAN!");
+	if(isnan(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
 
 	// Updates Fside_ = Fheel*cos(phi*pi/180). Note PHI_ is in degrees
 	fSide_ = fHeel_ * cos( toRad(PHI_) );
-	if(isnan(fSide_))
-		throw VPPException(HERE,"fSide is NAN!");
+	if(isnan(fSide_)) throw VPPException(HERE,"fSide is NAN!");
 
 }
 

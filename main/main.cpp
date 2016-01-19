@@ -26,8 +26,6 @@ int main(int argc, const char *argv[]) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-		throw VPPException(HERE, "Test");
-
 		// Get the variables
 		VariableFileParser parser("variableFile.txt");
 		parser.parse();

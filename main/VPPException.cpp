@@ -9,6 +9,7 @@ VPPException::VPPException(const char* inFile, int inLine, const char* inFunctio
 	oss<<"Error in function: "<<inFunction<<"\nin file: "<<inFile<<" line: "<<inLine<<std::endl;
 	oss<<"Message: "<<message<<std::endl;
 	msg=oss.str();
+	std::cout<<msg<<std::endl;
 }
 
 // Destructor

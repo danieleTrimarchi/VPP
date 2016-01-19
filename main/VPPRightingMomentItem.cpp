@@ -24,6 +24,7 @@ RightingMomentItem::~RightingMomentItem() {
 
 // Get the righting moment value
 const double RightingMomentItem::get() const {
+	if(isnan(val_)) throw VPPException(HERE,"val_ is nan");
 	return val_;
 }
 
@@ -35,9 +36,7 @@ void RightingMomentItem::update(int vTW, int aTW) {
 	//M2 = geom.MMVBLCRW .* phys.g .* b .* cos(phi*pi/180);
 	//Mright = M1+M2;
 	val_ = m10_ * std::sin( toRad(PHI_)) + m20_ * b_ * std::cos( toRad(PHI_)) ;
-
-	if(isnan(val_))
-		throw VPPException(HERE,"Righting moment is NAN");
+	if(isnan(val_)) throw VPPException(HERE,"Righting moment is NAN");
 
 }
 
