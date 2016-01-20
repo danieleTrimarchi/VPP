@@ -93,24 +93,26 @@ void Optimizer::run(int TWV, int TWA) {
   opt.set_xtol_rel(1e-8);
 
   // Set the max number of evaluations
-  opt.set_maxeval(5000);
+  opt.set_maxeval(1000);
 
   // Set some initial guess. Make sure it is within the
   // bounds that have been set
   std::vector<double> xp(dimension_);
-  xp[0]= 1.;
-  xp[1]= 0.;
-  xp[2]= 0.5;
-  xp[3]= 0.5;
+  xp[0]= 0.02;
+  xp[1]= 0.1;
+  xp[2]= 3;
+  xp[3]= 1;
 
   // Instantiate the maximum objective value, upon return
   double maxf;
 
-  // Set an initial population of 1000 points
-  opt.set_population(1000);
-
   // Launch the optimization; negative retVal implies failure
-  nlopt::result result = opt.optimize(xp, maxf);
+  nlopt::result result;
+  try{
+  	result= opt.optimize(xp, maxf);
+  } catch (...){
+  	// do nothing
+  }
 
   if (result < 0) {
       printf("nlopt failed!\n");

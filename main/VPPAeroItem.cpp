@@ -48,8 +48,6 @@ void WindItem::update(int vTW, int aTW) {
 
 	// Update the apparent wind velocity vector
 	awv_(0)= V_ + twv_ * cos( toRad(twa_)  );
-	std::cout<<"V_= "<<V_<<std::endl;
-	std::cout<<"awv_(0)= "<<awv_(0)<<std::endl;
 	if(isnan(awv_(0))) throw VPPException(HERE,"awv_(0) is NAN!");
 
 	awv_(1)= twv_ * sin( toRad(twa_) ) * cos( toRad(PHI_) );
@@ -346,9 +344,9 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") ) /  ps->get("AN");
-	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") ) /  ps->get("AN");
-
 	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
+
+	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") ) /  ps->get("AN");
 	if(isnan(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
@@ -391,8 +389,9 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
-	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
 	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
+
+	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
 	if(isnan(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
@@ -436,8 +435,9 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
-	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
 	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
+
+	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
 	if(isnan(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI

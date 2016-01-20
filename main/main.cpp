@@ -42,13 +42,10 @@ int main(int argc, const char *argv[]) {
 		// Instantiate an optimizer
 		Optimizer optimizer(pVppItems);
 
-//
-//		// Loop on the wind VELOCITIES and ANGLES
-//		//for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++)
-//		//	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++){
-		for(size_t vTW=0; vTW<1; vTW++)
-			for(size_t aTW=0; aTW<1; aTW++){
-
+		// Loop on the number of wind VELOCITIES and ANGLES
+		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++)
+			for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++){
+				std::cout<<"----------------------------------"<<std::endl;
 				std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
 
 				// Run the optimizer for the current wind speed/angle
