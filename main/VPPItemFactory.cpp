@@ -120,5 +120,24 @@ void VPPItemFactory::computeResiduals(double& dF, double& dM) {
 
 }
 
+// Compute the residuals vector: {dF dM dv/dr  dv/df}
+Eigen::Vector4d VPPItemFactory::getResiduals() {
+
+	// Declare the residuals vector
+	Eigen::Vector4d residuals;
+
+	// Compute dF
+	residuals(0)= (pAeroForcesItem_->getFDrive() - getResistance());
+
+	// Compute dM
+	residuals(1)=  (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+
+	// Compute dv/dr = (FrMh-FhMr)/(FvMh-FhMv)
+
+	// Compute dv/df = (FfMh-FhMv)/(FvMh-FhMv)
+
+
+	return residuals;
+}
 
 

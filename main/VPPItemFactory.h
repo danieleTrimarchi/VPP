@@ -32,8 +32,11 @@ class VPPItemFactory {
 		/// Compute the resistance by summing up all the contributions
 		double getResistance();
 
-		/// void computeResiduals todo dtrimarchi: allow for a useful interface
+		/// Compute force and moment residuals
 		void computeResiduals(double& dF, double& dM);
+
+		/// Compute the residual vector: {df dM dv/dr  dv/df}
+		Eigen::Vector4d getResiduals();
 
 	private:
 

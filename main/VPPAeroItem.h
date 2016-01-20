@@ -25,7 +25,7 @@ class WindItem : public VPPItem {
 		/// Returns the true wind angle for this step
 		const double getTWA() const;
 
-		/// Returns the apparent wind angle for this step
+		/// Returns the apparent wind angle (deg) for this step
 		const double getAWA() const;
 
 		/// Returns the apparent wind velocity vector for this step

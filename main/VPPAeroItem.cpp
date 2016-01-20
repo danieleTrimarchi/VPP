@@ -38,12 +38,12 @@ void WindItem::update(int vTW, int aTW) {
 	// can update.
 
 	// Update the true wind velocity
-	// vmin to vmax in N steps : vMin + vTW * ( (vMax-vMin)/(nSteps-2) - 1 )
-	twv_= v_tw_min_ + vTW * ( ( v_tw_max_ - v_tw_min_ ) / n_twv_ );
+	// vmin to vmax in N steps : vMin + vTW * ( (vMax-vMin)/nSteps )
+	twv_= v_tw_min_ + vTW * ( v_tw_max_ - v_tw_min_ ) / n_twv_;
 	if(isnan(twv_)) throw VPPException(HERE,"twv_ is NAN!");
 
 	// Update the true wind angle: make as per the velocity
-	twa_= alpha_tw_min_ + vTW * ( ( alpha_tw_max_ - alpha_tw_min_ ) /  n_alpha_tw_ );
+	twa_= alpha_tw_min_ + vTW * ( alpha_tw_max_ - alpha_tw_min_ ) /  n_alpha_tw_;
 	if(isnan(twa_)) throw VPPException(HERE,"twa_ is NAN!");
 
 	// Update the apparent wind velocity vector
@@ -55,7 +55,7 @@ void WindItem::update(int vTW, int aTW) {
 
 	// Update the apparent wind angle - todo dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
-	awa_= atan( double(awv_(1)/awv_(0)) );
+	awa_= toDeg( atan( double(awv_(1)/awv_(0)) ) );
 	if(isnan(awa_))	throw VPPException(HERE,"awa_ is NAN!");
 
 
@@ -75,7 +75,7 @@ const double WindItem::getTWA() const {
 	return twa_;
 }
 
-/// Returns the apparent wind angle for this step
+/// Returns the apparent wind angle (in deg) for this step
 const double WindItem::getAWA() const {
 	return awa_;
 }
