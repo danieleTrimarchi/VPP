@@ -2,6 +2,7 @@
 #define VPPAEROITEM_H
 
 #include "VPPItem.h"
+#include "SailSet.h"
 #include "Physics.h"
 #include "boost/shared_ptr.hpp"
 
@@ -130,6 +131,9 @@ class SailCoefficientItem : public VPPItem {
 
 	private:
 
+		/// Pure virtual that makes this class abstract.
+		virtual void compute() =0;
+
 		/// Ptr to the wind item
 		WindItem* pWindItem_;
 
@@ -157,6 +161,9 @@ class MainOnlySailCoefficientItem : public SailCoefficientItem {
 
 	private:
 
+		/// Implement the pure virtual method of the abstract base class
+		virtual void compute();
+
 		/// Update the item for the current step (wind velocity and angle),
 		/// the values of the state vector x computed by the optimizer have
 		/// already been treated by the parent
@@ -180,6 +187,9 @@ class MainAndJibCoefficientItem : public SailCoefficientItem {
 		virtual void printWhoAmI();
 
 	private:
+
+		/// Implement the pure virtual method of the abstract base class
+		virtual void compute();
 
 		/// Update the item for the current step (wind velocity and angle),
 		/// the values of the state vector x computed by the optimizer have
@@ -205,6 +215,9 @@ class MainAndSpiCoefficientItem : public SailCoefficientItem {
 
 	private:
 
+		/// Implement the pure virtual method of the abstract base class
+		virtual void compute();
+
 		/// Update the item for the current step (wind velocity and angle),
 		/// the values of the state vector x computed by the optimizer have
 		/// already been treated by the parent
@@ -229,12 +242,16 @@ class MainJibAndSpiCoefficientItem : public SailCoefficientItem {
 
 	private:
 
+		/// Implement the pure virtual method of the abstract base class
+		virtual void compute();
+
 		/// Update the item for the current step (wind velocity and angle),
 		/// the values of the state vector x computed by the optimizer have
 		/// already been treated by the parent
 		virtual void update(int vTW, int aTW);
 
 };
+
 //=================================================================
 
 class AeroForcesItem : public VPPItem {

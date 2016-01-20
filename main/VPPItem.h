@@ -12,6 +12,9 @@
 using namespace std;
 using namespace Eigen;
 
+/// Forward declarations
+class SailSet;
+
 /// Generic base class for all the VPP items
 class VPPItem {
 

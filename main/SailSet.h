@@ -13,6 +13,14 @@ enum sailConfig {
 	mainJibAndSpi=7,
 };
 
+/// forward declarations
+class WindItem;
+class SailCoefficientItem;
+class MainOnlySailCoefficientItem;
+class MainAndJibCoefficientItem;
+class MainAndSpiCoefficientItem;
+class MainJibAndSpiCoefficientItem;
+
 /// Compute the sail geometry/configuration given the
 /// informations stored in the parser
 class SailSet {
@@ -37,6 +45,10 @@ class SailSet {
 		/// Get the value of a variable
 		double get(std::string);
 
+		/// Make a new SailCoefficientItem of the type required for
+		/// this sailSet
+		virtual SailCoefficientItem* sailCoefficientItemFactory(WindItem*) =0;
+
 	protected:
 
 		/// Parser storing all the variables read
@@ -58,6 +70,10 @@ class MainOnlySailSet : public SailSet {
 		/// Return the Id of this SailSet (this is the enum sailConfig)
 		virtual size_t getType();
 
+		/// Make a new SailCoefficientItem of the type required for
+		/// this sailSet
+		virtual SailCoefficientItem* sailCoefficientItemFactory(WindItem*);
+
 };
 
 class MainAndJibSailSet : public SailSet {
@@ -69,6 +85,10 @@ class MainAndJibSailSet : public SailSet {
 
 		/// Return the Id of this SailSet (this is the enum sailConfig)
 		virtual size_t getType();
+
+		/// Make a new SailCoefficientItem of the type required for
+		/// this sailSet
+		virtual SailCoefficientItem* sailCoefficientItemFactory(WindItem*);
 
 };
 
@@ -82,6 +102,10 @@ class MainAndSpiSailSet : public SailSet {
 		/// Return the Id of this SailSet (this is the enum sailConfig)
 		virtual size_t getType();
 
+		/// Make a new SailCoefficientItem of the type required for
+		/// this sailSet
+		virtual SailCoefficientItem* sailCoefficientItemFactory(WindItem*);
+
 };
 
 class MainJibAndSpiSailSet : public SailSet {
@@ -93,6 +117,10 @@ class MainJibAndSpiSailSet : public SailSet {
 
 		/// Return the Id of this SailSet (this is the enum sailConfig)
 		virtual size_t getType();
+
+		/// Make a new SailCoefficientItem of the type required for
+		/// this sailSet
+		virtual SailCoefficientItem* sailCoefficientItemFactory(WindItem*);
 
 };
 

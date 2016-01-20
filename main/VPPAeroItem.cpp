@@ -193,6 +193,9 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 	// Compute cd0
 	cd0_= 1.13 * ( (p->get("B") * p->get("AVGFREB")) + (p->get("AVGFREB")*p->get("AVGFREB") ) ) / s->get("AN");
 
+	// Compute the coefficients based on the sail configuration
+	compute();
+
 }
 
 // Called by the children as a decorator for update.
@@ -288,6 +291,14 @@ MainOnlySailCoefficientItem::~MainOnlySailCoefficientItem() {
 
 }
 
+// Implement the pure virtual method of the abstract base class
+void MainOnlySailCoefficientItem::compute() {
+
+	// Compute the sail coefficients for the main sail
+	computeForMain();
+
+}
+
 // Update the item for the current step (wind velocity and angle),
 // the values of the state vector x computed by the optimizer have
 // already been treated by the parent
@@ -295,9 +306,6 @@ void MainOnlySailCoefficientItem::update(int vTW, int aTW) {
 
 	// Decorate the parent class method that updates the value of awa_
 	SailCoefficientItem::update(vTW,aTW);
-
-	// Compute the sail coefficients for the main sail
-	computeForMain();
 
 	// In this case the lift/drag coeffs are just what was computed for main
 	cl_ = allCl_(0);
@@ -327,6 +335,15 @@ MainAndJibCoefficientItem::~MainAndJibCoefficientItem() {
 
 }
 
+// Implement the pure virtual method of the abstract base class
+void MainAndJibCoefficientItem::compute() {
+
+	// Compute the sail coefficients for the main sail and the Jib
+	computeForMain();
+	computeForJib();
+
+}
+
 // Update the item for the current step (wind velocity and angle),
 // the values of the state vector x computed by the optimizer have
 // already been treated by the parent
@@ -334,10 +351,6 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 
 	// Decorate the parent class method that updates the value of awa_
 	SailCoefficientItem::update(vTW,aTW);
-
-	// Compute the sail coefficients for the main sail and the Jib
-	computeForMain();
-	computeForJib();
 
 	// create an alias for code readability
 	boost::shared_ptr<SailSet> ps= pSailSet_;
@@ -372,6 +385,15 @@ MainAndSpiCoefficientItem::~MainAndSpiCoefficientItem() {
 
 }
 
+// Implement the pure virtual method of the abstract base class
+void MainAndSpiCoefficientItem::compute() {
+
+	// Compute the sail coefficients for the main sail and the Jib
+	computeForMain();
+	computeForSpi();
+
+}
+
 // Update the item for the current step (wind velocity and angle),
 // the values of the state vector x computed by the optimizer have
 // already been treated by the parent
@@ -379,10 +401,6 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 
 	// Decorate the parent class method that updates the value of awa_
 	SailCoefficientItem::update(vTW,aTW);
-
-	// Compute the sail coefficients for the main sail and the Jib
-	computeForMain();
-	computeForSpi();
 
 	// create an alias for code readability
 	boost::shared_ptr<SailSet> ps= pSailSet_;
@@ -416,6 +434,16 @@ MainJibAndSpiCoefficientItem::~MainJibAndSpiCoefficientItem() {
 
 }
 
+// Implement the pure virtual method of the abstract base class
+void MainJibAndSpiCoefficientItem::compute() {
+
+	// Compute the sail coefficients for the main sail and the Jib
+	computeForMain();
+	computeForJib();
+	computeForSpi();
+
+}
+
 // Update the item for the current step (wind velocity and angle),
 // the values of the state vector x computed by the optimizer have
 // already been treated by the parent
@@ -423,11 +451,6 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 
 	// Decorate the parent class method that updates the value of awa_
 	SailCoefficientItem::update(vTW,aTW);
-
-	// Compute the sail coefficients for the main sail and the Jib
-	computeForMain();
-	computeForJib();
-	computeForSpi();
 
 	// create an alias for code readability
 	boost::shared_ptr<SailSet> ps= pSailSet_;

@@ -1,4 +1,5 @@
 #include "SailSet.h"
+#include "VPPAeroItem.h"
 #include "cmath"
 
 // Constructor
@@ -97,6 +98,11 @@ size_t MainOnlySailSet::getType() {
 	return sailConfig::mainOnly;
 }
 
+// Make a new SailCoefficientItem of the type required for
+// this sailSet
+SailCoefficientItem* MainOnlySailSet::sailCoefficientItemFactory(WindItem* pWind) {
+	return new MainOnlySailCoefficientItem(pWind);
+}
 
 //////////////////////////////////////////////////////////
 
@@ -119,6 +125,12 @@ MainAndJibSailSet::MainAndJibSailSet(const VariableFileParser& parser) :
 // Return the Id of this SailSet (this is the enum sailConfig)
 size_t MainAndJibSailSet::getType() {
 	return sailConfig::mainAndJib;
+}
+
+// Make a new SailCoefficientItem of the type required for
+// this sailSet
+SailCoefficientItem* MainAndJibSailSet::sailCoefficientItemFactory(WindItem* pWind) {
+	return new MainAndJibCoefficientItem(pWind);
 }
 
 //////////////////////////////////////////////////////////
@@ -144,6 +156,12 @@ size_t MainAndSpiSailSet::getType() {
 	return sailConfig::mainAndSpi;
 }
 
+// Make a new SailCoefficientItem of the type required for
+// this sailSet
+SailCoefficientItem* MainAndSpiSailSet::sailCoefficientItemFactory(WindItem* pWind) {
+	return new MainAndSpiCoefficientItem(pWind);
+}
+
 //////////////////////////////////////////////////////////
 
 // Constructor
@@ -166,5 +184,11 @@ MainJibAndSpiSailSet::MainJibAndSpiSailSet(const VariableFileParser& parser):
 // Return the Id of this SailSet (this is the enum sailConfig)
 size_t MainJibAndSpiSailSet::getType() {
 	return sailConfig::mainJibAndSpi;
+}
+
+// Make a new SailCoefficientItem of the type required for
+// this sailSet
+SailCoefficientItem* MainJibAndSpiSailSet::sailCoefficientItemFactory(WindItem* pWind) {
+	return new MainJibAndSpiCoefficientItem(pWind);
 }
 
