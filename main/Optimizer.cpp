@@ -43,6 +43,8 @@ double Optimizer::VPP_speed(unsigned n, const double* x, double *grad, void *my_
 		// Increment the number of iterations for each call of the objective function
 		++optIterations;
 
+		if(isnan(x[0])) throw VPPException(HERE,"x[0] is NAN!");
+
 		// Return x[0], or the velocity to be maximized
     return x[0];
 
@@ -76,7 +78,8 @@ void Optimizer::run(int TWV, int TWA) {
   opt.set_lower_bounds(lowerBounds_);
   opt.set_upper_bounds(upperBounds_);
 
-  std::vector<double> tol(dimension_);
+  // Note that the Number of constraints is determined by tol.size!!
+  std::vector<double> tol(2);
   tol[0]=tol[1]=1.e-8;
 
   // Drive the loop info to the struct
@@ -98,16 +101,13 @@ void Optimizer::run(int TWV, int TWA) {
   // Set some initial guess. Make sure it is within the
   // bounds that have been set
   std::vector<double> xp(dimension_);
-  xp[0]= 1.;
-  xp[1]= 0.;
-  xp[2]= 0.5;
-  xp[3]= 0.5;
+  xp[0]= 0.01;
+  xp[1]= 0.01;
+  xp[2]= 0.01;
+  xp[3]= .99;
 
   // Instantiate the maximum objective value, upon return
   double maxf;
-
-  // Set an initial population of 1000 points
-  opt.set_population(1000);
 
   // Launch the optimization; negative retVal implies failure
   nlopt::result result = opt.optimize(xp, maxf);

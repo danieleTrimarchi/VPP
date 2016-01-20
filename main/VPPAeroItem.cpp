@@ -48,8 +48,6 @@ void WindItem::update(int vTW, int aTW) {
 
 	// Update the apparent wind velocity vector
 	awv_(0)= V_ + twv_ * cos( toRad(twa_)  );
-	std::cout<<"V_= "<<V_<<std::endl;
-	std::cout<<"awv_(0)= "<<awv_(0)<<std::endl;
 	if(isnan(awv_(0))) throw VPPException(HERE,"awv_(0) is NAN!");
 
 	awv_(1)= twv_ * sin( toRad(twa_) ) * cos( toRad(PHI_) );
@@ -57,7 +55,7 @@ void WindItem::update(int vTW, int aTW) {
 
 	// Update the apparent wind angle - todo dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
-	awa_= atan( double(awv_(1)/awv_(0)) );
+	awa_= toDeg( atan( double(awv_(1)/awv_(0)) ) );
 	if(isnan(awa_))	throw VPPException(HERE,"awa_ is NAN!");
 
 
