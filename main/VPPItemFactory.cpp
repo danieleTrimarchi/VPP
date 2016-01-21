@@ -11,8 +11,9 @@ pParser_(pParser) {
 	boost::shared_ptr<WindItem> pWind(new WindItem(pParser_,pSailSet));
 	vppAeroItems_.push_back( pWind );
 
-	// Instantiate the sail coefficients and push it back to the children vector
-	boost::shared_ptr<SailCoefficientItem> pSailCoeffItem(new SailCoefficientItem(pWind.get()));
+	// Ask the sailSet to instantiate the relevant sail coefficients based
+	// on the current sail configuration and push it back to the children vector
+	boost::shared_ptr<SailCoefficientItem> pSailCoeffItem( pSailSet->sailCoefficientItemFactory(pWind.get()) );
 	vppAeroItems_.push_back( pSailCoeffItem );
 
 	// Instantiate the aero force Item and push it back to the children vector
