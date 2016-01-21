@@ -8,7 +8,7 @@ int optIterations=0;
 ///////// Optimizer Result Class ///////////////////////////////
 
 /// Constructor
-OptResult::OptResult(int twv, int twa, std::vector<double>& res) :
+OptResult::OptResult(double twv, double twa, std::vector<double>& res) :
 		twv_(twv),
 		twa_(twa),
 		result_(res) {
@@ -18,6 +18,14 @@ OptResult::OptResult(int twv, int twa, std::vector<double>& res) :
 /// Destructor
 OptResult::~OptResult(){
 	// make nothing
+}
+
+// PrintOut the values stored in this result
+void OptResult::print() {
+	std::cout<<" "<<twv_<<" "<<twa_;
+	for(size_t iRes=0; iRes<result_.size(); iRes++)
+		std::cout<<" "<<result_[iRes];
+	std::cout<<"\n";
 }
 
 /////////////////////////////////////////////////////////////
@@ -56,11 +64,23 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
   opt_->set_lower_bounds(lowerBounds_);
   opt_->set_upper_bounds(upperBounds_);
 
+	// Resize the vector with the initial guess/optimizer results
+  // and set the initial guess
+  xp_.resize(dimension_);
+  xp_[0]= 0.01;  	// V_0
+  xp_[1]= 0.01;		// PHI_0
+  xp_[2]= 0.01;		// b_0
+  xp_[3]= .99;		// f_0
+
   // Set the objective function to be maximized (using set_max_objective)
   opt_->set_max_objective(VPP_speed, NULL);
 
   // Set the relative tolerance
   opt_->set_xtol_rel(1e-8);
+
+  // Also get a reference to the WindItem that has computed the
+  // real wind velocity/angle for the current run
+  pWind_=vppItemsContainer_->getWind();
 
 }
 
@@ -111,19 +131,11 @@ void Optimizer::run(int TWV, int TWA) {
   // Make a ptr to the non static member function VPPconstraint
   opt_->add_equality_mconstraint(VPPconstraint, &loopData, tol);
 
-  // Set some initial guess. Make sure it is within the
-  // bounds that have been set
-  std::vector<double> xp(dimension_);
-  xp[0]= 0.01;
-  xp[1]= 0.01;
-  xp[2]= 0.01;
-  xp[3]= .99;
-
   // Instantiate the maximum objective value, upon return
   double maxf;
 
   // Launch the optimization; negative retVal implies failure
-  nlopt::result result = opt_->optimize(xp, maxf);
+  nlopt::result result = opt_->optimize(xp_, maxf);
 
   if (result < 0)
   	throw VPPException(HERE,"nlopt failed!\n");
@@ -131,11 +143,22 @@ void Optimizer::run(int TWV, int TWA) {
   else {
   		printf("found maximum after %d evaluations\n", optIterations);
   		printf("found maximum at f(%g,%g,%g,%g) = %0.10g\n",
-     		 xp[0],xp[1],xp[2],xp[3],maxf);
+     		 xp_[0],xp_[1],xp_[2],xp_[3],maxf);
 
   		// Push the result to the result vector
-  		results_.push_back(OptResult(TWV, TWA, xp));
+  		results_.push_back(OptResult(pWind_->getTWV(), pWind_->getTWA(), xp_));
   }
+}
+
+// Make a printout of the results for this run
+void Optimizer::printResults() {
+
+	std::cout<<"==== OPTIMIZER RESULTS PRINTOUT ======"<<std::endl;
+	std::cout<<" TWV  TWA  V  PHI  B  F  "<<std::endl;
+	std::cout<<"--------------------------------------"<<std::endl;
+	for(size_t iRes=0; iRes<results_.size();iRes++)
+		results_[iRes].print();
+
 }
 
 

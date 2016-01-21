@@ -20,10 +20,13 @@ class OptResult {
 	public:
 
 		/// Constructor
-		OptResult(int twv, int twa, std::vector<double>& res);
+		OptResult(double twv, double twa, std::vector<double>& res);
 
 		/// Destructor
 		~OptResult();
+
+		/// PrintOut the values stored in this result
+		void print();
 
 	private:
 
@@ -49,6 +52,9 @@ class Optimizer {
 
 		/// Execute a VPP-like analysis
 		void run(int TWV, int TWA);
+
+		/// Make a printout of the results for this run
+		void printResults();
 
 	private:
 
@@ -79,8 +85,14 @@ class Optimizer {
 		/// Ptr to the variableFileParser
 		VariableFileParser* pParser_;
 
+		/// Vector with the initial guess/optimizer results
+	  std::vector<double> xp_;
+
 		/// Vector of results, one result per Optimizer run
 		std::vector<OptResult> results_;
+
+		/// Ptr to the wind item, used to retrieve the current twv, twa
+		WindItem* pWind_;
 
 };
 

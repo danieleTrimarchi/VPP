@@ -7,9 +7,12 @@ pParser_(pParser) {
 
 	// -- INSTATIATE THE AERO ITEMS
 
-	//Instantiate the wind and push it back to the children vector
+	// Instantiate the wind and push it back to the children vector
 	boost::shared_ptr<WindItem> pWind(new WindItem(pParser_,pSailSet));
 	vppAeroItems_.push_back( pWind );
+
+	// Store a ptr to the wind
+	pWind_= pWind;
 
 	// Ask the sailSet to instantiate the relevant sail coefficients based
 	// on the current sail configuration and push it back to the children vector
@@ -90,9 +93,14 @@ VariableFileParser* VPPItemFactory::getParser() {
 	return pParser_;
 }
 
+/// Returns a ptr to the wind item
+WindItem* VPPItemFactory::getWind() const {
+	return pWind_.get();
+}
+
 // Getter for the aero forces item that stores the driving forces
-boost::shared_ptr<AeroForcesItem> VPPItemFactory::getAeroForcesItem() {
-	return pAeroForcesItem_;
+const AeroForcesItem* VPPItemFactory::getAeroForcesItem() const {
+	return pAeroForcesItem_.get();
 }
 
 // Compute the resistance by summing up all the contributions

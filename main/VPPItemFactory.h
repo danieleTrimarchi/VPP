@@ -26,8 +26,11 @@ class VPPItemFactory {
 		/// Returns a ptr to the variableFileParser
 		VariableFileParser* getParser();
 
+		/// Returns a ptr to the wind item
+		WindItem* getWind() const;
+
 		/// Getter for the aero forces item that stores the driving forces
-		boost::shared_ptr<AeroForcesItem> getAeroForcesItem();
+		const AeroForcesItem* getAeroForcesItem() const;
 
 		/// Compute the resistance by summing up all the contributions
 		double getResistance();
@@ -42,7 +45,12 @@ class VPPItemFactory {
 
 		/// Vector storing all the Children of VPPItem
 		std::vector<boost::shared_ptr<VPPItem> > vppAeroItems_;
+
+		/// Pointer to the resistance item
 		std::vector<boost::shared_ptr<ResistanceItem> > vppHydroItems_;
+
+		/// Pointer to the Wind Item, owned by pAeroForcesItem_
+		boost::shared_ptr<WindItem> pWind_;
 
 		/// Pointer to the Aero forces Item
 		boost::shared_ptr<AeroForcesItem> pAeroForcesItem_;

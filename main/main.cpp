@@ -54,6 +54,9 @@ int main(int argc, const char *argv[]) {
 
 			}
 
+		// And now printout the whole set of results
+		optimizer.printResults();
+
 	} catch(std::exception& e) {
 		std::cout<<"\n-----------------------------------------"<<std::endl;
 		std::cout<<" Exception caught in Main:  "<<std::endl;
