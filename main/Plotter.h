@@ -25,7 +25,7 @@ class Plotter {
 		virtual ~Plotter();
 		
 		/// Plot the points of some given arrays
-		void plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y);
+		void plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y, string title="Plot");
 
 		/// Plot the points of two given array sets
 		void plot(Eigen::ArrayXd& x0,

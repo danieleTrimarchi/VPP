@@ -29,8 +29,9 @@ class Variable {
 	  operator double() const;
 
 		/// Overload operator << to printout variable name and value
-		friend ostream& operator << ( ostream&os, const Variable& var) {
+		friend ostream& operator << ( ostream& os, const Variable& var) {
 			os <<"  "<< var.varName_ <<"  "<<var.val_;
+			return os;
 		};
 
 		/// Name of this variable

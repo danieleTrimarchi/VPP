@@ -41,23 +41,31 @@ void WindItem::update(int vTW, int aTW) {
 	// vmin to vmax in N steps : vMin + vTW * ( (vMax-vMin)/(nSteps-2) - 1 )
 	twv_= v_tw_min_ + vTW * ( ( v_tw_max_ - v_tw_min_ ) / n_twv_ );
 	if(isnan(twv_)) throw VPPException(HERE,"twv_ is NAN!");
+	std::cout<<"twv_= "<<twv_<<std::endl;
 
 	// Update the true wind angle: make as per the velocity
-	twa_= alpha_tw_min_ + vTW * ( ( alpha_tw_max_ - alpha_tw_min_ ) /  n_alpha_tw_ );
+	twa_= alpha_tw_min_ + aTW * ( ( alpha_tw_max_ - alpha_tw_min_ ) /  n_alpha_tw_ );
 	if(isnan(twa_)) throw VPPException(HERE,"twa_ is NAN!");
+	std::cout<<"twa_= "<<twa_<<std::endl;
+
+	std::cout<<"V_= "<<V_<<std::endl;
+	std::cout<<"PHI_= "<<PHI_<<std::endl;
 
 	// Update the apparent wind velocity vector
 	awv_(0)= V_ + twv_ * cos( toRad(twa_)  );
 	if(isnan(awv_(0))) throw VPPException(HERE,"awv_(0) is NAN!");
+	std::cout<<"awv_(0)= "<<awv_(0)<<std::endl;
 
-	awv_(1)= twv_ * sin( toRad(twa_) ) * cos( toRad(PHI_) );
+	awv_(1)= twv_ * sin( toRad(twa_) );
 	if(isnan(awv_(1))) throw VPPException(HERE,"awv_(1) is NAN!");
+	std::cout<<"awv_(1)= "<<awv_(1)<<std::endl;
 
 	// Update the apparent wind angle - todo dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
-	awa_= toDeg( atan( double(awv_(1)/awv_(0)) ) );
+	awa_= toDeg( atan( awv_(1)/awv_(0) ) );
 	if(isnan(awa_))	throw VPPException(HERE,"awa_ is NAN!");
-
+	std::cout<<"awa_= "<<awa_<<std::endl;
+	std::cout<<"--------------------\n"<<std::endl;
 
 }
 
@@ -111,34 +119,42 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 	// Pick the lift coefficient for this main (full batten or not)
 	if( pParser_->get("MFLB") ) {
 
-		clMat0.resize(6,4);
-		clMat0.row(0) << 0, 		0, 			0, 		0   ;
-		clMat0.row(1) << 27, 	1.725,	1.5,	0   ;
-		clMat0.row(2) << 50, 	1.5, 		0.5,	1.5 ;
-		clMat0.row(3) << 80,		0.95, 	0.3,	1.0 ;
-		clMat0.row(4) << 100,	0.85, 	0.0,	0.85;
-		clMat0.row(5) << 180,	0, 			0, 		0		;
+		clMat0.resize(9,4);
+		clMat0.row(0) << 0, 	0, 			0, 		0   ;
+		clMat0.row(1) << 20, 	1.3, 	  1.2,	0.02;
+		clMat0.row(2) << 27, 	1.725,	1.5,	0.1 ;
+		clMat0.row(3) << 50, 	1.5, 		0.5,	1.5 ;
+		clMat0.row(4) << 60, 	1.25, 	0.4,	1.25;
+		clMat0.row(5) << 80,	0.95, 	0.3,	1.0 ;
+		clMat0.row(6) << 100,	0.85, 	0.1,	0.85;
+		clMat0.row(7) << 140,	0.2, 		0.05,	0.2 ;
+		clMat0.row(8) << 180,	0, 			0, 		0		;
 
 	} else {
 
-		clMat0.resize(6,4);
-		clMat0.row(0) << 0, 		0, 	 	0 , 	0;
-		clMat0.row(1) << 27, 	1.5, 	1.5,	0;
-		clMat0.row(2) << 50, 	1.5, 	0.5,	1.5;
-		clMat0.row(3) << 80, 	0.95,	0.3,	1.0;
-		clMat0.row(4) << 100,	0.85,	0.0,	0.85;
-		clMat0.row(5) << 180,	0, 	 	0,	 	0;
+		clMat0.resize(9,4);
+		clMat0.row(0) << 0, 	0, 	 	0 , 	0;
+		clMat0.row(1) << 20, 	1.2, 	1.2,   0.02;
+		clMat0.row(2) << 27, 	1.5, 	1.5,	0.1;
+		clMat0.row(3) << 50, 	1.5, 	0.5,	1.5;
+		clMat0.row(4) << 60, 	1.25, 0.4,	1.25;
+		clMat0.row(5) << 80, 	0.95,	0.3,	1.0;
+		clMat0.row(6) << 100,	0.85,	0.0,	0.85;
+		clMat0.row(7) << 140,	0.2, 		0.05,	0.2 ;
+		clMat0.row(8) << 180,	0., 		0.05,	0.1 ;
 
 	}
 
 		// We only dispose of one drag coeff array for the moment
-		cdpMat0.resize(6,4);
+		cdpMat0.resize(8,4);
 		cdpMat0.row(0) << 0,  	0,   	0,   	0;
-		cdpMat0.row(1) << 27, 	0.02,	0.02,	0;
-		cdpMat0.row(2) << 50, 	0.15,	0.25,	0.25;
-		cdpMat0.row(3) << 80, 	0.8, 	0.15,	0.9;
-		cdpMat0.row(4) << 100,	1.0, 	0.0, 	1.2;
-		cdpMat0.row(5) << 180,	0.9, 	0.0, 	0.66;
+		cdpMat0.row(1) << 15,  	0.02, 0.005, 0.02;
+		cdpMat0.row(2) << 27, 	0.02,	0.02,	0.05;
+		cdpMat0.row(3) << 50, 	0.15,	0.25,	0.25;
+		cdpMat0.row(4) << 80, 	0.8, 	0.15,	0.9;
+		cdpMat0.row(5) << 100,	1.0, 	0.05, 1.2;
+		cdpMat0.row(6) << 140,	0.95, 	0.01, 0.8;
+		cdpMat0.row(7) << 180,	0.9, 	0.0, 	0.66;
 
 		// Reset the interpolator vectors before filling them
 		interpClVec_.clear();
@@ -158,6 +174,13 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 			interpCdVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
 		}
 
+		interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
+		interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
+//		interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
+//		interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
+//		interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
+//		interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
+throw VPPException(HERE, "stop");
 		// resize cl_ and cd_ for storing the interpolated values
 		allCl_.resize(3);
 		allCd_.resize(3);

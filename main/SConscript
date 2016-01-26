@@ -42,6 +42,8 @@ THIRD_PARTY_LIBPATH=[
 #This must be a way to define the path where the executable searches for the dyLib, but for the moment it does not seems to work
 env = DefaultEnvironment()
 
+#Compile debug mode
+#env.Append(CCFLAGS= '-g')
 
 env.Program('VPP',
 		['main.cpp','Plotter.cpp','Solver.cpp','Optimizer.cpp',

@@ -28,6 +28,23 @@ void OptResult::print() {
 	std::cout<<"\n";
 }
 
+
+// get the twv for this result
+const double OptResult::getTWV() const {
+	return twv_;
+}
+
+// get the twa for this result
+const double OptResult::getTWA() const {
+	return twa_;
+}
+
+// get the state vector for this result
+const std::vector<double>* OptResult::getX() const {
+	return &result_;
+}
+
+
 /////////////////////////////////////////////////////////////
 
 // Constructor
@@ -78,6 +95,9 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
   // Set the relative tolerance
   opt_->set_xtol_rel(1e-8);
 
+  // Set the max number of evaluations for a single run
+  opt_->set_maxeval(500);
+
   // Also get a reference to the WindItem that has computed the
   // real wind velocity/angle for the current run
   pWind_=vppItemsContainer_->getWind();
@@ -124,9 +144,16 @@ void Optimizer::run(int TWV, int TWA) {
   // Drive the loop info to the struct
   Loop_data loopData={TWV,TWA};
 
+  // Reset the iteration counter
+  optIterations=0;
+
   // Note that the Number of constraints is determined by tol.size!!
   std::vector<double> tol(2);
   tol[0]=tol[1]=1.e-8;
+
+  // Clear the optimizer
+  opt_->remove_equality_constraints();
+  opt_->remove_inequality_constraints();
 
   // Make a ptr to the non static member function VPPconstraint
   opt_->add_equality_mconstraint(VPPconstraint, &loopData, tol);
@@ -142,8 +169,11 @@ void Optimizer::run(int TWV, int TWA) {
 
   else {
   		printf("found maximum after %d evaluations\n", optIterations);
-  		printf("found maximum at f(%g,%g,%g,%g) = %0.10g\n",
+  		printf("      at f(%g,%g,%g,%g) = %0.10g\n",
      		 xp_[0],xp_[1],xp_[2],xp_[3],maxf);
+  		double dF, dM;
+  		vppItemsContainer_->getResiduals(dF,dM);
+  		printf("      residuals: dF= %g, dM= %g\n\n",dF,dM);
 
   		// Push the result to the result vector
   		results_.push_back(OptResult(pWind_->getTWV(), pWind_->getTWA(), xp_));
@@ -158,6 +188,29 @@ void Optimizer::printResults() {
 	std::cout<<"--------------------------------------"<<std::endl;
 	for(size_t iRes=0; iRes<results_.size();iRes++)
 		results_[iRes].print();
+
+}
+
+/// Make a printout of the results for this run
+void Optimizer::plotResults() {
+
+	// Prepare the data for the plotter
+	Eigen::ArrayXd windSpeeds(results_.size());
+	Eigen::ArrayXd boatSpeeds(results_.size());
+	Eigen::ArrayXd boatHeel(results_.size());
+
+	for(size_t iRes=0; iRes<results_.size(); iRes++) {
+		windSpeeds(iRes) = results_[iRes].getTWV();
+		boatSpeeds(iRes) = results_[iRes].getX()->at(0);
+		boatHeel(iRes)   = results_[iRes].getX()->at(1);
+	}
+
+	// Instantiate a plotter
+	Plotter plotter;
+	plotter.plot(windSpeeds,boatSpeeds,"Boat Speed");
+
+	Plotter plotter2;
+	plotter2.plot(windSpeeds,boatHeel, "Boat Heel");
 
 }
 

@@ -9,6 +9,7 @@
 #include <nlopt.hpp>
 
 #include "VPPItemFactory.h"
+#include "Plotter.h"
 
 using namespace std;
 
@@ -27,6 +28,15 @@ class OptResult {
 
 		/// PrintOut the values stored in this result
 		void print();
+
+		// get the twv for this result
+		const double getTWV() const;
+
+		// get the twa for this result
+		const double getTWA() const;
+
+		// get the state vector for this result
+		const std::vector<double>* getX() const;
 
 	private:
 
@@ -55,6 +65,9 @@ class Optimizer {
 
 		/// Make a printout of the results for this run
 		void printResults();
+
+		/// Make a printout of the results for this run
+		void plotResults();
 
 	private:
 

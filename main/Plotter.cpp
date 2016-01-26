@@ -165,7 +165,7 @@ double Plotter::max(std::vector<double>& vec) {
 }
 
 // Produce a 2d plot from Eigen vectors
-void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
+void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y,string title) {
 
 	// Reset the ranges at the very beginning of the plot
 	initRanges();
@@ -195,7 +195,7 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 	plline( nValues_, x_, y_ );
 
 	// Add labels
- 	pllab( "x", "y", "2D Plot Example" );
+ 	pllab( "x", "y", title.c_str() );
 
 	// Close PLplot library
 	plend();

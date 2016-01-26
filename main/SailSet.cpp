@@ -1,6 +1,7 @@
 #include "SailSet.h"
 #include "VPPAeroItem.h"
 #include "cmath"
+#include "VPPException.h"
 
 // Constructor
 SailSet::SailSet(const VariableFileParser& parser) :

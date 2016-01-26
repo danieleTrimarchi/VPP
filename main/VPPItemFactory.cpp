@@ -3,9 +3,11 @@
 
 // Constructor
 VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-pParser_(pParser) {
+pParser_(pParser),
+dF_(0),
+dM_(0) {
 
-	// -- INSTATIATE THE AERO ITEMS
+	// -- INSTANTIATE THE AERO ITEMS
 
 	// Instantiate the wind and push it back to the children vector
 	boost::shared_ptr<WindItem> pWind(new WindItem(pParser_,pSailSet));
@@ -121,11 +123,22 @@ double VPPItemFactory::getResistance() {
 void VPPItemFactory::computeResiduals(double& dF, double& dM) {
 
 	// compute deltaF = (Fdrive - Rtot)
-	dF = (pAeroForcesItem_->getFDrive() - getResistance());
-	// compute deltaM = (Mheel  - Mright)
-	dM = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+	dF_ = (pAeroForcesItem_->getFDrive() - getResistance());
+	dF=dF_;
 
-	std::cout<<"dF= "<<dF<<"  dM= "<<dM<<std::endl;
+	// compute deltaM = (Mheel  - Mright)
+	dM_ = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+	dM=dM_;
+
+	//std::cout<<"dF= "<<dF<<"  dM= "<<dM<<std::endl;
+
+}
+
+// Get the current value for the optimizer constraint residuals dF=0 and dM=0
+void VPPItemFactory::getResiduals(double& dF, double& dM) {
+
+	dF=dF_;
+	dM=dM_;
 
 }
 
