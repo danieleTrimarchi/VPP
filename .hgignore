@@ -1,7 +1,14 @@
 syntax: glob
+.hgignore
 .cproject
 .DS_Store
 .project
 .pydevproject
 .sconsign.dblite
 .DS_Store
+*.xcworkspacedata
+*.xcuserstate
+*.xcbkptlist
+*.xcscheme
+*.plist
+*~
