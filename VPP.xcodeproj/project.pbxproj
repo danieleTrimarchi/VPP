@@ -49,7 +49,6 @@
 		64BBD5D71C5B701400F14B38 /* Interpolator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Interpolator.cpp; path = main/Interpolator.cpp; sourceTree = "<group>"; };
 		64BBD5D81C5B701400F14B38 /* Interpolator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interpolator.h; path = main/Interpolator.h; sourceTree = "<group>"; };
 		64BBD5D91C5B701400F14B38 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = main/main.cpp; sourceTree = "<group>"; };
-		64BBD5DA1C5B701400F14B38 /* main.cpp.orig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = main.cpp.orig; path = main/main.cpp.orig; sourceTree = "<group>"; };
 		64BBD5DB1C5B701400F14B38 /* mathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mathUtils.h; path = main/mathUtils.h; sourceTree = "<group>"; };
 		64BBD5DC1C5B701400F14B38 /* Optimizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Optimizer.cpp; path = main/Optimizer.cpp; sourceTree = "<group>"; };
 		64BBD5DD1C5B701400F14B38 /* Optimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Optimizer.h; path = main/Optimizer.h; sourceTree = "<group>"; };
@@ -84,13 +83,13 @@
 		64BBD5FA1C5B701400F14B38 /* Warning.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Warning.cpp; path = main/Warning.cpp; sourceTree = "<group>"; };
 		64BBD5FB1C5B701400F14B38 /* Warning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Warning.h; path = main/Warning.h; sourceTree = "<group>"; };
 		64BBD60B1C5B705000F14B38 /* libnlopt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnlopt.a; path = "../../third_party/nlopt-2.4.2/.libs/libnlopt.a"; sourceTree = "<group>"; };
-		64BBD60D1C5B746A00F14B38 /* libplot.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libplot.a; path = ../../../../opt/local/lib/libplot.a; sourceTree = "<group>"; };
-		64BBD60F1C5B747D00F14B38 /* libplplot.13.1.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplot.13.1.2.dylib; path = ../../../../opt/local/lib/libplplot.13.1.2.dylib; sourceTree = "<group>"; };
-		64BBD6111C5B748000F14B38 /* libplplot.13.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplot.13.dylib; path = ../../../../opt/local/lib/libplplot.13.dylib; sourceTree = "<group>"; };
-		64BBD6131C5B748600F14B38 /* libplplot.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplot.dylib; path = ../../../../opt/local/lib/libplplot.dylib; sourceTree = "<group>"; };
-		64BBD6151C5B748900F14B38 /* libplplotcxx.12.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.12.0.0.dylib; path = ../../../../opt/local/lib/libplplotcxx.12.0.0.dylib; sourceTree = "<group>"; };
-		64BBD6171C5B748C00F14B38 /* libplplotcxx.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.12.dylib; path = ../../../../opt/local/lib/libplplotcxx.12.dylib; sourceTree = "<group>"; };
-		64BBD6191C5B749000F14B38 /* libplplotcxx.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.dylib; path = ../../../../opt/local/lib/libplplotcxx.dylib; sourceTree = "<group>"; };
+		64BBD60D1C5B746A00F14B38 /* libplot.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libplot.a; path = /opt/local/lib/libplot.a; sourceTree = "<absolute>"; };
+		64BBD60F1C5B747D00F14B38 /* libplplot.13.1.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplot.13.1.2.dylib; path = /opt/local/lib/libplplot.13.1.2.dylib; sourceTree = "<absolute>"; };
+		64BBD6111C5B748000F14B38 /* libplplot.13.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplot.13.dylib; path = /opt/local/lib/libplplot.13.dylib; sourceTree = "<absolute>"; };
+		64BBD6131C5B748600F14B38 /* libplplot.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplot.dylib; path = /opt/local/lib/libplplot.dylib; sourceTree = "<absolute>"; };
+		64BBD6151C5B748900F14B38 /* libplplotcxx.12.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.12.0.0.dylib; path = /opt/local/lib/libplplotcxx.12.0.0.dylib; sourceTree = "<absolute>"; };
+		64BBD6171C5B748C00F14B38 /* libplplotcxx.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.12.dylib; path = /opt/local/lib/libplplotcxx.12.dylib; sourceTree = "<absolute>"; };
+		64BBD6191C5B749000F14B38 /* libplplotcxx.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.dylib; path = /opt/local/lib/libplplotcxx.dylib; sourceTree = "<absolute>"; };
 		64BBD61B1C5B74B000F14B38 /* libumfpack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libumfpack.a; path = "../../third_party/SuiteSparse-4.4.6/UMFPACK/Lib/libumfpack.a"; sourceTree = "<group>"; };
 		64D919501C59F7D70002F585 /* VPP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VPP; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -115,7 +114,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		64D919471C59F7D60002F585 = {
+		64BBD61E1C5B76C900F14B38 /* Libs */ = {
 			isa = PBXGroup;
 			children = (
 				64BBD61B1C5B74B000F14B38 /* libumfpack.a */,
@@ -127,10 +126,17 @@
 				64BBD60F1C5B747D00F14B38 /* libplplot.13.1.2.dylib */,
 				64BBD60D1C5B746A00F14B38 /* libplot.a */,
 				64BBD60B1C5B705000F14B38 /* libnlopt.a */,
+			);
+			name = Libs;
+			sourceTree = "<group>";
+		};
+		64D919471C59F7D60002F585 = {
+			isa = PBXGroup;
+			children = (
+				64BBD61E1C5B76C900F14B38 /* Libs */,
 				64BBD5D71C5B701400F14B38 /* Interpolator.cpp */,
 				64BBD5D81C5B701400F14B38 /* Interpolator.h */,
 				64BBD5D91C5B701400F14B38 /* main.cpp */,
-				64BBD5DA1C5B701400F14B38 /* main.cpp.orig */,
 				64BBD5DB1C5B701400F14B38 /* mathUtils.h */,
 				64BBD5DC1C5B701400F14B38 /* Optimizer.cpp */,
 				64BBD5DD1C5B701400F14B38 /* Optimizer.h */,
