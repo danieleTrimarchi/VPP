@@ -6,7 +6,7 @@
 #include <fstream>
 #include <math.h>
 
-#include <nlopt.hpp>
+#include "nlopt.hpp"
 
 #include "VPPItemFactory.h"
 #include "Plotter.h"
@@ -79,7 +79,7 @@ class Optimizer {
 
 		// Struct used to drive twv and twa into the update methods of the VPPItems
 		typedef struct {
-				double twv, twa;
+				int twv_, twa_;
 		} Loop_data;
 
 		/// Size of the problem this Optimizer is handling

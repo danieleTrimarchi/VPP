@@ -96,7 +96,7 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
   opt_->set_xtol_rel(1e-8);
 
   // Set the max number of evaluations for a single run
-  opt_->set_maxeval(500);
+  opt_->set_maxeval(10);
 
   // Also get a reference to the WindItem that has computed the
   // real wind velocity/angle for the current run
@@ -128,8 +128,8 @@ void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const doub
 	// Retrieve the loop data for this call with a c-style cast
 	Loop_data* d = (Loop_data*)loopData;
 
-	int twv= d-> twv;
-	int twa= d-> twa;
+	int twv= d-> twv_;
+	int twa= d-> twa_;
 
 	// Now call update on the VPPItem container
 	vppItemsContainer_->update(twv,twa,x);

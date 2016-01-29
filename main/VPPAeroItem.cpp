@@ -7,11 +7,11 @@ using namespace mathUtils;
 
 /// Constructor
 WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
-				VPPItem(pParser,pSailSet),
-				twv_(0),
-				twa_(0),
-				awa_(0),
-				awv_(Eigen::Vector2d::Zero()) {
+						VPPItem(pParser,pSailSet),
+						twv_(0),
+						twa_(0),
+						awa_(0),
+						awv_(Eigen::Vector2d::Zero()) {
 
 	// Get the max/min wind velocities from the parser
 	v_tw_min_= pParser_->get("V_TW_MIN");
@@ -102,15 +102,15 @@ const double WindItem::getAWNorm() const {
 
 // Constructor
 SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
-				VPPItem(pWindItem->getParser(), pWindItem->getSailSet()),
-				pWindItem_(pWindItem),
-				awa_(0),
-				ar_(0),
-				cl_(0),
-				cdp_(0),
-				cdI_(0),
-				cd0_(0),
-				cd_(0) {
+						VPPItem(pWindItem->getParser(), pWindItem->getSailSet()),
+						pWindItem_(pWindItem),
+						awa_(0),
+						ar_(0),
+						cl_(0),
+						cdp_(0),
+						cdI_(0),
+						cd0_(0),
+						cd_(0) {
 
 	// Init static members with values from: Hazer Cl-Cd coefficients, 1999
 	// Cols: rwa_, Main_Cl, Jib_Cl, Spi_Cl
@@ -145,45 +145,45 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 
 	}
 
-		// We only dispose of one drag coeff array for the moment
-		cdpMat0.resize(8,4);
-		cdpMat0.row(0) << 0,  	0,   	0,   	0;
-		cdpMat0.row(1) << 15,  	0.02, 0.005, 0.02;
-		cdpMat0.row(2) << 27, 	0.02,	0.02,	0.05;
-		cdpMat0.row(3) << 50, 	0.15,	0.25,	0.25;
-		cdpMat0.row(4) << 80, 	0.8, 	0.15,	0.9;
-		cdpMat0.row(5) << 100,	1.0, 	0.05, 1.2;
-		cdpMat0.row(6) << 140,	0.95, 	0.01, 0.8;
-		cdpMat0.row(7) << 180,	0.9, 	0.0, 	0.66;
+	// We only dispose of one drag coeff array for the moment
+	cdpMat0.resize(8,4);
+	cdpMat0.row(0) << 0,  	0,   	0,   	0;
+	cdpMat0.row(1) << 15,  	0.02, 0.005, 0.02;
+	cdpMat0.row(2) << 27, 	0.02,	0.02,	0.05;
+	cdpMat0.row(3) << 50, 	0.15,	0.25,	0.25;
+	cdpMat0.row(4) << 80, 	0.8, 	0.15,	0.9;
+	cdpMat0.row(5) << 100,	1.0, 	0.05, 1.2;
+	cdpMat0.row(6) << 140,	0.95, 	0.01, 0.8;
+	cdpMat0.row(7) << 180,	0.9, 	0.0, 	0.66;
 
-		// Reset the interpolator vectors before filling them
-		interpClVec_.clear();
-		interpCdVec_.clear();
+	// Reset the interpolator vectors before filling them
+	interpClVec_.clear();
+	interpCdVec_.clear();
 
-		Eigen::ArrayXd x, y;
-		x=clMat0.col(0);
-		// Interpolate the values of the sail coefficients for the MainSail
-		for(size_t i=1; i<4; i++){
-			y=clMat0.col(i);
-			interpClVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y) ) );
-		}
-		x=cdpMat0.col(0);
-		// Interpolate the values of the sail coefficients for the MainSail
-		for(size_t i=1; i<4; i++){
-			y=cdpMat0.col(i);
-			interpCdVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
-		}
+	Eigen::ArrayXd x, y;
+	x=clMat0.col(0);
+	// Interpolate the values of the sail coefficients for the MainSail
+	for(size_t i=1; i<4; i++){
+		y=clMat0.col(i);
+		interpClVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y) ) );
+	}
+	x=cdpMat0.col(0);
+	// Interpolate the values of the sail coefficients for the MainSail
+	for(size_t i=1; i<4; i++){
+		y=cdpMat0.col(i);
+		interpCdVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
+	}
 
-		interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
-		interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
-//		interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
-//		interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
-//		interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
-//		interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
-throw VPPException(HERE, "stop");
-		// resize cl_ and cd_ for storing the interpolated values
-		allCl_.resize(3);
-		allCd_.resize(3);
+	//		interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
+	//		interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
+	//		interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
+	//		interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
+	//		interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
+	//		interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
+
+	// resize cl_ and cd_ for storing the interpolated values
+	allCl_.resize(3);
+	allCd_.resize(3);
 }
 
 // Destructor
@@ -195,7 +195,7 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 
 	// Update the local copy of the the apparent wind angle
 	awa_= pWindItem_->getAWA();
-	if(isnan(awa_)) throw VPPException(HERE,"awa_ is nan");
+	if(isnan(awa_)) throw VPPException(HERE,"awa_ is NaN");
 
 	// create aliases for code readability
 	VariableFileParser* p = pParser_;
@@ -305,7 +305,7 @@ void SailCoefficientItem::printCoefficients() {
 
 // Constructor
 MainOnlySailCoefficientItem::MainOnlySailCoefficientItem(WindItem* pWind) :
-		SailCoefficientItem(pWind) {
+				SailCoefficientItem(pWind) {
 	// do nothing
 }
 
@@ -349,7 +349,7 @@ void MainOnlySailCoefficientItem::printWhoAmI() {
 
 // Constructor
 MainAndJibCoefficientItem::MainAndJibCoefficientItem(WindItem* pWind) :
-		SailCoefficientItem(pWind) {
+				SailCoefficientItem(pWind) {
 	// do nothing
 }
 
@@ -399,7 +399,7 @@ void MainAndJibCoefficientItem::printWhoAmI() {
 
 // Constructor
 MainAndSpiCoefficientItem::MainAndSpiCoefficientItem(WindItem* pWind) :
-		SailCoefficientItem(pWind) {
+				SailCoefficientItem(pWind) {
 	// do nothing
 }
 
@@ -448,7 +448,7 @@ void MainAndSpiCoefficientItem::printWhoAmI() {
 
 // Constructor
 MainJibAndSpiCoefficientItem::MainJibAndSpiCoefficientItem(WindItem* pWind) :
-		SailCoefficientItem(pWind) {
+				SailCoefficientItem(pWind) {
 	// do nothing
 }
 
@@ -498,15 +498,15 @@ void MainJibAndSpiCoefficientItem::printWhoAmI() {
 
 // Constructor
 AeroForcesItem::AeroForcesItem(SailCoefficientItem* sailCoeffItem) :
-		VPPItem(sailCoeffItem->getParser(), sailCoeffItem->getSailSet() ),
-		pSailCoeffs_(sailCoeffItem),
-		pWindItem_(pSailCoeffs_->getWindItem()),
-		lift_(0),
-		drag_(0),
-		fDrive_(0),
-		fHeel_(0),
-		fSide_(0),
-		mHeel_(0) {
+				VPPItem(sailCoeffItem->getParser(), sailCoeffItem->getSailSet() ),
+				pSailCoeffs_(sailCoeffItem),
+				pWindItem_(pSailCoeffs_->getWindItem()),
+				lift_(0),
+				drag_(0),
+				fDrive_(0),
+				fHeel_(0),
+				fSide_(0),
+				mHeel_(0) {
 	// do nothing
 }
 

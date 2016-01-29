@@ -1,0 +1,513 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		64F708331C59F991002A0D64 /* Interpolator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F7080C1C59F991002A0D64 /* Interpolator.cpp */; };
+		64F708341C59F991002A0D64 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F7080E1C59F991002A0D64 /* main.cpp */; };
+		64F708351C59F991002A0D64 /* Optimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F708111C59F991002A0D64 /* Optimizer.cpp */; };
+		64F708361C59F991002A0D64 /* Plotter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F708151C59F991002A0D64 /* Plotter.cpp */; };
+		64F708371C59F991002A0D64 /* SailSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F708171C59F991002A0D64 /* SailSet.cpp */; };
+		64F708391C59F991002A0D64 /* VariableFileParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F7081E1C59F991002A0D64 /* VariableFileParser.cpp */; };
+		64F7083A1C59F991002A0D64 /* Variables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F708201C59F991002A0D64 /* Variables.cpp */; };
+		64F7083B1C59F991002A0D64 /* VPPAeroItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F708221C59F991002A0D64 /* VPPAeroItem.cpp */; };
+		64F7083C1C59F991002A0D64 /* VPPException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F708241C59F991002A0D64 /* VPPException.cpp */; };
+		64F7083D1C59F991002A0D64 /* VPPHydroItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F708261C59F991002A0D64 /* VPPHydroItem.cpp */; };
+		64F7083E1C59F991002A0D64 /* VPPItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F708281C59F991002A0D64 /* VPPItem.cpp */; };
+		64F7083F1C59F991002A0D64 /* VPPItemFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F7082A1C59F991002A0D64 /* VPPItemFactory.cpp */; };
+		64F708401C59F991002A0D64 /* VPPRightingMomentItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F7082C1C59F991002A0D64 /* VPPRightingMomentItem.cpp */; };
+		64F708411C59F991002A0D64 /* Warning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64F7082E1C59F991002A0D64 /* Warning.cpp */; };
+		64F708431C59FBF7002A0D64 /* libamd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F708421C59FBF7002A0D64 /* libamd.a */; };
+		64F708451C59FC0D002A0D64 /* libcholmod.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F708441C59FC0D002A0D64 /* libcholmod.a */; };
+		64F708471C59FC41002A0D64 /* libgoto2_penrynp-r1.13.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F708461C59FC41002A0D64 /* libgoto2_penrynp-r1.13.a */; };
+		64F708491C59FC51002A0D64 /* libsuitesparseconfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F708481C59FC51002A0D64 /* libsuitesparseconfig.a */; };
+		64F7084B1C59FC66002A0D64 /* libcolamd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F7084A1C59FC66002A0D64 /* libcolamd.a */; };
+		64F7084D1C59FC74002A0D64 /* libumfpack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F7084C1C59FC74002A0D64 /* libumfpack.a */; };
+		64F7084F1C59FC98002A0D64 /* libplot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F7084E1C59FC98002A0D64 /* libplot.a */; };
+		64F708511C59FCBE002A0D64 /* libplplotcxx.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F708501C59FCBE002A0D64 /* libplplotcxx.dylib */; };
+		64F708531C59FD4E002A0D64 /* libnlopt.la in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F708521C59FD4E002A0D64 /* libnlopt.la */; settings = {ATTRIBUTES = (Weak, ); }; };
+		64F708561C5A8713002A0D64 /* libplplotcxx.12.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F708551C5A8713002A0D64 /* libplplotcxx.12.dylib */; };
+		64F708581C5A871C002A0D64 /* libplplotcxx.12.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F708571C5A871C002A0D64 /* libplplotcxx.12.0.0.dylib */; };
+		64F7085A1C5A871F002A0D64 /* libplplot.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F708591C5A871F002A0D64 /* libplplot.dylib */; };
+		64F7085C1C5A8724002A0D64 /* libplplot.13.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F7085B1C5A8724002A0D64 /* libplplot.13.dylib */; };
+		64F7085E1C5A8727002A0D64 /* libplplot.13.1.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F7085D1C5A8727002A0D64 /* libplplot.13.1.2.dylib */; };
+		64F708601C5AC1FC002A0D64 /* libnlopt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64F7085F1C5AC1FC002A0D64 /* libnlopt.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		64D9194E1C59F7D60002F585 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		64D919501C59F7D70002F585 /* VPP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VPP; sourceTree = BUILT_PRODUCTS_DIR; };
+		64F708031C59F991002A0D64 /* SConstruct */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
+		64F708051C59F991002A0D64 /* .cproject */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = .cproject; sourceTree = "<group>"; };
+		64F708061C59F991002A0D64 /* .hgignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .hgignore; sourceTree = "<group>"; };
+		64F708071C59F991002A0D64 /* .project */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = .project; sourceTree = "<group>"; };
+		64F708081C59F991002A0D64 /* .pydevproject */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = .pydevproject; sourceTree = "<group>"; };
+		64F708091C59F991002A0D64 /* .sconsign.dblite */ = {isa = PBXFileReference; lastKnownFileType = file; path = .sconsign.dblite; sourceTree = "<group>"; };
+		64F7080C1C59F991002A0D64 /* Interpolator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpolator.cpp; sourceTree = "<group>"; };
+		64F7080D1C59F991002A0D64 /* Interpolator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interpolator.h; sourceTree = "<group>"; };
+		64F7080E1C59F991002A0D64 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		64F7080F1C59F991002A0D64 /* main.cpp.orig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.cpp.orig; sourceTree = "<group>"; };
+		64F708101C59F991002A0D64 /* mathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mathUtils.h; sourceTree = "<group>"; };
+		64F708111C59F991002A0D64 /* Optimizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Optimizer.cpp; sourceTree = "<group>"; };
+		64F708121C59F991002A0D64 /* Optimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Optimizer.h; sourceTree = "<group>"; };
+		64F708131C59F991002A0D64 /* Optimizer.h.orig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Optimizer.h.orig; sourceTree = "<group>"; };
+		64F708141C59F991002A0D64 /* Physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Physics.h; sourceTree = "<group>"; };
+		64F708151C59F991002A0D64 /* Plotter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plotter.cpp; sourceTree = "<group>"; };
+		64F708161C59F991002A0D64 /* Plotter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plotter.h; sourceTree = "<group>"; };
+		64F708171C59F991002A0D64 /* SailSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SailSet.cpp; sourceTree = "<group>"; };
+		64F708181C59F991002A0D64 /* SailSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SailSet.h; sourceTree = "<group>"; };
+		64F708191C59F991002A0D64 /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
+		64F7081A1C59F991002A0D64 /* Solver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Solver.cpp; sourceTree = "<group>"; };
+		64F7081B1C59F991002A0D64 /* Solver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Solver.h; sourceTree = "<group>"; };
+		64F7081C1C59F991002A0D64 /* Spline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spline.h; sourceTree = "<group>"; };
+		64F7081D1C59F991002A0D64 /* variableFile.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = variableFile.txt; sourceTree = "<group>"; };
+		64F7081E1C59F991002A0D64 /* VariableFileParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableFileParser.cpp; sourceTree = "<group>"; };
+		64F7081F1C59F991002A0D64 /* VariableFileParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableFileParser.h; sourceTree = "<group>"; };
+		64F708201C59F991002A0D64 /* Variables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Variables.cpp; sourceTree = "<group>"; };
+		64F708211C59F991002A0D64 /* Variables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Variables.h; sourceTree = "<group>"; };
+		64F708221C59F991002A0D64 /* VPPAeroItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VPPAeroItem.cpp; sourceTree = "<group>"; };
+		64F708231C59F991002A0D64 /* VPPAeroItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VPPAeroItem.h; sourceTree = "<group>"; };
+		64F708241C59F991002A0D64 /* VPPException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VPPException.cpp; sourceTree = "<group>"; };
+		64F708251C59F991002A0D64 /* VPPException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VPPException.h; sourceTree = "<group>"; };
+		64F708261C59F991002A0D64 /* VPPHydroItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VPPHydroItem.cpp; sourceTree = "<group>"; };
+		64F708271C59F991002A0D64 /* VPPHydroItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VPPHydroItem.h; sourceTree = "<group>"; };
+		64F708281C59F991002A0D64 /* VPPItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VPPItem.cpp; sourceTree = "<group>"; };
+		64F708291C59F991002A0D64 /* VPPItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VPPItem.h; sourceTree = "<group>"; };
+		64F7082A1C59F991002A0D64 /* VPPItemFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VPPItemFactory.cpp; sourceTree = "<group>"; };
+		64F7082B1C59F991002A0D64 /* VPPItemFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VPPItemFactory.h; sourceTree = "<group>"; };
+		64F7082C1C59F991002A0D64 /* VPPRightingMomentItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VPPRightingMomentItem.cpp; sourceTree = "<group>"; };
+		64F7082D1C59F991002A0D64 /* VPPRightingMomentItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VPPRightingMomentItem.h; sourceTree = "<group>"; };
+		64F7082E1C59F991002A0D64 /* Warning.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Warning.cpp; sourceTree = "<group>"; };
+		64F7082F1C59F991002A0D64 /* Warning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Warning.h; sourceTree = "<group>"; };
+		64F708301C59F991002A0D64 /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
+		64F708311C59F991002A0D64 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
+		64F708321C59F991002A0D64 /* VPP.uxf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = VPP.uxf; sourceTree = "<group>"; };
+		64F708421C59FBF7002A0D64 /* libamd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libamd.a; path = "../third_party/SuiteSparse-4.4.6/AMD/Lib/libamd.a"; sourceTree = "<group>"; };
+		64F708441C59FC0D002A0D64 /* libcholmod.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcholmod.a; path = "../third_party/SuiteSparse-4.4.6/CHOLMOD/Lib/libcholmod.a"; sourceTree = "<group>"; };
+		64F708461C59FC41002A0D64 /* libgoto2_penrynp-r1.13.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libgoto2_penrynp-r1.13.a"; path = "../third_party/GotoBLAS2/libgoto2_penrynp-r1.13.a"; sourceTree = "<group>"; };
+		64F708481C59FC51002A0D64 /* libsuitesparseconfig.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsuitesparseconfig.a; path = "../third_party/SuiteSparse-4.4.6/SuiteSparse_config/libsuitesparseconfig.a"; sourceTree = "<group>"; };
+		64F7084A1C59FC66002A0D64 /* libcolamd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcolamd.a; path = "../third_party/SuiteSparse-4.4.6/COLAMD/Lib/libcolamd.a"; sourceTree = "<group>"; };
+		64F7084C1C59FC74002A0D64 /* libumfpack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libumfpack.a; path = "../third_party/SuiteSparse-4.4.6/UMFPACK/Lib/libumfpack.a"; sourceTree = "<group>"; };
+		64F7084E1C59FC98002A0D64 /* libplot.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libplot.a; path = /opt/local/lib/libplot.a; sourceTree = "<absolute>"; };
+		64F708501C59FCBE002A0D64 /* libplplotcxx.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.dylib; path = /opt/local/lib/libplplotcxx.dylib; sourceTree = "<absolute>"; };
+		64F708521C59FD4E002A0D64 /* libnlopt.la */ = {isa = PBXFileReference; lastKnownFileType = text; name = libnlopt.la; path = "../third_party/nlopt-2.4.2/libnlopt.la"; sourceTree = "<group>"; };
+		64F708551C5A8713002A0D64 /* libplplotcxx.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.12.dylib; path = ../../../opt/local/lib/libplplotcxx.12.dylib; sourceTree = "<group>"; };
+		64F708571C5A871C002A0D64 /* libplplotcxx.12.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.12.0.0.dylib; path = ../../../opt/local/lib/libplplotcxx.12.0.0.dylib; sourceTree = "<group>"; };
+		64F708591C5A871F002A0D64 /* libplplot.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplot.dylib; path = ../../../opt/local/lib/libplplot.dylib; sourceTree = "<group>"; };
+		64F7085B1C5A8724002A0D64 /* libplplot.13.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplot.13.dylib; path = ../../../opt/local/lib/libplplot.13.dylib; sourceTree = "<group>"; };
+		64F7085D1C5A8727002A0D64 /* libplplot.13.1.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplot.13.1.2.dylib; path = ../../../opt/local/lib/libplplot.13.1.2.dylib; sourceTree = "<group>"; };
+		64F7085F1C5AC1FC002A0D64 /* libnlopt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnlopt.a; path = "../third_party/nlopt-2.4.2/.libs/libnlopt.a"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		64D9194D1C59F7D60002F585 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64F708601C5AC1FC002A0D64 /* libnlopt.a in Frameworks */,
+				64F708531C59FD4E002A0D64 /* libnlopt.la in Frameworks */,
+				64F7084F1C59FC98002A0D64 /* libplot.a in Frameworks */,
+				64F708491C59FC51002A0D64 /* libsuitesparseconfig.a in Frameworks */,
+				64F708431C59FBF7002A0D64 /* libamd.a in Frameworks */,
+				64F708581C5A871C002A0D64 /* libplplotcxx.12.0.0.dylib in Frameworks */,
+				64F7085A1C5A871F002A0D64 /* libplplot.dylib in Frameworks */,
+				64F7084B1C59FC66002A0D64 /* libcolamd.a in Frameworks */,
+				64F7085E1C5A8727002A0D64 /* libplplot.13.1.2.dylib in Frameworks */,
+				64F7085C1C5A8724002A0D64 /* libplplot.13.dylib in Frameworks */,
+				64F708561C5A8713002A0D64 /* libplplotcxx.12.dylib in Frameworks */,
+				64F708511C59FCBE002A0D64 /* libplplotcxx.dylib in Frameworks */,
+				64F708451C59FC0D002A0D64 /* libcholmod.a in Frameworks */,
+				64F7084D1C59FC74002A0D64 /* libumfpack.a in Frameworks */,
+				64F708471C59FC41002A0D64 /* libgoto2_penrynp-r1.13.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		64D919471C59F7D60002F585 = {
+			isa = PBXGroup;
+			children = (
+				64F7085F1C5AC1FC002A0D64 /* libnlopt.a */,
+				64F7085D1C5A8727002A0D64 /* libplplot.13.1.2.dylib */,
+				64F7085B1C5A8724002A0D64 /* libplplot.13.dylib */,
+				64F708591C5A871F002A0D64 /* libplplot.dylib */,
+				64F708571C5A871C002A0D64 /* libplplotcxx.12.0.0.dylib */,
+				64F708551C5A8713002A0D64 /* libplplotcxx.12.dylib */,
+				64F708541C59FDF7002A0D64 /* lib */,
+				64F708031C59F991002A0D64 /* SConstruct */,
+				64F708041C59F991002A0D64 /* src */,
+				64D919511C59F7D70002F585 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		64D919511C59F7D70002F585 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				64D919501C59F7D70002F585 /* VPP */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		64F708041C59F991002A0D64 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				64F708051C59F991002A0D64 /* .cproject */,
+				64F708061C59F991002A0D64 /* .hgignore */,
+				64F708071C59F991002A0D64 /* .project */,
+				64F708081C59F991002A0D64 /* .pydevproject */,
+				64F708091C59F991002A0D64 /* .sconsign.dblite */,
+				64F7080A1C59F991002A0D64 /* .settings */,
+				64F7080B1C59F991002A0D64 /* main */,
+				64F708301C59F991002A0D64 /* SConscript */,
+				64F708311C59F991002A0D64 /* TODO */,
+				64F708321C59F991002A0D64 /* VPP.uxf */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		64F7080A1C59F991002A0D64 /* .settings */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = .settings;
+			sourceTree = "<group>";
+		};
+		64F7080B1C59F991002A0D64 /* main */ = {
+			isa = PBXGroup;
+			children = (
+				64F7080C1C59F991002A0D64 /* Interpolator.cpp */,
+				64F7080D1C59F991002A0D64 /* Interpolator.h */,
+				64F7080E1C59F991002A0D64 /* main.cpp */,
+				64F7080F1C59F991002A0D64 /* main.cpp.orig */,
+				64F708101C59F991002A0D64 /* mathUtils.h */,
+				64F708111C59F991002A0D64 /* Optimizer.cpp */,
+				64F708121C59F991002A0D64 /* Optimizer.h */,
+				64F708131C59F991002A0D64 /* Optimizer.h.orig */,
+				64F708141C59F991002A0D64 /* Physics.h */,
+				64F708151C59F991002A0D64 /* Plotter.cpp */,
+				64F708161C59F991002A0D64 /* Plotter.h */,
+				64F708171C59F991002A0D64 /* SailSet.cpp */,
+				64F708181C59F991002A0D64 /* SailSet.h */,
+				64F708191C59F991002A0D64 /* SConscript */,
+				64F7081A1C59F991002A0D64 /* Solver.cpp */,
+				64F7081B1C59F991002A0D64 /* Solver.h */,
+				64F7081C1C59F991002A0D64 /* Spline.h */,
+				64F7081D1C59F991002A0D64 /* variableFile.txt */,
+				64F7081E1C59F991002A0D64 /* VariableFileParser.cpp */,
+				64F7081F1C59F991002A0D64 /* VariableFileParser.h */,
+				64F708201C59F991002A0D64 /* Variables.cpp */,
+				64F708211C59F991002A0D64 /* Variables.h */,
+				64F708221C59F991002A0D64 /* VPPAeroItem.cpp */,
+				64F708231C59F991002A0D64 /* VPPAeroItem.h */,
+				64F708241C59F991002A0D64 /* VPPException.cpp */,
+				64F708251C59F991002A0D64 /* VPPException.h */,
+				64F708261C59F991002A0D64 /* VPPHydroItem.cpp */,
+				64F708271C59F991002A0D64 /* VPPHydroItem.h */,
+				64F708281C59F991002A0D64 /* VPPItem.cpp */,
+				64F708291C59F991002A0D64 /* VPPItem.h */,
+				64F7082A1C59F991002A0D64 /* VPPItemFactory.cpp */,
+				64F7082B1C59F991002A0D64 /* VPPItemFactory.h */,
+				64F7082C1C59F991002A0D64 /* VPPRightingMomentItem.cpp */,
+				64F7082D1C59F991002A0D64 /* VPPRightingMomentItem.h */,
+				64F7082E1C59F991002A0D64 /* Warning.cpp */,
+				64F7082F1C59F991002A0D64 /* Warning.h */,
+			);
+			path = main;
+			sourceTree = "<group>";
+		};
+		64F708541C59FDF7002A0D64 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				64F708521C59FD4E002A0D64 /* libnlopt.la */,
+				64F708501C59FCBE002A0D64 /* libplplotcxx.dylib */,
+				64F7084E1C59FC98002A0D64 /* libplot.a */,
+				64F7084C1C59FC74002A0D64 /* libumfpack.a */,
+				64F7084A1C59FC66002A0D64 /* libcolamd.a */,
+				64F708481C59FC51002A0D64 /* libsuitesparseconfig.a */,
+				64F708461C59FC41002A0D64 /* libgoto2_penrynp-r1.13.a */,
+				64F708441C59FC0D002A0D64 /* libcholmod.a */,
+				64F708421C59FBF7002A0D64 /* libamd.a */,
+			);
+			name = lib;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		64D9194F1C59F7D60002F585 /* VPP */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 64D919571C59F7D70002F585 /* Build configuration list for PBXNativeTarget "VPP" */;
+			buildPhases = (
+				64D9194C1C59F7D60002F585 /* Sources */,
+				64D9194D1C59F7D60002F585 /* Frameworks */,
+				64D9194E1C59F7D60002F585 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VPP;
+			productName = VPP;
+			productReference = 64D919501C59F7D70002F585 /* VPP */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		64D919481C59F7D60002F585 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = "Daniele Trimarchi";
+				TargetAttributes = {
+					64D9194F1C59F7D60002F585 = {
+						CreatedOnToolsVersion = 7.2;
+					};
+				};
+			};
+			buildConfigurationList = 64D9194B1C59F7D60002F585 /* Build configuration list for PBXProject "VPP" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 64D919471C59F7D60002F585;
+			productRefGroup = 64D919511C59F7D70002F585 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				64D9194F1C59F7D60002F585 /* VPP */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		64D9194C1C59F7D60002F585 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64F7083F1C59F991002A0D64 /* VPPItemFactory.cpp in Sources */,
+				64F708401C59F991002A0D64 /* VPPRightingMomentItem.cpp in Sources */,
+				64F7083E1C59F991002A0D64 /* VPPItem.cpp in Sources */,
+				64F7083D1C59F991002A0D64 /* VPPHydroItem.cpp in Sources */,
+				64F708341C59F991002A0D64 /* main.cpp in Sources */,
+				64F708331C59F991002A0D64 /* Interpolator.cpp in Sources */,
+				64F708361C59F991002A0D64 /* Plotter.cpp in Sources */,
+				64F7083C1C59F991002A0D64 /* VPPException.cpp in Sources */,
+				64F708371C59F991002A0D64 /* SailSet.cpp in Sources */,
+				64F708351C59F991002A0D64 /* Optimizer.cpp in Sources */,
+				64F7083B1C59F991002A0D64 /* VPPAeroItem.cpp in Sources */,
+				64F708391C59F991002A0D64 /* VariableFileParser.cpp in Sources */,
+				64F7083A1C59F991002A0D64 /* Variables.cpp in Sources */,
+				64F708411C59F991002A0D64 /* Warning.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		64D919551C59F7D70002F585 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"/Users/daniele/third_party/nlopt-2.4.2/api",
+					"/Users/daniele/third_party/nlopt-2.4.2",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/AMD/Include",
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config",
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Include",
+					"/Users/daniele/third_party/eigen-3.2.7",
+					/opt/local/include/plplot,
+					/opt/local/share/plplot5.11.1/examples/c,
+					"/opt/local/share/plplot5.11.1/examples/c++",
+					/Users/daniele/third_party/boost_1_59_0,
+					"/Users/daniele/third_party/nlopt-2.4.2/api",
+					"/Users/daniele/third_party/nlopt-2.4.2",
+					/opt/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/AMD/Lib",
+					/opt/local/lib,
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Lib",
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/COLAMD/Lib",
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config",
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/CHOLMOD/Lib",
+					/Users/daniele/third_party/GotoBLAS2,
+					"/Users/daniele/third_party/nlopt-2.4.2",
+					"/Users/daniele/third_party/nlopt-2.4.2/api",
+					"/Users/daniele/third_party/nlopt-2.4.2/.libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "/Users/daniele/third_party/nlopt-2.4.2/api /Users/daniele/third_party/nlopt-2.4.2";
+			};
+			name = Debug;
+		};
+		64D919561C59F7D70002F585 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"/Users/daniele/third_party/nlopt-2.4.2/api",
+					"/Users/daniele/third_party/nlopt-2.4.2",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/AMD/Include",
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config",
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Include",
+					"/Users/daniele/third_party/eigen-3.2.7",
+					/opt/local/include/plplot,
+					/opt/local/share/plplot5.11.1/examples/c,
+					"/opt/local/share/plplot5.11.1/examples/c++",
+					/Users/daniele/third_party/boost_1_59_0,
+					"/Users/daniele/third_party/nlopt-2.4.2/api",
+					"/Users/daniele/third_party/nlopt-2.4.2",
+					/opt/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/AMD/Lib",
+					/opt/local/lib,
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Lib",
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/COLAMD/Lib",
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config",
+					"/Users/daniele/third_party/SuiteSparse-4.4.6/CHOLMOD/Lib",
+					/Users/daniele/third_party/GotoBLAS2,
+					"/Users/daniele/third_party/nlopt-2.4.2",
+					"/Users/daniele/third_party/nlopt-2.4.2/api",
+					"/Users/daniele/third_party/nlopt-2.4.2/.libs",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "/Users/daniele/third_party/nlopt-2.4.2/api /Users/daniele/third_party/nlopt-2.4.2";
+			};
+			name = Release;
+		};
+		64D919581C59F7D70002F585 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		64D919591C59F7D70002F585 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		64D9194B1C59F7D60002F585 /* Build configuration list for PBXProject "VPP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64D919551C59F7D70002F585 /* Debug */,
+				64D919561C59F7D70002F585 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		64D919571C59F7D70002F585 /* Build configuration list for PBXNativeTarget "VPP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64D919581C59F7D70002F585 /* Debug */,
+				64D919591C59F7D70002F585 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 64D919481C59F7D60002F585 /* Project object */;
+}

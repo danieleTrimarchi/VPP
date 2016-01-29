@@ -26,6 +26,11 @@ int main(int argc, const char *argv[]) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
+		bool inf=true;
+		while (inf){
+			// infinite loop
+		}
+
 		// Get the variables
 		VariableFileParser parser("variableFile.txt");
 		parser.parse();

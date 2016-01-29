@@ -34,6 +34,7 @@ THIRD_PARTY_LIBPATH=[
 			'/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config',
 			'/Users/daniele/third_party/SuiteSparse-4.4.6/COLAMD/Lib',
 			'/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Lib',
+			'/Users/daniele/third_party/nlopt-2.4.2',
 			'/opt/local/lib' # macPorts and lnopt lib path
 		]
 
@@ -43,8 +44,17 @@ THIRD_PARTY_LIBPATH=[
 env = DefaultEnvironment()
 
 #Compile debug mode
-#env.Append(CCFLAGS= '-g')
+env.Append(CCFLAGS= '-g')
 
+#===============================================================================
+# env = Environment()
+# conf = Configure(env)
+# if not conf.CheckLib('nlopt'):
+# 	print 'Did not find libnlopt.a or nlopt.lib, exiting!'
+# 	Exit(1)
+# env = conf.Finish()
+#===============================================================================
+    
 env.Program('VPP',
 		['main.cpp','Plotter.cpp','Solver.cpp','Optimizer.cpp',
 		'VariableFileParser.cpp','Warning.cpp','Variables.cpp',
