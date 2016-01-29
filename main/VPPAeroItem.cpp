@@ -149,7 +149,7 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 	cdpMat0.resize(8,4);
 	cdpMat0.row(0) << 0,  	0,   	0,   	0;
 	cdpMat0.row(1) << 15,  	0.02, 0.005, 0.02;
-	cdpMat0.row(2) << 27, 	0.02,	0.02,	0.05;
+	cdpMat0.row(2) << 27, 	0.03,	0.02,	0.05;
 	cdpMat0.row(3) << 50, 	0.15,	0.25,	0.25;
 	cdpMat0.row(4) << 80, 	0.8, 	0.15,	0.9;
 	cdpMat0.row(5) << 100,	1.0, 	0.05, 1.2;
@@ -174,16 +174,16 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 		interpCdVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
 	}
 
-	//		interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
-	//		interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
-	//		interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
-	//		interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
-	//		interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
-	//		interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
+			interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
+			interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
+			interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
+			interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
+			interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
+			interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
 
-	// resize cl_ and cd_ for storing the interpolated values
-	allCl_.resize(3);
-	allCd_.resize(3);
+	// resize and init cl_ and cd_ for storing the interpolated values
+	allCl_=Eigen::Vector3d::Zero();
+	allCd_=Eigen::Vector3d::Zero();
 }
 
 // Destructor
@@ -282,7 +282,7 @@ const double SailCoefficientItem::getCl() const {
 
 // Returns the current value of the lift coefficient
 const double SailCoefficientItem::getCd() const {
-	return cdp_;
+	return cd_;
 }
 
 // Print the class name -> in this case SailCoefficientItem
@@ -381,6 +381,10 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") ) /  ps->get("AN");
 	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") ) /  ps->get("AN");
+
+    std::cout<< "ps->get(AM)= "<<ps->get("AM")<<std::endl;
+    std::cout<< "ps->get(AJ)= "<<ps->get("AJ")<<std::endl;
+    std::cout<< "ps->get(AN)= "<<ps->get("AN")<<std::endl;
 
 	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
 	if(isnan(cdp_)) throw VPPException(HERE,"cdp_ is nan");
