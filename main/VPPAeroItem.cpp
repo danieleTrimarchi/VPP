@@ -41,31 +41,22 @@ void WindItem::update(int vTW, int aTW) {
 	// vmin to vmax in N steps : vMin + vTW * ( (vMax-vMin)/(nSteps-2) - 1 )
 	twv_= v_tw_min_ + vTW * ( ( v_tw_max_ - v_tw_min_ ) / n_twv_ );
 	if(isnan(twv_)) throw VPPException(HERE,"twv_ is NAN!");
-	std::cout<<"twv_= "<<twv_<<std::endl;
 
 	// Update the true wind angle: make as per the velocity
 	twa_= alpha_tw_min_ + aTW * ( ( alpha_tw_max_ - alpha_tw_min_ ) /  n_alpha_tw_ );
 	if(isnan(twa_)) throw VPPException(HERE,"twa_ is NAN!");
-	std::cout<<"twa_= "<<twa_<<std::endl;
-
-	std::cout<<"V_= "<<V_<<std::endl;
-	std::cout<<"PHI_= "<<PHI_<<std::endl;
 
 	// Update the apparent wind velocity vector
 	awv_(0)= V_ + twv_ * cos( toRad(twa_)  );
 	if(isnan(awv_(0))) throw VPPException(HERE,"awv_(0) is NAN!");
-	std::cout<<"awv_(0)= "<<awv_(0)<<std::endl;
 
 	awv_(1)= twv_ * sin( toRad(twa_) );
 	if(isnan(awv_(1))) throw VPPException(HERE,"awv_(1) is NAN!");
-	std::cout<<"awv_(1)= "<<awv_(1)<<std::endl;
 
 	// Update the apparent wind angle - todo dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
 	awa_= toDeg( atan( awv_(1)/awv_(0) ) );
 	if(isnan(awa_))	throw VPPException(HERE,"awa_ is NAN!");
-	std::cout<<"awa_= "<<awa_<<std::endl;
-	std::cout<<"--------------------\n"<<std::endl;
 
 }
 
@@ -174,12 +165,12 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 		interpCdVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
 	}
 
-			interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
-			interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
-			interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
-			interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
-			interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
-			interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
+//			interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
+//			interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
+//			interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
+//			interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
+//			interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
+//			interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
 
 	// resize and init cl_ and cd_ for storing the interpolated values
 	allCl_=Eigen::Vector3d::Zero();
@@ -382,10 +373,6 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") ) /  ps->get("AN");
 	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") ) /  ps->get("AN");
 
-    std::cout<< "ps->get(AM)= "<<ps->get("AM")<<std::endl;
-    std::cout<< "ps->get(AJ)= "<<ps->get("AJ")<<std::endl;
-    std::cout<< "ps->get(AN)= "<<ps->get("AN")<<std::endl;
-
 	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
 	if(isnan(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
@@ -541,12 +528,12 @@ void AeroForcesItem::update(int vTW, int aTW) {
 
 
 	// Updates Fdrive = lift_ * sin(alfa_eff) - D * cos(alfa_eff);
-	fDrive_ = lift_ * sin(awa) - drag_ * cos(awa);
+	fDrive_ = lift_ * sin( toRad(awa) ) - drag_ * cos( toRad(awa) );
 	if(isnan(fDrive_)) throw VPPException(HERE,"fDrive_ is NAN!");
 
 
 	// Updates Fheel = L * cos(alfa_eff) + D * sin(alfa_eff);
-	fHeel_ = lift_ * cos(awa) + drag_ * sin(awa);
+	fHeel_ = lift_ * cos( toRad(awa) ) + drag_ * sin( toRad(awa) );
 	if(isnan(fHeel_)) throw VPPException(HERE,"fHeel_ is NAN!");
 
 

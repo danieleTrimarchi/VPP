@@ -96,7 +96,7 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
   opt_->set_xtol_rel(1e-8);
 
   // Set the max number of evaluations for a single run
-  opt_->set_maxeval(10);
+  opt_->set_maxeval(5000);
 
   // Also get a reference to the WindItem that has computed the
   // real wind velocity/angle for the current run
