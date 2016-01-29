@@ -49,7 +49,8 @@ const std::vector<double>* OptResult::getX() const {
 
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-		dimension_(4) {
+		dimension_(4),
+		tol_(1.e-6){
 
   // Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
@@ -93,7 +94,7 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
   opt_->set_max_objective(VPP_speed, NULL);
 
   // Set the relative tolerance
-  opt_->set_xtol_rel(1e-8);
+  opt_->set_xtol_rel(tol_);
 
   // Set the max number of evaluations for a single run
   opt_->set_maxeval(5000);
@@ -149,7 +150,7 @@ void Optimizer::run(int TWV, int TWA) {
 
   // Note that the Number of constraints is determined by tol.size!!
   std::vector<double> tol(2);
-  tol[0]=tol[1]=1.e-8;
+  tol[0]=tol[1]=tol_;
 
   // Clear the optimizer
   opt_->remove_equality_constraints();

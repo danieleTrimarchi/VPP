@@ -26,7 +26,7 @@ int main(int argc, const char *argv[]) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-		bool inf=true;
+		bool inf=false;
 		while (inf){
 			// infinite loop
 		}

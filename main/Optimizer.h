@@ -107,6 +107,9 @@ class Optimizer {
 		/// Ptr to the wind item, used to retrieve the current twv, twa
 		WindItem* pWind_;
 
+		/// tolerance
+		double tol_;
+
 };
 
 #endif
