@@ -17,30 +17,30 @@ using namespace Eigen;
 class Plotter {
 
 	public:
-		
+
 		/// Constructor
 		Plotter();
-		
+
 		/// Destructor
 		virtual ~Plotter();
-		
+
 		/// Plot the points of some given arrays
 		void plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y, string title="Plot");
 
 		/// Plot the points of two given array sets
 		void plot(Eigen::ArrayXd& x0,
-							Eigen::ArrayXd& y0,
-							Eigen::ArrayXd& x1,
-							Eigen::ArrayXd& y1
-							);
+				Eigen::ArrayXd& y0,
+				Eigen::ArrayXd& x1,
+				Eigen::ArrayXd& y1
+		);
 
 		/// Plot the points of two given array sets
 		void plot(std::vector<double>& x0,
-							std::vector<double>& y0,
-							std::vector<double>& x1,
-							std::vector<double>& y1,
-							std::string title
-							);
+				std::vector<double>& y0,
+				std::vector<double>& x1,
+				std::vector<double>& y1,
+				std::string title
+		);
 
 	protected:
 

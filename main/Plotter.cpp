@@ -3,12 +3,12 @@
 
 // Constructor
 Plotter::Plotter():
-	minX_(1E20),
-	minY_(1E20),
-	maxX_(-1E20),
-	maxY_(-1E20),
-	nValues_(0),
-	x_(0), y_(0) {
+minX_(1E20),
+minY_(1E20),
+maxX_(-1E20),
+maxY_(-1E20),
+nValues_(0),
+x_(0), y_(0) {
 
 	// Specify the output device (aquaterm)
 	plsdev("aqt");
@@ -105,20 +105,20 @@ void Plotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 // Copy the values into plplot compatible containers
 void Plotter::setValues(std::vector<double>& x, std::vector<double>& y) {
 
-// make sure the buffers x_ and y_ are init
-delete x_;
-delete y_;
+	// make sure the buffers x_ and y_ are init
+	delete x_;
+	delete y_;
 
-nValues_=x.size();
+	nValues_=x.size();
 
-x_ = new double[nValues_];
-y_ = new double[nValues_];
+	x_ = new double[nValues_];
+	y_ = new double[nValues_];
 
-for ( int i = 0; i < nValues_; i++ )
-{
-	x_[i] = x[i];
-	y_[i] = y[i];
-}
+	for ( int i = 0; i < nValues_; i++ )
+	{
+		x_[i] = x[i];
+		y_[i] = y[i];
+	}
 
 }
 
@@ -195,7 +195,7 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y,string title) {
 	plline( nValues_, x_, y_ );
 
 	// Add labels
- 	pllab( "x", "y", title.c_str() );
+	pllab( "x", "y", title.c_str() );
 
 	// Close PLplot library
 	plend();
@@ -203,9 +203,9 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y,string title) {
 }
 
 void Plotter::plot(	Eigen::ArrayXd& x0,
-										Eigen::ArrayXd& y0,
-										Eigen::ArrayXd& x1,
-										Eigen::ArrayXd& y1) {
+		Eigen::ArrayXd& y0,
+		Eigen::ArrayXd& x1,
+		Eigen::ArrayXd& y1) {
 
 	// Reset the ranges at the very beginning of the plot
 	initRanges();
@@ -254,10 +254,10 @@ void Plotter::plot(	Eigen::ArrayXd& x0,
 }
 
 void Plotter::plot(	std::vector<double>& x0,
-										std::vector<double>& y0,
-										std::vector<double>& x1,
-										std::vector<double>& y1,
-										std::string title) {
+		std::vector<double>& y0,
+		std::vector<double>& x1,
+		std::vector<double>& y1,
+		std::string title) {
 
 	// Reset the ranges at the very beginning of the plot
 	initRanges();
@@ -307,8 +307,8 @@ void Plotter::plot(	std::vector<double>& x0,
 //=====================================================================
 
 PolarPlotter::PolarPlotter() :
-		Plotter(),
-		pi_(M_PI / 180.0) {
+				Plotter(),
+				pi_(M_PI / 180.0) {
 
 	nValues_=361;
 	x_= new double[nValues_];

@@ -5,7 +5,7 @@
 
 // Constructor
 SailSet::SailSet(const VariableFileParser& parser) :
-	pParser_(&parser) {
+pParser_(&parser) {
 
 	const VarSet& v = *(pParser_->getVariables());
 
@@ -84,7 +84,7 @@ double SailSet::get(std::string varName) {
 
 // Constructor
 MainOnlySailSet::MainOnlySailSet(const VariableFileParser& parser) :
-	SailSet(parser) {
+			SailSet(parser) {
 
 	// Compute the Sail Nominal Area AN = AM
 	sailVariables_.insert( Variable("AN", sailVariables_["AM"] ) );
@@ -109,7 +109,7 @@ SailCoefficientItem* MainOnlySailSet::sailCoefficientItemFactory(WindItem* pWind
 
 // Constructor
 MainAndJibSailSet::MainAndJibSailSet(const VariableFileParser& parser) :
-	SailSet(parser) {
+			SailSet(parser) {
 
 	// use a tmp var to refer to sailVariables_
 	VarSet& sv = sailVariables_;
@@ -138,7 +138,7 @@ SailCoefficientItem* MainAndJibSailSet::sailCoefficientItemFactory(WindItem* pWi
 
 // Constructor
 MainAndSpiSailSet::MainAndSpiSailSet(const VariableFileParser& parser):
-	SailSet(parser) {
+			SailSet(parser) {
 
 	// use a tmp var to refer to sailVariables_
 	VarSet& sv = sailVariables_;
@@ -167,7 +167,7 @@ SailCoefficientItem* MainAndSpiSailSet::sailCoefficientItemFactory(WindItem* pWi
 
 // Constructor
 MainJibAndSpiSailSet::MainJibAndSpiSailSet(const VariableFileParser& parser):
-	SailSet(parser) {
+			SailSet(parser) {
 
 	// use a tmp var to refer to sailVariables_
 	VarSet& sv = sailVariables_;

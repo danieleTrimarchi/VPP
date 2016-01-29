@@ -123,11 +123,11 @@ class SailCoefficientItem : public VPPItem {
 
 		/// Current lift/drag coefficient values for the full sailset
 		double 	cl_, //< Lift coefficient
-						ar_, //<
-						cdp_,//<
-						cdI_, //< Induced SailSet Resistance
-						cd0_, //<
-						cd_; //< Drag coefficient
+		ar_, //<
+		cdp_,//<
+		cdI_, //< Induced SailSet Resistance
+		cd0_, //<
+		cd_; //< Drag coefficient
 
 	private:
 
@@ -290,9 +290,9 @@ class AeroForcesItem : public VPPItem {
 		WindItem* pWindItem_;
 
 		double lift_, drag_,		//< Lift and Drag
-					fDrive_, fHeel_,	//< Drive and Heel forces, ie lift and drag projected to the boat's route
-					fSide_, 					//< Side force, or fHeel projected on the sea plane
-					mHeel_;						//< Heel moment due to fHeel
+		fDrive_, fHeel_,	//< Drive and Heel forces, ie lift and drag projected to the boat's route
+		fSide_, 					//< Side force, or fHeel projected on the sea plane
+		mHeel_;						//< Heel moment due to fHeel
 };
 
 

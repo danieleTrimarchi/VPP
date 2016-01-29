@@ -23,10 +23,10 @@ class Variable {
 		bool operator < (const Variable& rhs) const;
 
 		/// Overload operator == to compare in set
-	  bool operator==(const Variable& rhs) const;
+		bool operator==(const Variable& rhs) const;
 
-	  /// Self cast operator, returns the underlying value
-	  operator double() const;
+		/// Self cast operator, returns the underlying value
+		operator double() const;
 
 		/// Overload operator << to printout variable name and value
 		friend ostream& operator << ( ostream& os, const Variable& var) {

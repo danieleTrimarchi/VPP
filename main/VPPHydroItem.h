@@ -184,7 +184,7 @@ class FrictionalResistanceItem : public ResistanceItem {
 		virtual void update(int vTW, int aTW);
 
 		double 	rN0_,  //< Velocity Independent part of the Reynolds number
-						rfh0_; //< Velocity Independent part of the Frictional resistance of the bare hull
+		rfh0_; //< Velocity Independent part of the Frictional resistance of the bare hull
 
 };
 

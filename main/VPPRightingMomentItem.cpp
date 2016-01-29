@@ -6,12 +6,12 @@ using namespace mathUtils;
 
 // Constructor
 RightingMomentItem::RightingMomentItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> sailSet):
-		VPPItem(pParser, sailSet),
-		val_(0) {
+				VPPItem(pParser, sailSet),
+				val_(0) {
 
 	m10_= Physic::rho_w * Physic::g *
-				(pParser_->get("KM") - pParser_->get("KG")) *
-				(pParser_->get("DIVCAN") + pParser_->get("DVK"));
+			(pParser_->get("KM") - pParser_->get("KG")) *
+			(pParser_->get("DIVCAN") + pParser_->get("DVK"));
 
 	m20_= pParser_->get("MMVBLCRW") * Physic::g;
 

@@ -89,7 +89,7 @@ class Optimizer {
 		boost::shared_ptr<nlopt::opt> opt_;
 
 		/// lower and upper bounds for the state variables
-	  std::vector<double> lowerBounds_,upperBounds_;
+		std::vector<double> lowerBounds_,upperBounds_;
 
 		/// Ptr to the VPPItemFactory that contains all of the ingredients
 		/// required to compute the optimization constraints
@@ -99,7 +99,7 @@ class Optimizer {
 		VariableFileParser* pParser_;
 
 		/// Vector with the initial guess/optimizer results
-	  std::vector<double> xp_;
+		std::vector<double> xp_;
 
 		/// Vector of results, one result per Optimizer run
 		std::vector<OptResult> results_;

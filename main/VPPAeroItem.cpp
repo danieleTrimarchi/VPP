@@ -7,11 +7,11 @@ using namespace mathUtils;
 
 /// Constructor
 WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
-						VPPItem(pParser,pSailSet),
-						twv_(0),
-						twa_(0),
-						awa_(0),
-						awv_(Eigen::Vector2d::Zero()) {
+								VPPItem(pParser,pSailSet),
+								twv_(0),
+								twa_(0),
+								awa_(0),
+								awv_(Eigen::Vector2d::Zero()) {
 
 	// Get the max/min wind velocities from the parser
 	v_tw_min_= pParser_->get("V_TW_MIN");
@@ -93,15 +93,15 @@ const double WindItem::getAWNorm() const {
 
 // Constructor
 SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
-						VPPItem(pWindItem->getParser(), pWindItem->getSailSet()),
-						pWindItem_(pWindItem),
-						awa_(0),
-						ar_(0),
-						cl_(0),
-						cdp_(0),
-						cdI_(0),
-						cd0_(0),
-						cd_(0) {
+								VPPItem(pWindItem->getParser(), pWindItem->getSailSet()),
+								pWindItem_(pWindItem),
+								awa_(0),
+								ar_(0),
+								cl_(0),
+								cdp_(0),
+								cdI_(0),
+								cd0_(0),
+								cd_(0) {
 
 	// Init static members with values from: Hazer Cl-Cd coefficients, 1999
 	// Cols: rwa_, Main_Cl, Jib_Cl, Spi_Cl
@@ -165,12 +165,12 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 		interpCdVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
 	}
 
-//			interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
-//			interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
-//			interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
-//			interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
-//			interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
-//			interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
+	//			interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
+	//			interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
+	//			interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
+	//			interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
+	//			interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
+	//			interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
 
 	// resize and init cl_ and cd_ for storing the interpolated values
 	allCl_=Eigen::Vector3d::Zero();
@@ -296,7 +296,7 @@ void SailCoefficientItem::printCoefficients() {
 
 // Constructor
 MainOnlySailCoefficientItem::MainOnlySailCoefficientItem(WindItem* pWind) :
-				SailCoefficientItem(pWind) {
+						SailCoefficientItem(pWind) {
 	// do nothing
 }
 
@@ -340,7 +340,7 @@ void MainOnlySailCoefficientItem::printWhoAmI() {
 
 // Constructor
 MainAndJibCoefficientItem::MainAndJibCoefficientItem(WindItem* pWind) :
-				SailCoefficientItem(pWind) {
+						SailCoefficientItem(pWind) {
 	// do nothing
 }
 
@@ -390,7 +390,7 @@ void MainAndJibCoefficientItem::printWhoAmI() {
 
 // Constructor
 MainAndSpiCoefficientItem::MainAndSpiCoefficientItem(WindItem* pWind) :
-				SailCoefficientItem(pWind) {
+						SailCoefficientItem(pWind) {
 	// do nothing
 }
 
@@ -439,7 +439,7 @@ void MainAndSpiCoefficientItem::printWhoAmI() {
 
 // Constructor
 MainJibAndSpiCoefficientItem::MainJibAndSpiCoefficientItem(WindItem* pWind) :
-				SailCoefficientItem(pWind) {
+						SailCoefficientItem(pWind) {
 	// do nothing
 }
 
@@ -489,15 +489,15 @@ void MainJibAndSpiCoefficientItem::printWhoAmI() {
 
 // Constructor
 AeroForcesItem::AeroForcesItem(SailCoefficientItem* sailCoeffItem) :
-				VPPItem(sailCoeffItem->getParser(), sailCoeffItem->getSailSet() ),
-				pSailCoeffs_(sailCoeffItem),
-				pWindItem_(pSailCoeffs_->getWindItem()),
-				lift_(0),
-				drag_(0),
-				fDrive_(0),
-				fHeel_(0),
-				fSide_(0),
-				mHeel_(0) {
+						VPPItem(sailCoeffItem->getParser(), sailCoeffItem->getSailSet() ),
+						pSailCoeffs_(sailCoeffItem),
+						pWindItem_(pSailCoeffs_->getWindItem()),
+						lift_(0),
+						drag_(0),
+						fDrive_(0),
+						fHeel_(0),
+						fSide_(0),
+						mHeel_(0) {
 	// do nothing
 }
 

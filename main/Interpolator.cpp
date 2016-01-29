@@ -51,7 +51,7 @@ double Interpolator::interpolate(double val,Eigen::ArrayXd& X,Eigen::ArrayXd& Y)
 	// that preserves c1 continuity on the rest of the plot
 	bool useLinearInterp = (
 			val<=X(1) &&
-			 !reversed ? mu<=0.5 : (1-mu)<=0.5  );
+			!reversed ? mu<=0.5 : (1-mu)<=0.5  );
 
 	// Use linear for the very first trait, cosine for the rest
 	if(useLinearInterp)
@@ -63,7 +63,7 @@ double Interpolator::interpolate(double val,Eigen::ArrayXd& X,Eigen::ArrayXd& Y)
 
 // Linearly interpolate
 double Interpolator::LinearInterpolate(double y1,double y2,double mu) {
-   return(y1*(1-mu)+y2*mu);
+	return(y1*(1-mu)+y2*mu);
 }
 
 // Interpolate using cosines
@@ -71,8 +71,8 @@ double Interpolator::CosineInterpolate(double y1,double y2,double mu) {
 
 	double mu2;
 
-   mu2 = (1-cos(mu*M_PI))/2;
-   return(y1*(1-mu2)+y2*mu2);
+	mu2 = (1-cos(mu*M_PI))/2;
+	return(y1*(1-mu2)+y2*mu2);
 }
 
 void Interpolator::test() {
@@ -144,34 +144,34 @@ void Interpolator::test() {
 // Default constructor (test)
 SplineInterpolator::SplineInterpolator() {
 
-//	std::vector<double> X(5), Y(5);
-//	X[0]=0.1; X[1]=0.4; X[2]=1.2; X[3]=1.8; X[4]=2.0;
-//	Y[0]=0.1; Y[1]=0.7; Y[2]=1.5; Y[3]=1.1; Y[4]=0.9;
-//
-//	// Generate the underlying spline
-//	generate(X,Y);
-//
-//	size_t nPoints=50;
-//
-//	ArrayXd x0(5);
-//	ArrayXd y0(5);
-//	for(size_t i=0; i<5; i++){
-//		x0(i)=X[i];
-//		y0(i)=Y[i];
-//	}
-//
-//	ArrayXd x1(nPoints);
-//	ArrayXd y1(nPoints);
-//
-//	double dx= (X[4]-X[0])/(nPoints-1);
-//
-//	for(size_t i=0; i<nPoints; i++){
-//		x1(i)=X[0]+i*dx-0.5;
-//		y1(i)= s_( x1(i) );
-//	}
-//
-//	Plotter plotter;
-//	plotter.plot(x0,y0,x1,y1);
+	//	std::vector<double> X(5), Y(5);
+	//	X[0]=0.1; X[1]=0.4; X[2]=1.2; X[3]=1.8; X[4]=2.0;
+	//	Y[0]=0.1; Y[1]=0.7; Y[2]=1.5; Y[3]=1.1; Y[4]=0.9;
+	//
+	//	// Generate the underlying spline
+	//	generate(X,Y);
+	//
+	//	size_t nPoints=50;
+	//
+	//	ArrayXd x0(5);
+	//	ArrayXd y0(5);
+	//	for(size_t i=0; i<5; i++){
+	//		x0(i)=X[i];
+	//		y0(i)=Y[i];
+	//	}
+	//
+	//	ArrayXd x1(nPoints);
+	//	ArrayXd y1(nPoints);
+	//
+	//	double dx= (X[4]-X[0])/(nPoints-1);
+	//
+	//	for(size_t i=0; i<nPoints; i++){
+	//		x1(i)=X[0]+i*dx-0.5;
+	//		y1(i)= s_( x1(i) );
+	//	}
+	//
+	//	Plotter plotter;
+	//	plotter.plot(x0,y0,x1,y1);
 
 }
 

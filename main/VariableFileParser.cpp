@@ -6,7 +6,7 @@
 
 // Constructor
 VariableFileParser::VariableFileParser(std::string fileName) :
-	fileName_(fileName) {
+fileName_(fileName) {
 
 	// Set the variable the user must define in the input file.
 	// Method check() will assure all variables have been defined
@@ -140,12 +140,12 @@ void VariableFileParser::check() {
 	for(size_t iVar=0; iVar<requiredVariables_.size(); iVar++) {
 
 		std::set<Variable>::iterator it;
-	  it=variables_.find(requiredVariables_[iVar]);
-	  if(it == variables_.end()) {
-	  	char msg[256];
-	  	sprintf(msg,"Variable \"%s\" was not defined in file \"%s\"",requiredVariables_[iVar].c_str(),fileName_.c_str());
-	  	throw VPPException(HERE,msg);
-	  }
+		it=variables_.find(requiredVariables_[iVar]);
+		if(it == variables_.end()) {
+			char msg[256];
+			sprintf(msg,"Variable \"%s\" was not defined in file \"%s\"",requiredVariables_[iVar].c_str(),fileName_.c_str());
+			throw VPPException(HERE,msg);
+		}
 	}
 
 	// Add some check on the variables: are they within the model validity?
@@ -159,7 +159,7 @@ void VariableFileParser::check() {
 		Warning("BWL/TCAN is out of valuable interval");
 
 	if( variables_["LWL"]/std::pow(variables_["DIVCAN"],1./3) <=   4.34 ||
-				variables_["LWL"]/std::pow(variables_["DIVCAN"],1./3) >=  8.50 )
+			variables_["LWL"]/std::pow(variables_["DIVCAN"],1./3) >=  8.50 )
 		Warning("LWL/DIVCAN^(1/3) is out of valuable interval");
 
 	if( variables_["CPL"] <= 0.52 || variables_["CPL"] >= 0.6 )
