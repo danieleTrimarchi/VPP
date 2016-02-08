@@ -31,7 +31,8 @@ class Plotter {
 		void plot(Eigen::ArrayXd& x0,
 				Eigen::ArrayXd& y0,
 				Eigen::ArrayXd& x1,
-				Eigen::ArrayXd& y1
+				Eigen::ArrayXd& y1,
+				string title="Plot"
 		);
 
 		/// Plot the points of two given array sets
@@ -39,7 +40,7 @@ class Plotter {
 				std::vector<double>& y0,
 				std::vector<double>& x1,
 				std::vector<double>& y1,
-				std::string title
+				string title="Plot"
 		);
 
 	protected:

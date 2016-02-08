@@ -205,7 +205,8 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y,string title) {
 void Plotter::plot(	Eigen::ArrayXd& x0,
 		Eigen::ArrayXd& y0,
 		Eigen::ArrayXd& x1,
-		Eigen::ArrayXd& y1) {
+		Eigen::ArrayXd& y1,
+		std::string title) {
 
 	// Reset the ranges at the very beginning of the plot
 	initRanges();
@@ -248,7 +249,7 @@ void Plotter::plot(	Eigen::ArrayXd& x0,
 	plline( nValues_, x_, y_ );
 
 	// Close PLplot library
-	pllab( "x", "y", "2D Plot Example" );
+	pllab( "x", "y", title.c_str());
 	plend();
 
 }

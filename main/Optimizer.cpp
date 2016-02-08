@@ -54,7 +54,8 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 
 	// Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
-	//nlopt::opt opt(nlopt::GN_ISRES,dimension_);
+	//opt_.reset( new nlopt::opt(nlopt::LN_COBYLA,dimension_) );
+	//opt_.reset( new nlopt::opt(nlopt::GN_ISRES,dimension_) );
 	opt_.reset( new nlopt::opt(nlopt::LN_COBYLA,dimension_) );
 
 	// Init the static member vppItemsContainer
@@ -208,10 +209,10 @@ void Optimizer::plotResults() {
 
 	// Instantiate a plotter
 	Plotter plotter;
-	plotter.plot(windSpeeds,boatSpeeds,"Boat Speed");
+	plotter.plot(windSpeeds,boatSpeeds,windSpeeds,boatSpeeds,"Boat Speed");
 
 	Plotter plotter2;
-	plotter2.plot(windSpeeds,boatHeel, "Boat Heel");
+	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel, "Boat Heel");
 
 }
 
