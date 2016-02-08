@@ -113,7 +113,9 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	//  plotter.plot(phiD_,TeD);
 
 	// Make a check plot for the induced resistance
-	//interpolator.plot(0,30,20,"Induced Resistance");
+	// WARNING: as we are in update, this potentially leads to a
+	// large number of plots!
+	//interpolator.plot(0,30,30,"Induced Resistance");
 
 	// Get the aerodynamic side force
 	double fHeel= pAeroForcesItem_->getFSide();
@@ -189,7 +191,7 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrhDArr) );
 
 	// Make a check plot for the induced resistance
-	//pInterpolator_->plot(0,1,50,"Residuary Resistance");
+	pInterpolator_->plot(0,1,50,"Residuary Resistance");
 
 }
 
