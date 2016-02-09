@@ -8,10 +8,12 @@ int optIterations=0;
 ///////// Optimizer Result Class ///////////////////////////////
 
 /// Constructor
-OptResult::OptResult(double twv, double twa, std::vector<double>& res) :
+OptResult::OptResult(double twv, double twa, std::vector<double>& res, double dF, double dM) :
 				twv_(twv),
 				twa_(twa),
-				result_(res) {
+				result_(res),
+				dF_(dF),
+				dM_(dM) {
 
 }
 
@@ -22,9 +24,11 @@ OptResult::~OptResult(){
 
 // PrintOut the values stored in this result
 void OptResult::print() {
-	std::cout<<" "<<twv_<<" "<<twa_;
+	std::cout<<" "<<twv_<<" "<<twa_ <<"  --  ";
 	for(size_t iRes=0; iRes<result_.size(); iRes++)
 		std::cout<<" "<<result_[iRes];
+	std::cout<<"  --  "<<dF_<<" "<<dM_;
+
 	std::cout<<"\n";
 }
 
@@ -37,6 +41,16 @@ const double OptResult::getTWV() const {
 // get the twa for this result
 const double OptResult::getTWA() const {
 	return twa_;
+}
+
+// get the force residuals for this result
+const double OptResult::getdF() const {
+	return dF_;
+}
+
+// get the moment residuals for this result
+const double OptResult::getdM() const {
+	return dM_;
 }
 
 // get the state vector for this result
@@ -178,7 +192,7 @@ void Optimizer::run(int TWV, int TWA) {
 		printf("      residuals: dF= %g, dM= %g\n\n",dF,dM);
 
 		// Push the result to the result vector
-		results_.push_back(OptResult(pWind_->getTWV(), pWind_->getTWA(), xp_));
+		results_.push_back(OptResult(pWind_->getTWV(), pWind_->getTWA(), xp_, dF, dM));
 	}
 }
 
@@ -186,7 +200,7 @@ void Optimizer::run(int TWV, int TWA) {
 void Optimizer::printResults() {
 
 	std::cout<<"==== OPTIMIZER RESULTS PRINTOUT ======"<<std::endl;
-	std::cout<<" TWV  TWA  V  PHI  B  F  "<<std::endl;
+	std::cout<<" TWV  TWA  -- V  PHI  B  F -- dF  dM "<<std::endl;
 	std::cout<<"--------------------------------------"<<std::endl;
 	for(size_t iRes=0; iRes<results_.size();iRes++)
 		results_[iRes].print();
@@ -200,19 +214,31 @@ void Optimizer::plotResults() {
 	Eigen::ArrayXd windSpeeds(results_.size());
 	Eigen::ArrayXd boatSpeeds(results_.size());
 	Eigen::ArrayXd boatHeel(results_.size());
+	Eigen::ArrayXd dF(results_.size());
+	Eigen::ArrayXd dM(results_.size());
 
 	for(size_t iRes=0; iRes<results_.size(); iRes++) {
 		windSpeeds(iRes) = results_[iRes].getTWV();
 		boatSpeeds(iRes) = results_[iRes].getX()->at(0);
 		boatHeel(iRes)   = results_[iRes].getX()->at(1);
+		dF(iRes)         = results_[iRes].getdF();
+		dM(iRes)         = results_[iRes].getdM();
 	}
 
-	// Instantiate a plotter
+	// Instantiate a plotter for the velocity
 	Plotter plotter;
-	plotter.plot(windSpeeds,boatSpeeds,windSpeeds,boatSpeeds,"Boat Speed");
+	plotter.plot(windSpeeds,boatSpeeds,windSpeeds,boatSpeeds,
+			"Boat Speed","Wind Speed [m/s]","Boat Speed [m/s]");
 
+	// Instantiate a plotter for the heel
 	Plotter plotter2;
-	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel, "Boat Heel");
+	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
+			"Boat Heel","Wind Speed [m/s]","Boat Heel [deg]");
+
+	// Instantiate a plotter for the residuals
+	Plotter plotter3;
+	plotter3.plot(windSpeeds,dF,windSpeeds,dM,
+				"Residuals","Wind Speed [m/s]","Residuals [N,N*m]");
 
 }
 

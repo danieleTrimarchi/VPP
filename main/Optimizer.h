@@ -21,7 +21,7 @@ class OptResult {
 	public:
 
 		/// Constructor
-		OptResult(double twv, double twa, std::vector<double>& res);
+		OptResult(double twv, double twa, std::vector<double>& res, double dF, double dM);
 
 		/// Destructor
 		~OptResult();
@@ -35,6 +35,12 @@ class OptResult {
 		// get the twa for this result
 		const double getTWA() const;
 
+		// get the force residuals for this result
+		const double getdF() const;
+
+		// get the moment residuals for this result
+		const double getdM() const;
+
 		// get the state vector for this result
 		const std::vector<double>* getX() const;
 
@@ -45,6 +51,9 @@ class OptResult {
 
 		/// State vector
 		std::vector<double> result_;
+
+		// Force and moment residuals
+		double dF_, dM_;
 
 } ;
 

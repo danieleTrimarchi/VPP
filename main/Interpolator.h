@@ -56,7 +56,8 @@ class SplineInterpolator {
 		double interpolate(double);
 
 		/// Plot the spline and its underlying source points
-		void plot(double minVal,double maxVal,int nVals,string title);
+		void plot(double minVal,double maxVal,int nVals,
+				string title, string xLabel="x", string yLabel="y");
 
 	private:
 

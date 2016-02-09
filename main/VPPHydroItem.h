@@ -140,6 +140,8 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 
 //=================================================================
 
+/// Express the change in Appendage Resistance due to Heel.
+/// See Keuning 3.2.2 p 126
 class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 
 	public:

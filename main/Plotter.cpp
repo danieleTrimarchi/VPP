@@ -206,7 +206,9 @@ void Plotter::plot(	Eigen::ArrayXd& x0,
 		Eigen::ArrayXd& y0,
 		Eigen::ArrayXd& x1,
 		Eigen::ArrayXd& y1,
-		std::string title) {
+		std::string title,
+		string xLabel,
+		string yLabel) {
 
 	// Reset the ranges at the very beginning of the plot
 	initRanges();
@@ -249,7 +251,7 @@ void Plotter::plot(	Eigen::ArrayXd& x0,
 	plline( nValues_, x_, y_ );
 
 	// Close PLplot library
-	pllab( "x", "y", title.c_str());
+	pllab( xLabel.c_str(), yLabel.c_str(), title.c_str());
 	plend();
 
 }
@@ -258,7 +260,9 @@ void Plotter::plot(	std::vector<double>& x0,
 		std::vector<double>& y0,
 		std::vector<double>& x1,
 		std::vector<double>& y1,
-		std::string title) {
+		std::string title,
+		string xLabel,
+		string yLabel) {
 
 	// Reset the ranges at the very beginning of the plot
 	initRanges();
@@ -301,7 +305,7 @@ void Plotter::plot(	std::vector<double>& x0,
 	plline( nValues_, x_, y_ );
 
 	// Close PLplot library
-	pllab( "x", "y", title.c_str() );
+	pllab( xLabel.c_str(), yLabel.c_str(), title.c_str() );
 	plend();
 
 }
