@@ -1,5 +1,6 @@
 #include "Optimizer.h"
 #include "VPPException.h"
+#include <fstream>
 
 // Init static member
 boost::shared_ptr<VPPItemFactory> Optimizer::vppItemsContainer_;
@@ -24,11 +25,11 @@ OptResult::~OptResult(){
 
 // PrintOut the values stored in this result
 void OptResult::print() {
+	printf("%4.2f  %4.2f  -- ", twv_,twa_);
 	std::cout<<" "<<twv_<<" "<<twa_ <<"  --  ";
 	for(size_t iRes=0; iRes<result_.size(); iRes++)
-		std::cout<<" "<<result_[iRes];
-	std::cout<<"  --  "<<dF_<<" "<<dM_;
-
+		printf("  %4.2e",result_[iRes]);
+	printf("  --  %4.2e  %4.2e", dF_,dM_);
 	std::cout<<"\n";
 }
 
@@ -66,13 +67,14 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 				dimension_(4),
 				tol_(1.e-6){
 
+
 	// Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
 	//opt_.reset( new nlopt::opt(nlopt::LN_COBYLA,dimension_) );
 	//opt_.reset( new nlopt::opt(nlopt::GN_ISRES,dimension_) );
 	opt_.reset( new nlopt::opt(nlopt::LN_COBYLA,dimension_) );
 
-	// Init the static member vppItemsContainer
+	// Init the STATIC member vppItemsContainer
 	vppItemsContainer_= VPPItemFactory;
 
 	// Set the parser

@@ -36,8 +36,8 @@ class ResistanceItem : public VPPItem {
 
 };
 
-//=================================================================
-
+///=================================================================
+/// For the definition of the Induced Resistance see DSYHS99 ch4 p128
 class InducedResistanceItem : public ResistanceItem {
 
 	public:
@@ -66,7 +66,7 @@ class InducedResistanceItem : public ResistanceItem {
 };
 
 //=================================================================
-
+// Residuary Resistance: see Keuning 3.1.1.2 p112
 class ResiduaryResistanceItem : public ResistanceItem {
 
 	public:
@@ -89,8 +89,9 @@ class ResiduaryResistanceItem : public ResistanceItem {
 		boost::shared_ptr<SplineInterpolator> pInterpolator_;
 };
 
-//=================================================================
-
+/// =================================================================
+/// For the definition of the change in Residuary Resistance due to heel
+/// see DSYHS99 ch3.1.2.2 p116
 class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 
 	public:
@@ -114,7 +115,9 @@ class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 
 };
 
-//=================================================================
+/// =================================================================
+/// For the definition of the Residuary Resistance of the Keel see
+/// DSYHS99 3.2.1.2 p.120 and following
 
 class ResiduaryResistanceKeelItem : public ResistanceItem {
 
@@ -167,6 +170,7 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 
 //=================================================================
 
+// For the definition of the Frictional Resistance see Keuning 2.1 p108
 class FrictionalResistanceItem : public ResistanceItem {
 
 	public:
@@ -192,6 +196,8 @@ class FrictionalResistanceItem : public ResistanceItem {
 
 //=================================================================
 
+// For the definition of the Change in Frictional Resistance due to heel
+// see Keuning 3.1.2.1 p115-116
 class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
 
 	public:

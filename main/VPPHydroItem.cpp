@@ -46,7 +46,7 @@ void ResistanceItem::printWhoAmI() {
 }
 
 //=========================================================
-
+// For the definition of the Induced Resistance see DSYHS99 ch4 p128
 // Constructor
 InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 				ResistanceItem(pAeroForcesItem->getParser(), pAeroForcesItem->getSailSet()),
@@ -54,23 +54,28 @@ InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 
 	coeffA_.resize(4,4);
 	coeffA_ << 	3.7455,	-3.6246,	0.0589,	-0.0296,
-			4.4892,	-4.8454,	0.0294,	-0.0176,
-			3.9592,	-3.9804,	0.0283,	-0.0075,
-			3.4891,	-2.9577,	0.0250,	-0.0272;
+							4.4892,	-4.8454,	0.0294,	-0.0176,
+							3.9592,	-3.9804,	0.0283,	-0.0075,
+							3.4891,	-2.9577,	0.0250,	-0.0272;
 
 	coeffB_.resize(4,2);
 	coeffB_ << 	1.2306,	-0.7256,
-			1.4231,	-1.2971,
-			1.545,	-1.5622,
-			1.4744,	-1.3499;
+							1.4231,	-1.2971,
+							1.545,	-1.5622,
+							1.4744,	-1.3499;
 
 	phiD_.resize(4);
 	phiD_ << 0, 10, 20, 30;
 
+	// Draft of the canoe body
 	double tCan = pParser_->get("TCAN");
+	// Total Draft
 	double t= 		pParser_->get("T");
+	// Waterline Beam
 	double bwl = 	pParser_->get("BWL");
+	// Keel tip chord length
 	double chtpk=	pParser_->get("CHTPK");
+	// Keel root chord length
 	double chrtk= pParser_->get("CHRTK");
 
 	//geom.TCAN./geom.T (geom.TCAN./geom.T).^2 geom.BWL./geom.TCAN geom.CHTPK./geom.CHRTK;
@@ -99,12 +104,12 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	// coeffB(4x2) * vectB(2x1) => TeFn(4x1)
 	Eigen::ArrayXd TeFn = coeffB_ * vectB;
 
-	// Note that this is a coefficient-wise operation Tegeo(4x1) * TeFn(4x1) -> TeD(4x1)
-	Eigen::ArrayXd TeD = pParser_->get("T") * Tegeo_ * TeFn;
+	// Note that this is a coefficient-wise operation Tegeo(4x1) * TeFn(4x1) -> Teffective(4x1)
+	Eigen::ArrayXd Teffective = pParser_->get("T") * Tegeo_ * TeFn;
 
 	// Properly interpolate then values of TeD for the current value
 	// of the state variable PHI_ (heeling angle)
-	SplineInterpolator interpolator(phiD_,TeD);
+	SplineInterpolator interpolator(phiD_,Teffective);
 	double Te= interpolator.interpolate(PHI_);
 
 	//  std::cout<<"phiDArr= "<<phiD_<<std::endl;
@@ -116,10 +121,10 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	// Make a check plot for the induced resistance
 	// WARNING: as we are in update, this potentially leads to a
 	// large number of plots!
-	//interpolator.plot(0,30,30,"Induced Resistance");
+	//interpolator.plot(0,30,30,"Effective Span","PHI [deg]","Te");
 
-	// Get the aerodynamic side force
-	double fHeel= pAeroForcesItem_->getFSide();
+	// Get the aerodynamic side force. See DSYHS99 p 129
+	double fHeel= pAeroForcesItem_->getFSide() / cos(toRad(PHI_));
 
 	// Compute the induced resistance Ri = Fheel^2 / (0.5 * pi * rho_w * Te^2 * V^2)
 	res_ = fHeel * fHeel / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
@@ -132,7 +137,7 @@ void InducedResistanceItem::printWhoAmI() {
 }
 
 //=================================================================
-
+// Residuary Resistance: see DSYHS99 3.1.1.2 p112
 // Constructor
 ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 				ResistanceItem(pParser, pSailSet) {
@@ -215,7 +220,7 @@ void ResiduaryResistanceItem::printWhoAmI() {
 }
 
 //=================================================================
-
+// For the change in Residuary Resistance due to heel see DSYHS99 ch3.1.2.2 p116
 // Constructor
 Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
@@ -293,7 +298,7 @@ void Delta_ResiduaryResistance_HeelItem::printWhoAmI() {
 }
 
 //=================================================================
-
+// For the definition of the Residuary Resistance of the Keel see DSYHS99 3.2.1.2 p.120 and following
 // Constructor
 ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 				ResistanceItem(pParser,pSailSet) {
@@ -366,7 +371,7 @@ void ResiduaryResistanceKeelItem::printWhoAmI() {
 //=================================================================
 
 // Express the change in Appendage Resistance due to Heel.
-// See Keuning 3.2.2 p 126
+// See DSYHS99 3.2.2 p 126
 // Constructor
 Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
@@ -421,7 +426,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::printWhoAmI() {
 }
 
 //=================================================================
-
+// For the definition of the Frictional Resistance see DSYHS99 2.1 p108
 // Constructor
 FrictionalResistanceItem::FrictionalResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 				ResistanceItem(pParser,pSailSet) {
@@ -468,12 +473,17 @@ void FrictionalResistanceItem::printWhoAmI() {
 
 //=================================================================
 
+// For the definition of the Change in wetted surface see DSYHS99 3.1.2.1 p115-116
+// For the definition of the Frictional Resistance use the std definition of
+// DSYHS99,
+
 // Constructor
 Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 						ResistanceItem(pParser,pSailSet) {
 
-	// Pre-compute the velocity independent part of rN_
+	// Pre-compute the velocity independent part of rN_. The definition of the Rn
+	// is given by DSYHS99, p109. 0.7 is an arbitrary factor used to reduce the lwl
 	rN0_= pParser->get("LWL") * 0.7 / Physic::ni_w;
 
 	// Define an array of coefficients and instantiate an interpolator over it
@@ -536,11 +546,14 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	// Compute the interpolated value of the change in wetted area wrt PHI [deg]
 	double SCphi = pInterpolator_->interpolate(PHI_);
 
-	// Compute the Frictional resistance of the bare hull
-	// Rfh = 1/2 .* phys.rho_w .* V.^2 .* geom.SC .* Cf;
+	// Compute the change in Frictional resistance using the delta of wetted surface
+	// Apart for the def. of the surface, the frictional resistance uses the std definition
+	// see DSYHS99 3.2.1.1 p119
+	// Rfh = 1/2 .* phys.rho_w .* V.^2 .* Cf .* ( S - S0 );
 	double rfhH = 0.5 * Physic::rho_w * V_ * V_ * cF * (SCphi-pParser_->get("SC"));
 
 	// todo dtrimarchi: does it make sense to use the same hull form factor both for the upright and the heeled hull?
+	// See DSYHS99 p119, where the form factor is also defined. Here we ask the user to prompt a value
 	res_ = rfhH * pParser_->get("HULLFF");
 	if(isnan(res_)) throw VPPException(HERE,"res_ is nan");
 
@@ -569,6 +582,9 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
 
+	// Define the Reynolds number using the mean chord length of the keel,
+	// this is a value provided by the user. The viscous resistance is
+	// defined in the std way, see DSYHS99 3.2.1.1 p 119
 	double rN = pParser_->get("CHMEK") * V_ / Physic::ni_w;
 	double cf = 0.075 / std::pow((std::log10(rN) - 2),2);
 	double rfk= 0.5 * Physic::rho_w * V_ * V_ * pParser_->get("SK") * cf;
@@ -603,9 +619,12 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
 
-	double rN = pParser_->get("CHMEK") * V_ / Physic::ni_w;
+	// Define the Reynolds number using the mean chord length of the rudder,
+	// this is a value provided by the user. The viscous resistance is
+	// defined in the std way, see DSYHS99 3.2.1.1 p 119
+	double rN = pParser_->get("CHMER") * V_ / Physic::ni_w;
 	double cf = 0.075 / std::pow((std::log10(rN) - 2),2);
-	double rfr= 0.5 * Physic::rho_w * V_ * V_ * pParser_->get("SK") * cf;
+	double rfr= 0.5 * Physic::rho_w * V_ * V_ * pParser_->get("SR") * cf;
 
 	// todo dtrimarchi : this form factor can be computed from the
 	// Rudder geometry (see DSYHS99) Ch.3.2.11

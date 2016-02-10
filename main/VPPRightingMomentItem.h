@@ -3,6 +3,8 @@
 
 #include "VPPItem.h"
 
+/// todo dtrimarchi : verify where this definition comes
+/// from, perhaps Larsson?
 class RightingMomentItem : public VPPItem {
 
 	public:
