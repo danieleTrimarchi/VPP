@@ -204,8 +204,8 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 	// Compute the aspect ratio for this awa_
 	ar_ = 1.1 * h * h / s->get("AN");
 
-	// Compute cd0
-	cd0_= 1.13 * ( (p->get("B") * p->get("AVGFREB")) + (p->get("AVGFREB")*p->get("AVGFREB") ) ) / s->get("AN");
+	// Compute cd0, see the Hazen's model Larsson p.148
+	cd0_= 1.13 * ( (p->get("B") * p->get("AVGFREB")) + (p->get("EHM")*p->get("EMDC") ) ) / s->get("AN");
 
 	// Compute the coefficients based on the sail configuration
 	compute();
@@ -533,20 +533,17 @@ void AeroForcesItem::update(int vTW, int aTW) {
 
 
 	// Updates Fheel = L * cos(alfa_eff) + D * sin(alfa_eff);
-	fHeel_ = lift_ * cos( toRad(awa) ) + drag_ * sin( toRad(awa) );
-	if(isnan(fHeel_)) throw VPPException(HERE,"fHeel_ is NAN!");
-
-
-	// Updates Mheel = Fheel*(ZCE + geom.T - geom.ZCBK);
-	// todo dtrimarchi: verify the original comment
-	// attenzione: il centro di spinta della deriva e' stato messo nel centro
-	// di galleggiamento. l'ipotesi e' corretta?
-	mHeel_ = fHeel_ * ( pSailSet_->get("ZCE") + pParser_->get("T") - pParser_->get("ZCBK") );
-	if(isnan(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
+	fSide_ = lift_ * cos( toRad(awa) ) + drag_ * sin( toRad(awa) );
+	if(isnan(fSide_)) throw VPPException(HERE,"fSide_ is NAN!");
 
 	// Updates Fside_ = Fheel*cos(phi*pi/180). Note PHI_ is in degrees
-	fSide_ = fHeel_ * cos( toRad(PHI_) );
-	if(isnan(fSide_)) throw VPPException(HERE,"fSide is NAN!");
+	fHeel_ = fSide_ * cos( toRad(PHI_) );
+	if(isnan(fHeel_)) throw VPPException(HERE,"fHeel_ is NAN!");
+
+	// The righting moment arm is set as the distance between the center of sail effort and
+	// the hydrodynamic center
+	mHeel_ = fHeel_ * ( 0.45 * pParser_->get("T") + pParser_->get("AVGFREB") + pSailSet_->get("ZCE") );
+	if(isnan(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
 
 }
 
