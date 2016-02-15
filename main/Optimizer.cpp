@@ -216,6 +216,8 @@ void Optimizer::plotResults() {
 	Eigen::ArrayXd windSpeeds(results_.size());
 	Eigen::ArrayXd boatSpeeds(results_.size());
 	Eigen::ArrayXd boatHeel(results_.size());
+	Eigen::ArrayXd boatFlat(results_.size());
+	Eigen::ArrayXd boatB(results_.size());
 	Eigen::ArrayXd dF(results_.size());
 	Eigen::ArrayXd dM(results_.size());
 
@@ -223,6 +225,8 @@ void Optimizer::plotResults() {
 		windSpeeds(iRes) = results_[iRes].getTWV();
 		boatSpeeds(iRes) = results_[iRes].getX()->at(0);
 		boatHeel(iRes)   = results_[iRes].getX()->at(1);
+		boatB(iRes)   	 = results_[iRes].getX()->at(2);
+		boatFlat(iRes)   = results_[iRes].getX()->at(3);
 		dF(iRes)         = results_[iRes].getdF();
 		dM(iRes)         = results_[iRes].getdM();
 	}
@@ -237,9 +241,19 @@ void Optimizer::plotResults() {
 	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
 			"Boat Heel","Wind Speed [m/s]","Boat Heel [deg]");
 
-	// Instantiate a plotter for the residuals
+	// Instantiate a plotter for the Flat
 	Plotter plotter3;
-	plotter3.plot(windSpeeds,dF,windSpeeds,dM,
+	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
+			"Sail FLAT","Wind Speed [m/s]","Sail FLAT [-]");
+
+	// Instantiate a plotter for the position of the movable crew B
+	Plotter plotter4;
+	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
+			"Crew position","Wind Speed [m/s]","Position of the movable crew [m]");
+
+	// Instantiate a plotter for the residuals
+	Plotter plotter5;
+	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
 				"Residuals","Wind Speed [m/s]","Residuals [N,N*m]");
 
 }
