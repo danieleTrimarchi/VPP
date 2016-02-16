@@ -90,12 +90,9 @@ OptResultContainer::OptResultContainer(WindItem* pWindItem):
 	nWa_= pParser->get("N_ALPHA_TW");
 
 	// Allocate enough space in the resMat_[Wv][Wa] and init
-	resMat_.reserve(nWv_);
+	resMat_.resize(nWv_);
 	for(size_t iWv=0; iWv<nWv_; iWv++){
-		resMat_[iWv].reserve(nWa_);
-		for(size_t iWa=0; iWv<nWa_; iWa++){
-			resMat_[iWv][iWa]=OptResult();
-		}
+		resMat_[iWv].resize(nWa_);
 	}
 }
 
@@ -107,10 +104,16 @@ OptResultContainer::~OptResultContainer() {
 // push_back a result taking care of the allocation
 void OptResultContainer::push_back(size_t iWv, size_t iWa, std::vector<double>& res, double dF, double dM) {
 
-	if(iWv>=nWv_)
-		throw VPPException(HERE,"In OptResultContainer, requested out-of-bounds iWv!");
-	if(iWa>=nWa_)
-		throw VPPException(HERE,"In OptResultContainer, requested out-of-bounds iWa!");
+	if(iWv>=nWv_){
+		char msg[256];
+		sprintf(msg,"In OptResultContainer, requested out-of-bounds iWv: %i on %i",iWv,nWv_ );
+		throw VPPException(HERE,msg);
+	}
+	if(iWa>=nWa_) {
+		char msg[256];
+		sprintf(msg,"In OptResultContainer, requested out-of-bounds iWa: %i on %i",iWa,nWa_ );
+		throw VPPException(HERE,msg);
+	}
 
 	// Ask the wind to get the current wind velocity/angles. Note that this
 	// implies that the call must be in sync, which seems rather dangerous!
@@ -217,7 +220,9 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	pWind_=vppItemsContainer_->getWind();
 
 	// Init the ResultContainer that will be filled while running the results
+	std::cout<<"Pre init OptResultContainer "<<std::endl;
 	pResults_.reset(new OptResultContainer(pWind_));
+	std::cout<<"Post init OptResultContainer "<<std::endl;
 
 }
 
@@ -293,7 +298,7 @@ void Optimizer::run(int TWV, int TWA) {
 		printf("      residuals: dF= %g, dM= %g\n\n",dF,dM);
 
 		// Push the result to the result container
-		pResults_->push_back(pWind_->getTWV(), pWind_->getTWA(), xp_, dF, dM);
+		pResults_->push_back(TWV, TWA, xp_, dF, dM);
 	}
 }
 
@@ -312,9 +317,9 @@ void Optimizer::plotResults() {
 	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
 	// Sail flat, Crew B, dF and dM
 	PolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot");
-	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot");
-	PolarPlotter crewBPolarPlotter("Crew B Polar Plot");
-	PolarPlotter sailFlatPolarPlotter("Sail Flat");
+//	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot");
+//	PolarPlotter crewBPolarPlotter("Crew B Polar Plot");
+//	PolarPlotter sailFlatPolarPlotter("Sail Flat");
 
 	// Instantiate the list of wind angles that will serve
 	// for each velocity
@@ -354,9 +359,9 @@ void Optimizer::plotResults() {
 
 		// Append the angles-data to the relevant plotter
 		boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
-		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
-		crewBPolarPlotter.append(wVLabel,windAngles,crewB);
-		sailFlatPolarPlotter.append(wVLabel,windAngles,sailFlat);
+//		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
+//		crewBPolarPlotter.append(wVLabel,windAngles,crewB);
+//		sailFlatPolarPlotter.append(wVLabel,windAngles,sailFlat);
 
 	}
 
