@@ -311,20 +311,69 @@ void Plotter::plot(	std::vector<double>& x0,
 }
 //=====================================================================
 
-PolarPlotter::PolarPlotter() :
-				Plotter(),
-				pi_(M_PI / 180.0) {
+PolarPlotter::PolarPlotter( string title ) :
+	title_(title),
+	minAlphaRange_(1E+20),
+	maxAlphaRange_(-1E20),
+	maxValRange_(-1E20),
+	x_(NULL),
+	y_(NULL),
+	pi_(M_PI / 180.0) {
 
-	nValues_=361;
-	x_= new double[nValues_];
-	y_= new double[nValues_];
+	// Specify the output device (aquaterm)
+	plsdev("aqt");
+
 }
 
 PolarPlotter::~PolarPlotter() {
 	// Do nothing
 }
 
-void PolarPlotter::testPlot() {
+// Append a set of polar data
+void PolarPlotter::append(string& curveLabel, Eigen::ArrayXd& alpha, Eigen::ArrayXd& vals) {
+
+	// make sure the size of the arrays are the same
+	if(alpha.size() != vals.size())
+		throw VPPException(HERE, "In PolarPlotter, the size of the arrays does not match");
+
+	// push back the angles
+	alphas_.push_back(alpha);
+
+	// push back the values
+	vals_.push_back(vals);
+
+	// Set the ranges
+	if(alpha.minCoeff()<minAlphaRange_)
+		minAlphaRange_=alpha.minCoeff();
+	if(alpha.maxCoeff()>maxAlphaRange_)
+		maxAlphaRange_=alpha.maxCoeff();
+	if(vals.maxCoeff()>maxValRange_)
+		maxValRange_=vals.maxCoeff();
+
+}
+
+// Copy the values into plplot compatible containers
+void PolarPlotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
+
+	// make sure the buffers x_ and y_ are init
+	delete x_;
+	delete y_;
+
+	int nValues_=x.size();
+
+	x_ = new double[nValues_];
+	y_ = new double[nValues_];
+
+	for ( int i = 0; i < nValues_; i++ )
+	{
+		x_[i] = x(i);
+		y_[i] = y(i);
+	}
+
+}
+
+// Plot the data appended to the plotter
+void PolarPlotter::plot() {
 
 	// Set orientation to portrait - note not all device drivers
 	// support this, in particular most interactive drivers do not
@@ -336,26 +385,14 @@ void PolarPlotter::testPlot() {
 	// Initialize plplot
 	plinit();
 
-	// Fill the values array
-	for ( size_t i = 0; i < nValues_; i++ )
-	{
-		double r    = pi_ * ( .1 * i );
-		x_[i] = cos( pi_ * i ) * r;
-		y_[i] = sin( pi_ * i ) * r;
-	}
-
-	// Compute the min/max and set symmetric bounds for this plot
-	double xRange = std::max(fabs(min(x_)),fabs(max(x_)));
-	double yRange = std::max(fabs(min(y_)),fabs(max(y_)));
-	double allrange = std::max(xRange,yRange);
-
 	// Set up viewport and window, but do not draw box
-	plenv( -allrange, allrange, -allrange, allrange, 1, -2 );
+	plenv( -maxValRange_, maxValRange_, -maxValRange_, maxValRange_, 1, -2 );
 
+	// Define the color for the outer circles
 	plcol0( color::grey );
 
 	// Draw a number of circles for polar grid
-	int nCircles = allrange / 0.1;
+	int nCircles = maxValRange_ / 0.1;
 	for ( size_t i = 1; i <= nCircles; i++ ) {
 		// Add the arc
 		plarc( 0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0.0, 0 );
@@ -370,8 +407,8 @@ void PolarPlotter::testPlot() {
 	for ( size_t i = 0; i <= 11; i++ )
 	{
 		double theta = 30.0 * i;
-		double dx    = allrange * cos( pi_ * theta );
-		double dy    = allrange * sin( pi_ * theta );
+		double dx    = maxValRange_ * cos( pi_ * theta );
+		double dy    = maxValRange_ * sin( pi_ * theta );
 
 		// Draw radial spokes for polar grid and add the text
 		pljoin( 0.0, 0.0, dx, dy );
@@ -398,18 +435,24 @@ void PolarPlotter::testPlot() {
 
 	// Set the color for the data line
 	plcol0( color::blue );
-	plline( nValues_, x_, y_ );
+
+	for(size_t iLine=0; iLine<alphas_.size(); iLine++){
+
+		// Copy the vals into a c-stile array
+		setValues(alphas_[iLine], vals_[iLine]);
+
+		// And now define the line
+		plline( alphas_.size(), x_, y_ );
+	}
 
 	// set the color
 	plcol0( color::red	);
-	plmtex( "t", -1., 0., 0.5, "Polar Plot Example" );
+	plmtex( "t", -1., 0., 0.5, title_.c_str() );
 
 	// Close the plot at end
 	plend();
 
 }
-
-
 
 
 

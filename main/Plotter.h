@@ -13,6 +13,26 @@ using namespace Eigen;
 /// Directives for PLPLOT
 #include "plcdemos.h"
 
+/// Define colors -- see plplot_5.11 guide 18.13: plCol0
+enum color{
+	black,
+	red,
+	yellow,
+	green,
+	aquamarine,
+	pink,
+	wheat,
+	grey,
+	brown,
+	blue,
+	BlueViolet,
+	cyan,
+	turquoise,
+	magenta,
+	salmon,
+	white
+};
+
 /// Wrapper class for ploPlot
 class Plotter {
 
@@ -61,26 +81,6 @@ class Plotter {
 		/// Find the max of the specified vector
 		double max(std::vector<double>&);
 
-		/// Define colors -- see plplot_5.11 guide 18.13: plCol0
-		enum color{
-			black,
-			red,
-			yellow,
-			green,
-			aquamarine,
-			pink,
-			wheat,
-			grey,
-			brown,
-			blue,
-			BlueViolet,
-			cyan,
-			turquoise,
-			magenta,
-			salmon,
-			white
-		};
-
 		/// Number of points the plot is made of
 		int nValues_;
 
@@ -115,23 +115,41 @@ class Plotter {
 
 };
 
-class PolarPlotter : public Plotter {
+class PolarPlotter {
 
 	public:
 
 		/// Constructor
-		PolarPlotter();
+		PolarPlotter( string title );
 
 		/// Destructor
 		~PolarPlotter();
 
-		// make a test plot
-		void testPlot();
+		/// Append a set of polar data
+		void append(string& curveLabel, Eigen::ArrayXd& alpha, Eigen::ArrayXd& vals);
+
+		/// Plot the data appended to the plotter
+		void plot();
 
 	private:
 
+		/// Copy the values from the ArrayXd to the c-style containers plPlot is fed with
+		void setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& y);
+
 		/// Pi in radians
 		double pi_;
+
+		/// Ranges of the alpha and vals arrays
+		double minAlphaRange_, maxAlphaRange_, maxValRange_;
+
+		// Title of the plot
+		string title_;
+
+		// Values that constitute the plot
+		std::vector<Eigen::ArrayXd> alphas_, vals_;
+
+		/// Primitive arrays plplot is feed with
+		double* x_, * y_;
 
 };
 

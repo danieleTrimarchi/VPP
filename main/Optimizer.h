@@ -20,6 +20,9 @@ class OptResult {
 
 	public:
 
+		/// Default constructor
+		OptResult();
+
 		/// Constructor
 		OptResult(double twv, double twa, std::vector<double>& res, double dF, double dM);
 
@@ -56,6 +59,53 @@ class OptResult {
 		double dF_, dM_;
 
 } ;
+
+/// Container for OptResult, which is a wrapper around
+/// vector<vector<OptResults? > >
+/// This utility class is used to store a result for each
+/// twv and twa
+class OptResultContainer {
+
+	public:
+
+		/// Constructor using a windItem
+		OptResultContainer(WindItem*);
+
+		/// Destructor
+		~OptResultContainer();
+
+		/// push_back a result taking care of the allocation
+		void push_back(size_t iWv, size_t iWa, std::vector<double>& res, double dF, double dM);
+
+		/// Get the result for a given wind velocity/angle
+		const OptResult& get(size_t iWv, size_t iWa) const;
+
+		/// How many results have been stored?
+		const size_t size() const;
+
+		/// How many wind velocities?
+		const size_t windVelocitySize() const;
+
+		/// How many wind angles?
+		const size_t windAngleSize() const;
+
+		/// Printout the list of Opt Results, arranged by twv-twa
+		void print();
+
+	private:
+
+		/// Default constructor
+		OptResultContainer();
+
+		/// Number of true wind velocities/ angles
+		size_t nWv_, nWa_;
+
+		/// Ptr to the wind item
+		WindItem* pWind_;
+
+		/// Result matrix for each wind velocity/angle
+		vector<vector<OptResult> > resMat_;
+};
 
 /// Wrapper class around NLOPT non-linear
 /// optimization library
@@ -110,8 +160,8 @@ class Optimizer {
 		/// Vector with the initial guess/optimizer results
 		std::vector<double> xp_;
 
-		/// Vector of results, one result per Optimizer run
-		std::vector<OptResult> results_;
+		/// Matrix of results, one result per wind velocity/angle
+		boost::shared_ptr<OptResultContainer> pResults_;
 
 		/// Ptr to the wind item, used to retrieve the current twv, twa
 		WindItem* pWind_;

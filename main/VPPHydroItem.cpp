@@ -17,7 +17,7 @@ void ResistanceItem::update(int vTW, int aTW) {
 
 	// Update the Froude number using the state variable boat velocity
 	fN_= fabs(V_) / sqrt(Physic::g * pParser_->get("LWL"));
-	if(isnan(fN_)) throw VPPException(HERE,"fN_ is nan");
+	if(isnan(fN_)) throw VPPException(HERE,"fN_ is Nan");
 
 
 	// todo dtrimarchi : possibly re-introduce the warning
@@ -37,7 +37,7 @@ ResistanceItem::~ResistanceItem() {
 
 // Get the value of the resistance for this ResistanceItem
 const double ResistanceItem::get() const {
-	if(isnan(res_)) throw VPPException(HERE,"res_ is nan");
+	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 	return res_;
 }
 
@@ -128,7 +128,7 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 
 	// Compute the induced resistance Ri = Fheel^2 / (0.5 * pi * rho_w * Te^2 * V^2)
 	res_ = fHeel * fHeel / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
-	if(isnan(res_)) throw VPPException(HERE,"res_ is nan");
+	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -195,7 +195,7 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrhDArr) );
 
 	// Make a check plot for the induced resistance
-	pInterpolator_->plot(0,1,50,"Residuary Resistance","Fn [-]","Resistance [N]" );
+	//pInterpolator_->plot(0,1,50,"Residuary Resistance","Fn [-]","Resistance [N]" );
 }
 
 /// Destructor
@@ -211,7 +211,7 @@ void ResiduaryResistanceItem::update(int vTW, int aTW) {
 
 	// Compute the residuary resistance for the current froude number
 	res_ = pInterpolator_->interpolate(fN_);
-	if(isnan(res_)) throw VPPException(HERE,"res_ is nan");
+	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -271,7 +271,7 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrhH20DArr) );
 
 	// Make a check plot for the induced resistance
-	pInterpolator_->plot(0,.7,20,"Delta Residuary Resistance","Fn [-]","Resistance [N]" );
+	//pInterpolator_->plot(0,.7,20,"Delta Residuary Resistance","Fn [-]","Resistance [N]" );
 
 }
 
@@ -289,7 +289,7 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	// Compute the residuary resistance for the current froude number
 	// RrhH = RrhH20 .* 6 .* ( toRad(phi) ).^1.7;
 	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( toRad(PHI_),1.7) ;
-	if(isnan(res_)) throw VPPException(HERE,"res_ is nan");
+	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -343,7 +343,7 @@ ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pPa
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrkDArr) );
 
 	// Make a check plot for the Residuary resistance
-	pInterpolator_->plot(0,.8,40,"Residuary Resistance Keel","Fn [-]","Resistance [N]" );
+	//pInterpolator_->plot(0,.8,40,"Residuary Resistance Keel","Fn [-]","Resistance [N]" );
 
 }
 
@@ -360,7 +360,7 @@ void ResiduaryResistanceKeelItem::update(int vTW, int aTW) {
 
 	// Updates the value of the Residuary Resistance due to the Keel
 	res_= pInterpolator_->interpolate(fN_);
-	if(isnan(res_)) throw VPPException(HERE,"res_ is nan");
+	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -417,7 +417,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 	// Compute the resistance
 	// RrkH = (geom.DVK.*phys.rho_w.*phys.g.*Ch)*Fn.^2.*phi*pi/180;
 	res_= Ch_ * fN_ * fN_ * toRad(PHI_);
-	if(isnan(res_)) throw VPPException(HERE,"res_ is nan");
+	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -463,7 +463,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 
 	// Compute the frictional resistance
 	res_ = rfh * pParser_->get("HULLFF");
-	if(isnan(res_)) throw VPPException(HERE,"res_ is nan");
+	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -521,7 +521,7 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 	pInterpolator_.reset( new SplineInterpolator(phiD,SCphiDArr) );
 
 	// Make a check plot for the induced resistance
-	pInterpolator_->plot(0,40,20,"Frictional Resistance due to HEEL","Fn [-]","Resistance [N]" );
+	//pInterpolator_->plot(0,40,20,"Frictional Resistance due to HEEL","Fn [-]","Resistance [N]" );
 
 }
 
@@ -555,7 +555,7 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	// todo dtrimarchi: does it make sense to use the same hull form factor both for the upright and the heeled hull?
 	// See DSYHS99 p119, where the form factor is also defined. Here we ask the user to prompt a value
 	res_ = rfhH * pParser_->get("HULLFF");
-	if(isnan(res_)) throw VPPException(HERE,"res_ is nan");
+	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -592,7 +592,7 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 	// todo dtrimarchi : this form factor can be computed from the
 	// Keel geometry (see DSYHS99) Ch.3.2.11
 	res_ = rfk * pParser_->get("KEELFF");
-	if(isnan(res_)) throw VPPException(HERE,"res_ is nan");
+	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -629,7 +629,7 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 	// todo dtrimarchi : this form factor can be computed from the
 	// Rudder geometry (see DSYHS99) Ch.3.2.11
 	res_ = rfr * pParser_->get("RUDDFF");
-	if(isnan(res_)) throw VPPException(HERE,"res_ is nan");
+	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 

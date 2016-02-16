@@ -8,7 +8,17 @@ int optIterations=0;
 
 ///////// Optimizer Result Class ///////////////////////////////
 
-/// Constructor
+// Default constructor
+OptResult::OptResult():
+			twv_(0),
+			twa_(0),
+			result_(0),
+			dF_(0),
+			dM_(0) {
+
+}
+
+// Constructor
 OptResult::OptResult(double twv, double twa, std::vector<double>& res, double dF, double dM) :
 				twv_(twv),
 				twa_(twa),
@@ -18,7 +28,7 @@ OptResult::OptResult(double twv, double twa, std::vector<double>& res, double dF
 
 }
 
-/// Destructor
+// Destructor
 OptResult::~OptResult(){
 	// make nothing
 }
@@ -26,7 +36,6 @@ OptResult::~OptResult(){
 // PrintOut the values stored in this result
 void OptResult::print() {
 	printf("%4.2f  %4.2f  -- ", twv_,twa_);
-	std::cout<<" "<<twv_<<" "<<twa_ <<"  --  ";
 	for(size_t iRes=0; iRes<result_.size(); iRes++)
 		printf("  %4.2e",result_[iRes]);
 	printf("  --  %4.2e  %4.2e", dF_,dM_);
@@ -57,6 +66,93 @@ const double OptResult::getdM() const {
 // get the state vector for this result
 const std::vector<double>* OptResult::getX() const {
 	return &result_;
+}
+
+/////  OptResultContainer   /////////////////////////////////
+
+// Default constructor
+OptResultContainer::OptResultContainer():
+	nWv_(0),
+	nWa_(0),
+	pWind_(0) {
+
+}
+
+// Constructor using a windItem
+OptResultContainer::OptResultContainer(WindItem* pWindItem):
+		pWind_(pWindItem) {
+
+	// Get the parser
+	VariableFileParser* pParser = pWind_->getParser();
+
+	// Set the variables
+	nWv_= pParser->get("N_TWV");
+	nWa_= pParser->get("N_ALPHA_TW");
+
+	// Allocate enough space in the resMat_[Wv][Wa] and init
+	resMat_.reserve(nWv_);
+	for(size_t iWv=0; iWv<nWv_; iWv++){
+		resMat_[iWv].reserve(nWa_);
+		for(size_t iWa=0; iWv<nWa_; iWa++){
+			resMat_[iWv][iWa]=OptResult();
+		}
+	}
+}
+
+// Destructor
+OptResultContainer::~OptResultContainer() {
+
+}
+
+// push_back a result taking care of the allocation
+void OptResultContainer::push_back(size_t iWv, size_t iWa, std::vector<double>& res, double dF, double dM) {
+
+	if(iWv>=nWv_)
+		throw VPPException(HERE,"In OptResultContainer, requested out-of-bounds iWv!");
+	if(iWa>=nWa_)
+		throw VPPException(HERE,"In OptResultContainer, requested out-of-bounds iWa!");
+
+	// Ask the wind to get the current wind velocity/angles. Note that this
+	// implies that the call must be in sync, which seems rather dangerous!
+	// todo dtrimarchi: the wind must have calls such as pWind_->getTWV(iWv)
+	resMat_[iWv][iWa] = OptResult(pWind_->getTWV(), pWind_->getTWA(), res, dF, dM);
+
+}
+
+/// Get the result for a given wind velocity/angle
+const OptResult& OptResultContainer::get(size_t iWv, size_t iWa) const {
+
+	if(iWv>=nWv_)
+		throw VPPException(HERE,"In OptResultContainer::get, requested out-of-bounds iWv!");
+	if(iWa>=nWa_)
+		throw VPPException(HERE,"In OptResultContainer::get(), requested out-of-bounds iWa!");
+
+	return resMat_[iWv][iWa];
+}
+
+// How many results have been stored?
+const size_t OptResultContainer::size() const {
+	return nWv_*nWa_;
+}
+
+/// How many wind velocities?
+const size_t OptResultContainer::windVelocitySize() const {
+	return nWv_;
+}
+
+/// How many wind angles?
+const size_t OptResultContainer::windAngleSize() const {
+	return nWa_;
+}
+
+/// Printout the list of Opt Results, arranged by twv-twa
+void OptResultContainer::print() {
+
+	std::cout<<" TWV    TWA   --  V    PHI    B    F  --  dF    dM "<<std::endl;
+	std::cout<<"---------------------------------------------------"<<std::endl;
+	for(size_t iWv=0; iWv<nWv_; iWv++)
+		for(size_t iWa=0; iWa<nWa_; iWa++)
+			resMat_[iWv][iWa].print();
 }
 
 
@@ -119,6 +215,9 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run
 	pWind_=vppItemsContainer_->getWind();
+
+	// Init the ResultContainer that will be filled while running the results
+	pResults_.reset(new OptResultContainer(pWind_));
 
 }
 
@@ -193,68 +292,128 @@ void Optimizer::run(int TWV, int TWA) {
 		vppItemsContainer_->getResiduals(dF,dM);
 		printf("      residuals: dF= %g, dM= %g\n\n",dF,dM);
 
-		// Push the result to the result vector
-		results_.push_back(OptResult(pWind_->getTWV(), pWind_->getTWA(), xp_, dF, dM));
+		// Push the result to the result container
+		pResults_->push_back(pWind_->getTWV(), pWind_->getTWA(), xp_, dF, dM);
 	}
 }
 
 // Make a printout of the results for this run
 void Optimizer::printResults() {
 
-	std::cout<<"==== OPTIMIZER RESULTS PRINTOUT ======"<<std::endl;
-	std::cout<<" TWV  TWA  -- V  PHI  B  F -- dF  dM "<<std::endl;
-	std::cout<<"--------------------------------------"<<std::endl;
-	for(size_t iRes=0; iRes<results_.size();iRes++)
-		results_[iRes].print();
+	std::cout<<"==== OPTIMIZER RESULTS PRINTOUT ==================="<<std::endl;
+	pResults_->print();
+	std::cout<<"---------------------------------------------------\n"<<std::endl;
 
 }
 
 /// Make a printout of the results for this run
 void Optimizer::plotResults() {
 
-	// Prepare the data for the plotter
-	Eigen::ArrayXd windSpeeds(results_.size());
-	Eigen::ArrayXd boatSpeeds(results_.size());
-	Eigen::ArrayXd boatHeel(results_.size());
-	Eigen::ArrayXd boatFlat(results_.size());
-	Eigen::ArrayXd boatB(results_.size());
-	Eigen::ArrayXd dF(results_.size());
-	Eigen::ArrayXd dM(results_.size());
+	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
+	// Sail flat, Crew B, dF and dM
+	PolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot");
+	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot");
+	PolarPlotter crewBPolarPlotter("Crew B Polar Plot");
+	PolarPlotter sailFlatPolarPlotter("Sail Flat");
 
-	for(size_t iRes=0; iRes<results_.size(); iRes++) {
-		windSpeeds(iRes) = results_[iRes].getTWV();
-		boatSpeeds(iRes) = results_[iRes].getX()->at(0);
-		boatHeel(iRes)   = results_[iRes].getX()->at(1);
-		boatB(iRes)   	 = results_[iRes].getX()->at(2);
-		boatFlat(iRes)   = results_[iRes].getX()->at(3);
-		dF(iRes)         = results_[iRes].getdF();
-		dM(iRes)         = results_[iRes].getdM();
+	// Instantiate the list of wind angles that will serve
+	// for each velocity
+	Eigen::ArrayXd windAngles(pResults_->windAngleSize());
+	Eigen::ArrayXd boatVelocity(pResults_->windAngleSize());
+	Eigen::ArrayXd boatHeel(pResults_->windAngleSize());
+	Eigen::ArrayXd crewB(pResults_->windAngleSize());
+	Eigen::ArrayXd sailFlat(pResults_->windAngleSize());
+
+	// Loop on the wind velocities
+	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
+
+		// Store the wind velocity as a label for this curve
+		char windVelocityLabel[256];
+		sprintf(windVelocityLabel,"%d", pResults_->get(iWv,0).getTWV() );
+		string wVLabel(windVelocityLabel);
+
+		// Loop on the wind angles
+		for(size_t iWa=0; iWa<pResults_->windAngleSize(); iWa++) {
+
+			// fill the list of wind angles
+			windAngles(iWa) = pResults_->get(iWv,iWa).getTWA();
+
+			// fill the list of boat speeds to an ArrayXd
+			boatVelocity(iWa) = pResults_->get(iWv,iWa).getX()->at(0);
+
+			// fill the list of boat heel to an ArrayXd
+			boatHeel(iWa) = pResults_->get(iWv,iWa).getX()->at(1);
+
+			// fill the list of Crew B to an ArrayXd
+			crewB(iWa) = pResults_->get(iWv,iWa).getX()->at(2);
+
+			// fill the list of Sail flat to an ArrayXd
+			sailFlat(iWa) = pResults_->get(iWv,iWa).getX()->at(3);
+
+		}
+
+		// Append the angles-data to the relevant plotter
+		boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
+		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
+		crewBPolarPlotter.append(wVLabel,windAngles,crewB);
+		sailFlatPolarPlotter.append(wVLabel,windAngles,sailFlat);
+
 	}
 
-	// Instantiate a plotter for the velocity
-	Plotter plotter;
-	plotter.plot(windSpeeds,boatSpeeds,windSpeeds,boatSpeeds,
-			"Boat Speed","Wind Speed [m/s]","Boat Speed [m/s]");
+	// Ask all plotters to plot
+	boatSpeedPolarPlotter.plot();
+	boatHeelPolarPlotter.plot();
+	crewBPolarPlotter.plot();
+	sailFlatPolarPlotter.plot();
 
-	// Instantiate a plotter for the heel
-	Plotter plotter2;
-	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
-			"Boat Heel","Wind Speed [m/s]","Boat Heel [deg]");
+//	todo dtrimarchi : Find a nice way to plot the force/moment residuals
 
-	// Instantiate a plotter for the Flat
-	Plotter plotter3;
-	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
-			"Sail FLAT","Wind Speed [m/s]","Sail FLAT [-]");
 
-	// Instantiate a plotter for the position of the movable crew B
-	Plotter plotter4;
-	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
-			"Crew position","Wind Speed [m/s]","Position of the movable crew [m]");
-
-	// Instantiate a plotter for the residuals
-	Plotter plotter5;
-	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
-				"Residuals","Wind Speed [m/s]","Residuals [N,N*m]");
+	//-------- this has to be modified for other xy plots
+//
+//	// Prepare the data for the plotter
+//	Eigen::ArrayXd windSpeeds(pResults_->size());
+//	Eigen::ArrayXd boatSpeeds(pResults_->size());
+//	Eigen::ArrayXd boatHeel(pResults_->size());
+//	Eigen::ArrayXd boatFlat(pResults_->size());
+//	Eigen::ArrayXd boatB(pResults_->size());
+//	Eigen::ArrayXd dF(pResults_->size());
+//	Eigen::ArrayXd dM(pResults_->size());
+//
+//	for(size_t iRes=0; iRes<pResults_.size(); iRes++) {
+//		windSpeeds(iRes) = results_[iRes].getTWV();
+//		boatSpeeds(iRes) = results_[iRes].getX()->at(0);
+//		boatHeel(iRes)   = results_[iRes].getX()->at(1);
+//		boatB(iRes)   	 = results_[iRes].getX()->at(2);
+//		boatFlat(iRes)   = results_[iRes].getX()->at(3);
+//		dF(iRes)         = results_[iRes].getdF();
+//		dM(iRes)         = results_[iRes].getdM();
+//	}
+//
+//	// Instantiate a plotter for the velocity
+//	Plotter plotter;
+//	plotter.plot(windSpeeds,boatSpeeds,windSpeeds,boatSpeeds,
+//			"Boat Speed","Wind Speed [m/s]","Boat Speed [m/s]");
+//
+//	// Instantiate a plotter for the heel
+//	Plotter plotter2;
+//	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
+//			"Boat Heel","Wind Speed [m/s]","Boat Heel [deg]");
+//
+//	// Instantiate a plotter for the Flat
+//	Plotter plotter3;
+//	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
+//			"Sail FLAT","Wind Speed [m/s]","Sail FLAT [-]");
+//
+//	// Instantiate a plotter for the position of the movable crew B
+//	Plotter plotter4;
+//	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
+//			"Crew position","Wind Speed [m/s]","Position of the movable crew [m]");
+//
+//	// Instantiate a plotter for the residuals
+//	Plotter plotter5;
+//	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
+//				"Residuals","Wind Speed [m/s]","Residuals [N,N*m]");
 
 }
 
