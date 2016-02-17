@@ -106,12 +106,14 @@ void OptResultContainer::push_back(size_t iWv, size_t iWa, std::vector<double>& 
 
 	if(iWv>=nWv_){
 		char msg[256];
-		sprintf(msg,"In OptResultContainer, requested out-of-bounds iWv: %i on %i",iWv,nWv_ );
+		int v=iWv, n=nWv_;
+		sprintf(msg,"In OptResultContainer, requested out-of-bounds iWv: %i on %i",v,n );
 		throw VPPException(HERE,msg);
 	}
 	if(iWa>=nWa_) {
 		char msg[256];
-		sprintf(msg,"In OptResultContainer, requested out-of-bounds iWa: %i on %i",iWa,nWa_ );
+		int a=iWa, n=nWa_;
+		sprintf(msg,"In OptResultContainer, requested out-of-bounds iWa: %i on %i",a,n );
 		throw VPPException(HERE,msg);
 	}
 
@@ -201,10 +203,7 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	// Resize the vector with the initial guess/optimizer results
 	// and set the initial guess
 	xp_.resize(dimension_);
-	xp_[0]= 0.01;  	// V_0
-	xp_[1]= 0.01;		// PHI_0
-	xp_[2]= 0.01;		// b_0
-	xp_[3]= .99;		// f_0
+	resetInitialGuess();
 
 	// Set the objective function to be maximized (using set_max_objective)
 	opt_->set_max_objective(VPP_speed, NULL);
@@ -229,6 +228,16 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 // Destructor
 Optimizer::~Optimizer() {
 	// make nothing
+}
+
+// Set the initial guess for the state variable vector
+void Optimizer::resetInitialGuess() {
+
+	xp_[0]= 0.01;  	// V_0
+	xp_[1]= 0.01;		// PHI_0
+	xp_[2]= 0.01;		// b_0
+	xp_[3]= .99;		// f_0
+
 }
 
 // Set the objective function for tutorial g13
@@ -276,6 +285,11 @@ void Optimizer::run(int TWV, int TWA) {
 	// Clear the optimizer
 	opt_->remove_equality_constraints();
 	opt_->remove_inequality_constraints();
+
+	// For each wind velocity, reset the initial guess for the
+	// state variable vector to zero
+	if(TWA==0)
+		resetInitialGuess();
 
 	// Make a ptr to the non static member function VPPconstraint
 	opt_->add_equality_mconstraint(VPPconstraint, &loopData, tol);
@@ -334,7 +348,7 @@ void Optimizer::plotResults() {
 
 		// Store the wind velocity as a label for this curve
 		char windVelocityLabel[256];
-		sprintf(windVelocityLabel,"%d", pResults_->get(iWv,0).getTWV() );
+		sprintf(windVelocityLabel,"%f", pResults_->get(iWv,0).getTWV() );
 		string wVLabel(windVelocityLabel);
 
 		// Loop on the wind angles
@@ -367,9 +381,9 @@ void Optimizer::plotResults() {
 
 	// Ask all plotters to plot
 	boatSpeedPolarPlotter.plot();
-	boatHeelPolarPlotter.plot();
-	crewBPolarPlotter.plot();
-	sailFlatPolarPlotter.plot();
+//	boatHeelPolarPlotter.plot();
+//	crewBPolarPlotter.plot();
+//	sailFlatPolarPlotter.plot();
 
 //	todo dtrimarchi : Find a nice way to plot the force/moment residuals
 

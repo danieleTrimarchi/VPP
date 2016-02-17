@@ -1,5 +1,8 @@
 #include "Plotter.h"
 #include "VPPException.h"
+#include "mathUtils.h"
+
+using namespace mathUtils;
 
 // Constructor
 Plotter::Plotter():
@@ -330,7 +333,7 @@ PolarPlotter::~PolarPlotter() {
 }
 
 // Append a set of polar data
-void PolarPlotter::append(string& curveLabel, Eigen::ArrayXd& alpha, Eigen::ArrayXd& vals) {
+void PolarPlotter::append(string curveLabel, Eigen::ArrayXd& alpha, Eigen::ArrayXd& vals) {
 
 	// make sure the size of the arrays are the same
 	if(alpha.size() != vals.size())
@@ -342,32 +345,45 @@ void PolarPlotter::append(string& curveLabel, Eigen::ArrayXd& alpha, Eigen::Arra
 	// push back the values
 	vals_.push_back(vals);
 
+	// push back the curve titles
+	curveLabels_.push_back(curveLabel);
+
+	// place the labels in the center of the curve
+	size_t pos= vals.size() / 2;
+	idx_.push_back(pos);
+
 	// Set the ranges
 	if(alpha.minCoeff()<minAlphaRange_)
 		minAlphaRange_=alpha.minCoeff();
 	if(alpha.maxCoeff()>maxAlphaRange_)
 		maxAlphaRange_=alpha.maxCoeff();
 	if(vals.maxCoeff()>maxValRange_)
-		maxValRange_=vals.maxCoeff();
+		maxValRange_=ceil(vals.maxCoeff());
 
 }
 
 // Copy the values into plplot compatible containers
-void PolarPlotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
+void PolarPlotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& vals) {
+
+	// make sure the size of x and y are the same
+	if(x.size() != vals.size())
+		throw VPPException(HERE,"In PolarPlotter::setValues. Array size mismatch");
 
 	// make sure the buffers x_ and y_ are init
 	delete x_;
 	delete y_;
 
-	int nValues_=x.size();
+	x_ = new double[x.size()];
+	y_ = new double[x.size()];
 
-	x_ = new double[nValues_];
-	y_ = new double[nValues_];
-
-	for ( int i = 0; i < nValues_; i++ )
-	{
-		x_[i] = x(i);
-		y_[i] = y(i);
+	// x contains the angle [deg]
+	// and y contains the |val|
+	// rotated 90 degrees
+	// x_ = sin(toRad(Phi[i])) * val[i]
+	// y_ = cos(toRad(Phi[i])) * val[i]
+	for ( int i = 0; i < x.size(); i++ ) {
+		x_[i] = sin( toRad(double(x(i)))) * vals(i);
+		y_[i] = cos( toRad(double(x(i)))) * vals(i);
 	}
 
 }
@@ -377,7 +393,7 @@ void PolarPlotter::plot() {
 
 	// Set orientation to portrait - note not all device drivers
 	// support this, in particular most interactive drivers do not
-	plsori( 1 );
+	//plsori( 1 );
 
 	// Specify the background color (rgb) and its transparency
 	plscolbga(255,255,255,.5);
@@ -392,57 +408,64 @@ void PolarPlotter::plot() {
 	plcol0( color::grey );
 
 	// Draw a number of circles for polar grid
-	int nCircles = maxValRange_ / 0.1;
+	int nCircles = maxValRange_;
 	for ( size_t i = 1; i <= nCircles; i++ ) {
 		// Add the arc
-		plarc( 0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0.0, 0 );
+		plarc( 0.0, 0.0, i, i, 0.0, 360.0, 0.0, 0 );
 		// Add a label
 		char title[256];
-		sprintf(title,"%2.1f",0.1*i);
-
-		plptex(0,0.1*i,0.1,0.1 * i,0, title);
+		sprintf(title,"%d",i);
+		plptex(0,i,0.1,i,2, title);
 	}
 
-	// Set the radial lines
+	// Set the radial lines, divide in 30deg sectors
 	for ( size_t i = 0; i <= 11; i++ )
 	{
 		double theta = 30.0 * i;
-		double dx    = maxValRange_ * cos( pi_ * theta );
-		double dy    = maxValRange_ * sin( pi_ * theta );
+
+		// Note: invert x and y to get the right orientation of the
+		// polar plot
+		double dx = maxValRange_ * sin( toRad( theta ) );
+		double dy = maxValRange_ * cos( toRad( theta ) );
 
 		// Draw radial spokes for polar grid and add the text
 		pljoin( 0.0, 0.0, dx, dy );
 
-		char text[4];
-		sprintf( text, "%d", ROUND( theta ) );
+		// Only add a label for theta > 0
+		if(i>0){
+			char text[4];
+			sprintf( text, "%d", ROUND( theta ) );
 
-		// Write labels for angle
-		double offset;
-		if ( theta < 9.99 )	{
-			offset = 0.45;
-		}	else if ( theta < 99.9 ){
-			offset = 0.30;
-		}	else {
-			offset = 0.15;
+			// Write labels for angle
+			double offset;
+			if ( theta < 9.99 )	{
+				offset = 0.45;
+			}	else if ( theta < 99.9 ){
+				offset = 0.30;
+			}	else {
+				offset = 0.15;
+			}
+
+			// Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
+			if ( dx >= -0.00001 )
+				plptex( dx, dy, dx, dy, -offset, text );
+			else
+				plptex( dx, dy, -dx, -dy, 1. + offset, text );
 		}
-
-		// Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
-		if ( dx >= -0.00001 )
-			plptex( dx, dy, dx, dy, -offset, text );
-		else
-			plptex( dx, dy, -dx, -dy, 1. + offset, text );
 	}
-
 	// Set the color for the data line
 	plcol0( color::blue );
 
-	for(size_t iLine=0; iLine<alphas_.size(); iLine++){
+	for(size_t iLine=0; iLine<alphas_.size(); iLine++) {
 
 		// Copy the vals into a c-stile array
 		setValues(alphas_[iLine], vals_[iLine]);
 
 		// And now define the line
-		plline( alphas_.size(), x_, y_ );
+		plline( alphas_[iLine].size(), x_, y_ );
+
+		// Place the curve label somewhere on the curve
+		plptex(x_[idx_[iLine]],y_[idx_[iLine]],1,0,0,curveLabels_[iLine].c_str());
 	}
 
 	// set the color

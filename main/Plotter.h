@@ -126,7 +126,7 @@ class PolarPlotter {
 		~PolarPlotter();
 
 		/// Append a set of polar data
-		void append(string& curveLabel, Eigen::ArrayXd& alpha, Eigen::ArrayXd& vals);
+		void append(string curveLabel, Eigen::ArrayXd& alpha, Eigen::ArrayXd& vals);
 
 		/// Plot the data appended to the plotter
 		void plot();
@@ -142,11 +142,17 @@ class PolarPlotter {
 		/// Ranges of the alpha and vals arrays
 		double minAlphaRange_, maxAlphaRange_, maxValRange_;
 
-		// Title of the plot
+		/// Title of the plot
 		string title_;
 
-		// Values that constitute the plot
+		/// Values that constitute the plot
 		std::vector<Eigen::ArrayXd> alphas_, vals_;
+
+		/// index of the position where we aim to place the curve label for this curve
+		std::vector<size_t> idx_;
+
+		/// Title of each curve to be plot
+		std::vector<string> curveLabels_;
 
 		/// Primitive arrays plplot is feed with
 		double* x_, * y_;
