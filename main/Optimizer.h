@@ -137,7 +137,7 @@ class Optimizer {
 		static void VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* f_data);
 
 		/// Set the initial guess for the state variable vector
-		void resetInitialGuess();
+		void resetInitialGuess(int TWV, int TWA);
 
 		// Struct used to drive twv and twa into the update methods of the VPPItems
 		typedef struct {

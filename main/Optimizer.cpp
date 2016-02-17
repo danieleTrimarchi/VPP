@@ -201,9 +201,7 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	opt_->set_upper_bounds(upperBounds_);
 
 	// Resize the vector with the initial guess/optimizer results
-	// and set the initial guess
 	xp_.resize(dimension_);
-	resetInitialGuess();
 
 	// Set the objective function to be maximized (using set_max_objective)
 	opt_->set_max_objective(VPP_speed, NULL);
@@ -219,9 +217,7 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	pWind_=vppItemsContainer_->getWind();
 
 	// Init the ResultContainer that will be filled while running the results
-	std::cout<<"Pre init OptResultContainer "<<std::endl;
 	pResults_.reset(new OptResultContainer(pWind_));
-	std::cout<<"Post init OptResultContainer "<<std::endl;
 
 }
 
@@ -231,13 +227,24 @@ Optimizer::~Optimizer() {
 }
 
 // Set the initial guess for the state variable vector
-void Optimizer::resetInitialGuess() {
+void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
-	xp_[0]= 0.01;  	// V_0
-	xp_[1]= 0.01;		// PHI_0
-	xp_[2]= 0.01;		// b_0
-	xp_[3]= .99;		// f_0
+	// Init to something small to start with
+	if(TWV==0 && TWA==0) {
 
+		xp_[0]= 0.01;  	// V_0
+		xp_[1]= 0.01;		// PHI_0
+		xp_[2]= 0.01;		// b_0
+		xp_[3]= .99;		// f_0
+
+	} else if(TWA==0) {
+
+		// Init with the value for the first angle and the previous
+		// velocity value
+		for(size_t i=0; i<dimension_; i++)
+			xp_[i] = pResults_->get(TWV-1,TWA).getX()->at(i);
+
+	}
 }
 
 // Set the objective function for tutorial g13
@@ -288,8 +295,7 @@ void Optimizer::run(int TWV, int TWA) {
 
 	// For each wind velocity, reset the initial guess for the
 	// state variable vector to zero
-	if(TWA==0)
-		resetInitialGuess();
+	resetInitialGuess(TWV,TWA);
 
 	// Make a ptr to the non static member function VPPconstraint
 	opt_->add_equality_mconstraint(VPPconstraint, &loopData, tol);
@@ -331,9 +337,9 @@ void Optimizer::plotResults() {
 	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
 	// Sail flat, Crew B, dF and dM
 	PolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot");
-//	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot");
-//	PolarPlotter crewBPolarPlotter("Crew B Polar Plot");
-//	PolarPlotter sailFlatPolarPlotter("Sail Flat");
+	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot");
+	PolarPlotter crewBPolarPlotter("Crew B Polar Plot");
+	PolarPlotter sailFlatPolarPlotter("Sail Flat");
 
 	// Instantiate the list of wind angles that will serve
 	// for each velocity
@@ -348,7 +354,7 @@ void Optimizer::plotResults() {
 
 		// Store the wind velocity as a label for this curve
 		char windVelocityLabel[256];
-		sprintf(windVelocityLabel,"%f", pResults_->get(iWv,0).getTWV() );
+		sprintf(windVelocityLabel,"%3.1f", pResults_->get(iWv,0).getTWV() );
 		string wVLabel(windVelocityLabel);
 
 		// Loop on the wind angles
@@ -373,17 +379,17 @@ void Optimizer::plotResults() {
 
 		// Append the angles-data to the relevant plotter
 		boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
-//		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
-//		crewBPolarPlotter.append(wVLabel,windAngles,crewB);
-//		sailFlatPolarPlotter.append(wVLabel,windAngles,sailFlat);
+		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
+		crewBPolarPlotter.append(wVLabel,windAngles,crewB);
+		sailFlatPolarPlotter.append(wVLabel,windAngles,sailFlat);
 
 	}
 
 	// Ask all plotters to plot
 	boatSpeedPolarPlotter.plot();
-//	boatHeelPolarPlotter.plot();
-//	crewBPolarPlotter.plot();
-//	sailFlatPolarPlotter.plot();
+	boatHeelPolarPlotter.plot();
+	crewBPolarPlotter.plot();
+	sailFlatPolarPlotter.plot();
 
 //	todo dtrimarchi : Find a nice way to plot the force/moment residuals
 
