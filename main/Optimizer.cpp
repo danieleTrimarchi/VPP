@@ -245,6 +245,13 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 			xp_[i] = pResults_->get(TWV-1,TWA).getX()->at(i);
 
 	}
+//	 else if( TWA>1){
+//
+//		// if twa>1 we can  linearly predict the state vector
+//
+//	}
+
+
 }
 
 // Set the objective function for tutorial g13

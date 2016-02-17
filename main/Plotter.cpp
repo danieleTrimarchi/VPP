@@ -391,9 +391,8 @@ void PolarPlotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& vals) {
 // Plot the data appended to the plotter
 void PolarPlotter::plot() {
 
-	// Set orientation to portrait - note not all device drivers
-	// support this, in particular most interactive drivers do not
-	//plsori( 1 );
+	// Specify the output device (aquaterm)
+	plsdev("aqt");
 
 	// Specify the background color (rgb) and its transparency
 	plscolbga(255,255,255,.5);
