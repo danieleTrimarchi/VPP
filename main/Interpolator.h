@@ -69,4 +69,29 @@ class SplineInterpolator {
 
 };
 
+////////////////////////////////////////////////////////////////////////////////////
+
+class Extrapolator {
+
+	public:
+
+		/// Constructor
+		Extrapolator(double xm2, const std::vector<double>* vm2, double xm1, const std::vector<double>* vm1);
+
+		/// Get the vector with the value extrapolated for the abscissa x
+		std::vector<double> get(double x);
+
+	private:
+
+		/// values of the abscissas
+		double xm2_, xm1_;
+
+		/// Ptrs to the vectors with the vals to extrapolate
+		const std::vector<double>* pVm2_, *pVm1_;
+
+		/// Vector with the extrapolated values to be filled
+		std::vector<double> v_;
+
+};
+
 #endif

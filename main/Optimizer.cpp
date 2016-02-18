@@ -1,5 +1,6 @@
 #include "Optimizer.h"
 #include "VPPException.h"
+#include "Interpolator.h"
 #include <fstream>
 
 // Init static member
@@ -229,22 +230,28 @@ Optimizer::~Optimizer() {
 // Set the initial guess for the state variable vector
 void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
-	// Init to something small to start the evals at each angle
-	if(TWA==0) {
+	// Init to something small to start the evals at each velocity
+	if(TWV==0) {
 
 		xp_[0]= 0.01;  	// V_0
 		xp_[1]= 0.01;		// PHI_0
 		xp_[2]= 0.01;		// b_0
 		xp_[3]= .99;		// f_0
 
+	}	else if(TWV>1) {
+
+		// For twv> 1 we can linearly predict the result of the state vector
+		Extrapolator extrapolator(
+				pResults_->get(TWV-2,TWA).getTWV(),
+				pResults_->get(TWV-2,TWA).getX(),
+				pResults_->get(TWV-1,TWA).getTWV(),
+				pResults_->get(TWV-2,TWA).getX()
+		);
+
+		// Extrapolate the state vector for the current
+		// wind velocity
+		xp_= extrapolator.get( pWind_->getTWV() );
 	}
-//	else if(TWA==0) {
-//
-//		// Init with the value for the first angle and the previous
-//		// velocity value
-//		for(size_t i=0; i<dimension_; i++)
-//			xp_[i] = pResults_->get(TWV-1,TWA).getX()->at(i);
-//	}
 
 }
 

@@ -252,3 +252,47 @@ void SplineInterpolator::plot(double minVal,double maxVal,int nVals,
 	plotter.plot(x0,y0,x,y,title,xLabel,yLabel);
 
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////
+
+// Constructor
+Extrapolator::Extrapolator(	double xm2, const std::vector<double>* vm2,
+														double xm1, const std::vector<double>* vm1) :
+				xm2_(xm2),
+				pVm2_(vm2),
+				xm1_(xm1),
+				pVm1_(vm1) {
+
+	// check the size of the base vector is equal
+	if(pVm2_->size() != pVm1_->size())
+		throw VPPException(HERE, "In Extrapolator, base vector size mismatch");
+
+	// Allocate the space for the vector with the extrapolated values
+	v_.resize(pVm2_->size());
+}
+
+// Get the vector with the value extrapolated for the abscissa x
+std::vector<double> Extrapolator::get(double x) {
+
+	// Instantiate the extrapolated vector
+	std::vector<double> vRes(pVm2_->size());
+
+	// Distance between the two known solutions
+	double dx= xm2_-xm1_;
+
+	for(size_t i=0; i<pVm2_->size(); i++){
+
+		// Compute the angular coeff for this set of coeffs
+		double m= (pVm1_->at(i)-pVm2_->at(i))/dx;
+
+		// y=mx+q  => y2-y1/x2-x1 = yext-y1/xext-x1
+		// yext = y1 + y2-y1 * xext-x1 / x2-x1
+		//      = y1 + m * xext-x1 / x2-x1
+		// with __1 => Vm2 and __2 Vm1
+		vRes[i]= pVm2_->at(i) + m * (x-xm2_)/(xm1_-xm2_)  ;
+	}
+
+	return vRes;
+}
+

@@ -23,8 +23,14 @@ class WindItem : public VPPItem {
 		/// Returns the true wind velocity for this step
 		const double getTWV() const;
 
+		/// Returns the true wind velocity for a given step
+		const double getTWV(size_t iV) const;
+
 		/// Returns the true wind angle for this step
 		const double getTWA() const;
+
+		/// Returns the true wind angle for a given step
+		const double getTWA(size_t iA) const;
 
 		/// Returns the apparent wind angle for this step
 		const double getAWA() const;
@@ -57,6 +63,10 @@ class WindItem : public VPPItem {
 
 		// Apparent wind velocity vector (x/y components)
 		Eigen::Vector2d awv_;
+
+		/// Containers to store the values of the wind true
+		/// velocity an angles requested by the user
+		vector<double> vTwv_, vTwa_;
 
 };
 

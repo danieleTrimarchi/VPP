@@ -18,10 +18,22 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 	v_tw_max_= pParser_->get("V_TW_MAX");
 	n_twv_= pParser_->get("N_TWV");
 
+	// Fill the values of the wind true velocities
+	vTwv_.resize(n_twv_);
+	double delta=( ( v_tw_max_ - v_tw_min_ ) / n_twv_ );
+	for(size_t i=0; i<n_twv_; i++)
+		vTwv_[i]= v_tw_min_ + i * delta;
+
 	// Get the max/min wind angles from the parser
 	alpha_tw_min_= pParser_->get("ALPHA_TW_MIN");
 	alpha_tw_max_= pParser_->get("ALPHA_TW_MAX");
 	n_alpha_tw_= pParser_->get("N_ALPHA_TW");
+
+	// Fill the values of the wind true angles
+	vTwa_.resize(n_alpha_tw_);
+	delta=( ( alpha_tw_max_ - alpha_tw_min_ ) /  n_alpha_tw_ );
+	for(size_t i=0; i<n_alpha_tw_; i++)
+		twa_= alpha_tw_min_ + i * delta;
 
 }
 
@@ -39,11 +51,11 @@ void WindItem::update(int vTW, int aTW) {
 
 	// Update the true wind velocity
 	// vmin to vmax in N steps : vMin + vTW * ( (vMax-vMin)/(nSteps-2) - 1 )
-	twv_= v_tw_min_ + vTW * ( ( v_tw_max_ - v_tw_min_ ) / n_twv_ );
+	twv_= getTWV(vTW);
 	if(isnan(twv_)) throw VPPException(HERE,"twv_ is NAN!");
 
 	// Update the true wind angle: make as per the velocity
-	twa_= alpha_tw_min_ + aTW * ( ( alpha_tw_max_ - alpha_tw_min_ ) /  n_alpha_tw_ );
+	twa_= getTWA(aTW);
 	if(isnan(twa_)) throw VPPException(HERE,"twa_ is NAN!");
 
 	// Update the apparent wind velocity vector
@@ -64,12 +76,22 @@ void WindItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of WindItem "<<std::endl;
 }
 
-// Returns the true wind velocity for this step
+// Returns the true wind velocity for a given step
+const double WindItem::getTWV(size_t iV) const {
+	return vTwv_[iV];
+}
+
+// Returns the current true wind velocity for this step
 const double WindItem::getTWV() const {
 	return twv_;
 }
 
-// Returns the true wind angle for this step
+// Returns the true wind angle for a given step
+const double WindItem::getTWA(size_t iA) const {
+	return vTwa_[iA];
+}
+
+// Returns the current true wind angle for this step
 const double WindItem::getTWA() const {
 	return twa_;
 }
