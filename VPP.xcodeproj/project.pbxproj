@@ -52,7 +52,6 @@
 		64BBD5DB1C5B701400F14B38 /* mathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mathUtils.h; path = main/mathUtils.h; sourceTree = "<group>"; };
 		64BBD5DC1C5B701400F14B38 /* Optimizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Optimizer.cpp; path = main/Optimizer.cpp; sourceTree = "<group>"; };
 		64BBD5DD1C5B701400F14B38 /* Optimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Optimizer.h; path = main/Optimizer.h; sourceTree = "<group>"; };
-		64BBD5DE1C5B701400F14B38 /* Optimizer.h.orig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Optimizer.h.orig; path = main/Optimizer.h.orig; sourceTree = "<group>"; };
 		64BBD5DF1C5B701400F14B38 /* Physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Physics.h; path = main/Physics.h; sourceTree = "<group>"; };
 		64BBD5E01C5B701400F14B38 /* Plotter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Plotter.cpp; path = main/Plotter.cpp; sourceTree = "<group>"; };
 		64BBD5E11C5B701400F14B38 /* Plotter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plotter.h; path = main/Plotter.h; sourceTree = "<group>"; };
@@ -140,7 +139,6 @@
 				64BBD5DB1C5B701400F14B38 /* mathUtils.h */,
 				64BBD5DC1C5B701400F14B38 /* Optimizer.cpp */,
 				64BBD5DD1C5B701400F14B38 /* Optimizer.h */,
-				64BBD5DE1C5B701400F14B38 /* Optimizer.h.orig */,
 				64BBD5DF1C5B701400F14B38 /* Physics.h */,
 				64BBD5E01C5B701400F14B38 /* Plotter.cpp */,
 				64BBD5E11C5B701400F14B38 /* Plotter.h */,

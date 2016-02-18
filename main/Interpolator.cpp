@@ -279,7 +279,7 @@ std::vector<double> Extrapolator::get(double x) {
 	std::vector<double> vRes(pVm2_->size());
 
 	// Distance between the two known solutions
-	double dx= xm2_-xm1_;
+	double dx= xm1_-xm2_;
 
 	for(size_t i=0; i<pVm2_->size(); i++){
 

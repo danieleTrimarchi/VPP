@@ -33,7 +33,7 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 	vTwa_.resize(n_alpha_tw_);
 	delta=( ( alpha_tw_max_ - alpha_tw_min_ ) /  n_alpha_tw_ );
 	for(size_t i=0; i<n_alpha_tw_; i++)
-		twa_= alpha_tw_min_ + i * delta;
+		vTwa_[i]= alpha_tw_min_ + i * delta;
 
 }
 

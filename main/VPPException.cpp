@@ -6,8 +6,8 @@
 VPPException::VPPException(const char* inFile, int inLine, const char* inFunction, const char* message ){
 
 	std::ostringstream oss;
-	oss<<"Error in function: "<<inFunction<<"\nin file: "<<inFile<<" line: "<<inLine<<std::endl;
-	oss<<"Message: "<<message<<std::endl;
+	oss<<"Error in function: "<<inFunction<<"\n in file: "<<inFile<<" line: "<<inLine<<std::endl;
+	oss<<" Message: "<<message<<std::endl;
 	msg=oss.str();
 	std::cout<<msg<<std::endl;
 }

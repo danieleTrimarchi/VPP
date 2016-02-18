@@ -230,7 +230,7 @@ Optimizer::~Optimizer() {
 // Set the initial guess for the state variable vector
 void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
-	// Init to something small to start the evals at each velocity
+	// In it to something small to start the evals at each velocity
 	if(TWV==0) {
 
 		xp_[0]= 0.01;  	// V_0
@@ -245,13 +245,16 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 				pResults_->get(TWV-2,TWA).getTWV(),
 				pResults_->get(TWV-2,TWA).getX(),
 				pResults_->get(TWV-1,TWA).getTWV(),
-				pResults_->get(TWV-2,TWA).getX()
+				pResults_->get(TWV-1,TWA).getX()
 		);
 
-		// Extrapolate the state vector for the current
-		// wind velocity
-		xp_= extrapolator.get( pWind_->getTWV() );
+		// Extrapolate the state vector for the current wind
+		// velocity. Note that the items have not been init yet
+		xp_= extrapolator.get( pWind_->getTWV(TWV) );
 	}
+
+	std::cout<<"INITIAL GUESS: "<<std::endl;
+	cout<<"  "<<xp_[0]<<" , "<<xp_[1]<<" , "<<xp_[2]<<" , "<<xp_[3]<<endl;
 
 }
 
@@ -287,6 +290,8 @@ void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const doub
 
 void Optimizer::run(int TWV, int TWA) {
 
+	std::cout<<"    "<<pWind_->getTWV(TWV)<<"    "<<pWind_->getTWA(TWA)<<std::endl;
+
 	// Drive the loop info to the struct
 	Loop_data loopData={TWV,TWA};
 
@@ -316,7 +321,7 @@ void Optimizer::run(int TWV, int TWA) {
 		// Launch the optimization; negative retVal implies failure
 		result = opt_->optimize(xp_, maxf);
 	} catch (...) {
-		throw VPPException(HERE,"NLOpt Exception catched!\n");
+		throw VPPException(HERE,"nlopt exception catched!\n");
 	}
 
 	if (result < 0)
