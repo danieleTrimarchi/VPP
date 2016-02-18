@@ -286,11 +286,11 @@ std::vector<double> Extrapolator::get(double x) {
 		// Compute the angular coeff for this set of coeffs
 		double m= (pVm1_->at(i)-pVm2_->at(i))/dx;
 
-		// y=mx+q  => y2-y1/x2-x1 = yext-y1/xext-x1
-		// yext = y1 + y2-y1 * xext-x1 / x2-x1
-		//      = y1 + m * xext-x1 / x2-x1
+		// y=mx+q  => (y2-y1)/(x2-x1) = (yext-y1)/(xext-x1)
+		// yext = y1 + (y2-y1 / x2-x1) * xext-x1
+		//      = y1 + m * xext-x1
 		// with __1 => Vm2 and __2 Vm1
-		vRes[i]= pVm2_->at(i) + m * (x-xm2_)/(xm1_-xm2_)  ;
+		vRes[i]= pVm2_->at(i) + m * (x-xm2_);
 	}
 
 	return vRes;
