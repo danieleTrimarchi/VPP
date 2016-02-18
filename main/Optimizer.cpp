@@ -229,28 +229,22 @@ Optimizer::~Optimizer() {
 // Set the initial guess for the state variable vector
 void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
-	// Init to something small to start with
-	if(TWV==0 && TWA==0) {
+	// Init to something small to start the evals at each angle
+	if(TWA==0) {
 
 		xp_[0]= 0.01;  	// V_0
 		xp_[1]= 0.01;		// PHI_0
 		xp_[2]= 0.01;		// b_0
 		xp_[3]= .99;		// f_0
 
-	} else if(TWA==0) {
-
-		// Init with the value for the first angle and the previous
-		// velocity value
-		for(size_t i=0; i<dimension_; i++)
-			xp_[i] = pResults_->get(TWV-1,TWA).getX()->at(i);
-
 	}
-//	 else if( TWA>1){
+//	else if(TWA==0) {
 //
-//		// if twa>1 we can  linearly predict the state vector
-//
+//		// Init with the value for the first angle and the previous
+//		// velocity value
+//		for(size_t i=0; i<dimension_; i++)
+//			xp_[i] = pResults_->get(TWV-1,TWA).getX()->at(i);
 //	}
-
 
 }
 
@@ -310,8 +304,13 @@ void Optimizer::run(int TWV, int TWA) {
 	// Instantiate the maximum objective value, upon return
 	double maxf;
 
-	// Launch the optimization; negative retVal implies failure
-	nlopt::result result = opt_->optimize(xp_, maxf);
+	nlopt::result result;
+	try{
+		// Launch the optimization; negative retVal implies failure
+		result = opt_->optimize(xp_, maxf);
+	} catch (...) {
+		throw VPPException(HERE,"NLOpt Exception catched!\n");
+	}
 
 	if (result < 0)
 		throw VPPException(HERE,"nlopt failed!\n");

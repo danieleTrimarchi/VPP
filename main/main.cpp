@@ -47,9 +47,9 @@ int main(int argc, const char *argv[]) {
 		// Instantiate an optimizer
 		Optimizer optimizer(pVppItems);
 
-		// Loop on the wind VELOCITIES and ANGLES
-		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++)
-			for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++){
+		// Loop on the wind ANGLES and VELOCITIES
+		for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
+			for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++){
 
 				std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
 
