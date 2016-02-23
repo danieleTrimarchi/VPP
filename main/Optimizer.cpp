@@ -238,20 +238,22 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 		xp_[2]= 0.01;		// b_0
 		xp_[3]= .99;		// f_0
 
-	}	else if(TWV>1) {
-
-		// For twv> 1 we can linearly predict the result of the state vector
-		Extrapolator extrapolator(
-				pResults_->get(TWV-2,TWA).getTWV(),
-				pResults_->get(TWV-2,TWA).getX(),
-				pResults_->get(TWV-1,TWA).getTWV(),
-				pResults_->get(TWV-1,TWA).getX()
-		);
-
-		// Extrapolate the state vector for the current wind
-		// velocity. Note that the items have not been init yet
-		xp_= extrapolator.get( pWind_->getTWV(TWV) );
 	}
+
+	//	else if(TWV>1) {
+//
+//		// For twv> 1 we can linearly predict the result of the state vector
+//		Extrapolator extrapolator(
+//				pResults_->get(TWV-2,TWA).getTWV(),
+//				pResults_->get(TWV-2,TWA).getX(),
+//				pResults_->get(TWV-1,TWA).getTWV(),
+//				pResults_->get(TWV-1,TWA).getX()
+//		);
+//
+//		// Extrapolate the state vector for the current wind
+//		// velocity. Note that the items have not been init yet
+//		xp_= extrapolator.get( pWind_->getTWV(TWV) );
+//	}
 
 	std::cout<<"INITIAL GUESS: "<<std::endl;
 	cout<<"  "<<xp_[0]<<" , "<<xp_[1]<<" , "<<xp_[2]<<" , "<<xp_[3]<<endl;
