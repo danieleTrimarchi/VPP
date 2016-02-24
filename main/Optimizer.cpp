@@ -322,24 +322,34 @@ void Optimizer::run(int TWV, int TWA) {
 	try{
 		// Launch the optimization; negative retVal implies failure
 		result = opt_->optimize(xp_, maxf);
-	} catch (...) {
-		throw VPPException(HERE,"nlopt exception catched!\n");
+	}
+	catch( nlopt::roundoff_limited& e ){
+		// do nothing because the result of roundoff-limited exception
+		// is meant to be still a meaningful result
+	}
+	catch (std::exception& e) {
+
+		// Only throw if the result is not useful. If the result code
+		// is -4, this is a roundoff error and the opt result is supposedly
+		// useful
+		char msg[256];
+		sprintf(msg,"%s\n",e.what());
+		throw VPPException(HERE,msg);
+	}
+	catch (...) {
+		throw VPPException(HERE,"nlopt unknown exception catched!\n");
 	}
 
-	if (result < 0)
-		throw VPPException(HERE,"nlopt failed!\n");
+	printf("found maximum after %d evaluations\n", optIterations);
+	printf("      at f(%g,%g,%g,%g) = %0.10g\n",
+			xp_[0],xp_[1],xp_[2],xp_[3],maxf);
+	double dF, dM;
+	vppItemsContainer_->getResiduals(dF,dM);
+	printf("      residuals: dF= %g, dM= %g\n\n",dF,dM);
 
-	else {
-		printf("found maximum after %d evaluations\n", optIterations);
-		printf("      at f(%g,%g,%g,%g) = %0.10g\n",
-				xp_[0],xp_[1],xp_[2],xp_[3],maxf);
-		double dF, dM;
-		vppItemsContainer_->getResiduals(dF,dM);
-		printf("      residuals: dF= %g, dM= %g\n\n",dF,dM);
+	// Push the result to the result container
+	pResults_->push_back(TWV, TWA, xp_, dF, dM);
 
-		// Push the result to the result container
-		pResults_->push_back(TWV, TWA, xp_, dF, dM);
-	}
 }
 
 // Make a printout of the results for this run
@@ -411,54 +421,64 @@ void Optimizer::plotResults() {
 	crewBPolarPlotter.plot();
 	sailFlatPolarPlotter.plot();
 
-//	todo dtrimarchi : Find a nice way to plot the force/moment residuals
+
+	// Prepare the data for the plotter
+	Eigen::ArrayXd windSpeeds(pResults_->windVelocitySize());
+	boatVelocity.resize(pResults_->windVelocitySize());
+	boatHeel.resize(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatFlat(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatB(pResults_->windVelocitySize());
+	Eigen::ArrayXd dF(pResults_->windVelocitySize());
+	Eigen::ArrayXd dM(pResults_->windVelocitySize());
+
+	for(size_t iWa=0; iWa<pResults_->windAngleSize(); iWa++) {
+
+		for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
+
+			windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
+			boatVelocity(iWv)  = pResults_->get(iWv,iWa).getX()->at(0);
+			boatHeel(iWv)    = pResults_->get(iWv,iWa).getX()->at(1);
+			boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->at(2);
+			boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->at(3);
+			dF(iWv)          = pResults_->get(iWv,iWa).getdF();
+			dM(iWv)          = pResults_->get(iWv,iWa).getdM();
+
+		}
+
+		char title[256];
+		sprintf(title,"AWA= %4.2f", pWind_->getTWA(iWa) );
+
+		// Instantiate a plotter for the velocity
+		Plotter plotter;
+		string t=string("Boat Speed")+string(title);
+		plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
+				t,"Wind Speed [m/s]","Boat Speed [m/s]");
 
 
-	//-------- this has to be modified for other xy plots
-//
-//	// Prepare the data for the plotter
-//	Eigen::ArrayXd windSpeeds(pResults_->size());
-//	Eigen::ArrayXd boatSpeeds(pResults_->size());
-//	Eigen::ArrayXd boatHeel(pResults_->size());
-//	Eigen::ArrayXd boatFlat(pResults_->size());
-//	Eigen::ArrayXd boatB(pResults_->size());
-//	Eigen::ArrayXd dF(pResults_->size());
-//	Eigen::ArrayXd dM(pResults_->size());
-//
-//	for(size_t iRes=0; iRes<pResults_.size(); iRes++) {
-//		windSpeeds(iRes) = results_[iRes].getTWV();
-//		boatSpeeds(iRes) = results_[iRes].getX()->at(0);
-//		boatHeel(iRes)   = results_[iRes].getX()->at(1);
-//		boatB(iRes)   	 = results_[iRes].getX()->at(2);
-//		boatFlat(iRes)   = results_[iRes].getX()->at(3);
-//		dF(iRes)         = results_[iRes].getdF();
-//		dM(iRes)         = results_[iRes].getdM();
-//	}
-//
-//	// Instantiate a plotter for the velocity
-//	Plotter plotter;
-//	plotter.plot(windSpeeds,boatSpeeds,windSpeeds,boatSpeeds,
-//			"Boat Speed","Wind Speed [m/s]","Boat Speed [m/s]");
-//
-//	// Instantiate a plotter for the heel
-//	Plotter plotter2;
-//	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
-//			"Boat Heel","Wind Speed [m/s]","Boat Heel [deg]");
-//
-//	// Instantiate a plotter for the Flat
-//	Plotter plotter3;
-//	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
-//			"Sail FLAT","Wind Speed [m/s]","Sail FLAT [-]");
-//
-//	// Instantiate a plotter for the position of the movable crew B
-//	Plotter plotter4;
-//	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
-//			"Crew position","Wind Speed [m/s]","Position of the movable crew [m]");
-//
-//	// Instantiate a plotter for the residuals
-//	Plotter plotter5;
-//	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
-//				"Residuals","Wind Speed [m/s]","Residuals [N,N*m]");
+		// Instantiate a plotter for the heel
+		Plotter plotter2;
+		string t2=string("Boat Heel")+string(title);
+		plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
+				t2,"Wind Speed [m/s]","Boat Heel [deg]");
+
+		// Instantiate a plotter for the Flat
+		Plotter plotter3;
+		string t3=string("Sail FLAT")+string(title);
+		plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
+				t3,"Wind Speed [m/s]","Sail FLAT [-]");
+
+		// Instantiate a plotter for the position of the movable crew B
+		Plotter plotter4;
+		string t4=string("Crew position")+string(title);
+		plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
+				t4,"Wind Speed [m/s]","Position of the movable crew [m]");
+
+		// Instantiate a plotter for the residuals
+		Plotter plotter5;
+		string t5=string("Residuals")+string(title);
+		plotter5.plot(windSpeeds,dF,windSpeeds,dM,
+					t5,"Wind Speed [m/s]","Residuals [N,N*m]");
+	}
 
 }
 
