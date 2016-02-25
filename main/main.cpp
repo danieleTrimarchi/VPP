@@ -11,8 +11,6 @@ using namespace std;
 using namespace Eigen;
 
 #include "boost/shared_ptr.hpp"
-#include "boost/program_options.hpp"
-using namespace boost::program_options;
 
 #include "VariableFileParser.h"
 #include "SailSet.h"
@@ -45,61 +43,43 @@ int main(int argc, char** argv) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-		bool inf=false;
-		while (inf){
-			// infinite loop
-		}
+		// Get the variables
+		VariableFileParser parser("variableFile.txt");
+		parser.parse();
+		parser.check();
+		parser.printVariables();
 
-//		// Get the variables
-//		VariableFileParser parser("variableFile.txt");
-//		parser.parse();
-//		parser.check();
-//		parser.printVariables();
-//
-//		// Compute the sail configuration based on the variables that have been read in
-//		boost::shared_ptr<SailSet> pSails( SailSet::SailSetFactory(parser) );
-//		pSails->printVariables();
-//
-//		// Instantiate a container for all the quantities function of the state variables
-//		boost::shared_ptr<VPPItemFactory> pVppItems( new VPPItemFactory(&parser,pSails) );
-//
-//		// Instantiate an optimizer
-//		Optimizer optimizer(pVppItems);
+		// Compute the sail configuration based on the variables that have been read in
+		boost::shared_ptr<SailSet> pSails( SailSet::SailSetFactory(parser) );
+		pSails->printVariables();
 
-		options_description desc("Allowed options");
-		desc.add_options()
-			("help","produce help message")
-			("run","run the optimization")
-			("print","prints the results to screen")
-			("plot","plot graphs with the results")
-				;
+		// Instantiate a container for all the quantities function of the state variables
+		boost::shared_ptr<VPPItemFactory> pVppItems( new VPPItemFactory(&parser,pSails) );
 
-		variables_map vm;
-		store(parse_command_line(argc,argv,desc),vm);
-		notify(vm);
+		// Instantiate an optimizer
+		Optimizer optimizer(pVppItems);
 
-		if(vm.count("help")){
-			cout << desc << "\n";
-			return 1;
-		}
-		if(vm.count("run")){
-			cout<<"Run!"<< "\n";
-			return 1;
-		}
-		if(vm.count("print")){
-			cout<<"Print!"<< "\n";
-			return 1;
-		}
-		if(vm.count("plot")){
-			cout<<"Plot!"<< "\n";
-			return 1;
-		}
-//
-//		optimizer.printResults();
-//
-//		// And now printout the whole set of results
-//		optimizer.plotResults();
+		string s;
+		while(cin >> s){
 
+			// Exit the program on demand
+			if(s==string("exit"))
+				break;
+
+			// Parse other options
+			if(s == string("run") )
+				run(parser,optimizer);
+
+			else if( s == string("print"))
+				optimizer.printResults();
+
+			else if( s == string("plot"))
+				optimizer.plotResults();
+
+			else
+				std::cout<<"Option not recognized\n";
+
+		}
 
 	} catch(std::exception& e) {
 		std::cout<<"\n-----------------------------------------"<<std::endl;
