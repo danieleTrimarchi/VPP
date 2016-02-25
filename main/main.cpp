@@ -19,6 +19,22 @@ using namespace Eigen;
 #include "Interpolator.h"
 #include "VPPException.h"
 
+/// Reload the variable file and update the items accordingly
+void load(VariableFileParser& parser,
+		boost::shared_ptr<SailSet>& pSailSet,
+		boost::shared_ptr<VPPItemFactory>& pVppItems){
+
+	// Parse the variables file
+	parser.parse();
+
+	// Instantiate the sailset
+	pSailSet.reset( SailSet::SailSetFactory(parser) );
+
+	// Reload the items
+	pVppItems.reset( new VPPItemFactory(&parser,pSailSet) );
+
+}
+
 /// RUN
 void run(VariableFileParser& parser, Optimizer& optimizer){
 
@@ -43,21 +59,24 @@ int main(int argc, char** argv) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-		// Get the variables
+		// Instantiate a parser with the variables
 		VariableFileParser parser("variableFile.txt");
-		parser.parse();
 
-		// Compute the sail configuration based on the variables that have been read in
-		boost::shared_ptr<SailSet> pSails( SailSet::SailSetFactory(parser) );
-		pSails->printVariables();
+		// Declare a ptr with the sail configuration
+		// This is based on the variables that have been read in
+		boost::shared_ptr<SailSet> pSails;
 
-		// Instantiate a container for all the quantities function of the state variables
-		boost::shared_ptr<VPPItemFactory> pVppItems( new VPPItemFactory(&parser,pSails) );
+		// Declare a container for all the items that
+		// constitute the VPP components (Wind, Resistance, RightingMoment...)
+		boost::shared_ptr<VPPItemFactory> pVppItems;
+
+		// Load variables and items
+		load(parser,pSails,pVppItems);
 
 		// Instantiate an optimizer
 		Optimizer optimizer(pVppItems);
 
-		std::cout<<"Please enter a command \n";
+		std::cout<<"Please enter a command or type -help-\n";
 
 		string s;
 		while(cin >> s){
@@ -70,24 +89,10 @@ int main(int argc, char** argv) {
 			if(s == string("printVars") )
 				parser.printVariables();
 
-			if(s == string("reload") ){
+			else if(s == string("reload") )
+				load(parser,pSails,pVppItems);
 
-				std::cout<<"--> WARNING : reload is untested!\n";
-
-				// Reload the parser
-				parser.parse();
-
-				// Reload the sailSet
-				delete pSails;
-				pSails.reset( SailSet::SailSetFactory(parser) );
-
-				// Reload the items
-				delete pVppItems;
-				pVppItems.reset( new VPPItemFactory(&parser,pSails) );
-
-			}
-
-			if(s == string("run") )
+			else if(s == string("run") )
 				run(parser,optimizer);
 
 			else if( s == string("print"))
@@ -96,7 +101,7 @@ int main(int argc, char** argv) {
 			else if( s == string("plotAeroCoeffs"))
 				cout<<"NOT IMPLEMENTED\n";
 
-			else if( s == string("plot"))
+			else if( s == string("plotAllResults"))
 				optimizer.plotResults();
 
 			else if( s == string("help")){
@@ -107,7 +112,7 @@ int main(int argc, char** argv) {
 				std::cout<<"   run            : launches the computations \n";
 				std::cout<<"   print          : print results to screen \n";
 				std::cout<<"   plotAeroCoeffs : plot result graphs \n";
-				std::cout<<"   plot           : plot result graphs \n";
+				std::cout<<"   plotAllResults : plot ALL the result graphs \n";
 				std::cout<<"   exit           : terminates the program \n";
 				std::cout<<"====================================================== \n\n";
 
@@ -116,7 +121,7 @@ int main(int argc, char** argv) {
 				std::cout<<"Option not recognized, type -help- "
 						"for a list of available options \n";
 
-			std::cout<<"Please enter a command \n";
+			std::cout<<"Please enter a command or type -help-\n";
 		}
 
 	} catch(std::exception& e) {
