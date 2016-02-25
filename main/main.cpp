@@ -46,8 +46,6 @@ int main(int argc, char** argv) {
 		// Get the variables
 		VariableFileParser parser("variableFile.txt");
 		parser.parse();
-		parser.check();
-		parser.printVariables();
 
 		// Compute the sail configuration based on the variables that have been read in
 		boost::shared_ptr<SailSet> pSails( SailSet::SailSetFactory(parser) );
@@ -59,6 +57,8 @@ int main(int argc, char** argv) {
 		// Instantiate an optimizer
 		Optimizer optimizer(pVppItems);
 
+		std::cout<<"Please enter a command \n";
+
 		string s;
 		while(cin >> s){
 
@@ -67,18 +67,56 @@ int main(int argc, char** argv) {
 				break;
 
 			// Parse other options
+			if(s == string("printVars") )
+				parser.printVariables();
+
+			if(s == string("reload") ){
+
+				std::cout<<"--> WARNING : reload is untested!\n";
+
+				// Reload the parser
+				parser.parse();
+
+				// Reload the sailSet
+				delete pSails;
+				pSails.reset( SailSet::SailSetFactory(parser) );
+
+				// Reload the items
+				delete pVppItems;
+				pVppItems.reset( new VPPItemFactory(&parser,pSails) );
+
+			}
+
 			if(s == string("run") )
 				run(parser,optimizer);
 
 			else if( s == string("print"))
 				optimizer.printResults();
 
+			else if( s == string("plotAeroCoeffs"))
+				cout<<"NOT IMPLEMENTED\n";
+
 			else if( s == string("plot"))
 				optimizer.plotResults();
 
-			else
-				std::cout<<"Option not recognized\n";
+			else if( s == string("help")){
 
+				std::cout<<"\n== AVAILABLE OPTIONS ================================ \n";
+				std::cout<<"   printVars      : print the variables read from file \n";
+				std::cout<<"   reload         : reload the variables from file \n";
+				std::cout<<"   run            : launches the computations \n";
+				std::cout<<"   print          : print results to screen \n";
+				std::cout<<"   plotAeroCoeffs : plot result graphs \n";
+				std::cout<<"   plot           : plot result graphs \n";
+				std::cout<<"   exit           : terminates the program \n";
+				std::cout<<"====================================================== \n\n";
+
+			}
+			else
+				std::cout<<"Option not recognized, type -help- "
+						"for a list of available options \n";
+
+			std::cout<<"Please enter a command \n";
 		}
 
 	} catch(std::exception& e) {

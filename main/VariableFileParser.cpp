@@ -96,6 +96,9 @@ VariableFileParser::~VariableFileParser() {
 // Parse the file
 void VariableFileParser::parse() {
 
+	// Make sure the variables_ set is empty
+	variables_.clear();
+
 	// Get the file as an ifstream
 	std::ifstream infile(fileName_.c_str());
 	if(!infile.good())
@@ -129,6 +132,10 @@ void VariableFileParser::parse() {
 			variables_.insert(newVariable);
 		}
 	}
+
+	// make sure we have all the variables we need and that
+	// the values are reasonable
+	check();
 }
 
 // Check that all the required variables have been
