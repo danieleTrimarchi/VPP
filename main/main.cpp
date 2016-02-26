@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
 		while(cin >> s){
 
 			// Exit the program on demand
-			if(s==string("exit"))
+			if(s==string("exit") || s==string("q") )
 				break;
 
 			// Parse other options
@@ -101,10 +101,10 @@ int main(int argc, char** argv) {
 				pVppItems->getResiduaryResistanceKeelItem()->plot();
 
 			else if(s == string("plotViscousRes_Keel") )
-				pVppItems->getViscousResistanceKeelItem()->plot();
+				pVppItems->getViscousResistanceKeelItem()->plot(); //-> this does not plot
 
 			else if(s == string("plotViscousRes_Rudder") )
-				pVppItems->getViscousResistanceRudderItem()->plot();
+				pVppItems->getViscousResistanceRudderItem()->plot(); //-> this does not plot
 
 			else if(s == string("plotDelta_FrictRes_Heel") )
 				pVppItems->getDelta_FrictionalResistance_HeelItem()->plot();

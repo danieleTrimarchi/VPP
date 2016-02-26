@@ -62,8 +62,6 @@ void Plotter::resetRanges(Eigen::ArrayXd& x0,Eigen::ArrayXd& y0,Eigen::ArrayXd& 
 	resetRanges(x0,y0);
 	resetRanges(x1,y1);
 
-	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
-
 }
 
 // Reset the ranges so that it can contain all of the plot
@@ -71,8 +69,6 @@ void Plotter::resetRanges(std::vector<double>& x0,std::vector<double>& y0,std::v
 
 	resetRanges(x0,y0);
 	resetRanges(x1,y1);
-
-	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
 
 }
 
@@ -238,6 +234,7 @@ void Plotter::plot(	Eigen::ArrayXd& x0,
 
 	// Reset the plot margins so that it can contain the plot
 	resetRanges(x0,y0,x1,y1);
+	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
 
 	// Plot the data that was prepared above.
 	plcol0( color::blue );
@@ -287,6 +284,7 @@ void Plotter::plot(
 
 	// Reset the plot margins so that it can contain the plot
 	resetRanges(x0,y0);
+	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
 
 	// Plot the data that was prepared above.
 	plcol0( color::blue );
@@ -331,6 +329,7 @@ void Plotter::plot(	std::vector<double>& x0,
 
 	// Reset the plot margins so that it can contain the plot
 	resetRanges(x0,y0,x1,y1);
+	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
 
 	// Plot the data that was prepared above.
 	plcol0( color::blue );

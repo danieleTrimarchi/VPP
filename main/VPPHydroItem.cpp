@@ -637,14 +637,14 @@ void ViscousResistanceKeelItem::plot() {
 	for(size_t i=0; i<nVals; i++) {
 
 		// Set a fictitious velocity
-		V_ = 0.7/50 * i;
+		V_ = 1./nVals * i;
 
 		// Update the item
 		update(0,0);
 
 		// Fill the vectors to be plot
-		x[i]= V_;
-		y[i]= get();
+		x[i]= fN_;
+		y[i]= res_;
 
 	}
 
@@ -714,7 +714,7 @@ void ViscousResistanceRudderItem::plot() {
 
 		// Fill the vectors to be plot
 		x[i]= V_;
-		y[i]= get();
+		y[i]= res_;
 
 	}
 
