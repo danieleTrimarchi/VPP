@@ -410,10 +410,10 @@ void MainAndJibCoefficientItem::printWhoAmI() {
 
 void MainAndJibCoefficientItem::plotInterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
-	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
-	interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
-	interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
+	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN","[-]","AWA [deg]");
+	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN","[-]","AWA [deg]");
+	interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB","[-]","AWA [deg]");
+	interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB","[-]","AWA [deg]");
 
 }
 
@@ -469,10 +469,10 @@ void MainAndSpiCoefficientItem::printWhoAmI() {
 
 void MainAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
-	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
-	interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
-	interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
+	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN","[-]","AWA [deg]");
+	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN","[-]","AWA [deg]");
+	interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI","[-]","AWA [deg]");
+	interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI","[-]","AWA [deg]");
 
 }
 
@@ -528,12 +528,12 @@ void MainJibAndSpiCoefficientItem::printWhoAmI() {
 
 void MainJibAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
-	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
-	interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
-	interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
-	interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
-	interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
+	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN","[-]","AWA [deg]");
+	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN","[-]","AWA [deg]");
+	interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB","[-]","AWA [deg]");
+	interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB","[-]","AWA [deg]");
+	interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI","[-]","AWA [deg]");
+	interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI","[-]","AWA [deg]");
 
 }
 
