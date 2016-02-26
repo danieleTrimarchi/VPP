@@ -95,8 +95,14 @@ class SailCoefficientItem : public VPPItem {
 		/// Returns a ptr to the wind Item
 		WindItem* getWindItem() const;
 
-		/// PrintOut the coefficient matrices
+		/// PrintOut the coefficients for main, jib and spi.
+		/// Note that these coefficients are the values interpolated
+		/// for the current awa_
 		void printCoefficients();
+
+		/// Plot the spline-interpolated curves based on the Larsson's
+		/// sail coefficients. The range is set 0-180deg
+		virtual void plotInterpolatedCoefficients() const=0;
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
@@ -139,6 +145,11 @@ class SailCoefficientItem : public VPPItem {
 		cd0_, //<
 		cd_; //< Drag coefficient
 
+		/// Interpolator vectors -- store a cubic spline that interpolates
+		/// the values of the sail coefficients
+		vector< boost::shared_ptr<SplineInterpolator> > interpClVec_;
+		vector< boost::shared_ptr<SplineInterpolator> > interpCdVec_;
+
 	private:
 
 		/// Pure virtual that makes this class abstract.
@@ -146,11 +157,6 @@ class SailCoefficientItem : public VPPItem {
 
 		/// Ptr to the wind item
 		WindItem* pWindItem_;
-
-		/// Interpolator vectors -- store a cubic spline that interpolates
-		/// the values of the sail coefficients
-		vector< boost::shared_ptr<SplineInterpolator> > interpClVec_;
-		vector< boost::shared_ptr<SplineInterpolator> > interpCdVec_;
 
 };
 
@@ -168,6 +174,10 @@ class MainOnlySailCoefficientItem : public SailCoefficientItem {
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
+
+		/// Plot the spline-interpolated curves based on the Larsson's
+		/// sail coefficients. The range is set 0-180deg
+		virtual void plotInterpolatedCoefficients() const;
 
 	private:
 
@@ -196,6 +206,10 @@ class MainAndJibCoefficientItem : public SailCoefficientItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
+		/// Plot the spline-interpolated curves based on the Larsson's
+		/// sail coefficients. The range is set 0-180deg
+		virtual void plotInterpolatedCoefficients() const;
+
 	private:
 
 		/// Implement the pure virtual method of the abstract base class
@@ -223,6 +237,10 @@ class MainAndSpiCoefficientItem : public SailCoefficientItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
+		/// Plot the spline-interpolated curves based on the Larsson's
+		/// sail coefficients. The range is set 0-180deg
+		virtual void plotInterpolatedCoefficients() const;
+
 	private:
 
 		/// Implement the pure virtual method of the abstract base class
@@ -249,6 +267,10 @@ class MainJibAndSpiCoefficientItem : public SailCoefficientItem {
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
+
+		/// Plot the spline-interpolated curves based on the Larsson's
+		/// sail coefficients. The range is set 0-180deg
+		virtual void plotInterpolatedCoefficients() const;
 
 	private:
 

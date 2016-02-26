@@ -57,6 +57,14 @@ class Plotter {
 				string yLabel="y"
 		);
 
+		/// Plot the points of one given array set
+		void plot(std::vector<double>& x0,
+				std::vector<double>& y0,
+				string title="Plot",
+				string xLabel="x",
+				string yLabel="y"
+		);
+
 		/// Plot the points of two given array sets
 		void plot(std::vector<double>& x0,
 				std::vector<double>& y0,

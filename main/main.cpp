@@ -89,6 +89,31 @@ int main(int argc, char** argv) {
 			if(s == string("printVars") )
 				parser.printVariables();
 
+			else if( s == string("plotSailCoeffs"))
+				pVppItems->getSailCoefficientItem()->plotInterpolatedCoefficients();
+
+			else if( s == string("plotResidRes"))
+				pVppItems->getResiduaryResistanceItem()->plot();
+
+			//---
+
+			else if(s == string("plotResidRes_Keel") )
+				pVppItems->getResiduaryResistanceKeelItem()->plot();
+
+			else if(s == string("plotViscousRes_Keel") )
+				pVppItems->getViscousResistanceKeelItem()->plot();
+
+			else if(s == string("plotViscousRes_Rudder") )
+				pVppItems->getViscousResistanceRudderItem()->plot();
+
+			else if(s == string("plotDelta_FrictRes_Heel") )
+				pVppItems->getDelta_FrictionalResistance_HeelItem()->plot();
+
+			else if(s == string("plotDelta_ResidRes_Heel") )
+				pVppItems->getDelta_ResiduaryResistance_HeelItem()->plot();
+
+			//---
+
 			else if(s == string("reload") )
 				load(parser,pSails,pVppItems);
 
@@ -98,30 +123,38 @@ int main(int argc, char** argv) {
 			else if( s == string("print"))
 				optimizer.printResults();
 
-			else if( s == string("plotAeroCoeffs"))
-				cout<<"NOT IMPLEMENTED\n";
-
 			else if( s == string("plotAllResults"))
 				optimizer.plotResults();
 
 			else if( s == string("help")){
 
-				std::cout<<"\n== AVAILABLE OPTIONS ================================ \n";
-				std::cout<<"   printVars      : print the variables read from file \n";
-				std::cout<<"   reload         : reload the variables from file \n";
-				std::cout<<"   run            : launches the computations \n";
-				std::cout<<"   print          : print results to screen \n";
-				std::cout<<"   plotAeroCoeffs : plot result graphs \n";
-				std::cout<<"   plotAllResults : plot ALL the result graphs \n";
-				std::cout<<"   exit           : terminates the program \n";
-				std::cout<<"====================================================== \n\n";
+				std::cout<<"\n== AVAILABLE OPTIONS =============================================== \n";
+				std::cout<<"   printVars              : print the variables read from file \n";
+				std::cout<<" \n";
+				std::cout<<"   plotSailCoeffs         : plot the aerodynamic coeffs for the current sails \n";
+				std::cout<<" \n";
+				std::cout<<"   plotResidRes           : plot the Residuary Resistance \n";
+				std::cout<<"   plotResidRes_Keel      : plot the Residuary Resistance of the Keel \n";
+				std::cout<<"   plotViscousRes_Keel    : plot the Viscous Resistance of the Keel \n";
+				std::cout<<"   plotViscousRes_Rudder  : plot the Viscous Resistance of the Rudder \n";
+				std::cout<<"   plotDelta_FrictRes_Heel: plot the Delta Frictional Resistance due to heel \n";
+				std::cout<<"   plotDelta_ResidRes_Heel: plot the Delta Residuary Resistance due to heel \n";
+				std::cout<<" \n";
+				std::cout<<"   reload                 : reload the variables from file \n";
+				std::cout<<"   run                    : launches the computations \n";
+				std::cout<<" \n";
+				std::cout<<"   print                  : print results to screen \n";
+				std::cout<<"   plotAllResults         : plot ALL the result graphs \n";
+				std::cout<<" \n";
+				std::cout<<"   exit                   : terminates the program \n";
+				std::cout<<"======================================================================\n\n";
 
 			}
 			else
 				std::cout<<"Option not recognized, type -help- "
 						"for a list of available options \n";
 
-			std::cout<<"Please enter a command or type -help-\n";
+			std::cout<<"\nPlease enter a command or type -help-\n";
 		}
 
 	} catch(std::exception& e) {

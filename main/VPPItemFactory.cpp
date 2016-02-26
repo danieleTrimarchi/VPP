@@ -18,11 +18,11 @@ dM_(0) {
 
 	// Ask the sailSet to instantiate the relevant sail coefficients based
 	// on the current sail configuration and push it back to the children vector
-	boost::shared_ptr<SailCoefficientItem> pSailCoeffItem( pSailSet->sailCoefficientItemFactory(pWind.get()) );
-	vppAeroItems_.push_back( pSailCoeffItem );
+	pSailCoeffItem_.reset( pSailSet->sailCoefficientItemFactory(pWind.get()) );
+	vppAeroItems_.push_back( pSailCoeffItem_ );
 
 	// Instantiate the aero force Item and push it back to the children vector
-	pAeroForcesItem_.reset(new AeroForcesItem(pSailCoeffItem.get()));
+	pAeroForcesItem_.reset(new AeroForcesItem(pSailCoeffItem_.get()));
 	vppAeroItems_.push_back( pAeroForcesItem_ );
 
 	// -- INSTANTIATE THE 9 RESISTANCE ITEMS
@@ -34,35 +34,35 @@ dM_(0) {
 
 	// Instantiate a ResiduaryResistanceItem and push it back to the children vector
 	// For the definition of the Residuary Resistance: see Keuning 3.1.1.2 p112
-	boost::shared_ptr<ResiduaryResistanceItem> pResiduaryResistance(new ResiduaryResistanceItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pResiduaryResistance );
+	pResiduaryResistanceItem_.reset(new ResiduaryResistanceItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pResiduaryResistanceItem_ );
 
 	// Instantiate a Delta_FrictionalResistance_HeelItem Item and push it back to the children vector
 	// For the definition of the Change in Frictional Resistance due to heel see Keuning ch3.1.2.1 p115-116
-	boost::shared_ptr<Delta_FrictionalResistance_HeelItem> pDelta_FrictionalResistance_HeelItem(new Delta_FrictionalResistance_HeelItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pDelta_FrictionalResistance_HeelItem );
+	pDelta_FrictionalResistance_HeelItem_.reset(new Delta_FrictionalResistance_HeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pDelta_FrictionalResistance_HeelItem_ );
 
 	// Instantiate a Delta_ResiduaryResistance_HeelItem Item push it back to the children vector
 	// For the definition of the change in Residuary Resistance due to heel
 	// see DSYHS99 ch3.1.2.2 p116
-	boost::shared_ptr<Delta_ResiduaryResistance_HeelItem> pDelta_ResiduaryResistance_HeelItem(new Delta_ResiduaryResistance_HeelItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pDelta_ResiduaryResistance_HeelItem );
+	pDelta_ResiduaryResistance_HeelItem_.reset(new Delta_ResiduaryResistance_HeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pDelta_ResiduaryResistance_HeelItem_ );
 
 	// Instantiate a ViscousResistanceKeelItem Item and push it back to the children vector
 	// The viscous resistance of the Keel is defined in the std way, see DSYHS99 3.2.1.1 p 119
-	boost::shared_ptr<ViscousResistanceKeelItem> pViscousResistanceKeelItem(new ViscousResistanceKeelItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pViscousResistanceKeelItem );
+	pViscousResistanceKeelItem_.reset(new ViscousResistanceKeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pViscousResistanceKeelItem_ );
 
 	// Instantiate a ViscousResistanceKeelItem Item and push it back to the children vector
 	// The viscous resistance of the Rudder is defined in the std way, see DSYHS99 ch3.2.1.1 p 119
-	boost::shared_ptr<ViscousResistanceRudderItem> pViscousResistanceRudderItem(new ViscousResistanceRudderItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pViscousResistanceRudderItem );
+	pViscousResistanceRudderItem_.reset(new ViscousResistanceRudderItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pViscousResistanceRudderItem_ );
 
 	// Instantiate a ResiduaryResistanceKeelItem Item and push it back to the children vector
 	// For the definition of the Residuary Resistance of the Keel see
 	// DSYHS99 3.2.1.2 p.120 and following
-	boost::shared_ptr<ResiduaryResistanceKeelItem> pResiduaryResistanceKeelItem(new ResiduaryResistanceKeelItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pResiduaryResistanceKeelItem );
+	pResiduaryResistanceKeelItem_.reset(new ResiduaryResistanceKeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pResiduaryResistanceKeelItem_ );
 
 	// Instantiate a Delta_ResiduaryResistanceKeel_HeelItem Item and push it back to the children vector
 	// Express the change in Appendage Resistance due to Heel. See DSYHS99 3.2.2 p 126-127
@@ -113,9 +113,44 @@ WindItem* VPPItemFactory::getWind() const {
 	return pWind_.get();
 }
 
+/// Getter for the sail coefficients container
+const SailCoefficientItem* VPPItemFactory::getSailCoefficientItem() const {
+	return pSailCoeffItem_.get();
+}
+
 // Getter for the aero forces item that stores the driving forces
 const AeroForcesItem* VPPItemFactory::getAeroForcesItem() const {
 	return pAeroForcesItem_.get();
+}
+
+// Getter for the Residuary Resistance item
+ResiduaryResistanceItem* VPPItemFactory::getResiduaryResistanceItem() const {
+	return pResiduaryResistanceItem_.get();
+}
+
+// Getter for the Residuary Resistance of the keel item
+ResiduaryResistanceKeelItem* VPPItemFactory::getResiduaryResistanceKeelItem() const {
+	return pResiduaryResistanceKeelItem_.get();
+}
+
+// Getter for the Delta Viscous Resistance of the keel item
+ViscousResistanceKeelItem* VPPItemFactory::getViscousResistanceKeelItem() const {
+	return pViscousResistanceKeelItem_.get();
+}
+
+// Getter for the Delta Viscous Resistance of the Rudder item
+ViscousResistanceRudderItem* VPPItemFactory::getViscousResistanceRudderItem() const {
+	return pViscousResistanceRudderItem_.get();
+}
+
+// Getter for the Residuary Resistance due to heel item
+Delta_FrictionalResistance_HeelItem* VPPItemFactory::getDelta_FrictionalResistance_HeelItem() const {
+	return pDelta_FrictionalResistance_HeelItem_.get();
+}
+
+// Getter for the Delta Residuary Resistance due to heel item
+Delta_ResiduaryResistance_HeelItem* VPPItemFactory::getDelta_ResiduaryResistance_HeelItem() const {
+	return pDelta_ResiduaryResistance_HeelItem_.get();
 }
 
 // Compute the resistance by summing up all the contributions

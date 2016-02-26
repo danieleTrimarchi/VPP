@@ -80,6 +80,9 @@ class ResiduaryResistanceItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
+		/// Plot the Residuary Resistance vs Fn curve
+		void plot();
+
 	private:
 
 		/// Implement pure virtual method of the parent class
@@ -104,6 +107,9 @@ class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
+
+		/// Plot the Residuary Resistance vs Fn curve
+		void plot();
 
 	private:
 
@@ -131,6 +137,9 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
+
+		/// Plot the Residuary Resistance of the Keel versus Fn curve
+		void plot();
 
 	private:
 
@@ -211,6 +220,9 @@ class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
+		/// Plot the Frictional Resistance due to heel vs Fn curve
+		void plot();
+
 	private:
 
 		/// Implement pure virtual method of the parent class
@@ -239,6 +251,9 @@ class ViscousResistanceKeelItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
+		/// Plot the viscous resistance of the keel for a fixed range (Fn=0-0.7)
+		void plot();
+
 	private:
 
 		/// Implement pure virtual method of the parent class
@@ -260,6 +275,9 @@ class ViscousResistanceRudderItem : public ResistanceItem {
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
+
+		/// Plot the viscous resistance of the rudder for a fixed range (Fn=0-0.7)
+		void plot();
 
 	private:
 

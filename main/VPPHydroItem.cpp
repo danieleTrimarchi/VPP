@@ -1,8 +1,11 @@
 #include "VPPHydroItem.h"
 #include "Warning.h"
+
 #include "mathUtils.h"
 using namespace mathUtils;
+
 #include "VPPException.h"
+#include "Plotter.h"
 
 // Constructor
 ResistanceItem::ResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
@@ -194,8 +197,6 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 	Eigen::ArrayXd RrhDArr=RrhD.array();
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrhDArr) );
 
-	// Make a check plot for the induced resistance
-	//pInterpolator_->plot(0,1,50,"Residuary Resistance","Fn [-]","Resistance [N]" );
 }
 
 /// Destructor
@@ -218,6 +219,15 @@ void ResiduaryResistanceItem::update(int vTW, int aTW) {
 void ResiduaryResistanceItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of ResiduaryResistanceItem "<<std::endl;
 }
+
+// Plot the Residuary Resistance versus Fn curve
+void ResiduaryResistanceItem::plot() {
+
+	// Make a check plot for the residuary resistance
+	pInterpolator_->plot(0,1,50,"Residuary Resistance","Fn [-]","Resistance [N]" );
+
+}
+
 
 //=================================================================
 // For the change in Residuary Resistance due to heel see DSYHS99 ch3.1.2.2 p116
@@ -270,9 +280,6 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 	Eigen::ArrayXd RrhH20DArr=RrhH20D.array();
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrhH20DArr) );
 
-	// Make a check plot for the induced resistance
-	//pInterpolator_->plot(0,.7,20,"Delta Residuary Resistance","Fn [-]","Resistance [N]" );
-
 }
 
 // Destructor
@@ -295,6 +302,14 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 
 void Delta_ResiduaryResistance_HeelItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of Delta_ResiduaryResistance_HeelItem "<<std::endl;
+}
+
+// Plot the Residuary Resistance versus Fn curve
+void Delta_ResiduaryResistance_HeelItem::plot() {
+
+	// Make a check plot for the induced resistance
+	pInterpolator_->plot(0,.7,20,"Delta Residuary Resistance","Fn [-]","Resistance [N]" );
+
 }
 
 //=================================================================
@@ -342,9 +357,6 @@ ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pPa
 	Eigen::ArrayXd RrkDArr=RrkD.array();
 	pInterpolator_.reset( new SplineInterpolator(fnD,RrkDArr) );
 
-	// Make a check plot for the Residuary resistance
-	//pInterpolator_->plot(0,.8,40,"Residuary Resistance Keel","Fn [-]","Resistance [N]" );
-
 }
 
 // Destructor
@@ -366,6 +378,14 @@ void ResiduaryResistanceKeelItem::update(int vTW, int aTW) {
 
 void ResiduaryResistanceKeelItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of ResiduaryResistanceKeelItem "<<std::endl;
+}
+
+// Plot the Frictional Resistance due to heel versus Fn curve
+void ResiduaryResistanceKeelItem::plot() {
+
+	// Make a check plot for the Residuary resistance of the keel
+	pInterpolator_->plot(0,.8,40,"Residuary Resistance Keel","Fn [-]","Resistance [N]" );
+
 }
 
 //=================================================================
@@ -520,9 +540,6 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 	// generate the cubic spline values for the coefficients
 	pInterpolator_.reset( new SplineInterpolator(phiD,SCphiDArr) );
 
-	// Make a check plot for the induced resistance
-	//pInterpolator_->plot(0,40,20,"Frictional Resistance due to HEEL","Fn [-]","Resistance [N]" );
-
 }
 
 // Destructor
@@ -563,6 +580,14 @@ void Delta_FrictionalResistance_HeelItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of Delta_FrictionalResistance_HeelItem "<<std::endl;
 }
 
+// Plot the Frictional Resistance due to heel versus Fn curve
+void Delta_FrictionalResistance_HeelItem::plot() {
+
+	// Make a check plot for the frictional resistance
+	pInterpolator_->plot(0,40,20,"Frictional Resistance due to HEEL","Fn [-]","Resistance [N]" );
+
+}
+
 //=================================================================
 
 // Constructor
@@ -600,6 +625,39 @@ void ViscousResistanceKeelItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of ViscousResistanceKeelItem "<<std::endl;
 }
 
+// Plot the viscous resistance of the keel for a fixed range Fn=0-0.7
+void ViscousResistanceKeelItem::plot() {
+
+	// buffer the velocity that is going to be modified by the plot
+	double bufferV= V_;
+
+	int nVals=50;
+	std::vector<double> x(nVals), y(nVals);
+
+	for(size_t i=0; i<nVals; i++) {
+
+		// Set a fictitious velocity
+		V_ = 0.7/50 * i;
+
+		// Update the item
+		update(0,0);
+
+		// Fill the vectors to be plot
+		x[i]= V_;
+		y[i]= get();
+
+	}
+
+	// Instantiate a plotter and plot the curves
+	Plotter plotter;
+	plotter.plot(x,y,"Viscous Resistance of the Keel","Fn [-]","Resistance [N]");
+
+	// Restore the initial buffered values
+	V_= bufferV;
+	update(0,0);
+}
+
+
 //=================================================================
 
 // Constructor
@@ -635,6 +693,39 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 
 void ViscousResistanceRudderItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of ViscousResistanceRudderItem "<<std::endl;
+}
+
+// Plot the viscous resistance of the rudder for a fixed range (Fn=0-0.7)
+void ViscousResistanceRudderItem::plot() {
+
+	// buffer the velocity that is going to be modified by the plot
+	double bufferV= V_;
+
+	int nVals=50;
+	std::vector<double> x(nVals), y(nVals);
+
+	for(size_t i=0; i<nVals; i++) {
+
+		// Set a fictitious velocity
+		V_ = 0.7/50 * i;
+
+		// Update the item
+		update(0,0);
+
+		// Fill the vectors to be plot
+		x[i]= V_;
+		y[i]= get();
+
+	}
+
+	// Instantiate a plotter and plot the curves
+	Plotter plotter;
+	plotter.plot(x,y,"Viscous Resistance of the Rudder","Fn [-]","Resistance [N]");
+
+	// Restore the initial buffered values
+	V_= bufferV;
+	update(0,0);
+
 }
 
 

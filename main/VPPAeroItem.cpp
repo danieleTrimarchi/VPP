@@ -187,13 +187,6 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 		interpCdVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
 	}
 
-	//			interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
-	//			interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
-	//			interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
-	//			interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
-	//			interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
-	//			interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
-
 	// resize and init cl_ and cd_ for storing the interpolated values
 	allCl_=Eigen::Vector3d::Zero();
 	allCd_=Eigen::Vector3d::Zero();
@@ -357,6 +350,13 @@ void MainOnlySailCoefficientItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of MainOnlySailCoefficientItem "<<std::endl;
 }
 
+void MainOnlySailCoefficientItem::plotInterpolatedCoefficients() const{
+
+	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
+	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
+
+}
+
 
 //=================================================================
 
@@ -408,6 +408,16 @@ void MainAndJibCoefficientItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of MainAndJibCoefficientItem "<<std::endl;
 }
 
+void MainAndJibCoefficientItem::plotInterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
+	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
+	interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
+	interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
+
+}
+
+
 //=================================================================
 
 // Constructor
@@ -455,6 +465,15 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 // Print the class name - implement the pure virtual of VPPItem
 void MainAndSpiCoefficientItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of MainAndSpiCoefficientItem "<<std::endl;
+}
+
+void MainAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
+	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
+	interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
+	interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
+
 }
 
 //=================================================================
@@ -507,6 +526,17 @@ void MainJibAndSpiCoefficientItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of MainJibAndSpiCoefficientItem "<<std::endl;
 }
 
+void MainJibAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN");
+	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN");
+	interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB");
+	interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB");
+	interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI");
+	interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI");
+
+}
+
 //=================================================================
 
 // Constructor
@@ -552,7 +582,6 @@ void AeroForcesItem::update(int vTW, int aTW) {
 	// Updates Fdrive = lift_ * sin(alfa_eff) - D * cos(alfa_eff);
 	fDrive_ = lift_ * sin( toRad(awa) ) - drag_ * cos( toRad(awa) );
 	if(isnan(fDrive_)) throw VPPException(HERE,"fDrive_ is NAN!");
-
 
 	// Updates Fheel = L * cos(alfa_eff) + D * sin(alfa_eff);
 	fSide_ = lift_ * cos( toRad(awa) ) + drag_ * sin( toRad(awa) );

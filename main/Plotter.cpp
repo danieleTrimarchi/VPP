@@ -259,6 +259,45 @@ void Plotter::plot(	Eigen::ArrayXd& x0,
 
 }
 
+void Plotter::plot(
+		std::vector<double>& x0,
+		std::vector<double>& y0,
+		std::string title,
+		string xLabel,
+		string yLabel) {
+
+	// Reset the ranges at the very beginning of the plot
+	initRanges();
+
+	// Check the size of x and y are consistent
+	if(x0.size() != y0.size())
+		throw VPPException(HERE,"In Plotter::plot(x,y). Array _0_ sizes mismatch");
+
+	// Specify the background color (rgb) and its transparency
+	plscolbga(255,255,255,0.6);
+
+	// Initialize plplot
+	plinit();
+
+	// Create a labeled box to hold the plot.
+	plcol0( color::grey );
+
+	// Copy the values from the incoming arrays into plplot compatible containers
+	setValues(x0,y0);
+
+	// Reset the plot margins so that it can contain the plot
+	resetRanges(x0,y0);
+
+	// Plot the data that was prepared above.
+	plcol0( color::blue );
+	plline( nValues_, x_, y_ );
+
+	// Close PLplot library
+	pllab( xLabel.c_str(), yLabel.c_str(), title.c_str() );
+	plend();
+
+}
+
 void Plotter::plot(	std::vector<double>& x0,
 		std::vector<double>& y0,
 		std::vector<double>& x1,
@@ -312,6 +351,7 @@ void Plotter::plot(	std::vector<double>& x0,
 	plend();
 
 }
+
 //=====================================================================
 
 PolarPlotter::PolarPlotter( string title ) :
