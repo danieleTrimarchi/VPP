@@ -20,7 +20,12 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 
 	// Fill the values of the wind true velocities
 	vTwv_.resize(n_twv_);
-	double delta=( ( v_tw_max_ - v_tw_min_ ) / n_twv_ );
+
+	// reset and compute the delta for awv
+	double delta=0;
+	if(n_twv_>1)
+		delta=( ( v_tw_max_ - v_tw_min_ ) / (n_twv_-1) );
+
 	for(size_t i=0; i<n_twv_; i++)
 		vTwv_[i]= v_tw_min_ + i * delta;
 
@@ -31,7 +36,12 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 
 	// Fill the values of the wind true angles
 	vTwa_.resize(n_alpha_tw_);
-	delta=( ( alpha_tw_max_ - alpha_tw_min_ ) /  n_alpha_tw_ );
+
+	// reset and compute the delta for awa
+	delta=0;
+	if(n_alpha_tw_>1)
+		delta=( ( alpha_tw_max_ - alpha_tw_min_ ) /  (n_alpha_tw_-1) );
+
 	for(size_t i=0; i<n_alpha_tw_; i++)
 		vTwa_[i]= alpha_tw_min_ + i * delta;
 

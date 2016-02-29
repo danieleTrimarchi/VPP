@@ -120,11 +120,18 @@ int main(int argc, char** argv) {
 			else if(s == string("run") )
 				run(parser,optimizer);
 
+			//---
+
 			else if( s == string("print"))
 				optimizer.printResults();
 
-			else if( s == string("plotAllResults"))
-				optimizer.plotResults();
+			else if( s == string("plotPolars"))
+				optimizer.plotPolars();
+
+			else if( s == string("plotXY"))
+				optimizer.plotXY();
+
+			//---
 
 			else if( s == string("help")){
 
@@ -144,7 +151,9 @@ int main(int argc, char** argv) {
 				std::cout<<"   run                    : launches the computations \n";
 				std::cout<<" \n";
 				std::cout<<"   print                  : print results to screen \n";
-				std::cout<<"   plotAllResults         : plot ALL the result graphs \n";
+				std::cout<<" \n";
+				std::cout<<"   plotPolars             : plot the polar result graphs \n";
+				std::cout<<"   plotXY                 : plot the XY velocity-wise result graphs \n";
 				std::cout<<" \n";
 				std::cout<<"   exit                   : terminates the program \n";
 				std::cout<<"======================================================================\n\n";

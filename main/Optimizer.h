@@ -125,8 +125,11 @@ class Optimizer {
 		/// Make a printout of the results for this run
 		void printResults();
 
-		/// Make a printout of the results for this run
-		void plotResults();
+		/// Plot the polar plots for the state variables
+		void plotPolars();
+
+		/// Plot the XY plots for the state variables
+		void plotXY();
 
 	private:
 

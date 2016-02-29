@@ -362,7 +362,7 @@ void Optimizer::printResults() {
 }
 
 /// Make a printout of the results for this run
-void Optimizer::plotResults() {
+void Optimizer::plotPolars() {
 
 	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
 	// Sail flat, Crew B, dF and dM
@@ -420,12 +420,15 @@ void Optimizer::plotResults() {
 	boatHeelPolarPlotter.plot();
 	crewBPolarPlotter.plot();
 	sailFlatPolarPlotter.plot();
+}
 
+/// Make a printout of the results for this run
+void Optimizer::plotXY() {
 
 	// Prepare the data for the plotter
 	Eigen::ArrayXd windSpeeds(pResults_->windVelocitySize());
-	boatVelocity.resize(pResults_->windVelocitySize());
-	boatHeel.resize(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatVelocity(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatHeel(pResults_->windVelocitySize());
 	Eigen::ArrayXd boatFlat(pResults_->windVelocitySize());
 	Eigen::ArrayXd boatB(pResults_->windVelocitySize());
 	Eigen::ArrayXd dF(pResults_->windVelocitySize());
