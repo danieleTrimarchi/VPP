@@ -114,8 +114,10 @@ int main(int argc, char** argv) {
 
 			//---
 
-			else if(s == string("reload") )
+			else if(s == string("reload") ){
 				load(parser,pSails,pVppItems);
+				optimizer.reset(pVppItems);
+			}
 
 			else if(s == string("run") )
 				run(parser,optimizer);
@@ -128,8 +130,12 @@ int main(int argc, char** argv) {
 			else if( s == string("plotPolars"))
 				optimizer.plotPolars();
 
-			else if( s == string("plotXY"))
-				optimizer.plotXY();
+			else if( s == string("plotXY")) {
+				std::cout<<"Please enter the index of the wind angle: \n";
+				int idx;
+				cin >> idx;
+				optimizer.plotXY(idx);
+			}
 
 			//---
 

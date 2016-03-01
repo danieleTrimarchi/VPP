@@ -119,6 +119,9 @@ class Optimizer {
 		/// Destructor
 		~Optimizer();
 
+		/// Reset the optimizer when reloading the initial data
+		void reset(boost::shared_ptr<VPPItemFactory>);
+
 		/// Execute a VPP-like analysis
 		void run(int TWV, int TWA);
 
@@ -127,6 +130,9 @@ class Optimizer {
 
 		/// Plot the polar plots for the state variables
 		void plotPolars();
+
+		/// Plot the XY plots for the state variables
+		void plotXY( size_t index );
 
 		/// Plot the XY plots for the state variables
 		void plotXY();

@@ -172,7 +172,6 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 
 	// Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
-	//opt_.reset( new nlopt::opt(nlopt::LN_COBYLA,dimension_) );
 	//opt_.reset( new nlopt::opt(nlopt::GN_ISRES,dimension_) );
 	opt_.reset( new nlopt::opt(nlopt::LN_COBYLA,dimension_) );
 
@@ -225,6 +224,36 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 // Destructor
 Optimizer::~Optimizer() {
 	// make nothing
+}
+
+void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
+
+	// Init the STATIC member vppItemsContainer
+	vppItemsContainer_= VPPItemFactory;
+
+	// Set the parser
+	pParser_= vppItemsContainer_->getParser();
+
+	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
+	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
+	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
+	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
+	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
+	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
+	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
+	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
+
+	// Set the bounds for the constraints
+	opt_->set_lower_bounds(lowerBounds_);
+	opt_->set_upper_bounds(upperBounds_);
+
+	// Also get a reference to the WindItem that has computed the
+	// real wind velocity/angle for the current run
+	pWind_=vppItemsContainer_->getWind();
+
+	// Init the ResultContainer that will be filled while running the results
+	pResults_.reset(new OptResultContainer(pWind_));
+
 }
 
 // Set the initial guess for the state variable vector
@@ -484,6 +513,72 @@ void Optimizer::plotXY() {
 	}
 
 }
+
+
+/// Make a printout of the results for this run
+void Optimizer::plotXY(size_t iWa) {
+
+	if( iWa>=pResults_->windAngleSize() ){
+		std::cout<<"User requested a wrong index! \n";
+		return;
+	}
+
+	// Prepare the data for the plotter
+	Eigen::ArrayXd windSpeeds(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatVelocity(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatHeel(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatFlat(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatB(pResults_->windVelocitySize());
+	Eigen::ArrayXd dF(pResults_->windVelocitySize());
+	Eigen::ArrayXd dM(pResults_->windVelocitySize());
+
+	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
+
+		windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
+		boatVelocity(iWv)  = pResults_->get(iWv,iWa).getX()->at(0);
+		boatHeel(iWv)    = pResults_->get(iWv,iWa).getX()->at(1);
+		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->at(2);
+		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->at(3);
+		dF(iWv)          = pResults_->get(iWv,iWa).getdF();
+		dM(iWv)          = pResults_->get(iWv,iWa).getdM();
+
+	}
+
+	char title[256];
+	sprintf(title,"AWA= %4.2f", pWind_->getTWA(iWa) );
+
+	// Instantiate a plotter for the velocity
+	Plotter plotter;
+	string t=string("Boat Speed")+string(title);
+	plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
+			t,"Wind Speed [m/s]","Boat Speed [m/s]");
+
+
+	// Instantiate a plotter for the heel
+	Plotter plotter2;
+	string t2=string("Boat Heel")+string(title);
+	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
+			t2,"Wind Speed [m/s]","Boat Heel [deg]");
+
+	// Instantiate a plotter for the Flat
+	Plotter plotter3;
+	string t3=string("Sail FLAT")+string(title);
+	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
+			t3,"Wind Speed [m/s]","Sail FLAT [-]");
+
+	// Instantiate a plotter for the position of the movable crew B
+	Plotter plotter4;
+	string t4=string("Crew position")+string(title);
+	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
+			t4,"Wind Speed [m/s]","Position of the movable crew [m]");
+
+	// Instantiate a plotter for the residuals
+	Plotter plotter5;
+	string t5=string("Residuals")+string(title);
+	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
+			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
+}
+
 
 
 
