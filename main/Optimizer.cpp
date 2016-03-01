@@ -5,6 +5,7 @@
 
 // Init static member
 boost::shared_ptr<VPPItemFactory> Optimizer::vppItemsContainer_;
+size_t Optimizer::maxIters_;
 int optIterations=0;
 
 ///////// Optimizer Result Class ///////////////////////////////
@@ -167,8 +168,7 @@ void OptResultContainer::print() {
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 				dimension_(4),
-				tol_(1.e-6){
-
+				tol_(1.e-5) {
 
 	// Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
@@ -206,11 +206,15 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	// Set the objective function to be maximized (using set_max_objective)
 	opt_->set_max_objective(VPP_speed, NULL);
 
-	// Set the relative tolerance
-	opt_->set_xtol_rel(tol_);
+	// Set the absolute tolerance on the state variables
+	opt_->set_xtol_abs(tol_);
+
+	// Set the absolute tolerance on the function value
+	opt_->set_ftol_abs(tol_);
 
 	// Set the max number of evaluations for a single run
-	opt_->set_maxeval(20000);
+	maxIters_= 40000;
+	opt_->set_maxeval(maxIters_);
 
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run
@@ -269,20 +273,28 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
 	}
 
-	//	else if(TWV>1) {
-//
-//		// For twv> 1 we can linearly predict the result of the state vector
-//		Extrapolator extrapolator(
-//				pResults_->get(TWV-2,TWA).getTWV(),
-//				pResults_->get(TWV-2,TWA).getX(),
-//				pResults_->get(TWV-1,TWA).getTWV(),
-//				pResults_->get(TWV-1,TWA).getX()
-//		);
-//
-//		// Extrapolate the state vector for the current wind
-//		// velocity. Note that the items have not been init yet
-//		xp_= extrapolator.get( pWind_->getTWV(TWV) );
-//	}
+	else if(TWV>1) {
+
+		// For twv> 1 we can linearly predict the result of the state vector
+		Extrapolator extrapolator(
+				pResults_->get(TWV-2,TWA).getTWV(),
+				pResults_->get(TWV-2,TWA).getX(),
+				pResults_->get(TWV-1,TWA).getTWV(),
+				pResults_->get(TWV-1,TWA).getX()
+		);
+
+		// Extrapolate the state vector for the current wind
+		// velocity. Note that the items have not been init yet
+		xp_= extrapolator.get( pWind_->getTWV(TWV) );
+	}
+
+	// Make sure the initial guess does not exceeds the bounds
+	for(size_t i=0; i<dimension_; i++) {
+		if(xp_[i]<lowerBounds_[i])
+			xp_[i]=lowerBounds_[i];
+		if(xp_[i]>upperBounds_[i])
+			xp_[i]=upperBounds_[i];
+	}
 
 	std::cout<<"INITIAL GUESS: "<<std::endl;
 	cout<<"  "<<xp_[0]<<" , "<<xp_[1]<<" , "<<xp_[2]<<" , "<<xp_[3]<<endl;
@@ -294,6 +306,9 @@ double Optimizer::VPP_speed(unsigned n, const double* x, double *grad, void *my_
 
 	// Increment the number of iterations for each call of the objective function
 	++optIterations;
+
+	if(grad)
+		throw VPPException(HERE,"VPP_speed can only be used for derivative-free algorithms!");
 
 	if(isnan(x[0])) throw VPPException(HERE,"x[0] is NAN!");
 
@@ -350,6 +365,8 @@ void Optimizer::run(int TWV, int TWA) {
 	nlopt::result result;
 	try{
 		// Launch the optimization; negative retVal implies failure
+		std::cout<<"Entering the optimizer with: "<<
+				xp_[0]<<" "<<xp_[1]<<" "<<xp_[2]<<" "<<xp_[3]<<"\n";
 		result = opt_->optimize(xp_, maxf);
 	}
 	catch( nlopt::roundoff_limited& e ){
@@ -358,9 +375,7 @@ void Optimizer::run(int TWV, int TWA) {
 	}
 	catch (std::exception& e) {
 
-		// Only throw if the result is not useful. If the result code
-		// is -4, this is a roundoff error and the opt result is supposedly
-		// useful
+		// throw exceptions catched by NLOpt
 		char msg[256];
 		sprintf(msg,"%s\n",e.what());
 		throw VPPException(HERE,msg);
@@ -368,6 +383,8 @@ void Optimizer::run(int TWV, int TWA) {
 	catch (...) {
 		throw VPPException(HERE,"nlopt unknown exception catched!\n");
 	}
+
+
 
 	printf("found maximum after %d evaluations\n", optIterations);
 	printf("      at f(%g,%g,%g,%g) = %0.10g\n",
@@ -452,70 +469,6 @@ void Optimizer::plotPolars() {
 }
 
 /// Make a printout of the results for this run
-void Optimizer::plotXY() {
-
-	// Prepare the data for the plotter
-	Eigen::ArrayXd windSpeeds(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatVelocity(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatHeel(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatFlat(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatB(pResults_->windVelocitySize());
-	Eigen::ArrayXd dF(pResults_->windVelocitySize());
-	Eigen::ArrayXd dM(pResults_->windVelocitySize());
-
-	for(size_t iWa=0; iWa<pResults_->windAngleSize(); iWa++) {
-
-		for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
-
-			windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
-			boatVelocity(iWv)  = pResults_->get(iWv,iWa).getX()->at(0);
-			boatHeel(iWv)    = pResults_->get(iWv,iWa).getX()->at(1);
-			boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->at(2);
-			boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->at(3);
-			dF(iWv)          = pResults_->get(iWv,iWa).getdF();
-			dM(iWv)          = pResults_->get(iWv,iWa).getdM();
-
-		}
-
-		char title[256];
-		sprintf(title,"AWA= %4.2f", pWind_->getTWA(iWa) );
-
-		// Instantiate a plotter for the velocity
-		Plotter plotter;
-		string t=string("Boat Speed")+string(title);
-		plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
-				t,"Wind Speed [m/s]","Boat Speed [m/s]");
-
-
-		// Instantiate a plotter for the heel
-		Plotter plotter2;
-		string t2=string("Boat Heel")+string(title);
-		plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
-				t2,"Wind Speed [m/s]","Boat Heel [deg]");
-
-		// Instantiate a plotter for the Flat
-		Plotter plotter3;
-		string t3=string("Sail FLAT")+string(title);
-		plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
-				t3,"Wind Speed [m/s]","Sail FLAT [-]");
-
-		// Instantiate a plotter for the position of the movable crew B
-		Plotter plotter4;
-		string t4=string("Crew position")+string(title);
-		plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
-				t4,"Wind Speed [m/s]","Position of the movable crew [m]");
-
-		// Instantiate a plotter for the residuals
-		Plotter plotter5;
-		string t5=string("Residuals")+string(title);
-		plotter5.plot(windSpeeds,dF,windSpeeds,dM,
-					t5,"Wind Speed [m/s]","Residuals [N,N*m]");
-	}
-
-}
-
-
-/// Make a printout of the results for this run
 void Optimizer::plotXY(size_t iWa) {
 
 	if( iWa>=pResults_->windAngleSize() ){
@@ -535,7 +488,7 @@ void Optimizer::plotXY(size_t iWa) {
 	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
 
 		windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
-		boatVelocity(iWv)  = pResults_->get(iWv,iWa).getX()->at(0);
+		boatVelocity(iWv)= pResults_->get(iWv,iWa).getX()->at(0);
 		boatHeel(iWv)    = pResults_->get(iWv,iWa).getX()->at(1);
 		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->at(2);
 		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->at(3);

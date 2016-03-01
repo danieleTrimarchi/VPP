@@ -122,7 +122,8 @@ class Optimizer {
 		/// Reset the optimizer when reloading the initial data
 		void reset(boost::shared_ptr<VPPItemFactory>);
 
-		/// Execute a VPP-like analysis
+		/// Execute a VPP-like analysis. Returns 0 on success,
+		/// -1 if the residuals are found to exceed a tolerance
 		void run(int TWV, int TWA);
 
 		/// Make a printout of the results for this run
@@ -133,9 +134,6 @@ class Optimizer {
 
 		/// Plot the XY plots for the state variables
 		void plotXY( size_t index );
-
-		/// Plot the XY plots for the state variables
-		void plotXY();
 
 	private:
 
@@ -180,6 +178,9 @@ class Optimizer {
 
 		/// tolerance
 		double tol_;
+
+		/// max iters allowed for the optimizer
+		static size_t maxIters_;
 
 };
 
