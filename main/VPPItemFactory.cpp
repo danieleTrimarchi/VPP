@@ -1,11 +1,14 @@
 #include "VPPItemFactory.h"
 #include "VPPException.h"
+#include <limits>
 
 // Constructor
 VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 pParser_(pParser),
 dF_(0),
-dM_(0) {
+dM_(0),
+c1_(0),
+c2_(0) {
 
 	// -- INSTANTIATE THE AERO ITEMS
 
@@ -179,6 +182,69 @@ void VPPItemFactory::computeResiduals(double& dF, double& dM) {
 	dM=dM_;
 
 	//std::cout<<"dF= "<<dF<<"  dM= "<<dM<<std::endl;
+
+}
+
+void VPPItemFactory::computeResiduals(int vTW, int aTW, const double* x) {
+
+	// update the items with the state vector
+	update(vTW, aTW, x);
+
+	// compute deltaF = (Fdrive - Rtot)
+	dF_ = (pAeroForcesItem_->getFDrive() - getResistance());
+
+	// compute deltaM = (Mheel  - Mright)
+	dM_ = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+
+	//std::cout<<"dF= "<<dF_<<"  dM= "<<dM_<<std::endl;
+
+	// Container for the residuals and their derivatives :
+	// dF  dF/dv  dF/dPhi  dF/db  dF/df
+	// dM  dM/dv  dM/dPhi  dM/db  dM/df
+	Eigen::Array rsd(2,5);
+
+	// Compute the the derivatives for the additional (optimization) equations
+	for(size_t iVar=0; iVar<4; iVar++) {
+
+		// Compute the 'optimal' eps
+		double eps= x[iVar] * std::sqrt( std::numeric_limits::epsilon() );
+
+		// Set var = var+eps:
+		x[iVar] += eps;
+
+		// update the items with the state vector
+		update(vTW, aTW, x);
+
+		// Get the residuals
+		double dFp = (pAeroForcesItem_->getFDrive() - getResistance());
+		double dMp = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+
+		// Set var = var-2eps:
+		x[iVar] -= 2*eps;
+
+		// update the items with the state vector
+		update(vTW, aTW, x);
+
+		// Get the residuals
+		double dFm = (pAeroForcesItem_->getFDrive() - getResistance());
+		double dMm = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+
+		// Compute dF/dv and dM/dv:
+		rsd(0,iVar+1) = ( dFp - dFm ) / (2*eps);
+		rsd(1,iVar+1) = ( dMp - dMm ) / (2*eps);
+
+		// Restore the state vector
+		x[iVar] += eps;
+
+	}
+
+	// Compute the value of c1 = (Fb MPhi-FPhi Mb)/(Fv MPhi-FPhi Mv)
+	c1_= 	( rsd(0,3) * rsd(1,2) - rsd(0,2) * rsd(1,3) ) /
+				( rsd(0,0) * rsd(1,2) - rsd(0,2) * rsd(1,0) );
+
+	// Compute the value of c2 = (Ff MPhi-FPhi Mv)/(Fv MPhi-FPhi Mv)
+	c2_= 	( rsd(0,4) * rsd(1,2) - rsd(0,2) * rsd(1,1) ) /
+				( rsd(0,0) * rsd(1,2) - rsd(0,2) * rsd(1,0) );
 
 }
 

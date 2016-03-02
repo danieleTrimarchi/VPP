@@ -56,8 +56,12 @@ class VPPItemFactory {
 		/// Compute the resistance by summing up all the contributions
 		double getResistance();
 
-		/// Compute the residuals for the optimizer constraints dF=0 and dM=0
+		/// Compute the force/moment residuals for the optimizer constraints dF=0 and dM=0
 		void computeResiduals(double& dF, double& dM);
+
+		/// Compute the force/moment residuals and also the residuals of the additional
+		/// equations c1=0 and c2=0. Do not require updates to be operated previously
+		void computeResiduals(int vTW, int aTW, const double* x);
 
 		/// Get the current value for the optimizer constraint residuals dF=0 and dM=0
 		void getResiduals(double& dF, double& dM);
@@ -103,8 +107,8 @@ class VPPItemFactory {
 		/// Pointer to the Righting moment Item
 		boost::shared_ptr<RightingMomentItem> pRightingMomentItem_;
 
-		/// Residuals on the constraints : dF and dM
-		double dF_, dM_;
+		/// Residuals on the residuals : dF, dM, c1 and c2
+		double dF_, dM_, c1_, c2_;
 
 };
 
