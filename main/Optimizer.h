@@ -16,18 +16,18 @@ using namespace std;
 /// Struct containing the results of the current
 /// run. For each step (i.e. twv,twa it contains
 /// the value of the state vector
-class OptResult {
+class Result {
 
 	public:
 
 		/// Default constructor
-		OptResult();
+		Result();
 
 		/// Constructor
-		OptResult(double twv, double twa, std::vector<double>& res, double dF, double dM);
+		Result(double twv, double twa, std::vector<double>& res, double dF, double dM);
 
 		/// Destructor
-		~OptResult();
+		~Result();
 
 		/// PrintOut the values stored in this result
 		void print();
@@ -64,21 +64,21 @@ class OptResult {
 /// vector<vector<OptResults? > >
 /// This utility class is used to store a result for each
 /// twv and twa
-class OptResultContainer {
+class ResultContainer {
 
 	public:
 
 		/// Constructor using a windItem
-		OptResultContainer(WindItem*);
+		ResultContainer(WindItem*);
 
 		/// Destructor
-		~OptResultContainer();
+		~ResultContainer();
 
 		/// push_back a result taking care of the allocation
 		void push_back(size_t iWv, size_t iWa, std::vector<double>& res, double dF, double dM);
 
 		/// Get the result for a given wind velocity/angle
-		const OptResult& get(size_t iWv, size_t iWa) const;
+		const Result& get(size_t iWv, size_t iWa) const;
 
 		/// How many results have been stored?
 		const size_t size() const;
@@ -95,7 +95,7 @@ class OptResultContainer {
 	private:
 
 		/// Default constructor
-		OptResultContainer();
+		ResultContainer();
 
 		/// Number of true wind velocities/ angles
 		size_t nWv_, nWa_;
@@ -104,7 +104,7 @@ class OptResultContainer {
 		WindItem* pWind_;
 
 		/// Result matrix for each wind velocity/angle
-		vector<vector<OptResult> > resMat_;
+		vector<vector<Result> > resMat_;
 };
 
 /// Wrapper class around NLOPT non-linear
@@ -171,7 +171,7 @@ class Optimizer {
 		std::vector<double> xp_;
 
 		/// Matrix of results, one result per wind velocity/angle
-		boost::shared_ptr<OptResultContainer> pResults_;
+		boost::shared_ptr<ResultContainer> pResults_;
 
 		/// Ptr to the wind item, used to retrieve the current twv, twa
 		WindItem* pWind_;

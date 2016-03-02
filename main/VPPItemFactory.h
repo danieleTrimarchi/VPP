@@ -61,7 +61,7 @@ class VPPItemFactory {
 
 		/// Compute the force/moment residuals and also the residuals of the additional
 		/// equations c1=0 and c2=0. Do not require updates to be operated previously
-		void computeResiduals(int vTW, int aTW, const double* x);
+		void computeResiduals(int vTW, int aTW, double* x);
 
 		/// Get the current value for the optimizer constraint residuals dF=0 and dM=0
 		void getResiduals(double& dF, double& dM);

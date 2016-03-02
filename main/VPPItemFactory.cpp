@@ -185,7 +185,7 @@ void VPPItemFactory::computeResiduals(double& dF, double& dM) {
 
 }
 
-void VPPItemFactory::computeResiduals(int vTW, int aTW, const double* x) {
+void VPPItemFactory::computeResiduals(int vTW, int aTW, double* x) {
 
 	// update the items with the state vector
 	update(vTW, aTW, x);
@@ -201,13 +201,13 @@ void VPPItemFactory::computeResiduals(int vTW, int aTW, const double* x) {
 	// Container for the residuals and their derivatives :
 	// dF  dF/dv  dF/dPhi  dF/db  dF/df
 	// dM  dM/dv  dM/dPhi  dM/db  dM/df
-	Eigen::Array rsd(2,5);
+	Eigen::Array2Xd rsd(2,5);
 
 	// Compute the the derivatives for the additional (optimization) equations
 	for(size_t iVar=0; iVar<4; iVar++) {
 
 		// Compute the 'optimal' eps
-		double eps= x[iVar] * std::sqrt( std::numeric_limits::epsilon() );
+		double eps= x[iVar] * std::sqrt( std::numeric_limits<double>::epsilon() );
 
 		// Set var = var+eps:
 		x[iVar] += eps;
@@ -237,6 +237,9 @@ void VPPItemFactory::computeResiduals(int vTW, int aTW, const double* x) {
 		x[iVar] += eps;
 
 	}
+
+	// update the items with the state intial state vector
+	update(vTW, aTW, x);
 
 	// Compute the value of c1 = (Fb MPhi-FPhi Mb)/(Fv MPhi-FPhi Mv)
 	c1_= 	( rsd(0,3) * rsd(1,2) - rsd(0,2) * rsd(1,3) ) /
