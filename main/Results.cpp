@@ -6,21 +6,48 @@
 // Default constructor
 Result::Result():
 			twv_(0),
-			twa_(0),
-			result_(0),
-			dF_(0),
-			dM_(0) {
+			twa_(0) {
+
+	result_ << 0,0,0,0;
+	// init the residuals container
+	residuals_<<0,0,0,0;
 
 }
 
 // Constructor
-Result::Result(double twv, double twa, std::vector<double>& res, double dF, double dM) :
+Result::Result(double twv, double twa, std::vector<double>& res,
+		double dF, double dM) :
+				twv_(twv),
+				twa_(twa){
+
+	// Init the result container
+	result_<<res[0],res[1],res[2],res[3];
+
+	// init the residuals container
+	residuals_<<dF,dM,0,0;
+
+}
+
+// Constructor
+Result::Result(	double twv, double twa,
+				std::vector<double>& results,
+				Eigen::Vector4d& residuals ):
 				twv_(twv),
 				twa_(twa),
-				result_(res),
-				dF_(dF),
-				dM_(dM) {
+				residuals_(residuals){
 
+	result_<<results[0],results[1],results[2],results[3];
+
+}
+
+// Constructor with residual array
+Result::Result(	double twv, double twa,
+				Eigen::Vector4d& result,
+				Eigen::Vector4d& residuals ) :
+					twv_(twv),
+					twa_(twa),
+					result_(result),
+					residuals_(residuals){
 }
 
 // Destructor
@@ -33,7 +60,8 @@ void Result::print() {
 	printf("%4.2f  %4.2f  -- ", twv_,twa_);
 	for(size_t iRes=0; iRes<result_.size(); iRes++)
 		printf("  %4.2e",result_[iRes]);
-	printf("  --  %4.2e  %4.2e", dF_,dM_);
+	printf("  --  %4.2e  %4.2e  %4.2e  %4.2e",
+			residuals_(0),residuals_(1),residuals_(2),residuals_(3));
 	std::cout<<"\n";
 }
 
@@ -50,16 +78,26 @@ const double Result::getTWA() const {
 
 // get the force residuals for this result
 const double Result::getdF() const {
-	return dF_;
+	return residuals_(0);
 }
 
 // get the moment residuals for this result
 const double Result::getdM() const {
-	return dM_;
+	return residuals_(1);
+}
+
+// get the moment residuals for this result
+const double Result::getC1() const {
+	return residuals_(2);
+}
+
+// get the moment residuals for this result
+const double Result::getC2() const {
+	return residuals_(3);
 }
 
 // get the state vector for this result
-const std::vector<double>* Result::getX() const {
+const Eigen::Vector4d* Result::getX() const {
 	return &result_;
 }
 
@@ -97,7 +135,22 @@ ResultContainer::~ResultContainer() {
 }
 
 // push_back a result taking care of the allocation
-void ResultContainer::push_back(size_t iWv, size_t iWa, std::vector<double>& res, double dF, double dM) {
+void ResultContainer::push_back(size_t iWv, size_t iWa,
+																Eigen::Vector4d& results,
+																double dF, double dM ) {
+
+	// Compile an Eigen-vector and call the push_back method
+	Eigen::Vector4d residuals(dF,dM,0,0);
+
+	// Call the other signature of the method
+	push_back(iWv,iWa,results,residuals);
+
+}
+
+// push_back a result taking care of the allocation
+void ResultContainer::push_back(size_t iWv, size_t iWa,
+																Eigen::Vector4d& results,
+																Eigen::Vector4d& residuals ) {
 
 	if(iWv>=nWv_){
 		char msg[256];
@@ -115,9 +168,11 @@ void ResultContainer::push_back(size_t iWv, size_t iWa, std::vector<double>& res
 	// Ask the wind to get the current wind velocity/angles. Note that this
 	// implies that the call must be in sync, which seems rather dangerous!
 	// todo dtrimarchi: the wind must have calls such as pWind_->getTWV(iWv)
-	resMat_[iWv][iWa] = Result(pWind_->getTWV(), pWind_->getTWA(), res, dF, dM);
+	resMat_[iWv][iWa] = Result(pWind_->getTWV(), pWind_->getTWA(), results, residuals );
 
 }
+
+
 
 /// Get the result for a given wind velocity/angle
 const Result& ResultContainer::get(size_t iWv, size_t iWa) const {
@@ -148,8 +203,8 @@ const size_t ResultContainer::windAngleSize() const {
 /// Printout the list of Opt Results, arranged by twv-twa
 void ResultContainer::print() {
 
-	std::cout<<" TWV    TWA   --  V    PHI    B    F  --  dF    dM "<<std::endl;
-	std::cout<<"---------------------------------------------------"<<std::endl;
+	std::cout<<" TWV    TWA   --  V    PHI    B    F  --  dF    dM    c1    c2 "<<std::endl;
+	std::cout<<"---------------------------------------------------------------"<<std::endl;
 	for(size_t iWv=0; iWv<nWv_; iWv++)
 		for(size_t iWa=0; iWa<nWa_; iWa++)
 			resMat_[iWv][iWa].print();

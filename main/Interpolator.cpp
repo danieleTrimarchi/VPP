@@ -257,8 +257,8 @@ void SplineInterpolator::plot(double minVal,double maxVal,int nVals,
 ////////////////////////////////////////////////////////////////////////////////////
 
 // Constructor
-Extrapolator::Extrapolator(	double xm2, const std::vector<double>* vm2,
-														double xm1, const std::vector<double>* vm1) :
+Extrapolator::Extrapolator(	double xm2, const Eigen::Vector4d* vm2,
+														double xm1, const Eigen::Vector4d* vm1) :
 				xm2_(xm2),
 				pVm2_(vm2),
 				xm1_(xm1),
@@ -273,10 +273,10 @@ Extrapolator::Extrapolator(	double xm2, const std::vector<double>* vm2,
 }
 
 // Get the vector with the value extrapolated for the abscissa x
-std::vector<double> Extrapolator::get(double x) {
+Eigen::VectorXd Extrapolator::get(double x) {
 
 	// Instantiate the extrapolated vector
-	std::vector<double> vRes(pVm2_->size());
+	Eigen::VectorXd vRes(pVm2_->size());
 
 	// Distance between the two known solutions
 	double dx= xm1_-xm2_;
@@ -284,13 +284,13 @@ std::vector<double> Extrapolator::get(double x) {
 	for(size_t i=0; i<pVm2_->size(); i++){
 
 		// Compute the angular coeff for this set of coeffs
-		double m= (pVm1_->at(i)-pVm2_->at(i))/dx;
+		double m= (pVm1_->coeff(i)-pVm2_->coeff(i))/dx;
 
 		// y=mx+q  => (y2-y1)/(x2-x1) = (yext-y1)/(xext-x1)
 		// yext = y1 + (y2-y1 / x2-x1) * xext-x1
 		//      = y1 + m * xext-x1
 		// with __1 => Vm2 and __2 Vm1
-		vRes[i]= pVm2_->at(i) + m * (x-xm2_);
+		vRes(i)= pVm2_->coeff(i) + m * (x-xm2_);
 	}
 
 	return vRes;

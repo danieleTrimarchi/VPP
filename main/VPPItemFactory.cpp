@@ -91,6 +91,20 @@ VPPItemFactory::~VPPItemFactory(){
 
 // Update the VPPItems for the current step (wind velocity and angle),
 // the value of the state vector x computed by the optimizer
+// todo dtrimarchi: definitely remove the old c-style signature
+void VPPItemFactory::update(int vTW, int aTW, Eigen::Vector4d& xv) {
+
+	// instantiate a c-stile container and copy the content of xv
+	double* x=new double(xv.size());
+	for(size_t i=0; i<xv.size(); i++)
+		x[i]=xv(i);
+
+	// call the standard update
+	update( vTW, aTW, x);
+}
+
+// Update the VPPItems for the current step (wind velocity and angle),
+// the value of the state vector x computed by the optimizer
 void VPPItemFactory::update(int vTW, int aTW, const double* x) {
 
 	// Update all of the aero items:
@@ -171,7 +185,7 @@ double VPPItemFactory::getResistance() {
 	return resistance;
 }
 
-void VPPItemFactory::computeResiduals(double& dF, double& dM) {
+void VPPItemFactory::getResiduals(double& dF, double& dM) {
 
 	// compute deltaF = (Fdrive - Rtot)
 	dF_ = (pAeroForcesItem_->getFDrive() - getResistance());
@@ -185,7 +199,7 @@ void VPPItemFactory::computeResiduals(double& dF, double& dM) {
 
 }
 
-void VPPItemFactory::computeResiduals(int vTW, int aTW, double* x) {
+Eigen::Vector4d VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::Vector4d& x) {
 
 	// update the items with the state vector
 	update(vTW, aTW, x);
@@ -203,27 +217,34 @@ void VPPItemFactory::computeResiduals(int vTW, int aTW, double* x) {
 	// dM  dM/dv  dM/dPhi  dM/db  dM/df
 	Eigen::Array2Xd rsd(2,5);
 
+	// Instantiate a buffer container for the state variables (limits cancellation)
+	// todo dtrimarchi: step1, copy with a proper C utility. step2, pass to vectors
+	Eigen::Vector4d xbuf(x.size());
+
 	// Compute the the derivatives for the additional (optimization) equations
 	for(size_t iVar=0; iVar<4; iVar++) {
 
+		// Init the buffer vector with the values of the state vector
+		xbuf=x;
+
 		// Compute the 'optimal' eps
-		double eps= x[iVar] * std::sqrt( std::numeric_limits<double>::epsilon() );
+		double eps= x(iVar) * std::sqrt( std::numeric_limits<double>::epsilon() );
 
 		// Set var = var+eps:
-		x[iVar] += eps;
+		xbuf(iVar) = x(iVar) + eps;
 
 		// update the items with the state vector
-		update(vTW, aTW, x);
+		update(vTW, aTW, xbuf);
 
 		// Get the residuals
 		double dFp = (pAeroForcesItem_->getFDrive() - getResistance());
 		double dMp = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
 
 		// Set var = var-2eps:
-		x[iVar] -= 2*eps;
+		xbuf(iVar) = x(iVar) - eps;
 
 		// update the items with the state vector
-		update(vTW, aTW, x);
+		update(vTW, aTW, xbuf);
 
 		// Get the residuals
 		double dFm = (pAeroForcesItem_->getFDrive() - getResistance());
@@ -233,12 +254,9 @@ void VPPItemFactory::computeResiduals(int vTW, int aTW, double* x) {
 		rsd(0,iVar+1) = ( dFp - dFm ) / (2*eps);
 		rsd(1,iVar+1) = ( dMp - dMm ) / (2*eps);
 
-		// Restore the state vector
-		x[iVar] += eps;
-
 	}
 
-	// update the items with the state intial state vector
+	// update the items with the state initial state vector
 	update(vTW, aTW, x);
 
 	// Compute the value of c1 = (Fb MPhi-FPhi Mb)/(Fv MPhi-FPhi Mv)
@@ -249,15 +267,16 @@ void VPPItemFactory::computeResiduals(int vTW, int aTW, double* x) {
 	c2_= 	( rsd(0,4) * rsd(1,2) - rsd(0,2) * rsd(1,1) ) /
 				( rsd(0,0) * rsd(1,2) - rsd(0,2) * rsd(1,0) );
 
+	// Returns the results in a reasonable Eigen-style shape
+	return getResiduals();
+
 }
 
 // Get the current value for the optimizer constraint residuals dF=0 and dM=0
-void VPPItemFactory::getResiduals(double& dF, double& dM) {
+Eigen::Vector4d VPPItemFactory::getResiduals() {
 
-	dF=dF_;
-	dM=dM_;
+	return Eigen::Vector4d(dF_,dM_,c1_,c2_);
 
 }
-
 
 

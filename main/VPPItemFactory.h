@@ -21,6 +21,12 @@ class VPPItemFactory {
 
 		/// Update the VPPItems for the current step (wind velocity and angle),
 		/// the value of the state vector x computed by the optimizer
+		/// todo dtrimarchi: definitely remove the old c-style signature
+		void update(int vTW, int aTW, Eigen::Vector4d& xv);
+
+		/// Update the VPPItems for the current step (wind velocity and angle),
+		/// the value of the state vector x computed by the optimizer
+		/// todo dtrimarchi: definitely remove this old c-style signature
 		void update(int vTW, int aTW, const double* x);
 
 		/// Returns a ptr to the variableFileParser
@@ -57,14 +63,15 @@ class VPPItemFactory {
 		double getResistance();
 
 		/// Compute the force/moment residuals for the optimizer constraints dF=0 and dM=0
-		void computeResiduals(double& dF, double& dM);
+		void getResiduals(double& dF, double& dM);
 
 		/// Compute the force/moment residuals and also the residuals of the additional
 		/// equations c1=0 and c2=0. Do not require updates to be operated previously
-		void computeResiduals(int vTW, int aTW, double* x);
+		Eigen::Vector4d getResiduals(int vTW, int aTW, Vector4d& x);
 
 		/// Get the current value for the optimizer constraint residuals dF=0 and dM=0
-		void getResiduals(double& dF, double& dM);
+		/// and for c1 and c2
+		Eigen::Vector4d getResiduals();
 
 	private:
 

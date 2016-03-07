@@ -21,7 +21,19 @@ class Result {
 		Result();
 
 		/// Constructor
-		Result(double twv, double twa, std::vector<double>& res, double dF, double dM);
+		Result(	double twv, double twa,
+						std::vector<double>& res,
+						double dF, double dM);
+
+		/// Constructor with residual array
+		Result(	double twv, double twa,
+						std::vector<double>& results,
+						Eigen::Vector4d& residuals );
+
+		/// Constructor with residual array
+		Result(	double twv, double twa,
+						Eigen::Vector4d& res,
+						Eigen::Vector4d& residuals );
 
 		/// Destructor
 		~Result();
@@ -41,8 +53,14 @@ class Result {
 		// get the moment residuals for this result
 		const double getdM() const;
 
+		// get the c1 residual for this result
+		const double getC1() const;
+
+		// get the c2 residual for this result
+		const double getC2() const;
+
 		// get the state vector for this result
-		const std::vector<double>* getX() const;
+		const Eigen::Vector4d* getX() const;
 
 	private:
 
@@ -50,10 +68,10 @@ class Result {
 		double twv_,twa_;
 
 		/// State vector
-		std::vector<double> result_;
+		Eigen::Vector4d result_;
 
-		// Force and moment residuals
-		double dF_, dM_;
+		// Force and moment, c1 residuals
+		Eigen::Vector4d residuals_;
 
 } ;
 
@@ -71,8 +89,15 @@ class ResultContainer {
 		/// Destructor
 		~ResultContainer();
 
+		/// Alternative signature for push_back
+		void push_back(size_t iWv, size_t iWa,
+										Eigen::Vector4d& results,
+										double dF, double dM );
+
 		/// push_back a result taking care of the allocation
-		void push_back(size_t iWv, size_t iWa, std::vector<double>& res, double dF, double dM);
+		void push_back(size_t iWv, size_t iWa,
+										Eigen::Vector4d& results,
+										Eigen::Vector4d& residuals );
 
 		/// Get the result for a given wind velocity/angle
 		const Result& get(size_t iWv, size_t iWa) const;
