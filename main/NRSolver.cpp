@@ -129,6 +129,8 @@ void NRSolver::run(int twv, int twa) {
 		// Newton loop
 		for( it=0; it<=maxIters_; it++ ) {
 
+			std::cout<<"Run NR iteration number "<<it<<endl;
+
 			// throw if the solution was not found within the max number of iterations
 			if(it==maxIters_)
 				throw VPPException(HERE,"VPP Solver could not converge");
@@ -186,6 +188,9 @@ void NRSolver::run(int twv, int twa) {
 			// buffer the solution
 			Eigen::Vector4d xbuf(xp_);
 
+			std::cout<<"J= \n"<<J<<std::endl;
+			std::cout<<"residuals= \n"<<residuals<<std::endl;
+
 			// A * x = residuals --  J * deltas = residuals
 			// where deltas are also equal to f(x_i) / f'(x_i)
 			Vector4d deltas = J.colPivHouseholderQr().solve(residuals);
@@ -193,6 +198,8 @@ void NRSolver::run(int twv, int twa) {
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
 			xp_  = xp_ - deltas;
+
+			std::cout<<"xp= \n"<<xp_<<std::endl;
 
 			//  break if converged. todo dtrimarchi: this condition seems way too simple!
 			if( deltas.norm()<1e-6 )
@@ -232,130 +239,130 @@ void NRSolver::printResults() {
 
 }
 
-//// Make a printout of the results for this run
-//void NRSolver::plotPolars() {
-//
-//	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
-//	// Sail flat, Crew B, dF and dM
-//	PolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot");
-//	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot");
-//	PolarPlotter crewBPolarPlotter("Crew B Polar Plot");
-//	PolarPlotter sailFlatPolarPlotter("Sail Flat");
-//
-//	// Instantiate the list of wind angles that will serve
-//	// for each velocity
-//	Eigen::ArrayXd windAngles(pResults_->windAngleSize());
-//	Eigen::ArrayXd boatVelocity(pResults_->windAngleSize());
-//	Eigen::ArrayXd boatHeel(pResults_->windAngleSize());
-//	Eigen::ArrayXd crewB(pResults_->windAngleSize());
-//	Eigen::ArrayXd sailFlat(pResults_->windAngleSize());
-//
-//	// Loop on the wind velocities
-//	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
-//
-//		// Store the wind velocity as a label for this curve
-//		char windVelocityLabel[256];
-//		sprintf(windVelocityLabel,"%3.1f", pResults_->get(iWv,0).getTWV() );
-//		string wVLabel(windVelocityLabel);
-//
-//		// Loop on the wind angles
-//		for(size_t iWa=0; iWa<pResults_->windAngleSize(); iWa++) {
-//
-//			// fill the list of wind angles
-//			windAngles(iWa) = pResults_->get(iWv,iWa).getTWA();
-//
-//			// fill the list of boat speeds to an ArrayXd
-//			boatVelocity(iWa) = pResults_->get(iWv,iWa).getX()->at(0);
-//
-//			// fill the list of boat heel to an ArrayXd
-//			boatHeel(iWa) = pResults_->get(iWv,iWa).getX()->at(1);
-//
-//			// fill the list of Crew B to an ArrayXd
-//			crewB(iWa) = pResults_->get(iWv,iWa).getX()->at(2);
-//
-//			// fill the list of Sail flat to an ArrayXd
-//			sailFlat(iWa) = pResults_->get(iWv,iWa).getX()->at(3);
-//
-//		}
-//
-//		// Append the angles-data to the relevant plotter
-//		boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
-//		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
-//		crewBPolarPlotter.append(wVLabel,windAngles,crewB);
-//		sailFlatPolarPlotter.append(wVLabel,windAngles,sailFlat);
-//
-//	}
-//
-//	// Ask all plotters to plot
-//	boatSpeedPolarPlotter.plot();
-//	boatHeelPolarPlotter.plot();
-//	crewBPolarPlotter.plot();
-//	sailFlatPolarPlotter.plot();
-//}
+// Make a printout of the results for this run
+void NRSolver::plotPolars() {
 
-/// Make a printout of the results for this run
-//void NRSolver::plotXY(size_t iWa) {
-//
-//	if( iWa>=pResults_->windAngleSize() ){
-//		std::cout<<"User requested a wrong index! \n";
-//		return;
-//	}
-//
-//	// Prepare the data for the plotter
-//	Eigen::ArrayXd windSpeeds(pResults_->windVelocitySize());
-//	Eigen::ArrayXd boatVelocity(pResults_->windVelocitySize());
-//	Eigen::ArrayXd boatHeel(pResults_->windVelocitySize());
-//	Eigen::ArrayXd boatFlat(pResults_->windVelocitySize());
-//	Eigen::ArrayXd boatB(pResults_->windVelocitySize());
-//	Eigen::ArrayXd dF(pResults_->windVelocitySize());
-//	Eigen::ArrayXd dM(pResults_->windVelocitySize());
-//
-//	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
-//
-//		windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
-//		boatVelocity(iWv)= pResults_->get(iWv,iWa).getX()->at(0);
-//		boatHeel(iWv)    = pResults_->get(iWv,iWa).getX()->at(1);
-//		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->at(2);
-//		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->at(3);
-//		dF(iWv)          = pResults_->get(iWv,iWa).getdF();
-//		dM(iWv)          = pResults_->get(iWv,iWa).getdM();
-//
-//	}
-//
-//	char title[256];
-//	sprintf(title,"AWA= %4.2f", pWind_->getTWA(iWa) );
-//
-//	// Instantiate a plotter for the velocity
-//	Plotter plotter;
-//	string t=string("Boat Speed")+string(title);
-//	plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
-//			t,"Wind Speed [m/s]","Boat Speed [m/s]");
-//
-//
-//	// Instantiate a plotter for the heel
-//	Plotter plotter2;
-//	string t2=string("Boat Heel")+string(title);
-//	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
-//			t2,"Wind Speed [m/s]","Boat Heel [deg]");
-//
-//	// Instantiate a plotter for the Flat
-//	Plotter plotter3;
-//	string t3=string("Sail FLAT")+string(title);
-//	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
-//			t3,"Wind Speed [m/s]","Sail FLAT [-]");
-//
-//	// Instantiate a plotter for the position of the movable crew B
-//	Plotter plotter4;
-//	string t4=string("Crew position")+string(title);
-//	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
-//			t4,"Wind Speed [m/s]","Position of the movable crew [m]");
-//
-//	// Instantiate a plotter for the residuals
-//	Plotter plotter5;
-//	string t5=string("Residuals")+string(title);
-//	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
-//			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
-//}
+	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
+	// Sail flat, Crew B, dF and dM
+	PolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot");
+	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot");
+	PolarPlotter crewBPolarPlotter("Crew B Polar Plot");
+	PolarPlotter sailFlatPolarPlotter("Sail Flat");
+
+	// Instantiate the list of wind angles that will serve
+	// for each velocity
+	Eigen::ArrayXd windAngles(pResults_->windAngleSize());
+	Eigen::ArrayXd boatVelocity(pResults_->windAngleSize());
+	Eigen::ArrayXd boatHeel(pResults_->windAngleSize());
+	Eigen::ArrayXd crewB(pResults_->windAngleSize());
+	Eigen::ArrayXd sailFlat(pResults_->windAngleSize());
+
+	// Loop on the wind velocities
+	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
+
+		// Store the wind velocity as a label for this curve
+		char windVelocityLabel[256];
+		sprintf(windVelocityLabel,"%3.1f", pResults_->get(iWv,0).getTWV() );
+		string wVLabel(windVelocityLabel);
+
+		// Loop on the wind angles
+		for(size_t iWa=0; iWa<pResults_->windAngleSize(); iWa++) {
+
+			// fill the list of wind angles
+			windAngles(iWa) = pResults_->get(iWv,iWa).getTWA();
+
+			// fill the list of boat speeds to an ArrayXd
+			boatVelocity(iWa) = pResults_->get(iWv,iWa).getX()->coeff(0);
+
+			// fill the list of boat heel to an ArrayXd
+			boatHeel(iWa) = pResults_->get(iWv,iWa).getX()->coeff(1);
+
+			// fill the list of Crew B to an ArrayXd
+			crewB(iWa) = pResults_->get(iWv,iWa).getX()->coeff(2);
+
+			// fill the list of Sail flat to an ArrayXd
+			sailFlat(iWa) = pResults_->get(iWv,iWa).getX()->coeff(3);
+
+		}
+
+		// Append the angles-data to the relevant plotter
+		boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
+		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
+		crewBPolarPlotter.append(wVLabel,windAngles,crewB);
+		sailFlatPolarPlotter.append(wVLabel,windAngles,sailFlat);
+
+	}
+
+	// Ask all plotters to plot
+	boatSpeedPolarPlotter.plot();
+	boatHeelPolarPlotter.plot();
+	crewBPolarPlotter.plot();
+	sailFlatPolarPlotter.plot();
+}
+
+// Make a printout of the results for this run
+void NRSolver::plotXY(size_t iWa) {
+
+	if( iWa>=pResults_->windAngleSize() ){
+		std::cout<<"User requested a wrong index! \n";
+		return;
+	}
+
+	// Prepare the data for the plotter
+	Eigen::ArrayXd windSpeeds(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatVelocity(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatHeel(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatFlat(pResults_->windVelocitySize());
+	Eigen::ArrayXd boatB(pResults_->windVelocitySize());
+	Eigen::ArrayXd dF(pResults_->windVelocitySize());
+	Eigen::ArrayXd dM(pResults_->windVelocitySize());
+
+	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
+
+		windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
+		boatVelocity(iWv)= pResults_->get(iWv,iWa).getX()->coeff(0);
+		boatHeel(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(1);
+		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
+		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(3);
+		dF(iWv)          = pResults_->get(iWv,iWa).getdF();
+		dM(iWv)          = pResults_->get(iWv,iWa).getdM();
+
+	}
+
+	char title[256];
+	sprintf(title,"AWA= %4.2f", pWind_->getTWA(iWa) );
+
+	// Instantiate a plotter for the velocity
+	Plotter plotter;
+	string t=string("Boat Speed")+string(title);
+	plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
+			t,"Wind Speed [m/s]","Boat Speed [m/s]");
+
+
+	// Instantiate a plotter for the heel
+	Plotter plotter2;
+	string t2=string("Boat Heel")+string(title);
+	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
+			t2,"Wind Speed [m/s]","Boat Heel [deg]");
+
+	// Instantiate a plotter for the Flat
+	Plotter plotter3;
+	string t3=string("Sail FLAT")+string(title);
+	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
+			t3,"Wind Speed [m/s]","Sail FLAT [-]");
+
+	// Instantiate a plotter for the position of the movable crew B
+	Plotter plotter4;
+	string t4=string("Crew position")+string(title);
+	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
+			t4,"Wind Speed [m/s]","Position of the movable crew [m]");
+
+	// Instantiate a plotter for the residuals
+	Plotter plotter5;
+	string t5=string("Residuals")+string(title);
+	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
+			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
+}
 
 
 

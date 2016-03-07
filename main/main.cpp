@@ -16,6 +16,7 @@ using namespace Eigen;
 #include "SailSet.h"
 #include "VPPItem.h"
 #include "Optimizer.h"
+#include "NRSolver.h"
 #include "Interpolator.h"
 #include "VPPException.h"
 
@@ -50,6 +51,21 @@ void run(VariableFileParser& parser, Optimizer& optimizer){
 		}
 }
 
+/// RUN
+void run(VariableFileParser& parser, NRSolver& solver){
+
+	// Loop on the wind ANGLES and VELOCITIES
+	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
+		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++){
+
+			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
+
+			// Run the optimizer for the current wind speed/angle
+			solver.run(vTW,aTW);
+
+		}
+}
+
 // MAIN
 int main(int argc, char** argv) {
 
@@ -73,8 +89,8 @@ int main(int argc, char** argv) {
 		// Load variables and items
 		load(parser,pSails,pVppItems);
 
-		// Instantiate an optimizer
-		Optimizer optimizer(pVppItems);
+		// Instantiate a Newton Raphson solver
+		NRSolver solver(pVppItems);
 
 		std::cout<<"Please enter a command or type -help-\n";
 
@@ -116,25 +132,25 @@ int main(int argc, char** argv) {
 
 			else if(s == string("reload") ){
 				load(parser,pSails,pVppItems);
-				optimizer.reset(pVppItems);
+				solver.reset(pVppItems);
 			}
 
 			else if(s == string("run") )
-				run(parser,optimizer);
+				run(parser,solver);
 
 			//---
 
 			else if( s == string("print"))
-				optimizer.printResults();
+				solver.printResults();
 
 			else if( s == string("plotPolars"))
-				optimizer.plotPolars();
+				solver.plotPolars();
 
 			else if( s == string("plotXY")) {
 				std::cout<<"Please enter the index of the wind angle: \n";
 				int idx;
 				cin >> idx;
-				optimizer.plotXY(idx);
+				solver.plotXY(idx);
 			}
 
 			//---

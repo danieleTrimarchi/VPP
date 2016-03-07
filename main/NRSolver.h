@@ -37,12 +37,12 @@ class NRSolver {
 		/// Plot the polar plots for the state variables
 		/// It is really not the solver to be responsible
 		/// for plotting...
-		/// void plotPolars();
+		void plotPolars();
 
 		/// Plot the XY plots for the state variables
 		/// It is really not the solver to be responsible
 		/// for plotting...
-		/// void plotXY( size_t index );
+		void plotXY( size_t index );
 
 	private:
 
