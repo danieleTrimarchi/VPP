@@ -182,16 +182,17 @@ SplineInterpolator::SplineInterpolator(Eigen::ArrayXd& X0,Eigen::ArrayXd& Y0) {
 		throw VPPException(HERE,"In SplineInterpolator: Size mismatch");
 
 	// transform the Eigen arrays into vectors
-	std::vector<double> X(X0.size()), Y(Y0.size());
+	X_.resize(X0.size());
+	Y_.resize(Y0.size());
 
 	// Copy the values
 	for(size_t i=0; i<X0.size(); i++){
-		X[i]=X0(i);
-		Y[i]=Y0(i);
+		X_[i]=X0(i);
+		Y_[i]=Y0(i);
 	}
 
 	// Generate the underlying spline
-	generate(X,Y);
+	generate();
 
 }
 
@@ -200,21 +201,24 @@ SplineInterpolator::SplineInterpolator(std::vector<double>& x, std::vector<doubl
 	if(x.size() != y.size())
 		throw VPPException(HERE,"In SplineInterpolator: Size mismatch");
 
+	X_=x;
+	Y_=y;
+
 	// Generate the underlying spline
-	generate(x,y);
+	generate();
 
 }
 
 // Interpolate the function X-Y for the value val
-void SplineInterpolator::generate(std::vector<double>& x, std::vector<double>& y ) {
+void SplineInterpolator::generate() {
 
 	// throw if x is not sorted (todo dtrimarchi: instantiate a sorter)
-	for(size_t i=1; i<x.size(); i++)
-		if(x[i]<=x[i-1])
+	for(size_t i=1; i<X_.size(); i++)
+		if(X_[i]<=X_[i-1])
 			throw VPPException(HERE,"In SplineInterpolator, vector not sorted");
 
-	// Instantiate a spline out of the xy vectors
-	s_.set_points(x,y);
+	// Instantiate a spline out of the XY vectors
+	s_.set_points(X_,Y_);
 
 }
 

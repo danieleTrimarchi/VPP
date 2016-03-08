@@ -216,7 +216,11 @@ Eigen::Vector4d VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::Vector4d& 
 	// dF  dF/dv  dF/dPhi  dF/db  dF/df
 	// dM  dM/dv  dM/dPhi  dM/db  dM/df
 	Eigen::Array2Xd rsd(2,5);
-
+    
+    // Fill the first column of rsd
+    rsd(0,0)=dF_;
+    rsd(1,0)=dM_;
+    
 	// Instantiate a buffer container for the state variables (limits cancellation)
 	// todo dtrimarchi: step1, copy with a proper C utility. step2, pass to vectors
 	Eigen::Vector4d xbuf(x.size());

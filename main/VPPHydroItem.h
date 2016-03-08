@@ -148,6 +148,7 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 
 		/// Interpolator that stores the residuary resistance curve for all froude numbers
 		boost::shared_ptr<SplineInterpolator> pInterpolator_;
+
 };
 
 //=================================================================
@@ -166,6 +167,9 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
+
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	private:
 

@@ -92,7 +92,7 @@ InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 
 // Destructor
 InducedResistanceItem::~InducedResistanceItem() {
-
+		std::cout<<"Destructor of InducedResistanceItem"<<std::endl;
 }
 
 // Implement pure virtual method of the parent class
@@ -361,7 +361,7 @@ ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pPa
 
 // Destructor
 ResiduaryResistanceKeelItem::~ResiduaryResistanceKeelItem() {
-
+    std::cout<<"Destructor of the ResiduaryResistanceKeelItem"<<endl;
 }
 
 // Implement pure virtual method of the parent class

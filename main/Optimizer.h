@@ -42,6 +42,9 @@ class Optimizer {
 		/// Plot the XY plots for the state variables
 		void plotXY( size_t index );
 
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	private:
 
 		/// Boat velocity objective function

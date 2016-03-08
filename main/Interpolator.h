@@ -59,13 +59,19 @@ class SplineInterpolator {
 		void plot(double minVal,double maxVal,int nVals,
 				string title, string xLabel="x", string yLabel="y");
 
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	private:
 
 		/// Generate the underlying spline
-		void generate(std::vector<double>&, std::vector<double>&);
+		void generate();
 
 		/// Underlying spline
 		tk::spline s_;
+
+		// Underlying value vectors
+		std::vector<double> X_, Y_;
 
 };
 

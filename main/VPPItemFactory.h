@@ -73,6 +73,9 @@ class VPPItemFactory {
 		/// and for c1 and c2
 		Eigen::Vector4d getResiduals();
 
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	private:
 
 		/// Ptr to the VariableFileParser

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		64598B581C8E1D1C0038AC6C /* NRSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64598B561C8E1D1C0038AC6C /* NRSolver.cpp */; };
+		64598B5B1C8E1D740038AC6C /* Results.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64598B591C8E1D740038AC6C /* Results.cpp */; };
 		64BBD5FC1C5B701400F14B38 /* Interpolator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5D71C5B701400F14B38 /* Interpolator.cpp */; };
 		64BBD5FD1C5B701400F14B38 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5D91C5B701400F14B38 /* main.cpp */; };
 		64BBD5FE1C5B701400F14B38 /* Optimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5DC1C5B701400F14B38 /* Optimizer.cpp */; };
@@ -46,6 +48,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		64598B561C8E1D1C0038AC6C /* NRSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NRSolver.cpp; path = main/NRSolver.cpp; sourceTree = "<group>"; };
+		64598B571C8E1D1C0038AC6C /* NRSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NRSolver.h; path = main/NRSolver.h; sourceTree = "<group>"; };
+		64598B591C8E1D740038AC6C /* Results.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Results.cpp; path = main/Results.cpp; sourceTree = "<group>"; };
+		64598B5A1C8E1D740038AC6C /* Results.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Results.h; path = main/Results.h; sourceTree = "<group>"; };
 		64BBD5D71C5B701400F14B38 /* Interpolator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Interpolator.cpp; path = main/Interpolator.cpp; sourceTree = "<group>"; };
 		64BBD5D81C5B701400F14B38 /* Interpolator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interpolator.h; path = main/Interpolator.h; sourceTree = "<group>"; };
 		64BBD5D91C5B701400F14B38 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = main/main.cpp; sourceTree = "<group>"; };
@@ -132,9 +138,13 @@
 		64D919471C59F7D60002F585 = {
 			isa = PBXGroup;
 			children = (
+				64598B561C8E1D1C0038AC6C /* NRSolver.cpp */,
+				64598B571C8E1D1C0038AC6C /* NRSolver.h */,
 				64BBD61E1C5B76C900F14B38 /* Libs */,
 				64BBD5D71C5B701400F14B38 /* Interpolator.cpp */,
 				64BBD5D81C5B701400F14B38 /* Interpolator.h */,
+				64598B591C8E1D740038AC6C /* Results.cpp */,
+				64598B5A1C8E1D740038AC6C /* Results.h */,
 				64BBD5D91C5B701400F14B38 /* main.cpp */,
 				64BBD5DB1C5B701400F14B38 /* mathUtils.h */,
 				64BBD5DC1C5B701400F14B38 /* Optimizer.cpp */,
@@ -239,11 +249,13 @@
 				64BBD6081C5B701400F14B38 /* VPPItemFactory.cpp in Sources */,
 				64BBD6091C5B701400F14B38 /* VPPRightingMomentItem.cpp in Sources */,
 				64BBD6011C5B701400F14B38 /* Solver.cpp in Sources */,
+				64598B5B1C8E1D740038AC6C /* Results.cpp in Sources */,
 				64BBD6071C5B701400F14B38 /* VPPItem.cpp in Sources */,
 				64BBD6061C5B701400F14B38 /* VPPHydroItem.cpp in Sources */,
 				64BBD5FD1C5B701400F14B38 /* main.cpp in Sources */,
 				64BBD5FC1C5B701400F14B38 /* Interpolator.cpp in Sources */,
 				64BBD5FF1C5B701400F14B38 /* Plotter.cpp in Sources */,
+				64598B581C8E1D1C0038AC6C /* NRSolver.cpp in Sources */,
 				64BBD6051C5B701400F14B38 /* VPPException.cpp in Sources */,
 				64BBD6001C5B701400F14B38 /* SailSet.cpp in Sources */,
 				64BBD5FE1C5B701400F14B38 /* Optimizer.cpp in Sources */,

@@ -62,6 +62,9 @@ class Result {
 		// get the state vector for this result
 		const Eigen::Vector4d* getX() const;
 
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	private:
 
 		/// Value of wind TRUE velocity/angle

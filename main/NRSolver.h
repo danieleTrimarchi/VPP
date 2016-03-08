@@ -44,6 +44,9 @@ class NRSolver {
 		/// for plotting...
 		void plotXY( size_t index );
 
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	private:
 
 		/// Set the initial guess for the state variable vector

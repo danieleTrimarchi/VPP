@@ -148,7 +148,7 @@ void NRSolver::run(int twv, int twa) {
 			// ------ ^^ ------
 
 			// Instantiate the Jacobian matrix
-			Eigen::Matrix4d  J(xp_.rows(),xp_.rows());
+			Eigen::Matrix4d J(xp_.rows(),xp_.rows());
 
 			// Instantiate a buffer of the state vector xp_
 			Eigen::Vector4d xp(xp_.rows());
@@ -158,6 +158,9 @@ void NRSolver::run(int twv, int twa) {
 
 				// Compute the optimum eps for this variable
 				double eps= std::sqrt( std::numeric_limits<double>::epsilon() );
+
+				// init the buffer vector to the value of the outer state vector
+				xp= xp_;
 
 				// set x= x + eps
 				xp(iVar) = xp_(iVar) * ( 1 + eps );
