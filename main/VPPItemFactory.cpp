@@ -221,9 +221,9 @@ Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& 
 	// dM  dM/dv  dM/dPhi  dM/db  dM/df
 	Eigen::Array2Xd rsd(2,5);
     
-    // Fill the first column of rsd
-    rsd(0,0)=dF_;
-    rsd(1,0)=dM_;
+	// Fill the first column of rsd
+	rsd(0,0)=dF_;
+	rsd(1,0)=dM_;
     
 	// Instantiate a buffer container for the state variables (limits cancellation)
 	// todo dtrimarchi: step1, copy with a proper C utility. step2, pass to vectors
@@ -271,11 +271,11 @@ Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& 
 
 	// Compute the value of c1 = (Fb MPhi-FPhi Mb)/(Fv MPhi-FPhi Mv)
 	c1_= 	( rsd(0,3) * rsd(1,2) - rsd(0,2) * rsd(1,3) ) /
-				( rsd(0,0) * rsd(1,2) - rsd(0,2) * rsd(1,0) );
+				( rsd(0,1) * rsd(1,2) - rsd(0,2) * rsd(1,0) );
 
 	// Compute the value of c2 = (Ff MPhi-FPhi Mv)/(Fv MPhi-FPhi Mv)
 	c2_= 	( rsd(0,4) * rsd(1,2) - rsd(0,2) * rsd(1,1) ) /
-				( rsd(0,0) * rsd(1,2) - rsd(0,2) * rsd(1,0) );
+				( rsd(0,1) * rsd(1,2) - rsd(0,2) * rsd(1,0) );
 
 	// Returns the results in a reasonable Eigen-style shape
 	return getResiduals();
