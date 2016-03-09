@@ -92,18 +92,19 @@ VPPItemFactory::~VPPItemFactory(){
 // Update the VPPItems for the current step (wind velocity and angle),
 // the value of the state vector x computed by the optimizer
 // todo dtrimarchi: definitely remove the old c-style signature
-void VPPItemFactory::update(int vTW, int aTW, Eigen::VectorXd& xv) {
+void VPPItemFactory::update(int vTW, int aTW, Eigen::VectorXd& x) {
 
-	// instantiate a c-stile container and copy the content of xv
-	double* x=new double(xv.size());
-	for(size_t i=0; i<xv.size(); i++)
-		x[i]=xv(i);
+	// Update all of the aero items:
+	for(size_t iItem=0; iItem<vppAeroItems_.size(); iItem++)
+		vppAeroItems_[iItem]->update(vTW,aTW,x);
 
-	// call the standard update
-	update( vTW, aTW, x);
+	// Update all of the hydro items:
+	for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
+		vppHydroItems_[iItem]->VPPItem::update(vTW,aTW,x);
 
-	// delete the buffer that was allocated locally
-	delete x;
+	// Update of the righting moment item:
+	pRightingMomentItem_->VPPItem::update(vTW,aTW,x);
+
 }
 
 // Update the VPPItems for the current step (wind velocity and angle),

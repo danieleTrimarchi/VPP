@@ -31,6 +31,11 @@ class VPPItem {
 		/// update method for the children in the vppItems_ vector
 		void update(int vTW, int aTW, const double* x);
 
+		/// Update the parent VPPItem for the current step (wind velocity and angle),
+		/// the value of the state vector x computed by the optimizer. Then, call the
+		/// update method for the children in the vppItems_ vector
+		void update(int vTW, int aTW, Eigen::VectorXd& x);
+
 		/// Print the class name -> in this case VPPItem
 		virtual void printWhoAmI()=0;
 

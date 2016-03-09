@@ -50,4 +50,26 @@ void VPPItem::update(int vTW, int aTW, const double* x) {
 
 }
 
+// Update the parent VPPItem for the current step (wind velocity and angle),
+// the value of the state vector x computed by the optimizer. Then, call the
+// update method for the children in the vppItems_ vector
+void VPPItem::update(int vTW, int aTW, Eigen::VectorXd& x) {
+
+	if(isnan(x(0))) throw VPPException(HERE,"x(0) is NAN!");
+	if(isnan(x(1))) throw VPPException(HERE,"x(1) is NAN!");
+	if(isnan(x(2))) throw VPPException(HERE,"x(2) is NAN!");
+	if(isnan(x(3))) throw VPPException(HERE,"x(3) is NAN!");
+
+	// Update the local copy of the state variables
+	V_= x(0);
+	PHI_= x(1); // Note that PHI_ is in deg
+	b_= x(2);
+	f_= x(3);
+
+
+	// Now call the implementation of the pure virtual update(int,int)
+	// for every child
+	update(vTW,aTW);
+
+}
 
