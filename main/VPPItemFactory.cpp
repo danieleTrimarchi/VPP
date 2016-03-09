@@ -92,7 +92,7 @@ VPPItemFactory::~VPPItemFactory(){
 // Update the VPPItems for the current step (wind velocity and angle),
 // the value of the state vector x computed by the optimizer
 // todo dtrimarchi: definitely remove the old c-style signature
-void VPPItemFactory::update(int vTW, int aTW, Eigen::Vector4d& xv) {
+void VPPItemFactory::update(int vTW, int aTW, Eigen::VectorXd& xv) {
 
 	// instantiate a c-stile container and copy the content of xv
 	double* x=new double(xv.size());
@@ -101,6 +101,9 @@ void VPPItemFactory::update(int vTW, int aTW, Eigen::Vector4d& xv) {
 
 	// call the standard update
 	update( vTW, aTW, x);
+
+	// delete the buffer that was allocated locally
+	delete x;
 }
 
 // Update the VPPItems for the current step (wind velocity and angle),
@@ -199,7 +202,7 @@ void VPPItemFactory::getResiduals(double& dF, double& dM) {
 
 }
 
-Eigen::Vector4d VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::Vector4d& x) {
+Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& x) {
 
 	// update the items with the state vector
 	update(vTW, aTW, x);
@@ -223,7 +226,7 @@ Eigen::Vector4d VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::Vector4d& 
     
 	// Instantiate a buffer container for the state variables (limits cancellation)
 	// todo dtrimarchi: step1, copy with a proper C utility. step2, pass to vectors
-	Eigen::Vector4d xbuf(x.size());
+	Eigen::VectorXd xbuf(x.size());
 
 	// Compute the the derivatives for the additional (optimization) equations
 	for(size_t iVar=0; iVar<4; iVar++) {
@@ -277,10 +280,11 @@ Eigen::Vector4d VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::Vector4d& 
 }
 
 // Get the current value for the optimizer constraint residuals dF=0 and dM=0
-Eigen::Vector4d VPPItemFactory::getResiduals() {
+Eigen::VectorXd VPPItemFactory::getResiduals() {
 
-	return Eigen::Vector4d(dF_,dM_,c1_,c2_);
-
+	Eigen::VectorXd ret(4);
+	ret << dF_,dM_,c1_,c2_;
+	return ret;
 }
 
 

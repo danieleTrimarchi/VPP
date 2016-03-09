@@ -20,6 +20,9 @@ class ResistanceItem : public VPPItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	protected:
 
 		/// Protected constructor (Avoid the instantiation of this class)
@@ -167,9 +170,6 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
-
-		/// Declare the macro to allow for fixed size vector support
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	private:
 

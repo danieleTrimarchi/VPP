@@ -261,8 +261,8 @@ void SplineInterpolator::plot(double minVal,double maxVal,int nVals,
 ////////////////////////////////////////////////////////////////////////////////////
 
 // Constructor
-Extrapolator::Extrapolator(	double xm2, const Eigen::Vector4d* vm2,
-														double xm1, const Eigen::Vector4d* vm1) :
+Extrapolator::Extrapolator(	double xm2, const Eigen::VectorXd* vm2,
+														double xm1, const Eigen::VectorXd* vm1) :
 				xm2_(xm2),
 				pVm2_(vm2),
 				xm1_(xm1),

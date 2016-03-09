@@ -22,7 +22,7 @@ class VPPItemFactory {
 		/// Update the VPPItems for the current step (wind velocity and angle),
 		/// the value of the state vector x computed by the optimizer
 		/// todo dtrimarchi: definitely remove the old c-style signature
-		void update(int vTW, int aTW, Eigen::Vector4d& xv);
+		void update(int vTW, int aTW, Eigen::VectorXd& xv);
 
 		/// Update the VPPItems for the current step (wind velocity and angle),
 		/// the value of the state vector x computed by the optimizer
@@ -67,11 +67,11 @@ class VPPItemFactory {
 
 		/// Compute the force/moment residuals and also the residuals of the additional
 		/// equations c1=0 and c2=0. Do not require updates to be operated previously
-		Eigen::Vector4d getResiduals(int vTW, int aTW, Vector4d& x);
+		Eigen::VectorXd getResiduals(int vTW, int aTW, VectorXd& x);
 
 		/// Get the current value for the optimizer constraint residuals dF=0 and dM=0
 		/// and for c1 and c2
-		Eigen::Vector4d getResiduals();
+		Eigen::VectorXd getResiduals();
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW

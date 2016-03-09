@@ -28,12 +28,12 @@ class Result {
 		/// Constructor with residual array
 		Result(	double twv, double twa,
 						std::vector<double>& results,
-						Eigen::Vector4d& residuals );
+						Eigen::VectorXd& residuals );
 
 		/// Constructor with residual array
 		Result(	double twv, double twa,
-						Eigen::Vector4d& res,
-						Eigen::Vector4d& residuals );
+						Eigen::VectorXd& res,
+						Eigen::VectorXd& residuals );
 
 		/// Destructor
 		~Result();
@@ -60,7 +60,7 @@ class Result {
 		const double getC2() const;
 
 		// get the state vector for this result
-		const Eigen::Vector4d* getX() const;
+		const Eigen::VectorXd* getX() const;
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -71,10 +71,10 @@ class Result {
 		double twv_,twa_;
 
 		/// State vector
-		Eigen::Vector4d result_;
+		Eigen::VectorXd result_;
 
 		// Force and moment, c1 residuals
-		Eigen::Vector4d residuals_;
+		Eigen::VectorXd residuals_;
 
 } ;
 
@@ -94,13 +94,13 @@ class ResultContainer {
 
 		/// Alternative signature for push_back
 		void push_back(size_t iWv, size_t iWa,
-										Eigen::Vector4d& results,
+										Eigen::VectorXd& results,
 										double dF, double dM );
 
 		/// push_back a result taking care of the allocation
 		void push_back(size_t iWv, size_t iWa,
-										Eigen::Vector4d& results,
-										Eigen::Vector4d& residuals );
+										Eigen::VectorXd& results,
+										Eigen::VectorXd& residuals );
 
 		/// Get the result for a given wind velocity/angle
 		const Result& get(size_t iWv, size_t iWa) const;

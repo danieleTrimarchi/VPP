@@ -44,6 +44,9 @@ class WindItem : public VPPItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	private:
 
 		/// Update the item for the current step (wind velocity and angle),

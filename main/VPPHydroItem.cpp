@@ -398,7 +398,7 @@ Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
 				ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
-	Eigen::Vector4d coeff;
+	Eigen::VectorXd coeff(4);
 	coeff << -3.5837, -0.0518,	0.5958,	0.2055;
 
 	// Define the vector with the physical quantities multiplying the
@@ -408,7 +408,7 @@ Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
 	//				geom.BWL./geom.TCAN
 	//				(geom.BWL.*geom.TCAN)./(geom.T.*geom.TCAN)
 	//				geom.LWL./geom.DIVCAN.^1/3 ];
-	Eigen::Vector4d vect;
+	Eigen::VectorXd vect(4);
 	vect << pParser_->get("TCAN")/pParser_->get("T"),
 			pParser_->get("BWL")/pParser_->get("TCAN"),
 			pParser_->get("BWL")/pParser_->get("T"),

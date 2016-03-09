@@ -8,8 +8,11 @@ Result::Result():
 			twv_(0),
 			twa_(0) {
 
+	// init the result container
+	result_.resize(4);
 	result_ << 0,0,0,0;
 	// init the residuals container
+	residuals_.resize(4);
 	residuals_<<0,0,0,0;
 
 }
@@ -31,7 +34,7 @@ Result::Result(double twv, double twa, std::vector<double>& res,
 // Constructor
 Result::Result(	double twv, double twa,
 				std::vector<double>& results,
-				Eigen::Vector4d& residuals ):
+				Eigen::VectorXd& residuals ):
 				twv_(twv),
 				twa_(twa),
 				residuals_(residuals){
@@ -42,8 +45,8 @@ Result::Result(	double twv, double twa,
 
 // Constructor with residual array
 Result::Result(	double twv, double twa,
-				Eigen::Vector4d& result,
-				Eigen::Vector4d& residuals ) :
+				Eigen::VectorXd& result,
+				Eigen::VectorXd& residuals ) :
 					twv_(twv),
 					twa_(twa),
 					result_(result),
@@ -97,7 +100,7 @@ const double Result::getC2() const {
 }
 
 // get the state vector for this result
-const Eigen::Vector4d* Result::getX() const {
+const Eigen::VectorXd* Result::getX() const {
 	return &result_;
 }
 
@@ -123,7 +126,8 @@ ResultContainer::ResultContainer(WindItem* pWindItem):
 	nWa_= pParser->get("N_ALPHA_TW");
 
 	// Allocate enough space in the resMat_[Wv][Wa] and init
-	resMat_.resize(nWv_);
+    resMat_.clear();
+    resMat_.resize(nWv_);
 	for(size_t iWv=0; iWv<nWv_; iWv++){
 		resMat_[iWv].resize(nWa_);
 	}
@@ -136,11 +140,12 @@ ResultContainer::~ResultContainer() {
 
 // push_back a result taking care of the allocation
 void ResultContainer::push_back(size_t iWv, size_t iWa,
-																Eigen::Vector4d& results,
+																Eigen::VectorXd& results,
 																double dF, double dM ) {
 
 	// Compile an Eigen-vector and call the push_back method
-	Eigen::Vector4d residuals(dF,dM,0,0);
+	Eigen::VectorXd residuals(4);
+	residuals << dF,dM,0,0;
 
 	// Call the other signature of the method
 	push_back(iWv,iWa,results,residuals);
@@ -149,8 +154,8 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 
 // push_back a result taking care of the allocation
 void ResultContainer::push_back(size_t iWv, size_t iWa,
-																Eigen::Vector4d& results,
-																Eigen::Vector4d& residuals ) {
+																Eigen::VectorXd& results,
+																Eigen::VectorXd& residuals ) {
 
 	if(iWv>=nWv_){
 		char msg[256];

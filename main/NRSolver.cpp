@@ -12,6 +12,9 @@ NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 				tol_(1.e-6),
 				maxIters_(50){
 
+	// Resize the result container
+	xp_.resize(dimension_);
+
 	// Init the STATIC member vppItemsContainer
 	vppItemsContainer_= VPPItemFactory;
 
@@ -151,7 +154,7 @@ void NRSolver::run(int twv, int twa) {
 			Eigen::Matrix4d J(xp_.rows(),xp_.rows());
 
 			// Instantiate a buffer of the state vector xp_
-			Eigen::Vector4d xp(xp_.rows());
+			Eigen::VectorXd xp(xp_.rows());
 
 			// loop on the state variables
 			for(size_t iVar=0; iVar<xp_.rows(); iVar++) {
@@ -166,7 +169,7 @@ void NRSolver::run(int twv, int twa) {
 				xp(iVar) = xp_(iVar) * ( 1 + eps );
 
 				// update the items and compute the residuals for x_plus_epsilon
-				Eigen::Vector4d f_xPlus( vppItemsContainer_->getResiduals(twv,twa,xp) );
+				Eigen::VectorXd f_xPlus( vppItemsContainer_->getResiduals(twv,twa,xp) );
 
 				// compile the ith column of the Jacobian matrix
 				J.row(iVar) = f_xPlus.transpose();
@@ -175,7 +178,7 @@ void NRSolver::run(int twv, int twa) {
 				xp(iVar) = xp_(iVar) * ( 1 - eps );
 
 				// update the items and compute the residuals for x_minus_epsilon
-				Eigen::Vector4d f_xMin( vppItemsContainer_->getResiduals(twv,twa,xp) );
+				Eigen::VectorXd f_xMin( vppItemsContainer_->getResiduals(twv,twa,xp) );
 
 				// compile the ith column of the Jacobian matrix
 			 	J.row(iVar) -= f_xMin.transpose();
@@ -186,17 +189,17 @@ void NRSolver::run(int twv, int twa) {
 			}
 
 			// Compute the residuals vector and restore the items with the current xp_
-			Eigen::Vector4d residuals= vppItemsContainer_->getResiduals(twv,twa,xp_);
+			Eigen::VectorXd residuals= vppItemsContainer_->getResiduals(twv,twa,xp_);
 
 			// buffer the solution
-			Eigen::Vector4d xbuf(xp_);
+			Eigen::VectorXd xbuf(xp_);
 
 			std::cout<<"J= \n"<<J<<std::endl;
 			std::cout<<"residuals= \n"<<residuals<<std::endl;
 
 			// A * x = residuals --  J * deltas = residuals
 			// where deltas are also equal to f(x_i) / f'(x_i)
-			Vector4d deltas = J.colPivHouseholderQr().solve(residuals);
+			VectorXd deltas = J.colPivHouseholderQr().solve(residuals);
 
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
@@ -224,7 +227,7 @@ void NRSolver::run(int twv, int twa) {
 	printf("found solution after %d evaluations\n", it);
 	printf("      at f(%g,%g,%g,%g)",
 			xp_(0),xp_(1),xp_(2),xp_(3));
-	Eigen::Vector4d res= vppItemsContainer_->getResiduals();
+	Eigen::VectorXd res= vppItemsContainer_->getResiduals();
 	printf("      residuals: dF= %g, dM= %g, c1= %g, c2= %g\n\n",
 			res(0),res(1),res(2),res(3) );
 

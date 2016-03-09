@@ -82,7 +82,7 @@ class Extrapolator {
 	public:
 
 		/// Constructor
-		Extrapolator(double xm2, const Eigen::Vector4d* vm2, double xm1, const Eigen::Vector4d* vm1);
+		Extrapolator(double xm2, const Eigen::VectorXd* vm2, double xm1, const Eigen::VectorXd* vm1);
 
 		/// Get the vector with the value extrapolated for the abscissa x
 		Eigen::VectorXd get(double x);
@@ -93,7 +93,7 @@ class Extrapolator {
 		double xm2_, xm1_;
 
 		/// Ptrs to the vectors with the vals to extrapolate
-		const Eigen::Vector4d* pVm2_, *pVm1_;
+		const Eigen::VectorXd* pVm2_, *pVm1_;
 
 		/// Vector with the extrapolated values to be filled
 		std::vector<double> v_;
