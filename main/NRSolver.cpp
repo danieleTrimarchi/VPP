@@ -172,7 +172,7 @@ void NRSolver::run(int twv, int twa) {
 				Eigen::VectorXd f_xPlus( vppItemsContainer_->getResiduals(twv,twa,xp) );
 
 				// compile the ith column of the Jacobian matrix
-				J.row(iVar) = f_xPlus.transpose();
+				J.col(iVar) = f_xPlus.transpose();
 
 				// set x= x - eps
 				xp(iVar) = xp_(iVar) * ( 1 - eps );
@@ -181,10 +181,10 @@ void NRSolver::run(int twv, int twa) {
 				Eigen::VectorXd f_xMin( vppItemsContainer_->getResiduals(twv,twa,xp) );
 
 				// compile the ith column of the Jacobian matrix
-			 	J.row(iVar) -= f_xMin.transpose();
+			 	J.col(iVar) -= f_xMin.transpose();
 
 			 	// divide the column of the Jacobian by 2*eps
-			 	J.row(iVar) /= ( 2 * eps );
+			 	J.col(iVar) /= ( 2 * eps );
 
 			}
 
@@ -201,6 +201,10 @@ void NRSolver::run(int twv, int twa) {
 			// where deltas are also equal to f(x_i) / f'(x_i)
 			VectorXd deltas = J.colPivHouseholderQr().solve(residuals);
 
+            // test the quality of the solution: J*deltas == residuals
+            // VectorXd test = J*deltas;
+            //std::cout<<"test: "<<test<<std::endl;
+            
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
 			xp_  = xp_ - deltas;
