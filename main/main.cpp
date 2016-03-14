@@ -201,6 +201,9 @@ double fDrive(double V, double phi, boost::shared_ptr<SailSet>& pSails){
 
 double R(double V, VariableFileParser& parser){
 
+	if(V<0.1)
+		return 0.01;
+
 	// compute Rn
 	double rN= V * parser.get("LWL") * 0.7 / Physic::ni_w;
 

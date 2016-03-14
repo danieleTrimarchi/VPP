@@ -491,22 +491,24 @@ void FrictionalResistanceItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of FrictionalResistanceItem "<<std::endl;
 }
 
-// Plot the viscous resistance of the keel for a fixed range Fn=0-0.7
+// Plot the viscous resistance of the keel for a fixed range Fn=0-1
 void FrictionalResistanceItem::plot() {
 
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
 
-	int nVals=50;
+	int nVals=10;
 	std::vector<double> x(nVals), y(nVals);
 
 	for(size_t i=0; i<nVals; i++) {
 
-		// Set a fictitious velocity
-		V_ = 1./nVals * i;
+		// Set a fictitious velocity (Fn=0-1)
+		V_= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 		// Update the item
 		update(0,0);
+
+		std::cout<<"   "<<"  Fn_="<<fN_<<"  res_="<<res_<<std::endl;
 
 		// Fill the vectors to be plot
 		x[i]= fN_;
@@ -663,13 +665,13 @@ void ViscousResistanceKeelItem::plot() {
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
 
-	int nVals=50;
+	int nVals=10;
 	std::vector<double> x(nVals), y(nVals);
 
 	for(size_t i=0; i<nVals; i++) {
 
 		// Set a fictitious velocity
-		V_ = 1./nVals * i;
+		V_= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 		// Update the item
 		update(0,0);
@@ -733,13 +735,13 @@ void ViscousResistanceRudderItem::plot() {
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
 
-	int nVals=50;
+	int nVals=10;
 	std::vector<double> x(nVals), y(nVals);
 
 	for(size_t i=0; i<nVals; i++) {
 
 		// Set a fictitious velocity
-		V_ = 0.7/50 * i;
+		V_= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 		// Update the item
 		update(0,0);
