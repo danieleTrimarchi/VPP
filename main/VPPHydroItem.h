@@ -197,6 +197,9 @@ class FrictionalResistanceItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
+		/// Plot the frictional resistance for a fixed range (Fn=0-0.7)
+		void plot();
+
 	private:
 
 		/// Implement pure virtual method of the parent class

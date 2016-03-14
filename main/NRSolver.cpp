@@ -151,7 +151,7 @@ void NRSolver::run(int twv, int twa) {
 			// ------ ^^ ------
 
 			// Instantiate the Jacobian matrix
-			Eigen::Matrix4d J(xp_.rows(),xp_.rows());
+			Eigen::MatrixXd J(xp_.rows(),xp_.rows());
 
 			// Instantiate a buffer of the state vector xp_
 			Eigen::VectorXd xp(xp_.rows());
@@ -200,6 +200,7 @@ void NRSolver::run(int twv, int twa) {
 			// A * x = residuals --  J * deltas = residuals
 			// where deltas are also equal to f(x_i) / f'(x_i)
 			VectorXd deltas = J.colPivHouseholderQr().solve(residuals);
+            std::cout<<"deltas= \n"<<deltas<<std::endl;
 
             // test the quality of the solution: J*deltas == residuals
             // VectorXd test = J*deltas;

@@ -491,6 +491,38 @@ void FrictionalResistanceItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of FrictionalResistanceItem "<<std::endl;
 }
 
+// Plot the viscous resistance of the keel for a fixed range Fn=0-0.7
+void FrictionalResistanceItem::plot() {
+
+	// buffer the velocity that is going to be modified by the plot
+	double bufferV= V_;
+
+	int nVals=50;
+	std::vector<double> x(nVals), y(nVals);
+
+	for(size_t i=0; i<nVals; i++) {
+
+		// Set a fictitious velocity
+		V_ = 1./nVals * i;
+
+		// Update the item
+		update(0,0);
+
+		// Fill the vectors to be plot
+		x[i]= fN_;
+		y[i]= res_;
+
+	}
+
+	// Instantiate a plotter and plot the curves
+	Plotter plotter;
+	plotter.plot(x,y,"Frictional Resistance","Fn [-]","Resistance [N]");
+
+	// Restore the initial buffered values
+	V_= bufferV;
+	update(0,0);
+}
+
 //=================================================================
 
 // For the definition of the Change in wetted surface see DSYHS99 3.1.2.1 p115-116

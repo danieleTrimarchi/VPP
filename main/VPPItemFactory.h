@@ -47,6 +47,9 @@ class VPPItemFactory {
 		/// Getter for the Residuary Resistance of the Keel item
 		ResiduaryResistanceKeelItem* getResiduaryResistanceKeelItem() const;
 
+		/// Getter for the Frictional Resistance item
+		FrictionalResistanceItem* getFrictionalResistanceItem() const;
+
 		/// Getter for the Delta Viscous Resistance of the keel item
 		ViscousResistanceKeelItem* getViscousResistanceKeelItem() const;
 
@@ -101,6 +104,9 @@ class VPPItemFactory {
 
 		/// Pointer to the Residuary Resistance of the Keel Item
 		boost::shared_ptr<ResiduaryResistanceKeelItem> pResiduaryResistanceKeelItem_;
+
+		/// Pointer to the Frictional Resistance Item
+		boost::shared_ptr<FrictionalResistanceItem> pFrictionalResistanceItem_;
 
 		/// Pointer to the Viscous Resistance of the keel Item
 		boost::shared_ptr<ViscousResistanceKeelItem> pViscousResistanceKeelItem_;

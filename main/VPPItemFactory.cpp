@@ -32,8 +32,8 @@ c2_(0) {
 
 	// Instantiate a FrictionalResistanceItem Item and push it back to the children vector
 	// For the definition of the Frictional Resistance see Keuning 2.1 p108
-	boost::shared_ptr<FrictionalResistanceItem> pFrictionalResistanceItem(new FrictionalResistanceItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pFrictionalResistanceItem );
+	pFrictionalResistanceItem_.reset(new FrictionalResistanceItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pFrictionalResistanceItem_ );
 
 	// Instantiate a ResiduaryResistanceItem and push it back to the children vector
 	// For the definition of the Residuary Resistance: see Keuning 3.1.1.2 p112
@@ -157,6 +157,11 @@ ResiduaryResistanceKeelItem* VPPItemFactory::getResiduaryResistanceKeelItem() co
 // Getter for the Delta Viscous Resistance of the keel item
 ViscousResistanceKeelItem* VPPItemFactory::getViscousResistanceKeelItem() const {
 	return pViscousResistanceKeelItem_.get();
+}
+
+// Getter for the Frictional Resistance item
+FrictionalResistanceItem* VPPItemFactory::getFrictionalResistanceItem() const {
+	return pFrictionalResistanceItem_.get();
 }
 
 // Getter for the Delta Viscous Resistance of the Rudder item
