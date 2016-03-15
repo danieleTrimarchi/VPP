@@ -189,7 +189,7 @@ void testNR2() {
 double fDrive(double V, double phi, boost::shared_ptr<SailSet>& pSails){
 
 	// set the wind velocity at 5 m/s
-	double wv=5;
+	double wv=6;
 
 	// Fdrive = pho S (V^2 + vw^2) cos(phi)
 	double fDrive= ( V*V + wv*wv ) * cos(mathUtils::toRad(phi) );
@@ -242,14 +242,49 @@ double Rm(double phi, VariableFileParser& parser) {
 	return rm;
 }
 
+void computeJacobian(	boost::shared_ptr<SailSet>& pSails,
+											VariableFileParser& parser,
+											Eigen::VectorXd x,Eigen::MatrixXd& J){
 
-void testFakeVPP(	boost::shared_ptr<SailSet>& pSails,
-									VariableFileParser& parser){
+	for(size_t j=0; j<J.cols(); j++){
 
-	size_t dimension=2;
-	// Select a starting point
-	Eigen::VectorXd x(dimension);
-	x << 1.5, 10;
+		// compute eps(xj)
+		double eps= x(j) * std::sqrt( std::numeric_limits<double>::epsilon() );
+
+		// buffer the state vector
+		Eigen::VectorXd xbuf=x;
+
+		// set x(j)=x(j)+eps
+		xbuf(j) = x(j) + eps;
+
+		double f_drive= fDrive( xbuf(0), xbuf(1), pSails );
+		double Resistance= R( xbuf(0), parser );
+		double HeelMoment= Mw( f_drive, xbuf(1), pSails);
+		double rightMoment= Rm( xbuf(1),parser );
+
+		J.col(j)(0) = f_drive-Resistance;
+		J.col(j)(1) = HeelMoment-rightMoment;
+
+		// set x(j)=x(j)-eps
+		xbuf(j) = x(j) - eps;
+
+		f_drive= fDrive( xbuf(0), xbuf(1), pSails );
+		Resistance= R( xbuf(0), parser );
+		HeelMoment= Mw( f_drive, xbuf(1), pSails);
+		rightMoment= Rm( xbuf(1),parser );
+
+		// J.col(j)-=f- , g-
+		J.col(j)(0) -= f_drive-Resistance;
+		J.col(j)(1) -= HeelMoment-rightMoment;
+
+		//J.col(j)/=2eps
+		J.col(j) /= ( 2 * eps );
+
+	}
+}
+
+void solve(	boost::shared_ptr<SailSet>& pSails,
+						VariableFileParser& parser,Eigen::VectorXd& x){
 
 	size_t maxIter=20;
 	for( size_t iter=0; iter<maxIter+1; iter++){
@@ -264,7 +299,7 @@ void testFakeVPP(	boost::shared_ptr<SailSet>& pSails,
 		double rightMoment= Rm( x(1),parser );
 
 		// Compute the residuals for the current solution x
-		Eigen::VectorXd residuals(2);
+		Eigen::VectorXd residuals(x.size());
 		residuals << f_drive-Resistance, HeelMoment-rightMoment;
 
 		std::cout<<"Iteration "<<iter<<endl;
@@ -274,63 +309,25 @@ void testFakeVPP(	boost::shared_ptr<SailSet>& pSails,
 		// Instantiate and compute the Jacobian matrix
 		// J = |df/dx1 df/dx2|
 		//	   |dg/dx1 dg/dx2|
-		Eigen::MatrixXd J(dimension,dimension);
-
-		for(size_t j=0; j<dimension; j++){
-
-			// compute eps(xj)
-			double eps= x(j) * std::sqrt( std::numeric_limits<double>::epsilon() );
-
-			// buffer the state vector
-			Eigen::VectorXd xbuf=x;
-
-			// set x(j)=x(j)+eps
-			xbuf(j) = x(j) + eps;
-
-			f_drive= fDrive( xbuf(0), xbuf(1), pSails );
-			Resistance= R( xbuf(0), parser );
-			HeelMoment= Mw( f_drive, xbuf(1), pSails);
-			rightMoment= Rm( xbuf(1),parser );
-
-			J.col(j)(0) = f_drive-Resistance;
-			J.col(j)(1) = HeelMoment-rightMoment;
-
-			// set x(j)=x(j)-eps
-			xbuf(j) = x(j) - eps;
-
-			f_drive= fDrive( xbuf(0), xbuf(1), pSails );
-			Resistance= R( xbuf(0), parser );
-			HeelMoment= Mw( f_drive, xbuf(1), pSails);
-			rightMoment= Rm( xbuf(1),parser );
-
-			// J.col(j)-=f- , g-
-			J.col(j)(0) -= f_drive-Resistance;
-			J.col(j)(1) -= HeelMoment-rightMoment;
-
-			//J.col(j)/=2eps
-			J.col(j) /= 2*eps;
-
-		}
-
-        std::cout<<"J= "<<J<<std::endl;
+		Eigen::MatrixXd J(x.size(),x.size());
+		computeJacobian(pSails,parser,x,J);
+		std::cout<<"J= "<<J<<std::endl;
         
 		// A * x = residuals --  J * deltas = residuals
 		// where deltas are also equal to f(x_i) / f'(x_i)
 		VectorXd deltas = J.colPivHouseholderQr().solve(residuals);
 
-        std::cout<<"deltas= "<<deltas.transpose()<<std::endl;
-
+		std::cout<<"deltas   = "<<deltas.transpose()<<std::endl;
 		x -= deltas;
+		std::cout<<"        x= "<<x.transpose()<<std::endl;
 
-        std::cout<<"x= "<<x.transpose()<<std::endl;
-
-        // limit the solution. 0<x<100 ; 0<phi<85
-		if(x(0)<0) x(0)=0.1;
-		if(x(0)>100) x(0)=100;
-		if(x(1)<0) x(1)=0.1;
-		if(x(1)>85) x(1)=85;
+//        // limit the solution. 0<x<100 ; 0<phi<85
+//		if(x(0)<0) x(0)=0.1;
+//		if(x(0)>100) x(0)=100;
+//		if(x(1)<0) x(1)=0.1;
+//		if(x(1)>85) x(1)=85;
  
-        std::cout<<"limited x= "<<x.transpose()<<std::endl;
+		std::cout<<"limited x= "<<x.transpose()<<std::endl;
 
 		f_drive= fDrive( x(0), x(1), pSails );
 		Resistance= R( x(0), parser );
@@ -343,8 +340,19 @@ void testFakeVPP(	boost::shared_ptr<SailSet>& pSails,
 					"; f= "<<f_drive-Resistance<<", g= "<<HeelMoment-rightMoment<<std::endl;
 			break;
 		}
-
 	}
+}
+
+void testFakeVPP(	boost::shared_ptr<SailSet>& pSails,
+									VariableFileParser& parser){
+
+	size_t dimension=2;
+	// Select a starting point
+	Eigen::VectorXd x(dimension);
+	x << 1.5, 10;
+
+	solve( pSails, parser, x);
+
 }
 
 // MAIN

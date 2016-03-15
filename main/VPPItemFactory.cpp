@@ -265,9 +265,7 @@ Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& 
 
 		// Compute dF/dv and dM/dv:
 		rsd(0,iVar+1) = ( dFp - dFm ) / (2*eps);
-        std::cout<<"rsd(0,"<<iVar+1<<")= "<<rsd(0,iVar+1)<<endl;
 		rsd(1,iVar+1) = ( dMp - dMm ) / (2*eps);
-        std::cout<<"rsd(1,"<<iVar+1<<")= "<<rsd(1,iVar+1)<<endl;
 
 	}
 

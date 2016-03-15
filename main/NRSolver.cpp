@@ -10,7 +10,7 @@
 NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 				dimension_(4),
 				tol_(1.e-6),
-				maxIters_(50){
+				maxIters_(10){
 
 	// Resize the result container
 	xp_.resize(dimension_);
@@ -87,28 +87,28 @@ void NRSolver::resetInitialGuess(int TWV, int TWA) {
 
 	}
 
-	else if( TWV>1 ) {
-
-		// For twv> 1 we can linearly predict the result of the state vector
-		Extrapolator extrapolator(
-				pResults_->get(TWV-2,TWA).getTWV(),
-				pResults_->get(TWV-2,TWA).getX(),
-				pResults_->get(TWV-1,TWA).getTWV(),
-				pResults_->get(TWV-1,TWA).getX()
-		);
-
-		// Extrapolate the state vector for the current wind
-		// velocity. Note that the items have not been init yet
-		xp_= extrapolator.get( pWind_->getTWV(TWV) );
-	}
-
-	// Make sure the initial guess does not exceeds the bounds
-	for(size_t i=0; i<dimension_; i++) {
-		if(xp_(i)<lowerBounds_[i])
-			xp_(i)=lowerBounds_[i];
-		if(xp_(i)>upperBounds_[i])
-			xp_(i)=upperBounds_[i];
-	}
+//	else if( TWV>1 ) {
+//
+//		// For twv> 1 we can linearly predict the result of the state vector
+//		Extrapolator extrapolator(
+//				pResults_->get(TWV-2,TWA).getTWV(),
+//				pResults_->get(TWV-2,TWA).getX(),
+//				pResults_->get(TWV-1,TWA).getTWV(),
+//				pResults_->get(TWV-1,TWA).getX()
+//		);
+//
+//		// Extrapolate the state vector for the current wind
+//		// velocity. Note that the items have not been init yet
+//		xp_= extrapolator.get( pWind_->getTWV(TWV) );
+//	}
+//
+//	// Make sure the initial guess does not exceeds the bounds
+//	for(size_t i=0; i<dimension_; i++) {
+//		if(xp_(i)<lowerBounds_[i])
+//			xp_(i)=lowerBounds_[i];
+//		if(xp_(i)>upperBounds_[i])
+//			xp_(i)=upperBounds_[i];
+//	}
 
 }
 
@@ -129,14 +129,43 @@ void NRSolver::run(int twv, int twa) {
 		std::cout<<"Entering the NRSolver with initial guess: "<<
 				xp_[0]<<" "<<xp_[1]<<" "<<xp_[2]<<" "<<xp_[3]<<"\n";
 
+		std::vector<double> velocityResiduals;
+		std::vector<double> PhiResiduals;
+		std::vector<double> c1Residuals;
+		std::vector<double> c2Residuals;
+
 		// Newton loop
 		for( it=0; it<=maxIters_; it++ ) {
 
 			std::cout<<"Run NR iteration number "<<it<<endl;
 
 			// throw if the solution was not found within the max number of iterations
-			if(it==maxIters_)
+			if(it==maxIters_){
+				// plot the velocity residuals and trhow
+				Plotter plotter;
+				plotter.plot(velocityResiduals,"V_residuals");
+				Plotter plotter2;
+				plotter2.plot(PhiResiduals,"PHI_residuals");
+				Plotter plotter3;
+				plotter3.plot(c1Residuals,"c1_residuals");
+				Plotter plotter4;
+				plotter4.plot(c2Residuals,"c2_residuals");
+
 				throw VPPException(HERE,"VPP Solver could not converge");
+			}
+
+			// Compute the residuals vector
+			Eigen::VectorXd residuals= vppItemsContainer_->getResiduals(twv,twa,xp_);
+
+			std::cout<<"residuals= \n"<<residuals.transpose()<<std::endl;
+			velocityResiduals.push_back( residuals(0) );
+			PhiResiduals.push_back(residuals(1));
+			c1Residuals.push_back(residuals(2));
+			c2Residuals.push_back(residuals(3));
+
+			//  break if converged. todo dtrimarchi: this condition seems way too simple!
+			if( residuals.norm()<1e-6 )
+				break;
 
 			// ------ vv ------
 			// Define the Jacobian matrix :
@@ -166,55 +195,38 @@ void NRSolver::run(int twv, int twa) {
 				xp= xp_;
 
 				// set x= x + eps
-				xp(iVar) = xp_(iVar) * ( 1 + eps );
+				xp(iVar) = xp_(iVar) + eps;
 
 				// update the items and compute the residuals for x_plus_epsilon
 				Eigen::VectorXd f_xPlus( vppItemsContainer_->getResiduals(twv,twa,xp) );
 
 				// compile the ith column of the Jacobian matrix
-				J.col(iVar) = f_xPlus.transpose();
+				J.col(iVar) = f_xPlus;
 
 				// set x= x - eps
-				xp(iVar) = xp_(iVar) * ( 1 - eps );
+				xp(iVar) = xp_(iVar) - eps;
 
 				// update the items and compute the residuals for x_minus_epsilon
 				Eigen::VectorXd f_xMin( vppItemsContainer_->getResiduals(twv,twa,xp) );
 
 				// compile the ith column of the Jacobian matrix
-			 	J.col(iVar) -= f_xMin.transpose();
+			 	J.col(iVar) -= f_xMin;
 
 			 	// divide the column of the Jacobian by 2*eps
 			 	J.col(iVar) /= ( 2 * eps );
 
 			}
 
-			// Compute the residuals vector and restore the items with the current xp_
-			Eigen::VectorXd residuals= vppItemsContainer_->getResiduals(twv,twa,xp_);
-
-			// buffer the solution
-			Eigen::VectorXd xbuf(xp_);
-
-			std::cout<<"J= \n"<<J<<std::endl;
-			std::cout<<"residuals= \n"<<residuals<<std::endl;
-
 			// A * x = residuals --  J * deltas = residuals
 			// where deltas are also equal to f(x_i) / f'(x_i)
 			VectorXd deltas = J.colPivHouseholderQr().solve(residuals);
-            std::cout<<"deltas= \n"<<deltas<<std::endl;
+      std::cout<<"deltas= \n"<<deltas<<std::endl;
 
-            // test the quality of the solution: J*deltas == residuals
-            // VectorXd test = J*deltas;
-            //std::cout<<"test: "<<test<<std::endl;
-            
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
-			xp_  = xp_ - deltas;
+			xp_ -= deltas;
 
 			std::cout<<"xp= \n"<<xp_<<std::endl;
-
-			//  break if converged. todo dtrimarchi: this condition seems way too simple!
-			if( deltas.norm()<1e-6 )
-				break;
 
 		}
 

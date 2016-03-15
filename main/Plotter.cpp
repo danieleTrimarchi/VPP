@@ -163,6 +163,21 @@ double Plotter::max(std::vector<double>& vec) {
 	return val;
 }
 
+// Plot the points of some given arrays
+void Plotter::plot( std::vector<double>& y, string title) {
+
+	// generate a VectorXd 'x' with default abscissas
+	Eigen::ArrayXd xtemp(y.size());
+	Eigen::ArrayXd ytemp(y.size());
+	for(size_t i=0; i<y.size(); i++){
+		xtemp(i)=i;
+		ytemp(i)=y[i];
+	}
+
+	// Call the std plot method
+	plot(xtemp,ytemp,title);
+}
+
 // Produce a 2d plot from Eigen vectors
 void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y,string title) {
 

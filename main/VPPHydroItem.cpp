@@ -92,7 +92,6 @@ InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 
 // Destructor
 InducedResistanceItem::~InducedResistanceItem() {
-		std::cout<<"Destructor of InducedResistanceItem"<<std::endl;
 }
 
 // Implement pure virtual method of the parent class
@@ -293,6 +292,12 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
 
+	// limit the values to positive angles
+	if(toRad(PHI_)<0.1) {
+		res_=0.;
+		return;
+	}
+
 	// Compute the residuary resistance for the current froude number
 	// RrhH = RrhH20 .* 6 .* ( toRad(phi) ).^1.7;
 	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( toRad(PHI_),1.7) ;
@@ -361,7 +366,6 @@ ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pPa
 
 // Destructor
 ResiduaryResistanceKeelItem::~ResiduaryResistanceKeelItem() {
-    std::cout<<"Destructor of the ResiduaryResistanceKeelItem"<<endl;
 }
 
 // Implement pure virtual method of the parent class
@@ -469,6 +473,12 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
+
+	// Limit the computations to positive values
+	if(V_<0.1) {
+		res_=0.;
+		return;
+	}
 
 	// Compute the Reynolds number
 	// Rn = geom.LWL .* 0.7 .* V ./ phys.ni_w;
@@ -587,6 +597,12 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
 
+	// Limit the computations to positive values
+	if(V_<0.1) {
+		res_=0.;
+		return;
+	}
+
 	// Compute the Reynolds number
 	// Rn = geom.LWL .* 0.7 .* V ./ phys.ni_w;
 	double rN = rN0_ * V_;
@@ -640,6 +656,12 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
+
+	// Limit the computations to positive values
+	if(V_<0.1) {
+		res_=0.;
+		return;
+	}
 
 	// Define the Reynolds number using the mean chord length of the keel,
 	// this is a value provided by the user. The viscous resistance is
@@ -710,6 +732,12 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
+
+	// Limit the computations to positive values
+	if(V_<0.1) {
+		res_=0.;
+		return;
+	}
 
 	// Define the Reynolds number using the mean chord length of the rudder,
 	// this is a value provided by the user. The viscous resistance is
