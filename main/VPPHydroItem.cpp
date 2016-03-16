@@ -475,7 +475,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<0.1) {
+	if(V_<0.01) {
 		res_=0.;
 		return;
 	}
@@ -517,8 +517,6 @@ void FrictionalResistanceItem::plot() {
 
 		// Update the item
 		update(0,0);
-
-		std::cout<<"   "<<"  Fn_="<<fN_<<"  res_="<<res_<<std::endl;
 
 		// Fill the vectors to be plot
 		x[i]= fN_;
@@ -598,7 +596,7 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<0.1) {
+	if(V_<0.01) {
 		res_=0.;
 		return;
 	}
@@ -658,7 +656,7 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<0.1) {
+	if(V_<0.01) {
 		res_=0.;
 		return;
 	}
@@ -734,7 +732,7 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<0.1) {
+	if(V_<0.01) {
 		res_=0.;
 		return;
 	}

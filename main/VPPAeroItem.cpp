@@ -77,7 +77,7 @@ void WindItem::update(int vTW, int aTW) {
 
 	// Update the apparent wind angle - todo dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
-	awa_= toDeg( atan( awv_(1)/awv_(0) ) );
+	awa_= toDeg( atan2( awv_(1),awv_(0) ) );
 	if(isnan(awa_))	throw VPPException(HERE,"awa_ is NAN!");
 
 }
@@ -242,7 +242,7 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 void SailCoefficientItem::postUpdate() {
 
 	// Reduce cl with the flattening factor of the state vector
-	cl_ = cl_ * f_;
+	// TORESTORE cl_ = cl_ * f_;
 	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
 
 	// Compute the induced resistance
@@ -557,7 +557,6 @@ AeroForcesItem::AeroForcesItem(SailCoefficientItem* sailCoeffItem) :
 						lift_(0),
 						drag_(0),
 						fDrive_(0),
-						fHeel_(0),
 						fSide_(0),
 						mHeel_(0) {
 	// do nothing
@@ -580,14 +579,16 @@ void AeroForcesItem::update(int vTW, int aTW) {
 
 
 	// Updates Lift = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cl;
-	lift_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * pSailCoeffs_->getCl();
+	// Note that the nominal area AN was scaled with cos( PHI ) and it
+	// takes the meaning of a projected surface
+	lift_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * cos( toRad(PHI_) ) * pSailCoeffs_->getCl();
 	if(isnan(lift_)) throw VPPException(HERE,"lift_ is NAN!");
 
-
 	// Updates Drag = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cd;
-	drag_ = 0.5 * rho_a * awv * awv * pSailSet_->get("AN") * pSailCoeffs_->getCd();
+	// Note that the nominal area AN was scaled with cos( PHI ) and it
+	// takes the meaning of a projected surface
+	drag_ = 0.5 * rho_a * awv * awv * pSailSet_->get("AN") * cos( toRad(PHI_) ) * pSailCoeffs_->getCd();
 	if(isnan(drag_)) throw VPPException(HERE,"drag_ is NAN!");
-
 
 	// Updates Fdrive = lift_ * sin(alfa_eff) - D * cos(alfa_eff);
 	fDrive_ = lift_ * sin( toRad(awa) ) - drag_ * cos( toRad(awa) );
@@ -597,13 +598,9 @@ void AeroForcesItem::update(int vTW, int aTW) {
 	fSide_ = lift_ * cos( toRad(awa) ) + drag_ * sin( toRad(awa) );
 	if(isnan(fSide_)) throw VPPException(HERE,"fSide_ is NAN!");
 
-	// Updates Fside_ = Fheel*cos(phi*pi/180). Note PHI_ is in degrees
-	fHeel_ = fSide_ * cos( toRad(PHI_) );
-	if(isnan(fHeel_)) throw VPPException(HERE,"fHeel_ is NAN!");
-
 	// The righting moment arm is set as the distance between the center of sail effort and
-	// the hydrodynamic center
-	mHeel_ = fHeel_ * ( 0.45 * pParser_->get("T") + pParser_->get("AVGFREB") + pSailSet_->get("ZCE") );
+	// the hydrodynamic center, scaled with cos(PHI)
+	mHeel_ = fSide_ * ( 0.45 * pParser_->get("T") + pParser_->get("AVGFREB") + pSailSet_->get("ZCE") ) * cos( toRad(PHI_) );
 	if(isnan(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
 
 }
