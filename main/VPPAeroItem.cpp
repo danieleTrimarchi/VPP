@@ -262,8 +262,6 @@ WindItem* SailCoefficientItem::getWindItem() const {
 
 void SailCoefficientItem::computeForMain() {
 
-	Eigen::ArrayXd x, y;
-
 	// Interpolate the values of the sail coefficients for the MainSail
 	allCl_(0) = interpClVec_[0]->interpolate(awa_);
 	allCd_(0) = interpCdVec_[0]->interpolate(awa_);
@@ -272,8 +270,6 @@ void SailCoefficientItem::computeForMain() {
 
 void SailCoefficientItem::computeForJib() {
 
-	Eigen::ArrayXd x, y;
-
 	// Interpolate the values of the sail coefficients for the Jib
 	allCl_(1) = interpClVec_[1]->interpolate(awa_);
 	allCd_(1) = interpCdVec_[1]->interpolate(awa_);
@@ -281,8 +277,6 @@ void SailCoefficientItem::computeForJib() {
 }
 
 void SailCoefficientItem::computeForSpi() {
-
-	Eigen::ArrayXd x, y;
 
 	// Interpolate the values of the sail coefficients for the Spi
 	allCl_(1) = interpClVec_[2]->interpolate(awa_);
@@ -587,14 +581,14 @@ void AeroForcesItem::update(int vTW, int aTW) {
 	// Updates Drag = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cd;
 	// Note that the nominal area AN was scaled with cos( PHI ) and it
 	// takes the meaning of a projected surface
-	drag_ = 0.5 * rho_a * awv * awv * pSailSet_->get("AN") * cos( toRad(PHI_) ) * pSailCoeffs_->getCd();
+	drag_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * cos( toRad(PHI_) ) * pSailCoeffs_->getCd();
 	if(isnan(drag_)) throw VPPException(HERE,"drag_ is NAN!");
 
 	// Updates Fdrive = lift_ * sin(alfa_eff) - D * cos(alfa_eff);
 	fDrive_ = lift_ * sin( toRad(awa) ) - drag_ * cos( toRad(awa) );
 	if(isnan(fDrive_)) throw VPPException(HERE,"fDrive_ is NAN!");
 
-	// Updates Fheel = L * cos(alfa_eff) + D * sin(alfa_eff);
+	// Updates FSide = L * cos(alfa_eff) + D * sin(alfa_eff);
 	fSide_ = lift_ * cos( toRad(awa) ) + drag_ * sin( toRad(awa) );
 	if(isnan(fSide_)) throw VPPException(HERE,"fSide_ is NAN!");
 

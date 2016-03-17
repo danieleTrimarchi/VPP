@@ -34,7 +34,7 @@ c2_(0) {
 	// For the definition of the Frictional Resistance see Keuning 2.1 p108
 	pFrictionalResistanceItem_.reset(new FrictionalResistanceItem(pParser_,pSailSet));
 	vppHydroItems_.push_back( pFrictionalResistanceItem_ );
-
+//
 //	// Instantiate a ResiduaryResistanceItem and push it back to the children vector
 //	// For the definition of the Residuary Resistance: see Keuning 3.1.1.2 p112
 //	pResiduaryResistanceItem_.reset(new ResiduaryResistanceItem(pParser_,pSailSet));

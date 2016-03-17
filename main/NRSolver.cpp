@@ -12,7 +12,7 @@ NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 //dimension_(4),
 dimension_(2),
 tol_(1.e-6),
-maxIters_(25){
+maxIters_(100){
 
 	// Resize the result container
 	xp_.resize(dimension_);
@@ -93,28 +93,28 @@ void NRSolver::resetInitialGuess(int TWV, int TWA) {
 
 	}
 
-	//	else if( TWV>1 ) {
+	//		else if( TWV>1 ) {
 	//
-	//		// For twv> 1 we can linearly predict the result of the state vector
-	//		Extrapolator extrapolator(
-	//				pResults_->get(TWV-2,TWA).getTWV(),
-	//				pResults_->get(TWV-2,TWA).getX(),
-	//				pResults_->get(TWV-1,TWA).getTWV(),
-	//				pResults_->get(TWV-1,TWA).getX()
-	//		);
+	//			// For twv> 1 we can linearly predict the result of the state vector
+	//			Extrapolator extrapolator(
+	//					pResults_->get(TWV-2,TWA).getTWV(),
+	//					pResults_->get(TWV-2,TWA).getX(),
+	//					pResults_->get(TWV-1,TWA).getTWV(),
+	//					pResults_->get(TWV-1,TWA).getX()
+	//			);
 	//
-	//		// Extrapolate the state vector for the current wind
-	//		// velocity. Note that the items have not been init yet
-	//		xp_= extrapolator.get( pWind_->getTWV(TWV) );
-	//	}
+	//			// Extrapolate the state vector for the current wind
+	//			// velocity. Note that the items have not been init yet
+	//			xp_= extrapolator.get( pWind_->getTWV(TWV) );
+	//		}
 	//
-	//	// Make sure the initial guess does not exceeds the bounds
-	//	for(size_t i=0; i<dimension_; i++) {
-	//		if(xp_(i)<lowerBounds_[i])
-	//			xp_(i)=lowerBounds_[i];
-	//		if(xp_(i)>upperBounds_[i])
-	//			xp_(i)=upperBounds_[i];
-	//	}
+	//		// Make sure the initial guess does not exceeds the bounds
+	//		for(size_t i=0; i<dimension_; i++) {
+	//			if(xp_(i)<lowerBounds_[i])
+	//				xp_(i)=lowerBounds_[i];
+	//			if(xp_(i)>upperBounds_[i])
+	//				xp_(i)=upperBounds_[i];
+	//		}
 
 }
 
@@ -132,6 +132,7 @@ void NRSolver::run(int twv, int twa) {
 
 	try{
 		// Launch the optimization; negative retVal implies failure
+		std::cout<<"------------------------------------------\n";
 		std::cout<<"Entering the NRSolver with initial guess: "<<
 				xp_[0]<<" "<<xp_[1]<<"\n";
 		// TORESTORE
@@ -165,8 +166,10 @@ void NRSolver::run(int twv, int twa) {
 			Eigen::VectorXd residuals= vppItemsContainer_->getResiduals(twv,twa,xp_);
 
 			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.transpose()<<std::endl;
-			velocityResiduals.push_back( residuals(0) );
-			PhiResiduals.push_back(residuals(1));
+			if(it>1) {
+				velocityResiduals.push_back( residuals(0) );
+				PhiResiduals.push_back(residuals(1));
+			}
 			//			c1Residuals.push_back(residuals(2));
 			//			c2Residuals.push_back(residuals(3));
 
@@ -193,10 +196,10 @@ void NRSolver::run(int twv, int twa) {
 			for(size_t iVar=0; iVar<xp_.rows(); iVar++) {
 
 				// Compute the optimum eps for this variable
-				double eps= xp_(iVar) * std::sqrt( std::numeric_limits<double>::epsilon() );
+				double eps= xp_(iVar) * 10 * std::sqrt( std::numeric_limits<double>::epsilon() );
 
-                // Init a buffer of the state vector xp_
-                Eigen::VectorXd xp(xp_);
+				// Init a buffer of the state vector xp_
+				Eigen::VectorXd xp(xp_);
 
 				// set x= x + eps
 				xp(iVar) = xp_(iVar) + eps;
@@ -213,7 +216,6 @@ void NRSolver::run(int twv, int twa) {
 				// update the items and compute the residuals for x_minus_epsilon
 				Eigen::VectorXd f_xMin( vppItemsContainer_->getResiduals(twv,twa,xp) );
 
-
 				// compile the ith column of the Jacobian matrix
 				J.col(iVar) -= f_xMin;
 
@@ -223,14 +225,17 @@ void NRSolver::run(int twv, int twa) {
 			}
 
 			std::cout<<"J=\n"<<J<<std::endl;
-
 			// A * x = residuals --  J * deltas = residuals
 			// where deltas are also equal to f(x_i) / f'(x_i)
 			VectorXd deltas = J.colPivHouseholderQr().solve(residuals);
 
+			// Test the solution :
+			std::cout<<"Test the solution: "<<(J*deltas-residuals).transpose()<<std::endl;
+
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
 			xp_ -= deltas;
+			std::cout<<"deltas= "<<deltas.transpose()<<" - xp_= "<<xp_.transpose()<<std::endl;
 
 		}
 
