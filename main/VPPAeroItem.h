@@ -58,7 +58,7 @@ class WindItem : public VPPItem {
 		double twv_;
 
 		/// True and apparent wind angles (wrt the boat's longitudinal axis)
-		/// Expressed in degrees
+		/// Expressed in radians
 		double twa_, awa_;
 
 		double v_tw_min_, v_tw_max_, n_twv_;

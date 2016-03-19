@@ -393,7 +393,7 @@ void PolarPlotter::append(string curveLabel, Eigen::ArrayXd& alpha, Eigen::Array
 	if(alpha.size() != vals.size())
 		throw VPPException(HERE, "In PolarPlotter, the size of the arrays does not match");
 
-	// push back the angles
+	// push back the angles expressed in deg
 	alphas_.push_back(alpha);
 
 	// push back the values

@@ -192,7 +192,7 @@ double fDrive(double V, double phi, boost::shared_ptr<SailSet>& pSails){
 	double wv=6;
 
 	// Fdrive = pho S (V^2 + vw^2) cos(phi)
-	double fDrive= ( V*V + wv*wv ) * cos(mathUtils::toRad(phi) );
+	double fDrive= ( V*V + wv*wv ) * cos(phi);
 	if(isnan(fDrive))
 		throw VPPException(HERE,"fDrive is NAN!");
 
@@ -222,7 +222,7 @@ double R(double V, VariableFileParser& parser){
 
 double Mw(double fDrive, double phi, boost::shared_ptr<SailSet>& pSails) {
 
-	double mw= fDrive * pSails->get("ZCE") * cos(mathUtils::toRad(phi));
+	double mw= fDrive * pSails->get("ZCE") * cos(phi);
 	if(isnan(mw))
 		throw VPPException(HERE,"mw is NAN!");
 
@@ -235,7 +235,7 @@ double Rm(double phi, VariableFileParser& parser) {
 	double rm= Physic::rho_w * Physic::g *
 			(parser.get("KM") - parser.get("KG")) *
 			(parser.get("DIVCAN") + parser.get("DVK")) *
-			std::sin( mathUtils::toRad(phi)) ;
+			std::sin( phi ) ;
 	if(isnan(rm))
 		throw VPPException(HERE,"rm is NAN!");
 
@@ -349,7 +349,7 @@ void testFakeVPP(	boost::shared_ptr<SailSet>& pSails,
 	size_t dimension=2;
 	// Select a starting point
 	Eigen::VectorXd x(dimension);
-	x << 1.5, 10;
+	x << 1.5, mathUtils::toRad(10);
 
 	solve( pSails, parser, x);
 

@@ -3,6 +3,9 @@
 #include "Interpolator.h"
 #include <fstream>
 #include <Eigen/Dense>
+#include "mathUtils.h"
+
+using namespace mathUtils;
 
 //// NRSolver class  //////////////////////////////////////////////
 
@@ -120,7 +123,7 @@ void NRSolver::resetInitialGuess(int TWV, int TWA) {
 
 void NRSolver::run(int twv, int twa) {
 
-	std::cout<<"    "<<pWind_->getTWV(twv)<<"    "<<pWind_->getTWA(twa)<<std::endl;
+	std::cout<<"    "<<pWind_->getTWV(twv)<<"    "<<toDeg( pWind_->getTWA(twa) )<<std::endl;
 
 	// For each wind velocity, reset the initial guess for the
 	// state variable vector to zero
@@ -168,7 +171,7 @@ void NRSolver::run(int twv, int twa) {
 			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.transpose()<<std::endl;
 			if(it>1) {
 				velocityResiduals.push_back( residuals(0) );
-				PhiResiduals.push_back(residuals(1));
+				PhiResiduals.push_back(residuals(1) );
 			}
 			//			c1Residuals.push_back(residuals(2));
 			//			c2Residuals.push_back(residuals(3));
@@ -229,13 +232,10 @@ void NRSolver::run(int twv, int twa) {
 			// where deltas are also equal to f(x_i) / f'(x_i)
 			VectorXd deltas = J.colPivHouseholderQr().solve(residuals);
 
-			// Test the solution :
-			std::cout<<"Test the solution: "<<(J*deltas-residuals).transpose()<<std::endl;
-
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
 			xp_ -= deltas;
-			std::cout<<"deltas= "<<deltas.transpose()<<" - xp_= "<<xp_.transpose()<<std::endl;
+			std::cout<<"xp= "<<xp_.transpose()<<std::endl;
 
 		}
 
@@ -306,14 +306,14 @@ void NRSolver::plotPolars() {
 		// Loop on the wind angles
 		for(size_t iWa=0; iWa<pResults_->windAngleSize(); iWa++) {
 
-			// fill the list of wind angles
-			windAngles(iWa) = pResults_->get(iWv,iWa).getTWA();
+			// fill the list of wind angles in degrees
+			windAngles(iWa) = mathUtils::toDeg( pResults_->get(iWv,iWa).getTWA() );
 
 			// fill the list of boat speeds to an ArrayXd
 			boatVelocity(iWa) = pResults_->get(iWv,iWa).getX()->coeff(0);
 
 			// fill the list of boat heel to an ArrayXd
-			boatHeel(iWa) = pResults_->get(iWv,iWa).getX()->coeff(1);
+			boatHeel(iWa) = mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) );
 
 			// TORESTORE
 			//			// fill the list of Crew B to an ArrayXd
@@ -363,7 +363,8 @@ void NRSolver::plotXY(size_t iWa) {
 
 		windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
 		boatVelocity(iWv)= pResults_->get(iWv,iWa).getX()->coeff(0);
-		boatHeel(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(1);
+		// Convert the heel results to degrees
+		boatHeel(iWv)    = mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) );
 		// TORESTORE
 		//		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
 		//		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(3);
@@ -373,7 +374,7 @@ void NRSolver::plotXY(size_t iWa) {
 	}
 
 	char title[256];
-	sprintf(title,"AWA= %4.2f", pWind_->getTWA(iWa) );
+	sprintf(title,"AWA= %4.2f", mathUtils::toDeg( pWind_->getTWA(iWa) ) );
 
 	// Instantiate a plotter for the velocity
 	Plotter plotter;

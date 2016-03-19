@@ -50,7 +50,7 @@ class VPPItem {
 		/// Velocity value in the state vector
 		double V_;
 
-		/// Heeling angle value in the state vector in degrees
+		/// Heeling angle value in the state vector in RADIANS
 		double PHI_;
 
 		/// b value in the sate vector (reef..?)

@@ -2,6 +2,9 @@
 #include "VPPException.h"
 #include "Interpolator.h"
 #include <fstream>
+#include "mathUtils.h"
+
+using namespace mathUtils;
 
 // Init static member
 boost::shared_ptr<VPPItemFactory> Optimizer::vppItemsContainer_;
@@ -181,7 +184,7 @@ void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const doub
 
 void Optimizer::run(int TWV, int TWA) {
 
-	std::cout<<"    "<<pWind_->getTWV(TWV)<<"    "<<pWind_->getTWA(TWA)<<std::endl;
+	std::cout<<"    "<<pWind_->getTWV(TWV)<<"    "<<toDeg(pWind_->getTWA(TWA))<<std::endl;
 
 	// Drive the loop info to the struct
 	Loop_data loopData={TWV,TWA};
@@ -350,7 +353,7 @@ void Optimizer::plotXY(size_t iWa) {
 	}
 
 	char title[256];
-	sprintf(title,"AWA= %4.2f", pWind_->getTWA(iWa) );
+	sprintf(title,"AWA= %4.2f", toDeg(pWind_->getTWA(iWa)) );
 
 	// Instantiate a plotter for the velocity
 	Plotter plotter;

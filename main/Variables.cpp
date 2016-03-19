@@ -1,5 +1,6 @@
 #include "Variables.h"
 #include "VPPException.h"
+#include "utility"
 
 // Implicit copy constructor used to cast a variable to its name
 Variable::Variable(const string& varName, const double& val)
@@ -7,6 +8,22 @@ Variable::Variable(const string& varName, const double& val)
 	val_(val) {
 	// make nothing
 }
+
+// Assignment operator
+Variable& Variable::operator = ( const Variable rhs ) {
+	varName_= rhs.varName_;
+	val_= rhs.val_;
+
+	return *this;
+}
+
+/// Assignment operator
+Variable& Variable::operator = ( const double val ) {
+	val_= val;
+
+	return *this;
+}
+
 
 // Overload operator < to compare in set
 bool Variable::operator < (const Variable& rhs) const {

@@ -1,5 +1,8 @@
 #include "Results.h"
 #include "VPPException.h"
+#include "mathUtils.h"
+
+using namespace mathUtils;
 
 ///////// Result Class ///////////////////////////////
 
@@ -60,11 +63,14 @@ Result::~Result(){
 
 // PrintOut the values stored in this result
 void Result::print() {
+
 	printf("%4.2f  %4.2f  -- ", twv_,twa_);
 	for(size_t iRes=0; iRes<result_.size(); iRes++)
 		printf("  %4.2e",result_[iRes]);
-	printf("  --  %4.2e  %4.2e  %4.2e  %4.2e",
-			residuals_(0),residuals_(1),residuals_(2),residuals_(3));
+	printf("  --  ");
+	for(size_t i=0; i<residuals_.size(); i++)
+		printf("  %4.2e", residuals_(i) );
+
 	std::cout<<"\n";
 }
 

@@ -3,6 +3,7 @@
 #include <cmath>
 #include "Warning.h"
 #include "VPPException.h"
+#include "mathUtils.h"
 
 // Constructor
 VariableFileParser::VariableFileParser(std::string fileName) :
@@ -181,6 +182,13 @@ void VariableFileParser::check() {
 
 	if(variables_["V_TW_MAX"] <= variables_["V_TW_MIN"] )
 		throw VPPException(HERE,"V_TW_MIN is larger than V_TW_MAX!");
+
+	if(variables_["ALPHA_TW_MAX"] <= variables_["ALPHA_TW_MIN"] )
+		throw VPPException(HERE,"ALPHA_TW_MIN is larger than ALPHA_TW_MAX!");
+
+	// Convert the angles from DEG to RAD
+	variables_["ALPHA_TW_MIN"] = 30; //mathUtils::toRad( variables_["ALPHA_TW_MIN"] );
+	variables_["ALPHA_TW_MAX"] = 30; //mathUtils::toRad( variables_["ALPHA_TW_MAX"] );
 
 }
 

@@ -67,8 +67,10 @@ InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 							1.545,	-1.5622,
 							1.4744,	-1.3499;
 
+	// Declare the angular value array and convert to RAD
 	phiD_.resize(4);
 	phiD_ << 0, 10, 20, 30;
+	phiD_ *= ( M_PI / 180.0);
 
 	// Draft of the canoe body
 	double tCan = pParser_->get("TCAN");
@@ -126,7 +128,7 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	//interpolator.plot(0,30,30,"Effective Span","PHI [deg]","Te");
 
 	// Get the aerodynamic side force. See DSYHS99 p 129
-	double fHeel= pAeroForcesItem_->getFSide() / cos(toRad(PHI_));
+	double fHeel= pAeroForcesItem_->getFSide() / cos(PHI_);
 
 	// Compute the induced resistance Ri = Fheel^2 / (0.5 * pi * rho_w * Te^2 * V^2)
 	res_ = fHeel * fHeel / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
@@ -293,14 +295,14 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// limit the values to positive angles
-	if(toRad(PHI_)<0.1) {
+	if(PHI_<0.1) {
 		res_=0.;
 		return;
 	}
 
 	// Compute the residuary resistance for the current froude number
-	// RrhH = RrhH20 .* 6 .* ( toRad(phi) ).^1.7;
-	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( toRad(PHI_),1.7) ;
+	// RrhH = RrhH20 .* 6 .* ( phi ).^1.7;
+	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( PHI_,1.7) ;
 	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
@@ -440,7 +442,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 
 	// Compute the resistance
 	// RrkH = (geom.DVK.*phys.rho_w.*phys.g.*Ch)*Fn.^2.*phi*pi/180;
-	res_= Ch_ * fN_ * fN_ * toRad(PHI_);
+	res_= Ch_ * fN_ * fN_ * PHI_;
 	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
@@ -571,9 +573,10 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 			std::pow( (pParser_->get("BWL") / pParser_->get("TCAN")),2),
 			pParser_->get("CMS");
 
-	// Values of the heel angle on which the coefficients
+	// Values of the heel angle on which the coefficients and convert to radians
 	Eigen::ArrayXd phiD(8);
 	phiD << 0, 5, 10, 15, 20, 25, 30, 35;
+	phiD *= ( M_PI / 180.0);
 
 	// Compute the coefficients for the current geometry
 	Eigen::ArrayXd SCphiDArr = pParser_->get("SC") *

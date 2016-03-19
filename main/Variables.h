@@ -19,6 +19,12 @@ class Variable {
 		/// Implicit copy constructor used to cast a variable to its name
 		Variable(const string& varName = "", const double& val = 0.);
 
+		/// Assignment operator
+		Variable& operator = ( const Variable rhs );
+
+		/// Assignment operator
+		Variable& operator = ( const double val );
+
 		/// Overload operator < to compare in set
 		bool operator < (const Variable& rhs) const;
 
