@@ -368,6 +368,79 @@ void Plotter::plot(	std::vector<double>& x0,
 
 //=====================================================================
 
+// Constructor
+VectorPlotter::VectorPlotter() {
+
+	// Specify the output device (aquaterm)
+	plsdev("aqt");
+
+	plinit();
+
+	// PLPLOT example 22
+	int i,j;
+	PLFLT dx,dy,x,y;
+	PLcGrid2 cgrid2;
+	PLFLT **u, **v;
+	const int nx=20;
+	const int ny=20;
+	PLFLT xmin,xmax,ymin,ymax;
+
+	dx = 1.0;
+	dy = 1.0;
+
+	xmin= -nx / 2 * dx;
+	xmax=  nx / 2 * dx;
+	ymin= -ny / 2 * dy;
+	ymax=  ny / 2 * dy;
+
+	plAlloc2dGrid( &cgrid2.xg, nx, ny );
+	plAlloc2dGrid( &cgrid2.yg, nx, ny );
+	plAlloc2dGrid( &u, nx, ny );
+	plAlloc2dGrid( &v, nx, ny );
+
+	cgrid2.nx= nx;
+	cgrid2.ny= ny;
+
+	for( i=0; i<nx; i++) {
+		x = ( i - nx / 2 + 0.5 ) * dx;
+		for( j=0; j<ny; j++) {
+
+			y=( j - ny / 2 + 0.5 ) * dy;
+			cgrid2.xg[i][j]= x;
+			cgrid2.yg[i][j]= y;
+			u[i][j]	=	 y;
+			v[i][j]	=	-x;
+		}
+	}
+
+	plenv(xmin,xmax,ymin,ymax,0,0);
+	pllab("x","y","vector plot");
+	plcol0(2);
+	plvect(
+			(const PLFLT* const *) u,
+			(const PLFLT* const *) v,
+			nx, ny, 0.0, pltr2,
+			(void*) &cgrid2 );
+
+	plcol0(1);
+
+	plFree2dGrid(cgrid2.xg,nx,ny);
+	plFree2dGrid(cgrid2.yg,nx,ny);
+	plFree2dGrid(u,nx,ny);
+	plFree2dGrid(v,nx,ny);
+
+	plend();
+
+}
+
+// Destructor
+VectorPlotter::~VectorPlotter() {
+	// make nothing
+}
+
+
+//=====================================================================
+
 PolarPlotter::PolarPlotter( string title ) :
 	title_(title),
 	minAlphaRange_(1E+20),
