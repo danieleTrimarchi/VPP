@@ -61,7 +61,7 @@ env.Program('VPP',
 		'SailSet.cpp', 'VPPItem.cpp', 'Interpolator.cpp',
 		'VPPItemFactory.cpp','VPPAeroItem.cpp','VPPHydroItem.cpp',
 		'VPPRightingMomentItem.cpp','VPPException.cpp', 'Results.cpp',
-		'NRSolver.cpp'],
+		'NRSolver.cpp','VPPJacobian.cpp'],
 		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,
 		LIBPATH=THIRD_PARTY_LIBPATH

@@ -33,8 +33,50 @@ enum color{
 	white
 };
 
+class PlotterBase {
+
+	public:
+
+		/// Constructor
+		PlotterBase();
+
+		/// Destructor
+		~PlotterBase();
+
+	protected:
+
+		/// Reset the ranges to very big values
+		void initRanges();
+
+		/// Reset the ranges to the ranges of a point set - version for Eigen
+		void resetRanges(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0);
+
+		/// Reset the ranges to the ranges of a point set - version for Eigen
+		void resetRanges(Eigen::MatrixXd& x0, Eigen::MatrixXd& y0);
+
+		/// Reset the ranges to the ranges of a point set -- version for vectors
+		void resetRanges(std::vector<double>& x0, std::vector<double>& y0);
+
+		/// Reset the ranges to the ranges of two point set -- version for Eigen
+		void resetRanges(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Eigen::ArrayXd& y1);
+
+		/// Reset the ranges to the ranges of two point set -- version for vectors
+		void resetRanges(std::vector<double>& x0,std::vector<double>& y0,std::vector<double>& x1,std::vector<double>& y1);
+
+		/// Find the min of the specified vector
+		double min(std::vector<double>&);
+
+		/// Find the max of the specified vector
+		double max(std::vector<double>&);
+
+		/// plot ranges
+		double minX_, minY_, maxX_, maxY_;
+
+};
+
+
 /// Wrapper class for ploPlot
-class Plotter {
+class Plotter : public PlotterBase {
 
 	public:
 
@@ -83,14 +125,9 @@ class Plotter {
 		/// Find the min of the specified c-style array
 		double min(double*);
 
-		/// Find the min of the specified vector
-		double min(std::vector<double>&);
 
 		/// Find the max of the specified c-style array
 		double max(double*);
-
-		/// Find the max of the specified vector
-		double max(std::vector<double>&);
 
 		/// Number of points the plot is made of
 		int nValues_;
@@ -106,29 +143,35 @@ class Plotter {
 		/// Copy the values into plplot compatible containers -- version for vectors
 		void setValues(std::vector<double>& x, std::vector<double>& y);
 
-		/// Reset the ranges to very big values
-		void initRanges();
-
-		/// Reset the ranges to the ranges of a point set - version for Eigen
-		void resetRanges(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0);
-
-		/// Reset the ranges to the ranges of a point set -- version for vectors
-		void resetRanges(std::vector<double>& x0, std::vector<double>& y0);
-
-		/// Reset the ranges to the ranges of two point set -- version for Eigen
-		void resetRanges(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Eigen::ArrayXd& y1);
-
-		/// Reset the ranges to the ranges of two point set -- version for vectors
-		void resetRanges(std::vector<double>& x0,std::vector<double>& y0,std::vector<double>& x1,std::vector<double>& y1);
-
-		/// plot ranges
-		double minX_, minY_, maxX_, maxY_;
-
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// Plotter class used to plot vectorFields
+//
+// Usage Example:
+//size_t nx=20, ny=1;
+//Eigen::MatrixXd x(nx,ny);
+//Eigen::MatrixXd y(nx,ny);
+//for(size_t i=0; i<nx; i++) {
+//	for(size_t j=0; j<ny; j++) {
+//		 x(i,j)=i;
+//		 y(i,j)=3;
+//	}
+//}
+//
+//Eigen::MatrixXd du(nx,ny), dv(nx,ny);
+//for(size_t i=0; i<nx; i++) {
+//	for(size_t j=0; j<ny; j++) {
+//		du(i,j) = .2;
+//		dv(i,j) = 0.0001 * i*i;
+//	}
+//}
+//
+//// instantiate a vectorPlotter and quit
+//VectorPlotter vecplot;
+//vecplot.plot(x,y,du,dv);
 
-class VectorPlotter{
+class VectorPlotter : public PlotterBase {
 
 	public:
 
@@ -138,6 +181,25 @@ class VectorPlotter{
 		/// Destructor
 		~VectorPlotter();
 
+		/// Vector plot for a grid of m points,
+		/// the coordinates of which are x,y
+		/// for each couple x,y the arrays du,dv
+		/// store the isoparametric coordinates
+		/// of the vector plot. Note that the magnitudes
+		/// are rescaled to unity
+		void plot(Eigen::MatrixXd& x,
+				Eigen::MatrixXd& y,
+				Eigen::MatrixXd& du,
+				Eigen::MatrixXd& dv,
+				string title="Plot",
+				string xLabel="x",
+				string yLabel="y"
+		);
+
+	private:
+
+		/// Number of points the underlying grid is made of
+		int nX_, nY_;
 
 };
 

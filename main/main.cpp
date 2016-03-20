@@ -364,9 +364,6 @@ int main(int argc, char** argv) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-		// instantiate a vectorPlotter and quit
-		VectorPlotter testplot;
-
 		// Instantiate a parser with the variables
 		VariableFileParser parser("variableFile.txt");
 
