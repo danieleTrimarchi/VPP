@@ -58,7 +58,6 @@
 		64BBD5E21C5B701400F14B38 /* SailSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SailSet.cpp; path = main/SailSet.cpp; sourceTree = "<group>"; };
 		64BBD5E31C5B701400F14B38 /* SailSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SailSet.h; path = main/SailSet.h; sourceTree = "<group>"; };
 		64BBD5E41C5B701400F14B38 /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SConscript; path = main/SConscript; sourceTree = "<group>"; };
-		64BBD5E51C5B701400F14B38 /* SConscript~ */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "SConscript~"; path = "main/SConscript~"; sourceTree = "<group>"; };
 		64BBD5E61C5B701400F14B38 /* Solver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Solver.cpp; path = main/Solver.cpp; sourceTree = "<group>"; };
 		64BBD5E71C5B701400F14B38 /* Solver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Solver.h; path = main/Solver.h; sourceTree = "<group>"; };
 		64BBD5E81C5B701400F14B38 /* Spline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Spline.h; path = main/Spline.h; sourceTree = "<group>"; };
@@ -81,7 +80,7 @@
 		64BBD5F91C5B701400F14B38 /* VPPRightingMomentItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPRightingMomentItem.h; path = main/VPPRightingMomentItem.h; sourceTree = "<group>"; };
 		64BBD5FA1C5B701400F14B38 /* Warning.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Warning.cpp; path = main/Warning.cpp; sourceTree = "<group>"; };
 		64BBD5FB1C5B701400F14B38 /* Warning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Warning.h; path = main/Warning.h; sourceTree = "<group>"; };
-		64BBD60B1C5B705000F14B38 /* libnlopt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnlopt.a; path = "../../third_party/nlopt-2.4.2/.libs/libnlopt.a"; sourceTree = "<group>"; };
+		64BBD60B1C5B705000F14B38 /* libnlopt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnlopt.a; path = "/Users/dtrimarchi/VPP/../third_party/nlopt-2.4.2/libs/libnlopt.a"; sourceTree = "<absolute>"; };
 		64BBD60D1C5B746A00F14B38 /* libplot.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libplot.a; path = /opt/local/lib/libplot.a; sourceTree = "<absolute>"; };
 		64BBD60F1C5B747D00F14B38 /* libplplot.13.1.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplot.13.1.2.dylib; path = /opt/local/lib/libplplot.13.1.2.dylib; sourceTree = "<absolute>"; };
 		64BBD6111C5B748000F14B38 /* libplplot.13.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplot.13.dylib; path = /opt/local/lib/libplplot.13.dylib; sourceTree = "<absolute>"; };
@@ -89,7 +88,7 @@
 		64BBD6151C5B748900F14B38 /* libplplotcxx.12.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.12.0.0.dylib; path = /opt/local/lib/libplplotcxx.12.0.0.dylib; sourceTree = "<absolute>"; };
 		64BBD6171C5B748C00F14B38 /* libplplotcxx.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.12.dylib; path = /opt/local/lib/libplplotcxx.12.dylib; sourceTree = "<absolute>"; };
 		64BBD6191C5B749000F14B38 /* libplplotcxx.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.dylib; path = /opt/local/lib/libplplotcxx.dylib; sourceTree = "<absolute>"; };
-		64BBD61B1C5B74B000F14B38 /* libumfpack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libumfpack.a; path = "../../third_party/SuiteSparse-4.4.6/UMFPACK/Lib/libumfpack.a"; sourceTree = "<group>"; };
+		64BBD61B1C5B74B000F14B38 /* libumfpack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libumfpack.a; path = ../third_party/SuiteSparse/UMFPACK/Lib/libumfpack.a; sourceTree = "<group>"; };
 		64D919501C59F7D70002F585 /* VPP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VPP; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -145,7 +144,6 @@
 				64BBD5E21C5B701400F14B38 /* SailSet.cpp */,
 				64BBD5E31C5B701400F14B38 /* SailSet.h */,
 				64BBD5E41C5B701400F14B38 /* SConscript */,
-				64BBD5E51C5B701400F14B38 /* SConscript~ */,
 				64BBD5E61C5B701400F14B38 /* Solver.cpp */,
 				64BBD5E71C5B701400F14B38 /* Solver.h */,
 				64BBD5E81C5B701400F14B38 /* Spline.h */,

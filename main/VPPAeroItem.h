@@ -58,8 +58,9 @@ class WindItem : public VPPItem {
 		/// Expressed in degrees
 		double twa_, awa_;
 
-		double v_tw_min_, v_tw_max_, n_twv_;
-		double alpha_tw_min_, alpha_tw_max_, n_alpha_tw_;
+		double v_tw_min_, v_tw_max_;
+		int n_twv_,n_alpha_tw_;
+		double alpha_tw_min_, alpha_tw_max_;
 
 		// Apparent wind velocity vector (x/y components)
 		Eigen::Vector2d awv_;

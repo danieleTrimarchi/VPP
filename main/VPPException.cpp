@@ -13,10 +13,10 @@ VPPException::VPPException(const char* inFile, int inLine, const char* inFunctio
 }
 
 // Destructor
-VPPException::~VPPException() {
+VPPException::~VPPException() throw() {
 
 }
 
-const char* VPPException::what() const {
+const char* VPPException::what() const throw() {
 	return msg.c_str();
 }
