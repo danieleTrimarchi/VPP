@@ -216,8 +216,8 @@ void Optimizer::run(int TWV, int TWA) {
 		std::cout<<"Entering the optimizer with: "<<
 				xp_(0)<<" "<<xp_(1)<<" "<<xp_(2)<<" "<<xp_(3)<<"\n";
 		// convert to standard vector
-		std::vector<double> xp(xp_.size());
-		for(size_t i=0; i<xp_.size(); i++)
+		std::vector<double> xp(xp_.rows());
+		for(size_t i=0; i<xp_.rows(); i++)
 			xp[i]=xp_(i);
 		result = opt_->optimize(xp, maxf);
 		//store the results back to the member state vector

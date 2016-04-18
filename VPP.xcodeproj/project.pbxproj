@@ -24,7 +24,6 @@
 		64BBD6081C5B701400F14B38 /* VPPItemFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5F61C5B701400F14B38 /* VPPItemFactory.cpp */; };
 		64BBD6091C5B701400F14B38 /* VPPRightingMomentItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5F81C5B701400F14B38 /* VPPRightingMomentItem.cpp */; };
 		64BBD60A1C5B701400F14B38 /* Warning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5FA1C5B701400F14B38 /* Warning.cpp */; };
-		64BBD60C1C5B705000F14B38 /* libnlopt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD60B1C5B705000F14B38 /* libnlopt.a */; };
 		64BBD60E1C5B746A00F14B38 /* libplot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD60D1C5B746A00F14B38 /* libplot.a */; };
 		64BBD6101C5B747D00F14B38 /* libplplot.13.1.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD60F1C5B747D00F14B38 /* libplplot.13.1.2.dylib */; };
 		64BBD6121C5B748000F14B38 /* libplplot.13.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD6111C5B748000F14B38 /* libplplot.13.dylib */; };
@@ -33,6 +32,9 @@
 		64BBD6181C5B748C00F14B38 /* libplplotcxx.12.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD6171C5B748C00F14B38 /* libplplotcxx.12.dylib */; };
 		64BBD61A1C5B749000F14B38 /* libplplotcxx.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD6191C5B749000F14B38 /* libplplotcxx.dylib */; };
 		64BBD61C1C5B74B000F14B38 /* libumfpack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD61B1C5B74B000F14B38 /* libumfpack.a */; };
+		B3855B1C1CC54316002F33AC /* libnlopt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD60B1C5B705000F14B38 /* libnlopt.a */; };
+		B3855B211CC544E4002F33AC /* SparseSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3855B1D1CC544E4002F33AC /* SparseSolver.cpp */; };
+		B3855B221CC544E4002F33AC /* VPPJacobian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3855B1F1CC544E4002F33AC /* VPPJacobian.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -94,8 +96,12 @@
 		64BBD6151C5B748900F14B38 /* libplplotcxx.12.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.12.0.0.dylib; path = /opt/local/lib/libplplotcxx.12.0.0.dylib; sourceTree = "<absolute>"; };
 		64BBD6171C5B748C00F14B38 /* libplplotcxx.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.12.dylib; path = /opt/local/lib/libplplotcxx.12.dylib; sourceTree = "<absolute>"; };
 		64BBD6191C5B749000F14B38 /* libplplotcxx.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.dylib; path = /opt/local/lib/libplplotcxx.dylib; sourceTree = "<absolute>"; };
-		64BBD61B1C5B74B000F14B38 /* libumfpack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libumfpack.a; path = ../third_party/SuiteSparse/UMFPACK/Lib/libumfpack.a; sourceTree = "<group>"; };
+		64BBD61B1C5B74B000F14B38 /* libumfpack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libumfpack.a; path = "../third_party/SuiteSparse-4.5.2/UMFPACK/Lib/libumfpack.a"; sourceTree = "<group>"; };
 		64D919501C59F7D70002F585 /* VPP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VPP; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3855B1D1CC544E4002F33AC /* SparseSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SparseSolver.cpp; path = main/SparseSolver.cpp; sourceTree = "<group>"; };
+		B3855B1E1CC544E4002F33AC /* SparseSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SparseSolver.h; path = main/SparseSolver.h; sourceTree = "<group>"; };
+		B3855B1F1CC544E4002F33AC /* VPPJacobian.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPJacobian.cpp; path = main/VPPJacobian.cpp; sourceTree = "<group>"; };
+		B3855B201CC544E4002F33AC /* VPPJacobian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPJacobian.h; path = main/VPPJacobian.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,9 +109,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3855B1C1CC54316002F33AC /* libnlopt.a in Frameworks */,
 				64BBD60E1C5B746A00F14B38 /* libplot.a in Frameworks */,
 				64BBD61C1C5B74B000F14B38 /* libumfpack.a in Frameworks */,
-				64BBD60C1C5B705000F14B38 /* libnlopt.a in Frameworks */,
 				64BBD6161C5B748900F14B38 /* libplplotcxx.12.0.0.dylib in Frameworks */,
 				64BBD6181C5B748C00F14B38 /* libplplotcxx.12.dylib in Frameworks */,
 				64BBD6121C5B748000F14B38 /* libplplot.13.dylib in Frameworks */,
@@ -137,6 +143,10 @@
 		64D919471C59F7D60002F585 = {
 			isa = PBXGroup;
 			children = (
+				B3855B1D1CC544E4002F33AC /* SparseSolver.cpp */,
+				B3855B1E1CC544E4002F33AC /* SparseSolver.h */,
+				B3855B1F1CC544E4002F33AC /* VPPJacobian.cpp */,
+				B3855B201CC544E4002F33AC /* VPPJacobian.h */,
 				64598B561C8E1D1C0038AC6C /* NRSolver.cpp */,
 				64598B571C8E1D1C0038AC6C /* NRSolver.h */,
 				64BBD61E1C5B76C900F14B38 /* Libs */,
@@ -244,6 +254,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3855B221CC544E4002F33AC /* VPPJacobian.cpp in Sources */,
 				64BBD6081C5B701400F14B38 /* VPPItemFactory.cpp in Sources */,
 				64BBD6091C5B701400F14B38 /* VPPRightingMomentItem.cpp in Sources */,
 				64BBD6011C5B701400F14B38 /* Solver.cpp in Sources */,
@@ -252,6 +263,7 @@
 				64BBD6061C5B701400F14B38 /* VPPHydroItem.cpp in Sources */,
 				64BBD5FD1C5B701400F14B38 /* main.cpp in Sources */,
 				64BBD5FC1C5B701400F14B38 /* Interpolator.cpp in Sources */,
+				B3855B211CC544E4002F33AC /* SparseSolver.cpp in Sources */,
 				64BBD5FF1C5B701400F14B38 /* Plotter.cpp in Sources */,
 				64598B581C8E1D1C0038AC6C /* NRSolver.cpp in Sources */,
 				64BBD6051C5B701400F14B38 /* VPPException.cpp in Sources */,
@@ -291,8 +303,8 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"/Users/daniele/third_party/nlopt-2.4.2/api",
-					"/Users/daniele/third_party/nlopt-2.4.2",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2/api",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -309,35 +321,33 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/AMD/Include",
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config",
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Include",
-					"/Users/daniele/third_party/eigen-3.2.7",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Include",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Include",
+					"/Users/dtrimarchi/third_party/eigen-3.2.7",
 					/opt/local/include/plplot,
 					/opt/local/share/plplot5.11.1/examples/c,
 					"/opt/local/share/plplot5.11.1/examples/c++",
-					/Users/daniele/third_party/boost_1_59_0,
-					"/Users/daniele/third_party/nlopt-2.4.2/api",
-					"/Users/daniele/third_party/nlopt-2.4.2",
+					/Users/dtrimarchi/third_party/boost_1_60_0,
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2/api",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2",
 					/opt/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/AMD/Lib",
 					/opt/local/lib,
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Lib",
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/COLAMD/Lib",
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config",
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/CHOLMOD/Lib",
-					/Users/daniele/third_party/GotoBLAS2,
-					"/Users/daniele/third_party/nlopt-2.4.2",
-					"/Users/daniele/third_party/nlopt-2.4.2/api",
-					"/Users/daniele/third_party/nlopt-2.4.2/.libs",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2/api",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2/.libs",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "/Users/daniele/third_party/nlopt-2.4.2/api /Users/daniele/third_party/nlopt-2.4.2";
+				USER_HEADER_SEARCH_PATHS = "/Users/dtrimarchi/third_party/nlopt-2.4.2/api /Users/dtrimarchi/third_party/nlopt-2.4.2";
 			};
 			name = Debug;
 		};
@@ -365,8 +375,8 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"/Users/daniele/third_party/nlopt-2.4.2/api",
-					"/Users/daniele/third_party/nlopt-2.4.2",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2/api",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -377,34 +387,32 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/AMD/Include",
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config",
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Include",
-					"/Users/daniele/third_party/eigen-3.2.7",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Include",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Include",
+					"/Users/dtrimarchi/third_party/eigen-3.2.7",
 					/opt/local/include/plplot,
 					/opt/local/share/plplot5.11.1/examples/c,
 					"/opt/local/share/plplot5.11.1/examples/c++",
-					/Users/daniele/third_party/boost_1_59_0,
-					"/Users/daniele/third_party/nlopt-2.4.2/api",
-					"/Users/daniele/third_party/nlopt-2.4.2",
+					/Users/dtrimarchi/third_party/boost_1_60_0,
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2/api",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2",
 					/opt/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/AMD/Lib",
 					/opt/local/lib,
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/UMFPACK/Lib",
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/COLAMD/Lib",
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/SuiteSparse_config",
-					"/Users/daniele/third_party/SuiteSparse-4.4.6/CHOLMOD/Lib",
-					/Users/daniele/third_party/GotoBLAS2,
-					"/Users/daniele/third_party/nlopt-2.4.2",
-					"/Users/daniele/third_party/nlopt-2.4.2/api",
-					"/Users/daniele/third_party/nlopt-2.4.2/.libs",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2/api",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2/.libs",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "/Users/daniele/third_party/nlopt-2.4.2/api /Users/daniele/third_party/nlopt-2.4.2";
+				USER_HEADER_SEARCH_PATHS = "/Users/dtrimarchi/third_party/nlopt-2.4.2/api /Users/dtrimarchi/third_party/nlopt-2.4.2";
 			};
 			name = Release;
 		};
@@ -414,6 +422,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/lib,
+					"$(PROJECT_DIR)/../third_party/nlopt-2.4.2/libs",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -425,6 +434,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/lib,
+					"$(PROJECT_DIR)/../third_party/nlopt-2.4.2/libs",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
