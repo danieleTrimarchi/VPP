@@ -64,7 +64,7 @@ namespace
 				// access operator
 				double & operator () (int i, int j);            // write
 				double   operator () (int i, int j) const;      // read
-				// we can store an additional diogonal (in m_lower)
+				// we can store an additional diagonal (in m_lower)
 				double& saved_diag(int i);
 				double  saved_diag(int i) const;
 				void lu_decompose();

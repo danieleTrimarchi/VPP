@@ -56,7 +56,7 @@ WindItem::~WindItem() {
 /// Update the items for the current step (wind velocity and angle)
 void WindItem::update(int vTW, int aTW) {
 
-	// todo dtrimarchi : it this method is called n times by the optimizer, so it is
+	// TODO dtrimarchi : it this method is called n times by the optimizer, so it is
 	// stupid to re-compute twv_ e twa_ at each time! But it is the only place where I
 	// can update.
 
@@ -76,7 +76,7 @@ void WindItem::update(int vTW, int aTW) {
 	awv_(1)= twv_ * sin( twa_ );
 	if(isnan(awv_(1))) throw VPPException(HERE,"awv_(1) is NAN!");
 
-	// Update the apparent wind angle - todo dtrimarchi: why do I need to
+	// Update the apparent wind angle - TODO dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
 	awa_= atan2( awv_(1),awv_(0) );
 	if(isnan(awa_))	throw VPPException(HERE,"awa_ is NAN!");
@@ -226,7 +226,7 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 
 	// Update the Aspect Ratio
 	double h;
-	if(awa_ < 45)  // todo dtrimarchi: verify that awa is in deg... Which I doubt!
+	if(awa_ < 45)  // TODO dtrimarchi: verify that awa is in deg... Which I doubt!
 		// h = mast height above deck + Average freeboard
 		h= p->get("EHM") + p->get("AVGFREB");
 	else
@@ -361,7 +361,7 @@ void MainOnlySailCoefficientItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of MainOnlySailCoefficientItem "<<std::endl;
 }
 
-void MainOnlySailCoefficientItem::plotInterpolatedCoefficients() const{
+void MainOnlySailCoefficientItem::plotInterpolatedCoefficients() const {
 
 	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
 	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
