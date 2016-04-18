@@ -1,12 +1,4 @@
-- Recover how to send the .o files to some separate hierarchy
-
-- Resolve the exception problem in ~VPPException, possibly this is a comp flag for CPP11
-
-
 - Why inclusions are not working for eclipse?
-
-- latex, pdfLAtex, texEdit
 
 - use cppunit to make a test suite in main/test -> see howto in MEMSp
 
-- download and install Doxygen

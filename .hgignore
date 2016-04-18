@@ -6,6 +6,9 @@ syntax: glob
 .pydevproject
 .sconsign.dblite
 .DS_Store
+build/*
+EclipseWorkSpace/*
+*.settings*
 *.xcworkspacedata
 *.xcuserstate
 *.xcbkptlist
