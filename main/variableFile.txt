@@ -14,8 +14,12 @@ F_MIN	0.4		% ???
 F_MAX	1		% ???
 
 %%%% WIND CONFIGURATION
-V_TW	2.57 5.14 7.71 	% ???
-ALPHA_TW	28 2 180 	% ???
+V_TW_MIN		2.57
+V_TW_MAX 		5.14 
+N_TWV 			10
+ALPHA_TW_MIN	28 
+ALPHA_TW_MAX 	180
+N_ALPHA_TW		2
 
 % These data are measurements and estimates for a Freedom 25
 %%%%%% HULL %%%%%%%
@@ -26,7 +30,7 @@ B       2.591  % [m]  Design maximum beam
 AVGFREB 0.853  % [m]  Average freeboard
 XFB     3.483  % [m]  Longitudinal center of buoyancy LCB from fpp
 XFF     3.483  % [m]  Longitudinal center of flotation LCF from fpp
-CPL     0.50  % [-]  Longitudinal prismatic coefficient
+CPL     0.55   % [-]  Longitudinal prismatic coefficient
 HULLFF  1.0    % [-]  Hull form factor
 AW      6.503  %[m^2] Design waterplane?s area
 SC      7.432  %[m^2] Wetted surface?s area of canoe body

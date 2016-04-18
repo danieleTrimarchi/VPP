@@ -13,7 +13,7 @@
 using namespace std;
 
 /// Newton-Raphson solver class.
-/// todo dtrimarchi: this class is to be inserted in
+/// TODO dtrimarchi: this class is to be inserted in
 /// a class hierarchy with its brother class Optimizer
 class NRSolver {
 
