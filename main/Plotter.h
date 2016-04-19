@@ -11,7 +11,7 @@ using namespace std;
 using namespace Eigen;
 
 /// Directives for PLPLOT
-#include "plcdemos.h"
+#include "plc++demos.h"
 
 /// Define colors -- see plplot_5.11 guide 18.13: plCol0
 enum color{
@@ -125,7 +125,6 @@ class Plotter : public PlotterBase {
 		/// Find the min of the specified c-style array
 		double min(double*);
 
-
 		/// Find the max of the specified c-style array
 		double max(double*);
 
@@ -188,6 +187,21 @@ class VectorPlotter : public PlotterBase {
 		/// of the vector plot. Note that the magnitudes
 		/// are rescaled to unity
 		void plot(Eigen::MatrixXd& x,
+				Eigen::MatrixXd& y,
+				Eigen::MatrixXd& du,
+				Eigen::MatrixXd& dv,
+				string title="Plot",
+				string xLabel="x",
+				string yLabel="y"
+		);
+
+		/// Vector plot for a grid of m points,
+		/// the coordinates of which are x,y
+		/// for each couple x,y the arrays du,dv
+		/// store the isoparametric coordinates
+		/// of the vector plot. Note that the magnitudes
+		/// are rescaled to unity
+		void test(Eigen::MatrixXd& x,
 				Eigen::MatrixXd& y,
 				Eigen::MatrixXd& du,
 				Eigen::MatrixXd& dv,

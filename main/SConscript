@@ -8,7 +8,7 @@ THIRD_PARTY_INCS=[
 			'/Users/dtrimarchi/third_party/boost_1_60_0',
 			'/Users/dtrimarchi/third_party/nlopt-2.4.2/api',
 			'/opt/local/include',												# macPorts and nlopt include path
-			'/opt/local/share/plplot5.11.1/examples/c',							#include path for plplot example
+			'/opt/local/share/plplot5.11.1/examples/c++',							#include path for plplot example
 			'/opt/local/include/plplot'
 		]
 
@@ -43,8 +43,8 @@ THIRD_PARTY_LIBPATH=[
 #This must be a way to define the path where the executable searches for the dyLib, but for the moment it does not seems to work
 env = DefaultEnvironment()
 
-#Compile debug mode
-env.Append(CCFLAGS= '-g')
+#Compile Debug mode
+#env.Append(CCFLAGS= '-g')
 
 #===============================================================================
 # env = Environment()

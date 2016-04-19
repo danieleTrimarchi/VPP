@@ -364,6 +364,23 @@ int main(int argc, char** argv) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
+		// instantiate a vectorPlotter and quit
+		VectorPlotter testplot;
+
+		Eigen::MatrixXd x(1,4), y(1,4), du(1,4), dv(1,4);
+
+		// Coordinate vectors. Will form a coordinate matrix
+		x  << 0, 1, 2, 3;
+		y  << 1.5, 1.5, 1.5, 1.5;
+
+		// For each point of the grid, u-value of the
+		du << 0.1, 0.2, 0.2, 0.1;
+		dv << 0.1, 0.2, 0.2, 0.1;
+
+		testplot.test(x,y,du,dv);
+
+		throw VPPException(HERE,"STOP");
+
 		// Instantiate a parser with the variables
 		VariableFileParser parser("variableFile.txt");
 

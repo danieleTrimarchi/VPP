@@ -400,9 +400,9 @@ VectorPlotter::VectorPlotter() :
 // of which are x,y for each couple x,y the arrays du,dv
 // store the isoparametric coordinates of the vector plot.
 // Note that the magnitudes are rescaled to unity
-void VectorPlotter::plot(MatrixXd& x, MatrixXd& y,
-												MatrixXd& du,
-		MatrixXd& dv,
+void VectorPlotter::plot(
+		MatrixXd& x,  MatrixXd& y,
+		MatrixXd& du, MatrixXd& dv,
 		string title,
 		string xLabel,
 		string yLabel
@@ -472,6 +472,65 @@ void VectorPlotter::plot(MatrixXd& x, MatrixXd& y,
 
 	// Finalize the plot
 	plend();
+
+}
+
+void VectorPlotter::test(
+		MatrixXd& xx,  MatrixXd& yy,
+		MatrixXd& du, MatrixXd& dv,
+		string title,
+		string xLabel,
+		string yLabel
+) {
+
+    // Create new plstream
+    plstream* pls = new plstream();
+
+	// Specify the output device (aquaterm)
+	plsdev("aqt");
+
+    // Initialize plplot
+    pls->init();
+
+    if(xx.rows()!=yy.rows() || xx.cols()!=yy.cols())
+    	throw VPPException(HERE,"VectorPlot size mismatch");
+    int nx   = xx.rows();
+    int ny   = xx.cols();
+
+    // Allocate arrays
+    PLcGrid2 cgrid2;
+    double **u, **v;
+
+    pls->Alloc2dGrid( &cgrid2.xg, nx, ny );
+    pls->Alloc2dGrid( &cgrid2.yg, nx, ny );
+    pls->Alloc2dGrid( &u, nx, ny );
+    pls->Alloc2dGrid( &v, nx, ny );
+
+    cgrid2.nx = nx;
+    cgrid2.ny = ny;
+
+	resetRanges(xx,yy);
+
+    // Create data - circulation around the origin.
+    for ( int i = 0; i < xx.rows(); i++ )
+    {
+        for ( int j = 0; j < yy.cols(); j++ )
+        {
+            cgrid2.xg[i][j] = xx(i,j);
+            cgrid2.yg[i][j] = yy(i,j);
+            u[i][j]         = du(i,j);
+            v[i][j]         = dv(i,j);
+        }
+    }
+
+    // Plot vectors with default arrows
+    pls->env( minX_, maxX_, minY_, maxY_, 0, 0 );
+    pls->lab( "(x)", "(y)", "#frPLplot Example 22 - circulation" );
+    pls->col0( 2 );
+    pls->vect( u, v, nx, ny, 0.0, plcallback::tr2, (void *) &cgrid2 );
+    pls->col0( 1 );
+
+    delete pls;
 
 }
 
