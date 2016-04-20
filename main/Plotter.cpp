@@ -5,10 +5,10 @@
 using namespace mathUtils;
 
 PlotterBase::PlotterBase():
-minX_(1E20),
-minY_(1E20),
-maxX_(-1E20),
-maxY_(-1E20) {
+		minX_(1E20),
+		minY_(1E20),
+		maxX_(-1E20),
+		maxY_(-1E20) {
 
 	// Specify the output device (aquaterm)
 	plsdev("aqt");
@@ -53,7 +53,7 @@ void PlotterBase::resetRanges(ArrayXd& x, ArrayXd& y) {
 
 }
 
-void PlotterBase::resetRanges(MatrixXd& x, MatrixXd& y) {
+void PlotterBase::resetRanges(MatrixXd& x, MatrixXd& y, bool axisEqual) {
 
 	// Set the ranges for the first array
 	if(x.minCoeff()<minX_)
@@ -75,6 +75,15 @@ void PlotterBase::resetRanges(MatrixXd& x, MatrixXd& y) {
 		maxY_ += 0.5;
 	}
 
+	if(axisEqual){
+		double tmp=std::min(minX_,minY_);
+		minX_=tmp;
+		minY_=tmp;
+
+		tmp=std::max(maxX_,maxY_);
+		maxX_=tmp;
+		maxY_=tmp;
+	}
 }
 
 void PlotterBase::resetRanges(std::vector<double>& x, std::vector<double>& y) {
@@ -132,9 +141,9 @@ double PlotterBase::max(std::vector<double>& vec) {
 
 // Constructor
 Plotter::Plotter():
-		PlotterBase(),
-		nValues_(0),
-		x_(0), y_(0) {
+				PlotterBase(),
+				nValues_(0),
+				x_(0), y_(0) {
 
 }
 
@@ -390,147 +399,73 @@ void Plotter::plot(	std::vector<double>& x0,
 
 // Constructor
 VectorPlotter::VectorPlotter() :
-		PlotterBase(),
-		nX_(0),
-		nY_(0) {
+				PlotterBase(),
+				nX_(0),
+				nY_(0) {
 
 }
 
-// Vector plot for a grid of m points, the coordinates
-// of which are x,y for each couple x,y the arrays du,dv
-// store the isoparametric coordinates of the vector plot.
-// Note that the magnitudes are rescaled to unity
+//// instantiate a vectorPlotter and quit. Usage for a single vector plot:
+// VectorPlotter testplot;
+// Eigen::MatrixXd x(1,4), y(1,4), du(1,4), dv(1,4);
+//// Coordinate vectors. Will form a coordinate matrix
+//x  << 0, 1, 2, 3;
+//y  << 1., 1., 1., 1.;
+//// For each point of the grid, u-value of the
+//du << 0.5, 0.2, 1., 0.5;
+//dv << 0.5, 0.2, 1., 0.5;
+//testplot.plot(x,y,du,dv,"vector plot","x","y");
 void VectorPlotter::plot(
-		MatrixXd& x,  MatrixXd& y,
+		MatrixXd& xx,  MatrixXd& yy,
 		MatrixXd& du, MatrixXd& dv,
 		string title,
 		string xLabel,
-		string yLabel
-) {
+		string yLabel) {
 
-	std::cout<<"Entering with: \n";
-	std::cout<<"x= \n"<<x.transpose()<<std::endl;
-	std::cout<<"y= \n"<<y.transpose()<<std::endl;
-	std::cout<<"du= \n"<<du.transpose()<<std::endl;
-	std::cout<<"dv= \n"<<dv.transpose()<<std::endl;
+	if(xx.rows()!=yy.rows() || xx.cols()!=yy.cols())
+		throw VPPException(HERE,"VectorPlot size mismatch");
 
-	// verify the consistency of the sizes
-	if( x.rows() != du.rows() || x.rows() != dv.rows() ||
-			x.cols() != du.cols() || x.cols() != dv.cols() )
-		throw VPPException(HERE, "Source data size mismatch");
-
-	// Declare a grid and the c-stile data container
+	// Declare arrays
 	PLcGrid2 cgrid2;
 	double **u, **v;
 
-	// Set the number of subdivisions for the current grid
-	cgrid2.nx= x.rows();
-	cgrid2.ny= x.cols();
+	// Allocate arrays
+	plAlloc2dGrid( &cgrid2.xg, xx.rows(), xx.cols() );
+	plAlloc2dGrid( &cgrid2.yg, xx.rows(), xx.cols() );
+	plAlloc2dGrid( &u, xx.rows(), xx.cols() );
+	plAlloc2dGrid( &v, xx.rows(), xx.cols() );
+	cgrid2.nx = xx.rows();
+	cgrid2.ny = xx.cols();
 
-	// Allocate memory for the current grid
-	plAlloc2dGrid( &cgrid2.xg, x.rows(), x.cols() );
-	plAlloc2dGrid( &cgrid2.yg, y.rows(), y.cols() );
-	plAlloc2dGrid( &u, du.rows(), du.cols() );
-	plAlloc2dGrid( &v, dv.rows(), dv.cols() );
+	// Create data - vectors are placed half-way through the coordinate pts
+	for ( int i = 0; i < xx.rows(); i++ )
+		for ( int j = 0; j < yy.cols(); j++ ) {
 
-	// Define the points of the grid and the
-	// u,v components of the vectors at each
-	// grid point
-	for( int i=0; i<x.rows(); i++) {
-		for( int j=0; j<x.cols(); j++) {
-
-			cgrid2.xg[i][j]= x(i,j);
-			cgrid2.yg[i][j]= y(i,j);
-			u[i][j]	=	du(i,j);
-			v[i][j]	=	dv(i,j);
-
+			cgrid2.xg[i][j] = xx(i,j);
+			cgrid2.yg[i][j] = yy(i,j);
+			u[i][j]         = du(i,j);
+			v[i][j]         = dv(i,j);
 		}
-	}
 
 	// Set the ranges and the bounding box
-	resetRanges(x,y);
-	plenv(minX_,maxX_,minY_,maxY_,0,0);
+	resetRanges(xx,yy,true);
+	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
 
 	// Set the plot labels
 	pllab(xLabel.c_str(),yLabel.c_str(),title.c_str());
 
 	// Set the color for the vectors
-	plcol0(color::red);
+	plcol0( color::red );
 
 	// plot the vectors
-	plvect(
-			(const PLFLT* const *) u,
-			(const PLFLT* const *) v,
-			du.rows(), du.cols(), 0.0, pltr2,
-			(void*) &cgrid2 );
+	plvect( u, v, xx.rows(), xx.cols(), 1.0, plcallback::tr2, (void *) &cgrid2 );
 
-	// Free memory for the current grid
-	plFree2dGrid(cgrid2.xg,x.rows(),x.cols());
-	plFree2dGrid(cgrid2.yg,y.rows(),y.cols());
-	plFree2dGrid(u,du.rows(),du.cols());
-	plFree2dGrid(v,dv.rows(),dv.cols());
-
-	// Finalize the plot
+	// Free memory for the current grid, finalize the plot
+	plFree2dGrid( cgrid2.xg,xx.rows(),xx.cols() );
+	plFree2dGrid( cgrid2.yg,xx.rows(),xx.cols() );
+	plFree2dGrid( u,xx.rows(), xx.cols() );
+	plFree2dGrid( v,xx.rows(), xx.cols() );
 	plend();
-
-}
-
-void VectorPlotter::test(
-		MatrixXd& xx,  MatrixXd& yy,
-		MatrixXd& du, MatrixXd& dv,
-		string title,
-		string xLabel,
-		string yLabel
-) {
-
-    // Create new plstream
-    plstream* pls = new plstream();
-
-	// Specify the output device (aquaterm)
-	plsdev("aqt");
-
-    // Initialize plplot
-    pls->init();
-
-    if(xx.rows()!=yy.rows() || xx.cols()!=yy.cols())
-    	throw VPPException(HERE,"VectorPlot size mismatch");
-    int nx   = xx.rows();
-    int ny   = xx.cols();
-
-    // Allocate arrays
-    PLcGrid2 cgrid2;
-    double **u, **v;
-
-    pls->Alloc2dGrid( &cgrid2.xg, nx, ny );
-    pls->Alloc2dGrid( &cgrid2.yg, nx, ny );
-    pls->Alloc2dGrid( &u, nx, ny );
-    pls->Alloc2dGrid( &v, nx, ny );
-
-    cgrid2.nx = nx;
-    cgrid2.ny = ny;
-
-	resetRanges(xx,yy);
-
-    // Create data - circulation around the origin.
-    for ( int i = 0; i < xx.rows(); i++ )
-    {
-        for ( int j = 0; j < yy.cols(); j++ )
-        {
-            cgrid2.xg[i][j] = xx(i,j);
-            cgrid2.yg[i][j] = yy(i,j);
-            u[i][j]         = du(i,j);
-            v[i][j]         = dv(i,j);
-        }
-    }
-
-    // Plot vectors with default arrows
-    pls->env( minX_, maxX_, minY_, maxY_, 0, 0 );
-    pls->lab( "(x)", "(y)", "#frPLplot Example 22 - circulation" );
-    pls->col0( 2 );
-    pls->vect( u, v, nx, ny, 0.0, plcallback::tr2, (void *) &cgrid2 );
-    pls->col0( 1 );
-
-    delete pls;
 
 }
 
@@ -539,17 +474,16 @@ VectorPlotter::~VectorPlotter() {
 	// make nothing
 }
 
-
 //=====================================================================
 
 PolarPlotter::PolarPlotter( string title ) :
-	title_(title),
-	minAlphaRange_(1E+20),
-	maxAlphaRange_(-1E20),
-	maxValRange_(-1E20),
-	x_(NULL),
-	y_(NULL),
-	pi_(M_PI / 180.0) {
+			title_(title),
+			minAlphaRange_(1E+20),
+			maxAlphaRange_(-1E20),
+			maxValRange_(-1E20),
+			x_(NULL),
+			y_(NULL),
+			pi_(M_PI / 180.0) {
 
 	// Specify the output device (aquaterm)
 	plsdev("aqt");

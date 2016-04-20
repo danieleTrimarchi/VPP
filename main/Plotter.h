@@ -52,7 +52,7 @@ class PlotterBase {
 		void resetRanges(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0);
 
 		/// Reset the ranges to the ranges of a point set - version for Eigen
-		void resetRanges(Eigen::MatrixXd& x0, Eigen::MatrixXd& y0);
+		void resetRanges(Eigen::MatrixXd& x0, Eigen::MatrixXd& y0, bool axisEqual=false);
 
 		/// Reset the ranges to the ranges of a point set -- version for vectors
 		void resetRanges(std::vector<double>& x0, std::vector<double>& y0);
@@ -187,21 +187,6 @@ class VectorPlotter : public PlotterBase {
 		/// of the vector plot. Note that the magnitudes
 		/// are rescaled to unity
 		void plot(Eigen::MatrixXd& x,
-				Eigen::MatrixXd& y,
-				Eigen::MatrixXd& du,
-				Eigen::MatrixXd& dv,
-				string title="Plot",
-				string xLabel="x",
-				string yLabel="y"
-		);
-
-		/// Vector plot for a grid of m points,
-		/// the coordinates of which are x,y
-		/// for each couple x,y the arrays du,dv
-		/// store the isoparametric coordinates
-		/// of the vector plot. Note that the magnitudes
-		/// are rescaled to unity
-		void test(Eigen::MatrixXd& x,
 				Eigen::MatrixXd& y,
 				Eigen::MatrixXd& du,
 				Eigen::MatrixXd& dv,
