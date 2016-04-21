@@ -16,7 +16,7 @@ NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 //dimension_(4),
 dimension_(2),
 tol_(1.e-6),
-maxIters_(20){
+maxIters_(10){
 
 	// Resize the result container
 	xp_.resize(dimension_);
@@ -150,6 +150,9 @@ void NRSolver::run(int twv, int twa) {
 		// instantiate a Jacobian
 		VPPJacobian J(xp_,vppItemsContainer_);
 
+		// Instantiate a JacobianChecker
+		JacobianChecker JCheck;
+
 		// Newton loop
 		for( it=0; it<=maxIters_; it++ ) {
 
@@ -167,7 +170,10 @@ void NRSolver::run(int twv, int twa) {
 				//				plotter4.plot(c2Residuals,"c2_residuals");
 
 				// Also plot some Jacobian diagnostics
-				J.test(twv,twa);
+				J.testPlot(twv,twa);
+
+				// And plot the JacobianChecker diagnostics
+				JCheck.testPlot();
 
 				throw VPPException(HERE,"VPP Solver could not converge");
 			}
@@ -190,6 +196,9 @@ void NRSolver::run(int twv, int twa) {
 			// Compute the Jcobian matrix
 			J.run(twv,twa);
 			std::cout<<"J= \n"<<J<<std::endl;
+
+			// Right before computing the solution, store the relevant data to the JacobianChecker
+			JCheck.push_back(J,xp_,residuals);
 
 			// A * x = residuals --  J * deltas = residuals
 			// where deltas are also equal to f(x_i) / f'(x_i)
