@@ -84,6 +84,16 @@ void PlotterBase::resetRanges(MatrixXd& x, MatrixXd& y, bool axisEqual) {
 		maxX_=tmp;
 		maxY_=tmp;
 	}
+
+	// Now increase the spacing to visualize all of the plot
+	double dx=fabs(maxX_-minX_)/50;
+	double dy=fabs(maxY_-minY_)/50;
+
+	minX_-=dx;
+	maxX_+=dx;
+	minY_-=dy;
+	maxY_+=dy;
+
 }
 
 void PlotterBase::resetRanges(std::vector<double>& x, std::vector<double>& y) {
@@ -416,13 +426,18 @@ VectorPlotter::VectorPlotter() :
 //dv << 0.5, 0.2, 1., 0.5;
 //testplot.plot(x,y,du,dv,"vector plot","x","y");
 void VectorPlotter::plot(
-		MatrixXd& xx,  MatrixXd& yy,
+		MatrixXd& x,  MatrixXd& y,
 		MatrixXd& du, MatrixXd& dv,
 		string title,
 		string xLabel,
 		string yLabel) {
 
-	if(xx.rows()!=yy.rows() || xx.cols()!=yy.cols())
+	std::cout<<"x= "<< x<< std::endl;
+	std::cout<<"y= "<< y<< std::endl;
+	std::cout<<"du= "<< du<< std::endl;
+	std::cout<<"dv= "<< dv<< std::endl;
+
+	if(x.rows()!=y.rows() || x.cols()!=y.cols())
 		throw VPPException(HERE,"VectorPlot size mismatch");
 
 	// Declare arrays
@@ -430,25 +445,25 @@ void VectorPlotter::plot(
 	double **u, **v;
 
 	// Allocate arrays
-	plAlloc2dGrid( &cgrid2.xg, xx.rows(), xx.cols() );
-	plAlloc2dGrid( &cgrid2.yg, xx.rows(), xx.cols() );
-	plAlloc2dGrid( &u, xx.rows(), xx.cols() );
-	plAlloc2dGrid( &v, xx.rows(), xx.cols() );
-	cgrid2.nx = xx.rows();
-	cgrid2.ny = xx.cols();
+	plAlloc2dGrid( &cgrid2.xg, x.rows(), x.cols() );
+	plAlloc2dGrid( &cgrid2.yg, x.rows(), x.cols() );
+	plAlloc2dGrid( &u, x.rows(), x.cols() );
+	plAlloc2dGrid( &v, x.rows(), x.cols() );
+	cgrid2.nx = x.rows();
+	cgrid2.ny = x.cols();
 
 	// Create data - vectors are placed half-way through the coordinate pts
-	for ( int i = 0; i < xx.rows(); i++ )
-		for ( int j = 0; j < yy.cols(); j++ ) {
+	for ( int i = 0; i < x.rows(); i++ )
+		for ( int j = 0; j < y.cols(); j++ ) {
 
-			cgrid2.xg[i][j] = xx(i,j);
-			cgrid2.yg[i][j] = yy(i,j);
+			cgrid2.xg[i][j] = x(i,j);
+			cgrid2.yg[i][j] = y(i,j);
 			u[i][j]         = du(i,j);
 			v[i][j]         = dv(i,j);
 		}
 
 	// Set the ranges and the bounding box
-	resetRanges(xx,yy,true);
+	resetRanges(x,y);
 	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
 
 	// Set the plot labels
@@ -458,13 +473,13 @@ void VectorPlotter::plot(
 	plcol0( color::red );
 
 	// plot the vectors
-	plvect( u, v, xx.rows(), xx.cols(), 1.0, plcallback::tr2, (void *) &cgrid2 );
+	plvect( u, v, x.rows(), x.cols(), 1.0, plcallback::tr2, (void *) &cgrid2 );
 
 	// Free memory for the current grid, finalize the plot
-	plFree2dGrid( cgrid2.xg,xx.rows(),xx.cols() );
-	plFree2dGrid( cgrid2.yg,xx.rows(),xx.cols() );
-	plFree2dGrid( u,xx.rows(), xx.cols() );
-	plFree2dGrid( v,xx.rows(), xx.cols() );
+	plFree2dGrid( cgrid2.xg,x.rows(),x.cols() );
+	plFree2dGrid( cgrid2.yg,x.rows(),x.cols() );
+	plFree2dGrid( u,x.rows(), x.cols() );
+	plFree2dGrid( v,x.rows(), x.cols() );
 	plend();
 
 }

@@ -16,7 +16,7 @@ NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 //dimension_(4),
 dimension_(2),
 tol_(1.e-6),
-maxIters_(15){
+maxIters_(20){
 
 	// Resize the result container
 	xp_.resize(dimension_);
@@ -122,55 +122,6 @@ void NRSolver::resetInitialGuess(int TWV, int TWA) {
 
 }
 
-// Compute the Jacobian matrix:
-//
-// J = | dF /du dF /dPhi  dF/db  dF/df|	|du	 | 	 |dF |    |0|
-//	   | dM /du dM /dPhi  dM/db  dM/df|	|dPhi| = |dM | -> |0|
-//	   | dC1/du dC1/dPhi dC1/db dC1/df|	|db	 |	 |dC1|	  |0|
-//	   | dC2/du dC2/dPhi dC2/db dC2/df|	|df	 |	 |dC2|    |0|
-//
-// where the derivatives in the Jacobian matrix are computed by
-// centered finite differences:
-Eigen::MatrixXd NRSolver::computeJacobian(int twv, int twa){
-
-	// Resize the Jacobian matrix
-	Eigen::MatrixXd J(xp_.rows(),xp_.rows());
-
-	// loop on the state variables
-	for(size_t iVar=0; iVar<xp_.rows(); iVar++) {
-
-		// Compute the optimum eps for this variable
-		double eps= xp_(iVar) * std::sqrt( std::numeric_limits<double>::epsilon() );
-
-		// Init a buffer of the state vector xp_
-		Eigen::VectorXd xp(xp_);
-
-		// set x= x + eps
-		xp(iVar) = xp_(iVar) + eps;
-
-		// update the items and compute the residuals for x_plus_epsilon
-		Eigen::VectorXd f_xPlus( vppItemsContainer_->getResiduals(twv,twa,xp) );
-
-		// compile the ith column of the Jacobian matrix
-		J.col(iVar) = f_xPlus;
-
-		// set x= x - eps
-		xp(iVar) = xp_(iVar) - eps;
-
-		// update the items and compute the residuals for x_minus_epsilon
-		Eigen::VectorXd f_xMin( vppItemsContainer_->getResiduals(twv,twa,xp) );
-
-		// compile the ith column of the Jacobian matrix
-		J.col(iVar) -= f_xMin;
-
-		// divide the column of the Jacobian by 2*eps
-		J.col(iVar) /= ( 2 * eps );
-
-	}
-
-	return J;
-}
-
 void NRSolver::run(int twv, int twa) {
 
 	std::cout<<"    "<<pWind_->getTWV(twv)<<"    "<<toDeg( pWind_->getTWA(twa) )<<std::endl;
@@ -197,7 +148,7 @@ void NRSolver::run(int twv, int twa) {
 		//std::vector<double> c2Residuals;
 
 		// instantiate a Jacobian
-		VPPJacobian newJ(xp_,vppItemsContainer_);
+		VPPJacobian J(xp_,vppItemsContainer_);
 
 		// Newton loop
 		for( it=0; it<=maxIters_; it++ ) {
@@ -215,6 +166,9 @@ void NRSolver::run(int twv, int twa) {
 				//				Plotter plotter4;
 				//				plotter4.plot(c2Residuals,"c2_residuals");
 
+				// Also plot some Jacobian diagnostics
+				J.test(twv,twa);
+
 				throw VPPException(HERE,"VPP Solver could not converge");
 			}
 
@@ -229,15 +183,13 @@ void NRSolver::run(int twv, int twa) {
 			//			c1Residuals.push_back(residuals(2));
 			//			c2Residuals.push_back(residuals(3));
 
-			//  break if converged. todo dtrimarchi: this condition seems way too simple!
+			//  break if converged. todo dtrimarchi: this condition is way too simple!
 			if( residuals.norm()<1e-6 )
 				break;
 
-			Eigen::MatrixXd J= computeJacobian(twv,twa);
-			std::cout<<"J=\n"<<J<<std::endl;
-
-			newJ.run(twv,twa);
-			std::cout<<"newJ=\n"<<newJ<<std::endl;
+			// Compute the Jcobian matrix
+			J.run(twv,twa);
+			std::cout<<"J= \n"<<J<<std::endl;
 
 			// A * x = residuals --  J * deltas = residuals
 			// where deltas are also equal to f(x_i) / f'(x_i)

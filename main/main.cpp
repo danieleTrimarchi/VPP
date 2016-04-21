@@ -321,14 +321,6 @@ void solve(	boost::shared_ptr<SailSet>& pSails,
 		x -= deltas;
 		std::cout<<"        x= "<<x.transpose()<<std::endl;
 
-//        // limit the solution. 0<x<100 ; 0<phi<85
-//		if(x(0)<0) x(0)=0.1;
-//		if(x(0)>100) x(0)=100;
-//		if(x(1)<0) x(1)=0.1;
-//		if(x(1)>85) x(1)=85;
- 
-		std::cout<<"limited x= "<<x.transpose()<<std::endl;
-
 		f_drive= fDrive( x(0), x(1), pSails );
 		Resistance= R( x(0), parser );
 		HeelMoment= Mw( f_drive, x(1), pSails);

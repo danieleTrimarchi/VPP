@@ -52,9 +52,6 @@ class NRSolver {
 		/// Set the initial guess for the state variable vector
 		void resetInitialGuess(int twv, int twa);
 
-		/// Compute the Jacobian matrix
-		Eigen::MatrixXd computeJacobian(int twv, int twa);
-
 		// Struct used to drive twv and twa into the update methods of the VPPItems
 		typedef struct {
 				int twv_, twa_;
