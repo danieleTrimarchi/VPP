@@ -432,11 +432,6 @@ void VectorPlotter::plot(
 		string xLabel,
 		string yLabel) {
 
-	std::cout<<"x= "<< x<< std::endl;
-	std::cout<<"y= "<< y<< std::endl;
-	std::cout<<"du= "<< du<< std::endl;
-	std::cout<<"dv= "<< dv<< std::endl;
-
 	if(x.rows()!=y.rows() || x.cols()!=y.cols())
 		throw VPPException(HERE,"VectorPlot size mismatch");
 

@@ -1,4 +1,5 @@
 #include "VPPJacobian.h"
+#include "mathUtils.h"
 
 // Constructor
 VPPJacobian::VPPJacobian(VectorXd& x,boost::shared_ptr<VPPItemFactory> vppItemsContainer):
@@ -47,14 +48,19 @@ void VPPJacobian::test(int twv, int twa) {
 
 	// How many values this test is made of. The analyzed velocity range varies
 	// from 0 to n/10
-	size_t n=10;
+	size_t n=50;
+
+	// Init the state vector at Zero
+	for(size_t i=0; i<x_.size(); i++)
+		x_(i)=0;
 
 	// Instantiate the containers used to feed the plotter
 	// for the moment just one variable at the time...
-	Eigen::MatrixXd x(1,n), y(1,n), du(1,n), dv(1,n);
+	Eigen::MatrixXd x(1,n),
+			f(1,n), du_f(1,n), df(1,n),
+			M(1,n), du_M(1,n), dM(1,n);
 
-	// plot dF/dx when varying x
-	// Fill the vectors
+	// plot the Jacobian components when varying x
 	for(size_t i=0; i<n; i++){
 
 		// Vary the first state variable and record its value to the plotting
@@ -63,28 +69,93 @@ void VPPJacobian::test(int twv, int twa) {
 		x(0,i)= x_(0);
 
 		// Store the force value for this plot
-		y(0,i)= vppItemsContainer_->getResiduals(twv,twa,x_)(0);
+		f(0,i)= vppItemsContainer_->getResiduals(twv,twa,x_)(0);
+		M(0,i)= vppItemsContainer_->getResiduals(twv,twa,x_)(1);
 
 		// Compute the Jacobian for this configuration
 		run(twv, twa);
-		std::cout<<"J= "<<*this<<std::endl;
 
-		// x-component of the jacobian derivative df/dx - the 'optimal' dx for
+		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences
-		du(0,i)= x_(0) * std::sqrt( std::numeric_limits<double>::epsilon() );
+		du_f(0,i)= x_(0) * std::sqrt( std::numeric_limits<double>::epsilon() );
+		du_M(0,i)= du_f(0,i);
 
-		// y-component of the jacobian derivative: df/dx * dx
-	  dv(0,i)= coeffRef(0,0) * du(0,i);
+		// y-component of the jacobian derivative: dF/dx * dx
+	  df(0,i)= coeffRef(0,0) * du_f(0,i);
 
-	  // Normalize the vector size
-	  double norm=std::sqrt(du(0,i)*du(0,i)+dv(0,i)*dv(0,i));
-	  du(0,i) /= norm;
-	  dv(0,i) /= norm;
+		// y-component of the jacobian derivative: dM/dx * dx
+	  dM(0,i)= coeffRef(1,0) * du_M(0,i);
+
+	  // Normalize the vector size. Introduce some scaling used to improve the
+	  // visualization as a function of the number of vectors
+	  double fnorm=std::sqrt(du_f(0,i)*du_f(0,i)+df(0,i)*df(0,i)) * 5/n;
+	  du_f(0,i) /= fnorm;
+	  df(0,i) /= fnorm;
+
+	  double Mnorm=std::sqrt(du_M(0,i)*du_M(0,i)+dM(0,i)*dM(0,i)) * 2/n;
+	  du_M(0,i) /= Mnorm;
+	  dM(0,i) /= Mnorm;
+
 	}
 
 	// Instantiate a vector plotter and produce the plot
-	VectorPlotter testplot;
-	testplot.plot(x,y,du,dv,"dF/dx Jacobian test plot","U [m/s]","F[N]");
+	VectorPlotter dFdx;
+	dFdx.plot(x,f,du_f,df,"dF/du Jacobian test plot","TWV [m/s]","F[N]");
+
+	// Instantiate a vector plotter and produce the plot
+	VectorPlotter dMdx;
+	dMdx.plot(x,M,du_M,dM,"dM/du Jacobian test plot","TWV [m/s]","M[N*m]");
+
+
+	// Reset the state vector
+	for(size_t i=0; i<x_.size(); i++)
+		x_(i)=0;
+
+	// plot the Jacobian components when varying Phi, say n is in deg
+	for(size_t i=0; i<n; i++){
+
+		// Vary the first state variable and record its value to the plotting
+		// buffer vector
+		x_(1) = mathUtils::toRad( (i + 1 ) * 0.1 );
+		x(0,i)= x_(1);
+
+		// Store the force value for this plot
+		f(0,i)= vppItemsContainer_->getResiduals(twv,twa,x_)(0);
+		M(0,i)= vppItemsContainer_->getResiduals(twv,twa,x_)(1);
+
+		// Compute the Jacobian for this configuration
+		run(twv, twa);
+
+		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
+		// finite differences
+		du_f(0,i)= x_(1) * std::sqrt( std::numeric_limits<double>::epsilon() );
+		du_M(0,i)= du_f(0,i);
+
+		// y-component of the jacobian derivative: dF/dx * dx
+	  df(0,i)= coeffRef(0,1) * du_f(0,i);
+
+		// y-component of the jacobian derivative: dM/dx * dx
+	  dM(0,i)= coeffRef(1,1) * du_M(0,i);
+
+	  // Normalize the vector size. Introduce some scaling used to improve the
+	  // visualization as a function of the number of vectors
+	  double fnorm=std::sqrt(du_f(0,i)*du_f(0,i)+df(0,i)*df(0,i)) * n;
+	  du_f(0,i) /= fnorm;
+	  df(0,i) /= fnorm;
+
+	  double Mnorm=std::sqrt(du_M(0,i)*du_M(0,i)+dM(0,i)*dM(0,i)) * 2/n;
+	  du_M(0,i) /= Mnorm;
+	  dM(0,i) /= Mnorm;
+
+	}
+
+	// Instantiate a vector plotter and produce the plot
+	VectorPlotter dFdPhi;
+	dFdPhi.plot(x,f,du_f,df,"dF/dPhi Jacobian test plot","Phi [RAD]","F[N]");
+
+	// Instantiate a vector plotter and produce the plot
+	VectorPlotter dMdPhi;
+	dMdPhi.plot(x,M,du_M,dM,"dM/dPhi Jacobian test plot","Phi [RAD]","M[N*m]");
 
 }
 
