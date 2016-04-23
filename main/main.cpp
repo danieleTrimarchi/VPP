@@ -464,13 +464,15 @@ int main(int argc, char** argv) {
 				std::cout<<"   plot_D_SailCoeffs      : plot the first derivative of the aerodynamic coeffs for the current sails \n";
 				std::cout<<"   plot_D2_SailCoeffs     : plot the second derivative of the aerodynamic coeffs for the current sails \n";
 				std::cout<<" \n";
-				std::cout<<"   plotResidRes           : plot the Residuary Resistance \n";
-				std::cout<<"   plotResidRes_Keel      : plot the Residuary Resistance of the Keel \n";
-				std::cout<<"   plotViscousRes         : plot the Viscous Resistance \n";
-				std::cout<<"   plotViscousRes_Keel    : plot the Viscous Resistance of the Keel \n";
-				std::cout<<"   plotViscousRes_Rudder  : plot the Viscous Resistance of the Rudder \n";
-				std::cout<<"   plotDelta_FrictRes_Heel: plot the Delta Frictional Resistance due to heel \n";
-				std::cout<<"   plotDelta_ResidRes_Heel: plot the Delta Residuary Resistance due to heel \n";
+
+				std::cout<<" \n";
+				std::cout<<"   plotResidRes           : plot the Residuary Resistance for a fixed range\n";
+				std::cout<<"   plotResidRes_Keel      : plot the Residuary Resistance of the Keel for a fixed range\n";
+				std::cout<<"   plotViscousRes         : plot the Viscous Resistance for a fixed range\n";
+				std::cout<<"   plotViscousRes_Keel    : plot the Viscous Resistance of the Keel for a fixed range\n";
+				std::cout<<"   plotViscousRes_Rudder  : plot the Viscous Resistance of the Rudder for a fixed range\n";
+				std::cout<<"   plotDelta_FrictRes_Heel: plot the Delta Frictional Resistance due to heel for a fixed range\n";
+				std::cout<<"   plotDelta_ResidRes_Heel: plot the Delta Residuary Resistance due to heel for a fixed range\n";
 				std::cout<<" \n";
 				std::cout<<"   reload                 : reload the variables from file \n";
 				std::cout<<"   run                    : launches the computations \n";

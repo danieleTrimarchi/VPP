@@ -97,20 +97,21 @@ void NRSolver::resetInitialGuess(int TWV, int TWA) {
 
 	}
 
-	//		else if( TWV>1 ) {
-	//
-	//			// For twv> 1 we can linearly predict the result of the state vector
-	//			Extrapolator extrapolator(
-	//					pResults_->get(TWV-2,TWA).getTWV(),
-	//					pResults_->get(TWV-2,TWA).getX(),
-	//					pResults_->get(TWV-1,TWA).getTWV(),
-	//					pResults_->get(TWV-1,TWA).getX()
-	//			);
-	//
-	//			// Extrapolate the state vector for the current wind
-	//			// velocity. Note that the items have not been init yet
-	//			xp_= extrapolator.get( pWind_->getTWV(TWV) );
-	//		}
+	else if( TWV>1 ) {
+
+		// For twv> 1 we can linearly predict the result of the state vector
+		Extrapolator extrapolator(
+				pResults_->get(TWV-2,TWA).getTWV(),
+				pResults_->get(TWV-2,TWA).getX(),
+				pResults_->get(TWV-1,TWA).getTWV(),
+				pResults_->get(TWV-1,TWA).getX()
+		);
+
+		// Extrapolate the state vector for the current wind
+		// velocity. Note that the items have not been init yet
+		xp_= extrapolator.get( pWind_->getTWV(TWV) );
+		std::cout<<"-->>Extrapolated first giuess: "<<xp_.transpose()<<std::endl;
+	}
 	//
 	//		// Make sure the initial guess does not exceeds the bounds
 	//		for(size_t i=0; i<dimension_; i++) {
@@ -193,7 +194,7 @@ void NRSolver::run(int twv, int twa) {
 			if( residuals.norm()<1e-6 )
 				break;
 
-			// Compute the Jcobian matrix
+			// Compute the Jacobian matrix
 			J.run(twv,twa);
 			std::cout<<"J= \n"<<J<<std::endl;
 
