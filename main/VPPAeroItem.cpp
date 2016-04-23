@@ -368,6 +368,19 @@ void MainOnlySailCoefficientItem::plotInterpolatedCoefficients() const {
 
 }
 
+void MainOnlySailCoefficientItem::plot_D_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainOnlySailCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+
+}
 
 //=================================================================
 
@@ -428,6 +441,23 @@ void MainAndJibCoefficientItem::plotInterpolatedCoefficients() const {
 
 }
 
+void MainAndJibCoefficientItem::plot_D_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainAndJibCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
+
+}
 
 //=================================================================
 
@@ -484,6 +514,24 @@ void MainAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
 	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
 	interpClVec_[2] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
 	interpCdVec_[2] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
+
+}
+
+void MainAndSpiCoefficientItem::plot_D_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
 
 }
 
@@ -545,6 +593,28 @@ void MainJibAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
 	interpCdVec_[1] -> plot(0,toRad(180),50,"Interpolated CD for JIB","AWA [rad]","[-]");
 	interpClVec_[2] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
 	interpCdVec_[2] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
+
+}
+
+void MainJibAndSpiCoefficientItem::plot_D_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainJibAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
 
 }
 

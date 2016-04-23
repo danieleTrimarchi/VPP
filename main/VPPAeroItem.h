@@ -108,6 +108,16 @@ class SailCoefficientItem : public VPPItem {
 		/// sail coefficients. The range is set 0-180deg
 		virtual void plotInterpolatedCoefficients() const=0;
 
+		/// Plot the first derivative of the spline-interpolated
+		/// curves based on the Larsson's sail coefficients.
+		/// The range is set 0-180deg
+		virtual void plot_D_InterpolatedCoefficients() const=0;
+
+		/// Plot the second derivative of the spline-interpolated
+		/// curves based on the Larsson's sail coefficients.
+		/// The range is set 0-180deg
+		virtual void plot_D2_InterpolatedCoefficients() const=0;
+
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
@@ -183,6 +193,16 @@ class MainOnlySailCoefficientItem : public SailCoefficientItem {
 		/// sail coefficients. The range is set 0-180deg
 		virtual void plotInterpolatedCoefficients() const;
 
+		/// Plot the first derivative of the spline-interpolated
+		/// curves based on the Larsson's sail coefficients.
+		/// The range is set 0-180deg
+		virtual void plot_D_InterpolatedCoefficients() const;
+
+		/// Plot the second derivative of the spline-interpolated
+		/// curves based on the Larsson's sail coefficients.
+		/// The range is set 0-180deg
+		virtual void plot_D2_InterpolatedCoefficients() const;
+
 	private:
 
 		/// Implement the pure virtual method of the abstract base class
@@ -213,6 +233,16 @@ class MainAndJibCoefficientItem : public SailCoefficientItem {
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
 		virtual void plotInterpolatedCoefficients() const;
+
+		/// Plot the first derivative of the spline-interpolated
+		/// curves based on the Larsson's sail coefficients.
+		/// The range is set 0-180deg
+		virtual void plot_D_InterpolatedCoefficients() const;
+
+		/// Plot the second derivative of the spline-interpolated
+		/// curves based on the Larsson's sail coefficients.
+		/// The range is set 0-180deg
+		virtual void plot_D2_InterpolatedCoefficients() const;
 
 	private:
 
@@ -245,6 +275,16 @@ class MainAndSpiCoefficientItem : public SailCoefficientItem {
 		/// sail coefficients. The range is set 0-180deg
 		virtual void plotInterpolatedCoefficients() const;
 
+		/// Plot the first derivative of the spline-interpolated
+		/// curves based on the Larsson's sail coefficients.
+		/// The range is set 0-180deg
+		virtual void plot_D_InterpolatedCoefficients() const;
+
+		/// Plot the second derivative of the spline-interpolated
+		/// curves based on the Larsson's sail coefficients.
+		/// The range is set 0-180deg
+		virtual void plot_D2_InterpolatedCoefficients() const;
+
 	private:
 
 		/// Implement the pure virtual method of the abstract base class
@@ -275,6 +315,16 @@ class MainJibAndSpiCoefficientItem : public SailCoefficientItem {
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
 		virtual void plotInterpolatedCoefficients() const;
+
+		/// Plot the first derivative of the spline-interpolated
+		/// curves based on the Larsson's sail coefficients.
+		/// The range is set 0-180deg
+		virtual void plot_D_InterpolatedCoefficients() const;
+
+		/// Plot the second derivative of the spline-interpolated
+		/// curves based on the Larsson's sail coefficients.
+		/// The range is set 0-180deg
+		virtual void plot_D2_InterpolatedCoefficients() const;
 
 	private:
 

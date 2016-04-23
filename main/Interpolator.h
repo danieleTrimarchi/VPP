@@ -59,6 +59,14 @@ class SplineInterpolator {
 		void plot(double minVal,double maxVal,int nVals,
 				string title, string xLabel="x", string yLabel="y");
 
+		/// Plot the first derivative of the spline
+		void plotD1(double minVal,double maxVal,int nVals,
+				string title, string xLabel="x", string yLabel="y");
+
+		/// Plot the second derivative of the spline
+		void plotD2(double minVal,double maxVal,int nVals,
+				string title, string xLabel="x", string yLabel="y");
+
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 

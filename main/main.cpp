@@ -389,6 +389,12 @@ int main(int argc, char** argv) {
 			else if( s == string("plotSailCoeffs"))
 				pVppItems->getSailCoefficientItem()->plotInterpolatedCoefficients();
 
+			else if( s == string("plot_D_SailCoeffs"))
+				pVppItems->getSailCoefficientItem()->plot_D_InterpolatedCoefficients();
+
+			else if( s == string("plot_D2_SailCoeffs"))
+				pVppItems->getSailCoefficientItem()->plot_D2_InterpolatedCoefficients();
+
 			else if( s == string("plotResidRes"))
 				pVppItems->getResiduaryResistanceItem()->plot();
 
@@ -455,6 +461,8 @@ int main(int argc, char** argv) {
 				std::cout<<"   printVars              : print the variables read from file \n";
 				std::cout<<" \n";
 				std::cout<<"   plotSailCoeffs         : plot the aerodynamic coeffs for the current sails \n";
+				std::cout<<"   plot_D_SailCoeffs      : plot the first derivative of the aerodynamic coeffs for the current sails \n";
+				std::cout<<"   plot_D2_SailCoeffs     : plot the second derivative of the aerodynamic coeffs for the current sails \n";
 				std::cout<<" \n";
 				std::cout<<"   plotResidRes           : plot the Residuary Resistance \n";
 				std::cout<<"   plotResidRes_Keel      : plot the Residuary Resistance of the Keel \n";

@@ -257,7 +257,61 @@ void SplineInterpolator::plot(double minVal,double maxVal,int nVals,
 
 }
 
+// Plot the spline and its underlying source points
+void SplineInterpolator::plotD1(double minVal,double maxVal,int nVals,
+		string title, string xLabel, string yLabel) {
 
+	std::vector<double> x(nVals+1), y(nVals+1);
+	double dx= (maxVal-minVal)/(nVals);
+
+	// Generate the n.points for the current plot
+	for(size_t i=0; i<nVals+1; i++){
+		x[i] = minVal + i*dx;
+		y[i] = s_(x[i]);
+	}
+
+	// now compute the first derivative of this curve
+	std::vector<double> x1(nVals), y1(nVals);
+	for(size_t i=0; i<nVals; i++){
+		x1[i] = (x[i]+x[i+1])/2;
+		y1[i] = (y[i+1]-y[i])/(x[i+1]-x[i]);
+	}
+
+	// Instantiate a plotter and plot the data
+	Plotter plotter;
+	plotter.plot(x1,y1,title,xLabel,yLabel);
+
+}
+
+// Plot the spline and its underlying source points
+void SplineInterpolator::plotD2(double minVal,double maxVal,int nVals,
+		string title, string xLabel, string yLabel) {
+
+	std::vector<double> x(nVals+1), y(nVals+1);
+	double dx= (maxVal-minVal)/(nVals);
+
+	// Generate the n.points for the current plot
+	for(size_t i=0; i<nVals+1; i++){
+		x[i] = minVal + i*dx;
+		y[i] = s_(x[i]);
+	}
+
+	// now compute the second derivative of this curve
+	std::vector<double> x2(nVals-1), y2(nVals-1);
+	for(size_t i=0; i<nVals-1; i++){
+		x2[i] = (x[i+2]+2*x[i+1]+x[i])/4;
+		y2[i] = 2*(
+								y[i+2]*(x[i+1]-x[i]) +
+								y[i+1]*(x[i]-2*x[i+1]-x[i+2]) +
+								y[i]  *(x[i+1]-x[i+2])
+							) / ( x[i+2]-x[i] );
+	}
+
+	// Instantiate a plotter and plot the data
+	Plotter plotter;
+	plotter.plot(x2,y2,title,xLabel,yLabel);
+
+}
 ////////////////////////////////////////////////////////////////////////////////////
 
 // Constructor
