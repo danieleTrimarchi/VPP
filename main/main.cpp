@@ -114,15 +114,19 @@ int main(int argc, char** argv) {
 			else if( s == string("plot_D2_SailCoeffs"))
 				pVppItems->getSailCoefficientItem()->plot_D2_InterpolatedCoefficients();
 
-			else if( s == string("plotResidRes"))
-				pVppItems->getResiduaryResistanceItem()->plot();
+			//---
+
+			else if( s == string("plotSailForceMoment"))
+				pVppItems->getAeroForcesItem()->plot();
 
 			//---
+
+			else if( s == string("plotResidRes"))
+				pVppItems->getResiduaryResistanceItem()->plot();
 
 			else if(s == string("plotResidRes_Keel") )
 				pVppItems->getResiduaryResistanceKeelItem()->plot();
 
-			//add plot FrictionalResistanceItem
 			else if(s == string("plotFrictionalRes") )
 				pVppItems->getFrictionalResistanceItem()->plot();
 
@@ -174,8 +178,7 @@ int main(int argc, char** argv) {
 				std::cout<<"   plot_D_SailCoeffs        : plot the first derivative of the aerodynamic coeffs for the current sails \n";
 				std::cout<<"   plot_D2_SailCoeffs       : plot the second derivative of the aerodynamic coeffs for the current sails \n";
 				std::cout<<" \n";
-				//std::cout<<"   plotSailForce            : plot the aerodynamic force for fixed wind/heel ranges\n";
-				//std::cout<<"   plotHeelMoment           : plot the heeling moment for fixed wind/heel ranges\n";
+				std::cout<<"   plotSailForceMoment      : plot the drive force and the heeling moment for fixed wind/heel ranges\n";
 				std::cout<<" \n";
 				std::cout<<"   plotResidRes             : plot the Residuary Resistance for a fixed range\n";
 				std::cout<<"   plotResidRes_Keel        : plot the Residuary Resistance of the Keel for a fixed range\n";

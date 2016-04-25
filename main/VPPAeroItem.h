@@ -47,6 +47,9 @@ class WindItem : public VPPItem {
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+		/// Make this class friend of the VPPAeroItem, that requires data to plot
+		friend class AeroForcesItem;
+
 	private:
 
 		/// Update the item for the current step (wind velocity and angle),
@@ -358,6 +361,9 @@ class AeroForcesItem : public VPPItem {
 
 		/// Get the value of the heel moment
 		const double getMHeel() const;
+
+		/// plot the aeroForces for a fixed range
+		void plot();
 
 		/// Print the class name -> in this case AeroForcesItem
 		virtual void printWhoAmI();

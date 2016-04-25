@@ -144,6 +144,11 @@ const AeroForcesItem* VPPItemFactory::getAeroForcesItem() const {
 	return pAeroForcesItem_.get();
 }
 
+// Getter for the aero forces item that stores the driving forces
+AeroForcesItem* VPPItemFactory::getAeroForcesItem() {
+	return pAeroForcesItem_.get();
+}
+
 // Getter for the Residuary Resistance item
 ResiduaryResistanceItem* VPPItemFactory::getResiduaryResistanceItem() const {
 	return pResiduaryResistanceItem_.get();

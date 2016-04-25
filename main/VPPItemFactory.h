@@ -41,6 +41,10 @@ class VPPItemFactory {
 		/// Getter for the aero forces item that stores the driving forces
 		const AeroForcesItem* getAeroForcesItem() const;
 
+		/// Getter for the aero forces item that stores the driving forces
+		/// Non const version
+		AeroForcesItem* getAeroForcesItem();
+
 		/// Getter for the Residuary Resistance item
 		ResiduaryResistanceItem* getResiduaryResistanceItem() const;
 

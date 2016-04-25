@@ -154,7 +154,6 @@ Plotter::Plotter():
 				PlotterBase(),
 				nValues_(0),
 				x_(0), y_(0) {
-
 }
 
 // Destructor
@@ -401,6 +400,64 @@ void Plotter::plot(	std::vector<double>& x0,
 
 	// Close PLplot library
 	pllab( xLabel.c_str(), yLabel.c_str(), title.c_str() );
+	plend();
+
+}
+
+
+// Append a set of polar data
+void Plotter::append(string curveLabel, ArrayXd& xs, ArrayXd& ys) {
+
+	// make sure the size of the arrays are the same
+	if(xs.size() != ys.size())
+		throw VPPException(HERE, "In Plotter::append, the size of the arrays does not match");
+
+	// push back the angles expressed in deg
+	xs_.push_back(xs);
+
+	// push back the values
+	ys_.push_back(ys);
+
+	// push back the curve titles
+	curveLabels_.push_back(curveLabel);
+
+	// place the labels in the center of the curve
+	size_t pos= xs.size() / 2;
+	idx_.push_back(pos);
+
+	// Set the ranges
+	resetRanges(xs,ys);
+
+}
+
+// Plot the data that have been previously appended to the buffer vectors
+void Plotter::plot(string xLabel,string yLabel,string plotTitle) {
+
+	// Create a labeled box to hold the plot.
+	plcol0( color::grey );
+
+	// Set up viewport and window, but do not draw box
+	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
+
+	// Set the color for the data line
+	plcol0( color::red );
+
+	for(size_t iLine=0; iLine<xs_.size(); iLine++) {
+
+		// Copy the vals into a c-stile array
+		setValues(xs_[iLine], ys_[iLine]);
+
+		// And now define the line
+		plline( xs_[iLine].size(), x_, y_ );
+
+		// Place the curve label somewhere on the curve
+		plptex(x_[idx_[iLine]],y_[idx_[iLine]],1,0,0,curveLabels_[iLine].c_str());
+	}
+
+	// set the color
+	pllab( xLabel.c_str(), yLabel.c_str(), plotTitle.c_str() );
+
+	// Close the plot at end
 	plend();
 
 }

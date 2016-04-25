@@ -120,6 +120,12 @@ class Plotter : public PlotterBase {
 				string yLabel="y"
 		);
 
+		/// Append a set of data. Allows for multi-curve plots
+		void append(string curveLabel, Eigen::ArrayXd& xs, Eigen::ArrayXd& ys);
+
+		/// Plot the data that have been previously appended to the buffer vectors
+		void plot(string xLabel,string yLabel,string plotTitle);
+
 	protected:
 
 		/// Find the min of the specified c-style array
@@ -141,6 +147,16 @@ class Plotter : public PlotterBase {
 
 		/// Copy the values into plplot compatible containers -- version for vectors
 		void setValues(std::vector<double>& x, std::vector<double>& y);
+
+		/// Values that constitute the plot. The points of each curve in the
+		/// plot are appended to these vectors
+		std::vector<Eigen::ArrayXd> xs_, ys_;
+
+		/// index of the position where we aim to place the curve label for this curve
+		std::vector<size_t> idx_;
+
+		/// Title of each curve to be plot
+		std::vector<string> curveLabels_;
 
 };
 

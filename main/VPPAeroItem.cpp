@@ -629,6 +629,7 @@ AeroForcesItem::AeroForcesItem(SailCoefficientItem* sailCoeffItem) :
 						drag_(0),
 						fDrive_(0),
 						fSide_(0),
+						fHeel_(0),
 						mHeel_(0) {
 	// do nothing
 }
@@ -673,6 +674,80 @@ void AeroForcesItem::update(int vTW, int aTW) {
 	// the hydrodynamic center, scaled with cos(PHI)
 	mHeel_ = fSide_ * ( 0.45 * pParser_->get("T") + pParser_->get("AVGFREB") + pSailSet_->get("ZCE") ) * cos( PHI_ );
 	if(isnan(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
+
+}
+
+// plot the aeroForces for a fixed range
+void AeroForcesItem::plot() {
+
+	// buffer the current solution
+	Eigen::Vector2d xbuf;
+	xbuf << V_,PHI_;
+
+	// Declare containers for the velocity and angle-wise data
+	std::vector<ArrayXd> v, fDrive, mHeel;
+	std::vector<string> curveLabels;
+
+	// Loop on heel angles : from 0 to 90 deg in steps of 15 degs
+	for(size_t hAngle=0; hAngle<90; hAngle+=15){
+
+		// Convert the heeling angle into radians
+		PHI_= toRad(hAngle);
+		// vectors with the current boat velocity, the drive force
+		// and heeling moment values
+		ArrayXd x_v, f_v, m_v;
+
+		size_t nVelocities=5;
+		x_v.resize(nVelocities);
+		f_v.resize(nVelocities);
+		m_v.resize(nVelocities);
+
+		// loop on the boat velocity, from 0.1 to 5m/s in step on 1 m/s
+		for(size_t iTwv=0; iTwv<nVelocities; iTwv++ ) {
+
+			// Set the value for the state variable boat velocity
+			V_ = 0.1 + iTwv;
+
+			// update the wind. For the moment fix the apparent wind velocity and angle
+			// to the first values contained in the variableFiles. TODO: introduce inner
+			// loops foreach awa and foreach awv
+			pWindItem_->update(0,0);
+
+			// update 'this': compute sail forces. TODO: introduce inner
+			// loops foreach awa and foreach awv
+			update(0,0);
+
+			// Store velocity-wise data:
+			x_v(iTwv)= V_;					// velocities...
+			f_v(iTwv)= getFDrive(); // fDrive...
+			m_v(iTwv)= getMHeel();  // mHeel...
+
+		}
+
+		// Append the velocity-wise curve for each heel angle
+		v.push_back(x_v);
+		fDrive.push_back(f_v);
+		mHeel.push_back(m_v);
+
+	}
+
+	// Instantiate a plotter and plot
+	Plotter fPlotter;
+	for(size_t i=0; i<v.size(); i++)
+		fPlotter.append("V=...",v[i],fDrive[i]);
+
+	fPlotter.plot("V[m/s]","Fdrive [N]","plot drive force vs boat speed");
+
+	// same for mheel
+	Plotter mPlotter;
+	for(size_t i=0; i<v.size(); i++)
+		mPlotter.append("M=...",v[i],mHeel[i]);
+
+	mPlotter.plot("V[m/s]","mHeel [N*m]","plot heeling moment vs boat speed");
+
+	// Restore the current solution
+	V_ = xbuf(0);
+	PHI_ = xbuf(1);
 
 }
 
