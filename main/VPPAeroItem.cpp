@@ -708,10 +708,24 @@ void AeroForcesItem::plot() {
 			// Set the value for the state variable boat velocity
 			V_ = 0.1 + iTwv;
 
+			// Declare a state vector to give the windItem
+			VectorXd stateVector(2);
+			stateVector << V_,PHI_;
+
 			// update the wind. For the moment fix the apparent wind velocity and angle
 			// to the first values contained in the variableFiles. TODO: introduce inner
 			// loops foreach awa and foreach awv
-			pWindItem_->update(0,0);
+			// TODO dtrimarchi : what a hell? Why do I need the dynamic_cast?
+			if(dynamic_cast<VPPItem*>(pWindItem_))
+				dynamic_cast<VPPItem*>(pWindItem_)->update(0, 0, stateVector);
+			else
+				throw VPPException(HERE,"Cannot cast WindItem to VPPItem..?");
+
+			// Update the sail coefficients for the current wind
+			if(dynamic_cast<VPPItem*>(pSailCoeffs_))
+				dynamic_cast<VPPItem*>(pSailCoeffs_)->update(0, 0, stateVector);
+			else
+				throw VPPException(HERE,"Cannot cast SailCoeffs to VPPItem..?");
 
 			// update 'this': compute sail forces. TODO: introduce inner
 			// loops foreach awa and foreach awv
@@ -729,19 +743,23 @@ void AeroForcesItem::plot() {
 		fDrive.push_back(f_v);
 		mHeel.push_back(m_v);
 
+		char msg[256];
+		sprintf(msg,"Phi=%d deg",hAngle);
+		curveLabels.push_back(msg);
+
 	}
 
 	// Instantiate a plotter and plot
 	Plotter fPlotter;
 	for(size_t i=0; i<v.size(); i++)
-		fPlotter.append("V=...",v[i],fDrive[i]);
+		fPlotter.append(curveLabels[i],v[i],fDrive[i]);
 
 	fPlotter.plot("V[m/s]","Fdrive [N]","plot drive force vs boat speed");
 
 	// same for mheel
 	Plotter mPlotter;
 	for(size_t i=0; i<v.size(); i++)
-		mPlotter.append("M=...",v[i],mHeel[i]);
+		mPlotter.append(curveLabels[i],v[i],mHeel[i]);
 
 	mPlotter.plot("V[m/s]","mHeel [N*m]","plot heeling moment vs boat speed");
 
