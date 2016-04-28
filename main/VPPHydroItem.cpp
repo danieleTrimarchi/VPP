@@ -19,7 +19,7 @@ ResistanceItem::ResistanceItem(VariableFileParser* pParser, boost::shared_ptr<Sa
 void ResistanceItem::update(int vTW, int aTW) {
 
 	// Update the Froude number using the state variable boat velocity
-	fN_= fabs(V_) / sqrt(Physic::g * pParser_->get("LWL"));
+	fN_= V_ / sqrt(Physic::g * pParser_->get("LWL"));
 	if(isnan(fN_)) throw VPPException(HERE,"fN_ is Nan");
 
 

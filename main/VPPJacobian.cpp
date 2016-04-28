@@ -55,7 +55,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 	// the current iteration
 	x_=xp0_;
 
-	std::cout<<"REset the state vector to: "<<x_<<std::endl;
+	std::cout<<"Reset the state vector to: "<<x_.transpose()<<std::endl;
 
 	// Instantiate the containers used to feed the plotter
 	// for the moment just one variable at the time...
@@ -222,7 +222,7 @@ void JacobianChecker::testPlot() {
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dFdx;
-	dFdx.plot(x,f,du_f,df,"dF/du JacobianChecker test plot","TWV [m/s]","F[N]");
+	dFdx.plot(x,f,du_f,df,"dF/du JacobianChecker test plot","Vb [m/s]","F[N]");
 
 
 }

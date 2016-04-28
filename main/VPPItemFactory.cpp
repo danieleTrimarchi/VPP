@@ -194,6 +194,11 @@ NegativeResistanceItem* VPPItemFactory::getNegativeResistanceItem() const {
 	return pNegativeResistance_.get();
 }
 
+// Getter for the righting moment item
+RightingMomentItem* VPPItemFactory::getRightingMomentItem() const {
+	return pRightingMomentItem_.get();
+}
+
 // Compute the resistance by summing up all the contributions
 double VPPItemFactory::getResistance() {
 
@@ -227,6 +232,7 @@ Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& 
 
 	// update the items with the state vector
 	update(vTW, aTW, x);
+
 
 	// compute deltaF = (Fdrive + Rtot). Remember that FDrive is supposedly
 	// positive, while the resistance is always negative

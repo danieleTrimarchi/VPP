@@ -16,7 +16,7 @@ NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 //dimension_(4),
 dimension_(2),
 tol_(1.e-6),
-maxIters_(10){
+maxIters_(40){
 
 	// Resize the result container
 	xp_.resize(dimension_);
@@ -180,7 +180,13 @@ void NRSolver::run(int twv, int twa) {
 			}
 
 			// Compute the residuals vector
+			std::cout<<"-------------------------------------------"<<std::endl;
 			Eigen::VectorXd residuals= vppItemsContainer_->getResiduals(twv,twa,xp_);
+			std::cout<<" FDRIVE= "<<vppItemsContainer_->getAeroForcesItem()->getFDrive()<<std::endl;
+			std::cout<<" R= "<<vppItemsContainer_->getResistance()<<std::endl;
+
+			std::cout<<" MHEEL= "<<vppItemsContainer_->getAeroForcesItem()->getMHeel()<<std::endl;
+			std::cout<<" MRIGHT= "<<vppItemsContainer_->getRightingMomentItem()->get()<<std::endl;
 
 			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.transpose()<<std::endl;
 			if(it>1) {

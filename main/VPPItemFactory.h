@@ -69,6 +69,9 @@ class VPPItemFactory {
 		/// Getter for the negative resistance item
 		NegativeResistanceItem* getNegativeResistanceItem() const;
 
+		/// Getter for the righting moment item
+		RightingMomentItem* getRightingMomentItem() const;
+
 		/// Compute the resistance by summing up all the contributions
 		double getResistance();
 
