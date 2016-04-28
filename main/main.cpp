@@ -142,6 +142,9 @@ int main(int argc, char** argv) {
 			else if(s == string("plotDelta_ResidRes_Heel") )
 				pVppItems->getDelta_ResiduaryResistance_HeelItem()->plot();
 
+			else if(s == string("plotNegativeResistance") )
+				pVppItems->getNegativeResistanceItem()->plot();
+
 			//---
 
 			else if(s == string("reload") ){
@@ -187,6 +190,7 @@ int main(int argc, char** argv) {
 				std::cout<<"   plotFrictionalRes_Rudder : plot the Viscous Resistance of the Rudder for a fixed range\n";
 				std::cout<<"   plotDelta_FrictRes_Heel  : plot the Delta Frictional Resistance due to heel for a fixed range\n";
 				std::cout<<"   plotDelta_ResidRes_Heel  : plot the Delta Residuary Resistance due to heel for a fixed range\n";
+				std::cout<<"   plotNegativeResistance   : plot the Negative Resistance for a fixed Fn range\n";
 				std::cout<<" \n";
 				std::cout<<"   reload                   : reload the variables from file \n";
 				std::cout<<"   run                      : launches the computations \n";

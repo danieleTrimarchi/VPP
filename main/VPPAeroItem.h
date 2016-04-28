@@ -26,11 +26,17 @@ class WindItem : public VPPItem {
 		/// Returns the true wind velocity for a given step
 		const double getTWV(size_t iV) const;
 
+		/// Returns the number of wind velocities defined in the variableFile
+		const int getWVSize() const;
+
 		/// Returns the true wind angle for this step
 		const double getTWA() const;
 
 		/// Returns the true wind angle for a given step
 		const double getTWA(size_t iA) const;
+
+		/// Returns the number of true wind angles
+		const int getWASize() const;
 
 		/// Returns the apparent wind angle for this step
 		const double getAWA() const;

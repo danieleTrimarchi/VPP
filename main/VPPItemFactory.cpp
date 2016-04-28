@@ -28,7 +28,7 @@ c2_(0) {
 	pAeroForcesItem_.reset(new AeroForcesItem(pSailCoeffItem_.get()));
 	vppAeroItems_.push_back( pAeroForcesItem_ );
 
-	// -- INSTANTIATE THE 9 RESISTANCE ITEMS
+	// -- INSTANTIATE THE 10 RESISTANCE ITEMS
 
 	// Instantiate a FrictionalResistanceItem Item and push it back to the children vector
 	// For the definition of the Frictional Resistance see Keuning 2.1 p108
@@ -77,6 +77,11 @@ c2_(0) {
 //	boost::shared_ptr<InducedResistanceItem> pInducedResistance(new InducedResistanceItem(pAeroForcesItem_.get()));
 //	vppHydroItems_.push_back( pInducedResistance );
 
+	// Instantiate a NegativeResistanceItem and push it back to the children vector
+	// This defines the resistance in the case of negative velocities
+	pNegativeResistance_.reset(new NegativeResistanceItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pNegativeResistance_ );
+
 	// ----------
 
 	/// Instantiate a righting moment item
@@ -96,14 +101,14 @@ void VPPItemFactory::update(int vTW, int aTW, Eigen::VectorXd& x) {
 
 	// Update all of the aero items:
 	for(size_t iItem=0; iItem<vppAeroItems_.size(); iItem++)
-		vppAeroItems_[iItem]->update(vTW,aTW,x);
+		vppAeroItems_[iItem]->updateSolution(vTW,aTW,x);
 
 	// Update all of the hydro items:
 	for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
-		vppHydroItems_[iItem]->VPPItem::update(vTW,aTW,x);
+		vppHydroItems_[iItem]->VPPItem::updateSolution(vTW,aTW,x);
 
 	// Update of the righting moment item:
-	pRightingMomentItem_->VPPItem::update(vTW,aTW,x);
+	pRightingMomentItem_->VPPItem::updateSolution(vTW,aTW,x);
 
 }
 
@@ -113,14 +118,14 @@ void VPPItemFactory::update(int vTW, int aTW, const double* x) {
 
 	// Update all of the aero items:
 	for(size_t iItem=0; iItem<vppAeroItems_.size(); iItem++)
-		vppAeroItems_[iItem]->update(vTW,aTW,x);
+		vppAeroItems_[iItem]->updateSolution(vTW,aTW,x);
 
 	// Update all of the hydro items:
 	for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
-		vppHydroItems_[iItem]->VPPItem::update(vTW,aTW,x);
+		vppHydroItems_[iItem]->VPPItem::updateSolution(vTW,aTW,x);
 
 	// Update of the righting moment item:
-	pRightingMomentItem_->VPPItem::update(vTW,aTW,x);
+	pRightingMomentItem_->VPPItem::updateSolution(vTW,aTW,x);
 
 }
 
@@ -184,6 +189,11 @@ Delta_ResiduaryResistance_HeelItem* VPPItemFactory::getDelta_ResiduaryResistance
 	return pDelta_ResiduaryResistance_HeelItem_.get();
 }
 
+// Getter for the negative resistance item
+NegativeResistanceItem* VPPItemFactory::getNegativeResistanceItem() const {
+	return pNegativeResistance_.get();
+}
+
 // Compute the resistance by summing up all the contributions
 double VPPItemFactory::getResistance() {
 
@@ -218,11 +228,13 @@ Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& 
 	// update the items with the state vector
 	update(vTW, aTW, x);
 
-	// compute deltaF = (Fdrive - Rtot)
+	// compute deltaF = (Fdrive + Rtot). Remember that FDrive is supposedly
+	// positive, while the resistance is always negative
 	dF_ = (pAeroForcesItem_->getFDrive() - getResistance());
 
-	// compute deltaM = (Mheel  - Mright)
-	dM_ = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+	// compute deltaM = (Mheel + Mright). Remember that mHeel is Positive,
+	// while righting moment is negative (right hand rule)
+	dM_ = (pAeroForcesItem_->getMHeel() - pRightingMomentItem_->get());
 
 	//std::cout<<"dF= "<<dF_<<"  dM= "<<dM_<<std::endl;
 

@@ -295,7 +295,7 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// limit the values to positive angles
-	if(PHI_<0.1) {
+	if(PHI_<0.01) {
 		res_=0.;
 		return;
 	}
@@ -477,7 +477,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<0.01) {
+	if(V_<0.001) {
 		res_=0.;
 		return;
 	}
@@ -599,7 +599,7 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<0.01) {
+	if(V_<0.001) {
 		res_=0.;
 		return;
 	}
@@ -659,7 +659,7 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<0.01) {
+	if(V_<0.001) {
 		res_=0.;
 		return;
 	}
@@ -735,7 +735,7 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<0.01) {
+	if(V_<0.001) {
 		res_=0.;
 		return;
 	}
@@ -776,7 +776,7 @@ void ViscousResistanceRudderItem::plot() {
 		update(0,0);
 
 		// Fill the vectors to be plot
-		x[i]= V_;
+		x[i]= fN_;
 		y[i]= res_;
 
 	}
@@ -784,6 +784,71 @@ void ViscousResistanceRudderItem::plot() {
 	// Instantiate a plotter and plot the curves
 	Plotter plotter;
 	plotter.plot(x,y,"Viscous Resistance of the Rudder","Fn [-]","Resistance [N]");
+
+	// Restore the initial buffered values
+	V_= bufferV;
+	update(0,0);
+
+}
+
+//=================================================================
+
+// Constructor
+NegativeResistanceItem::NegativeResistanceItem(
+		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+																ResistanceItem(pParser,pSailSet) {
+}
+
+// Destructor
+NegativeResistanceItem::~NegativeResistanceItem() {
+
+}
+
+/// Implement pure virtual method of the parent class
+void NegativeResistanceItem::update(int vTW, int aTW) {
+
+	// Call the parent class update to update the Froude number
+	ResistanceItem::update(vTW,aTW);
+
+	// Limit the computations to negative values. In this case
+	// define negative resistance as v^3
+	if(V_<0.)
+		res_=V_*V_*V_;
+	else
+		res_=0;
+
+}
+
+void NegativeResistanceItem::printWhoAmI() {
+	std::cout<<"--> WhoAmI of NegativeResistanceItem "<<std::endl;
+}
+
+// Plot the viscous resistance of the rudder for a fixed range (Fn=0-1)
+void NegativeResistanceItem::plot() {
+
+	// buffer the velocity that is going to be modified by the plot
+	double bufferV= V_;
+
+	int nVals=10;
+	std::vector<double> x(nVals), y(nVals);
+
+	for(size_t i=0; i<nVals; i++) {
+
+		// Set a fictitious -negative- velocity
+		V_= - ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
+
+		// Update the item
+		update(0,0);
+
+		// Fill the vectors to be plot
+		x[i]= fN_;
+		y[i]= res_;
+
+	}
+
+	// Instantiate a plotter and plot the curves
+	Plotter plotter;
+	plotter.plot(x,y,"Negative Resistance","Fn [-]","Resistance [N]");
 
 	// Restore the initial buffered values
 	V_= bufferV;

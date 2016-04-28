@@ -294,5 +294,30 @@ class ViscousResistanceRudderItem : public ResistanceItem {
 };
 
 //=================================================================
+// Class that returns a ficticious negative resistance in the case
+// of negative velocities. Used to stabilize the computations (NRSolver)
+class NegativeResistanceItem : public ResistanceItem {
 
+	public:
+
+		/// Constructor
+	NegativeResistanceItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+
+		/// Destructor
+		~NegativeResistanceItem();
+
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
+
+		/// Plot the negative resistance for a fixed range (Fn=0-1)
+		void plot();
+
+	private:
+
+		/// Implement pure virtual method of the parent class
+		virtual void update(int vTW, int aTW);
+
+};
+
+//=================================================================
 #endif

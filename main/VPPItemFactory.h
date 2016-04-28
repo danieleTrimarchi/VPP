@@ -66,6 +66,9 @@ class VPPItemFactory {
 		/// Getter for the Delta Residuary Resistance due to heel item
 		Delta_ResiduaryResistance_HeelItem* getDelta_ResiduaryResistance_HeelItem() const;
 
+		/// Getter for the negative resistance item
+		NegativeResistanceItem* getNegativeResistanceItem() const;
+
 		/// Compute the resistance by summing up all the contributions
 		double getResistance();
 
@@ -123,6 +126,9 @@ class VPPItemFactory {
 
 		/// Pointer to the Residuary Resistance due to Heel Item
 		boost::shared_ptr<Delta_ResiduaryResistance_HeelItem> pDelta_ResiduaryResistance_HeelItem_;
+
+		/// Pointer to the Negative Resistance
+		boost::shared_ptr<NegativeResistanceItem> pNegativeResistance_;
 
 		/// Pointer to the Righting moment Item
 		boost::shared_ptr<RightingMomentItem> pRightingMomentItem_;

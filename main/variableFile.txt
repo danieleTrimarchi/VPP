@@ -14,12 +14,12 @@ F_MIN	0.4		% ???
 F_MAX	1		% ???
 
 %%%% WIND CONFIGURATION
-V_TW_MIN		2.57
-V_TW_MAX 		5.14 
+V_TW_MIN		.1
+V_TW_MAX 		10 
 N_TWV 			10
-ALPHA_TW_MIN	28 
-ALPHA_TW_MAX 	180
-N_ALPHA_TW		2
+ALPHA_TW_MIN		30 
+ALPHA_TW_MAX 		180
+N_ALPHA_TW		20
 
 % These data are measurements and estimates for a Freedom 25
 %%%%%% HULL %%%%%%%
@@ -63,8 +63,8 @@ DELTTR  0      % [m]  Mean thikness ratio of rudder section
 RUDDFF  1      % [m]  Rudder?s form factor
 %%%%%%% SAILS %%%%%%%%
 %sailset - sails used in THIS calculation
-% 3 - main & jib; 5 - main & spi; 7 - main, jib, & spinnaker; 
-SAILSET 5
+% 1 - main only; 3 - main & jib; 5 - main & spi; 7 - main, jib, & spinnaker; 
+SAILSET 1
 P       8.900  % [m]  Mainsail heigth
 E       4.084  % [m]  Mainsail base
 MROACH  1.3    % [-]  Correction for mainsail roach [-] 

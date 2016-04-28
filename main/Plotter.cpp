@@ -450,7 +450,7 @@ void Plotter::plot(string xLabel,string yLabel,string plotTitle) {
 		// And now define the line
 		plline( xs_[iLine].size(), x_, y_ );
 
-		// Place the curve label somewhere on the curve
+		// Place the curve label in the center of the curve
 		plptex(x_[idx_[iLine]],y_[idx_[iLine]],1,0,0,curveLabels_[iLine].c_str());
 	}
 

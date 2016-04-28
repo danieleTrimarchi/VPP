@@ -97,6 +97,11 @@ const double WindItem::getTWV() const {
 	return twv_;
 }
 
+// Returns the number of true wind velocities
+const int WindItem::getWVSize() const {
+	return n_twv_;
+}
+
 // Returns the true wind angle for a given step
 const double WindItem::getTWA(size_t iA) const {
 	return vTwa_[iA];
@@ -105,6 +110,11 @@ const double WindItem::getTWA(size_t iA) const {
 // Returns the current true wind angle for this step
 const double WindItem::getTWA() const {
 	return twa_;
+}
+
+// Returns the number of true wind angles
+const int WindItem::getWASize() const {
+	return n_alpha_tw_;
 }
 
 /// Returns the apparent wind angle for this step
@@ -639,7 +649,7 @@ AeroForcesItem::~AeroForcesItem() {
 
 }
 
-/// Update the items for the current step (wind velocity and angle)
+/// Update the items for the current ste§p (wind velocity and angle)
 void AeroForcesItem::update(int vTW, int aTW) {
 
 	// Gets the value of the apparent wind velocity
@@ -648,7 +658,6 @@ void AeroForcesItem::update(int vTW, int aTW) {
 
 	double awa = pWindItem_->getAWA();
 	if(isnan(awa)) throw VPPException(HERE,"awa is NAN!");
-
 
 	// Updates Lift = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cl;
 	// Note that the nominal area AN was scaled with cos( PHI ) and it
@@ -662,8 +671,8 @@ void AeroForcesItem::update(int vTW, int aTW) {
 	drag_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * cos( PHI_ ) * pSailCoeffs_->getCd();
 	if(isnan(drag_)) throw VPPException(HERE,"drag_ is NAN!");
 
-	// Updates Fdrive = lift_ * sin(alfa_eff) - D * cos(alfa_eff);
-	fDrive_ = lift_ * sin( awa ) - drag_ * cos( awa );
+	// Updates Fdrive = lift_ * sin(awa) - D * cos(awa);
+  fDrive_ = lift_ * sin( awa ) - drag_ * cos( awa );
 	if(isnan(fDrive_)) throw VPPException(HERE,"fDrive_ is NAN!");
 
 	// Updates FSide = L * cos(alfa_eff) + D * sin(alfa_eff);
@@ -680,7 +689,27 @@ void AeroForcesItem::update(int vTW, int aTW) {
 // plot the aeroForces for a fixed range
 void AeroForcesItem::plot() {
 
-	// buffer the current solution
+	// Number of points of the plots
+	size_t nVelocities=20;
+
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	size_t twv=0, twa=0;
+
+	std::cout<<"--> Please enter the values of twv and twa for the aero forces plot: "<<std::endl;
+	while(true){
+	cin >> twv >> twa;
+	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
+	bool vFine= twv < pWindItem_->getWVSize();
+	bool aFine= twa < pWindItem_->getWASize();
+	if(!vFine)
+		std::cout<<"the value of twv is out of range, max is: "<<pWindItem_->getWVSize()-1<<std::endl;
+	if(!aFine)
+		std::cout<<"the value of twa is out of range, max is: "<<pWindItem_->getWASize()-1<<std::endl;
+	if(vFine&&aFine)
+		break;
+	}
+
+	// Buffer the current solution
 	Eigen::Vector2d xbuf;
 	xbuf << V_,PHI_;
 
@@ -697,7 +726,6 @@ void AeroForcesItem::plot() {
 		// and heeling moment values
 		ArrayXd x_v, f_v, m_v;
 
-		size_t nVelocities=5;
 		x_v.resize(nVelocities);
 		f_v.resize(nVelocities);
 		m_v.resize(nVelocities);
@@ -706,7 +734,8 @@ void AeroForcesItem::plot() {
 		for(size_t iTwv=0; iTwv<nVelocities; iTwv++ ) {
 
 			// Set the value for the state variable boat velocity
-			V_ = 0.1 + iTwv;
+			// Linearly from 0 to 5 m/s
+			V_ = double(iTwv) / (nVelocities-1) * 5;
 
 			// Declare a state vector to give the windItem
 			VectorXd stateVector(2);
@@ -715,21 +744,14 @@ void AeroForcesItem::plot() {
 			// update the wind. For the moment fix the apparent wind velocity and angle
 			// to the first values contained in the variableFiles. TODO: introduce inner
 			// loops foreach awa and foreach awv
-			// TODO dtrimarchi : what a hell? Why do I need the dynamic_cast?
-			if(dynamic_cast<VPPItem*>(pWindItem_))
-				dynamic_cast<VPPItem*>(pWindItem_)->update(0, 0, stateVector);
-			else
-				throw VPPException(HERE,"Cannot cast WindItem to VPPItem..?");
+			pWindItem_->updateSolution(twv, twa, stateVector);
 
 			// Update the sail coefficients for the current wind
-			if(dynamic_cast<VPPItem*>(pSailCoeffs_))
-				dynamic_cast<VPPItem*>(pSailCoeffs_)->update(0, 0, stateVector);
-			else
-				throw VPPException(HERE,"Cannot cast SailCoeffs to VPPItem..?");
+			pSailCoeffs_->updateSolution(twv, twa, stateVector);
 
 			// update 'this': compute sail forces. TODO: introduce inner
 			// loops foreach awa and foreach awv
-			update(0,0);
+			update(twv, twa);
 
 			// Store velocity-wise data:
 			x_v(iTwv)= V_;					// velocities...
@@ -744,7 +766,7 @@ void AeroForcesItem::plot() {
 		mHeel.push_back(m_v);
 
 		char msg[256];
-		sprintf(msg,"Phi=%d deg",hAngle);
+		sprintf(msg,"heel=%d deg",hAngle);
 		curveLabels.push_back(msg);
 
 	}
@@ -754,7 +776,12 @@ void AeroForcesItem::plot() {
 	for(size_t i=0; i<v.size(); i++)
 		fPlotter.append(curveLabels[i],v[i],fDrive[i]);
 
-	fPlotter.plot("V[m/s]","Fdrive [N]","plot drive force vs boat speed");
+	char msg[256];
+	sprintf(msg,"plot drive force vs boat speed - "
+			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			pWindItem_->getTWV(twv),
+			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
+	fPlotter.plot("V [m/s]","Fdrive [N]", msg);
 
 	// same for mheel
 	Plotter mPlotter;

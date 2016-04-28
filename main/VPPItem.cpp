@@ -30,7 +30,7 @@ boost::shared_ptr<SailSet> VPPItem::getSailSet() const {
 
 // Update the items for the current step (wind velocity and angle),
 // the value of the state vector x computed by the optimizer
-void VPPItem::update(int vTW, int aTW, const double* x) {
+void VPPItem::updateSolution(int vTW, int aTW, const double* x) {
 
 	if(isnan(x[0])) throw VPPException(HERE,"x[0] is NAN!");
 	if(isnan(x[1])) throw VPPException(HERE,"x[1] is NAN!");
@@ -55,7 +55,7 @@ void VPPItem::update(int vTW, int aTW, const double* x) {
 // Update the parent VPPItem for the current step (wind velocity and angle),
 // the value of the state vector x computed by the optimizer. Then, call the
 // update method for the children in the vppItems_ vector
-void VPPItem::update(int vTW, int aTW, Eigen::VectorXd& x) {
+void VPPItem::updateSolution(int vTW, int aTW, Eigen::VectorXd& x) {
 
 	if(isnan(x(0))) throw VPPException(HERE,"x(0) is NAN!");
 	if(isnan(x(1))) throw VPPException(HERE,"x(1) is NAN!");
