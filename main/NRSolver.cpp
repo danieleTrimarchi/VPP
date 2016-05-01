@@ -16,7 +16,7 @@ NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 //dimension_(4),
 dimension_(2),
 tol_(1.e-6),
-maxIters_(40){
+maxIters_(100){
 
 	// Resize the result container
 	xp_.resize(dimension_);
@@ -91,7 +91,7 @@ void NRSolver::resetInitialGuess(int TWV, int TWA) {
 	if(TWV==0) {
 
 		//     V_0   PHI_0 b_0   f_0
-		xp_ << 0.01, 0.01;
+		xp_ << 0.01, mathUtils::toRad(0.01);
 		// TORESTORE
 		//, 0.01, 0.99;
 
@@ -171,7 +171,7 @@ void NRSolver::run(int twv, int twa) {
 				//				plotter4.plot(c2Residuals,"c2_residuals");
 
 				// Also plot some Jacobian diagnostics
-				J.testPlot(twv,twa);
+				//J.testPlot(twv,twa);
 
 				// And plot the JacobianChecker diagnostics
 				JCheck.testPlot();
@@ -182,11 +182,11 @@ void NRSolver::run(int twv, int twa) {
 			// Compute the residuals vector
 			std::cout<<"-------------------------------------------"<<std::endl;
 			Eigen::VectorXd residuals= vppItemsContainer_->getResiduals(twv,twa,xp_);
-			std::cout<<" FDRIVE= "<<vppItemsContainer_->getAeroForcesItem()->getFDrive()<<std::endl;
-			std::cout<<" R= "<<vppItemsContainer_->getResistance()<<std::endl;
-
-			std::cout<<" MHEEL= "<<vppItemsContainer_->getAeroForcesItem()->getMHeel()<<std::endl;
-			std::cout<<" MRIGHT= "<<vppItemsContainer_->getRightingMomentItem()->get()<<std::endl;
+//			std::cout<<" FDRIVE= "<<vppItemsContainer_->getAeroForcesItem()->getFDrive()<<std::endl;
+//			std::cout<<" R= "<<vppItemsContainer_->getResistance()<<std::endl;
+//
+//			std::cout<<" MHEEL= "<<vppItemsContainer_->getAeroForcesItem()->getMHeel()<<std::endl;
+//			std::cout<<" MRIGHT= "<<vppItemsContainer_->getRightingMomentItem()->get()<<std::endl;
 
 			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.transpose()<<std::endl;
 			if(it>1) {
@@ -201,7 +201,7 @@ void NRSolver::run(int twv, int twa) {
 				break;
 
 			// Compute the Jacobian matrix
-			J.run(twv,twa);
+			J.run(xp_,twv,twa);
 			std::cout<<"J= \n"<<J<<std::endl;
 
 			// Right before computing the solution, store the relevant data to the JacobianChecker
@@ -213,10 +213,20 @@ void NRSolver::run(int twv, int twa) {
 
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
-			xp_ -= deltas;
+			xp_ -= (deltas / 2);
 			std::cout<<"xp= "<<xp_.transpose()<<std::endl;
 
 		}
+
+		// And plot the JacobianChecker diagnostics
+		//JCheck.testPlot();
+
+//		string s;
+//		std::cout<<"Please press a key to continue"<<std::endl;
+//		while(cin >> s){
+//			break;
+//		}
+
 
 	}
 	catch (std::exception& e) {

@@ -493,6 +493,7 @@ void VectorPlotter::plot(
 		throw VPPException(HERE,"VectorPlot size mismatch");
 
 	// Diagnostics
+//	std::cout <<"Plotting: "<<title<<std::endl;
 //	std::cout<<"x= "<<x<<std::endl;
 //	std::cout<<"y= "<<y<<std::endl;
 //	std::cout<<"du= "<<du<<std::endl;
@@ -510,12 +511,31 @@ void VectorPlotter::plot(
 	cgrid2.nx = x.rows();
 	cgrid2.ny = x.cols();
 
+	double dx=fabs(x.maxCoeff()-x.minCoeff());
+
+	// scale each du, dv vector according to its norm to obtain 1-normed vectors
+	for ( int i = 0; i < x.rows(); i++ )
+		for ( int j = 0; j < x.cols(); j++ ) {
+
+			// Compute the scale for this vector
+			double norm = std::sqrt( du(i,j)*du(i,j) + dv(i,j)*dv(i,j));
+
+			// scale the u-v component according to the scale
+			du(i,j) *= (dx/norm);
+			dv(i,j) *= (dx/norm);
+
+		}
+
+//	std::cout<<"scaled du= "<<du<<std::endl;
+//	std::cout<<"scaled dv= "<<dv<<std::endl;
+
 	// Create data - vectors are placed half-way through the coordinate pts
 	for ( int i = 0; i < x.rows(); i++ )
 		for ( int j = 0; j < y.cols(); j++ ) {
 
 			cgrid2.xg[i][j] = x(i,j);
 			cgrid2.yg[i][j] = y(i,j);
+
 			u[i][j]         = du(i,j);
 			v[i][j]         = dv(i,j);
 		}

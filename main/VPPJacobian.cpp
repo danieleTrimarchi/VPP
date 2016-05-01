@@ -12,7 +12,10 @@ vppItemsContainer_(vppItemsContainer) {
 
 }
 
-void VPPJacobian::run(int twv, int twa) {
+void VPPJacobian::run(Eigen::VectorXd& x, int twv, int twa) {
+
+	// Note that we do not need to update x_, because x_ is a reference to the
+	// state vector of the class calling the constructor of this!
 
 	// loop on the state variables
 	for(size_t iVar=0; iVar<x_.rows(); iVar++) {
@@ -76,7 +79,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 		M(0,i)= vppItemsContainer_->getResiduals(twv,twa,x_)(1);
 
 		// Compute the Jacobian for this configuration
-		run(twv, twa);
+		run(x_,twv, twa);
 
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences
@@ -127,7 +130,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 		M(0,i)= vppItemsContainer_->getResiduals(twv,twa,x_)(1);
 
 		// Compute the Jacobian for this configuration
-		run(twv, twa);
+		run(x_,twv, twa);
 
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences
@@ -197,7 +200,8 @@ void JacobianChecker::testPlot() {
 	size_t n=jacobians_.size();
 
 	// Instantiate the containers used to feed the plotter
-	Eigen::MatrixXd x(1,n), f(1,n), du_f(1,n), df(1,n);
+	Eigen::MatrixXd x(1,n), f(1,n), du_f(1,n), df(1,n),
+													m(1,n), du_m(1,n), dm(1,n);
 
 	// Feed the containers for plotting df/dx
 	for(size_t i=0; i<n; i++){
@@ -205,25 +209,78 @@ void JacobianChecker::testPlot() {
 		// Feed then first state variable: Vb
 		x(0,i)= xs_[i](0);
 
-		// Feed the force residual vector f
+		// Feed the force residual vector f,m
 		f(0,i)= res_[i](0);
 
-		// Feed the derivative vectors
+		// Feed the force derivative vectors: df = df/dx * dx
 		du_f(0,i)= x(0,i) * std::sqrt( std::numeric_limits<double>::epsilon() );
 	  df(0,i)= jacobians_[i].coeffRef(0,0) * du_f(0,i);
 
-	  // Normalize the vector size. Introduce some scaling used to improve the
-	  // visualization as a function of the number of vectors
-	  double fnorm=std::sqrt(du_f(0,i)*du_f(0,i)+df(0,i)*df(0,i)) * 5/n;
-	  du_f(0,i) /= fnorm;
-	  df(0,i) /= fnorm;
+	}
+
+	// Instantiate the vector plotters and produce the plots
+	VectorPlotter dFdx;
+	dFdx.plot(x,f,du_f,df,"dF/du JacobianChecker test plot","Vb [m/s]","F [N]");
+
+	// ----------
+
+	// Feed the containers for plotting dM/dx
+	for(size_t i=0; i<n; i++){
+
+		// Feed the first state variable: Vb
+		x(0,i)= xs_[i](0);
+
+		// Feed the moment residual vector dM
+		m(0,i)= res_[i](1);
+
+		// Feed the moment derivative vectors: dm = dm/dx * dx
+		du_m(0,i)= x(0,i) * std::sqrt( std::numeric_limits<double>::epsilon() );
+	  dm(0,i)= jacobians_[i].coeffRef(1,0) * du_m(0,i);
 
 	}
 
-	// Instantiate a vector plotter and produce the plot
-	VectorPlotter dFdx;
-	dFdx.plot(x,f,du_f,df,"dF/du JacobianChecker test plot","Vb [m/s]","F[N]");
+	VectorPlotter dMdx;
+	dMdx.plot(x,m,du_m,dm,"dM/du JacobianChecker test plot","Vb [m/s]","M [N*m]");
 
+	// ----------
+
+	// Feed the containers for plotting dF/dPhi
+	for(size_t i=0; i<n; i++){
+
+		// Feed the second state variable: Phi
+		x(0,i)= xs_[i](1);
+
+		// Feed the force residual vector dF
+		f(0,i)= res_[i](0);
+
+		// Feed the force derivative vectors: df = df/dPhi * dPhi
+		du_f(0,i)= x(0,i) * std::sqrt( std::numeric_limits<double>::epsilon() );
+	  df(0,i)= jacobians_[i].coeffRef(0,1) * du_f(0,i);
+
+	}
+
+	VectorPlotter dFdPhi;
+	dFdPhi.plot(x,m,du_m,dm,"dF/dPhi JacobianChecker test plot","Phi [rad]","F [N]");
+
+	// ----------
+
+	// Feed the containers for plotting dM/dPhi
+	for(size_t i=0; i<n; i++){
+
+		// Feed the second state variable: Phi
+		x(0,i)= xs_[i](1);
+
+		// Feed the moment residual vector dM
+		m(0,i)= res_[i](1);
+
+		// Feed the moment derivative vectors: dm = dm/dPhi * dPhi
+		du_m(0,i)= x(0,i) * std::sqrt( std::numeric_limits<double>::epsilon() );
+		dm(0,i)= jacobians_[i].coeffRef(1,1) * du_m(0,i);
+
+	}
+
+	VectorPlotter dMdPhi;
+	dMdPhi.plot(x,m,du_m,dm,"dM/dPhi JacobianChecker test plot","Phi [rad]","M [N*m]");
 
 }
 
