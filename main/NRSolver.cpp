@@ -16,7 +16,7 @@ NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 //dimension_(4),
 dimension_(2),
 tol_(1.e-6),
-maxIters_(20){
+maxIters_(1000){
 
 	// Resize the result container
 	xp_.resize(dimension_);
@@ -137,9 +137,9 @@ void NRSolver::run(int twv, int twa) {
 
 	try{
 		// Launch the optimization; negative retVal implies failure
-		std::cout<<"------------------------------------------\n";
-		std::cout<<"Entering the NRSolver with initial guess: "<<
-				xp_[0]<<" "<<xp_[1]<<"\n";
+//		std::cout<<"------------------------------------------\n";
+//		std::cout<<"Entering the NRSolver with initial guess: "<<
+//				xp_[0]<<" "<<xp_[1]<<"\n";
 		// TORESTORE
 		//" "<<xp_[2]<<" "<<xp_[3]<<
 		std::vector<double> velocityResiduals;
@@ -180,15 +180,9 @@ void NRSolver::run(int twv, int twa) {
 			}
 
 			// Compute the residuals vector
-			std::cout<<"-------------------------------------------"<<std::endl;
 			Eigen::VectorXd residuals= vppItemsContainer_->getResiduals(twv,twa,xp_);
-//			std::cout<<" FDRIVE= "<<vppItemsContainer_->getAeroForcesItem()->getFDrive()<<std::endl;
-//			std::cout<<" R= "<<vppItemsContainer_->getResistance()<<std::endl;
-//
-//			std::cout<<" MHEEL= "<<vppItemsContainer_->getAeroForcesItem()->getMHeel()<<std::endl;
-//			std::cout<<" MRIGHT= "<<vppItemsContainer_->getRightingMomentItem()->get()<<std::endl;
+//			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.transpose()<<std::endl;
 
-			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.transpose()<<std::endl;
 			if(it>1) {
 				velocityResiduals.push_back( residuals(0) );
 				PhiResiduals.push_back(residuals(1) );
@@ -202,7 +196,7 @@ void NRSolver::run(int twv, int twa) {
 
 			// Compute the Jacobian matrix
 			J.run(twv,twa);
-			std::cout<<"J= \n"<<J<<std::endl;
+//			std::cout<<"J= \n"<<J<<std::endl;
 
 			// Right before computing the solution, store the relevant data to the JacobianChecker
 			JCheck.push_back(J,xp_,residuals);
@@ -213,8 +207,8 @@ void NRSolver::run(int twv, int twa) {
 
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
-			xp_ -= deltas;
-			std::cout<<"xp= "<<xp_.transpose()<<std::endl;
+			xp_ -= 0.1*deltas;
+//			std::cout<<"xp= "<<xp_.transpose()<<std::endl;
 
 		}
 

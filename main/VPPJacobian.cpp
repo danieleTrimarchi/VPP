@@ -22,7 +22,7 @@ void VPPJacobian::run(int twv, int twa) {
 
 		// Compute the optimum eps for this variable
 		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
-		if(x_(iVar)) eps *= x_(iVar);
+		if(x_(iVar)) eps *= std::fabs(x_(iVar));
 
 		// Init a buffer of the state vector xp_
 		VectorXd xp(x_);
@@ -86,13 +86,8 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences
-		du_f(0,i)= x_(0) * std::sqrt( std::numeric_limits<double>::epsilon() );
+		du_f(0,i)= fabs(x_(0)) * std::sqrt( std::numeric_limits<double>::epsilon() );
 		du_M(0,i)= du_f(0,i);
-
-		std::cout<<	"i= "<<i<<"  x_(0)= "<<x_(0)<<
-								"  du_f(0,i)= "<<du_f(0,i)<<"  coeffRef(0,0)= "<<coeffRef(0,0)<<"  df(0,i)= "<<df(0,i)<<
-								"\n  du_M(0,i)= "<<du_M(0,i)<<"  coeffRef(1,0)= "<<coeffRef(1,0)<<" dM(0,i)= "<<dM(0,i)<<
-								std::endl;
 
 		// y-component of the jacobian derivative: dF/dx * dx
 	  df(0,i)= coeffRef(0,0) * du_f(0,i);
@@ -109,7 +104,6 @@ void VPPJacobian::testPlot(int twv, int twa) {
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dMdx;
 	dMdx.plot(x,M,du_M,dM,15,"dM/du Jacobian test plot","Vboat [m/s]","M[N*m]");
-
 
 	// Reset the state vector to its initial state
 	x_=xp0_;
@@ -132,7 +126,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences
-		du_f(0,i)= x_(1) * std::sqrt( std::numeric_limits<double>::epsilon() );
+		du_f(0,i)= fabs(x_(1)) * std::sqrt( std::numeric_limits<double>::epsilon() );
 		du_M(0,i)= du_f(0,i);
 
 		// y-component of the jacobian derivative: dF/dx * dx
