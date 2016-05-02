@@ -206,6 +206,7 @@ class VectorPlotter : public PlotterBase {
 				Eigen::MatrixXd& y,
 				Eigen::MatrixXd& du,
 				Eigen::MatrixXd& dv,
+				double scale=1.,
 				string title="Plot",
 				string xLabel="x",
 				string yLabel="y"

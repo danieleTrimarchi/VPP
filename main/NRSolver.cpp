@@ -16,7 +16,7 @@ NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 //dimension_(4),
 dimension_(2),
 tol_(1.e-6),
-maxIters_(100){
+maxIters_(20){
 
 	// Resize the result container
 	xp_.resize(dimension_);
@@ -110,7 +110,7 @@ void NRSolver::resetInitialGuess(int TWV, int TWA) {
 		// Extrapolate the state vector for the current wind
 		// velocity. Note that the items have not been init yet
 		xp_= extrapolator.get( pWind_->getTWV(TWV) );
-		std::cout<<"-->>Extrapolated first giuess: "<<xp_.transpose()<<std::endl;
+		std::cout<<"-->>Extrapolated first guess: "<<xp_.transpose()<<std::endl;
 	}
 	//
 	//		// Make sure the initial guess does not exceeds the bounds
@@ -171,10 +171,10 @@ void NRSolver::run(int twv, int twa) {
 				//				plotter4.plot(c2Residuals,"c2_residuals");
 
 				// Also plot some Jacobian diagnostics
-				//J.testPlot(twv,twa);
+				J.testPlot(twv,twa);
 
 				// And plot the JacobianChecker diagnostics
-				JCheck.testPlot();
+				// JCheck.testPlot();
 
 				throw VPPException(HERE,"VPP Solver could not converge");
 			}
@@ -201,7 +201,7 @@ void NRSolver::run(int twv, int twa) {
 				break;
 
 			// Compute the Jacobian matrix
-			J.run(xp_,twv,twa);
+			J.run(twv,twa);
 			std::cout<<"J= \n"<<J<<std::endl;
 
 			// Right before computing the solution, store the relevant data to the JacobianChecker
@@ -213,7 +213,7 @@ void NRSolver::run(int twv, int twa) {
 
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
-			xp_ -= (deltas / 2);
+			xp_ -= deltas;
 			std::cout<<"xp= "<<xp_.transpose()<<std::endl;
 
 		}

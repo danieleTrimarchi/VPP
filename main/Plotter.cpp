@@ -86,8 +86,8 @@ void PlotterBase::resetRanges(MatrixXd& x, MatrixXd& y, bool axisEqual) {
 	}
 
 	// Now increase the spacing to visualize all of the plot
-	double dx=fabs(maxX_-minX_)/50;
-	double dy=fabs(maxY_-minY_)/50;
+	double dx=fabs(maxX_-minX_)/10;
+	double dy=fabs(maxY_-minY_)/10;
 
 	minX_-=dx;
 	maxX_+=dx;
@@ -485,6 +485,7 @@ VectorPlotter::VectorPlotter() :
 void VectorPlotter::plot(
 		MatrixXd& x,  MatrixXd& y,
 		MatrixXd& du, MatrixXd& dv,
+		double scale,
 		string title,
 		string xLabel,
 		string yLabel) {
@@ -493,11 +494,11 @@ void VectorPlotter::plot(
 		throw VPPException(HERE,"VectorPlot size mismatch");
 
 	// Diagnostics
-//	std::cout <<"Plotting: "<<title<<std::endl;
-//	std::cout<<"x= "<<x<<std::endl;
-//	std::cout<<"y= "<<y<<std::endl;
-//	std::cout<<"du= "<<du<<std::endl;
-//	std::cout<<"dv= "<<dv<<std::endl;
+	std::cout <<"Plotting: "<<title<<std::endl;
+	std::cout<<"x= "<<x<<std::endl;
+	std::cout<<"y= "<<y<<std::endl;
+	std::cout<<"du= "<<du<<std::endl;
+	std::cout<<"dv= "<<dv<<std::endl;
 
 	// Declare arrays
 	PLcGrid2 cgrid2;
@@ -511,23 +512,22 @@ void VectorPlotter::plot(
 	cgrid2.nx = x.rows();
 	cgrid2.ny = x.cols();
 
-	double dx=fabs(x.maxCoeff()-x.minCoeff());
-
 	// scale each du, dv vector according to its norm to obtain 1-normed vectors
 	for ( int i = 0; i < x.rows(); i++ )
 		for ( int j = 0; j < x.cols(); j++ ) {
 
 			// Compute the scale for this vector
 			double norm = std::sqrt( du(i,j)*du(i,j) + dv(i,j)*dv(i,j));
-
-			// scale the u-v component according to the scale
-			du(i,j) *= (dx/norm);
-			dv(i,j) *= (dx/norm);
+			if(norm>0){
+				// scale the u-v component according to the scale
+				du(i,j) *= scale/norm;
+				dv(i,j) *= scale/norm;
+			}
 
 		}
 
-//	std::cout<<"scaled du= "<<du<<std::endl;
-//	std::cout<<"scaled dv= "<<dv<<std::endl;
+	std::cout<<"scaled du= "<<du<<std::endl;
+	std::cout<<"scaled dv= "<<dv<<std::endl;
 
 	// Create data - vectors are placed half-way through the coordinate pts
 	for ( int i = 0; i < x.rows(); i++ )
