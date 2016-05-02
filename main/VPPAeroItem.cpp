@@ -684,9 +684,6 @@ void AeroForcesItem::update(int vTW, int aTW) {
 	mHeel_ = fSide_ * ( 0.45 * pParser_->get("T") + pParser_->get("AVGFREB") + pSailSet_->get("ZCE") ) * cos( PHI_ );
 	if(isnan(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
 
-	if(V_<0)
-		mHeel_*=-1;
-
 }
 
 // plot the aeroForces for a fixed range

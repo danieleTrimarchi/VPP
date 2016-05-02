@@ -233,7 +233,6 @@ Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& 
 	// update the items with the state vector
 	update(vTW, aTW, x);
 
-
 	// compute deltaF = (Fdrive + Rtot). Remember that FDrive is supposedly
 	// positive, while the resistance is always negative
 	dF_ = (pAeroForcesItem_->getFDrive() - getResistance());

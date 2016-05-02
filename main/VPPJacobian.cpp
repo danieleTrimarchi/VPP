@@ -77,8 +77,9 @@ void VPPJacobian::testPlot(int twv, int twa) {
 		x(0,i)= x_(0);
 
 		// Store the force value for this plot
-		f(0,i)= vppItemsContainer_->getResiduals(twv,twa,x_)(0);
-		M(0,i)= vppItemsContainer_->getResiduals(twv,twa,x_)(1);
+		Eigen::VectorXd residuals=vppItemsContainer_->getResiduals(twv,twa,x_);
+		f(0,i)= residuals(0);
+		M(0,i)= residuals(1);
 
 		// Compute the Jacobian for this configuration
 		run(twv, twa);
@@ -122,8 +123,9 @@ void VPPJacobian::testPlot(int twv, int twa) {
 		x(0,i)= x_(1);
 
 		// Store the force value for this plot
-		f(0,i)= vppItemsContainer_->getResiduals(twv,twa,x_)(0);
-		M(0,i)= vppItemsContainer_->getResiduals(twv,twa,x_)(1);
+		Eigen::VectorXd residuals=vppItemsContainer_->getResiduals(twv,twa,x_);
+		f(0,i)= residuals(0);
+		M(0,i)= residuals(1);
 
 		// Compute the Jacobian for this configuration
 		run(twv, twa);
@@ -143,7 +145,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dFdPhi;
-	dFdPhi.plot(x,f,du_f,df,.05,"dF/dPhi Jacobian test plot","Phi [RAD]","F[N]");
+	dFdPhi.plot(x,f,du_f,df,.005,"dF/dPhi Jacobian test plot","Phi [RAD]","F[N]");
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dMdPhi;
