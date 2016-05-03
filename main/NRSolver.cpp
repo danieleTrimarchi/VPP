@@ -207,6 +207,7 @@ void NRSolver::run(int twv, int twa) {
 
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
+			// TODO: introduce Aitken
 			xp_ -= 0.1*deltas;
 //			std::cout<<"xp= "<<xp_.transpose()<<std::endl;
 
