@@ -29,9 +29,9 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 	for(size_t i=0; i<n_twv_; i++)
 		vTwv_[i]= v_tw_min_ + i * delta;
 
-	// Get the max/min wind angles in radians from the parser
-	alpha_tw_min_= mathUtils::toRad( pParser_->get("ALPHA_TW_MIN") );
-	alpha_tw_max_= mathUtils::toRad( pParser_->get("ALPHA_TW_MAX") );
+	// Get the max/min wind angles [rad] from the parser
+	alpha_tw_min_= pParser_->get("ALPHA_TW_MIN");
+	alpha_tw_max_= pParser_->get("ALPHA_TW_MAX");
 	n_alpha_tw_= pParser_->get("N_ALPHA_TW");
 
 	// Fill the values of the wind true angles

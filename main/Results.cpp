@@ -64,7 +64,7 @@ Result::~Result(){
 // PrintOut the values stored in this result
 void Result::print() {
 
-	printf("%4.2f  %4.2f  -- ", twv_,twa_);
+	printf("%4.2f  %4.2f  -- ", twv_,mathUtils::toDeg(twa_));
 	for(size_t iRes=0; iRes<result_.size(); iRes++)
 		printf("  %4.2e",result_[iRes]);
 	printf("  --  ");
@@ -214,7 +214,9 @@ const size_t ResultContainer::windAngleSize() const {
 /// Printout the list of Opt Results, arranged by twv-twa
 void ResultContainer::print() {
 
-	std::cout<<" TWV    TWA   --  V    PHI    B    F  --  dF    dM    c1    c2 "<<std::endl;
+	std::cout<<"\n TWV    TWA   --  V    PHI    B    F  --  dF    dM    c1    c2 "<<std::endl;
+	std::cout<<"---------------------------------------------------------------"<<std::endl;
+	std::cout<<"[m/s]  [deg]  -- [m/s] [deg] [m]  [-] --  [N]  [N*m]  [-]   [-]"<<std::endl;
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
 	for(size_t iWv=0; iWv<nWv_; iWv++)
 		for(size_t iWa=0; iWa<nWa_; iWa++)
