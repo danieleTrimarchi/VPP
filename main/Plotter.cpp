@@ -494,11 +494,11 @@ void VectorPlotter::plot(
 		throw VPPException(HERE,"VectorPlot size mismatch");
 
 	// Diagnostics
-//	std::cout <<"Plotting: "<<title<<std::endl;
-//	std::cout<<"x= "<<x<<std::endl;
-//	std::cout<<"y= "<<y<<std::endl;
-//	std::cout<<"du= "<<du<<std::endl;
-//	std::cout<<"dv= "<<dv<<std::endl;
+	std::cout <<"Plotting: "<<title<<std::endl;
+	std::cout<<"x= "<<x<<std::endl;
+	std::cout<<"y= "<<y<<std::endl;
+	std::cout<<"du= "<<du<<std::endl;
+	std::cout<<"dv= "<<dv<<std::endl;
 
 	// Declare arrays
 	PLcGrid2 cgrid2;
@@ -526,8 +526,8 @@ void VectorPlotter::plot(
 
 		}
 
-//	std::cout<<"scaled du= "<<du<<std::endl;
-//	std::cout<<"scaled dv= "<<dv<<std::endl;
+	std::cout<<"scaled du= "<<du<<std::endl;
+	std::cout<<"scaled dv= "<<dv<<std::endl;
 
 	// Create data - vectors are placed half-way through the coordinate pts
 	for ( int i = 0; i < x.rows(); i++ )

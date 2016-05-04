@@ -130,7 +130,8 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	// Get the aerodynamic side force. See DSYHS99 p 129
 	double fHeel= pAeroForcesItem_->getFSide() / cos(PHI_);
 
-	// Compute the induced resistance Ri = Fheel^2 / (0.5 * pi * rho_w * Te^2 * V^2)
+	// it is NOT possible to have:  res=f(1/V^2)! This is umphysical and skews the results!
+	// Compute the induced resistance Ri = Fheel^2 / (0.5 * rho_w * pi * Te^2 * V^2)
 	res_ = fHeel * fHeel / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
 	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
 

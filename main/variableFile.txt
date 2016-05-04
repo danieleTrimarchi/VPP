@@ -3,24 +3,22 @@
 % all data must be provided at zero speed
 
 %%%% VPP CONFIGURATION %%%%%%%%%
-V_MIN	0		% ??? [m/s] Min true wind velocity
-V_MAX	10		% ??? [m/s] Max true wind velocity
-PHI_MIN	0		% ??? [deg] Min true wind angle
-PHI_MAX	80		% ??? [deg] Max true wind angle
-B_MIN	0		% ??? 
-B_MAX	3		% ??? 
-PHI_MAX	0.3		% ???
-F_MIN	0.4		% ???
-F_MAX	1		% ???
+V_MIN	0		% [m/s] Min allowed boat velocity
+V_MAX	10		% [m/s] Max allowed boat velocity
+PHI_MIN	0		% [deg] Min allowed boat heel angle
+PHI_MAX	80		% [deg] Max allowed boat heel angle
+B_MIN	0		% [m]   Min crew distance from boat’s centreline 
+B_MAX	3		% [m]   Max crew distance from boat’s centreline 
+F_MIN	0.4		% [-] 	Min allowed flat
+F_MAX	1		% [-] 	Max allowed flat
 
 %%%% WIND CONFIGURATION
-V_TW_MIN		0.1
-V_TW_MAX 		10 
-N_TWV 			10
-#ALPHA_TW_MIN		45.7895 
-ALPHA_TW_MIN		40 
-ALPHA_TW_MAX 		180
-N_ALPHA_TW		20
+V_TW_MIN		0.1 % [m/s] Min true wind speed 
+V_TW_MAX 		10  % [m/s] Max true wind speed
+N_TWV 			10  % [-]   Number of wind speeds to be computed
+ALPHA_TW_MIN		34  % [deg] Min true wind angle
+ALPHA_TW_MAX 		180 % [deg] Max true wind angle
+N_ALPHA_TW		20  % [-]   Number of wind angles to be computed
 
 % These data are measurements and estimates for a Freedom 25
 %%%%%% HULL %%%%%%%
