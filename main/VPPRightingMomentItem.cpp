@@ -38,7 +38,7 @@ void RightingMomentItem::update(int vTW, int aTW) {
 	// TORESTORE
 	//val_ = m10_ * std::sin( PHI_) + m20_ * b_ * std::cos( PHI_ ) ;
 	val_ = m10_ * std::sin( PHI_) ;
-	if(isnan(val_)) throw VPPException(HERE,"Righting moment is NAN");
+	if(mathUtils::isValid(val_)) throw VPPException(HERE,"Righting moment is NAN");
 
 }
 

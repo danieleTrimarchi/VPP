@@ -1,5 +1,6 @@
 #include "VPPItemFactory.h"
 #include "VPPException.h"
+#include "mathUtils.h"
 #include <limits>
 
 // Constructor
@@ -208,7 +209,7 @@ double VPPItemFactory::getResistance() {
 	for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
 		resistance += vppHydroItems_[iItem]->get();
 
-	if(isnan(resistance))
+	if(mathUtils::isValid(resistance))
 		throw VPPException(HERE,"Resistance is NAN");
 
 	return resistance;

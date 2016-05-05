@@ -20,7 +20,7 @@ void ResistanceItem::update(int vTW, int aTW) {
 
 	// Update the Froude number using the state variable boat velocity
 	fN_= V_ / sqrt(Physic::g * pParser_->get("LWL"));
-	if(isnan(fN_)) throw VPPException(HERE,"fN_ is Nan");
+	if(mathUtils::isValid(fN_)) throw VPPException(HERE,"fN_ is Nan");
 
 
 	// todo dtrimarchi : possibly re-introduce the warning
@@ -40,7 +40,7 @@ ResistanceItem::~ResistanceItem() {
 
 // Get the value of the resistance for this ResistanceItem
 const double ResistanceItem::get() const {
-	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
 	return res_;
 }
 
@@ -133,7 +133,7 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	// it is NOT possible to have:  res=f(1/V^2)! This is umphysical and skews the results!
 	// Compute the induced resistance Ri = Fheel^2 / (0.5 * rho_w * pi * Te^2 * V^2)
 	res_ = fHeel * fHeel / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
-	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -214,7 +214,7 @@ void ResiduaryResistanceItem::update(int vTW, int aTW) {
 
 	// Compute the residuary resistance for the current froude number
 	res_ = pInterpolator_->interpolate(fN_);
-	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -304,7 +304,7 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	// Compute the residuary resistance for the current froude number
 	// RrhH = RrhH20 .* 6 .* ( phi ).^1.7;
 	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( PHI_,1.7) ;
-	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -379,7 +379,7 @@ void ResiduaryResistanceKeelItem::update(int vTW, int aTW) {
 
 	// Updates the value of the Residuary Resistance due to the Keel
 	res_= pInterpolator_->interpolate(fN_);
-	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -444,7 +444,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 	// Compute the resistance
 	// RrkH = (geom.DVK.*phys.rho_w.*phys.g.*Ch)*Fn.^2.*phi*pi/180;
 	res_= Ch_ * fN_ * fN_ * PHI_;
-	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -496,7 +496,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 
 	// Compute the frictional resistance
 	res_ = rfh * pParser_->get("HULLFF");
-	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -624,7 +624,7 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	// todo dtrimarchi: does it make sense to use the same hull form factor both for the upright and the heeled hull?
 	// See DSYHS99 p119, where the form factor is also defined. Here we ask the user to prompt a value
 	res_ = rfhH * pParser_->get("HULLFF");
-	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -675,7 +675,7 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 	// todo dtrimarchi : this form factor can be computed from the
 	// Keel geometry (see DSYHS99) Ch.3.2.11
 	res_ = rfk * pParser_->get("KEELFF");
-	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -751,7 +751,7 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 	// todo dtrimarchi : this form factor can be computed from the
 	// Rudder geometry (see DSYHS99) Ch.3.2.11
 	res_ = rfr * pParser_->get("RUDDFF");
-	if(isnan(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 

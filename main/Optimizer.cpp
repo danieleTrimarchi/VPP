@@ -158,7 +158,7 @@ double Optimizer::VPP_speed(unsigned n, const double* x, double *grad, void *my_
 	if(grad)
 		throw VPPException(HERE,"VPP_speed can only be used for derivative-free algorithms!");
 
-	if(isnan(x[0])) throw VPPException(HERE,"x[0] is NAN!");
+	if(mathUtils::isValid(x[0])) throw VPPException(HERE,"x[0] is NAN!");
 
 	// Return x[0], or the velocity to be maximized
 	return x[0];
