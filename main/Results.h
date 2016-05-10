@@ -117,6 +117,9 @@ class ResultContainer {
 		/// Printout the list of Opt Results, arranged by twv-twa
 		void print();
 
+		/// Printout the bounds of the state variables for the whole run
+		void printBounds();
+
 	private:
 
 		/// Default constructor

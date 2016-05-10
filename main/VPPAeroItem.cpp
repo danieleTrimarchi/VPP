@@ -63,23 +63,23 @@ void WindItem::update(int vTW, int aTW) {
 	// Update the true wind velocity
 	// vmin to vmax in N steps : vMin + vTW * ( (vMax-vMin)/(nSteps-2) - 1 )
 	twv_= getTWV(vTW);
-	if(mathUtils::isValid(twv_)) throw VPPException(HERE,"twv_ is NAN!");
+	if(mathUtils::isNotValid(twv_)) throw VPPException(HERE,"twv_ is NAN!");
 
 	// Update the true wind angle: make as per the velocity
 	twa_= getTWA(aTW);
-	if(mathUtils::isValid(twa_)) throw VPPException(HERE,"twa_ is NAN!");
+	if(mathUtils::isNotValid(twa_)) throw VPPException(HERE,"twa_ is NAN!");
 
 	// Update the apparent wind velocity vector
 	awv_(0)= V_ + twv_ * cos( twa_ );
-	if(mathUtils::isValid(awv_(0))) throw VPPException(HERE,"awv_(0) is NAN!");
+	if(mathUtils::isNotValid(awv_(0))) throw VPPException(HERE,"awv_(0) is NAN!");
 
 	awv_(1)= twv_ * sin( twa_ );
-	if(mathUtils::isValid(awv_(1))) throw VPPException(HERE,"awv_(1) is NAN!");
+	if(mathUtils::isNotValid(awv_(1))) throw VPPException(HERE,"awv_(1) is NAN!");
 
 	// Update the apparent wind angle - TODO dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
 	awa_= atan2( awv_(1),awv_(0) );
-	if(mathUtils::isValid(awa_))	throw VPPException(HERE,"awa_ is NAN!");
+	if(mathUtils::isNotValid(awa_))	throw VPPException(HERE,"awa_ is NAN!");
 
 }
 
@@ -228,7 +228,7 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 
 	// Update the local copy of the the apparent wind angle
 	awa_= pWindItem_->getAWA();
-	if(mathUtils::isValid(awa_)) throw VPPException(HERE,"awa_ is NaN");
+	if(mathUtils::isNotValid(awa_)) throw VPPException(HERE,"awa_ is NaN");
 
 	// create aliases for code readability
 	VariableFileParser* p = pParser_;
@@ -260,14 +260,14 @@ void SailCoefficientItem::postUpdate() {
 
 	// Reduce cl with the flattening factor of the state vector
 	// TORESTORE cl_ = cl_ * f_;
-	if(mathUtils::isValid(cl_)) throw VPPException(HERE,"cl_ is nan");
+	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 
 	// Compute the induced resistance
 	cdI_ = cl_ * cl_ * ( 1. / (M_PI * ar_) + 0.005 );
 
 	// Compute the total sail drag coefficient now
 	cd_ = cdp_ + cd0_ + cdI_;
-	if(mathUtils::isValid(cd_)) throw VPPException(HERE,"cd_ is nan");
+	if(mathUtils::isNotValid(cd_)) throw VPPException(HERE,"cd_ is nan");
 
 }
 
@@ -429,8 +429,8 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") ) /  ps->get("AN");
 	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") ) /  ps->get("AN");
 
-	if(mathUtils::isValid(cl_)) throw VPPException(HERE,"cl_ is nan");
-	if(mathUtils::isValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
+	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
+	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
@@ -505,8 +505,8 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
 	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
-	if(mathUtils::isValid(cl_)) throw VPPException(HERE,"cl_ is nan");
-	if(mathUtils::isValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
+	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
+	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
@@ -582,8 +582,8 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
 	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
-	if(mathUtils::isValid(cl_)) throw VPPException(HERE,"cl_ is nan");
-	if(mathUtils::isValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
+	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
+	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
@@ -654,35 +654,35 @@ void AeroForcesItem::update(int vTW, int aTW) {
 
 	// Gets the value of the apparent wind velocity
 	double awv = pWindItem_->getAWNorm();
-	if(mathUtils::isValid(awv)) throw VPPException(HERE,"awv is NAN!");
+	if(mathUtils::isNotValid(awv)) throw VPPException(HERE,"awv is NAN!");
 
 	double awa = pWindItem_->getAWA();
-	if(mathUtils::isValid(awa)) throw VPPException(HERE,"awa is NAN!");
+	if(mathUtils::isNotValid(awa)) throw VPPException(HERE,"awa is NAN!");
 
 	// Updates Lift = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cl;
 	// Note that the nominal area AN was scaled with cos( PHI ) and it
 	// takes the meaning of a projected surface
 	lift_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * cos( PHI_ ) * pSailCoeffs_->getCl();
-	if(mathUtils::isValid(lift_)) throw VPPException(HERE,"lift_ is NAN!");
+	if(mathUtils::isNotValid(lift_)) throw VPPException(HERE,"lift_ is NAN!");
 
 	// Updates Drag = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cd;
 	// Note that the nominal area AN was scaled with cos( PHI ) and it
 	// takes the meaning of a projected surface
 	drag_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * cos( PHI_ ) * pSailCoeffs_->getCd();
-	if(mathUtils::isValid(drag_)) throw VPPException(HERE,"drag_ is NAN!");
+	if(mathUtils::isNotValid(drag_)) throw VPPException(HERE,"drag_ is NAN!");
 
 	// Updates Fdrive = lift_ * sin(awa) - D * cos(awa);
   fDrive_ = lift_ * sin( awa ) - drag_ * cos( awa );
-	if(mathUtils::isValid(fDrive_)) throw VPPException(HERE,"fDrive_ is NAN!");
+	if(mathUtils::isNotValid(fDrive_)) throw VPPException(HERE,"fDrive_ is NAN!");
 
 	// Updates FSide = L * cos(alfa_eff) + D * sin(alfa_eff);
 	fSide_ = lift_ * cos( awa ) + drag_ * sin( awa );
-	if(mathUtils::isValid(fSide_)) throw VPPException(HERE,"fSide_ is NAN!");
+	if(mathUtils::isNotValid(fSide_)) throw VPPException(HERE,"fSide_ is NAN!");
 
 	// The righting moment arm is set as the distance between the center of sail effort and
 	// the hydrodynamic center, scaled with cos(PHI)
 	mHeel_ = fSide_ * ( 0.45 * pParser_->get("T") + pParser_->get("AVGFREB") + pSailSet_->get("ZCE") ) * cos( PHI_ );
-	if(mathUtils::isValid(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
+	if(mathUtils::isNotValid(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
 
 }
 
@@ -809,6 +809,26 @@ const double AeroForcesItem::getFDrive() const {
 /// Get the value of the heel moment
 const double AeroForcesItem::getMHeel() const {
 	return mHeel_;
+}
+
+// Get a ptr to the wind item
+WindItem* AeroForcesItem::getWindItem() {
+	return pWindItem_;
+}
+
+// Get a ptr to the wind item - const variety
+const WindItem* AeroForcesItem::getWindItem() const {
+	return pWindItem_;
+}
+
+// Get a ptr to the sailCoeffs Item
+SailCoefficientItem* AeroForcesItem::getSailCoeffItem() {
+	return pSailCoeffs_;
+}
+
+// Get a ptr to the sailCoeffs Item - const variety
+const SailCoefficientItem* AeroForcesItem::getSailCoeffItem() const {
+	return pSailCoeffs_;
 }
 
 void AeroForcesItem::printWhoAmI() {

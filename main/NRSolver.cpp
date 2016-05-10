@@ -208,7 +208,7 @@ void NRSolver::run(int twv, int twa) {
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
 			// TODO: introduce Aitken
-			xp_ -= 0.1*deltas;
+			xp_ -= deltas;
 //			std::cout<<"xp= "<<xp_.transpose()<<std::endl;
 
 		}
@@ -259,13 +259,22 @@ void NRSolver::printResults() {
 
 }
 
+// Make a printout of the result bounds for this run
+void NRSolver::printResultBounds() {
+
+	std::cout<<"==== NRSolver RESULT BOUNDS PRINTOUT ==================="<<std::endl;
+	pResults_->printBounds();
+	std::cout<<"---------------------------------------------------\n"<<std::endl;
+
+}
+
 // Make a printout of the results for this run
 void NRSolver::plotPolars() {
 
 	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
 	// Sail flat, Crew B, dF and dM
-	PolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot");
-	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot");
+	PolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot [m/s]");
+	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot [deg]");
 	// TORESTORE
 	//	PolarPlotter crewBPolarPlotter("Crew B Polar Plot");
 	//	PolarPlotter sailFlatPolarPlotter("Sail Flat");
@@ -319,7 +328,7 @@ void NRSolver::plotPolars() {
 
 	// Ask all plotters to plot
 	boatSpeedPolarPlotter.plot();
-	boatHeelPolarPlotter.plot();
+	boatHeelPolarPlotter.plot(1000);
 	// TORESTORE
 	//	crewBPolarPlotter.plot();
 	//	sailFlatPolarPlotter.plot();

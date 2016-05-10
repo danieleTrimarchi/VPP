@@ -48,6 +48,9 @@ class VPPItemFactory {
 		/// Getter for the Residuary Resistance item
 		ResiduaryResistanceItem* getResiduaryResistanceItem() const;
 
+		/// Getter for the Induced Resistance item
+		InducedResistanceItem* getInducedResistanceItem() const;
+
 		/// Getter for the Residuary Resistance of the Keel item
 		ResiduaryResistanceKeelItem* getResiduaryResistanceKeelItem() const;
 
@@ -114,6 +117,9 @@ class VPPItemFactory {
 
 		/// Pointer to the Residuary Resistance of the Keel Item
 		boost::shared_ptr<ResiduaryResistanceKeelItem> pResiduaryResistanceKeelItem_;
+
+		/// Pointer to the Induced Resistance Item
+		boost::shared_ptr<InducedResistanceItem> pInducedResistanceItem_;
 
 		/// Pointer to the Frictional Resistance Item
 		boost::shared_ptr<FrictionalResistanceItem> pFrictionalResistanceItem_;

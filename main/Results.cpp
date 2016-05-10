@@ -216,10 +216,40 @@ void ResultContainer::print() {
 
 	std::cout<<"\n TWV    TWA   --  V    PHI    B    F  --  dF    dM    c1    c2 "<<std::endl;
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
-	std::cout<<"[m/s]  [deg]  -- [m/s] [deg] [m]  [-] --  [N]  [N*m]  [-]   [-]"<<std::endl;
+	std::cout<<"[m/s]  [deg]  -- [m/s] [rad] [m]  [-] --  [N]  [N*m]  [-]   [-]"<<std::endl;
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
 	for(size_t iWv=0; iWv<nWv_; iWv++)
 		for(size_t iWa=0; iWa<nWa_; iWa++)
 			resMat_[iWv][iWa].print();
 }
 
+/// Printout the bounds of the Results for the whole run
+void ResultContainer::printBounds() {
+
+	double minV=1e22;
+	double maxV=-1e22;
+	double minPhi=1e22;
+	double maxPhi=-1e22;
+
+	for(size_t iWv=0; iWv<nWv_; iWv++)
+		for(size_t iWa=0; iWa<nWa_; iWa++){
+
+			const Eigen::VectorXd* x( resMat_[iWv][iWa].getX() );
+
+			if(x->coeff(0)>maxV)
+				maxV=x->coeff(0);
+			if(x->coeff(0)<minV)
+				minV=x->coeff(0);
+			if(x->coeff(1)>maxPhi)
+				maxPhi=x->coeff(1);
+			if(x->coeff(1)<minPhi)
+				minPhi=x->coeff(1);
+
+		}
+
+	std::cout<<"---------------------------------------------------------------"<<std::endl;
+	std::cout<<"\n MinV [m/s]    MaxV [m/s]  --   MinPhi [rad]    MaxPhi [rad]"<<std::endl;
+	std::cout<<"---------------------------------------------------------------"<<std::endl;
+	std::cout<<"  "<<minV<<"     "<<maxV<<"     --    "<<minPhi<<"        "<<maxPhi<<std::endl;
+
+}

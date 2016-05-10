@@ -17,11 +17,11 @@ namespace mathUtils {
 	};
 
 	// Define a static utility function to check that a value is numeric and finite
-	static bool isValid( double val ){
+	static bool isNotValid( double val ){
 		if( isnan(val) || isinf(val) )
-			return false;
+			return true;
 
-		return true;
+		return false;
 	};
 
 }

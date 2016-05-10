@@ -20,7 +20,7 @@ void ResistanceItem::update(int vTW, int aTW) {
 
 	// Update the Froude number using the state variable boat velocity
 	fN_= V_ / sqrt(Physic::g * pParser_->get("LWL"));
-	if(mathUtils::isValid(fN_)) throw VPPException(HERE,"fN_ is Nan");
+	if(mathUtils::isNotValid(fN_)) throw VPPException(HERE,"fN_ is Nan");
 
 
 	// todo dtrimarchi : possibly re-introduce the warning
@@ -40,7 +40,7 @@ ResistanceItem::~ResistanceItem() {
 
 // Get the value of the resistance for this ResistanceItem
 const double ResistanceItem::get() const {
-	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 	return res_;
 }
 
@@ -125,16 +125,114 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	// Make a check plot for the induced resistance
 	// WARNING: as we are in update, this potentially leads to a
 	// large number of plots!
-	//interpolator.plot(0,30,30,"Effective Span","PHI [deg]","Te");
+	// interpolator.plot(0,mathUtils::toRad(30),30,"Effective Span","PHI [deg]","Te");
 
-	// Get the aerodynamic side force. See DSYHS99 p 129
+	// Get the aerodynamic side force. See DSYHS99 p 129. AeroForcesItem is supposedly up to
+	// date because it is stored in the aeroItems vector that is updated before the hydroItemsVector
 	double fHeel= pAeroForcesItem_->getFSide() / cos(PHI_);
 
-	// it is NOT possible to have:  res=f(1/V^2)! This is umphysical and skews the results!
 	// Compute the induced resistance Ri = Fheel^2 / (0.5 * rho_w * pi * Te^2 * V^2)
-	res_ = fHeel * fHeel / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
-	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(V_>0)
+		res_ = fHeel * fHeel / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
+	else
+		res_=0;
+	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
+}
+
+// Plot the Induced Resistance curve
+void InducedResistanceItem::plot() {
+
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	size_t twv=0, twa=0;
+
+	std::cout<<"--> Please enter the values of twv and twa for the aero forces plot: "<<std::endl;
+	while(true){
+	cin >> twv >> twa;
+	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
+	bool vFine= twv < pAeroForcesItem_->getWindItem()->getWVSize();
+	bool aFine= twa < pAeroForcesItem_->getWindItem()->getWASize();
+	if(!vFine)
+		std::cout<<"the value of twv is out of range, max is: "<<pAeroForcesItem_->getWindItem()->getWVSize()-1<<std::endl;
+	if(!aFine)
+		std::cout<<"the value of twa is out of range, max is: "<<pAeroForcesItem_->getWindItem()->getWASize()-1<<std::endl;
+	if(vFine&&aFine)
+		break;
+	}
+
+	// buffer the velocity that is going to be modified by the plot
+	double bufferV= V_;
+	double bufferPHI= PHI_;
+
+	size_t nVelocities=40, nAngles=20;
+
+	std::vector<string> curveLabels;
+	std::vector<ArrayXd> froudeNb, indRes;
+
+	// Loop on the heel angles
+	for(size_t i=0; i<nAngles; i+=4){
+
+		PHI_= ( 1./nAngles * (i+1) ) * M_PI/4;
+		//std::cout<<"PHI= "<<PHI_<<std::endl;
+
+		// declare some tmp containers
+		vector<double> fn, res;
+
+		// Loop on the velocities
+		for(size_t v=0; v<nVelocities-7; v++){
+
+			// Set a fictitious velocity (Fn=0-1)
+			V_= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
+
+			Eigen::VectorXd x(2);
+			x << V_, PHI_;
+
+			// Update the aeroForceItems
+			pAeroForcesItem_->getWindItem()->updateSolution(twv,twa,x);
+			pAeroForcesItem_->getSailCoeffItem()->updateSolution(twv,twa,x);
+			pAeroForcesItem_->updateSolution(twv,twa,x);
+
+			// Update the induced resistance Item
+			update(twv,twa);
+
+			// Fill the vectors to be plot
+			fn.push_back( fN_ );
+			res.push_back( res_ );
+
+		}
+
+		// Now transform fn and res to ArrayXd and push_back to vector
+		ArrayXd tmpFn(fn.size());
+		ArrayXd tmpRes(fn.size());
+		for(size_t j=0; j<fn.size(); j++){
+			tmpFn(j)=fn[j];
+			tmpRes(j)=res[j];
+		}
+
+		froudeNb.push_back(tmpFn);
+		indRes.push_back(tmpRes);
+
+		char msg[256];
+		sprintf(msg,"%3.1f [deg]", mathUtils::toDeg(PHI_));
+		curveLabels.push_back(msg);
+
+	}
+
+	// Instantiate a plotter and plot
+	Plotter fPlotter;
+	for(size_t i=0; i<froudeNb.size(); i++)
+		fPlotter.append(curveLabels[i],froudeNb[i],indRes[i]);
+
+	char msg[256];
+	sprintf(msg,"plot Induced Resistance vs boat speed - "
+			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			pAeroForcesItem_->getWindItem()->getTWV(0),
+			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(0)) );
+	fPlotter.plot("Fn [-]","Induced Resistance [N]", msg);
+
+	// Restore the values of the variables
+	V_=bufferV;
+	PHI_=bufferPHI;
 }
 
 void InducedResistanceItem::printWhoAmI() {
@@ -214,7 +312,7 @@ void ResiduaryResistanceItem::update(int vTW, int aTW) {
 
 	// Compute the residuary resistance for the current froude number
 	res_ = pInterpolator_->interpolate(fN_);
-	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -304,7 +402,7 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	// Compute the residuary resistance for the current froude number
 	// RrhH = RrhH20 .* 6 .* ( phi ).^1.7;
 	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( PHI_,1.7) ;
-	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -379,7 +477,7 @@ void ResiduaryResistanceKeelItem::update(int vTW, int aTW) {
 
 	// Updates the value of the Residuary Resistance due to the Keel
 	res_= pInterpolator_->interpolate(fN_);
-	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -444,7 +542,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 	// Compute the resistance
 	// RrkH = (geom.DVK.*phys.rho_w.*phys.g.*Ch)*Fn.^2.*phi*pi/180;
 	res_= Ch_ * fN_ * fN_ * PHI_;
-	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -496,7 +594,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 
 	// Compute the frictional resistance
 	res_ = rfh * pParser_->get("HULLFF");
-	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -624,7 +722,7 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	// todo dtrimarchi: does it make sense to use the same hull form factor both for the upright and the heeled hull?
 	// See DSYHS99 p119, where the form factor is also defined. Here we ask the user to prompt a value
 	res_ = rfhH * pParser_->get("HULLFF");
-	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -675,7 +773,7 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 	// todo dtrimarchi : this form factor can be computed from the
 	// Keel geometry (see DSYHS99) Ch.3.2.11
 	res_ = rfk * pParser_->get("KEELFF");
-	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -751,7 +849,7 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 	// todo dtrimarchi : this form factor can be computed from the
 	// Rudder geometry (see DSYHS99) Ch.3.2.11
 	res_ = rfr * pParser_->get("RUDDFF");
-	if(mathUtils::isValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 

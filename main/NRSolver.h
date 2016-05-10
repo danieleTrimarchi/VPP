@@ -34,6 +34,9 @@ class NRSolver {
 		/// Make a printout of the results for this run
 		void printResults();
 
+		/// Make a printout of the result bounds for this run
+		void printResultBounds();
+
 		/// Plot the polar plots for the state variables
 		/// It is really not the solver to be responsible
 		/// for plotting...

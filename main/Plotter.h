@@ -235,7 +235,7 @@ class PolarPlotter {
 		void append(string curveLabel, Eigen::ArrayXd& alpha, Eigen::ArrayXd& vals);
 
 		/// Plot the data appended to the plotter
-		void plot();
+		void plot(size_t skipCircles=1);
 
 	private:
 

@@ -75,8 +75,8 @@ c2_(0) {
 
 	// Instantiate a InducedResistanceItem and push it back to the children vector
 	// For the definition of the Induced Resistance see DSYHS99 ch4 p128
-	boost::shared_ptr<InducedResistanceItem> pInducedResistance(new InducedResistanceItem(pAeroForcesItem_.get()));
-	vppHydroItems_.push_back( pInducedResistance );
+	pInducedResistanceItem_.reset(new InducedResistanceItem(pAeroForcesItem_.get()));
+	vppHydroItems_.push_back( pInducedResistanceItem_ );
 
 	// Instantiate a NegativeResistanceItem and push it back to the children vector
 	// This defines the resistance in the case of negative velocities
@@ -160,6 +160,11 @@ ResiduaryResistanceItem* VPPItemFactory::getResiduaryResistanceItem() const {
 	return pResiduaryResistanceItem_.get();
 }
 
+// Getter for the Residuary Resistance item
+InducedResistanceItem* VPPItemFactory::getInducedResistanceItem() const {
+	return pInducedResistanceItem_.get();
+}
+
 // Getter for the Residuary Resistance of the keel item
 ResiduaryResistanceKeelItem* VPPItemFactory::getResiduaryResistanceKeelItem() const {
 	return pResiduaryResistanceKeelItem_.get();
@@ -209,7 +214,7 @@ double VPPItemFactory::getResistance() {
 	for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
 		resistance += vppHydroItems_[iItem]->get();
 
-	if(mathUtils::isValid(resistance))
+	if(mathUtils::isNotValid(resistance))
 		throw VPPException(HERE,"Resistance is NAN");
 
 	return resistance;

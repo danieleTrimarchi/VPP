@@ -368,6 +368,18 @@ class AeroForcesItem : public VPPItem {
 		/// Get the value of the heel moment
 		const double getMHeel() const;
 
+		/// Get a ptr to the wind item
+		WindItem* getWindItem();
+
+		/// Get a ptr to the wind item - const variety
+		const WindItem* getWindItem() const;
+
+		/// Get a ptr to the sailCoeffs Item
+		SailCoefficientItem* getSailCoeffItem();
+
+		/// Get a ptr to the sailCoeffs Item - const variety
+		const SailCoefficientItem* getSailCoeffItem() const;
+
 		/// plot the aeroForces for a fixed range
 		void plot();
 

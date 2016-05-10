@@ -121,14 +121,20 @@ int main(int argc, char** argv) {
 
 			//---
 
+			else if(s == string("plotFrictionalRes") )
+				pVppItems->getFrictionalResistanceItem()->plot();
+
 			else if( s == string("plotResidRes"))
 				pVppItems->getResiduaryResistanceItem()->plot();
 
-			else if(s == string("plotResidRes_Keel") )
-				pVppItems->getResiduaryResistanceKeelItem()->plot();
+			else if(s == string("plotInducedRes") )
+				pVppItems->getInducedResistanceItem()->plot();
 
-			else if(s == string("plotFrictionalRes") )
-				pVppItems->getFrictionalResistanceItem()->plot();
+			else if(s == string("plotDelta_FrictRes_Heel") )
+				pVppItems->getDelta_FrictionalResistance_HeelItem()->plot();
+
+			else if(s == string("plotDelta_ResidRes_Heel") )
+				pVppItems->getDelta_ResiduaryResistance_HeelItem()->plot();
 
 			else if(s == string("plotFrictionalRes_Keel") )
 				pVppItems->getViscousResistanceKeelItem()->plot(); //-> this does not plot
@@ -136,11 +142,8 @@ int main(int argc, char** argv) {
 			else if(s == string("plotFrictionalRes_Rudder") )
 				pVppItems->getViscousResistanceRudderItem()->plot(); //-> this does not plot
 
-			else if(s == string("plotDelta_FrictRes_Heel") )
-				pVppItems->getDelta_FrictionalResistance_HeelItem()->plot();
-
-			else if(s == string("plotDelta_ResidRes_Heel") )
-				pVppItems->getDelta_ResiduaryResistance_HeelItem()->plot();
+			else if(s == string("plotResidRes_Keel") )
+				pVppItems->getResiduaryResistanceKeelItem()->plot();
 
 			else if(s == string("plotNegativeResistance") )
 				pVppItems->getNegativeResistanceItem()->plot();
@@ -159,6 +162,9 @@ int main(int argc, char** argv) {
 
 			else if( s == string("print"))
 				solver.printResults();
+
+			else if( s == string("bounds"))
+				solver.printResultBounds();
 
 			else if( s == string("plotPolars"))
 				solver.plotPolars();
@@ -184,6 +190,7 @@ int main(int argc, char** argv) {
 				std::cout<<"   plotSailForceMoment      : plot the drive force and the heeling moment for fixed wind/heel ranges\n";
 				std::cout<<" \n";
 				std::cout<<"   plotResidRes             : plot the Residuary Resistance for a fixed range\n";
+				std::cout<<"   plotInducedRes           : plot the Induced Resistance for a fixed range\n";
 				std::cout<<"   plotResidRes_Keel        : plot the Residuary Resistance of the Keel for a fixed range\n";
 				std::cout<<"   plotFrictionalRes        : plot the Viscous Resistance for a fixed range\n";
 				std::cout<<"   plotFrictionalRes_Keel   : plot the Viscous Resistance of the Keel for a fixed range\n";
@@ -196,6 +203,7 @@ int main(int argc, char** argv) {
 				std::cout<<"   run                      : launches the computations \n";
 				std::cout<<" \n";
 				std::cout<<"   print                    : print results to screen \n";
+				std::cout<<"   bounds										: print result bounds to screen \n";
 				std::cout<<" \n";
 				std::cout<<"   plotPolars               : plot the polar result graphs \n";
 				std::cout<<"   plotXY                   : plot the XY velocity-wise result graphs \n";
