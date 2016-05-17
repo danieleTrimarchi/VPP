@@ -111,6 +111,8 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	// Note that this is a coefficient-wise operation Tegeo(4x1) * TeFn(4x1) -> Teffective(4x1)
 	Eigen::ArrayXd Teffective = pParser_->get("T") * Tegeo_ * TeFn;
 
+	//std::cout<<"Teffective= \n"<<Teffective<<std::endl;
+
 	// Properly interpolate then values of TeD for the current value
 	// of the state variable PHI_ (heeling angle)
 	SplineInterpolator interpolator(phiD_,Teffective);
@@ -133,7 +135,7 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 
 	// Compute the induced resistance Ri = Fheel^2 / (0.5 * rho_w * pi * Te^2 * V^2)
 	if(V_>0)
-		res_ = fHeel * fHeel / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
+		res_ = ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
 	else
 		res_=0;
 	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
@@ -146,7 +148,7 @@ void InducedResistanceItem::plot() {
 	// For which TWV, TWA shall we plot the aero forces/moments?
 	size_t twv=0, twa=0;
 
-	std::cout<<"--> Please enter the values of twv and twa for the aero forces plot: "<<std::endl;
+	std::cout<<"--> Please enter the values of twv and twa for the Induced Resistance plot: "<<std::endl;
 	while(true){
 	cin >> twv >> twa;
 	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
@@ -229,6 +231,76 @@ void InducedResistanceItem::plot() {
 			pAeroForcesItem_->getWindItem()->getTWV(0),
 			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(0)) );
 	fPlotter.plot("Fn [-]","Induced Resistance [N]", msg);
+
+	/// ----- Verify the linearity Ri/Fh^2 -----------------------------------
+	std::vector<ArrayXd> sideForce2;
+	indRes.clear();
+	curveLabels.clear();
+
+	// Loop on the heel angles
+	for(size_t i=0; i<nAngles; i+=4){
+
+		PHI_= ( 1./nAngles * (i+1) ) * M_PI/4;
+
+		// Solution-buffer vectors
+		vector<double> fh2, ri;
+
+		// Loop on the velocities
+		for(size_t v=0; v<nVelocities-7; v++){
+
+			// Set a fictitious velocity (Fn=0-1)
+			V_= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
+
+			Eigen::VectorXd x(2);
+			x << V_, PHI_;
+
+			// Update the aeroForceItems
+			pAeroForcesItem_->getWindItem()->updateSolution(twv,twa,x);
+			pAeroForcesItem_->getSailCoeffItem()->updateSolution(twv,twa,x);
+			pAeroForcesItem_->updateSolution(twv,twa,x);
+
+			// Update the induced resistance Item
+			update(twv,twa);
+
+			// Compute the heeling force
+			double fh= pAeroForcesItem_->getFSide() / cos(PHI_);
+
+			// Push the squared heeling force to its buffer vector
+			fh2.push_back(fh*fh);
+
+			// Push the Induced Resistance to its buffer vector
+			ri.push_back(res_);
+
+		}
+
+		// Now transform fn and res to ArrayXd and push_back to vector
+		ArrayXd tmpFh(fh2.size());
+		ArrayXd tmpRes(ri.size());
+		for(size_t j=0; j<fh2.size(); j++){
+			tmpFh(j)=fh2[j];
+			tmpRes(j)=ri[j];
+		}
+
+		sideForce2.push_back(tmpFh);
+		indRes.push_back(tmpRes);
+
+		char msg[256];
+		sprintf(msg,"%3.1f [deg]", mathUtils::toDeg(PHI_));
+		curveLabels.push_back(msg);
+
+	}
+
+	// Instantiate a plotter and plot
+	Plotter f2Plotter;
+	for(size_t i=0; i<sideForce2.size(); i++)
+		f2Plotter.append(curveLabels[i],sideForce2[i],indRes[i]);
+
+	char msg2[256];
+	sprintf(msg2,"plot Induced Resistance vs Fh^2 - "
+			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			pAeroForcesItem_->getWindItem()->getTWV(0),
+			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(0)) );
+	f2Plotter.plot("Fh^2 [N^2]","Induced Resistance [N]", msg2);
 
 	// Restore the values of the variables
 	V_=bufferV;

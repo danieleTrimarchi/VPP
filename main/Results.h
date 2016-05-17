@@ -23,17 +23,20 @@ class Result {
 		/// Constructor
 		Result(	double twv, double twa,
 						std::vector<double>& res,
-						double dF, double dM);
+						double dF, double dM,
+						bool discarde=false);
 
 		/// Constructor with residual array
 		Result(	double twv, double twa,
 						std::vector<double>& results,
-						Eigen::VectorXd& residuals );
+						Eigen::VectorXd& residuals,
+						bool discarde=false );
 
 		/// Constructor with residual array
 		Result(	double twv, double twa,
 						Eigen::VectorXd& res,
-						Eigen::VectorXd& residuals );
+						Eigen::VectorXd& residuals,
+						bool discarde=false );
 
 		/// Destructor
 		~Result();
@@ -41,26 +44,29 @@ class Result {
 		/// PrintOut the values stored in this result
 		void print();
 
-		// get the twv for this result
+		/// Get the twv for this result
 		const double getTWV() const;
 
-		// get the twa for this result
+		/// Get the twa for this result
 		const double getTWA() const;
 
-		// get the force residuals for this result
+		/// Get the force residuals for this result
 		const double getdF() const;
 
-		// get the moment residuals for this result
+		/// Get the moment residuals for this result
 		const double getdM() const;
 
-		// get the c1 residual for this result
+		/// Get the c1 residual for this result
 		const double getC1() const;
 
-		// get the c2 residual for this result
+		/// Get the c2 residual for this result
 		const double getC2() const;
 
-		// get the state vector for this result
+		/// Get the state vector for this result
 		const Eigen::VectorXd* getX() const;
+
+		/// Discard this solution: do not plot it
+		const bool discard() const;
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -73,8 +79,11 @@ class Result {
 		/// State vector
 		Eigen::VectorXd result_;
 
-		// Force and moment, c1 residuals
+		/// Force and moment, c1 residuals
 		Eigen::VectorXd residuals_;
+
+		/// Flag used to mark a result that must be discarded -> not plotted
+		bool discard_;
 
 } ;
 
@@ -100,7 +109,8 @@ class ResultContainer {
 		/// push_back a result taking care of the allocation
 		void push_back(size_t iWv, size_t iWa,
 										Eigen::VectorXd& results,
-										Eigen::VectorXd& residuals );
+										Eigen::VectorXd& residuals,
+										bool discard=false );
 
 		/// Get the result for a given wind velocity/angle
 		const Result& get(size_t iWv, size_t iWa) const;

@@ -102,8 +102,10 @@ int main(int argc, char** argv) {
 				break;
 
 			// Parse other options
-			if(s == string("printVars") )
+			if(s == string("printVars") ){
 				parser.printVariables();
+				pSails->printVariables();
+			}
 
 			else if( s == string("plotSailCoeffs"))
 				pVppItems->getSailCoefficientItem()->plotInterpolatedCoefficients();
@@ -178,7 +180,7 @@ int main(int argc, char** argv) {
 
 			//---
 
-			else if( s == string("help")){
+			else if( s == string("help") || s == string("h") ){
 
 				std::cout<<"\n== AVAILABLE OPTIONS =============================================== \n";
 				std::cout<<"   printVars              : print the variables read from file \n";

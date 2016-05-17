@@ -9,7 +9,8 @@ using namespace mathUtils;
 // Default constructor
 Result::Result():
 			twv_(0),
-			twa_(0) {
+			twa_(0),
+			discard_(false) {
 
 	// init the result container
 	result_.resize(4);
@@ -22,9 +23,10 @@ Result::Result():
 
 // Constructor
 Result::Result(double twv, double twa, std::vector<double>& res,
-		double dF, double dM) :
+		double dF, double dM, bool discarde) :
 				twv_(twv),
-				twa_(twa){
+				twa_(twa),
+				discard_(discarde) {
 
 	// Init the result container
 	result_<<res[0],res[1],res[2],res[3];
@@ -37,10 +39,11 @@ Result::Result(double twv, double twa, std::vector<double>& res,
 // Constructor
 Result::Result(	double twv, double twa,
 				std::vector<double>& results,
-				Eigen::VectorXd& residuals ):
+				Eigen::VectorXd& residuals, bool discarde ):
 				twv_(twv),
 				twa_(twa),
-				residuals_(residuals){
+				residuals_(residuals),
+				discard_(discarde) {
 
 	result_<<results[0],results[1],results[2],results[3];
 
@@ -49,11 +52,12 @@ Result::Result(	double twv, double twa,
 // Constructor with residual array
 Result::Result(	double twv, double twa,
 				Eigen::VectorXd& result,
-				Eigen::VectorXd& residuals ) :
+				Eigen::VectorXd& residuals, bool discarde ) :
 					twv_(twv),
 					twa_(twa),
 					result_(result),
-					residuals_(residuals){
+					residuals_(residuals),
+					discard_(discarde) {
 }
 
 // Destructor
@@ -70,6 +74,8 @@ void Result::print() {
 	printf("  --  ");
 	for(size_t i=0; i<residuals_.size(); i++)
 		printf("  %4.2e", residuals_(i) );
+	printf("  --  ", discard_ );
+
 
 	std::cout<<"\n";
 }
@@ -109,6 +115,12 @@ const double Result::getC2() const {
 const Eigen::VectorXd* Result::getX() const {
 	return &result_;
 }
+
+// Discard this solution: do not plot it
+const bool Result::discard() const {
+	return discard_;
+}
+
 
 /////  ResultContainer   /////////////////////////////////
 
@@ -161,7 +173,8 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 // push_back a result taking care of the allocation
 void ResultContainer::push_back(size_t iWv, size_t iWa,
 																Eigen::VectorXd& results,
-																Eigen::VectorXd& residuals ) {
+																Eigen::VectorXd& residuals,
+																bool discard ) {
 
 	if(iWv>=nWv_){
 		char msg[256];
@@ -179,7 +192,7 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 	// Ask the wind to get the current wind velocity/angles. Note that this
 	// implies that the call must be in sync, which seems rather dangerous!
 	// todo dtrimarchi: the wind must have calls such as pWind_->getTWV(iWv)
-	resMat_[iWv][iWa] = Result(pWind_->getTWV(), pWind_->getTWA(), results, residuals );
+	resMat_[iWv][iWa] = Result(pWind_->getTWV(), pWind_->getTWA(), results, residuals, discard );
 
 }
 
@@ -250,6 +263,7 @@ void ResultContainer::printBounds() {
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
 	std::cout<<"\n MinV [m/s]    MaxV [m/s]  --   MinPhi [rad]    MaxPhi [rad]"<<std::endl;
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
-	std::cout<<"  "<<minV<<"     "<<maxV<<"     --    "<<minPhi<<"        "<<maxPhi<<std::endl;
+	std::cout<<"  "<<minV<<"     "<<maxV<<"     --     "<<minPhi<<"     "<<maxPhi<<std::endl;
+	std::cout<<"---------------------------------------------------------------"<<std::endl;
 
 }

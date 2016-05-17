@@ -75,6 +75,8 @@ void WindItem::update(int vTW, int aTW) {
 
 	awv_(1)= twv_ * sin( twa_ );
 	if(mathUtils::isNotValid(awv_(1))) throw VPPException(HERE,"awv_(1) is NAN!");
+	if(awv_(1)<0)
+		throw VPPException(HERE,"awv_(1) is Negative!");
 
 	// Update the apparent wind angle - TODO dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
@@ -236,7 +238,7 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 
 	// Update the Aspect Ratio
 	double h;
-	if(awa_ < 45)  // TODO dtrimarchi: verify that awa is in deg... Which I doubt!
+	if(awa_ < toRad(45))
 		// h = mast height above deck + Average freeboard
 		h= p->get("EHM") + p->get("AVGFREB");
 	else

@@ -234,6 +234,9 @@ class PolarPlotter {
 		/// Append a set of polar data
 		void append(string curveLabel, Eigen::ArrayXd& alpha, Eigen::ArrayXd& vals);
 
+		/// Append a set of polar data
+		void append(string curveLabel, std::vector<double>& alpha, std::vector<double>& vals);
+
 		/// Plot the data appended to the plotter
 		void plot(size_t skipCircles=1);
 

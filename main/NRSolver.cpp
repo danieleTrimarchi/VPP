@@ -16,7 +16,7 @@ NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 //dimension_(4),
 dimension_(2),
 tol_(1.e-6),
-maxIters_(1000){
+maxIters_(200){
 
 	// Resize the result container
 	xp_.resize(dimension_);
@@ -35,8 +35,8 @@ maxIters_(1000){
 
 	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
 	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
+	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI converted to rad
+	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI converted to rad
 	// TORESTORE
 	//	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
 	//	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
@@ -67,8 +67,8 @@ void NRSolver::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
 	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
+	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI in radians
+	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI in radians
 	// TORESTORE
 	//	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
 	//	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
@@ -152,7 +152,7 @@ void NRSolver::run(int twv, int twa) {
 		VPPJacobian J(xp_,vppItemsContainer_);
 
 		// Instantiate a JacobianChecker
-		JacobianChecker JCheck;
+		// JacobianChecker JCheck;
 
 		// Newton loop
 		for( it=0; it<=maxIters_; it++ ) {
@@ -161,8 +161,7 @@ void NRSolver::run(int twv, int twa) {
 			if(it==maxIters_){
 				// plot the velocity residuals and throw
 				Plotter plotter;
-				plotter.plot(velocityResiduals,"V_residuals");
-				Plotter plotter2;
+                Plotter plotter2;
 				plotter2.plot(PhiResiduals,"PHI_residuals");
 				// TORESTORE
 				//				Plotter plotter3;
@@ -199,7 +198,7 @@ void NRSolver::run(int twv, int twa) {
 //			std::cout<<"J= \n"<<J<<std::endl;
 
 			// Right before computing the solution, store the relevant data to the JacobianChecker
-			JCheck.push_back(J,xp_,residuals);
+			//JCheck.push_back(J,xp_,residuals);
 
 			// A * x = residuals --  J * deltas = residuals
 			// where deltas are also equal to f(x_i) / f'(x_i)
@@ -207,7 +206,6 @@ void NRSolver::run(int twv, int twa) {
 
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
-			// TODO: introduce Aitken
 			xp_ -= deltas;
 //			std::cout<<"xp= "<<xp_.transpose()<<std::endl;
 
@@ -246,7 +244,14 @@ void NRSolver::run(int twv, int twa) {
 	//		res(0),res(1),res(2),res(3) );
 	printf("      residuals: dF= %g, dM= %g\n\n", res(0),res(1) );
 	// Push the result to the result container
-	pResults_->push_back(twv, twa, xp_, res);
+
+	bool discard=false;
+	for(size_t i=0; i<xp_.size(); i++){
+		if( xp_(i)<lowerBounds_[i] || xp_(i)>upperBounds_[i] )
+			discard=true;
+	}
+
+	pResults_->push_back(twv, twa, xp_, res, discard);
 
 }
 
@@ -281,9 +286,10 @@ void NRSolver::plotPolars() {
 
 	// Instantiate the list of wind angles that will serve
 	// for each velocity
-	Eigen::ArrayXd windAngles(pResults_->windAngleSize());
-	Eigen::ArrayXd boatVelocity(pResults_->windAngleSize());
-	Eigen::ArrayXd boatHeel(pResults_->windAngleSize());
+	std::vector<double> windAngles;
+	std::vector<double> boatVelocity;
+	std::vector<double> boatHeel;
+
 	// TORESTORE
 	//	Eigen::ArrayXd crewB(pResults_->windAngleSize());
 	//	Eigen::ArrayXd sailFlat(pResults_->windAngleSize());
@@ -296,39 +302,50 @@ void NRSolver::plotPolars() {
 		sprintf(windVelocityLabel,"%3.1f", pResults_->get(iWv,0).getTWV() );
 		string wVLabel(windVelocityLabel);
 
+		windAngles.clear();
+		boatVelocity.clear();
+		boatHeel.clear();
+
 		// Loop on the wind angles
 		for(size_t iWa=0; iWa<pResults_->windAngleSize(); iWa++) {
 
-			// fill the list of wind angles in degrees
-			windAngles(iWa) = mathUtils::toDeg( pResults_->get(iWv,iWa).getTWA() );
+			if( !pResults_->get(iWv,iWa).discard() ){
 
-			// fill the list of boat speeds to an ArrayXd
-			boatVelocity(iWa) = pResults_->get(iWv,iWa).getX()->coeff(0);
+				// fill the list of wind angles in degrees
+				windAngles.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getTWA() ) );
 
-			// fill the list of boat heel to an ArrayXd
-			boatHeel(iWa) = mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) );
+				// fill the list of boat speeds to an ArrayXd
+				boatVelocity.push_back( pResults_->get(iWv,iWa).getX()->coeff(0) );
 
-			// TORESTORE
-			//			// fill the list of Crew B to an ArrayXd
-			//			crewB(iWa) = pResults_->get(iWv,iWa).getX()->coeff(2);
-			//
-			//			// fill the list of Sail flat to an ArrayXd
-			//			sailFlat(iWa) = pResults_->get(iWv,iWa).getX()->coeff(3);
+				// fill the list of boat heel to an ArrayXd
+				boatHeel.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) ) );
 
+				// TORESTORE
+				//			// fill the list of Crew B to an ArrayXd
+				//			crewB(iWa) = pResults_->get(iWv,iWa).getX()->coeff(2);
+				//
+				//			// fill the list of Sail flat to an ArrayXd
+				//			sailFlat(iWa) = pResults_->get(iWv,iWa).getX()->coeff(3);
+
+			}
 		}
 
 		// Append the angles-data to the relevant plotter
-		boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
-		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
+		//boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
+		//boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
 		// TORESTORE
 		//		crewBPolarPlotter.append(wVLabel,windAngles,crewB);
 		//		sailFlatPolarPlotter.append(wVLabel,windAngles,sailFlat);
+
+		boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
+		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
+
 
 	}
 
 	// Ask all plotters to plot
 	boatSpeedPolarPlotter.plot();
-	boatHeelPolarPlotter.plot(1000);
+	boatHeelPolarPlotter.plot(50);
 	// TORESTORE
 	//	crewBPolarPlotter.plot();
 	//	sailFlatPolarPlotter.plot();
@@ -343,27 +360,34 @@ void NRSolver::plotXY(size_t iWa) {
 	}
 
 	// Prepare the data for the plotter
-	Eigen::ArrayXd windSpeeds(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatVelocity(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatHeel(pResults_->windVelocitySize());
+	std::vector<double> windSpeeds;
+	windSpeeds.reserve(pResults_->windVelocitySize());
+	std::vector<double> boatVelocity;
+	boatVelocity.reserve(pResults_->windVelocitySize());
+	std::vector<double> boatHeel;
+	boatHeel.reserve(pResults_->windVelocitySize());
 	// TORESTORE
 	//	Eigen::ArrayXd boatFlat(pResults_->windVelocitySize());
 	//	Eigen::ArrayXd boatB(pResults_->windVelocitySize());
-	Eigen::ArrayXd dF(pResults_->windVelocitySize());
-	Eigen::ArrayXd dM(pResults_->windVelocitySize());
+	std::vector<double> dF;
+	dF.reserve(pResults_->windVelocitySize());
+	std::vector<double> dM;
+	dM.reserve(pResults_->windVelocitySize());
 
 	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
 
-		windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
-		boatVelocity(iWv)= pResults_->get(iWv,iWa).getX()->coeff(0);
-		// Convert the heel results to degrees
-		boatHeel(iWv)    = mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) );
-		// TORESTORE
-		//		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
-		//		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(3);
-		dF(iWv)          = pResults_->get(iWv,iWa).getdF();
-		dM(iWv)          = pResults_->get(iWv,iWa).getdM();
+		if( !pResults_->get(iWv,iWa).discard() ){
 
+			windSpeeds.push_back( pResults_->get(iWv,iWa).getTWV() );
+			boatVelocity.push_back( pResults_->get(iWv,iWa).getX()->coeff(0) );
+			// Convert the heel results to degrees
+			boatHeel.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) ) );
+			// TORESTORE
+			//		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
+			//		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(3);
+			dF.push_back( pResults_->get(iWv,iWa).getdF() );
+			dM.push_back( pResults_->get(iWv,iWa).getdM() );
+		}
 	}
 
 	char title[256];

@@ -494,7 +494,7 @@ void VectorPlotter::plot(
 		throw VPPException(HERE,"VectorPlot size mismatch");
 
 	// Diagnostics
-//	std::cout <<"Plotting: "<<title<<std::endl;
+//	std::cout <<"\n\n Plotting: "<<title<<std::endl;
 //	std::cout<<"x= "<<x<<std::endl;
 //	std::cout<<"y= "<<y<<std::endl;
 //	std::cout<<"du= "<<du<<std::endl;
@@ -521,7 +521,7 @@ void VectorPlotter::plot(
 			if(norm>0){
 				// scale the u-v component according to the scale
 				du(i,j) *= scale/norm;
-				dv(i,j) *= scale/norm;
+                dv(i,j) *= scale/norm;
 			}
 
 		}
@@ -614,6 +614,23 @@ void PolarPlotter::append(string curveLabel, ArrayXd& alpha, ArrayXd& vals) {
 		maxAlphaRange_=alpha.maxCoeff();
 	if(vals.maxCoeff()>maxValRange_)
 		maxValRange_=ceil(vals.maxCoeff());
+
+}
+
+// Append a set of polar data
+void PolarPlotter::append(string curveLabel, std::vector<double>& alphaV, std::vector<double>& valsV){
+
+	// Convert vector->ArrayXd and call the append method for ArrayXd
+	ArrayXd alpha(alphaV.size());
+	ArrayXd vals(valsV.size());
+
+	// Fill the buffers
+	for(size_t i=0; i<alphaV.size(); i++){
+		alpha(i)= alphaV[i];
+		vals(i)= valsV[i];
+	}
+
+	append(curveLabel, alpha, vals);
 
 }
 
