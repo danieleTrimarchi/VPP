@@ -1,14 +1,9 @@
-- Delta_FrictionalResistance_HeelItem::plot() does not set the heel angle, but uses the current one. Not good. 
-
 - Restore two optimisation variables reef and flat -> requires Lagrange multipliers 	to limit the solution? 
 
 - Restore nlopt -> use the global optimiser and/or the augLag 
 	  
 
-- Items are contained into vectors, the sync is only assured by the position of the
-	items in the vector. Better would be a mechanism of dependencies, where each
-	item updates its dependency. Not sure how to deal with multiple items 		depending on one item (i.e: InducedResistance and HeelingMoment both depend
-	on AeroForce — we might end up updating some items twice. 
+- Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 		mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
 	To be investigated on UML!
 
 - use cppunit to make a test suite in main/test -> see howto in MEMSp

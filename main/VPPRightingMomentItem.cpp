@@ -35,9 +35,7 @@ void RightingMomentItem::update(int vTW, int aTW) {
 	// M1 = phys.rho_w * phys.g * (geom.KM - geom.KG) * (geom.DIVCAN + geom.DVK) * sin(phi*pi/180);
 	// M2 = geom.MMVBLCRW .* phys.g .* b .* cos(phi*pi/180);
 	// Mright = M1+M2;
-	// TORESTORE
-	//val_ = m10_ * std::sin( PHI_) + m20_ * b_ * std::cos( PHI_ ) ;
-	val_ = m10_ * std::sin( PHI_) ;
+	val_ = m10_ * std::sin( PHI_) + m20_ * b_ * std::cos( PHI_ ) ;
 	if(mathUtils::isNotValid(val_)) throw VPPException(HERE,"Righting moment is NAN");
 
 }

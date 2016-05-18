@@ -12,9 +12,7 @@ using namespace mathUtils;
 
 // Constructor
 NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-// TORESTORE
-//dimension_(4),
-dimension_(2),
+dimension_(4),
 tol_(1.e-6),
 maxIters_(200){
 
@@ -37,11 +35,10 @@ maxIters_(200){
 	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
 	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI converted to rad
 	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI converted to rad
-	// TORESTORE
-	//	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	//	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	//	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	//	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
+	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
+	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
+	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
+	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
 
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run
@@ -69,11 +66,10 @@ void NRSolver::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
 	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI in radians
 	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI in radians
-	// TORESTORE
-	//	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	//	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	//	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	//	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
+	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
+	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
+	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
+	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
 
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run
@@ -91,9 +87,7 @@ void NRSolver::resetInitialGuess(int TWV, int TWA) {
 	if(TWV==0) {
 
 		//     V_0   PHI_0 b_0   f_0
-		xp_ << 0.01, mathUtils::toRad(0.01);
-		// TORESTORE
-		//, 0.01, 0.99;
+		xp_ << 0.01, mathUtils::toRad(0.01), 0.01, 0.99;
 
 	}
 
@@ -137,16 +131,11 @@ void NRSolver::run(int twv, int twa) {
 
 	try{
 		// Launch the optimization; negative retVal implies failure
-//		std::cout<<"------------------------------------------\n";
-//		std::cout<<"Entering the NRSolver with initial guess: "<<
-//				xp_[0]<<" "<<xp_[1]<<"\n";
-		// TORESTORE
-		//" "<<xp_[2]<<" "<<xp_[3]<<
+
 		std::vector<double> velocityResiduals;
 		std::vector<double> PhiResiduals;
-		// TORESTORE
-		//std::vector<double> c1Residuals;
-		//std::vector<double> c2Residuals;
+		std::vector<double> c1Residuals;
+		std::vector<double> c2Residuals;
 
 		// instantiate a Jacobian
 		VPPJacobian J(xp_,vppItemsContainer_);
@@ -160,14 +149,13 @@ void NRSolver::run(int twv, int twa) {
 			// throw if the solution was not found within the max number of iterations
 			if(it==maxIters_){
 				// plot the velocity residuals and throw
-				Plotter plotter;
-                Plotter plotter2;
+        Plotter plotter2;
 				plotter2.plot(PhiResiduals,"PHI_residuals");
-				// TORESTORE
-				//				Plotter plotter3;
-				//				plotter3.plot(c1Residuals,"c1_residuals");
-				//				Plotter plotter4;
-				//				plotter4.plot(c2Residuals,"c2_residuals");
+
+				Plotter plotter3;
+				plotter3.plot(c1Residuals,"c1_residuals");
+				Plotter plotter4;
+				plotter4.plot(c2Residuals,"c2_residuals");
 
 				// Also plot some Jacobian diagnostics
 				J.testPlot(twv,twa);
@@ -180,17 +168,17 @@ void NRSolver::run(int twv, int twa) {
 
 			// Compute the residuals vector
 			Eigen::VectorXd residuals= vppItemsContainer_->getResiduals(twv,twa,xp_);
-//			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.transpose()<<std::endl;
+			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.transpose()<<std::endl;
 
 			if(it>1) {
 				velocityResiduals.push_back( residuals(0) );
 				PhiResiduals.push_back(residuals(1) );
+				c1Residuals.push_back(residuals(2));
+				c2Residuals.push_back(residuals(3));
 			}
-			//			c1Residuals.push_back(residuals(2));
-			//			c2Residuals.push_back(residuals(3));
 
 			//  break if converged. todo dtrimarchi: this condition is way too simple!
-			if( residuals.norm()<1e-6 )
+			if( residuals.norm()<1e-5 )
 				break;
 
 			// Compute the Jacobian matrix
@@ -232,19 +220,21 @@ void NRSolver::run(int twv, int twa) {
 		throw VPPException(HERE,"Unknown exception catched!\n");
 	}
 
-	printf("found solution after %d iterations\n", it);
-	// TORESTORE
-	//	printf("      at f(%g,%g,%g,%g)",
-	//			xp_(0),xp_(1),xp_(2),xp_(3));
-	printf("      at f(%g,%g)",xp_(0),xp_(1));
-
+	// Get the residuals
 	Eigen::VectorXd res= vppItemsContainer_->getResiduals();
-	// TORESTORE
-	//printf("      residuals: dF= %g, dM= %g, c1= %g, c2= %g\n\n",
-	//		res(0),res(1),res(2),res(3) );
-	printf("      residuals: dF= %g, dM= %g\n\n", res(0),res(1) );
-	// Push the result to the result container
 
+	// Print the solution
+	printf("found solution after %d iterations\n     at f(", it);
+	for(size_t i=0; i<xp_.size(); i++)
+		printf("%g  ",xp_(i));
+
+	// Print the residuals
+	printf("\n      residuals:\n");
+	for(size_t i=0; i<res.size(); i++)
+		printf("%g  ",res(i));
+
+	// Push the result to the result container. Hide from plotting if
+	// out-of-bounds
 	bool discard=false;
 	for(size_t i=0; i<xp_.size(); i++){
 		if( xp_(i)<lowerBounds_[i] || xp_(i)>upperBounds_[i] )
@@ -280,19 +270,12 @@ void NRSolver::plotPolars() {
 	// Sail flat, Crew B, dF and dM
 	PolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot [m/s]");
 	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot [deg]");
-	// TORESTORE
-	//	PolarPlotter crewBPolarPlotter("Crew B Polar Plot");
-	//	PolarPlotter sailFlatPolarPlotter("Sail Flat");
+	PolarPlotter crewBPolarPlotter("Crew B Polar Plot");
+	PolarPlotter sailFlatPolarPlotter("Sail Flat");
 
 	// Instantiate the list of wind angles that will serve
 	// for each velocity
-	std::vector<double> windAngles;
-	std::vector<double> boatVelocity;
-	std::vector<double> boatHeel;
-
-	// TORESTORE
-	//	Eigen::ArrayXd crewB(pResults_->windAngleSize());
-	//	Eigen::ArrayXd sailFlat(pResults_->windAngleSize());
+	std::vector<double> windAngles, boatVelocity, boatHeel, crewB, sailFlat;
 
 	// Loop on the wind velocities
 	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
@@ -311,44 +294,37 @@ void NRSolver::plotPolars() {
 
 			if( !pResults_->get(iWv,iWa).discard() ){
 
-				// fill the list of wind angles in degrees
+				// Fill the list of wind angles in degrees
 				windAngles.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getTWA() ) );
 
-				// fill the list of boat speeds to an ArrayXd
+				// Fill the list of boat speeds
 				boatVelocity.push_back( pResults_->get(iWv,iWa).getX()->coeff(0) );
 
-				// fill the list of boat heel to an ArrayXd
+				// Fill the list of boat heel
 				boatHeel.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) ) );
 
-				// TORESTORE
-				//			// fill the list of Crew B to an ArrayXd
-				//			crewB(iWa) = pResults_->get(iWv,iWa).getX()->coeff(2);
-				//
-				//			// fill the list of Sail flat to an ArrayXd
-				//			sailFlat(iWa) = pResults_->get(iWv,iWa).getX()->coeff(3);
+				// Fill the list of crew transverse position
+				crewB.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(2) ) );
+
+				// Fill the list of sail flat
+				sailFlat.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(3) ) );
 
 			}
 		}
 
 		// Append the angles-data to the relevant plotter
-		//boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
-		//boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
-		// TORESTORE
-		//		crewBPolarPlotter.append(wVLabel,windAngles,crewB);
-		//		sailFlatPolarPlotter.append(wVLabel,windAngles,sailFlat);
-
 		boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
 		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
-
+		crewBPolarPlotter.append(wVLabel,windAngles,crewB);
+		sailFlatPolarPlotter.append(wVLabel,windAngles,sailFlat);
 
 	}
 
 	// Ask all plotters to plot
 	boatSpeedPolarPlotter.plot();
 	boatHeelPolarPlotter.plot(50);
-	// TORESTORE
-	//	crewBPolarPlotter.plot();
-	//	sailFlatPolarPlotter.plot();
+	crewBPolarPlotter.plot();
+	sailFlatPolarPlotter.plot();
 }
 
 // Make a printout of the results for this run
@@ -366,13 +342,19 @@ void NRSolver::plotXY(size_t iWa) {
 	boatVelocity.reserve(pResults_->windVelocitySize());
 	std::vector<double> boatHeel;
 	boatHeel.reserve(pResults_->windVelocitySize());
-	// TORESTORE
-	//	Eigen::ArrayXd boatFlat(pResults_->windVelocitySize());
-	//	Eigen::ArrayXd boatB(pResults_->windVelocitySize());
+	std::vector<double> boatFlat;
+	boatFlat.reserve(pResults_->windVelocitySize());
+	std::vector<double> boatB;
+	boatB.reserve(pResults_->windVelocitySize());
+
 	std::vector<double> dF;
 	dF.reserve(pResults_->windVelocitySize());
 	std::vector<double> dM;
 	dM.reserve(pResults_->windVelocitySize());
+	std::vector<double> dC1;
+	dC1.reserve(pResults_->windVelocitySize());
+	std::vector<double> dC2;
+	dC2.reserve(pResults_->windVelocitySize());
 
 	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
 
@@ -382,11 +364,14 @@ void NRSolver::plotXY(size_t iWa) {
 			boatVelocity.push_back( pResults_->get(iWv,iWa).getX()->coeff(0) );
 			// Convert the heel results to degrees
 			boatHeel.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) ) );
-			// TORESTORE
-			//		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
-			//		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(3);
+
+			boatB.push_back( pResults_->get(iWv,iWa).getX()->coeff(2) );
+			boatFlat.push_back( pResults_->get(iWv,iWa).getX()->coeff(3) );
+
 			dF.push_back( pResults_->get(iWv,iWa).getdF() );
 			dM.push_back( pResults_->get(iWv,iWa).getdM() );
+			dC1.push_back( pResults_->get(iWv,iWa).getC1());
+			dC2.push_back( pResults_->get(iWv,iWa).getC2());
 		}
 	}
 
@@ -406,25 +391,30 @@ void NRSolver::plotXY(size_t iWa) {
 	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
 			t2,"Wind Speed [m/s]","Boat Heel [deg]");
 
-	// TORESTORE
-	//	// Instantiate a plotter for the Flat
-	//	Plotter plotter3;
-	//	string t3=string("Sail FLAT")+string(title);
-	//	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
-	//			t3,"Wind Speed [m/s]","Sail FLAT [-]");
+	// Instantiate a plotter for the Flat
+	Plotter plotter3;
+	string t3=string("Sail FLAT")+string(title);
+	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
+			t3,"Wind Speed [m/s]","Sail FLAT [-]");
 
-	// TORESTORE
 	// Instantiate a plotter for the position of the movable crew B
-	//	Plotter plotter4;
-	//	string t4=string("Crew position")+string(title);
-	//	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
-	//			t4,"Wind Speed [m/s]","Position of the movable crew [m]");
+	Plotter plotter4;
+	string t4=string("Crew position")+string(title);
+	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
+			t4,"Wind Speed [m/s]","Position of the movable crew [m]");
 
 	// Instantiate a plotter for the residuals
 	Plotter plotter5;
-	string t5=string("Residuals")+string(title);
+	string t5=string("dF and dM Residuals")+string(title);
 	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
 			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
+
+	// Instantiate a plotter for the residuals
+	Plotter plotter6;
+	string t6=string("dC1 and dC2 Residuals")+string(title);
+	plotter6.plot(windSpeeds,dC1,windSpeeds,dC2,
+			t6,"Wind Speed [m/s]","Residuals [-,-]");
+
 }
 
 

@@ -86,8 +86,11 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences
-		du_f(0,i)= fabs(x_(0)) * std::sqrt( std::numeric_limits<double>::epsilon() );
-		du_M(0,i)= du_f(0,i);
+		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
+		if(x_(0)) eps *= std::fabs(x_(0));
+
+		du_f(0,i)= eps;
+		du_M(0,i)= eps;
 
 		// y-component of the jacobian derivative: dF/dx * dx
 	  df(0,i)= coeffRef(0,0) * du_f(0,i);
@@ -99,11 +102,11 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dFdx;
-	dFdx.plot(x,f,du_f,df,10,"dF/du Jacobian test plot","Vboat [m/s]","F[N]");
+	dFdx.plot(x,f,du_f,df,500,"dF/du Jacobian test plot","Vboat [m/s]","F[N]");
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dMdx;
-	dMdx.plot(x,M,du_M,dM,150,"dM/du Jacobian test plot","Vboat [m/s]","M[N*m]");
+	dMdx.plot(x,M,du_M,dM,5,"dM/du Jacobian test plot","Vboat [m/s]","M[N*m]");
 
 	// Reset the state vector to its initial state
 	x_=xp0_;
@@ -126,8 +129,11 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences
-		du_f(0,i)= fabs(x_(1)) * std::sqrt( std::numeric_limits<double>::epsilon() );
-		du_M(0,i)= du_f(0,i);
+		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
+		if(x_(1)) eps *= std::fabs(x_(1));
+
+		du_f(0,i)= eps;
+		du_M(0,i)= eps;
 
 		// y-component of the jacobian derivative: dF/dx * dx
 	  df(0,i)= coeffRef(0,1) * du_f(0,i);
@@ -139,11 +145,11 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dFdPhi;
-	dFdPhi.plot(x,f,du_f,df,.5,"dF/dPhi Jacobian test plot","Phi [RAD]","F[N]");
+	dFdPhi.plot(x,f,du_f,df,15,"dF/dPhi Jacobian test plot","Phi [RAD]","F[N]");
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dMdPhi;
-	dMdPhi.plot(x,M,du_M,dM,100,"dM/dPhi Jacobian test plot","Phi [RAD]","M[N*m]");
+	dMdPhi.plot(x,M,du_M,dM,500,"dM/dPhi Jacobian test plot","Phi [RAD]","M[N*m]");
 
 }
 

@@ -261,7 +261,7 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 void SailCoefficientItem::postUpdate() {
 
 	// Reduce cl with the flattening factor of the state vector
-	// TORESTORE cl_ = cl_ * f_;
+	cl_ = cl_ * f_;
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 
 	// Compute the induced resistance

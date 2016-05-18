@@ -6,7 +6,7 @@
 V_MIN	0		% [m/s] Min allowed boat velocity
 V_MAX	10		% [m/s] Max allowed boat velocity
 PHI_MIN	0		% [deg] Min allowed boat heel angle
-PHI_MAX	80		% [deg] Max allowed boat heel angle
+PHI_MAX	85		% [deg] Max allowed boat heel angle
 B_MIN	0		% [m]   Min crew distance from boat’s centreline 
 B_MAX	3		% [m]   Max crew distance from boat’s centreline 
 F_MIN	0.4		% [-] 	Min allowed flat

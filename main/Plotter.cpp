@@ -228,7 +228,12 @@ double Plotter::max(double* arr) {
 // Plot the points of some given arrays
 void Plotter::plot( std::vector<double>& y, string title) {
 
-	// generate a VectorXd 'x' with default abscissas
+    if(!y.size()){
+        std::cout<<"\n WARNING: Attempting to plot an empty vector. Returning \n"<<std::endl;
+        return;
+    }
+    
+    // generate a VectorXd 'x' with default abscissas
 	ArrayXd xtemp(y.size());
 	ArrayXd ytemp(y.size());
 	for(size_t i=0; i<y.size(); i++){
