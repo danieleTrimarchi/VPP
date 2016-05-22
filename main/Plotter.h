@@ -11,7 +11,7 @@ using namespace std;
 using namespace Eigen;
 
 /// Directives for PLPLOT
-#include "plcdemos.h"
+#include "plc++demos.h"
 
 /// Define colors -- see plplot_5.11 guide 18.13: plCol0
 enum color{
@@ -33,8 +33,50 @@ enum color{
 	white
 };
 
+class PlotterBase {
+
+	public:
+
+		/// Constructor
+		PlotterBase();
+
+		/// Destructor
+		~PlotterBase();
+
+	protected:
+
+		/// Reset the ranges to very big values
+		void initRanges();
+
+		/// Reset the ranges to the ranges of a point set - version for Eigen
+		void resetRanges(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0);
+
+		/// Reset the ranges to the ranges of a point set - version for Eigen
+		void resetRanges(Eigen::MatrixXd& x0, Eigen::MatrixXd& y0, bool axisEqual=false);
+
+		/// Reset the ranges to the ranges of a point set -- version for vectors
+		void resetRanges(std::vector<double>& x0, std::vector<double>& y0);
+
+		/// Reset the ranges to the ranges of two point set -- version for Eigen
+		void resetRanges(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Eigen::ArrayXd& y1);
+
+		/// Reset the ranges to the ranges of two point set -- version for vectors
+		void resetRanges(std::vector<double>& x0,std::vector<double>& y0,std::vector<double>& x1,std::vector<double>& y1);
+
+		/// Find the min of the specified vector
+		double min(std::vector<double>&);
+
+		/// Find the max of the specified vector
+		double max(std::vector<double>&);
+
+		/// plot ranges
+		double minX_, minY_, maxX_, maxY_;
+
+};
+
+
 /// Wrapper class for ploPlot
-class Plotter {
+class Plotter : public PlotterBase {
 
 	public:
 
@@ -43,6 +85,9 @@ class Plotter {
 
 		/// Destructor
 		virtual ~Plotter();
+
+		/// Plot the points of some given arrays
+		void plot( std::vector<double>& y, string title="Plot");
 
 		/// Plot the points of some given arrays
 		void plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y, string title="Plot");
@@ -75,19 +120,19 @@ class Plotter {
 				string yLabel="y"
 		);
 
+		/// Append a set of data. Allows for multi-curve plots
+		void append(string curveLabel, Eigen::ArrayXd& xs, Eigen::ArrayXd& ys);
+
+		/// Plot the data that have been previously appended to the buffer vectors
+		void plot(string xLabel,string yLabel,string plotTitle);
+
 	protected:
 
 		/// Find the min of the specified c-style array
 		double min(double*);
 
-		/// Find the min of the specified vector
-		double min(std::vector<double>&);
-
 		/// Find the max of the specified c-style array
 		double max(double*);
-
-		/// Find the max of the specified vector
-		double max(std::vector<double>&);
 
 		/// Number of points the plot is made of
 		int nValues_;
@@ -103,25 +148,78 @@ class Plotter {
 		/// Copy the values into plplot compatible containers -- version for vectors
 		void setValues(std::vector<double>& x, std::vector<double>& y);
 
-		/// Reset the ranges to very big values
-		void initRanges();
+		/// Values that constitute the plot. The points of each curve in the
+		/// plot are appended to these vectors
+		std::vector<Eigen::ArrayXd> xs_, ys_;
 
-		/// Reset the ranges to the ranges of a point set - version for Eigen
-		void resetRanges(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0);
+		/// index of the position where we aim to place the curve label for this curve
+		std::vector<size_t> idx_;
 
-		/// Reset the ranges to the ranges of a point set -- version for vectors
-		void resetRanges(std::vector<double>& x0, std::vector<double>& y0);
-
-		/// Reset the ranges to the ranges of two point set -- version for Eigen
-		void resetRanges(Eigen::ArrayXd& x0, Eigen::ArrayXd& y0,Eigen::ArrayXd& x1, Eigen::ArrayXd& y1);
-
-		/// Reset the ranges to the ranges of two point set -- version for vectors
-		void resetRanges(std::vector<double>& x0,std::vector<double>& y0,std::vector<double>& x1,std::vector<double>& y1);
-
-		/// plot ranges
-		double minX_, minY_, maxX_, maxY_;
+		/// Title of each curve to be plot
+		std::vector<string> curveLabels_;
 
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// Plotter class used to plot vectorFields
+//
+// Usage Example:
+//size_t nx=20, ny=1;
+//Eigen::MatrixXd x(nx,ny);
+//Eigen::MatrixXd y(nx,ny);
+//for(size_t i=0; i<nx; i++) {
+//	for(size_t j=0; j<ny; j++) {
+//		 x(i,j)=i;
+//		 y(i,j)=3;
+//	}
+//}
+//
+//Eigen::MatrixXd du(nx,ny), dv(nx,ny);
+//for(size_t i=0; i<nx; i++) {
+//	for(size_t j=0; j<ny; j++) {
+//		du(i,j) = .2;
+//		dv(i,j) = 0.0001 * i*i;
+//	}
+//}
+//
+//// instantiate a vectorPlotter and quit
+//VectorPlotter vecplot;
+//vecplot.plot(x,y,du,dv);
+
+class VectorPlotter : public PlotterBase {
+
+	public:
+
+		/// Constructor
+		VectorPlotter();
+
+		/// Destructor
+		~VectorPlotter();
+
+		/// Vector plot for a grid of m points,
+		/// the coordinates of which are x,y
+		/// for each couple x,y the arrays du,dv
+		/// store the isoparametric coordinates
+		/// of the vector plot. Note that the magnitudes
+		/// are rescaled to unity
+		void plot(Eigen::MatrixXd& x,
+				Eigen::MatrixXd& y,
+				Eigen::MatrixXd& du,
+				Eigen::MatrixXd& dv,
+				double scale=1.,
+				string title="Plot",
+				string xLabel="x",
+				string yLabel="y"
+		);
+
+	private:
+
+		/// Number of points the underlying grid is made of
+		int nX_, nY_;
+
+};
+
+////////////////////////////////////////////////////////////////////////////////
 
 class PolarPlotter {
 
@@ -136,8 +234,11 @@ class PolarPlotter {
 		/// Append a set of polar data
 		void append(string curveLabel, Eigen::ArrayXd& alpha, Eigen::ArrayXd& vals);
 
+		/// Append a set of polar data
+		void append(string curveLabel, std::vector<double>& alpha, std::vector<double>& vals);
+
 		/// Plot the data appended to the plotter
-		void plot();
+		void plot(size_t skipCircles=1);
 
 	private:
 

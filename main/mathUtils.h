@@ -16,6 +16,14 @@ namespace mathUtils {
 		return rad * 180.0 / M_PI;
 	};
 
+	// Define a static utility function to check that a value is numeric and finite
+	static bool isNotValid( double val ){
+		if( isnan(val) || isinf(val) )
+			return true;
+
+		return false;
+	};
+
 }
 
 #endif

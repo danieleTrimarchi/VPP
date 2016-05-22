@@ -4,22 +4,33 @@
 
 using namespace mathUtils;
 
-// Constructor
-Plotter::Plotter():
-minX_(1E20),
-minY_(1E20),
-maxX_(-1E20),
-maxY_(-1E20),
-nValues_(0),
-x_(0), y_(0) {
+PlotterBase::PlotterBase():
+		minX_(1E20),
+		minY_(1E20),
+		maxX_(-1E20),
+		maxY_(-1E20) {
 
 	// Specify the output device (aquaterm)
 	plsdev("aqt");
 
+	// Specify the background color (rgb) and its transparency
+	plscolbga(255,255,255,0.6);
+
+	// Initialize plplot
+	plinit();
+
+	// Define the color of the labeled box holding the plot.
+	plcol0( color::grey );
+
+}
+
+// Destructor
+PlotterBase::~PlotterBase(){
+	// make nothing
 }
 
 // Reset the ranges to very big values
-void Plotter::initRanges() {
+void PlotterBase::initRanges() {
 
 	minX_=1E20;
 	minY_=1E20;
@@ -28,7 +39,7 @@ void Plotter::initRanges() {
 
 }
 
-void Plotter::resetRanges(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
+void PlotterBase::resetRanges(ArrayXd& x, ArrayXd& y) {
 
 	// Set the ranges for the first array
 	if(x.minCoeff()<minX_)
@@ -42,7 +53,50 @@ void Plotter::resetRanges(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
 
 }
 
-void Plotter::resetRanges(std::vector<double>& x, std::vector<double>& y) {
+void PlotterBase::resetRanges(MatrixXd& x, MatrixXd& y, bool axisEqual) {
+
+	// Set the ranges for the first array
+	if(x.minCoeff()<minX_)
+		minX_=x.minCoeff();
+	if(y.minCoeff()<minY_)
+		minY_=y.minCoeff();
+	if(x.maxCoeff()>maxX_)
+		maxX_=x.maxCoeff();
+	if(y.maxCoeff()>maxY_)
+		maxY_=y.maxCoeff();
+
+	// In the case the max and min are the same, give an arbitrary depht
+	if(minX_==maxX_){
+		minX_ -= 0.5;
+		maxX_ += 0.5;
+	}
+	if(minY_==maxY_){
+		minY_ -= 0.5;
+		maxY_ += 0.5;
+	}
+
+	if(axisEqual){
+		double tmp=std::min(minX_,minY_);
+		minX_=tmp;
+		minY_=tmp;
+
+		tmp=std::max(maxX_,maxY_);
+		maxX_=tmp;
+		maxY_=tmp;
+	}
+
+	// Now increase the spacing to visualize all of the plot
+	double dx=fabs(maxX_-minX_)/10;
+	double dy=fabs(maxY_-minY_)/10;
+
+	minX_-=dx;
+	maxX_+=dx;
+	minY_-=dy;
+	maxY_+=dy;
+
+}
+
+void PlotterBase::resetRanges(std::vector<double>& x, std::vector<double>& y) {
 
 	// Set the ranges for the first array
 	if(min(x)<minX_)
@@ -57,7 +111,7 @@ void Plotter::resetRanges(std::vector<double>& x, std::vector<double>& y) {
 }
 
 // Reset the ranges so that it can contain all of the plot
-void Plotter::resetRanges(Eigen::ArrayXd& x0,Eigen::ArrayXd& y0,Eigen::ArrayXd& x1,Eigen::ArrayXd& y1) {
+void PlotterBase::resetRanges(ArrayXd& x0,ArrayXd& y0,ArrayXd& x1,ArrayXd& y1) {
 
 	resetRanges(x0,y0);
 	resetRanges(x1,y1);
@@ -65,13 +119,42 @@ void Plotter::resetRanges(Eigen::ArrayXd& x0,Eigen::ArrayXd& y0,Eigen::ArrayXd& 
 }
 
 // Reset the ranges so that it can contain all of the plot
-void Plotter::resetRanges(std::vector<double>& x0,std::vector<double>& y0,std::vector<double>& x1,std::vector<double>& y1) {
+void PlotterBase::resetRanges(std::vector<double>& x0,std::vector<double>& y0,std::vector<double>& x1,std::vector<double>& y1) {
 
 	resetRanges(x0,y0);
 	resetRanges(x1,y1);
 
 }
 
+// Find the min of the specified c-style array
+double PlotterBase::min(std::vector<double>& vec) {
+
+	double val=1E+20;
+	for(size_t i=0; i<vec.size(); i++){
+		if(vec[i]<val)
+			val=vec[i];
+	}
+	return val;
+}
+
+// Find the max of the specified c-style array
+double PlotterBase::max(std::vector<double>& vec) {
+	double val=-1E+20;
+	for(size_t i=0; i<vec.size(); i++){
+		if(vec[i]>val)
+			val=vec[i];
+	}
+	return val;
+}
+
+// Plotter class ////////////////////////////////////////
+
+// Constructor
+Plotter::Plotter():
+				PlotterBase(),
+				nValues_(0),
+				x_(0), y_(0) {
+}
 
 // Destructor
 Plotter::~Plotter() {
@@ -82,7 +165,7 @@ Plotter::~Plotter() {
 }
 
 // Copy the values into plplot compatible containers
-void Plotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& y) {
+void Plotter::setValues(ArrayXd& x, ArrayXd& y) {
 
 	// make sure the buffers x_ and y_ are init
 	delete x_;
@@ -132,17 +215,6 @@ double Plotter::min(double* arr) {
 	return val;
 }
 
-// Find the min of the specified c-style array
-double Plotter::min(std::vector<double>& vec) {
-
-	double val=1E+20;
-	for(size_t i=0; i<vec.size(); i++){
-		if(vec[i]<val)
-			val=vec[i];
-	}
-	return val;
-}
-
 /// Find the max of the specified c-style array
 double Plotter::max(double* arr) {
 	double val=-1E+20;
@@ -153,18 +225,28 @@ double Plotter::max(double* arr) {
 	return val;
 }
 
-/// Find the max of the specified c-style array
-double Plotter::max(std::vector<double>& vec) {
-	double val=-1E+20;
-	for(size_t i=0; i<vec.size(); i++){
-		if(vec[i]>val)
-			val=vec[i];
+// Plot the points of some given arrays
+void Plotter::plot( std::vector<double>& y, string title) {
+
+    if(!y.size()){
+        std::cout<<"\n WARNING: Attempting to plot an empty vector. Returning \n"<<std::endl;
+        return;
+    }
+    
+    // generate a VectorXd 'x' with default abscissas
+	ArrayXd xtemp(y.size());
+	ArrayXd ytemp(y.size());
+	for(size_t i=0; i<y.size(); i++){
+		xtemp(i)=i;
+		ytemp(i)=y[i];
 	}
-	return val;
+
+	// Call the std plot method
+	plot(xtemp,ytemp,title);
 }
 
 // Produce a 2d plot from Eigen vectors
-void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y,string title) {
+void Plotter::plot(ArrayXd& x, ArrayXd& y,string title) {
 
 	// Reset the ranges at the very beginning of the plot
 	initRanges();
@@ -172,12 +254,6 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y,string title) {
 	// Check the size of x and y are consistent
 	if(x.size() != y.size())
 		throw VPPException(HERE,"In Plotter::plot(x,y). Array sizes mismatch");
-
-	// Specify the background color (rgb) and its transparency
-	plscolbga(255,255,255,0.6);
-
-	// Initialize plplot
-	plinit();
 
 	// Create a labeled box to hold the plot.
 	plcol0( color::grey );
@@ -201,10 +277,10 @@ void Plotter::plot(Eigen::ArrayXd& x, Eigen::ArrayXd& y,string title) {
 
 }
 
-void Plotter::plot(	Eigen::ArrayXd& x0,
-		Eigen::ArrayXd& y0,
-		Eigen::ArrayXd& x1,
-		Eigen::ArrayXd& y1,
+void Plotter::plot(	ArrayXd& x0,
+		ArrayXd& y0,
+		ArrayXd& x1,
+		ArrayXd& y1,
 		std::string title,
 		string xLabel,
 		string yLabel) {
@@ -219,12 +295,6 @@ void Plotter::plot(	Eigen::ArrayXd& x0,
 	// Check the size of x and y are consistent
 	if(x1.size() != y1.size())
 		throw VPPException(HERE,"In Plotter::plot(x,y). Array _1_ sizes mismatch");
-
-	// Specify the background color (rgb) and its transparency
-	plscolbga(255,255,255,0.6);
-
-	// Initialize plplot
-	plinit();
 
 	// Create a labeled box to hold the plot.
 	plcol0( color::grey );
@@ -270,12 +340,6 @@ void Plotter::plot(
 	if(x0.size() != y0.size())
 		throw VPPException(HERE,"In Plotter::plot(x,y). Array _0_ sizes mismatch");
 
-	// Specify the background color (rgb) and its transparency
-	plscolbga(255,255,255,0.6);
-
-	// Initialize plplot
-	plinit();
-
 	// Create a labeled box to hold the plot.
 	plcol0( color::grey );
 
@@ -315,12 +379,6 @@ void Plotter::plot(	std::vector<double>& x0,
 	if(x1.size() != y1.size())
 		throw VPPException(HERE,"In Plotter::plot(x,y). Array _1_ sizes mismatch");
 
-	// Specify the background color (rgb) and its transparency
-	plscolbga(255,255,255,0.6);
-
-	// Initialize plplot
-	plinit();
-
 	// Create a labeled box to hold the plot.
 	plcol0( color::grey );
 
@@ -351,16 +409,179 @@ void Plotter::plot(	std::vector<double>& x0,
 
 }
 
+
+// Append a set of data
+void Plotter::append(string curveLabel, ArrayXd& xs, ArrayXd& ys) {
+
+	// make sure the size of the arrays are the same
+	if(xs.size() != ys.size())
+		throw VPPException(HERE, "In Plotter::append, the size of the arrays does not match");
+
+	// push back the angles expressed in deg
+	xs_.push_back(xs);
+
+	// push back the values
+	ys_.push_back(ys);
+
+	// push back the curve titles
+	curveLabels_.push_back(curveLabel);
+
+	// place the labels in the center of the curve
+	size_t pos= xs.size() / 2;
+	idx_.push_back(pos);
+
+	// Set the ranges
+	resetRanges(xs,ys);
+
+}
+
+// Plot the data that have been previously appended to the buffer vectors
+void Plotter::plot(string xLabel,string yLabel,string plotTitle) {
+
+	// Create a labeled box to hold the plot.
+	plcol0( color::grey );
+
+	// Set up viewport and window, but do not draw box
+	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
+
+	// Set the color for the data line
+	plcol0( color::red );
+
+	for(size_t iLine=0; iLine<xs_.size(); iLine++) {
+
+		// Copy the vals into a c-stile array
+		setValues(xs_[iLine], ys_[iLine]);
+
+		// And now define the line
+		plline( xs_[iLine].size(), x_, y_ );
+
+		// Place the curve label in the center of the curve
+		plptex(x_[idx_[iLine]],y_[idx_[iLine]],1,0,0,curveLabels_[iLine].c_str());
+	}
+
+	// set the color
+	pllab( xLabel.c_str(), yLabel.c_str(), plotTitle.c_str() );
+
+	// Close the plot at end
+	plend();
+
+}
+
+//=====================================================================
+
+// Constructor
+VectorPlotter::VectorPlotter() :
+				PlotterBase(),
+				nX_(0),
+				nY_(0) {
+
+}
+
+//// instantiate a vectorPlotter and quit. Usage for a single vector plot:
+// VectorPlotter testplot;
+// Eigen::MatrixXd x(1,4), y(1,4), du(1,4), dv(1,4);
+//// Coordinate vectors. Will form a coordinate matrix
+//x  << 0, 1, 2, 3;
+//y  << 1., 1., 1., 1.;
+//// For each point of the grid, u-value of the
+//du << 0.5, 0.2, 1., 0.5;
+//dv << 0.5, 0.2, 1., 0.5;
+//testplot.plot(x,y,du,dv,"vector plot","x","y");
+void VectorPlotter::plot(
+		MatrixXd& x,  MatrixXd& y,
+		MatrixXd& du, MatrixXd& dv,
+		double scale,
+		string title,
+		string xLabel,
+		string yLabel) {
+
+	if(x.rows()!=y.rows() || x.cols()!=y.cols())
+		throw VPPException(HERE,"VectorPlot size mismatch");
+
+	// Diagnostics
+//	std::cout <<"\n\n Plotting: "<<title<<std::endl;
+//	std::cout<<"x= "<<x<<std::endl;
+//	std::cout<<"y= "<<y<<std::endl;
+//	std::cout<<"du= "<<du<<std::endl;
+//	std::cout<<"dv= "<<dv<<std::endl;
+
+	// Declare arrays
+	PLcGrid2 cgrid2;
+	double **u, **v;
+
+	// Allocate arrays
+	plAlloc2dGrid( &cgrid2.xg, x.rows(), x.cols() );
+	plAlloc2dGrid( &cgrid2.yg, x.rows(), x.cols() );
+	plAlloc2dGrid( &u, x.rows(), x.cols() );
+	plAlloc2dGrid( &v, x.rows(), x.cols() );
+	cgrid2.nx = x.rows();
+	cgrid2.ny = x.cols();
+
+	// scale each du, dv vector according to its norm to obtain 1-normed vectors
+	for ( int i = 0; i < x.rows(); i++ )
+		for ( int j = 0; j < x.cols(); j++ ) {
+
+			// Compute the scale for this vector
+			double norm = std::sqrt( du(i,j)*du(i,j) + dv(i,j)*dv(i,j));
+			if(norm>0){
+				// scale the u-v component according to the scale
+				du(i,j) *= scale/norm;
+                dv(i,j) *= scale/norm;
+			}
+
+		}
+
+//	std::cout<<"scaled du= "<<du<<std::endl;
+//	std::cout<<"scaled dv= "<<dv<<std::endl;
+
+	// Create data - vectors are placed half-way through the coordinate pts
+	for ( int i = 0; i < x.rows(); i++ )
+		for ( int j = 0; j < y.cols(); j++ ) {
+
+			cgrid2.xg[i][j] = x(i,j);
+			cgrid2.yg[i][j] = y(i,j);
+
+			u[i][j]         = du(i,j);
+			v[i][j]         = dv(i,j);
+		}
+
+	// Set the ranges and the bounding box
+	resetRanges(x,y);
+	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
+
+	// Set the plot labels
+	pllab(xLabel.c_str(),yLabel.c_str(),title.c_str());
+
+	// Set the color for the vectors
+	plcol0( color::red );
+
+	// plot the vectors
+	plvect( u, v, x.rows(), x.cols(), 1.0, plcallback::tr2, (void *) &cgrid2 );
+
+	// Free memory for the current grid, finalize the plot
+	plFree2dGrid( cgrid2.xg,x.rows(),x.cols() );
+	plFree2dGrid( cgrid2.yg,x.rows(),x.cols() );
+	plFree2dGrid( u,x.rows(), x.cols() );
+	plFree2dGrid( v,x.rows(), x.cols() );
+	plend();
+
+}
+
+// Destructor
+VectorPlotter::~VectorPlotter() {
+	// make nothing
+}
+
 //=====================================================================
 
 PolarPlotter::PolarPlotter( string title ) :
-	title_(title),
-	minAlphaRange_(1E+20),
-	maxAlphaRange_(-1E20),
-	maxValRange_(-1E20),
-	x_(NULL),
-	y_(NULL),
-	pi_(M_PI / 180.0) {
+			title_(title),
+			minAlphaRange_(1E+20),
+			maxAlphaRange_(-1E20),
+			maxValRange_(-1E20),
+			x_(NULL),
+			y_(NULL),
+			pi_(M_PI / 180.0) {
 
 	// Specify the output device (aquaterm)
 	plsdev("aqt");
@@ -372,13 +593,13 @@ PolarPlotter::~PolarPlotter() {
 }
 
 // Append a set of polar data
-void PolarPlotter::append(string curveLabel, Eigen::ArrayXd& alpha, Eigen::ArrayXd& vals) {
+void PolarPlotter::append(string curveLabel, ArrayXd& alpha, ArrayXd& vals) {
 
 	// make sure the size of the arrays are the same
 	if(alpha.size() != vals.size())
 		throw VPPException(HERE, "In PolarPlotter, the size of the arrays does not match");
 
-	// push back the angles
+	// push back the angles expressed in deg
 	alphas_.push_back(alpha);
 
 	// push back the values
@@ -401,8 +622,25 @@ void PolarPlotter::append(string curveLabel, Eigen::ArrayXd& alpha, Eigen::Array
 
 }
 
+// Append a set of polar data
+void PolarPlotter::append(string curveLabel, std::vector<double>& alphaV, std::vector<double>& valsV){
+
+	// Convert vector->ArrayXd and call the append method for ArrayXd
+	ArrayXd alpha(alphaV.size());
+	ArrayXd vals(valsV.size());
+
+	// Fill the buffers
+	for(size_t i=0; i<alphaV.size(); i++){
+		alpha(i)= alphaV[i];
+		vals(i)= valsV[i];
+	}
+
+	append(curveLabel, alpha, vals);
+
+}
+
 // Copy the values into plplot compatible containers
-void PolarPlotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& vals) {
+void PolarPlotter::setValues(ArrayXd& x, ArrayXd& vals) {
 
 	// make sure the size of x and y are the same
 	if(x.size() != vals.size())
@@ -428,7 +666,7 @@ void PolarPlotter::setValues(Eigen::ArrayXd& x, Eigen::ArrayXd& vals) {
 }
 
 // Plot the data appended to the plotter
-void PolarPlotter::plot() {
+void PolarPlotter::plot(size_t skipCircles) {
 
 	// Specify the output device (aquaterm)
 	plsdev("aqt");
@@ -447,7 +685,7 @@ void PolarPlotter::plot() {
 
 	// Draw a number of circles for polar grid
 	int nCircles = maxValRange_;
-	for ( size_t i = 1; i <= nCircles; i++ ) {
+	for ( size_t i = 1; i <= nCircles; i+=skipCircles ) {
 		// Add the arc
 		plarc( 0.0, 0.0, i, i, 0.0, 360.0, 0.0, 0 );
 		// Add a label

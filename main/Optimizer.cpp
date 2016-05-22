@@ -2,168 +2,16 @@
 #include "VPPException.h"
 #include "Interpolator.h"
 #include <fstream>
+#include "mathUtils.h"
+
+using namespace mathUtils;
 
 // Init static member
 boost::shared_ptr<VPPItemFactory> Optimizer::vppItemsContainer_;
 size_t Optimizer::maxIters_;
 int optIterations=0;
 
-///////// Optimizer Result Class ///////////////////////////////
-
-// Default constructor
-OptResult::OptResult():
-			twv_(0),
-			twa_(0),
-			result_(0),
-			dF_(0),
-			dM_(0) {
-
-}
-
-// Constructor
-OptResult::OptResult(double twv, double twa, std::vector<double>& res, double dF, double dM) :
-				twv_(twv),
-				twa_(twa),
-				result_(res),
-				dF_(dF),
-				dM_(dM) {
-
-}
-
-// Destructor
-OptResult::~OptResult(){
-	// make nothing
-}
-
-// PrintOut the values stored in this result
-void OptResult::print() {
-	printf("%4.2f  %4.2f  -- ", twv_,twa_);
-	for(size_t iRes=0; iRes<result_.size(); iRes++)
-		printf("  %4.2e",result_[iRes]);
-	printf("  --  %4.2e  %4.2e", dF_,dM_);
-	std::cout<<"\n";
-}
-
-
-// get the twv for this result
-const double OptResult::getTWV() const {
-	return twv_;
-}
-
-// get the twa for this result
-const double OptResult::getTWA() const {
-	return twa_;
-}
-
-// get the force residuals for this result
-const double OptResult::getdF() const {
-	return dF_;
-}
-
-// get the moment residuals for this result
-const double OptResult::getdM() const {
-	return dM_;
-}
-
-// get the state vector for this result
-const std::vector<double>* OptResult::getX() const {
-	return &result_;
-}
-
-/////  OptResultContainer   /////////////////////////////////
-
-// Default constructor
-OptResultContainer::OptResultContainer():
-	nWv_(0),
-	nWa_(0),
-	pWind_(0) {
-
-}
-
-// Constructor using a windItem
-OptResultContainer::OptResultContainer(WindItem* pWindItem):
-		pWind_(pWindItem) {
-
-	// Get the parser
-	VariableFileParser* pParser = pWind_->getParser();
-
-	// Set the variables
-	nWv_= pParser->get("N_TWV");
-	nWa_= pParser->get("N_ALPHA_TW");
-
-	// Allocate enough space in the resMat_[Wv][Wa] and init
-	resMat_.resize(nWv_);
-	for(size_t iWv=0; iWv<nWv_; iWv++){
-		resMat_[iWv].resize(nWa_);
-	}
-}
-
-// Destructor
-OptResultContainer::~OptResultContainer() {
-
-}
-
-// push_back a result taking care of the allocation
-void OptResultContainer::push_back(size_t iWv, size_t iWa, std::vector<double>& res, double dF, double dM) {
-
-	if(iWv>=nWv_){
-		char msg[256];
-		int v=iWv, n=nWv_;
-		sprintf(msg,"In OptResultContainer, requested out-of-bounds iWv: %i on %i",v,n );
-		throw VPPException(HERE,msg);
-	}
-	if(iWa>=nWa_) {
-		char msg[256];
-		int a=iWa, n=nWa_;
-		sprintf(msg,"In OptResultContainer, requested out-of-bounds iWa: %i on %i",a,n );
-		throw VPPException(HERE,msg);
-	}
-
-	// Ask the wind to get the current wind velocity/angles. Note that this
-	// implies that the call must be in sync, which seems rather dangerous!
-	// todo dtrimarchi: the wind must have calls such as pWind_->getTWV(iWv)
-	resMat_[iWv][iWa] = OptResult(pWind_->getTWV(), pWind_->getTWA(), res, dF, dM);
-
-}
-
-/// Get the result for a given wind velocity/angle
-const OptResult& OptResultContainer::get(size_t iWv, size_t iWa) const {
-
-	if(iWv>=nWv_)
-		throw VPPException(HERE,"In OptResultContainer::get, requested out-of-bounds iWv!");
-	if(iWa>=nWa_)
-		throw VPPException(HERE,"In OptResultContainer::get(), requested out-of-bounds iWa!");
-
-	return resMat_[iWv][iWa];
-}
-
-// How many results have been stored?
-const size_t OptResultContainer::size() const {
-	return nWv_*nWa_;
-}
-
-/// How many wind velocities?
-const size_t OptResultContainer::windVelocitySize() const {
-	return nWv_;
-}
-
-/// How many wind angles?
-const size_t OptResultContainer::windAngleSize() const {
-	return nWa_;
-}
-
-/// Printout the list of Opt Results, arranged by twv-twa
-void OptResultContainer::print() {
-
-	std::cout<<" TWV    TWA   --  V    PHI    B    F  --  dF    dM "<<std::endl;
-	std::cout<<"---------------------------------------------------"<<std::endl;
-	for(size_t iWv=0; iWv<nWv_; iWv++)
-		for(size_t iWa=0; iWa<nWa_; iWa++)
-			resMat_[iWv][iWa].print();
-}
-
-
-/////////////////////////////////////////////////////////////
+//// Optimizer class  //////////////////////////////////////////////
 
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
@@ -221,7 +69,7 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	pWind_=vppItemsContainer_->getWind();
 
 	// Init the ResultContainer that will be filled while running the results
-	pResults_.reset(new OptResultContainer(pWind_));
+	pResults_.reset(new ResultContainer(pWind_));
 
 }
 
@@ -256,7 +104,7 @@ void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 	pWind_=vppItemsContainer_->getWind();
 
 	// Init the ResultContainer that will be filled while running the results
-	pResults_.reset(new OptResultContainer(pWind_));
+	pResults_.reset(new ResultContainer(pWind_));
 
 }
 
@@ -266,38 +114,38 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 	// In it to something small to start the evals at each velocity
 	if(TWV==0) {
 
-		xp_[0]= 0.01;  	// V_0
-		xp_[1]= 0.01;		// PHI_0
-		xp_[2]= 0.01;		// b_0
-		xp_[3]= .99;		// f_0
+		xp_(0)= 0.01;  	// V_0
+		xp_(1)= 0.01;		// PHI_0
+		xp_(2)= 0.01;		// b_0
+		xp_(3)= .99;		// f_0
 
 	}
 
-	else if(TWV>1) {
-
-		// For twv> 1 we can linearly predict the result of the state vector
-		Extrapolator extrapolator(
-				pResults_->get(TWV-2,TWA).getTWV(),
-				pResults_->get(TWV-2,TWA).getX(),
-				pResults_->get(TWV-1,TWA).getTWV(),
-				pResults_->get(TWV-1,TWA).getX()
-		);
-
-		// Extrapolate the state vector for the current wind
-		// velocity. Note that the items have not been init yet
-		xp_= extrapolator.get( pWind_->getTWV(TWV) );
-	}
-
-	// Make sure the initial guess does not exceeds the bounds
-	for(size_t i=0; i<dimension_; i++) {
-		if(xp_[i]<lowerBounds_[i])
-			xp_[i]=lowerBounds_[i];
-		if(xp_[i]>upperBounds_[i])
-			xp_[i]=upperBounds_[i];
-	}
-
-	std::cout<<"INITIAL GUESS: "<<std::endl;
-	cout<<"  "<<xp_[0]<<" , "<<xp_[1]<<" , "<<xp_[2]<<" , "<<xp_[3]<<endl;
+////	else if(TWV>1) {
+////
+////		// For twv> 1 we can linearly predict the result of the state vector
+////		Extrapolator extrapolator(
+////				pResults_->get(TWV-2,TWA).getTWV(),
+////				pResults_->get(TWV-2,TWA).getX(),
+////				pResults_->get(TWV-1,TWA).getTWV(),
+////				pResults_->get(TWV-1,TWA).getX()
+////		);
+////
+////		// Extrapolate the state vector for the current wind
+////		// velocity. Note that the items have not been init yet
+////		xp_= extrapolator.get( pWind_->getTWV(TWV) );
+////	}
+////
+////	// Make sure the initial guess does not exceeds the bounds
+////	for(size_t i=0; i<dimension_; i++) {
+////		if(xp_[i]<lowerBounds_[i])
+////			xp_[i]=lowerBounds_[i];
+////		if(xp_[i]>upperBounds_[i])
+////			xp_[i]=upperBounds_[i];
+////	}
+//
+//	std::cout<<"INITIAL GUESS: "<<std::endl;
+//	cout<<"  "<<xp_[0]<<" , "<<xp_[1]<<" , "<<xp_[2]<<" , "<<xp_[3]<<endl;
 
 }
 
@@ -310,7 +158,7 @@ double Optimizer::VPP_speed(unsigned n, const double* x, double *grad, void *my_
 	if(grad)
 		throw VPPException(HERE,"VPP_speed can only be used for derivative-free algorithms!");
 
-	if(isnan(x[0])) throw VPPException(HERE,"x[0] is NAN!");
+	if(mathUtils::isNotValid(x[0])) throw VPPException(HERE,"x[0] is NAN!");
 
 	// Return x[0], or the velocity to be maximized
 	return x[0];
@@ -330,13 +178,13 @@ void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const doub
 	vppItemsContainer_->update(twv,twa,x);
 
 	// And compute the residuals for force and moment
-	vppItemsContainer_->computeResiduals(result[0],result[1]);
+	vppItemsContainer_->getResiduals(result[0],result[1]);
 
 }
 
 void Optimizer::run(int TWV, int TWA) {
 
-	std::cout<<"    "<<pWind_->getTWV(TWV)<<"    "<<pWind_->getTWA(TWA)<<std::endl;
+	std::cout<<"    "<<pWind_->getTWV(TWV)<<"    "<<toDeg(pWind_->getTWA(TWA))<<std::endl;
 
 	// Drive the loop info to the struct
 	Loop_data loopData={TWV,TWA};
@@ -366,8 +214,15 @@ void Optimizer::run(int TWV, int TWA) {
 	try{
 		// Launch the optimization; negative retVal implies failure
 		std::cout<<"Entering the optimizer with: "<<
-				xp_[0]<<" "<<xp_[1]<<" "<<xp_[2]<<" "<<xp_[3]<<"\n";
-		result = opt_->optimize(xp_, maxf);
+				xp_(0)<<" "<<xp_(1)<<" "<<xp_(2)<<" "<<xp_(3)<<"\n";
+		// convert to standard vector
+		std::vector<double> xp(xp_.rows());
+		for(size_t i=0; i<xp_.rows(); i++)
+			xp[i]=xp_(i);
+		result = opt_->optimize(xp, maxf);
+		//store the results back to the member state vector
+		for(size_t i=0; i<xp_.size(); i++)
+			xp_(i)=xp[i];
 	}
 	catch( nlopt::roundoff_limited& e ){
 		// do nothing because the result of roundoff-limited exception
@@ -388,7 +243,7 @@ void Optimizer::run(int TWV, int TWA) {
 
 	printf("found maximum after %d evaluations\n", optIterations);
 	printf("      at f(%g,%g,%g,%g) = %0.10g\n",
-			xp_[0],xp_[1],xp_[2],xp_[3],maxf);
+			xp_(0),xp_(1),xp_(2),xp_(3),maxf);
 	double dF, dM;
 	vppItemsContainer_->getResiduals(dF,dM);
 	printf("      residuals: dF= %g, dM= %g\n\n",dF,dM);
@@ -440,16 +295,16 @@ void Optimizer::plotPolars() {
 			windAngles(iWa) = pResults_->get(iWv,iWa).getTWA();
 
 			// fill the list of boat speeds to an ArrayXd
-			boatVelocity(iWa) = pResults_->get(iWv,iWa).getX()->at(0);
+			boatVelocity(iWa) = pResults_->get(iWv,iWa).getX()->coeff(0);
 
 			// fill the list of boat heel to an ArrayXd
-			boatHeel(iWa) = pResults_->get(iWv,iWa).getX()->at(1);
+			boatHeel(iWa) = pResults_->get(iWv,iWa).getX()->coeff(1);
 
 			// fill the list of Crew B to an ArrayXd
-			crewB(iWa) = pResults_->get(iWv,iWa).getX()->at(2);
+			crewB(iWa) = pResults_->get(iWv,iWa).getX()->coeff(2);
 
 			// fill the list of Sail flat to an ArrayXd
-			sailFlat(iWa) = pResults_->get(iWv,iWa).getX()->at(3);
+			sailFlat(iWa) = pResults_->get(iWv,iWa).getX()->coeff(3);
 
 		}
 
@@ -488,17 +343,17 @@ void Optimizer::plotXY(size_t iWa) {
 	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
 
 		windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
-		boatVelocity(iWv)= pResults_->get(iWv,iWa).getX()->at(0);
-		boatHeel(iWv)    = pResults_->get(iWv,iWa).getX()->at(1);
-		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->at(2);
-		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->at(3);
+		boatVelocity(iWv)= pResults_->get(iWv,iWa).getX()->coeff(0);
+		boatHeel(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(1);
+		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
+		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(3);
 		dF(iWv)          = pResults_->get(iWv,iWa).getdF();
 		dM(iWv)          = pResults_->get(iWv,iWa).getdM();
 
 	}
 
 	char title[256];
-	sprintf(title,"AWA= %4.2f", pWind_->getTWA(iWa) );
+	sprintf(title,"AWA= %4.2f", toDeg(pWind_->getTWA(iWa)) );
 
 	// Instantiate a plotter for the velocity
 	Plotter plotter;

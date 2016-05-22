@@ -1,8 +1,8 @@
 #include "VPPAeroItem.h"
 
 #include "VPPException.h"
-
 #include "mathUtils.h"
+
 using namespace mathUtils;
 
 /// Constructor
@@ -29,7 +29,7 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 	for(size_t i=0; i<n_twv_; i++)
 		vTwv_[i]= v_tw_min_ + i * delta;
 
-	// Get the max/min wind angles from the parser
+	// Get the max/min wind angles [rad] from the parser
 	alpha_tw_min_= pParser_->get("ALPHA_TW_MIN");
 	alpha_tw_max_= pParser_->get("ALPHA_TW_MAX");
 	n_alpha_tw_= pParser_->get("N_ALPHA_TW");
@@ -42,6 +42,7 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 	if(n_alpha_tw_>1)
 		delta=( ( alpha_tw_max_ - alpha_tw_min_ ) /  (n_alpha_tw_-1) );
 
+	// store the wind angles in RADIANS
 	for(size_t i=0; i<n_alpha_tw_; i++)
 		vTwa_[i]= alpha_tw_min_ + i * delta;
 
@@ -62,23 +63,25 @@ void WindItem::update(int vTW, int aTW) {
 	// Update the true wind velocity
 	// vmin to vmax in N steps : vMin + vTW * ( (vMax-vMin)/(nSteps-2) - 1 )
 	twv_= getTWV(vTW);
-	if(isnan(twv_)) throw VPPException(HERE,"twv_ is NAN!");
+	if(mathUtils::isNotValid(twv_)) throw VPPException(HERE,"twv_ is NAN!");
 
 	// Update the true wind angle: make as per the velocity
 	twa_= getTWA(aTW);
-	if(isnan(twa_)) throw VPPException(HERE,"twa_ is NAN!");
+	if(mathUtils::isNotValid(twa_)) throw VPPException(HERE,"twa_ is NAN!");
 
 	// Update the apparent wind velocity vector
-	awv_(0)= V_ + twv_ * cos( toRad(twa_)  );
-	if(isnan(awv_(0))) throw VPPException(HERE,"awv_(0) is NAN!");
+	awv_(0)= V_ + twv_ * cos( twa_ );
+	if(mathUtils::isNotValid(awv_(0))) throw VPPException(HERE,"awv_(0) is NAN!");
 
-	awv_(1)= twv_ * sin( toRad(twa_) );
-	if(isnan(awv_(1))) throw VPPException(HERE,"awv_(1) is NAN!");
+	awv_(1)= twv_ * sin( twa_ );
+	if(mathUtils::isNotValid(awv_(1))) throw VPPException(HERE,"awv_(1) is NAN!");
+	if(awv_(1)<0)
+		throw VPPException(HERE,"awv_(1) is Negative!");
 
 	// Update the apparent wind angle - TODO dtrimarchi: why do I need to
 	// explicitly cast to a double for the indexer to resolve..?
-	awa_= toDeg( atan( awv_(1)/awv_(0) ) );
-	if(isnan(awa_))	throw VPPException(HERE,"awa_ is NAN!");
+	awa_= atan2( awv_(1),awv_(0) );
+	if(mathUtils::isNotValid(awa_))	throw VPPException(HERE,"awa_ is NAN!");
 
 }
 
@@ -96,6 +99,11 @@ const double WindItem::getTWV() const {
 	return twv_;
 }
 
+// Returns the number of true wind velocities
+const int WindItem::getWVSize() const {
+	return n_twv_;
+}
+
 // Returns the true wind angle for a given step
 const double WindItem::getTWA(size_t iA) const {
 	return vTwa_[iA];
@@ -104,6 +112,11 @@ const double WindItem::getTWA(size_t iA) const {
 // Returns the current true wind angle for this step
 const double WindItem::getTWA() const {
 	return twa_;
+}
+
+// Returns the number of true wind angles
+const int WindItem::getWASize() const {
+	return n_alpha_tw_;
 }
 
 /// Returns the apparent wind angle for this step
@@ -168,6 +181,9 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 
 	}
 
+	// Convert the angular values to radians
+	clMat0.col(0) *= M_PI / 180.0;
+
 	// We only dispose of one drag coeff array for the moment
 	cdpMat0.resize(8,4);
 	cdpMat0.row(0) << 0,  	0,   	0,   	0;
@@ -178,6 +194,9 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 	cdpMat0.row(5) << 100,	1.0, 	0.05, 1.2;
 	cdpMat0.row(6) << 140,	0.95, 	0.01, 0.8;
 	cdpMat0.row(7) << 180,	0.9, 	0.0, 	0.66;
+
+	// Convert the angular values to radians
+	cdpMat0.col(0) *= M_PI / 180.0;
 
 	// Reset the interpolator vectors before filling them
 	interpClVec_.clear();
@@ -211,7 +230,7 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 
 	// Update the local copy of the the apparent wind angle
 	awa_= pWindItem_->getAWA();
-	if(isnan(awa_)) throw VPPException(HERE,"awa_ is NaN");
+	if(mathUtils::isNotValid(awa_)) throw VPPException(HERE,"awa_ is NaN");
 
 	// create aliases for code readability
 	VariableFileParser* p = pParser_;
@@ -219,7 +238,7 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 
 	// Update the Aspect Ratio
 	double h;
-	if(awa_ < 45)  // TODO dtrimarchi: verify that awa is in deg... Which I doubt!
+	if(awa_ < toRad(45))
 		// h = mast height above deck + Average freeboard
 		h= p->get("EHM") + p->get("AVGFREB");
 	else
@@ -243,14 +262,14 @@ void SailCoefficientItem::postUpdate() {
 
 	// Reduce cl with the flattening factor of the state vector
 	cl_ = cl_ * f_;
-	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
+	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 
 	// Compute the induced resistance
 	cdI_ = cl_ * cl_ * ( 1. / (M_PI * ar_) + 0.005 );
 
 	// Compute the total sail drag coefficient now
 	cd_ = cdp_ + cd0_ + cdI_;
-	if(isnan(cd_)) throw VPPException(HERE,"cd_ is nan");
+	if(mathUtils::isNotValid(cd_)) throw VPPException(HERE,"cd_ is nan");
 
 }
 
@@ -262,8 +281,6 @@ WindItem* SailCoefficientItem::getWindItem() const {
 
 void SailCoefficientItem::computeForMain() {
 
-	Eigen::ArrayXd x, y;
-
 	// Interpolate the values of the sail coefficients for the MainSail
 	allCl_(0) = interpClVec_[0]->interpolate(awa_);
 	allCd_(0) = interpCdVec_[0]->interpolate(awa_);
@@ -272,8 +289,6 @@ void SailCoefficientItem::computeForMain() {
 
 void SailCoefficientItem::computeForJib() {
 
-	Eigen::ArrayXd x, y;
-
 	// Interpolate the values of the sail coefficients for the Jib
 	allCl_(1) = interpClVec_[1]->interpolate(awa_);
 	allCd_(1) = interpCdVec_[1]->interpolate(awa_);
@@ -281,8 +296,6 @@ void SailCoefficientItem::computeForJib() {
 }
 
 void SailCoefficientItem::computeForSpi() {
-
-	Eigen::ArrayXd x, y;
 
 	// Interpolate the values of the sail coefficients for the Spi
 	allCl_(1) = interpClVec_[2]->interpolate(awa_);
@@ -362,11 +375,24 @@ void MainOnlySailCoefficientItem::printWhoAmI() {
 
 void MainOnlySailCoefficientItem::plotInterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN","AWA [deg]","[-]");
-	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN","AWA [deg]","[-]");
+	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
 
 }
 
+void MainOnlySailCoefficientItem::plot_D_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainOnlySailCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+
+}
 
 //=================================================================
 
@@ -405,8 +431,8 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") ) /  ps->get("AN");
 	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") ) /  ps->get("AN");
 
-	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
-	if(isnan(cdp_)) throw VPPException(HERE,"cdp_ is nan");
+	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
+	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
@@ -420,13 +446,30 @@ void MainAndJibCoefficientItem::printWhoAmI() {
 
 void MainAndJibCoefficientItem::plotInterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN","AWA [deg]","[-]");
-	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN","AWA [deg]","[-]");
-	interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB","AWA [deg]","[-]");
-	interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB","AWA [deg]","[-]");
+	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
+	interpClVec_[1] -> plot(0,toRad(180),50,"Interpolated CL for JIB","AWA [rad]","[-]");
+	interpCdVec_[1] -> plot(0,toRad(180),50,"Interpolated CD for JIB","AWA [rad]","[-]");
 
 }
 
+void MainAndJibCoefficientItem::plot_D_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainAndJibCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
+
+}
 
 //=================================================================
 
@@ -464,8 +507,8 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
 	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
-	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
-	if(isnan(cdp_)) throw VPPException(HERE,"cdp_ is nan");
+	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
+	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
@@ -479,10 +522,28 @@ void MainAndSpiCoefficientItem::printWhoAmI() {
 
 void MainAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN","AWA [deg]","[-]");
-	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN","AWA [deg]","[-]");
-	interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI","AWA [deg]","[-]");
-	interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI","AWA [deg]","[-]");
+	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
+	interpClVec_[2] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
+	interpCdVec_[2] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
+
+}
+
+void MainAndSpiCoefficientItem::plot_D_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
 
 }
 
@@ -523,8 +584,8 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
 	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
-	if(isnan(cl_)) throw VPPException(HERE,"cl_ is nan");
-	if(isnan(cdp_)) throw VPPException(HERE,"cdp_ is nan");
+	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
+	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
@@ -538,12 +599,34 @@ void MainJibAndSpiCoefficientItem::printWhoAmI() {
 
 void MainJibAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plot(0,180,50,"Interpolated CL for MAIN","AWA [deg]","[-]");
-	interpCdVec_[0] -> plot(0,180,50,"Interpolated CD for MAIN","AWA [deg]","[-]");
-	interpClVec_[1] -> plot(0,180,50,"Interpolated CL for JIB","AWA [deg]","[-]");
-	interpCdVec_[1] -> plot(0,180,50,"Interpolated CD for JIB","AWA [deg]","[-]");
-	interpClVec_[2] -> plot(0,180,50,"Interpolated CL for SPI","AWA [deg]","[-]");
-	interpCdVec_[2] -> plot(0,180,50,"Interpolated CD for SPI","AWA [deg]","[-]");
+	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
+	interpClVec_[1] -> plot(0,toRad(180),50,"Interpolated CL for JIB","AWA [rad]","[-]");
+	interpCdVec_[1] -> plot(0,toRad(180),50,"Interpolated CD for JIB","AWA [rad]","[-]");
+	interpClVec_[2] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
+	interpCdVec_[2] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
+
+}
+
+void MainJibAndSpiCoefficientItem::plot_D_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainJibAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+
+	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
 
 }
 
@@ -557,8 +640,8 @@ AeroForcesItem::AeroForcesItem(SailCoefficientItem* sailCoeffItem) :
 						lift_(0),
 						drag_(0),
 						fDrive_(0),
-						fHeel_(0),
 						fSide_(0),
+						fHeel_(0),
 						mHeel_(0) {
 	// do nothing
 }
@@ -568,43 +651,150 @@ AeroForcesItem::~AeroForcesItem() {
 
 }
 
-/// Update the items for the current step (wind velocity and angle)
+/// Update the items for the current ste§p (wind velocity and angle)
 void AeroForcesItem::update(int vTW, int aTW) {
 
 	// Gets the value of the apparent wind velocity
 	double awv = pWindItem_->getAWNorm();
-	if(isnan(awv)) throw VPPException(HERE,"awv is NAN!");
+	if(mathUtils::isNotValid(awv)) throw VPPException(HERE,"awv is NAN!");
 
 	double awa = pWindItem_->getAWA();
-	if(isnan(awa)) throw VPPException(HERE,"awa is NAN!");
-
+	if(mathUtils::isNotValid(awa)) throw VPPException(HERE,"awa is NAN!");
 
 	// Updates Lift = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cl;
-	lift_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * pSailCoeffs_->getCl();
-	if(isnan(lift_)) throw VPPException(HERE,"lift_ is NAN!");
-
+	// Note that the nominal area AN was scaled with cos( PHI ) and it
+	// takes the meaning of a projected surface
+	lift_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * cos( PHI_ ) * pSailCoeffs_->getCl();
+	if(mathUtils::isNotValid(lift_)) throw VPPException(HERE,"lift_ is NAN!");
 
 	// Updates Drag = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cd;
-	drag_ = 0.5 * rho_a * awv * awv * pSailSet_->get("AN") * pSailCoeffs_->getCd();
-	if(isnan(drag_)) throw VPPException(HERE,"drag_ is NAN!");
+	// Note that the nominal area AN was scaled with cos( PHI ) and it
+	// takes the meaning of a projected surface
+	drag_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * cos( PHI_ ) * pSailCoeffs_->getCd();
+	if(mathUtils::isNotValid(drag_)) throw VPPException(HERE,"drag_ is NAN!");
 
+	// Updates Fdrive = lift_ * sin(awa) - D * cos(awa);
+  fDrive_ = lift_ * sin( awa ) - drag_ * cos( awa );
+	if(mathUtils::isNotValid(fDrive_)) throw VPPException(HERE,"fDrive_ is NAN!");
 
-	// Updates Fdrive = lift_ * sin(alfa_eff) - D * cos(alfa_eff);
-	fDrive_ = lift_ * sin( toRad(awa) ) - drag_ * cos( toRad(awa) );
-	if(isnan(fDrive_)) throw VPPException(HERE,"fDrive_ is NAN!");
-
-	// Updates Fheel = L * cos(alfa_eff) + D * sin(alfa_eff);
-	fSide_ = lift_ * cos( toRad(awa) ) + drag_ * sin( toRad(awa) );
-	if(isnan(fSide_)) throw VPPException(HERE,"fSide_ is NAN!");
-
-	// Updates Fside_ = Fheel*cos(phi*pi/180). Note PHI_ is in degrees
-	fHeel_ = fSide_ * cos( toRad(PHI_) );
-	if(isnan(fHeel_)) throw VPPException(HERE,"fHeel_ is NAN!");
+	// Updates FSide = L * cos(alfa_eff) + D * sin(alfa_eff);
+	fSide_ = lift_ * cos( awa ) + drag_ * sin( awa );
+	if(mathUtils::isNotValid(fSide_)) throw VPPException(HERE,"fSide_ is NAN!");
 
 	// The righting moment arm is set as the distance between the center of sail effort and
-	// the hydrodynamic center
-	mHeel_ = fHeel_ * ( 0.45 * pParser_->get("T") + pParser_->get("AVGFREB") + pSailSet_->get("ZCE") );
-	if(isnan(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
+	// the hydrodynamic center, scaled with cos(PHI)
+	mHeel_ = fSide_ * ( 0.45 * pParser_->get("T") + pParser_->get("AVGFREB") + pSailSet_->get("ZCE") ) * cos( PHI_ );
+	if(mathUtils::isNotValid(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
+
+}
+
+// plot the aeroForces for a fixed range
+void AeroForcesItem::plot() {
+
+	// Number of points of the plots
+	size_t nVelocities=20;
+
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	size_t twv=0, twa=0;
+
+	std::cout<<"--> Please enter the values of twv and twa for the aero forces plot: "<<std::endl;
+	while(true){
+	cin >> twv >> twa;
+	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
+	bool vFine= twv < pWindItem_->getWVSize();
+	bool aFine= twa < pWindItem_->getWASize();
+	if(!vFine)
+		std::cout<<"the value of twv is out of range, max is: "<<pWindItem_->getWVSize()-1<<std::endl;
+	if(!aFine)
+		std::cout<<"the value of twa is out of range, max is: "<<pWindItem_->getWASize()-1<<std::endl;
+	if(vFine&&aFine)
+		break;
+	}
+
+	// Buffer the current solution
+	Eigen::Vector2d xbuf;
+	xbuf << V_,PHI_;
+
+	// Declare containers for the velocity and angle-wise data
+	std::vector<ArrayXd> v, fDrive, mHeel;
+	std::vector<string> curveLabels;
+
+	// Loop on heel angles : from 0 to 90 deg in steps of 15 degs
+	for(size_t hAngle=0; hAngle<90; hAngle+=15){
+
+		// Convert the heeling angle into radians
+		PHI_= toRad(hAngle);
+		// vectors with the current boat velocity, the drive force
+		// and heeling moment values
+		ArrayXd x_v, f_v, m_v;
+
+		x_v.resize(nVelocities);
+		f_v.resize(nVelocities);
+		m_v.resize(nVelocities);
+
+		// loop on the boat velocity, from 0.1 to 5m/s in step on 1 m/s
+		for(size_t iTwv=0; iTwv<nVelocities; iTwv++ ) {
+
+			// Set the value for the state variable boat velocity
+			// Linearly from 0 to 5 m/s
+			V_ = double(iTwv) / (nVelocities-1) * 5;
+
+			// Declare a state vector to give the windItem
+			VectorXd stateVector(2);
+			stateVector << V_,PHI_;
+
+			// update the wind. For the moment fix the apparent wind velocity and angle
+			// to the first values contained in the variableFiles. TODO: introduce inner
+			// loops foreach awa and foreach awv
+			pWindItem_->updateSolution(twv, twa, stateVector);
+
+			// Update the sail coefficients for the current wind
+			pSailCoeffs_->updateSolution(twv, twa, stateVector);
+
+			// update 'this': compute sail forces. TODO: introduce inner
+			// loops foreach awa and foreach awv
+			update(twv, twa);
+
+			// Store velocity-wise data:
+			x_v(iTwv)= V_;					// velocities...
+			f_v(iTwv)= getFDrive(); // fDrive...
+			m_v(iTwv)= getMHeel();  // mHeel...
+
+		}
+
+		// Append the velocity-wise curve for each heel angle
+		v.push_back(x_v);
+		fDrive.push_back(f_v);
+		mHeel.push_back(m_v);
+
+		char msg[256];
+		sprintf(msg,"heel=%d deg",hAngle);
+		curveLabels.push_back(msg);
+
+	}
+
+	// Instantiate a plotter and plot
+	Plotter fPlotter;
+	for(size_t i=0; i<v.size(); i++)
+		fPlotter.append(curveLabels[i],v[i],fDrive[i]);
+
+	char msg[256];
+	sprintf(msg,"plot drive force vs boat speed - "
+			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			pWindItem_->getTWV(twv),
+			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
+	fPlotter.plot("V [m/s]","Fdrive [N]", msg);
+
+	// same for mheel
+	Plotter mPlotter;
+	for(size_t i=0; i<v.size(); i++)
+		mPlotter.append(curveLabels[i],v[i],mHeel[i]);
+
+	mPlotter.plot("V[m/s]","mHeel [N*m]","plot heeling moment vs boat speed");
+
+	// Restore the current solution
+	V_ = xbuf(0);
+	PHI_ = xbuf(1);
 
 }
 
@@ -621,6 +811,26 @@ const double AeroForcesItem::getFDrive() const {
 /// Get the value of the heel moment
 const double AeroForcesItem::getMHeel() const {
 	return mHeel_;
+}
+
+// Get a ptr to the wind item
+WindItem* AeroForcesItem::getWindItem() {
+	return pWindItem_;
+}
+
+// Get a ptr to the wind item - const variety
+const WindItem* AeroForcesItem::getWindItem() const {
+	return pWindItem_;
+}
+
+// Get a ptr to the sailCoeffs Item
+SailCoefficientItem* AeroForcesItem::getSailCoeffItem() {
+	return pSailCoeffs_;
+}
+
+// Get a ptr to the sailCoeffs Item - const variety
+const SailCoefficientItem* AeroForcesItem::getSailCoeffItem() const {
+	return pSailCoeffs_;
 }
 
 void AeroForcesItem::printWhoAmI() {

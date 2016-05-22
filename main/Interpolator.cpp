@@ -182,16 +182,17 @@ SplineInterpolator::SplineInterpolator(Eigen::ArrayXd& X0,Eigen::ArrayXd& Y0) {
 		throw VPPException(HERE,"In SplineInterpolator: Size mismatch");
 
 	// transform the Eigen arrays into vectors
-	std::vector<double> X(X0.size()), Y(Y0.size());
+	X_.resize(X0.size());
+	Y_.resize(Y0.size());
 
 	// Copy the values
 	for(size_t i=0; i<X0.size(); i++){
-		X[i]=X0(i);
-		Y[i]=Y0(i);
+		X_[i]=X0(i);
+		Y_[i]=Y0(i);
 	}
 
 	// Generate the underlying spline
-	generate(X,Y);
+	generate();
 
 }
 
@@ -200,21 +201,24 @@ SplineInterpolator::SplineInterpolator(std::vector<double>& x, std::vector<doubl
 	if(x.size() != y.size())
 		throw VPPException(HERE,"In SplineInterpolator: Size mismatch");
 
+	X_=x;
+	Y_=y;
+
 	// Generate the underlying spline
-	generate(x,y);
+	generate();
 
 }
 
 // Interpolate the function X-Y for the value val
-void SplineInterpolator::generate(std::vector<double>& x, std::vector<double>& y ) {
+void SplineInterpolator::generate() {
 
 	// throw if x is not sorted (todo dtrimarchi: instantiate a sorter)
-	for(size_t i=1; i<x.size(); i++)
-		if(x[i]<=x[i-1])
+	for(size_t i=1; i<X_.size(); i++)
+		if(X_[i]<=X_[i-1])
 			throw VPPException(HERE,"In SplineInterpolator, vector not sorted");
 
-	// Instantiate a spline out of the xy vectors
-	s_.set_points(x,y);
+	// Instantiate a spline out of the XY vectors
+	s_.set_points(X_,Y_);
 
 }
 
@@ -253,12 +257,66 @@ void SplineInterpolator::plot(double minVal,double maxVal,int nVals,
 
 }
 
+// Plot the spline and its underlying source points
+void SplineInterpolator::plotD1(double minVal,double maxVal,int nVals,
+		string title, string xLabel, string yLabel) {
 
+	std::vector<double> x(nVals+1), y(nVals+1);
+	double dx= (maxVal-minVal)/(nVals);
+
+	// Generate the n.points for the current plot
+	for(size_t i=0; i<nVals+1; i++){
+		x[i] = minVal + i*dx;
+		y[i] = s_(x[i]);
+	}
+
+	// now compute the first derivative of this curve
+	std::vector<double> x1(nVals), y1(nVals);
+	for(size_t i=0; i<nVals; i++){
+		x1[i] = (x[i]+x[i+1])/2;
+		y1[i] = (y[i+1]-y[i])/(x[i+1]-x[i]);
+	}
+
+	// Instantiate a plotter and plot the data
+	Plotter plotter;
+	plotter.plot(x1,y1,title,xLabel,yLabel);
+
+}
+
+// Plot the spline and its underlying source points
+void SplineInterpolator::plotD2(double minVal,double maxVal,int nVals,
+		string title, string xLabel, string yLabel) {
+
+	std::vector<double> x(nVals+1), y(nVals+1);
+	double dx= (maxVal-minVal)/(nVals);
+
+	// Generate the n.points for the current plot
+	for(size_t i=0; i<nVals+1; i++){
+		x[i] = minVal + i*dx;
+		y[i] = s_(x[i]);
+	}
+
+	// now compute the second derivative of this curve
+	std::vector<double> x2(nVals-1), y2(nVals-1);
+	for(size_t i=0; i<nVals-1; i++){
+		x2[i] = (x[i+2]+2*x[i+1]+x[i])/4;
+		y2[i] = 2*(
+								y[i+2]*(x[i+1]-x[i]) +
+								y[i+1]*(x[i]-2*x[i+1]-x[i+2]) +
+								y[i]  *(x[i+1]-x[i+2])
+							) / ( x[i+2]-x[i] );
+	}
+
+	// Instantiate a plotter and plot the data
+	Plotter plotter;
+	plotter.plot(x2,y2,title,xLabel,yLabel);
+
+}
 ////////////////////////////////////////////////////////////////////////////////////
 
 // Constructor
-Extrapolator::Extrapolator(	double xm2, const std::vector<double>* vm2,
-														double xm1, const std::vector<double>* vm1) :
+Extrapolator::Extrapolator(	double xm2, const Eigen::VectorXd* vm2,
+														double xm1, const Eigen::VectorXd* vm1) :
 				xm2_(xm2),
 				pVm2_(vm2),
 				xm1_(xm1),
@@ -273,10 +331,10 @@ Extrapolator::Extrapolator(	double xm2, const std::vector<double>* vm2,
 }
 
 // Get the vector with the value extrapolated for the abscissa x
-std::vector<double> Extrapolator::get(double x) {
+Eigen::VectorXd Extrapolator::get(double x) {
 
 	// Instantiate the extrapolated vector
-	std::vector<double> vRes(pVm2_->size());
+	Eigen::VectorXd vRes(pVm2_->size());
 
 	// Distance between the two known solutions
 	double dx= xm1_-xm2_;
@@ -284,13 +342,13 @@ std::vector<double> Extrapolator::get(double x) {
 	for(size_t i=0; i<pVm2_->size(); i++){
 
 		// Compute the angular coeff for this set of coeffs
-		double m= (pVm1_->at(i)-pVm2_->at(i))/dx;
+		double m= (pVm1_->coeff(i)-pVm2_->coeff(i))/dx;
 
 		// y=mx+q  => (y2-y1)/(x2-x1) = (yext-y1)/(xext-x1)
 		// yext = y1 + (y2-y1 / x2-x1) * xext-x1
 		//      = y1 + m * xext-x1
 		// with __1 => Vm2 and __2 Vm1
-		vRes[i]= pVm2_->at(i) + m * (x-xm2_);
+		vRes(i)= pVm2_->coeff(i) + m * (x-xm2_);
 	}
 
 	return vRes;

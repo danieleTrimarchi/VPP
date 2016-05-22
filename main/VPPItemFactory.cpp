@@ -1,11 +1,15 @@
 #include "VPPItemFactory.h"
 #include "VPPException.h"
+#include "mathUtils.h"
+#include <limits>
 
 // Constructor
 VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 pParser_(pParser),
 dF_(0),
-dM_(0) {
+dM_(0),
+c1_(0),
+c2_(0) {
 
 	// -- INSTANTIATE THE AERO ITEMS
 
@@ -25,12 +29,12 @@ dM_(0) {
 	pAeroForcesItem_.reset(new AeroForcesItem(pSailCoeffItem_.get()));
 	vppAeroItems_.push_back( pAeroForcesItem_ );
 
-	// -- INSTANTIATE THE 9 RESISTANCE ITEMS
+	// -- INSTANTIATE THE 10 RESISTANCE ITEMS
 
 	// Instantiate a FrictionalResistanceItem Item and push it back to the children vector
 	// For the definition of the Frictional Resistance see Keuning 2.1 p108
-	boost::shared_ptr<FrictionalResistanceItem> pFrictionalResistanceItem(new FrictionalResistanceItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pFrictionalResistanceItem );
+	pFrictionalResistanceItem_.reset(new FrictionalResistanceItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pFrictionalResistanceItem_ );
 
 	// Instantiate a ResiduaryResistanceItem and push it back to the children vector
 	// For the definition of the Residuary Resistance: see Keuning 3.1.1.2 p112
@@ -71,8 +75,13 @@ dM_(0) {
 
 	// Instantiate a InducedResistanceItem and push it back to the children vector
 	// For the definition of the Induced Resistance see DSYHS99 ch4 p128
-	boost::shared_ptr<InducedResistanceItem> pInducedResistance(new InducedResistanceItem(pAeroForcesItem_.get()));
-	vppHydroItems_.push_back( pInducedResistance );
+	pInducedResistanceItem_.reset(new InducedResistanceItem(pAeroForcesItem_.get()));
+	vppHydroItems_.push_back( pInducedResistanceItem_ );
+
+	// Instantiate a NegativeResistanceItem and push it back to the children vector
+	// This defines the resistance in the case of negative velocities
+	pNegativeResistance_.reset(new NegativeResistanceItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pNegativeResistance_ );
 
 	// ----------
 
@@ -88,18 +97,36 @@ VPPItemFactory::~VPPItemFactory(){
 
 // Update the VPPItems for the current step (wind velocity and angle),
 // the value of the state vector x computed by the optimizer
+// TODO dtrimarchi: definitely remove the old c-style signature
+void VPPItemFactory::update(int vTW, int aTW, Eigen::VectorXd& x) {
+
+	// Update all of the aero items:
+	for(size_t iItem=0; iItem<vppAeroItems_.size(); iItem++)
+		vppAeroItems_[iItem]->updateSolution(vTW,aTW,x);
+
+	// Update all of the hydro items:
+	for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
+		vppHydroItems_[iItem]->VPPItem::updateSolution(vTW,aTW,x);
+
+	// Update of the righting moment item:
+	pRightingMomentItem_->VPPItem::updateSolution(vTW,aTW,x);
+
+}
+
+// Update the VPPItems for the current step (wind velocity and angle),
+// the value of the state vector x computed by the optimizer
 void VPPItemFactory::update(int vTW, int aTW, const double* x) {
 
 	// Update all of the aero items:
 	for(size_t iItem=0; iItem<vppAeroItems_.size(); iItem++)
-		vppAeroItems_[iItem]->update(vTW,aTW,x);
+		vppAeroItems_[iItem]->updateSolution(vTW,aTW,x);
 
 	// Update all of the hydro items:
 	for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
-		vppHydroItems_[iItem]->VPPItem::update(vTW,aTW,x);
+		vppHydroItems_[iItem]->VPPItem::updateSolution(vTW,aTW,x);
 
 	// Update of the righting moment item:
-	pRightingMomentItem_->VPPItem::update(vTW,aTW,x);
+	pRightingMomentItem_->VPPItem::updateSolution(vTW,aTW,x);
 
 }
 
@@ -123,9 +150,19 @@ const AeroForcesItem* VPPItemFactory::getAeroForcesItem() const {
 	return pAeroForcesItem_.get();
 }
 
+// Getter for the aero forces item that stores the driving forces
+AeroForcesItem* VPPItemFactory::getAeroForcesItem() {
+	return pAeroForcesItem_.get();
+}
+
 // Getter for the Residuary Resistance item
 ResiduaryResistanceItem* VPPItemFactory::getResiduaryResistanceItem() const {
 	return pResiduaryResistanceItem_.get();
+}
+
+// Getter for the Residuary Resistance item
+InducedResistanceItem* VPPItemFactory::getInducedResistanceItem() const {
+	return pInducedResistanceItem_.get();
 }
 
 // Getter for the Residuary Resistance of the keel item
@@ -136,6 +173,11 @@ ResiduaryResistanceKeelItem* VPPItemFactory::getResiduaryResistanceKeelItem() co
 // Getter for the Delta Viscous Resistance of the keel item
 ViscousResistanceKeelItem* VPPItemFactory::getViscousResistanceKeelItem() const {
 	return pViscousResistanceKeelItem_.get();
+}
+
+// Getter for the Frictional Resistance item
+FrictionalResistanceItem* VPPItemFactory::getFrictionalResistanceItem() const {
+	return pFrictionalResistanceItem_.get();
 }
 
 // Getter for the Delta Viscous Resistance of the Rudder item
@@ -153,6 +195,16 @@ Delta_ResiduaryResistance_HeelItem* VPPItemFactory::getDelta_ResiduaryResistance
 	return pDelta_ResiduaryResistance_HeelItem_.get();
 }
 
+// Getter for the negative resistance item
+NegativeResistanceItem* VPPItemFactory::getNegativeResistanceItem() const {
+	return pNegativeResistance_.get();
+}
+
+// Getter for the righting moment item
+RightingMomentItem* VPPItemFactory::getRightingMomentItem() const {
+	return pRightingMomentItem_.get();
+}
+
 // Compute the resistance by summing up all the contributions
 double VPPItemFactory::getResistance() {
 
@@ -162,13 +214,13 @@ double VPPItemFactory::getResistance() {
 	for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
 		resistance += vppHydroItems_[iItem]->get();
 
-	if(isnan(resistance))
+	if(mathUtils::isNotValid(resistance))
 		throw VPPException(HERE,"Resistance is NAN");
 
 	return resistance;
 }
 
-void VPPItemFactory::computeResiduals(double& dF, double& dM) {
+void VPPItemFactory::getResiduals(double& dF, double& dM) {
 
 	// compute deltaF = (Fdrive - Rtot)
 	dF_ = (pAeroForcesItem_->getFDrive() - getResistance());
@@ -182,13 +234,93 @@ void VPPItemFactory::computeResiduals(double& dF, double& dM) {
 
 }
 
-// Get the current value for the optimizer constraint residuals dF=0 and dM=0
-void VPPItemFactory::getResiduals(double& dF, double& dM) {
+Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& x) {
 
-	dF=dF_;
-	dM=dM_;
+	// update the items with the state vector
+	update(vTW, aTW, x);
+
+	// compute deltaF = (Fdrive + Rtot). Remember that FDrive is supposedly
+	// positive, while the resistance is always negative
+	dF_ = (pAeroForcesItem_->getFDrive() - getResistance());
+
+	// compute deltaM = (Mheel + Mright). Remember that mHeel is Positive,
+	// while righting moment is negative (right hand rule)
+	dM_ = (pAeroForcesItem_->getMHeel() - pRightingMomentItem_->get());
+
+	//std::cout<<"dF= "<<dF_<<"  dM= "<<dM_<<std::endl;
+
+	// Container for the residuals and their derivatives :
+	// dF  dF/dv  dF/dPhi  dF/db  dF/df
+	// dM  dM/dv  dM/dPhi  dM/db  dM/df
+	Eigen::Array2Xd rsd(2,5);
+
+	// Fill the first column of rsd
+	rsd(0,0)=dF_;
+	rsd(1,0)=dM_;
+
+	// Instantiate a buffer container for the state variables (limits cancellation)
+	// TODO dtrimarchi: step1, copy with a proper C utility. step2, pass to vectors
+	Eigen::VectorXd xbuf(x.size());
+
+	// Compute the the derivatives for the additional (optimization) equations
+	for(size_t iVar=0; iVar<x.size(); iVar++) {
+
+		// Init the buffer vector with the values of the state vector
+		xbuf=x;
+
+		// Compute the optimum eps for this variable
+		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
+		if(xbuf(iVar)) eps *= std::fabs(xbuf(iVar));
+
+		// Set var = var+eps:
+		xbuf(iVar) = x(iVar) + eps;
+
+		// update the items with the state vector
+		update(vTW, aTW, xbuf);
+
+		// Get the residuals
+		double dFp = (pAeroForcesItem_->getFDrive() - getResistance());
+		double dMp = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+
+		// Set var = var-2eps:
+		xbuf(iVar) = x(iVar) - eps;
+
+		// update the items with the state vector
+		update(vTW, aTW, xbuf);
+
+		// Get the residuals
+		double dFm = (pAeroForcesItem_->getFDrive() - getResistance());
+		double dMm = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
+
+		// Compute dF/dv and dM/dv:
+		rsd(0,iVar+1) = ( dFp - dFm ) / (2*eps);
+		rsd(1,iVar+1) = ( dMp - dMm ) / (2*eps);
+
+	}
+
+	// update the items with the state initial state vector
+	update(vTW, aTW, x);
+
+	// Compute the value of c1 = (Fb MPhi-FPhi Mb)/(Fv MPhi-FPhi Mv)
+	c1_= 	( rsd(0,3) * rsd(1,2) - rsd(0,2) * rsd(1,3) ) /
+				( rsd(0,1) * rsd(1,2) - rsd(0,2) * rsd(1,0) );
+
+	// Compute the value of c2 = (Ff MPhi-FPhi Mv)/(Fv MPhi-FPhi Mv)
+	c2_= 	( rsd(0,4) * rsd(1,2) - rsd(0,2) * rsd(1,1) ) /
+				( rsd(0,1) * rsd(1,2) - rsd(0,2) * rsd(1,0) );
+
+	// Returns the results in a reasonable Eigen-style shape
+	return getResiduals();
 
 }
 
+// Get the current value for the optimizer constraint residuals dF=0 and dM=0
+Eigen::VectorXd VPPItemFactory::getResiduals() {
+
+	Eigen::VectorXd ret(4);
+	ret << dF_,dM_,c1_,c2_;
+	return ret;
+
+}
 
 

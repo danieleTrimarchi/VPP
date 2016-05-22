@@ -3,6 +3,7 @@
 #include <cmath>
 #include "Warning.h"
 #include "VPPException.h"
+#include "mathUtils.h"
 
 // Constructor
 VariableFileParser::VariableFileParser(std::string fileName) :
@@ -13,23 +14,23 @@ fileName_(fileName) {
 	requiredVariables_.reserve(61);
 
 	// %%%%%%% SETUP THE DESIGN SPACE FOR THE OPTIMIZER %%%%%%%%
-	requiredVariables_.push_back("V_MIN");   // Constraint the min boat speed
-	requiredVariables_.push_back("V_MAX");   // Constraint the max boat speed
-	requiredVariables_.push_back("PHI_MIN"); // Constraint the min heel angle
-	requiredVariables_.push_back("PHI_MAX"); // Constraint the max heel angle
-	requiredVariables_.push_back("B_MIN");   // Constraint the min Reef (0, thus this must be the min nReef (int) ) todo dtrimarchi
-	requiredVariables_.push_back("B_MAX");   // Constraint the max Reef (3, thus this must be the max nReef (int) ) todo dtrimarchi
-	requiredVariables_.push_back("F_MIN");   // Constraint the min Flattening factor
-	requiredVariables_.push_back("F_MAX");   // Constraint the max Flattening factor
+	requiredVariables_.push_back("V_MIN");   // [m/s] Constraint the min boat speed
+	requiredVariables_.push_back("V_MAX");   // [m/s] Constraint the max boat speed
+	requiredVariables_.push_back("PHI_MIN"); // [deg] Constraint the min heel angle
+	requiredVariables_.push_back("PHI_MAX"); // [deg] Constraint the max heel angle
+	requiredVariables_.push_back("B_MIN");   // [m]   Constraint the min crew distance from centerline
+	requiredVariables_.push_back("B_MAX");   // [m]   Constraint the max crew distance from centerline
+	requiredVariables_.push_back("F_MIN");   // [-]   Constraint the min Flattening factor
+	requiredVariables_.push_back("F_MAX");   // [-]   Constraint the max Flattening factor
 
 	// %%%%%%% WIND %%%%%%%%
-	requiredVariables_.push_back("V_TW_MIN");	// Min true wind velocity [m/s]
-	requiredVariables_.push_back("V_TW_MAX");	// Max true wind velocity [m/s]
-	requiredVariables_.push_back("N_TWV");		// Number of wind velocities in range [-]
+	requiredVariables_.push_back("V_TW_MIN");	// [m/s] Min true wind velocity
+	requiredVariables_.push_back("V_TW_MAX");	// [m/s] Max true wind velocity
+	requiredVariables_.push_back("N_TWV");		// [-]   Number of wind velocities in range
 
-	requiredVariables_.push_back("ALPHA_TW_MIN"); // Min true wind angle [m/s]
-	requiredVariables_.push_back("ALPHA_TW_MAX"); // True wind angle [m/s]
-	requiredVariables_.push_back("N_ALPHA_TW"); 	// Number of wind angles in range [-]
+	requiredVariables_.push_back("ALPHA_TW_MIN"); // [deg] Min true wind angle
+	requiredVariables_.push_back("ALPHA_TW_MAX"); // [deg] Max true wind angle
+	requiredVariables_.push_back("N_ALPHA_TW"); 	// [-]   Number of wind angles in range
 
 	// %%%%%%% HULL %%%%%%%%
 	requiredVariables_.push_back("DIVCAN"); 	// [m^3] Displaced volume of canoe body
@@ -156,7 +157,7 @@ void VariableFileParser::check() {
 	}
 
 	// Add some check on the variables: are they within the model validity?
-	// todo dtrimarchi : add the source of these limitations: possibly Delft
+	// TODO dtrimarchi : add the source of these limitations: possibly Delft
 	if( variables_["LWL"]/variables_["BWL"] <=  2.73 ||
 			variables_["LWL"]/variables_["BWL"] >=  5.00 )
 		Warning("LWL/BWL is out of valuable interval");
@@ -181,6 +182,16 @@ void VariableFileParser::check() {
 
 	if(variables_["V_TW_MAX"] <= variables_["V_TW_MIN"] )
 		throw VPPException(HERE,"V_TW_MIN is larger than V_TW_MAX!");
+
+	if(variables_["ALPHA_TW_MAX"] <= variables_["ALPHA_TW_MIN"] )
+		throw VPPException(HERE,"ALPHA_TW_MIN is larger than ALPHA_TW_MAX!");
+
+	// Convert ALL the angles from DEG to RAD
+	variables_["PHI_MIN"] = mathUtils::toRad( variables_["PHI_MIN"] );
+	variables_["PHI_MAX"] = mathUtils::toRad( variables_["PHI_MAX"] );
+
+	variables_["ALPHA_TW_MIN"] = mathUtils::toRad( variables_["ALPHA_TW_MIN"] );
+	variables_["ALPHA_TW_MAX"] = mathUtils::toRad( variables_["ALPHA_TW_MAX"] );
 
 }
 

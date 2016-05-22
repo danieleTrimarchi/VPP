@@ -20,6 +20,9 @@ class ResistanceItem : public VPPItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	protected:
 
 		/// Protected constructor (Avoid the instantiation of this class)
@@ -50,6 +53,9 @@ class InducedResistanceItem : public ResistanceItem {
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
+
+		/// Plot the Induced Resistance curve
+		void plot();
 
 	private:
 
@@ -148,6 +154,7 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 
 		/// Interpolator that stores the residuary resistance curve for all froude numbers
 		boost::shared_ptr<SplineInterpolator> pInterpolator_;
+
 };
 
 //=================================================================
@@ -192,6 +199,9 @@ class FrictionalResistanceItem : public ResistanceItem {
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
+
+		/// Plot the frictional resistance for a fixed range (Fn=0-0.7)
+		void plot();
 
 	private:
 
@@ -287,5 +297,30 @@ class ViscousResistanceRudderItem : public ResistanceItem {
 };
 
 //=================================================================
+// Class that returns a ficticious negative resistance in the case
+// of negative velocities. Used to stabilize the computations (NRSolver)
+class NegativeResistanceItem : public ResistanceItem {
 
+	public:
+
+		/// Constructor
+	NegativeResistanceItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+
+		/// Destructor
+		~NegativeResistanceItem();
+
+		/// Print the class name - implement the pure virtual of VPPItem
+		virtual void printWhoAmI();
+
+		/// Plot the negative resistance for a fixed range (Fn=0-1)
+		void plot();
+
+	private:
+
+		/// Implement pure virtual method of the parent class
+		virtual void update(int vTW, int aTW);
+
+};
+
+//=================================================================
 #endif

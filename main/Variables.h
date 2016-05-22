@@ -19,6 +19,12 @@ class Variable {
 		/// Implicit copy constructor used to cast a variable to its name
 		Variable(const string& varName = "", const double& val = 0.);
 
+		/// Assignment operator
+		Variable& operator = ( const Variable rhs );
+
+		/// Assignment operator
+		Variable& operator = ( const double val );
+
 		/// Overload operator < to compare in set
 		bool operator < (const Variable& rhs) const;
 
@@ -49,10 +55,10 @@ class VarSet : public set<Variable> {
 	public:
 
 		/// Overload operator [] - non const variety
-		Variable operator [] (string varName);
+		Variable& operator [] (string varName);
 
 		/// Overload operator [] - const variety
-		const Variable operator [] (string varName) const;
+		const Variable& operator [] (string varName) const;
 
 		/// Iterate in the set and printout the variables
 		void print();

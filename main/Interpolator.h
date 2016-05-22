@@ -59,13 +59,27 @@ class SplineInterpolator {
 		void plot(double minVal,double maxVal,int nVals,
 				string title, string xLabel="x", string yLabel="y");
 
+		/// Plot the first derivative of the spline
+		void plotD1(double minVal,double maxVal,int nVals,
+				string title, string xLabel="x", string yLabel="y");
+
+		/// Plot the second derivative of the spline
+		void plotD2(double minVal,double maxVal,int nVals,
+				string title, string xLabel="x", string yLabel="y");
+
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	private:
 
 		/// Generate the underlying spline
-		void generate(std::vector<double>&, std::vector<double>&);
+		void generate();
 
 		/// Underlying spline
 		tk::spline s_;
+
+		// Underlying value vectors
+		std::vector<double> X_, Y_;
 
 };
 
@@ -76,10 +90,10 @@ class Extrapolator {
 	public:
 
 		/// Constructor
-		Extrapolator(double xm2, const std::vector<double>* vm2, double xm1, const std::vector<double>* vm1);
+		Extrapolator(double xm2, const Eigen::VectorXd* vm2, double xm1, const Eigen::VectorXd* vm1);
 
 		/// Get the vector with the value extrapolated for the abscissa x
-		std::vector<double> get(double x);
+		Eigen::VectorXd get(double x);
 
 	private:
 
@@ -87,7 +101,7 @@ class Extrapolator {
 		double xm2_, xm1_;
 
 		/// Ptrs to the vectors with the vals to extrapolate
-		const std::vector<double>* pVm2_, *pVm1_;
+		const Eigen::VectorXd* pVm2_, *pVm1_;
 
 		/// Vector with the extrapolated values to be filled
 		std::vector<double> v_;
