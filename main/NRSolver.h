@@ -47,6 +47,10 @@ class NRSolver {
 		/// for plotting...
 		void plotXY( size_t index );
 
+		/// Plot the Jacobian derivatives on a fixed interval of linearisation
+		/// points and for given awv, awa
+		void plotJacobian();
+
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 

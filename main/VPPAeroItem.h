@@ -359,6 +359,12 @@ class AeroForcesItem : public VPPItem {
 		/// Destructor
 		virtual ~AeroForcesItem();
 
+		/// Get the value of the lift
+		const double getLift() const;
+
+		/// Get the value of the drag
+		const double getDrag() const;
+
 		/// Get the value of the side force
 		const double getFSide() const;
 

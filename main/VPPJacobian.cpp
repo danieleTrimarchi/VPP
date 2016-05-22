@@ -30,7 +30,7 @@ void VPPJacobian::run(int twv, int twa) {
 		// set x= x + eps
 		xp(iVar) = x_(iVar) + eps;
 
-		// compile the i-th column of the Jacobian matrix with the
+		// Compile the i-th column of the Jacobian matrix with the
 		// residuals for x_plus_epsilon
 		col(iVar) = vppItemsContainer_->getResiduals(twv,twa,xp);
 
@@ -59,7 +59,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 	// the current iteration
 	x_=xp0_;
 
-	std::cout<<"Reset the state vector to: "<<x_.transpose()<<std::endl;
+	std::cout<<"\nReset the state vector to: "<<x_.transpose()<<std::endl;
 
 	// Instantiate the containers used to feed the plotter
 	// for the moment just one variable at the time...
@@ -67,7 +67,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 			f(1,n), du_f(1,n), df(1,n),
 			M(1,n), du_M(1,n), dM(1,n);
 
-	// plot the Jacobian components when varying x
+	// plot the Jacobian components when varying the boat velocity x(0)
 	for(size_t i=0; i<n; i++){
 
 		// Vary the first state variable and record its value to the plotting
@@ -102,7 +102,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dFdx;
-	dFdx.plot(x,f,du_f,df,500,"dF/du Jacobian test plot","Vboat [m/s]","F[N]");
+	dFdx.plot(x,f,du_f,df,10,"dF/du Jacobian test plot","Vboat [m/s]","F[N]");
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dMdx;
@@ -145,7 +145,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dFdPhi;
-	dFdPhi.plot(x,f,du_f,df,15,"dF/dPhi Jacobian test plot","Phi [RAD]","F[N]");
+	dFdPhi.plot(x,f,du_f,df,.005,"dF/dPhi Jacobian test plot","Phi [RAD]","F[N]");
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dMdPhi;

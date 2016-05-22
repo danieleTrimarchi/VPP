@@ -121,6 +121,9 @@ int main(int argc, char** argv) {
 			else if( s == string("plotSailForceMoment"))
 				pVppItems->getAeroForcesItem()->plot();
 
+			else if( s == string("plotJacobian"))
+				solver.plotJacobian();
+
 			//---
 
 			else if(s == string("plotFrictionalRes") )
@@ -183,13 +186,14 @@ int main(int argc, char** argv) {
 			else if( s == string("help") || s == string("h") ){
 
 				std::cout<<"\n== AVAILABLE OPTIONS =============================================== \n";
-				std::cout<<"   printVars              : print the variables read from file \n";
+				std::cout<<"   printVars                : print the variables read from file \n";
 				std::cout<<" \n";
 				std::cout<<"   plotSailCoeffs           : plot the aerodynamic coeffs for the current sails \n";
 				std::cout<<"   plot_D_SailCoeffs        : plot the first derivative of the aerodynamic coeffs for the current sails \n";
 				std::cout<<"   plot_D2_SailCoeffs       : plot the second derivative of the aerodynamic coeffs for the current sails \n";
 				std::cout<<" \n";
 				std::cout<<"   plotSailForceMoment      : plot the drive force and the heeling moment for fixed wind/heel ranges\n";
+				std::cout<<"   plotJacobian             : plot the Jacobian derivative components for fixed wind/heel ranges\n";
 				std::cout<<" \n";
 				std::cout<<"   plotResidRes             : plot the Residuary Resistance for a fixed range\n";
 				std::cout<<"   plotInducedRes           : plot the Induced Resistance for a fixed range\n";
@@ -205,7 +209,7 @@ int main(int argc, char** argv) {
 				std::cout<<"   run                      : launches the computations \n";
 				std::cout<<" \n";
 				std::cout<<"   print                    : print results to screen \n";
-				std::cout<<"   bounds										: print result bounds to screen \n";
+				std::cout<<"   bounds                   : print result bounds to screen \n";
 				std::cout<<" \n";
 				std::cout<<"   plotPolars               : plot the polar result graphs \n";
 				std::cout<<"   plotXY                   : plot the XY velocity-wise result graphs \n";
