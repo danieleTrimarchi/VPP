@@ -159,7 +159,7 @@ ResultContainer::~ResultContainer() {
 // push_back a result taking care of the allocation
 void ResultContainer::push_back(size_t iWv, size_t iWa,
 																Eigen::VectorXd& results,
-																double dF, double dM ) {
+																double dF, double dM) {
 
 	// Compile an Eigen-vector and call the push_back method
 	Eigen::VectorXd residuals(4);

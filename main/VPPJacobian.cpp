@@ -45,6 +45,10 @@ void VPPJacobian::run(int twv, int twa) {
 		col(iVar) /= ( 2 * eps );
 
 	}
+
+	// Update the items with the initial state vector
+	vppItemsContainer_->update(twv,twa,x_);
+
 }
 
 // Produces a test plot for a range of values of the state variables

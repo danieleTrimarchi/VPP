@@ -186,8 +186,8 @@ void InducedResistanceItem::plot() {
 			// Set a fictitious velocity (Fn=0-1)
 			V_= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
-			Eigen::VectorXd x(2);
-			x << V_, PHI_;
+			Eigen::VectorXd x(pbSize_);
+			x << V_, PHI_, b_, f_;
 
 			// Update the aeroForceItems
 			pAeroForcesItem_->getWindItem()->updateSolution(twv,twa,x);
@@ -251,8 +251,8 @@ void InducedResistanceItem::plot() {
 			// Set a fictitious velocity (Fn=0-1)
 			V_= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
-			Eigen::VectorXd x(2);
-			x << V_, PHI_;
+			Eigen::VectorXd x(pbSize_);
+			x << V_, PHI_, b_, f_;
 
 			// Update the aeroForceItems
 			pAeroForcesItem_->getWindItem()->updateSolution(twv,twa,x);

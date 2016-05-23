@@ -16,7 +16,7 @@ int optIterations=0;
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 				dimension_(4),
-				tol_(1.e-5) {
+				tol_(1.e-6) {
 
 	// Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
@@ -117,7 +117,7 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 		xp_(0)= 0.01;  	// V_0
 		xp_(1)= 0.01;		// PHI_0
 		xp_(2)= 0.01;		// b_0
-		xp_(3)= .99;		// f_0
+		xp_(3)= .9;		// f_0
 
 	}
 
@@ -262,6 +262,15 @@ void Optimizer::printResults() {
 
 }
 
+// Make a printout of the result bounds for this run
+void Optimizer::printResultBounds() {
+
+	std::cout<<"==== OPTIMIZER RESULT BOUNDS PRINTOUT ==================="<<std::endl;
+	pResults_->printBounds();
+	std::cout<<"---------------------------------------------------\n"<<std::endl;
+
+}
+
 /// Make a printout of the results for this run
 void Optimizer::plotPolars() {
 
@@ -292,13 +301,13 @@ void Optimizer::plotPolars() {
 		for(size_t iWa=0; iWa<pResults_->windAngleSize(); iWa++) {
 
 			// fill the list of wind angles
-			windAngles(iWa) = pResults_->get(iWv,iWa).getTWA();
+			windAngles(iWa) = mathUtils::toDeg(pResults_->get(iWv,iWa).getTWA());
 
 			// fill the list of boat speeds to an ArrayXd
 			boatVelocity(iWa) = pResults_->get(iWv,iWa).getX()->coeff(0);
 
 			// fill the list of boat heel to an ArrayXd
-			boatHeel(iWa) = pResults_->get(iWv,iWa).getX()->coeff(1);
+			boatHeel(iWa) = mathUtils::toDeg(pResults_->get(iWv,iWa).getX()->coeff(1));
 
 			// fill the list of Crew B to an ArrayXd
 			crewB(iWa) = pResults_->get(iWv,iWa).getX()->coeff(2);
@@ -318,7 +327,7 @@ void Optimizer::plotPolars() {
 
 	// Ask all plotters to plot
 	boatSpeedPolarPlotter.plot();
-	boatHeelPolarPlotter.plot();
+	boatHeelPolarPlotter.plot(5);
 	crewBPolarPlotter.plot();
 	sailFlatPolarPlotter.plot();
 }
@@ -387,6 +396,12 @@ void Optimizer::plotXY(size_t iWa) {
 			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
 }
 
+// Add this method for compatibility with the NR solver.
+// TODO dtrimarchi: this could go to a common parent class
+void Optimizer::plotJacobian() {
+	std::cout<<"Jacobian plot not allowed for this optimizer!"<<std::endl;
+	std::cout<<"-- please retry with a NR solver! --        "<<std::endl;
+}
 
 
 

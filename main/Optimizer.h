@@ -34,13 +34,22 @@ class Optimizer {
 		void run(int TWV, int TWA);
 
 		/// Make a printout of the results for this run
+		/// TODO dtrimarchi : shift this to a mother class
 		void printResults();
+
+		/// Make a printout of the result bounds for this run
+		/// TODO dtrimarchi : shift this to a mother class
+		void printResultBounds();
 
 		/// Plot the polar plots for the state variables
 		void plotPolars();
 
 		/// Plot the XY plots for the state variables
 		void plotXY( size_t index );
+
+		/// Add this method for compatibility with the NR solver.
+		/// TODO dtrimarchi: this could go to a common parent class
+		void plotJacobian();
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW

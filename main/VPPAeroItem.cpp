@@ -78,8 +78,7 @@ void WindItem::update(int vTW, int aTW) {
 	if(awv_(1)<0)
 		throw VPPException(HERE,"awv_(1) is Negative!");
 
-	// Update the apparent wind angle - TODO dtrimarchi: why do I need to
-	// explicitly cast to a double for the indexer to resolve..?
+	// Update the apparent wind angle
 	awa_= atan2( awv_(1),awv_(0) );
 	if(mathUtils::isNotValid(awa_))	throw VPPException(HERE,"awa_ is NAN!");
 

@@ -59,6 +59,9 @@ class VPPItem {
 		/// Flat value in the state vector
 		double f_;
 
+		/// Size of the pb, or the number of state variables
+		size_t pbSize_;
+
 		/// Ptr to the file parser with the user variables
 		VariableFileParser* pParser_;
 

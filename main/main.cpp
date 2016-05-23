@@ -90,7 +90,9 @@ int main(int argc, char** argv) {
 		load(parser,pSails,pVppItems);
 
 		// Instantiate a Newton Raphson solver
-		NRSolver solver(pVppItems);
+		//NRSolver solver(pVppItems);
+		// Instantiate an optimizer
+		Optimizer solver(pVppItems);
 
 		std::cout<<"Please enter a command or type -help-\n";
 

@@ -195,7 +195,6 @@ void NRSolver::run(int twv, int twa) {
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
 			xp_ -= deltas;
-//			std::cout<<"xp= "<<xp_.transpose()<<std::endl;
 
 		}
 
