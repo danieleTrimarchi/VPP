@@ -304,10 +304,10 @@ void NRSolver::plotPolars() {
 				boatHeel.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) ) );
 
 				// Fill the list of crew transverse position
-				crewB.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(2) ) );
+				crewB.push_back( pResults_->get(iWv,iWa).getX()->coeff(2) );
 
 				// Fill the list of sail flat
-				sailFlat.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(3) ) );
+				sailFlat.push_back( pResults_->get(iWv,iWa).getX()->coeff(3) );
 
 			}
 		}
@@ -417,7 +417,7 @@ void NRSolver::plotXY(size_t iWa) {
 
 }
 
-// Plot the Jacobian derivatives on a fixed interval of linearisation
+// Plot the Jacobian derivatives on a fixed interval of linearization
 // points and for given awv, awa
 void NRSolver::plotJacobian(){
 

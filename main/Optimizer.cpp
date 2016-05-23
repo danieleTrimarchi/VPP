@@ -56,9 +56,11 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 
 	// Set the absolute tolerance on the state variables
 	opt_->set_xtol_abs(tol_);
+	opt_->set_xtol_rel(tol_);
 
 	// Set the absolute tolerance on the function value
 	opt_->set_ftol_abs(tol_);
+	opt_->set_ftol_rel(tol_);
 
 	// Set the max number of evaluations for a single run
 	maxIters_= 40000;
@@ -121,31 +123,29 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
 	}
 
-////	else if(TWV>1) {
-////
-////		// For twv> 1 we can linearly predict the result of the state vector
-////		Extrapolator extrapolator(
-////				pResults_->get(TWV-2,TWA).getTWV(),
-////				pResults_->get(TWV-2,TWA).getX(),
-////				pResults_->get(TWV-1,TWA).getTWV(),
-////				pResults_->get(TWV-1,TWA).getX()
-////		);
-////
-////		// Extrapolate the state vector for the current wind
-////		// velocity. Note that the items have not been init yet
-////		xp_= extrapolator.get( pWind_->getTWV(TWV) );
-////	}
-////
-////	// Make sure the initial guess does not exceeds the bounds
-////	for(size_t i=0; i<dimension_; i++) {
-////		if(xp_[i]<lowerBounds_[i])
-////			xp_[i]=lowerBounds_[i];
-////		if(xp_[i]>upperBounds_[i])
-////			xp_[i]=upperBounds_[i];
-////	}
-//
-//	std::cout<<"INITIAL GUESS: "<<std::endl;
-//	cout<<"  "<<xp_[0]<<" , "<<xp_[1]<<" , "<<xp_[2]<<" , "<<xp_[3]<<endl;
+	else if( TWV>1 ) {
+
+		// For twv> 1 we can linearly predict the result of the state vector
+		Extrapolator extrapolator(
+				pResults_->get(TWV-2,TWA).getTWV(),
+				pResults_->get(TWV-2,TWA).getX(),
+				pResults_->get(TWV-1,TWA).getTWV(),
+				pResults_->get(TWV-1,TWA).getX()
+		);
+
+		// Extrapolate the state vector for the current wind
+		// velocity. Note that the items have not been init yet
+		xp_= extrapolator.get( pWind_->getTWV(TWV) );
+		// Make sure the initial guess does not exceeds the bounds
+		for(size_t i=0; i<dimension_; i++) {
+			if(xp_[i]<lowerBounds_[i])
+				xp_[i]=lowerBounds_[i];
+			if(xp_[i]>upperBounds_[i])
+				xp_[i]=upperBounds_[i];
+		}
+	}
+
+	std::cout<<"-->> first guess: "<<xp_.transpose()<<std::endl;
 
 }
 

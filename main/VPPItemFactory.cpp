@@ -236,14 +236,14 @@ void VPPItemFactory::getResiduals(double& dF, double& dM) {
 
 Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& x) {
 
-	// update the items with the state vector
+	// Update the items with the state vector
 	update(vTW, aTW, x);
 
-	// compute deltaF = (Fdrive + Rtot). Remember that FDrive is supposedly
+	// Compute deltaF = (Fdrive + Rtot). Remember that FDrive is supposedly
 	// positive, while the resistance is always negative
 	dF_ = (pAeroForcesItem_->getFDrive() - getResistance());
 
-	// compute deltaM = (Mheel + Mright). Remember that mHeel is Positive,
+	// Compute deltaM = (Mheel + Mright). Remember that mHeel is Positive,
 	// while righting moment is negative (right hand rule)
 	dM_ = (pAeroForcesItem_->getMHeel() - pRightingMomentItem_->get());
 
@@ -298,13 +298,13 @@ Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& 
 	// update the items with the initial state vector
 	update(vTW, aTW, x);
 
-	// Compute the value of c1 = (Fb MPhi-FPhi Mb)/(Fv MPhi-FPhi Mv)
-	c1_= 	( rsd(0,3) * rsd(1,2) - rsd(0,2) * rsd(1,3) ) /
-				( rsd(0,1) * rsd(1,2) - rsd(0,2) * rsd(1,1) );
-
 	// Container for the residuals and their derivatives :
 	// dF  dF/dv  dF/dPhi  dF/db  dF/df
 	// dM  dM/dv  dM/dPhi  dM/db  dM/df
+
+	// Compute the value of c1 = (Fb MPhi-FPhi Mb)/(Fv MPhi-FPhi Mv)
+	c1_= 	( rsd(0,3) * rsd(1,2) - rsd(0,2) * rsd(1,3) ) /
+				( rsd(0,1) * rsd(1,2) - rsd(0,2) * rsd(1,1) );
 
 	// Compute the value of c2 = (Ff MPhi-FPhi Mv)/(Fv MPhi-FPhi Mv)
 	c2_= 	( rsd(0,4) * rsd(1,2) - rsd(0,2) * rsd(1,1) ) /
