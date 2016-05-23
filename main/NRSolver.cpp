@@ -229,9 +229,10 @@ void NRSolver::run(int twv, int twa) {
 		printf("%g  ",xp_(i));
 
 	// Print the residuals
-	printf("\n      residuals:\n");
+	printf("\n     residuals: ");
 	for(size_t i=0; i<res.size(); i++)
 		printf("%g  ",res(i));
+	printf("\n ");
 
 	// Push the result to the result container. Hide from plotting if
 	// out-of-bounds
@@ -417,6 +418,39 @@ void NRSolver::plotXY(size_t iWa) {
 
 }
 
+// Plot the Jacobian derivatives on a fixed interval of linearisation
+// points and for given awv, awa
+void NRSolver::plotJacobian(){
+
+	// Define a linearization point
+	Eigen::VectorXd xp(4);
+	xp << 0.01, 0.01, 0.01, 0.99;
+
+	// Instantiate a Jacobian
+	VPPJacobian J(xp,vppItemsContainer_);
+
+	// ask the user which awv, awa
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	size_t twv=0, twa=0;
+
+	std::cout<<"--> Please enter the values of twv and twa for the aero forces plot: "<<std::endl;
+	while(true){
+	cin >> twv >> twa;
+	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
+	bool vFine= twv < vppItemsContainer_->getWind()->getWVSize();
+	bool aFine= twa < vppItemsContainer_->getWind()->getWASize();
+	if(!vFine)
+		std::cout<<"the value of twv is out of range, max is: "<<vppItemsContainer_->getWind()->getWVSize()-1<<std::endl;
+	if(!aFine)
+		std::cout<<"the value of twa is out of range, max is: "<<vppItemsContainer_->getWind()->getWASize()-1<<std::endl;
+	if(vFine&&aFine)
+		break;
+	}
+
+	// call jacobian.testPlot
+	J.testPlot(twv, twa);
+
+}
 
 
 

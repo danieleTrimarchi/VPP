@@ -677,7 +677,7 @@ void AeroForcesItem::update(int vTW, int aTW) {
   fDrive_ = lift_ * sin( awa ) - drag_ * cos( awa );
 	if(mathUtils::isNotValid(fDrive_)) throw VPPException(HERE,"fDrive_ is NAN!");
 
-	// Updates FSide = L * cos(alfa_eff) + D * sin(alfa_eff);
+	// Updates FSide = L * cos(awa) + D * sin(awa);
 	fSide_ = lift_ * cos( awa ) + drag_ * sin( awa );
 	if(mathUtils::isNotValid(fSide_)) throw VPPException(HERE,"fSide_ is NAN!");
 
@@ -692,7 +692,7 @@ void AeroForcesItem::update(int vTW, int aTW) {
 void AeroForcesItem::plot() {
 
 	// Number of points of the plots
-	size_t nVelocities=20;
+	size_t nVelocities=60;
 
 	// For which TWV, TWA shall we plot the aero forces/moments?
 	size_t twv=0, twa=0;
@@ -712,36 +712,42 @@ void AeroForcesItem::plot() {
 	}
 
 	// Buffer the current solution
-	Eigen::Vector2d xbuf;
-	xbuf << V_,PHI_;
+	Eigen::VectorXd xbuf(4);
+	xbuf << V_,PHI_,b_,f_;
+
+	// Now fix the value of b_ and f_
+	b_= 0.01;
+	f_= 0.99;
 
 	// Declare containers for the velocity and angle-wise data
-	std::vector<ArrayXd> v, fDrive, mHeel;
+	std::vector<ArrayXd> v, Lift, Drag, fDrive, fSide, mHeel;
 	std::vector<string> curveLabels;
 
-	// Loop on heel angles : from 0 to 90 deg in steps of 15 degs
+	// Loop on heel angles : from 0 to 90 deg in steps of 15 deg
 	for(size_t hAngle=0; hAngle<90; hAngle+=15){
 
 		// Convert the heeling angle into radians
 		PHI_= toRad(hAngle);
 		// vectors with the current boat velocity, the drive force
 		// and heeling moment values
-		ArrayXd x_v, f_v, m_v;
-
+		ArrayXd x_v, lift, drag, f_v, fs_v, m_v;
 		x_v.resize(nVelocities);
+		lift.resize(nVelocities);
+		drag.resize(nVelocities);
 		f_v.resize(nVelocities);
+		fs_v.resize(nVelocities);
 		m_v.resize(nVelocities);
 
 		// loop on the boat velocity, from 0.1 to 5m/s in step on 1 m/s
 		for(size_t iTwv=0; iTwv<nVelocities; iTwv++ ) {
 
 			// Set the value for the state variable boat velocity
-			// Linearly from 0 to 5 m/s
-			V_ = double(iTwv) / (nVelocities-1) * 5;
+			// Linearly from -2 to 3 m/s
+			V_ = -1 + double(iTwv) / (nVelocities-1) * 2;
 
 			// Declare a state vector to give the windItem
-			VectorXd stateVector(2);
-			stateVector << V_,PHI_;
+			VectorXd stateVector(4);
+			stateVector << V_,PHI_,b_,f_;
 
 			// update the wind. For the moment fix the apparent wind velocity and angle
 			// to the first values contained in the variableFiles. TODO: introduce inner
@@ -751,20 +757,25 @@ void AeroForcesItem::plot() {
 			// Update the sail coefficients for the current wind
 			pSailCoeffs_->updateSolution(twv, twa, stateVector);
 
-			// update 'this': compute sail forces. TODO: introduce inner
-			// loops foreach awa and foreach awv
+			// update 'this': compute sail forces
 			update(twv, twa);
 
 			// Store velocity-wise data:
 			x_v(iTwv)= V_;					// velocities...
+			lift(iTwv) = getLift(); // lift...
+			drag(iTwv) = getDrag(); // drag...
 			f_v(iTwv)= getFDrive(); // fDrive...
+			fs_v(iTwv)= getFSide(); // fSide_...
 			m_v(iTwv)= getMHeel();  // mHeel...
 
 		}
 
 		// Append the velocity-wise curve for each heel angle
 		v.push_back(x_v);
+		Lift.push_back(lift);
+		Drag.push_back(drag);
 		fDrive.push_back(f_v);
+		fSide.push_back(fs_v);
 		mHeel.push_back(m_v);
 
 		char msg[256];
@@ -773,32 +784,77 @@ void AeroForcesItem::plot() {
 
 	}
 
-	// Instantiate a plotter and plot
+	// Instantiate a plotter and plot Lift
+	Plotter liftPlotter;
+	for(size_t i=0; i<v.size(); i++)
+		liftPlotter.append(curveLabels[i],v[i],Lift[i]);
+
+	char msg[256];
+	sprintf(msg,"plot Sail Lift vs boat speed - "
+			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			pWindItem_->getTWV(twv),
+			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
+	liftPlotter.plot("V [m/s]","Lift [N]", msg);
+
+
+	// Instantiate a plotter and plot Drag
+	Plotter dragPlotter;
+	for(size_t i=0; i<v.size(); i++)
+		dragPlotter.append(curveLabels[i],v[i],Drag[i]);
+
+	sprintf(msg,"plot Sail Drag vs boat speed - "
+			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			pWindItem_->getTWV(twv),
+			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
+	dragPlotter.plot("V [m/s]","Drag [N]", msg);
+
+	// Instantiate a plotter and plot fDrive
 	Plotter fPlotter;
 	for(size_t i=0; i<v.size(); i++)
 		fPlotter.append(curveLabels[i],v[i],fDrive[i]);
 
-	char msg[256];
 	sprintf(msg,"plot drive force vs boat speed - "
 			"twv=%2.2f [m/s], twa=%2.2f [deg]",
 			pWindItem_->getTWV(twv),
 			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
 	fPlotter.plot("V [m/s]","Fdrive [N]", msg);
 
-	// same for mheel
+	// Instantiate a plotter and plot fSide
+	Plotter fSidePlotter;
+	for(size_t i=0; i<v.size(); i++)
+		fSidePlotter.append(curveLabels[i],v[i],fSide[i]);
+
+	sprintf(msg,"plot side force vs boat speed - "
+			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			pWindItem_->getTWV(twv),
+			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
+	fSidePlotter.plot("V [m/s]","Fside [N]", msg);
+
+	// Instantiate a plotter and plot mHeel
 	Plotter mPlotter;
 	for(size_t i=0; i<v.size(); i++)
 		mPlotter.append(curveLabels[i],v[i],mHeel[i]);
-
 	mPlotter.plot("V[m/s]","mHeel [N*m]","plot heeling moment vs boat speed");
 
 	// Restore the current solution
-	V_ = xbuf(0);
-	PHI_ = xbuf(1);
+	V_  = xbuf(0);
+	PHI_= xbuf(1);
+	b_  = xbuf(2);
+	f_  = xbuf(3);
 
 }
 
-/// Get the value of the side force
+// Get the value of the side force
+const double AeroForcesItem::getLift() const {
+	return lift_;
+}
+
+// Get the value of the side force
+const double AeroForcesItem::getDrag() const {
+	return drag_;
+}
+
+// Get the value of the side force
 const double AeroForcesItem::getFSide() const {
 	return fSide_;
 }
