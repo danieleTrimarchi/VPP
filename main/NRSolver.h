@@ -31,6 +31,9 @@ class NRSolver {
 		/// Run the solver
 		void run(int TWV, int TWA);
 
+		/// Run the solver with an external initial guess
+		void run(int twv, int twa, Eigen::VectorXd xp );
+
 		/// Make a printout of the results for this run
 		void printResults();
 
@@ -77,7 +80,7 @@ class NRSolver {
 		/// Ptr to the variableFileParser
 		VariableFileParser* pParser_;
 
-		/// Vector with the initial guess/NRSolver results
+		/// Vector with the initial guess/NRSolver subset results
 		Eigen::VectorXd xp_;
 
 		/// Matrix of results, one result per wind velocity/angle

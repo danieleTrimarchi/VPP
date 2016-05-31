@@ -57,10 +57,12 @@ void VPPItem::updateSolution(int vTW, int aTW, const double* x) {
 // update method for the children in the vppItems_ vector
 void VPPItem::updateSolution(int vTW, int aTW, Eigen::VectorXd& x) {
 
-	if(mathUtils::isNotValid(x(0))) throw VPPException(HERE,"x(0) is NAN!");
-	if(mathUtils::isNotValid(x(1))) throw VPPException(HERE,"x(1) is NAN!");
-	if(mathUtils::isNotValid(x(2))) throw VPPException(HERE,"x(2) is NAN!");
-	if(mathUtils::isNotValid(x(3))) throw VPPException(HERE,"x(3) is NAN!");
+	for(size_t i=0; i<x.size(); i++)
+		if(mathUtils::isNotValid(x(i))) {
+			char msg[256];
+			sprintf(msg,"x(%i) is NAN!",i);
+			throw VPPException(HERE,msg);
+		}
 
 	// Update the local copy of the state variables
 	V_= x(0);

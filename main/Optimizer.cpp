@@ -23,6 +23,11 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	// opt_.reset( new nlopt::opt(nlopt::GN_ISRES,dimension_) );
 	opt_.reset( new nlopt::opt(nlopt::LN_COBYLA,dimension_) );
 
+	// Instantiate a NRSolver that will be used to feed the optimizer with
+	// an equilibrated first guess solution. The solver will solve a subproblem
+	// without optimization variables
+	nrSover_.reset( new NRSolver(VPPItemFactory) );
+
 	// Init the STATIC member vppItemsContainer
 	vppItemsContainer_= VPPItemFactory;
 
@@ -135,7 +140,13 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
 		// Extrapolate the state vector for the current wind
 		// velocity. Note that the items have not been init yet
-		xp_= extrapolator.get( pWind_->getTWV(TWV) );
+		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
+
+		// Do extrapolate ONLY if the velocity is increasing
+		// This is beneficial to convergence
+		if(xp(0)>xp_(0))
+			xp_=xp;
+
 		// Make sure the initial guess does not exceeds the bounds
 		for(size_t i=0; i<dimension_; i++) {
 			if(xp_[i]<lowerBounds_[i])
@@ -147,6 +158,13 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
 	std::cout<<"-->> first guess: "<<xp_.transpose()<<std::endl;
 
+}
+
+// Ask the NRSolver to solve a sub-problem without the optimization variables
+// this makes the initial guess an equilibrated solution
+void Optimizer::solveInitialGuess(int TWV, int TWA) {
+
+	nrSover_->run(TWV,TWA,xp_);
 }
 
 // Set the objective function for tutorial g13
@@ -203,6 +221,9 @@ void Optimizer::run(int TWV, int TWA) {
 	// For each wind velocity, reset the initial guess for the
 	// state variable vector to zero
 	resetInitialGuess(TWV,TWA);
+
+	// Refine the initial guess solving a sub-problem with no optimization variables
+	solveInitialGuess(TWV,TWA);
 
 	// Make a ptr to the non static member function VPPconstraint
 	opt_->add_equality_mconstraint(VPPconstraint, &loopData, tol);

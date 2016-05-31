@@ -7,9 +7,7 @@
 VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 pParser_(pParser),
 dF_(0),
-dM_(0),
-c1_(0),
-c2_(0) {
+dM_(0) {
 
 	// -- INSTANTIATE THE AERO ITEMS
 
@@ -247,69 +245,6 @@ Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& 
 	// while righting moment is negative (right hand rule)
 	dM_ = (pAeroForcesItem_->getMHeel() - pRightingMomentItem_->get());
 
-	// Container for the residuals and their derivatives :
-	// dF  dF/dv  dF/dPhi  dF/db  dF/df
-	// dM  dM/dv  dM/dPhi  dM/db  dM/df
-	Eigen::Array2Xd rsd(2,5);
-
-	// Fill the first column of rsd
-	rsd(0,0)=dF_;
-	rsd(1,0)=dM_;
-
-	// Instantiate a buffer container for the state variables (limits cancellation)
-	Eigen::VectorXd xbuf(x.size());
-
-	// Compute the the derivatives for the additional (optimization) equations
-	for(size_t iVar=0; iVar<x.size(); iVar++) {
-
-		// Init the buffer vector with the values of the state vector
-		xbuf=x;
-
-		// Compute the optimum eps for this variable
-		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
-		if(xbuf(iVar)) eps *= std::fabs(xbuf(iVar));
-
-		// Set var = var+eps:
-		xbuf(iVar) = x(iVar) + eps;
-
-		// update the items with the state vector
-		update(vTW, aTW, xbuf);
-
-		// Get the residuals
-		double dFp = (pAeroForcesItem_->getFDrive() - getResistance());
-		double dMp = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
-
-		// Set var = var-eps:
-		xbuf(iVar) = x(iVar) - eps;
-
-		// update the items with the state vector
-		update(vTW, aTW, xbuf);
-
-		// Get the residuals
-		double dFm = (pAeroForcesItem_->getFDrive() - getResistance());
-		double dMm = (pAeroForcesItem_->getMHeel()  - pRightingMomentItem_->get());
-
-		// Compute dF/dv and dM/dv:
-		rsd(0,iVar+1) = ( dFp - dFm ) / (2*eps);
-		rsd(1,iVar+1) = ( dMp - dMm ) / (2*eps);
-
-	}
-
-	// update the items with the initial state vector
-	update(vTW, aTW, x);
-
-	// Container for the residuals and their derivatives :
-	// dF  dF/dv  dF/dPhi  dF/db  dF/df
-	// dM  dM/dv  dM/dPhi  dM/db  dM/df
-
-	// Compute the value of c1 = (Fb MPhi-FPhi Mb)/(Fv MPhi-FPhi Mv)
-	c1_= 	( rsd(0,3) * rsd(1,2) - rsd(0,2) * rsd(1,3) ) /
-				( rsd(0,1) * rsd(1,2) - rsd(0,2) * rsd(1,1) );
-
-	// Compute the value of c2 = (Ff MPhi-FPhi Mv)/(Fv MPhi-FPhi Mv)
-	c2_= 	( rsd(0,4) * rsd(1,2) - rsd(0,2) * rsd(1,1) ) /
-				( rsd(0,1) * rsd(1,2) - rsd(0,2) * rsd(1,1) );
-
 	// Returns the results in a reasonable Eigen-style shape
 	return getResiduals();
 
@@ -319,7 +254,7 @@ Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& 
 Eigen::VectorXd VPPItemFactory::getResiduals() {
 
 	Eigen::VectorXd ret(4);
-	ret << dF_,dM_,c1_,c2_;
+	ret << dF_,dM_, 0, 0;
 	return ret;
 
 }

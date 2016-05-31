@@ -143,7 +143,7 @@ class VPPItemFactory {
 		boost::shared_ptr<RightingMomentItem> pRightingMomentItem_;
 
 		/// Residuals on the residuals : dF, dM, c1 and c2
-		double dF_, dM_, c1_, c2_;
+		double dF_, dM_;
 
 };
 

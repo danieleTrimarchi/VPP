@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "nlopt.hpp"
+#include "NRSolver.h"
 
 #include "VPPItemFactory.h"
 #include "Results.h"
@@ -65,6 +66,10 @@ class Optimizer {
 		/// Set the initial guess for the state variable vector
 		void resetInitialGuess(int TWV, int TWA);
 
+		/// Ask the NRSolver to solve a sub-problem without the optimization variables
+		/// this makes the initial guess an equilibrated solution
+		void solveInitialGuess(int TWV, int TWA);
+
 		// Struct used to drive twv and twa into the update methods of the VPPItems
 		typedef struct {
 				int twv_, twa_;
@@ -75,6 +80,10 @@ class Optimizer {
 
 		/// Shared ptr holding the underlying optimizer
 		boost::shared_ptr<nlopt::opt> opt_;
+
+		/// Shared ptr holding the underlying NRSolver used to refine the
+		/// initial guess to be handed to the optimizer
+		boost::shared_ptr<NRSolver> nrSover_;
 
 		/// lower and upper bounds for the state variables
 		std::vector<double> lowerBounds_,upperBounds_;
