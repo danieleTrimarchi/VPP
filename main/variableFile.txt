@@ -17,8 +17,8 @@ V_TW_MIN		0.1   % [m/s] Min true wind speed
 V_TW_MAX 		8.5   % [m/s] Max true wind speed
 N_TWV 			50    % [-]   Number of wind speeds to be computed
 ALPHA_TW_MIN		35    % [deg] Min true wind angle
-ALPHA_TW_MAX 		179    % [deg] Max true wind angle
-N_ALPHA_TW		20     % [-]   Number of wind angles to be computed
+ALPHA_TW_MAX 		40   % [deg] Max true wind angle
+N_ALPHA_TW		3     % [-]   Number of wind angles to be computed
 
 % These data are measurements and estimates for a Freedom 25
 %%%%%% HULL %%%%%%%
@@ -63,7 +63,7 @@ RUDDFF  1      % [m]  Rudder?s form factor
 %%%%%%% SAILS %%%%%%%%
 %sailset - sails used in THIS calculation
 % 1 - main only; 3 - main & jib; 5 - main & spi; 7 - main, jib, & spinnaker; 
-SAILSET 1
+SAILSET 3
 P       8.900  % [m]  Mainsail heigth
 E       4.084  % [m]  Mainsail base
 MROACH  1.3    % [-]  Correction for mainsail roach [-] 

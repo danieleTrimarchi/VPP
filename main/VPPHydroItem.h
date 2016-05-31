@@ -4,7 +4,7 @@
 #include "VPPItem.h"
 #include "VPPAeroItem.h"
 
-// todo dtrimarchi : we are not considering the resistance
+// TODO dtrimarchi : we are not considering the resistance
 // contribution of the rudder. Add it!
 
 class ResistanceItem : public VPPItem {

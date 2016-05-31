@@ -16,11 +16,11 @@ int optIterations=0;
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 				dimension_(4),
-				tol_(1.e-6) {
+				tol_(1.e-3) {
 
 	// Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
-	//opt_.reset( new nlopt::opt(nlopt::GN_ISRES,dimension_) );
+	// opt_.reset( new nlopt::opt(nlopt::GN_ISRES,dimension_) );
 	opt_.reset( new nlopt::opt(nlopt::LN_COBYLA,dimension_) );
 
 	// Init the STATIC member vppItemsContainer
@@ -55,15 +55,15 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	opt_->set_max_objective(VPP_speed, NULL);
 
 	// Set the absolute tolerance on the state variables
-	opt_->set_xtol_abs(tol_);
+//	opt_->set_xtol_abs(tol_);
 	opt_->set_xtol_rel(tol_);
 
 	// Set the absolute tolerance on the function value
-	opt_->set_ftol_abs(tol_);
+//	opt_->set_ftol_abs(tol_);
 	opt_->set_ftol_rel(tol_);
 
 	// Set the max number of evaluations for a single run
-	maxIters_= 40000;
+	maxIters_= 4000;
 	opt_->set_maxeval(maxIters_);
 
 	// Also get a reference to the WindItem that has computed the
@@ -225,6 +225,7 @@ void Optimizer::run(int TWV, int TWA) {
 			xp_(i)=xp[i];
 	}
 	catch( nlopt::roundoff_limited& e ){
+		std::cout<<"Roundoff limited result"<<std::endl;
 		// do nothing because the result of roundoff-limited exception
 		// is meant to be still a meaningful result
 	}
@@ -238,7 +239,6 @@ void Optimizer::run(int TWV, int TWA) {
 	catch (...) {
 		throw VPPException(HERE,"nlopt unknown exception catched!\n");
 	}
-
 
 
 	printf("found maximum after %d evaluations\n", optIterations);
@@ -353,7 +353,7 @@ void Optimizer::plotXY(size_t iWa) {
 
 		windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
 		boatVelocity(iWv)= pResults_->get(iWv,iWa).getX()->coeff(0);
-		boatHeel(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(1);
+		boatHeel(iWv)    = mathUtils::toDeg(pResults_->get(iWv,iWa).getX()->coeff(1));
 		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
 		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(3);
 		dF(iWv)          = pResults_->get(iWv,iWa).getdF();

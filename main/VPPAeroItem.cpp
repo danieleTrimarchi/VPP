@@ -231,24 +231,22 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 	awa_= pWindItem_->getAWA();
 	if(mathUtils::isNotValid(awa_)) throw VPPException(HERE,"awa_ is NaN");
 
-	// create aliases for code readability
-	VariableFileParser* p = pParser_;
-	boost::shared_ptr<SailSet> s= pSailSet_;
-
 	// Update the Aspect Ratio
 	double h;
 	if(awa_ < toRad(45))
 		// h = mast height above deck + Average freeboard
-		h= p->get("EHM") + p->get("AVGFREB");
+		h= pParser_->get("EHM") + pParser_->get("AVGFREB");
 	else
 		// h = mast height above deck
-		h= p->get("EHM");
+		h= pParser_->get("EHM");
 
 	// Compute the aspect ratio for this awa_
-	ar_ = 1.1 * h * h / s->get("AN");
+	ar_ = 1.1 * h * h / pSailSet_->get("AN");
 
 	// Compute cd0, see the Hazen's model Larsson p.148
-	cd0_= 1.13 * ( (p->get("B") * p->get("AVGFREB")) + (p->get("EHM")*p->get("EMDC") ) ) / s->get("AN");
+	cd0_= 1.13 * ( 	(pParser_->get("B") * pParser_->get("AVGFREB")) +
+									(pParser_->get("EHM")*pParser_->get("EMDC") ) ) /
+											pSailSet_->get("AN");
 
 	// Compute the coefficients based on the sail configuration
 	compute();
@@ -260,7 +258,7 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 void SailCoefficientItem::postUpdate() {
 
 	// Reduce cl with the flattening factor of the state vector
-	cl_ = cl_ * f_;
+	cl_ *= f_;
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 
 	// Compute the induced resistance
