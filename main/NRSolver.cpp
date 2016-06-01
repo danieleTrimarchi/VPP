@@ -199,6 +199,8 @@ void NRSolver::run(int twv, int twa) {
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
 			xp_.block(0,0,subPbSize_,1) -= deltas;
 
+			std::cout<<" deltas="<<deltas.transpose()<<" - xp_= "<<xp_.transpose()<<std::endl;
+
 		}
 
 		// And plot the JacobianChecker diagnostics

@@ -58,7 +58,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 	// How many values this test is made of. The analyzed velocity range varies
 	// from -n/2 to n/2
-	size_t n=12;
+	size_t n=50;
 
 	// Init the state vector at the value of the state vector at the beginning of
 	// the current iteration
@@ -107,11 +107,11 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dFdx;
-	dFdx.plot(x,f,du_f,df,10,"dF/du Jacobian test plot","Vboat [m/s]","F[N]");
+	dFdx.plot(x,f,du_f,df,100,"dF/du Jacobian test plot","Vboat [m/s]","F[N]");
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dMdx;
-	dMdx.plot(x,M,du_M,dM,50,"dM/du Jacobian test plot","Vboat [m/s]","M[N*m]");
+	dMdx.plot(x,M,du_M,dM,100,"dM/du Jacobian test plot","Vboat [m/s]","M[N*m]");
 
 	// Reset the state vector to its initial state
 	x_=xp0_;
@@ -150,7 +150,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dFdPhi;
-	dFdPhi.plot(x,f,du_f,df,.005,"dF/dPhi Jacobian test plot","Phi [RAD]","F[N]");
+	dFdPhi.plot(x,f,du_f,df,.5,"dF/dPhi Jacobian test plot","Phi [RAD]","F[N]");
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dMdPhi;

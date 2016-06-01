@@ -427,15 +427,15 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 	//					geom.LWL./geom.BWL
 	//					geom.BWL./geom.TCAN
 	//					(geom.BWL./geom.TCAN).^2
-	//					geom.XFB./geom.LWL
-	//					(geom.XFB./geom.LWL).^2];
+	//					geom.XFB
+	//					(geom.XFB).^2];
 	Eigen::VectorXd vect(6);
 	vect << 1,
 			pParser_->get("LWL") / pParser_->get("BWL"),
 			pParser_->get("BWL") / pParser_->get("TCAN"),
 			std::pow(pParser_->get("BWL") / pParser_->get("TCAN"),2),
-			pParser_->get("XFB") / pParser_->get("LWL"),
-			std::pow(pParser_->get("XFB") / pParser_->get("LWL"),2);
+			pParser_->get("XFB"),
+			std::pow(pParser_->get("XFB"),2);
 
 	// Compute the resistance @PHI=20deg for each Fn
 	// RrhH20D = (geom.DIVCAN.*phys.g.*phys.rho_w) .* coeff*vect';
@@ -466,7 +466,7 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// limit the values to positive angles
-	if(PHI_<0.01) {
+	if(PHI_<1e-12) {
 		res_=0.;
 		return;
 	}
