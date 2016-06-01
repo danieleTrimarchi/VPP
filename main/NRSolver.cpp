@@ -385,7 +385,10 @@ void NRSolver::plotJacobian(){
 
 	// Define a linearization point
 	Eigen::VectorXd xp(4);
-	xp << 0.01, 0.01;
+	std::cout<<"--> Please enter the values the state vector: "<<std::endl;
+
+	for(size_t i=0; i<xp.size(); i++) cin >> xp(i);
+	//xp << 1.19772, 1.17027e-20, 0.627295, 1;
 
 	// Instantiate a Jacobian
 	VPPJacobian J(xp,vppItemsContainer_,subPbSize_);

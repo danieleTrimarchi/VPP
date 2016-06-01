@@ -435,8 +435,7 @@ void Optimizer::plotXY(size_t iWa) {
 // Add this method for compatibility with the NR solver.
 // TODO dtrimarchi: this could go to a common parent class
 void Optimizer::plotJacobian() {
-	std::cout<<"Jacobian plot not allowed for this optimizer!"<<std::endl;
-	std::cout<<"-- please retry with a NR solver! --        "<<std::endl;
+	nrSover_->plotJacobian();
 }
 
 

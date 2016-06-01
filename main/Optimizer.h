@@ -48,8 +48,7 @@ class Optimizer {
 		/// Plot the XY plots for the state variables
 		void plotXY( size_t index );
 
-		/// Add this method for compatibility with the NR solver.
-		/// TODO dtrimarchi: this could go to a common parent class
+		/// Ask the underlying NRSolver to plot its Jacobian
 		void plotJacobian();
 
 		/// Declare the macro to allow for fixed size vector support
