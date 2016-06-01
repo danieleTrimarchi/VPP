@@ -526,7 +526,7 @@ void VectorPlotter::plot(
 			if(norm>0){
 				// scale the u-v component according to the scale
 				du(i,j) *= scale/norm;
-                dv(i,j) *= scale/norm;
+        dv(i,j) *= scale/norm;
 			}
 
 		}

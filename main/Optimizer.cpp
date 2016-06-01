@@ -16,6 +16,7 @@ int optIterations=0;
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 				dimension_(4),
+				subPbSize_(2),
 				tol_(1.e-3) {
 
 	// Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
@@ -26,7 +27,7 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	// Instantiate a NRSolver that will be used to feed the optimizer with
 	// an equilibrated first guess solution. The solver will solve a subproblem
 	// without optimization variables
-	nrSover_.reset( new NRSolver(VPPItemFactory) );
+	nrSover_.reset( new NRSolver(VPPItemFactory,dimension_,subPbSize_) );
 
 	// Init the STATIC member vppItemsContainer
 	vppItemsContainer_= VPPItemFactory;
@@ -124,7 +125,7 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 		xp_(0)= 0.01;  	// V_0
 		xp_(1)= 0.01;		// PHI_0
 		xp_(2)= 0.01;		// b_0
-		xp_(3)= .9;		// f_0
+		xp_(3)= .99;		// f_0
 
 	}
 
@@ -156,7 +157,7 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 		}
 	}
 
-	std::cout<<"-->> first guess: "<<xp_.transpose()<<std::endl;
+	std::cout<<"-->> optimizer first guess: "<<xp_.transpose()<<std::endl;
 
 }
 
@@ -164,7 +165,21 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 // this makes the initial guess an equilibrated solution
 void Optimizer::solveInitialGuess(int TWV, int TWA) {
 
-	nrSover_->run(TWV,TWA,xp_);
+	// Get
+	xp_.block(0,0,2,1)= nrSover_->run(TWV,TWA,xp_).block(0,0,2,1);
+
+	// Make sure the initial guess does not exceeds the bounds
+	for(size_t i=0; i<subPbSize_; i++) {
+		if(xp_[i]<lowerBounds_[i]){
+			std::cout<<"WARNING: Modifying lower out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
+			xp_[i]=lowerBounds_[i];
+		}
+        if(xp_[i]>upperBounds_[i]){
+			std::cout<<"WARNING: Modifying upper out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
+			xp_[i]=upperBounds_[i];
+        }
+    }
+
 }
 
 // Set the objective function for tutorial g13
@@ -263,8 +278,8 @@ void Optimizer::run(int TWV, int TWA) {
 
 
 	printf("found maximum after %d evaluations\n", optIterations);
-	printf("      at f(%g,%g,%g,%g) = %0.10g\n",
-			xp_(0),xp_(1),xp_(2),xp_(3),maxf);
+	printf("      at f(%g,%g,%g,%g)\n",
+			xp_(0),xp_(1),xp_(2),xp_(3) );
 	double dF, dM;
 	vppItemsContainer_->getResiduals(dF,dM);
 	printf("      residuals: dF= %g, dM= %g\n\n",dF,dM);

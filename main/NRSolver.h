@@ -20,7 +20,7 @@ class NRSolver {
 	public:
 
 		/// Constructor
-		NRSolver(boost::shared_ptr<VPPItemFactory>);
+		NRSolver(boost::shared_ptr<VPPItemFactory>, size_t size, size_t subPbSize);
 
 		/// Destructor
 		~NRSolver();
@@ -32,7 +32,7 @@ class NRSolver {
 		void run(int TWV, int TWA);
 
 		/// Run the solver with an external initial guess
-		void run(int twv, int twa, Eigen::VectorXd xp );
+		Eigen::VectorXd run(int twv, int twa, Eigen::VectorXd& xp );
 
 		/// Make a printout of the results for this run
 		void printResults();
@@ -69,6 +69,9 @@ class NRSolver {
 
 		/// Size of the problem this NRSolver is handling
 		size_t dimension_; // --> v, phi, reef, flat
+
+		/// Size of the subProblem we aim to solve with the help of the NRSolver
+		size_t subPbSize_; // --> v, phi
 
 		/// lower and upper bounds for the state variables
 		std::vector<double> lowerBounds_,upperBounds_;

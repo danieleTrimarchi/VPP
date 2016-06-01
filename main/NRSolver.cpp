@@ -11,8 +11,10 @@ using namespace mathUtils;
 //// NRSolver class  //////////////////////////////////////////////
 
 // Constructor
-NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-dimension_(4),
+NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory,
+		size_t dimension, size_t subPbSize ):
+dimension_(dimension),
+subPbSize_(subPbSize),
 tol_(1.e-6),
 maxIters_(200){
 
@@ -110,8 +112,8 @@ void NRSolver::resetInitialGuess(int TWV, int TWA) {
 
 // The caller is the Optimizer, that resolves a larger problem with
 // optimization variables. Here we get the initial guess of the optimizer
-// and we try to solve a std sub-problem with no optimisation vars
-void NRSolver::run(int twv, int twa, Eigen::VectorXd xp ) {
+// and we try to solve a std sub-problem with no optimization vars
+Eigen::VectorXd NRSolver::run(int twv, int twa, Eigen::VectorXd& xp ) {
 
 	// Copy the optimizer solution into the local solution
 	xp_= xp;
@@ -119,16 +121,19 @@ void NRSolver::run(int twv, int twa, Eigen::VectorXd xp ) {
 	// now run std
 	run(twv, twa);
 
+	return xp_;
 
 }
 
 void NRSolver::run(int twv, int twa) {
 
-	std::cout<<"    "<<pWind_->getTWV(twv)<<"    "<<toDeg( pWind_->getTWA(twa) )<<std::endl;
+	// std::cout<<"    "<<pWind_->getTWV(twv)<<"    "<<toDeg( pWind_->getTWA(twa) )<<std::endl;
 
 	// For each wind velocity, reset the initial guess for the
 	// state variable vector to zero
-	resetInitialGuess(twv,twa);
+	// resetInitialGuess(twv,twa);
+
+	std::cout<<"Entering NR with first guess: "<<xp_.transpose()<<std::endl;
 
 	// declare an out-of-scope loop variable to report the number
 	// of Newton's iterations
@@ -141,7 +146,7 @@ void NRSolver::run(int twv, int twa) {
 		std::vector<double> PhiResiduals;
 
 		// instantiate a Jacobian
-		VPPJacobian J(xp_,vppItemsContainer_);
+		VPPJacobian J(xp_,vppItemsContainer_,subPbSize_);
 
 		// Instantiate a JacobianChecker
 		// JacobianChecker JCheck;
@@ -166,16 +171,16 @@ void NRSolver::run(int twv, int twa) {
 
 			// Build a state vector with the size of the outer vector
 
-			// Compute the residuals vector
-			Eigen::VectorXd residuals= vppItemsContainer_->getResiduals(twv,twa,xp_);
-			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.transpose()<<std::endl;
+			// Compute the residuals vector - here only the part relative to the subproblem
+			Eigen::VectorXd residuals= vppItemsContainer_->getResiduals(twv,twa,xp_).block(0,0,subPbSize_,1);
+			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<std::endl;
 
 			if(it>1) {
 				velocityResiduals.push_back( residuals(0) );
 				PhiResiduals.push_back(residuals(1) );
 			}
 
-			//  break if converged. todo dtrimarchi: this condition is way too simple!
+			//  break if converged. TODO dtrimarchi: this condition is way too simple!
 			if( residuals.norm()<1e-5 )
 				break;
 
@@ -192,7 +197,7 @@ void NRSolver::run(int twv, int twa) {
 
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
-			xp_ -= deltas;
+			xp_.block(0,0,subPbSize_,1) -= deltas;
 
 		}
 
@@ -221,15 +226,17 @@ void NRSolver::run(int twv, int twa) {
 	Eigen::VectorXd res= vppItemsContainer_->getResiduals();
 
 	// Print the solution
-	printf("found solution after %d iterations\n     at f(", it);
+	//printf("\n found solution after %d iterations\n     at f(", it);
+	printf("\n solution: ");
 	for(size_t i=0; i<xp_.size(); i++)
 		printf("%g  ",xp_(i));
+	printf("\n");
 
 	// Print the residuals
-	printf("\n     residuals: ");
-	for(size_t i=0; i<res.size(); i++)
-		printf("%g  ",res(i));
-	printf("\n ");
+//	printf("\n     residuals: ");
+//	for(size_t i=0; i<res.size(); i++)
+//		printf("%g  ",res(i));
+//	printf("\n ");
 
 	// Push the result to the result container. Hide from plotting if
 	// out-of-bounds
@@ -381,7 +388,7 @@ void NRSolver::plotJacobian(){
 	xp << 0.01, 0.01;
 
 	// Instantiate a Jacobian
-	VPPJacobian J(xp,vppItemsContainer_);
+	VPPJacobian J(xp,vppItemsContainer_,subPbSize_);
 
 	// ask the user which awv, awa
 	// For which TWV, TWA shall we plot the aero forces/moments?

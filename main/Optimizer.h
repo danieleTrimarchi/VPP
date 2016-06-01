@@ -78,6 +78,9 @@ class Optimizer {
 		/// Size of the problem this Optimizer is handling
 		size_t dimension_; // --> v, phi, reef, flat
 
+		/// Size of the sub-problem to be pre-solved with the NRSolver
+		size_t subPbSize_; // --> v, phi
+
 		/// Shared ptr holding the underlying optimizer
 		boost::shared_ptr<nlopt::opt> opt_;
 

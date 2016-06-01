@@ -2,13 +2,14 @@
 #include "mathUtils.h"
 
 // Constructor
-VPPJacobian::VPPJacobian(VectorXd& x,boost::shared_ptr<VPPItemFactory> vppItemsContainer):
+VPPJacobian::VPPJacobian(VectorXd& x,boost::shared_ptr<VPPItemFactory> vppItemsContainer, size_t subProblemSize):
 x_(x),
 xp0_(x),
-vppItemsContainer_(vppItemsContainer) {
+vppItemsContainer_(vppItemsContainer),
+subPbSize_(subProblemSize) {
 
 	// Resize this Jacobian to the size of the state vector
-	resize(x_.rows(),x_.rows());
+	resize(subPbSize_,subPbSize_);
 
 }
 
@@ -18,7 +19,7 @@ void VPPJacobian::run(int twv, int twa) {
 	// state vector of the class calling the constructor of this!
 
 	// loop on the state variables
-	for(size_t iVar=0; iVar<x_.rows(); iVar++) {
+	for(size_t iVar=0; iVar<subPbSize_; iVar++) {
 
 		// Compute the optimum eps for this variable
 		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
@@ -32,14 +33,14 @@ void VPPJacobian::run(int twv, int twa) {
 
 		// Compile the i-th column of the Jacobian matrix with the
 		// residuals for x_plus_epsilon
-		col(iVar) = vppItemsContainer_->getResiduals(twv,twa,xp);
+		col(iVar) = vppItemsContainer_->getResiduals(twv,twa,xp).block(0,0,subPbSize_,1);
 
 		// set x= x - eps
 		xp(iVar) = x_(iVar) - eps;
 
 		// compile the i-th column of the Jacobian matrix subtracting the
 		// residuals for x_minus_epsilon
-		col(iVar) -= vppItemsContainer_->getResiduals(twv,twa,xp);
+		col(iVar) -= vppItemsContainer_->getResiduals(twv,twa,xp).block(0,0,subPbSize_,1);
 
 		// divide the column of the Jacobian by 2*eps
 		col(iVar) /= ( 2 * eps );
@@ -110,7 +111,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VectorPlotter dMdx;
-	dMdx.plot(x,M,du_M,dM,5,"dM/du Jacobian test plot","Vboat [m/s]","M[N*m]");
+	dMdx.plot(x,M,du_M,dM,50,"dM/du Jacobian test plot","Vboat [m/s]","M[N*m]");
 
 	// Reset the state vector to its initial state
 	x_=xp0_;
