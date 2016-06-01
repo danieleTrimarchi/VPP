@@ -115,8 +115,10 @@ void NRSolver::resetInitialGuess(int TWV, int TWA) {
 // and we try to solve a std sub-problem with no optimization vars
 Eigen::VectorXd NRSolver::run(int twv, int twa, Eigen::VectorXd& xp ) {
 
-	// Copy the optimizer solution into the local solution
+	// Copy the optimizer solution into the local solution and to a local buffer, to be used
+	// if the solver cannot converge
 	xp_= xp;
+	xpBuf_=xp;
 
 	// now run std
 	run(twv, twa);
@@ -163,10 +165,16 @@ void NRSolver::run(int twv, int twa) {
 				// Also plot some Jacobian diagnostics
 				J.testPlot(twv,twa);
 
+				std::cout<<"\n\nWARNING: NR-Solver could not converge. Please press a key to continue"<<std::endl;
+				string s;
+				std::cin>>s;
+
 				// And plot the JacobianChecker diagnostics
 				// JCheck.testPlot();
 
-				throw VPPException(HERE,"VPP Solver could not converge");
+				//throw VPPException(HERE,"VPP Solver could not converge");
+				xp_=xpBuf_;
+				return;
 			}
 
 			// Build a state vector with the size of the outer vector

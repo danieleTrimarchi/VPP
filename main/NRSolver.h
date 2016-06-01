@@ -84,7 +84,7 @@ class NRSolver {
 		VariableFileParser* pParser_;
 
 		/// Vector with the initial guess/NRSolver subset results
-		Eigen::VectorXd xp_;
+		Eigen::VectorXd xp_, xpBuf_;
 
 		/// Matrix of results, one result per wind velocity/angle
 		boost::shared_ptr<ResultContainer> pResults_;
