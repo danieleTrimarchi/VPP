@@ -262,7 +262,7 @@ Eigen::VectorXd VPPItemFactory::getResiduals() {
 // Plot the total resistance over a fixed range Fn=0-1
 void VPPItemFactory::plotTotalResistance(){
 
-	// Ask the user fortwv and twa
+	// Ask the user for twv and twa
 	size_t twv=0, twa=0;
 	std::cout<<"--> Please enter the values of twv and twa for the total resistance plot: "<<std::endl;
 	while(true){
@@ -306,6 +306,10 @@ void VPPItemFactory::plotTotalResistance(){
 
 			// Set a fictitious velocity (Fn=0-1)
 			stateVector(0)= ( 1./nVelocities * v ) * sqrt(Physic::g * pParser_->get("LWL"));
+
+			// Update the aero Items (remember the induced resistance requires fHeel)
+			for(size_t iItem=0; iItem<vppAeroItems_.size(); iItem++)
+				vppAeroItems_[iItem]->VPPItem::updateSolution(twv,twa,stateVector);
 
 			// Update the hydroItems
 			for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
