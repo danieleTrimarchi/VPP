@@ -166,6 +166,7 @@ void InducedResistanceItem::plot() {
 	double bufferV= V_;
 	double bufferPHI= PHI_;
 
+	// Define the number of velocities and angles (+=4!!)
 	size_t nVelocities=40, nAngles=20;
 
 	std::vector<string> curveLabels;
@@ -228,8 +229,8 @@ void InducedResistanceItem::plot() {
 	char msg[256];
 	sprintf(msg,"plot Induced Resistance vs boat speed - "
 			"twv=%2.2f [m/s], twa=%2.2f [deg]",
-			pAeroForcesItem_->getWindItem()->getTWV(0),
-			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(0)) );
+			pAeroForcesItem_->getWindItem()->getTWV(twv),
+			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
 	fPlotter.plot("Fn [-]","Induced Resistance [N]", msg);
 
 	/// ----- Verify the linearity Ri/Fh^2 -----------------------------------

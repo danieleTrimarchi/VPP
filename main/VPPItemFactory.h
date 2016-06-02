@@ -21,12 +21,12 @@ class VPPItemFactory {
 
 		/// Update the VPPItems for the current step (wind velocity and angle),
 		/// the value of the state vector x computed by the optimizer
-		/// todo dtrimarchi: definitely remove the old c-style signature
+		/// TODO dtrimarchi: definitely remove the old c-style signature
 		void update(int vTW, int aTW, Eigen::VectorXd& xv);
 
 		/// Update the VPPItems for the current step (wind velocity and angle),
 		/// the value of the state vector x computed by the optimizer
-		/// todo dtrimarchi: definitely remove this old c-style signature
+		/// TODO dtrimarchi: definitely remove this old c-style signature
 		void update(int vTW, int aTW, const double* x);
 
 		/// Returns a ptr to the variableFileParser
@@ -88,6 +88,9 @@ class VPPItemFactory {
 		/// Get the current value for the optimizer constraint residuals dF=0 and dM=0
 		/// and for c1 and c2
 		Eigen::VectorXd getResiduals();
+
+		/// Plot the total resistance over a fixed range Fn=0-1
+		void plotTotalResistance();
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW

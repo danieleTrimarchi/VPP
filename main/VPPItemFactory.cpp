@@ -259,4 +259,93 @@ Eigen::VectorXd VPPItemFactory::getResiduals() {
 
 }
 
+// Plot the total resistance over a fixed range Fn=0-1
+void VPPItemFactory::plotTotalResistance(){
+
+	// Ask the user fortwv and twa
+	size_t twv=0, twa=0;
+	std::cout<<"--> Please enter the values of twv and twa for the total resistance plot: "<<std::endl;
+	while(true){
+	cin >> twv >> twa;
+	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
+	bool vFine= twv < pWind_->getWVSize();
+	bool aFine= twa < pWind_->getWASize();
+	if(!vFine)
+		std::cout<<"the value of twv is out of range, max is: "<<pWind_->getWVSize()-1<<std::endl;
+	if(!aFine)
+		std::cout<<"the value of twa is out of range, max is: "<<pWind_->getWASize()-1<<std::endl;
+	if(vFine&&aFine)
+		break;
+	}
+
+	// Init the state vector
+	Eigen::VectorXd stateVector(4);
+	stateVector << 0, 0, 0, 1;
+
+	// Define the number of velocities and angles
+	// ( the angles are incremented of 10!)
+	size_t nVelocities=40, nAngles=40;
+
+	// Instantiate containers for the curve labels, the
+	// Fn and the resistance
+	std::vector<string> curveLabels;
+	std::vector<ArrayXd> froudeNb, totRes;
+
+	// Loop on the heel angles
+	for(size_t iAngle=0; iAngle<nAngles+1; iAngle+=10){
+
+		// Compute the value of PHI
+		stateVector(1) = mathUtils::toRad(iAngle);
+		//std::cout<<"PHI= "<<stateVector(1)<<std::endl;
+
+		// declare some tmp containers
+		vector<double> fn, res;
+
+		// Loop on the velocities
+		for(size_t v=0; v<nVelocities; v++){
+
+			// Set a fictitious velocity (Fn=0-1)
+			stateVector(0)= ( 1./nVelocities * v ) * sqrt(Physic::g * pParser_->get("LWL"));
+
+			// Update the hydroItems
+			for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
+				vppHydroItems_[iItem]->VPPItem::updateSolution(twv,twa,stateVector);
+
+			// Fill the vectors to be plot
+			fn.push_back( stateVector(0)/sqrt(Physic::g * pParser_->get("LWL") ) );
+			res.push_back( getResistance() );
+
+		}
+
+		// Now transform fn and res to ArrayXd and push_back to vector
+		ArrayXd tmpFn(fn.size());
+		ArrayXd tmpRes(fn.size());
+		for(size_t j=0; j<fn.size(); j++){
+			tmpFn(j)=fn[j];
+			tmpRes(j)=res[j];
+		}
+
+		froudeNb.push_back(tmpFn);
+		totRes.push_back(tmpRes);
+
+		char msg[256];
+		sprintf(msg,"%3.1f [deg]", mathUtils::toDeg(stateVector(1)));
+		curveLabels.push_back(msg);
+
+	}
+
+	// Instantiate a plotter and plot
+	Plotter fPlotter;
+	for(size_t i=0; i<froudeNb.size(); i++)
+		fPlotter.append(curveLabels[i],froudeNb[i],totRes[i]);
+
+	char msg[256];
+	sprintf(msg,"plot TOTAL Resistance vs boat speed - "
+			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			pAeroForcesItem_->getWindItem()->getTWV(twv),
+			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
+	fPlotter.plot("Fn [-]","Total Resistance [N]", msg);
+
+}
+
 
