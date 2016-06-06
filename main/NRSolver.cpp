@@ -16,7 +16,7 @@ NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory,
 dimension_(dimension),
 subPbSize_(subPbSize),
 tol_(1.e-6),
-maxIters_(200){
+maxIters_(100){
 
 	// Resize the state vectors. Note that xp_ == xFull if the optimizer is
 	// not used. If NR is the sub-problem solver for the otpimizer, xp_ is a
@@ -158,19 +158,26 @@ void NRSolver::run(int twv, int twa) {
 
 			// throw if the solution was not found within the max number of iterations
 			if(it==maxIters_){
+
+				// Erase the first 20 vals with the last val to improve the view
+				for(size_t i=0; i<50; i++) {
+					velocityResiduals[i]=velocityResiduals[velocityResiduals.size()-1];
+					PhiResiduals[i]=PhiResiduals[PhiResiduals.size()-1];
+				}
+
 				// plot the velocity residuals and throw
-        Plotter plotter2;
-				plotter2.plot(PhiResiduals,"PHI_residuals");
+				Plotter vResPlot;
+				vResPlot.plot(velocityResiduals,"V_residuals");
+
+				Plotter phiResPlot;
+				phiResPlot.plot(PhiResiduals,"PHI_residuals");
 
 				// Also plot some Jacobian diagnostics
-				J.testPlot(twv,twa);
+				//J.testPlot(twv,twa);
 
 				std::cout<<"\n\nWARNING: NR-Solver could not converge. Please press a key to continue"<<std::endl;
 				string s;
 				std::cin>>s;
-
-				// And plot the JacobianChecker diagnostics
-				// JCheck.testPlot();
 
 				//throw VPPException(HERE,"VPP Solver could not converge");
 				xp_=xpBuf_;

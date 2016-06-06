@@ -232,13 +232,15 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 	if(mathUtils::isNotValid(awa_)) throw VPPException(HERE,"awa_ is NaN");
 
 	// Update the Aspect Ratio
-	double h;
-	if(awa_ < toRad(45))
-		// h = mast height above deck + Average freeboard
-		h= pParser_->get("EHM") + pParser_->get("AVGFREB");
-	else
-		// h = mast height above deck
-		h= pParser_->get("EHM");
+	double h= pParser_->get("EHM") + pParser_->get("AVGFREB");
+
+//	// TODO: restore this and introduce a proper smoothing function
+//	if(awa_ < toRad(45))
+//		// h = mast height above deck + Average freeboard
+//		h= pParser_->get("EHM") + pParser_->get("AVGFREB");
+//	else
+//		// h = mast height above deck
+//		h= pParser_->get("EHM");
 
 	// Compute the aspect ratio for this awa_
 	ar_ = 1.1 * h * h / pSailSet_->get("AN");
@@ -739,22 +741,21 @@ void AeroForcesItem::plot() {
 		for(size_t iTwv=0; iTwv<nVelocities; iTwv++ ) {
 
 			// Set the value for the state variable boat velocity
-			// Linearly from -2 to 3 m/s
+			// Linearly from -1 to 1 m/s
 			V_ = -1 + double(iTwv) / (nVelocities-1) * 2;
 
 			// Declare a state vector to give the windItem
 			VectorXd stateVector(4);
 			stateVector << V_,PHI_,b_,f_;
 
-			// update the wind. For the moment fix the apparent wind velocity and angle
-			// to the first values contained in the variableFiles. TODO: introduce inner
-			// loops foreach awa and foreach awv
+			// Update the wind. For the moment fix the apparent wind velocity and angle
+			// to the first values contained in the variableFiles.
 			pWindItem_->updateSolution(twv, twa, stateVector);
 
 			// Update the sail coefficients for the current wind
 			pSailCoeffs_->updateSolution(twv, twa, stateVector);
 
-			// update 'this': compute sail forces
+			// Update 'this': compute sail forces
 			update(twv, twa);
 
 			// Store velocity-wise data:

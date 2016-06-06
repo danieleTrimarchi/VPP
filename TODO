@@ -1,6 +1,12 @@
-- Restore two optimisation variables reef and flat -> requires Lagrange multipliers 	to limit the solution? 
+- Verify the sign of the righting moment. Is it well positive, because we are kind of returning the abs? If it is not, we have a pb!
 
-- Restore nlopt -> use the global optimiser and/or the augLag 
+- With the induced resistance switch off, I am not sure that the solution exist (!!) 
+	as the residuals do not go to zero though the NR dx -> 0. 
+	This is true or it is cyclically true. 
+	WHY? The solution MUST exist!! 
+	-> reduce the number of iters for NR and follow what happens. Shit! 
+
+ 
 	  
 
 - Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 		mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 

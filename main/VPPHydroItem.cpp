@@ -649,7 +649,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<0.001) {
+	if(V_<1.e-12) {
 		res_=0.;
 		return;
 	}

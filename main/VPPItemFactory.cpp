@@ -73,8 +73,8 @@ dM_(0) {
 
 	// Instantiate a InducedResistanceItem and push it back to the children vector
 	// For the definition of the Induced Resistance see DSYHS99 ch4 p128
-	pInducedResistanceItem_.reset(new InducedResistanceItem(pAeroForcesItem_.get()));
-	vppHydroItems_.push_back( pInducedResistanceItem_ );
+//	pInducedResistanceItem_.reset(new InducedResistanceItem(pAeroForcesItem_.get()));
+//	vppHydroItems_.push_back( pInducedResistanceItem_ );
 
 	// Instantiate a NegativeResistanceItem and push it back to the children vector
 	// This defines the resistance in the case of negative velocities
@@ -280,7 +280,8 @@ void VPPItemFactory::plotTotalResistance(){
 
 	// Init the state vector
 	Eigen::VectorXd stateVector(4);
-	stateVector << 0, 0, 0, 1;
+	std::cout<<"--> Please enter the values the state vector: "<<std::endl;
+	for(size_t i=0; i<stateVector.size(); i++) cin >> stateVector(i);
 
 	// Define the number of velocities and angles
 	// ( the angles are incremented of 10!)
@@ -304,16 +305,11 @@ void VPPItemFactory::plotTotalResistance(){
 		// Loop on the velocities
 		for(size_t v=0; v<nVelocities; v++){
 
-			// Set a fictitious velocity (Fn=0-1)
-			stateVector(0)= ( 1./nVelocities * v ) * sqrt(Physic::g * pParser_->get("LWL"));
+			// Set a fictitious velocity (Fn=0-0.6)
+			stateVector(0)= 0.6 * ( 1./nVelocities * v ) * sqrt(Physic::g * pParser_->get("LWL"));
 
-			// Update the aero Items (remember the induced resistance requires fHeel)
-			for(size_t iItem=0; iItem<vppAeroItems_.size(); iItem++)
-				vppAeroItems_[iItem]->VPPItem::updateSolution(twv,twa,stateVector);
-
-			// Update the hydroItems
-			for(size_t iItem=0; iItem<vppHydroItems_.size(); iItem++)
-				vppHydroItems_[iItem]->VPPItem::updateSolution(twv,twa,stateVector);
+			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
+			update(twv,twa,stateVector);
 
 			// Fill the vectors to be plot
 			fn.push_back( stateVector(0)/sqrt(Physic::g * pParser_->get("LWL") ) );
@@ -351,5 +347,4 @@ void VPPItemFactory::plotTotalResistance(){
 	fPlotter.plot("Fn [-]","Total Resistance [N]", msg);
 
 }
-
 

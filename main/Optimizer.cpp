@@ -122,9 +122,9 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 	// In it to something small to start the evals at each velocity
 	if(TWV==0) {
 
-		xp_(0)= 0.01;  	// V_0
-		xp_(1)= 0.01;		// PHI_0
-		xp_(2)= 0.01;		// b_0
+		xp_(0)= 0.1;  	// V_0
+		xp_(1)= 0.1;		// PHI_0
+		xp_(2)= 0.09;		// b_0
 		xp_(3)= .99;		// f_0
 
 	}
@@ -247,45 +247,59 @@ void Optimizer::run(int TWV, int TWA) {
 	double maxf;
 
 	nlopt::result result;
-	try{
-		// Launch the optimization; negative retVal implies failure
-		std::cout<<"Entering the optimizer with: "<<
-				xp_(0)<<" "<<xp_(1)<<" "<<xp_(2)<<" "<<xp_(3)<<"\n";
-		// convert to standard vector
-		std::vector<double> xp(xp_.rows());
-		for(size_t i=0; i<xp_.rows(); i++)
-			xp[i]=xp_(i);
-		result = opt_->optimize(xp, maxf);
-		//store the results back to the member state vector
-		for(size_t i=0; i<xp_.size(); i++)
-			xp_(i)=xp[i];
-	}
-	catch( nlopt::roundoff_limited& e ){
-		std::cout<<"Roundoff limited result"<<std::endl;
-		// do nothing because the result of roundoff-limited exception
-		// is meant to be still a meaningful result
-	}
-	catch (std::exception& e) {
 
-		// throw exceptions catched by NLOpt
-		char msg[256];
-		sprintf(msg,"%s\n",e.what());
-		throw VPPException(HERE,msg);
-	}
-	catch (...) {
-		throw VPPException(HERE,"nlopt unknown exception catched!\n");
-	}
+	// Init an arbitrarily high residuals vector
+	Eigen::VectorXd residuals(dimension_);
+	for(size_t i=0; i<dimension_; i++) residuals(i)=100;
+
+	//while ( residuals.norm() > 0.00001 )
+	for(size_t iRes=0; iRes<10; iRes++ ){
+		try{
+			// Launch the optimization; negative retVal implies failure
+			std::cout<<"Entering the optimizer with: "<<
+					xp_(0)<<" "<<xp_(1)<<" "<<xp_(2)<<" "<<xp_(3)<<"\n";
+			// convert to standard vector
+			std::vector<double> xp(xp_.rows());
+			for(size_t i=0; i<xp_.rows(); i++)
+				xp[i]=xp_(i);
+
+			// Launch the optimization
+			// result = opt_->optimize(xp, maxf);
+
+			//store the results back to the member state vector
+			for(size_t i=0; i<xp_.size(); i++)
+				xp_(i)=xp[i];
+		}
+		catch( nlopt::roundoff_limited& e ){
+			std::cout<<"Roundoff limited result"<<std::endl;
+			// do nothing because the result of roundoff-limited exception
+			// is meant to be still a meaningful result
+		}
+		catch (std::exception& e) {
+
+			// throw exceptions catched by NLOpt
+			char msg[256];
+			sprintf(msg,"%s\n",e.what());
+			throw VPPException(HERE,msg);
+		}
+		catch (...) {
+			throw VPPException(HERE,"nlopt unknown exception catched!\n");
+		}
 
 
-	printf("found maximum after %d evaluations\n", optIterations);
-	printf("      at f(%g,%g,%g,%g)\n",
-			xp_(0),xp_(1),xp_(2),xp_(3) );
-	double dF, dM;
-	vppItemsContainer_->getResiduals(dF,dM);
-	printf("      residuals: dF= %g, dM= %g\n\n",dF,dM);
+		printf("found maximum after %d evaluations\n", optIterations);
+		printf("      at f(%g,%g,%g,%g)\n",
+				xp_(0),xp_(1),xp_(2),xp_(3) );
+
+		residuals= vppItemsContainer_->getResiduals();
+		printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
+
+		if( residuals.norm() < 0.0001 )
+			break;
+	}
 
 	// Push the result to the result container
-	pResults_->push_back(TWV, TWA, xp_, dF, dM);
+	pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
 
 }
 
