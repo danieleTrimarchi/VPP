@@ -73,8 +73,8 @@ dM_(0) {
 
 	// Instantiate a InducedResistanceItem and push it back to the children vector
 	// For the definition of the Induced Resistance see DSYHS99 ch4 p128
-//	pInducedResistanceItem_.reset(new InducedResistanceItem(pAeroForcesItem_.get()));
-//	vppHydroItems_.push_back( pInducedResistanceItem_ );
+	pInducedResistanceItem_.reset(new InducedResistanceItem(pAeroForcesItem_.get()));
+	vppHydroItems_.push_back( pInducedResistanceItem_ );
 
 	// Instantiate a NegativeResistanceItem and push it back to the children vector
 	// This defines the resistance in the case of negative velocities
