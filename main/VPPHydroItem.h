@@ -87,7 +87,7 @@ class ResiduaryResistanceItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot the Residuary Resistance vs Fn curve
-		void plot();
+		void plot(WindItem* pWind);
 
 	private:
 

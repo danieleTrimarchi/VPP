@@ -124,7 +124,7 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	//  Plotter plotter;
 	//  plotter.plot(phiD_,TeD);
 
-	// Make a check plot for the induced resistance
+	// Make a check plot for the induced resistance6
 	// WARNING: as we are in update, this potentially leads to a
 	// large number of plots!
 	// interpolator.plot(0,mathUtils::toRad(30),30,"Effective Span","PHI [deg]","Te");
@@ -319,8 +319,9 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 				ResistanceItem(pParser, pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
-	Eigen::MatrixXd coeff(11,9);
-	coeff << -0.0014,  0.0403,  0.0470, -0.0227, -0.0119,  0.0061, -0.0086, -0.0307, -0.0553,
+	Eigen::MatrixXd coeff(12,9);
+	coeff <<  0.,			 0.,			0.,			 0.,			0., 		 0.,			0.,			 0.,			0.,
+						-0.0014, 0.0403,  0.0470, -0.0227, -0.0119,  0.0061, -0.0086, -0.0307, -0.0553,
 						0.0004, -0.1808,  0.1793, -0.0004,  0.0097,  0.0118, -0.0055,  0.1721, -0.1728,
 						0.0014, -0.1071,  0.0637,  0.0090,  0.0153,  0.0011,  0.0012,  0.1021, -0.0648,
 						0.0027,  0.0463, -0.1263,  0.0150,  0.0274, -0.0299,  0.0110, -0.0595,  0.1220,
@@ -356,15 +357,15 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 
 	// Compute the the residuary resistance for each Froude numbers
 	//  RrhD = (geom.DIVCAN.*phys.g.*phys.rho_w) .* ( coeff * vect' ) .* (geom.DIVCAN.^(1/3)./geom.LWL);
-	//  11x1        SCALAR                            11x9  *  9x1            SCALAR
+	//  12x1        SCALAR                            12x9  *  9x1            SCALAR
 	Eigen::VectorXd RrhD = 	(pParser_->get("DIVCAN") * Physic::g * Physic::rho_w) *
 			( std::pow(pParser_->get("DIVCAN"),1./3) / pParser_->get("LWL") ) *
 			coeff * vect ;
 
 	// Values of the froude number on which the coefficients of the
 	// residuary resistance are computed
-	Eigen::ArrayXd fnD(11);
-	fnD << 	.1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6;
+	Eigen::ArrayXd fnD(12);
+	fnD << 	0., .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6;
 
 	// generate the cubic spline values for the coefficients
 	Eigen::ArrayXd RrhDArr=RrhD.array();
@@ -394,10 +395,32 @@ void ResiduaryResistanceItem::printWhoAmI() {
 }
 
 // Plot the Residuary Resistance versus Fn curve
-void ResiduaryResistanceItem::plot() {
+void ResiduaryResistanceItem::plot(WindItem* pWind) {
+
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	size_t twv=0, twa=0;
+
+	std::cout<<"--> Please enter the values of twv and twa for the Residuary Resistance plot: "<<std::endl;
+	while(true){
+	cin >> twv >> twa;
+	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
+	bool vFine= twv < pWind->getWVSize();
+	bool aFine= twa < pWind->getWASize();
+	if(!vFine)
+		std::cout<<"the value of twv is out of range, max is: "<<pWind->getWVSize()-1<<std::endl;
+	if(!aFine)
+		std::cout<<"the value of twa is out of range, max is: "<<pWind->getWASize()-1<<std::endl;
+	if(vFine&&aFine)
+		break;
+	}
+
+	ResistanceItem::update(twv,twa);
+
+	res_ = pInterpolator_->interpolate(fN_);
 
 	// Make a check plot for the residuary resistance
-	pInterpolator_->plot(0,1,50,"Residuary Resistance","Fn [-]","Resistance [N]" );
+	pInterpolator_->plot(0,.1,50,"Residuary Resistance","Fn [-]","Resistance [N]" );
+
 
 }
 

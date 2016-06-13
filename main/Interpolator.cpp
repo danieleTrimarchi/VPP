@@ -252,6 +252,14 @@ void SplineInterpolator::plot(double minVal,double maxVal,int nVals,
 	std::vector<double> x0(s_.get_points(0));
 	std::vector<double> y0(s_.get_points(1));
 
+	// Limit the values to the ranges specified for this plot
+	for(size_t i=0; i<x0.size(); i++)
+		if(x0[i]<minVal || x0[i]>maxVal){
+			x0.erase(x0.begin()+i);
+			y0.erase(y0.begin()+i);
+			i--;
+		}
+
 	// Ask the plotter to plot the curves
 	plotter.plot(x0,y0,x,y,title,xLabel,yLabel);
 

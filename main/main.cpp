@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
 				pVppItems->getFrictionalResistanceItem()->plot();
 
 			else if( s == string("plotResidRes"))
-				pVppItems->getResiduaryResistanceItem()->plot();
+				pVppItems->getResiduaryResistanceItem()->plot(pVppItems->getWind());
 
 			else if(s == string("plotInducedRes") )
 				pVppItems->getInducedResistanceItem()->plot();

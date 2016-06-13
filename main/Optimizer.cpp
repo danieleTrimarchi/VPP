@@ -256,15 +256,15 @@ void Optimizer::run(int TWV, int TWA) {
 	for(size_t iRes=0; iRes<10; iRes++ ){
 		try{
 			// Launch the optimization; negative retVal implies failure
-			std::cout<<"Entering the optimizer with: "<<
-					xp_(0)<<" "<<xp_(1)<<" "<<xp_(2)<<" "<<xp_(3)<<"\n";
+			std::cout<<"Entering the optimizer with: ";
+			printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
 			// convert to standard vector
 			std::vector<double> xp(xp_.rows());
 			for(size_t i=0; i<xp_.rows(); i++)
 				xp[i]=xp_(i);
 
 			// Launch the optimization
-			// result = opt_->optimize(xp, maxf);
+			//result = opt_->optimize(xp, maxf);
 
 			//store the results back to the member state vector
 			for(size_t i=0; i<xp_.size(); i++)
