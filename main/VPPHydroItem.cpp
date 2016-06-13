@@ -419,7 +419,7 @@ void ResiduaryResistanceItem::plot(WindItem* pWind) {
 	res_ = pInterpolator_->interpolate(fN_);
 
 	// Make a check plot for the residuary resistance
-	pInterpolator_->plot(0,.1,50,"Residuary Resistance","Fn [-]","Resistance [N]" );
+	pInterpolator_->plot(0,.5,50,"Residuary Resistance","Fn [-]","Resistance [N]" );
 
 
 }
@@ -433,8 +433,11 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 				ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
-	Eigen::MatrixXd coeff(7,6);
-	coeff << -0.0268, -0.0014, -0.0057, 0.0016, -0.0070, -0.0017,
+	Eigen::MatrixXd coeff(10,6);
+	coeff << 	0.,			 0.,			0.,			0.,			0.,				0.,
+						0.,			 0.,			0.,			0.,			0.,				0.,
+						0.,			 0.,			0.,			0.,			0.,				0.,
+					 -0.0268, -0.0014, -0.0057, 0.0016, -0.0070, -0.0017,
 						0.6628, -0.0632, -0.0699, 0.0069,  0.0459, -0.0004,
 						1.6433, -0.2144, -0.1640, 0.0199, -0.0540, -0.0268,
 					 -0.8659, -0.0354,  0.2226, 0.0188, -0.5800, -0.1133,
@@ -451,15 +454,15 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 	//					geom.LWL./geom.BWL
 	//					geom.BWL./geom.TCAN
 	//					(geom.BWL./geom.TCAN).^2
-	//					geom.XFB
-	//					(geom.XFB).^2];
+	//					geom.XFB / geom.BWL      // todo WARNING : is this term correct?
+	//					(geom.XFB/ geom.BWL ).^2];  // todo WARNING : is this term correct?
 	Eigen::VectorXd vect(6);
 	vect << 1,
 			pParser_->get("LWL") / pParser_->get("BWL"),
 			pParser_->get("BWL") / pParser_->get("TCAN"),
 			std::pow(pParser_->get("BWL") / pParser_->get("TCAN"),2),
-			pParser_->get("XFB"),
-			std::pow(pParser_->get("XFB"),2);
+			pParser_->get("XFB")/pParser_->get("LWL"),
+			std::pow(pParser_->get("XFB")/pParser_->get("LWL"),2);
 
 	// Compute the resistance @PHI=20deg for each Fn
 	// RrhH20D = (geom.DIVCAN.*phys.g.*phys.rho_w) .* coeff*vect';
@@ -469,8 +472,8 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 
 	// Values of the froude number on which the coefficients of the
 	// residuary resistance are computed
-	Eigen::ArrayXd fnD(7);
-	fnD << .25, .3, .35, .4, .45, .5, .55;
+	Eigen::ArrayXd fnD(10);
+	fnD << 0., .1, .2, .25, .3, .35, .4, .45, .5, .55;
 
 	// generate the cubic spline values for the coefficients
 	Eigen::ArrayXd RrhH20DArr=RrhH20D.array();
@@ -507,7 +510,28 @@ void Delta_ResiduaryResistance_HeelItem::printWhoAmI() {
 }
 
 // Plot the Residuary Resistance versus Fn curve
-void Delta_ResiduaryResistance_HeelItem::plot() {
+void Delta_ResiduaryResistance_HeelItem::plot(WindItem* pWind) {
+
+
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	size_t twv=0, twa=0;
+
+	std::cout<<"--> Please enter the values of twv and twa for the Delta Residuary Resistance plot: "<<std::endl;
+	while(true){
+	cin >> twv >> twa;
+	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
+	bool vFine= twv < pWind->getWVSize();
+	bool aFine= twa < pWind->getWASize();
+	if(!vFine)
+		std::cout<<"the value of twv is out of range, max is: "<<pWind->getWVSize()-1<<std::endl;
+	if(!aFine)
+		std::cout<<"the value of twa is out of range, max is: "<<pWind->getWASize()-1<<std::endl;
+	if(vFine&&aFine)
+		break;
+	}
+
+	// update the item
+	update(twv,twa);
 
 	// Make a check plot for the induced resistance
 	pInterpolator_->plot(0,.7,20,"Delta Residuary Resistance","Fn [-]","Resistance [N]" );
@@ -521,8 +545,10 @@ ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pPa
 				ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
-	Eigen::MatrixXd coeff(9,4);
-	coeff <<	-0.00104, 0.00172, 0.00117, -0.00008,
+	Eigen::MatrixXd coeff(11,4);
+	coeff <<	 0.,			0.,			 0.,			 0.,
+						 0.,			0.,			 0.,			 0.,
+						-0.00104, 0.00172, 0.00117, -0.00008,
 						-0.00550, 0.00597, 0.00390, -0.00009,
 						-0.01110, 0.01421, 0.00069,  0.00021,
 						-0.00713, 0.02632,-0.00232,  0.00039,
@@ -552,8 +578,8 @@ ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pPa
 
 	// Values of the froude number on which the coefficients of the
 	// residuary resistance are computed
-	Eigen::ArrayXd fnD(9);
-	fnD << .2, .25, .3, .35, .4, .45, .5, .55, .6;
+	Eigen::ArrayXd fnD(11);
+	fnD << 0., 0.1, .2, .25, .3, .35, .4, .45, .5, .55, .6;
 
 	// generate the cubic spline values for the coefficients
 	Eigen::ArrayXd RrkDArr=RrkD.array();

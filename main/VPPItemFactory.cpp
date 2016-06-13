@@ -38,48 +38,48 @@ dM_(0) {
 	// For the definition of the Residuary Resistance: see Keuning 3.1.1.2 p112
 	pResiduaryResistanceItem_.reset(new ResiduaryResistanceItem(pParser_,pSailSet));
 	vppHydroItems_.push_back( pResiduaryResistanceItem_ );
-//
-//	// Instantiate a Delta_FrictionalResistance_HeelItem Item and push it back to the children vector
-//	// For the definition of the Change in Frictional Resistance due to heel see Keuning ch3.1.2.1 p115-116
-//	pDelta_FrictionalResistance_HeelItem_.reset(new Delta_FrictionalResistance_HeelItem(pParser_,pSailSet));
-//	vppHydroItems_.push_back( pDelta_FrictionalResistance_HeelItem_ );
-//
-//	// Instantiate a Delta_ResiduaryResistance_HeelItem Item push it back to the children vector
-//	// For the definition of the change in Residuary Resistance due to heel
-//	// see DSYHS99 ch3.1.2.2 p116
-//	pDelta_ResiduaryResistance_HeelItem_.reset(new Delta_ResiduaryResistance_HeelItem(pParser_,pSailSet));
-//	vppHydroItems_.push_back( pDelta_ResiduaryResistance_HeelItem_ );
-//
-//	// Instantiate a ViscousResistanceKeelItem Item and push it back to the children vector
-//	// The viscous resistance of the Keel is defined in the std way, see DSYHS99 3.2.1.1 p 119
-//	pViscousResistanceKeelItem_.reset(new ViscousResistanceKeelItem(pParser_,pSailSet));
-//	vppHydroItems_.push_back( pViscousResistanceKeelItem_ );
-//
-//	// Instantiate a ViscousResistanceKeelItem Item and push it back to the children vector
-//	// The viscous resistance of the Rudder is defined in the std way, see DSYHS99 ch3.2.1.1 p 119
-//	pViscousResistanceRudderItem_.reset(new ViscousResistanceRudderItem(pParser_,pSailSet));
-//	vppHydroItems_.push_back( pViscousResistanceRudderItem_ );
-//
-//	// Instantiate a ResiduaryResistanceKeelItem Item and push it back to the children vector
-//	// For the definition of the Residuary Resistance of the Keel see
-//	// DSYHS99 3.2.1.2 p.120 and following
-//	pResiduaryResistanceKeelItem_.reset(new ResiduaryResistanceKeelItem(pParser_,pSailSet));
-//	vppHydroItems_.push_back( pResiduaryResistanceKeelItem_ );
-//
-//	// Instantiate a Delta_ResiduaryResistanceKeel_HeelItem Item and push it back to the children vector
-//	// Express the change in Appendage Resistance due to Heel. See DSYHS99 3.2.2 p 126-127
-//	boost::shared_ptr<Delta_ResiduaryResistanceKeel_HeelItem> pDelta_ResiduaryResistanceKeel_HeelItem(new Delta_ResiduaryResistanceKeel_HeelItem(pParser_,pSailSet));
-//	vppHydroItems_.push_back( pDelta_ResiduaryResistanceKeel_HeelItem );
+
+	// Instantiate a Delta_FrictionalResistance_HeelItem Item and push it back to the children vector
+	// For the definition of the Change in Frictional Resistance due to heel see Keuning ch3.1.2.1 p115-116
+	pDelta_FrictionalResistance_HeelItem_.reset(new Delta_FrictionalResistance_HeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pDelta_FrictionalResistance_HeelItem_ );
+
+	// Instantiate a Delta_ResiduaryResistance_HeelItem Item push it back to the children vector
+	// For the definition of the change in Residuary Resistance due to heel
+	// see DSYHS99 ch3.1.2.2 p116
+	pDelta_ResiduaryResistance_HeelItem_.reset(new Delta_ResiduaryResistance_HeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pDelta_ResiduaryResistance_HeelItem_ );
+
+	// Instantiate a ViscousResistanceKeelItem Item and push it back to the children vector
+	// The viscous resistance of the Keel is defined in the std way, see DSYHS99 3.2.1.1 p 119
+	pViscousResistanceKeelItem_.reset(new ViscousResistanceKeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pViscousResistanceKeelItem_ );
+
+	// Instantiate a ViscousResistanceKeelItem Item and push it back to the children vector
+	// The viscous resistance of the Rudder is defined in the std way, see DSYHS99 ch3.2.1.1 p 119
+	pViscousResistanceRudderItem_.reset(new ViscousResistanceRudderItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pViscousResistanceRudderItem_ );
+
+	// Instantiate a ResiduaryResistanceKeelItem Item and push it back to the children vector
+	// For the definition of the Residuary Resistance of the Keel see
+	// DSYHS99 3.2.1.2 p.120 and following
+	pResiduaryResistanceKeelItem_.reset(new ResiduaryResistanceKeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pResiduaryResistanceKeelItem_ );
+
+	// Instantiate a Delta_ResiduaryResistanceKeel_HeelItem Item and push it back to the children vector
+	// Express the change in Appendage Resistance due to Heel. See DSYHS99 3.2.2 p 126-127
+	boost::shared_ptr<Delta_ResiduaryResistanceKeel_HeelItem> pDelta_ResiduaryResistanceKeel_HeelItem(new Delta_ResiduaryResistanceKeel_HeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pDelta_ResiduaryResistanceKeel_HeelItem );
 
 	// Instantiate a InducedResistanceItem and push it back to the children vector
 	// For the definition of the Induced Resistance see DSYHS99 ch4 p128
-//	pInducedResistanceItem_.reset(new InducedResistanceItem(pAeroForcesItem_.get()));
-//	vppHydroItems_.push_back( pInducedResistanceItem_ );
+	pInducedResistanceItem_.reset(new InducedResistanceItem(pAeroForcesItem_.get()));
+	vppHydroItems_.push_back( pInducedResistanceItem_ );
 
 	// Instantiate a NegativeResistanceItem and push it back to the children vector
 	// This defines the resistance in the case of negative velocities
-//	pNegativeResistance_.reset(new NegativeResistanceItem(pParser_,pSailSet));
-//	vppHydroItems_.push_back( pNegativeResistance_ );
+	pNegativeResistance_.reset(new NegativeResistanceItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pNegativeResistance_ );
 
 	// ----------
 
