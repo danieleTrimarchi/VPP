@@ -753,6 +753,262 @@ void PolarPlotter::plot(size_t skipCircles) {
 
 }
 
+// Plotter3d class ////////////////////////////////////////
+// Init static members
+double Plotter3d::alt_[]={60.0,40.0};
+double Plotter3d::az_[]={30.0,-30.0};
+int Plotter3d::rosen_=0;
+
+const char* Plotter3d::title_[]= {
+		"Alt=60, Az=30",
+		"Alt=60, Az=-30",
+};
+
+PLOptionTable Plotter3d::options_[]=
+{
+		{
+				"rosen",             // Turns on use of Rosenbrock function
+				NULL,
+				NULL,
+				&Plotter3d::rosen_,
+				PL_OPT_BOOL,
+				"-rosen",
+				"Use the log_e of the \"Rosenbrock\" function"
+		},
+		{
+				NULL,                     // option
+				NULL,                     // handler
+				NULL,                     // client data
+				NULL,                     // address of variable to set
+				0,                        // mode flag
+				NULL,                     // short syntax
+				NULL
+		}                             // long syntax
+};
+
+// Plotter3d Constructor
+//Plotter3d::Plotter3d( int argc, const char **argv )
+Plotter3d::Plotter3d() :
+		nPtsX_(35),
+		nPtsY_(45)
+{
+
+	// Specify the output device (aquaterm)
+	plsdev("aqt");
+
+	// Initialize plplot
+	plinit();
+
+	// Declare the value array z
+	double** z;
+
+	// Allocate a two-d array with the -z values
+	plAlloc2dGrid( &z, nPtsX_, nPtsY_ );
+
+	const int LEVELS = 10;
+	double* clevel = new double[LEVELS];
+
+	double* x = new double[ nPtsX_ ];
+	double* y = new double[ nPtsY_ ];
+	double dx = 2. / ( nPtsX_ - 1 );
+	double dy = 2. / ( nPtsY_ - 1 );
+
+	double xx, yy, r;
+	double zmin = 0.0, zmax = 0.0;
+
+	int ifshade;
+
+	int     indexxmin  = 0;
+	int     indexxmax  = nPtsX_;
+	int     *indexymin = new int[ nPtsX_ ];
+	int     *indexymax = new int[ nPtsX_ ];
+	double  **zlimited;
+
+	// parameters of ellipse (in x, y index coordinates) that limits the data.
+	// x0, y0 correspond to the exact floating point center of the index range.
+	double x0 = 0.5 * ( nPtsX_ - 1 );
+	double a  = 0.9 * x0;
+	double y0 = 0.5 * ( nPtsY_ - 1 );
+	double b  = 0.7 * y0;
+
+
+	for ( int i = 0; i < nPtsX_; i++ )
+	{
+		x[i] = -1. + (double) i * dx;
+		if ( rosen_ )
+			x[i] *= 1.5;
+	}
+
+	for ( size_t j = 0; j < nPtsY_; j++ )
+	{
+		y[j] = -1. + (double) j * dy;
+		if ( rosen_ )
+			y[j] += 0.5;
+	}
+
+	for ( int i = 0; i < nPtsX_; i++ )
+	{
+		xx = x[i];
+		for ( int j = 0; j < nPtsY_; j++ )
+		{
+			yy = y[j];
+			if ( rosen_ )
+			{
+				z[i][j] = pow( (double) ( 1. - xx ), 2. ) + 100 * pow( (double) ( yy - pow( (double) xx, 2. ) ), 2. );
+				// The log argument might be zero for just the right grid.
+				if ( z[i][j] > 0. )
+					z[i][j] = log( z[i][j] );
+				else
+					z[i][j] = -5.; // -MAXFLOAT would mess-up up the scale
+			}
+			else
+			{
+				r       = sqrt( xx * xx + yy * yy );
+				z[i][j] = exp( -r * r ) * cos( 2.0 * M_PI * r );
+			}
+			if ( i == 0 && j == 0 )
+			{
+				zmin = z[i][j];
+				zmax = zmin;
+			}
+			if ( zmin > z[i][j] )
+				zmin = z[i][j];
+			if ( zmax < z[i][j] )
+				zmax = z[i][j];
+		}
+	}
+
+	//  Allocate and calculate y index ranges and corresponding z-limited.
+	plAlloc2dGrid( &zlimited, nPtsX_, nPtsY_ );
+
+	for ( int i = indexxmin; i < indexxmax; i++ )
+	{
+		double square_root = sqrt( 1. - MIN( 1., pow( ( (double) i - x0 ) / a, 2. ) ) );
+		// Add 0.5 to find nearest integer and therefore preserve symmetry
+		// with regard to lower and upper bound of y range.
+		indexymin[i] = MAX( 0, (int) ( 0.5 + y0 - b * square_root ) );
+		// indexymax calculated with the convention that it is 1
+		// greater than highest valid index.
+		indexymax[i] = MIN( nPtsY_, 1 + (int) ( 0.5 + y0 + b * square_root ) );
+		for ( int j = indexymin[i]; j < indexymax[i]; j++ )
+			zlimited[i][j] = z[i][j];
+	}
+
+	double step = ( zmax - zmin ) / ( LEVELS + 1 );
+	for ( int i = 0; i < LEVELS; i++ )
+		clevel[i] = zmin + step * ( i + 1 );
+
+	pllightsource( 1., 1., 1. );
+	for ( int k = 0; k < 2; k++ )
+	{
+		for ( ifshade = 0; ifshade < 5; ifshade++ )
+		{
+			pladv( 0 );
+			plvpor( 0.0, 1.0, 0.0, 0.9 );
+			plwind( -1.0, 1.0, -0.9, 1.1 );
+			plcol0( 3 );
+			plmtex( "t", 1.0, 0.5, 0.5, title_[k] );
+			plcol0( 1 );
+			if ( rosen_ )
+				plw3d( 1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
+						alt_[k], az_[k] );
+			else
+				plw3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax,
+						alt_[k], az_[k] );
+			plbox3( "bnstu", "x axis", 0.0, 0,
+					"bnstu", "y axis", 0.0, 0,
+					"bcdmnstuv", "z axis", 0.0, 0 );
+
+			plcol0( 2 );
+
+			switch ( ifshade )
+			{
+				case 0: // diffuse light surface plot
+					cmap1_init( 1 );
+					plsurf3d( x, y, z, nPtsX_, nPtsY_, 0, NULL, 0 );
+					break;
+				case 1: // magnitude colored plot
+					cmap1_init( 0 );
+					plsurf3d( x, y, z, nPtsX_, nPtsY_, MAG_COLOR, NULL, 0 );
+					break;
+				case 2: //  magnitude colored plot with faceted squares
+					cmap1_init( 0 );
+					plsurf3d( x, y, z, nPtsX_, nPtsY_, MAG_COLOR | FACETED, NULL, 0 );
+					break;
+				case 3: // magnitude colored plot with contours
+					cmap1_init( 0 );
+					plsurf3d( x, y, z, nPtsX_, nPtsY_, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, LEVELS );
+					break;
+				case 4:  // magnitude colored plot with contours and index limits.
+					cmap1_init( 0 );
+					plsurf3dl( x, y, (const double * const *) zlimited, nPtsX_, nPtsY_, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, LEVELS, indexxmin, indexxmax, indexymin, indexymax );
+			}
+		}
+	}
+
+	plFree2dGrid( z, nPtsX_, nPtsY_ );
+
+	delete[] x;
+	delete[] y;
+	delete[] clevel;
+}
+
+// Destructor
+Plotter3d::~Plotter3d() {
+
+}
+
+// Init the colormap
+void Plotter3d::cmap1_init( int gray )
+{
+	double* intensity   = new double[2];
+	double* hue = new double[2];
+	double* lightness = new double[2];
+	double* saturation = new double[2];
+	PLBOOL* rev = new PLBOOL[2];
+
+	intensity[0] = 0.0;       // left boundary
+	intensity[1] = 1.0;       // right boundary
+
+	if ( gray == 1 )
+	{
+		hue[0] = 0.0;     // hue -- low: red (arbitrary if s=0)
+		hue[1] = 0.0;     // hue -- high: red (arbitrary if s=0)
+
+		lightness[0] = 0.5;     // lightness -- low: half-dark
+		lightness[1] = 1.0;     // lightness -- high: light
+
+		saturation[0] = 0.0;     // minimum saturation
+		saturation[1] = 0.0;     // minimum saturation
+	}
+	else
+	{
+		hue[0] = 240; // blue -> green -> yellow ->
+		hue[1] = 0;   // -> red
+
+		lightness[0] = 0.6;
+		lightness[1] = 0.6;
+
+		saturation[0] = 0.8;
+		saturation[1] = 0.8;
+	}
+
+	rev[0] = false;       // interpolate on front side of color wheel.
+	rev[1] = false;       // interpolate on front side of color wheel.
+
+	plscmap1n(256);
+	plscmap1l( 0, 2, intensity, hue, lightness, saturation, rev );
+
+	//c_plscmap1l( PLBOOL itype, PLINT npts, const PLFLT *intensity,
+	// const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLBOOL *alt_hue_path );
+
+	delete[] intensity;
+	delete[] hue;
+	delete[] lightness;
+	delete[] saturation;
+	delete[] rev;
+}
+
 
 
 

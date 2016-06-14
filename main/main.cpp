@@ -75,6 +75,9 @@ int main(int argc, char** argv) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
+		Plotter3d plot3d;
+		throw VPPException(HERE, "STOP");
+
 		// Instantiate a parser with the variables
 		VariableFileParser parser("variableFile.txt");
 
@@ -185,7 +188,6 @@ int main(int argc, char** argv) {
 				cin >> idx;
 				solver.plotXY(idx);
 			}
-
 			//---
 
 			else if( s == string("help") || s == string("h") ){

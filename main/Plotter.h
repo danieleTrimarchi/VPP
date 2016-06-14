@@ -268,4 +268,36 @@ class PolarPlotter {
 
 };
 
+class Plotter3d {
+
+	public:
+
+		/// Constructor
+		//Plotter3d( int, const char** );
+		Plotter3d();
+
+		/// Destructor
+		~Plotter3d();
+
+		/// Init method
+		void cmap1_init( int );
+
+	private:
+
+		size_t nPtsX_, nPtsY_;
+
+		static double alt_[];
+		static double az_[];
+		static const char* title_[];
+
+		static int rosen_;
+
+		static PLOptionTable options_[];
+
+		double MIN( double x, double y ) { return ( x < y ? x : y ); };
+		double MAX( double x, double y ) { return ( x > y ? x : y ); };
+
+};
+
+
 #endif
