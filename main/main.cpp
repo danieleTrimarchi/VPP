@@ -75,7 +75,12 @@ int main(int argc, char** argv) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-		Plotter3d plot3d;
+		DiffuseLightSurfacePlotter3d plotGrey("GreyScale");
+		MagnitudeColoredPlotter3d plotMag("MagnitudeColor");
+		MagnitudeColoredFacetedPlotter3d plotMagFac("MagnitudeColorFacet");
+		MagnitudeColoredCountourPlotter3d plotMagCont("MagnitudeColorContour");
+		MagnitudeColoredCountourLimitedPlotter3d plotMagContLim("MagnitudeColorContourLimited");
+
 		throw VPPException(HERE, "STOP");
 
 		// Instantiate a parser with the variables

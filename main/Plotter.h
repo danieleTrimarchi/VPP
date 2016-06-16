@@ -33,6 +33,11 @@ enum color{
 	white
 };
 
+enum colorplot{
+	colorMap,
+	greyScale
+};
+
 class PlotterBase {
 
 	public:
@@ -268,34 +273,164 @@ class PolarPlotter {
 
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
 class Plotter3d {
 
 	public:
 
-		/// Constructor
-		//Plotter3d( int, const char** );
-		Plotter3d();
-
 		/// Destructor
-		~Plotter3d();
+		virtual ~Plotter3d();
 
 		/// Init method
 		void cmap1_init( int );
 
-	private:
+	protected:
 
+		/// Protected constructor
+		Plotter3d(string title);
+
+		/// Plot!
+		virtual void plot();
+
+		/// Number of points this plot is made of in both directions
 		size_t nPtsX_, nPtsY_;
 
-		static double alt_[];
-		static double az_[];
-		static const char* title_[];
+		/// -x and -y wise axis value containers
+		double *x_, *y_;
 
-		static int rosen_;
+		/// function values array
+		double **z_;
 
-		static PLOptionTable options_[];
+		/// bounds of the functions to be plotted in -z
+		double zMin_, zMax_;
 
 		double MIN( double x, double y ) { return ( x < y ? x : y ); };
 		double MAX( double x, double y ) { return ( x > y ? x : y ); };
+
+	private:
+
+		/// Alt and azimuth, perspective view observation point
+		double alt_, az_;
+
+		/// Title of the plot
+		string title_;
+
+};
+
+class DiffuseLightSurfacePlotter3d : public Plotter3d {
+
+	public:
+
+		/// Constructor
+		DiffuseLightSurfacePlotter3d(string title);
+
+		/// Destructor
+		virtual ~DiffuseLightSurfacePlotter3d();
+
+		/// Plot!
+		virtual void plot();
+
+	private:
+
+};
+
+class MagnitudeColoredPlotter3d : public Plotter3d {
+
+	public:
+
+		/// Constructor
+		MagnitudeColoredPlotter3d(string title);
+
+		/// Destructor
+		virtual ~MagnitudeColoredPlotter3d();
+
+		/// Plot!
+		virtual void plot();
+
+	private:
+
+};
+
+class MagnitudeColoredFacetedPlotter3d : public Plotter3d {
+
+	public:
+
+		/// Constructor
+		MagnitudeColoredFacetedPlotter3d(string title);
+
+		/// Destructor
+		virtual ~MagnitudeColoredFacetedPlotter3d();
+
+		/// Plot!
+		virtual void plot();
+
+	private:
+
+};
+
+/// Base class for 3d plots featuring contours
+class CountourPlotter3d : public Plotter3d {
+
+	public:
+	protected:
+
+		// Constructor
+		CountourPlotter3d(string title);
+
+		// Destructor
+		~CountourPlotter3d();
+
+		/// Plot!
+		virtual void plot();
+
+		/// Number of contour levels
+		size_t nLevels_;
+
+		/// C-style array with the values of
+		/// the contour levels
+		double* cLevel_;
+
+	private:
+
+};
+
+
+class MagnitudeColoredCountourPlotter3d : public CountourPlotter3d {
+
+	public:
+
+		/// Constructor
+		MagnitudeColoredCountourPlotter3d(string title);
+
+		/// Destructor
+		virtual ~MagnitudeColoredCountourPlotter3d();
+
+		/// Plot!
+		virtual void plot();
+
+	private:
+
+};
+
+class MagnitudeColoredCountourLimitedPlotter3d : public CountourPlotter3d {
+
+	public:
+
+		/// Constructor
+		MagnitudeColoredCountourLimitedPlotter3d(string title);
+
+		/// Destructor
+		virtual ~MagnitudeColoredCountourLimitedPlotter3d();
+
+		/// Plot!
+		virtual void plot();
+
+	private:
+
+		double** zLimited_;
+
+		int* indexymin_, *indexymax_;
 
 };
 

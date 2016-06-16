@@ -754,44 +754,20 @@ void PolarPlotter::plot(size_t skipCircles) {
 }
 
 // Plotter3d class ////////////////////////////////////////
-// Init static members
-double Plotter3d::alt_[]={60.0,40.0};
-double Plotter3d::az_[]={30.0,-30.0};
-int Plotter3d::rosen_=0;
-
-const char* Plotter3d::title_[]= {
-		"Alt=60, Az=30",
-		"Alt=60, Az=-30",
-};
-
-PLOptionTable Plotter3d::options_[]=
-{
-		{
-				"rosen",             // Turns on use of Rosenbrock function
-				NULL,
-				NULL,
-				&Plotter3d::rosen_,
-				PL_OPT_BOOL,
-				"-rosen",
-				"Use the log_e of the \"Rosenbrock\" function"
-		},
-		{
-				NULL,                     // option
-				NULL,                     // handler
-				NULL,                     // client data
-				NULL,                     // address of variable to set
-				0,                        // mode flag
-				NULL,                     // short syntax
-				NULL
-		}                             // long syntax
-};
 
 // Plotter3d Constructor
-//Plotter3d::Plotter3d( int argc, const char **argv )
-Plotter3d::Plotter3d() :
+Plotter3d::Plotter3d(string title) :
 		nPtsX_(35),
-		nPtsY_(45)
+		nPtsY_(45),
+		zMin_(1e12),
+		zMax_(-1e12),
+		alt_(60),
+		az_(30),
+		title_(title)
 {
+
+	x_= new double[nPtsX_];
+	y_= new double[nPtsY_];
 
 	// Specify the output device (aquaterm)
 	plsdev("aqt");
@@ -799,162 +775,61 @@ Plotter3d::Plotter3d() :
 	// Initialize plplot
 	plinit();
 
-	// Declare the value array z
-	double** z;
+	// Set a light source
+	pllightsource( 1., 1., 1. );
 
-	// Allocate a two-d array with the -z values
-	plAlloc2dGrid( &z, nPtsX_, nPtsY_ );
-
-	const int LEVELS = 10;
-	double* clevel = new double[LEVELS];
-
-	double* x = new double[ nPtsX_ ];
-	double* y = new double[ nPtsY_ ];
-	double dx = 2. / ( nPtsX_ - 1 );
-	double dy = 2. / ( nPtsY_ - 1 );
-
-	double xx, yy, r;
-	double zmin = 0.0, zmax = 0.0;
-
-	int ifshade;
-
-	int     indexxmin  = 0;
-	int     indexxmax  = nPtsX_;
-	int     *indexymin = new int[ nPtsX_ ];
-	int     *indexymax = new int[ nPtsX_ ];
-	double  **zlimited;
-
-	// parameters of ellipse (in x, y index coordinates) that limits the data.
-	// x0, y0 correspond to the exact floating point center of the index range.
-	double x0 = 0.5 * ( nPtsX_ - 1 );
-	double a  = 0.9 * x0;
-	double y0 = 0.5 * ( nPtsY_ - 1 );
-	double b  = 0.7 * y0;
-
-
+	// Set the values of the -x and -y axis
 	for ( int i = 0; i < nPtsX_; i++ )
-	{
-		x[i] = -1. + (double) i * dx;
-		if ( rosen_ )
-			x[i] *= 1.5;
-	}
+		x_[i] = -1. + 2. * i / ( nPtsX_ - 1 );
 
 	for ( size_t j = 0; j < nPtsY_; j++ )
-	{
-		y[j] = -1. + (double) j * dy;
-		if ( rosen_ )
-			y[j] += 0.5;
-	}
+		y_[j] = -1. + 2. * j /  ( nPtsY_ - 1 );
 
-	for ( int i = 0; i < nPtsX_; i++ )
-	{
-		xx = x[i];
-		for ( int j = 0; j < nPtsY_; j++ )
-		{
-			yy = y[j];
-			if ( rosen_ )
-			{
-				z[i][j] = pow( (double) ( 1. - xx ), 2. ) + 100 * pow( (double) ( yy - pow( (double) xx, 2. ) ), 2. );
-				// The log argument might be zero for just the right grid.
-				if ( z[i][j] > 0. )
-					z[i][j] = log( z[i][j] );
-				else
-					z[i][j] = -5.; // -MAXFLOAT would mess-up up the scale
-			}
-			else
-			{
-				r       = sqrt( xx * xx + yy * yy );
-				z[i][j] = exp( -r * r ) * cos( 2.0 * M_PI * r );
-			}
-			if ( i == 0 && j == 0 )
-			{
-				zmin = z[i][j];
-				zmax = zmin;
-			}
-			if ( zmin > z[i][j] )
-				zmin = z[i][j];
-			if ( zmax < z[i][j] )
-				zmax = z[i][j];
+	// Allocate space for the function values array
+	plAlloc2dGrid( &z_, nPtsX_, nPtsY_ );
+
+	// Fill the array 'z' with the values of the function
+	for ( int i= 0; i < nPtsX_; i++ )
+		for ( int j= 0; j < nPtsY_; j++ ) {
+
+			double r = sqrt( x_[i] * x_[i] + y_[j] * y_[j] );
+			z_[i][j] = exp( -r * r ) * cos( 2.0 * M_PI * r );
+
 		}
-	}
 
-	//  Allocate and calculate y index ranges and corresponding z-limited.
-	plAlloc2dGrid( &zlimited, nPtsX_, nPtsY_ );
-
-	for ( int i = indexxmin; i < indexxmax; i++ )
-	{
-		double square_root = sqrt( 1. - MIN( 1., pow( ( (double) i - x0 ) / a, 2. ) ) );
-		// Add 0.5 to find nearest integer and therefore preserve symmetry
-		// with regard to lower and upper bound of y range.
-		indexymin[i] = MAX( 0, (int) ( 0.5 + y0 - b * square_root ) );
-		// indexymax calculated with the convention that it is 1
-		// greater than highest valid index.
-		indexymax[i] = MIN( nPtsY_, 1 + (int) ( 0.5 + y0 + b * square_root ) );
-		for ( int j = indexymin[i]; j < indexymax[i]; j++ )
-			zlimited[i][j] = z[i][j];
-	}
-
-	double step = ( zmax - zmin ) / ( LEVELS + 1 );
-	for ( int i = 0; i < LEVELS; i++ )
-		clevel[i] = zmin + step * ( i + 1 );
-
-	pllightsource( 1., 1., 1. );
-	for ( int k = 0; k < 2; k++ )
-	{
-		for ( ifshade = 0; ifshade < 5; ifshade++ )
-		{
-			pladv( 0 );
-			plvpor( 0.0, 1.0, 0.0, 0.9 );
-			plwind( -1.0, 1.0, -0.9, 1.1 );
-			plcol0( 3 );
-			plmtex( "t", 1.0, 0.5, 0.5, title_[k] );
-			plcol0( 1 );
-			if ( rosen_ )
-				plw3d( 1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
-						alt_[k], az_[k] );
-			else
-				plw3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax,
-						alt_[k], az_[k] );
-			plbox3( "bnstu", "x axis", 0.0, 0,
-					"bnstu", "y axis", 0.0, 0,
-					"bcdmnstuv", "z axis", 0.0, 0 );
-
-			plcol0( 2 );
-
-			switch ( ifshade )
-			{
-				case 0: // diffuse light surface plot
-					cmap1_init( 1 );
-					plsurf3d( x, y, z, nPtsX_, nPtsY_, 0, NULL, 0 );
-					break;
-				case 1: // magnitude colored plot
-					cmap1_init( 0 );
-					plsurf3d( x, y, z, nPtsX_, nPtsY_, MAG_COLOR, NULL, 0 );
-					break;
-				case 2: //  magnitude colored plot with faceted squares
-					cmap1_init( 0 );
-					plsurf3d( x, y, z, nPtsX_, nPtsY_, MAG_COLOR | FACETED, NULL, 0 );
-					break;
-				case 3: // magnitude colored plot with contours
-					cmap1_init( 0 );
-					plsurf3d( x, y, z, nPtsX_, nPtsY_, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, LEVELS );
-					break;
-				case 4:  // magnitude colored plot with contours and index limits.
-					cmap1_init( 0 );
-					plsurf3dl( x, y, (const double * const *) zlimited, nPtsX_, nPtsY_, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, LEVELS, indexxmin, indexxmax, indexymin, indexymax );
-			}
+	// Now get the bounds of the function z
+	for ( int i= 0; i < nPtsX_; i++ )
+		for ( int j= 0; j < nPtsY_; j++ ) {
+			if ( zMin_ > z_[i][j] )
+				zMin_ = z_[i][j];
+			if ( zMax_ < z_[i][j] )
+				zMax_ = z_[i][j];
 		}
-	}
 
-	plFree2dGrid( z, nPtsX_, nPtsY_ );
-
-	delete[] x;
-	delete[] y;
-	delete[] clevel;
 }
 
 // Destructor
 Plotter3d::~Plotter3d() {
+
+	// Deallocate the space used for z_ and zLimited_
+	plFree2dGrid( z_, nPtsX_, nPtsY_ );
+
+}
+
+void Plotter3d::plot() {
+
+	pladv( 0 );
+	plvpor( 0.0, 1.0, 0.0, 0.9 );
+	plwind( -1.0, 1.0, -0.9, 1.1 );
+	plcol0( 3 );
+	plmtex( "t", 1.0, 0.5, 0.5, title_.c_str() );
+	plcol0( 1 );
+	plw3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zMin_, zMax_,alt_, az_ );
+	plbox3( "bnstu", "x axis", 0.0, 0,
+			    "bnstu", "y axis", 0.0, 0,
+					"bcdmnstuv", "z axis", 0.0, 0 );
+
+	plcol0( 2 );
 
 }
 
@@ -1009,21 +884,189 @@ void Plotter3d::cmap1_init( int gray )
 	delete[] rev;
 }
 
+//////////////////////////////////////////////////////////////
+
+// Constructor
+DiffuseLightSurfacePlotter3d::DiffuseLightSurfacePlotter3d(string title) :
+		Plotter3d(title) {
+
+}
+
+// Destructor
+DiffuseLightSurfacePlotter3d::~DiffuseLightSurfacePlotter3d() {
+
+}
+
+void DiffuseLightSurfacePlotter3d::plot() {
+
+	// Decorator pattern
+	Plotter3d::plot();
+
+	cmap1_init( colorplot::greyScale );
+	plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, 0, NULL, 0 );
+
+}
 
 
+//////////////////////////////////////////////////////////////
+
+/// Constructor
+MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(string title) :
+		Plotter3d(title) {
+
+}
+
+/// Destructor
+MagnitudeColoredPlotter3d::~MagnitudeColoredPlotter3d() {
+
+}
+
+void MagnitudeColoredPlotter3d::plot() {
+
+	// Decorator pattern
+	Plotter3d::plot();
+
+	cmap1_init( colorplot::colorMap );
+	plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR, NULL, 0 );
+
+}
+//////////////////////////////////////////////////////////////
+
+/// Constructor
+MagnitudeColoredFacetedPlotter3d::MagnitudeColoredFacetedPlotter3d(string title):
+		Plotter3d(title) {
+
+}
+
+/// Destructor
+MagnitudeColoredFacetedPlotter3d::~MagnitudeColoredFacetedPlotter3d() {
+
+}
+
+void MagnitudeColoredFacetedPlotter3d::plot() {
+
+	// Decorator pattern
+	Plotter3d::plot();
+
+	cmap1_init( colorplot::colorMap );
+	plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR | FACETED, NULL, 0 );
+
+}
+
+//////////////////////////////////////////////////////////////
 
 
+/// Constructor
+CountourPlotter3d::CountourPlotter3d(string title):
+		Plotter3d(title),
+		nLevels_(10),
+		cLevel_( new double[nLevels_] ){
 
+	double step = ( zMax_ - zMin_ ) / ( nLevels_ + 1 );
+	for ( int i = 0; i < nLevels_; i++ )
+		cLevel_[i] = zMin_ + step * ( i + 1 );
 
+}
 
+/// Destructor
+CountourPlotter3d::~CountourPlotter3d() {
 
+	// De-allocate the space used for the level array
+	delete[] cLevel_;
 
+}
 
+void CountourPlotter3d::plot() {
 
+	// Decorator pattern
+	Plotter3d::plot();
 
+}
 
+//////////////////////////////////////////////////////////////
 
+/// Constructor
+MagnitudeColoredCountourPlotter3d::MagnitudeColoredCountourPlotter3d(string title):
+		CountourPlotter3d(title) {
 
+}
+
+/// Destructor
+MagnitudeColoredCountourPlotter3d::~MagnitudeColoredCountourPlotter3d() {
+
+}
+
+void MagnitudeColoredCountourPlotter3d::plot() {
+
+	// Decorator pattern
+	CountourPlotter3d::plot();
+
+	cmap1_init( colorplot::colorMap );
+	plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR | SURF_CONT | BASE_CONT, cLevel_, nLevels_ );
+
+}
+
+//////////////////////////////////////////////////////////////
+
+// Constructor
+MagnitudeColoredCountourLimitedPlotter3d::MagnitudeColoredCountourLimitedPlotter3d(string title) :
+		CountourPlotter3d(title),
+		indexymin_( new int[ nPtsX_ ] ),
+		indexymax_( new int[ nPtsX_ ] )
+{
+		//  Allocate and calculate y index ranges and corresponding z-limited.
+		plAlloc2dGrid( &zLimited_, nPtsX_, nPtsY_ );
+
+		// parameters of ellipse (in x, y index coordinates) that limits the data.
+		// x0, y0 correspond to the exact floating point center of the index range.
+		double x0 = 0.5 * ( nPtsX_ - 1 );
+		double a  = 0.9 * x0;
+		double y0 = 0.5 * ( nPtsY_ - 1 );
+		double b  = 0.7 * y0;
+
+		for ( int i = 0; i < nPtsX_; i++ )	{
+
+			double square_root = sqrt( 1. - MIN( 1., pow( ( (double) i - x0 ) / a, 2. ) ) );
+
+			// Add 0.5 to find nearest integer and therefore preserve symmetry
+			// with regard to lower and upper bound of y range.
+			indexymin_[i] = MAX( 0, (int) ( 0.5 + y0 - b * square_root ) );
+
+			// indexymax calculated with the convention that it is 1
+			// greater than highest valid index.
+			indexymax_[i] = MIN( nPtsY_, 1 + (int) ( 0.5 + y0 + b * square_root ) );
+			for ( int j = indexymin_[i]; j < indexymax_[i]; j++ )
+				zLimited_[i][j] = z_[i][j];
+		}
+}
+
+// Destructor
+MagnitudeColoredCountourLimitedPlotter3d::~MagnitudeColoredCountourLimitedPlotter3d() {
+
+	// De-allocate the space for zLimited and for the index arrays
+	plFree2dGrid( zLimited_, nPtsX_, nPtsY_ );
+
+	delete[] indexymin_;
+	delete[] indexymax_;
+}
+
+void MagnitudeColoredCountourLimitedPlotter3d::plot() {
+
+	// Decorator pattern
+	Plotter3d::plot();
+
+	int indexxmin  = 0;
+	int indexxmax  = nPtsX_;
+
+	cmap1_init( colorplot::colorMap );
+	plsurf3dl( x_, y_, (const double * const *) zLimited_, nPtsX_, nPtsY_,
+						MAG_COLOR | SURF_CONT | BASE_CONT,
+						cLevel_, nLevels_,
+						indexxmin, indexxmax, indexymin_, indexymax_ );
+
+}
+
+//////////////////////////////////////////////////////////////
 
 
 
