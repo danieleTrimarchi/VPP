@@ -759,24 +759,24 @@ void PolarPlotter::plot(size_t skipCircles) {
 Plotter3d::Plotter3d(string title) :
 		nPtsX_(35),
 		nPtsY_(45),
-		zMin_(1e12),
-		zMax_(-1e12),
+		title_(title),
+		zMin_(0),
+		zMax_(0),
 		alt_(60),
-		az_(30),
-		title_(title)
+		az_(30)
 {
-
-	x_= new double[nPtsX_];
-	y_= new double[nPtsY_];
-
 	// Specify the output device (aquaterm)
 	plsdev("aqt");
+
+	// Set a light source
+	pllightsource( 1., 1., 1. );
 
 	// Initialize plplot
 	plinit();
 
-	// Set a light source
-	pllightsource( 1., 1., 1. );
+	// Allocate coordinate arrays
+	x_= new double[nPtsX_];
+	y_= new double[nPtsY_];
 
 	// Set the values of the -x and -y axis
 	for ( int i = 0; i < nPtsX_; i++ )
@@ -814,20 +814,25 @@ Plotter3d::~Plotter3d() {
 	// Deallocate the space used for z_ and zLimited_
 	plFree2dGrid( z_, nPtsX_, nPtsY_ );
 
+	delete[] x_;
+	delete[] y_;
+
 }
 
 void Plotter3d::plot() {
 
 	pladv( 0 );
+
 	plvpor( 0.0, 1.0, 0.0, 0.9 );
 	plwind( -1.0, 1.0, -0.9, 1.1 );
 	plcol0( 3 );
 	plmtex( "t", 1.0, 0.5, 0.5, title_.c_str() );
 	plcol0( 1 );
+
 	plw3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zMin_, zMax_,alt_, az_ );
 	plbox3( "bnstu", "x axis", 0.0, 0,
-			    "bnstu", "y axis", 0.0, 0,
-					"bcdmnstuv", "z axis", 0.0, 0 );
+			"bnstu", "y axis", 0.0, 0,
+			"bcdmnstuv", "z axis", 0.0, 0 );
 
 	plcol0( 2 );
 
@@ -890,6 +895,7 @@ void Plotter3d::cmap1_init( int gray )
 DiffuseLightSurfacePlotter3d::DiffuseLightSurfacePlotter3d(string title) :
 		Plotter3d(title) {
 
+	plot();
 }
 
 // Destructor
@@ -899,12 +905,14 @@ DiffuseLightSurfacePlotter3d::~DiffuseLightSurfacePlotter3d() {
 
 void DiffuseLightSurfacePlotter3d::plot() {
 
-	// Decorator pattern
-	Plotter3d::plot();
+	for ( int k = 0; k < 2; k++ ){
 
-	cmap1_init( colorplot::greyScale );
-	plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, 0, NULL, 0 );
+		// Decorator pattern
+		Plotter3d::plot();
 
+		cmap1_init( colorplot::greyScale );
+		plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, 0, NULL, 0 );
+	}
 }
 
 
@@ -913,6 +921,8 @@ void DiffuseLightSurfacePlotter3d::plot() {
 /// Constructor
 MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(string title) :
 		Plotter3d(title) {
+
+	plot();
 
 }
 
@@ -923,18 +933,23 @@ MagnitudeColoredPlotter3d::~MagnitudeColoredPlotter3d() {
 
 void MagnitudeColoredPlotter3d::plot() {
 
-	// Decorator pattern
-	Plotter3d::plot();
+	for ( int k = 0; k < 2; k++ ){
 
-	cmap1_init( colorplot::colorMap );
-	plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR, NULL, 0 );
+		// Decorator pattern
+		Plotter3d::plot();
 
+		cmap1_init( colorplot::colorMap );
+		plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR, NULL, 0 );
+	}
 }
+
 //////////////////////////////////////////////////////////////
 
 /// Constructor
 MagnitudeColoredFacetedPlotter3d::MagnitudeColoredFacetedPlotter3d(string title):
 		Plotter3d(title) {
+
+	plot();
 
 }
 
@@ -945,12 +960,14 @@ MagnitudeColoredFacetedPlotter3d::~MagnitudeColoredFacetedPlotter3d() {
 
 void MagnitudeColoredFacetedPlotter3d::plot() {
 
-	// Decorator pattern
-	Plotter3d::plot();
+	for ( int k = 0; k < 2; k++ ){
 
-	cmap1_init( colorplot::colorMap );
-	plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR | FACETED, NULL, 0 );
+		// Decorator pattern
+		Plotter3d::plot();
 
+		cmap1_init( colorplot::colorMap );
+		plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR | FACETED, NULL, 0 );
+	}
 }
 
 //////////////////////////////////////////////////////////////
@@ -978,8 +995,9 @@ CountourPlotter3d::~CountourPlotter3d() {
 
 void CountourPlotter3d::plot() {
 
-	// Decorator pattern
-	Plotter3d::plot();
+		// Do not repeat the loop (?) for this mother class plot
+		// Decorator pattern
+		Plotter3d::plot();
 
 }
 
@@ -988,6 +1006,8 @@ void CountourPlotter3d::plot() {
 /// Constructor
 MagnitudeColoredCountourPlotter3d::MagnitudeColoredCountourPlotter3d(string title):
 		CountourPlotter3d(title) {
+
+	plot();
 
 }
 
@@ -998,12 +1018,14 @@ MagnitudeColoredCountourPlotter3d::~MagnitudeColoredCountourPlotter3d() {
 
 void MagnitudeColoredCountourPlotter3d::plot() {
 
-	// Decorator pattern
-	CountourPlotter3d::plot();
+	for ( int k = 0; k < 2; k++ ){
 
-	cmap1_init( colorplot::colorMap );
-	plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR | SURF_CONT | BASE_CONT, cLevel_, nLevels_ );
+		// Decorator pattern
+		CountourPlotter3d::plot();
 
+		cmap1_init( colorplot::colorMap );
+		plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR | SURF_CONT | BASE_CONT, cLevel_, nLevels_ );
+	}
 }
 
 //////////////////////////////////////////////////////////////
@@ -1038,6 +1060,9 @@ MagnitudeColoredCountourLimitedPlotter3d::MagnitudeColoredCountourLimitedPlotter
 			for ( int j = indexymin_[i]; j < indexymax_[i]; j++ )
 				zLimited_[i][j] = z_[i][j];
 		}
+
+		plot();
+
 }
 
 // Destructor
@@ -1055,15 +1080,17 @@ void MagnitudeColoredCountourLimitedPlotter3d::plot() {
 	// Decorator pattern
 	Plotter3d::plot();
 
-	int indexxmin  = 0;
-	int indexxmax  = nPtsX_;
+	for ( int k = 0; k < 2; k++ ){
 
-	cmap1_init( colorplot::colorMap );
-	plsurf3dl( x_, y_, (const double * const *) zLimited_, nPtsX_, nPtsY_,
-						MAG_COLOR | SURF_CONT | BASE_CONT,
-						cLevel_, nLevels_,
-						indexxmin, indexxmax, indexymin_, indexymax_ );
+		int indexxmin  = 0;
+		int indexxmax  = nPtsX_;
 
+		cmap1_init( colorplot::colorMap );
+		plsurf3dl( x_, y_, (const double * const *) zLimited_, nPtsX_, nPtsY_,
+							MAG_COLOR | SURF_CONT | BASE_CONT,
+							cLevel_, nLevels_,
+							indexxmin, indexxmax, indexymin_, indexymax_ );
+	}
 }
 
 //////////////////////////////////////////////////////////////

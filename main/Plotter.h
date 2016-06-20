@@ -287,6 +287,9 @@ class Plotter3d {
 
 	protected:
 
+		// old style constructor
+		Plotter3d(string title, int old);
+
 		/// Protected constructor
 		Plotter3d(string title);
 
