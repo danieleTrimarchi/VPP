@@ -75,12 +75,27 @@ int main(int argc, char** argv) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-		DiffuseLightSurfacePlotter3d plotGrey("GreyScale");
+		Eigen::ArrayXd x(40);
+		Eigen::ArrayXd y(55);
+		Eigen::MatrixXd z(x.size(), y.size());
 
-		MagnitudeColoredPlotter3d plotMag("MagnitudeColor");
-		MagnitudeColoredFacetedPlotter3d plotMagFac("MagnitudeColorFacet");
-		MagnitudeColoredCountourPlotter3d plotMagCont("MagnitudeColorContour");
-		MagnitudeColoredCountourLimitedPlotter3d plotMagContLim("MagnitudeColorContourLimited");
+		for(size_t i=0; i<x.size(); i++)
+			x(i) =  2. * i / ( x.size() - 1 );
+
+		for(size_t i=0; i<y.size(); i++)
+			y(i) = -1. + 2. * i / ( y.size() - 1 );
+
+		for ( int i= 0; i < x.size(); i++ ) {
+			for ( int j= 0; j < y.size(); j++ ) {
+
+//				double r = sqrt( x(i) * x(i) + y(j) * y(j) );
+//				z(i,j) = exp( -r * r ) * cos( 2.0 * M_PI * r );
+				z(i,j) = x(i)*x(i)*y(j)*y(j);
+
+			}
+		}
+
+		MagnitudeColoredPlotter3d plotGrey(x,y,z,"GreyScale");
 
 		throw VPPException(HERE, "STOP");
 

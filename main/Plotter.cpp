@@ -756,12 +756,12 @@ void PolarPlotter::plot(size_t skipCircles) {
 // Plotter3d class ////////////////////////////////////////
 
 // Plotter3d Constructor
-Plotter3d::Plotter3d(string title) :
-		nPtsX_(35),
-		nPtsY_(45),
+Plotter3d::Plotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title) :
+		nPtsX_(x.size()),
+		nPtsY_(y.size()),
 		title_(title),
-		zMin_(0),
-		zMax_(0),
+		zMin_(1e38),
+		zMax_(-1e38),
 		alt_(60),
 		az_(30)
 {
@@ -780,22 +780,23 @@ Plotter3d::Plotter3d(string title) :
 
 	// Set the values of the -x and -y axis
 	for ( int i = 0; i < nPtsX_; i++ )
-		x_[i] = -1. + 2. * i / ( nPtsX_ - 1 );
+		x_[i] = x(i);
+
+	xMin_= x.minCoeff();
+	yMin_= y.minCoeff();
+	xMax_= x.maxCoeff();
+	yMax_= y.maxCoeff();
 
 	for ( size_t j = 0; j < nPtsY_; j++ )
-		y_[j] = -1. + 2. * j /  ( nPtsY_ - 1 );
+		y_[j] = y(j);
 
 	// Allocate space for the function values array
 	plAlloc2dGrid( &z_, nPtsX_, nPtsY_ );
 
 	// Fill the array 'z' with the values of the function
 	for ( int i= 0; i < nPtsX_; i++ )
-		for ( int j= 0; j < nPtsY_; j++ ) {
-
-			double r = sqrt( x_[i] * x_[i] + y_[j] * y_[j] );
-			z_[i][j] = exp( -r * r ) * cos( 2.0 * M_PI * r );
-
-		}
+		for ( int j= 0; j < nPtsY_; j++ )
+			z_[i][j] = z(i,j);
 
 	// Now get the bounds of the function z
 	for ( int i= 0; i < nPtsX_; i++ )
@@ -823,15 +824,18 @@ void Plotter3d::plot() {
 
 	pladv( 0 );
 
-	plvpor( 0.0, 1.0, 0.0, 0.9 );
-	plwind( -1.0, 1.0, -0.9, 1.1 );
+	// Create the viewport (isoparametric coordinates)
+	plvpor( 0.0, 1.0, 0.0, 1 );
+	// Sets up the world coordinates of the edges of the viewport
+				// -1   2
+	plwind( -1,1,-1,1 );
 	plcol0( 3 );
 	plmtex( "t", 1.0, 0.5, 0.5, title_.c_str() );
 	plcol0( 1 );
 
-	plw3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zMin_, zMax_,alt_, az_ );
+	plw3d( 1.0, 1.0, 1.0, xMin_-1, xMax_+1, yMin_-1, yMax_+1, zMin_, zMax_,alt_, az_ );
 	plbox3( "bnstu", "x axis", 0.0, 0,
-			"bnstu", "y axis", 0.0, 0,
+					"bnstu", "y axis", 0.0, 0,
 			"bcdmnstuv", "z axis", 0.0, 0 );
 
 	plcol0( 2 );
@@ -892,8 +896,8 @@ void Plotter3d::cmap1_init( int gray )
 //////////////////////////////////////////////////////////////
 
 // Constructor
-DiffuseLightSurfacePlotter3d::DiffuseLightSurfacePlotter3d(string title) :
-		Plotter3d(title) {
+DiffuseLightSurfacePlotter3d::DiffuseLightSurfacePlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title) :
+		Plotter3d( x, y, z, title ) {
 
 	plot();
 
@@ -920,8 +924,8 @@ void DiffuseLightSurfacePlotter3d::plot() {
 //////////////////////////////////////////////////////////////
 
 /// Constructor
-MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(string title) :
-		Plotter3d(title) {
+MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title) :
+		Plotter3d( x, y, z, title ) {
 
 	plot();
 
@@ -948,8 +952,8 @@ void MagnitudeColoredPlotter3d::plot() {
 //////////////////////////////////////////////////////////////
 
 /// Constructor
-MagnitudeColoredFacetedPlotter3d::MagnitudeColoredFacetedPlotter3d(string title):
-		Plotter3d(title) {
+MagnitudeColoredFacetedPlotter3d::MagnitudeColoredFacetedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title):
+		Plotter3d( x, y, z, title ) {
 
 	plot();
 
@@ -977,8 +981,8 @@ void MagnitudeColoredFacetedPlotter3d::plot() {
 
 
 /// Constructor
-CountourPlotter3d::CountourPlotter3d(string title):
-		Plotter3d(title),
+CountourPlotter3d::CountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title):
+		Plotter3d( x, y, z, title ),
 		nLevels_(10),
 		cLevel_( new double[nLevels_] ){
 
@@ -1007,8 +1011,8 @@ void CountourPlotter3d::plot() {
 //////////////////////////////////////////////////////////////
 
 /// Constructor
-MagnitudeColoredCountourPlotter3d::MagnitudeColoredCountourPlotter3d(string title):
-		CountourPlotter3d(title) {
+MagnitudeColoredCountourPlotter3d::MagnitudeColoredCountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title):
+		CountourPlotter3d( x, y, z, title ) {
 
 	plot();
 
@@ -1035,8 +1039,8 @@ void MagnitudeColoredCountourPlotter3d::plot() {
 //////////////////////////////////////////////////////////////
 
 // Constructor
-MagnitudeColoredCountourLimitedPlotter3d::MagnitudeColoredCountourLimitedPlotter3d(string title) :
-		CountourPlotter3d(title),
+MagnitudeColoredCountourLimitedPlotter3d::MagnitudeColoredCountourLimitedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title) :
+		CountourPlotter3d( x, y, z, title ),
 		indexymin_( new int[ nPtsX_ ] ),
 		indexymax_( new int[ nPtsX_ ] )
 {
