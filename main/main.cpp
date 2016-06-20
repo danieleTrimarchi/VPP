@@ -76,10 +76,11 @@ int main(int argc, char** argv) {
 		printf("=======================\n");
 
 		DiffuseLightSurfacePlotter3d plotGrey("GreyScale");
+
 		MagnitudeColoredPlotter3d plotMag("MagnitudeColor");
-//		MagnitudeColoredFacetedPlotter3d plotMagFac("MagnitudeColorFacet");
-//		MagnitudeColoredCountourPlotter3d plotMagCont("MagnitudeColorContour");
-//		MagnitudeColoredCountourLimitedPlotter3d plotMagContLim("MagnitudeColorContourLimited");
+		MagnitudeColoredFacetedPlotter3d plotMagFac("MagnitudeColorFacet");
+		MagnitudeColoredCountourPlotter3d plotMagCont("MagnitudeColorContour");
+		MagnitudeColoredCountourLimitedPlotter3d plotMagContLim("MagnitudeColorContourLimited");
 
 		throw VPPException(HERE, "STOP");
 
