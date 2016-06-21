@@ -1,11 +1,12 @@
 #include "VPPHydroItem.h"
-#include "Warning.h"
+#include "Plotter.h"
 
 #include "mathUtils.h"
 using namespace mathUtils;
 
+#include "IOUtils.h"
 #include "VPPException.h"
-#include "Plotter.h"
+#include "Warning.h"
 
 // Constructor
 ResistanceItem::ResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
@@ -147,20 +148,8 @@ void InducedResistanceItem::plot() {
 
 	// For which TWV, TWA shall we plot the aero forces/moments?
 	size_t twv=0, twa=0;
-
-	std::cout<<"--> Please enter the values of twv and twa for the Induced Resistance plot: "<<std::endl;
-	while(true){
-	cin >> twv >> twa;
-	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
-	bool vFine= twv < pAeroForcesItem_->getWindItem()->getWVSize();
-	bool aFine= twa < pAeroForcesItem_->getWindItem()->getWASize();
-	if(!vFine)
-		std::cout<<"the value of twv is out of range, max is: "<<pAeroForcesItem_->getWindItem()->getWVSize()-1<<std::endl;
-	if(!aFine)
-		std::cout<<"the value of twa is out of range, max is: "<<pAeroForcesItem_->getWindItem()->getWASize()-1<<std::endl;
-	if(vFine&&aFine)
-		break;
-	}
+	IOUtils io(pAeroForcesItem_->getWindItem());
+	io.askUserWindIndexes(twv, twa);
 
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
@@ -399,20 +388,8 @@ void ResiduaryResistanceItem::plot(WindItem* pWind) {
 
 	// For which TWV, TWA shall we plot the aero forces/moments?
 	size_t twv=0, twa=0;
-
-	std::cout<<"--> Please enter the values of twv and twa for the Residuary Resistance plot: "<<std::endl;
-	while(true){
-	cin >> twv >> twa;
-	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
-	bool vFine= twv < pWind->getWVSize();
-	bool aFine= twa < pWind->getWASize();
-	if(!vFine)
-		std::cout<<"the value of twv is out of range, max is: "<<pWind->getWVSize()-1<<std::endl;
-	if(!aFine)
-		std::cout<<"the value of twa is out of range, max is: "<<pWind->getWASize()-1<<std::endl;
-	if(vFine&&aFine)
-		break;
-	}
+	IOUtils io(pWind);
+	io.askUserWindIndexes(twv, twa);
 
 	ResistanceItem::update(twv,twa);
 
@@ -515,20 +492,8 @@ void Delta_ResiduaryResistance_HeelItem::plot(WindItem* pWind) {
 
 	// For which TWV, TWA shall we plot the aero forces/moments?
 	size_t twv=0, twa=0;
-
-	std::cout<<"--> Please enter the values of twv and twa for the Delta Residuary Resistance plot: "<<std::endl;
-	while(true){
-	cin >> twv >> twa;
-	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
-	bool vFine= twv < pWind->getWVSize();
-	bool aFine= twa < pWind->getWASize();
-	if(!vFine)
-		std::cout<<"the value of twv is out of range, max is: "<<pWind->getWVSize()-1<<std::endl;
-	if(!aFine)
-		std::cout<<"the value of twa is out of range, max is: "<<pWind->getWASize()-1<<std::endl;
-	if(vFine&&aFine)
-		break;
-	}
+	IOUtils io(pWind);
+	io.askUserWindIndexes(twv, twa);
 
 	// update the item
 	update(twv,twa);

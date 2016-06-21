@@ -27,7 +27,7 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	// Instantiate a NRSolver that will be used to feed the optimizer with
 	// an equilibrated first guess solution. The solver will solve a subproblem
 	// without optimization variables
-	nrSover_.reset( new NRSolver(VPPItemFactory,dimension_,subPbSize_) );
+	nrSolver_.reset( new NRSolver(VPPItemFactory,dimension_,subPbSize_) );
 
 	// Init the STATIC member vppItemsContainer
 	vppItemsContainer_= VPPItemFactory;
@@ -166,7 +166,7 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 void Optimizer::solveInitialGuess(int TWV, int TWA) {
 
 	// Get
-	xp_.block(0,0,2,1)= nrSover_->run(TWV,TWA,xp_).block(0,0,2,1);
+	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
 
 	// Make sure the initial guess does not exceeds the bounds
 	for(size_t i=0; i<subPbSize_; i++) {
@@ -449,7 +449,7 @@ void Optimizer::plotXY(size_t iWa) {
 // Add this method for compatibility with the NR solver.
 // TODO dtrimarchi: this could go to a common parent class
 void Optimizer::plotJacobian() {
-	nrSover_->plotJacobian();
+	nrSolver_->plotJacobian();
 }
 
 

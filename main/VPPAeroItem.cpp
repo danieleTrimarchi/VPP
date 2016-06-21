@@ -2,6 +2,7 @@
 
 #include "VPPException.h"
 #include "mathUtils.h"
+#include "IOUtils.h"
 
 using namespace mathUtils;
 
@@ -695,20 +696,8 @@ void AeroForcesItem::plot() {
 
 	// For which TWV, TWA shall we plot the aero forces/moments?
 	size_t twv=0, twa=0;
-
-	std::cout<<"--> Please enter the values of twv and twa for the aero forces plot: "<<std::endl;
-	while(true){
-	cin >> twv >> twa;
-	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
-	bool vFine= twv < pWindItem_->getWVSize();
-	bool aFine= twa < pWindItem_->getWASize();
-	if(!vFine)
-		std::cout<<"the value of twv is out of range, max is: "<<pWindItem_->getWVSize()-1<<std::endl;
-	if(!aFine)
-		std::cout<<"the value of twa is out of range, max is: "<<pWindItem_->getWASize()-1<<std::endl;
-	if(vFine&&aFine)
-		break;
-	}
+	IOUtils io(pWindItem_);
+	io.askUserWindIndexes(twv, twa);
 
 	// Buffer the current solution
 	Eigen::VectorXd xbuf(4);

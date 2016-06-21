@@ -2,6 +2,8 @@
 #include "VPPException.h"
 #include "mathUtils.h"
 #include <limits>
+#include "IOUtils.h"
+#include "NRSolver.h"
 
 // Constructor
 VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
@@ -264,24 +266,12 @@ void VPPItemFactory::plotTotalResistance(){
 
 	// Ask the user for twv and twa
 	size_t twv=0, twa=0;
-	std::cout<<"--> Please enter the values of twv and twa for the total resistance plot: "<<std::endl;
-	while(true){
-	cin >> twv >> twa;
-	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
-	bool vFine= twv < pWind_->getWVSize();
-	bool aFine= twa < pWind_->getWASize();
-	if(!vFine)
-		std::cout<<"the value of twv is out of range, max is: "<<pWind_->getWVSize()-1<<std::endl;
-	if(!aFine)
-		std::cout<<"the value of twa is out of range, max is: "<<pWind_->getWASize()-1<<std::endl;
-	if(vFine&&aFine)
-		break;
-	}
+	IOUtils io(pWind_.get());
+	io.askUserWindIndexes(twv, twa);
 
 	// Init the state vector
-	Eigen::VectorXd stateVector(4);
-	std::cout<<"--> Please enter the values the state vector: "<<std::endl;
-	for(size_t i=0; i<stateVector.size(); i++) cin >> stateVector(i);
+	Eigen::VectorXd stateVector;
+	io.askUserStateVector(stateVector);
 
 	// Define the number of velocities and angles
 	// ( the angles are incremented of 10!)
@@ -345,6 +335,66 @@ void VPPItemFactory::plotTotalResistance(){
 			pAeroForcesItem_->getWindItem()->getTWV(twv),
 			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
 	fPlotter.plot("Fn [-]","Total Resistance [N]", msg);
+
+}
+
+// Make a 3d plot of the optimization variables v, phi when varying the two opt
+// parameters flat and crew
+void VPPItemFactory::plotOptimizationSpace() {
+
+	// Instantiate a IOUtil
+	IOUtils io(pWind_.get());
+
+	// Instantiate and ask for twv, twa, and the state vector
+	size_t twv, twa;
+	Eigen::VectorXd x;
+	io.askUserWindIndexes(twv, twa);
+	io.askUserStateVector(x);
+
+	// Instantiate a NRSolver
+	boost::shared_ptr<VPPItemFactory> ptr(this);
+	NRSolver nrSolver(ptr, 4, 2);
+
+	// Set the number of values for flat and crew -> x, y
+	size_t nFlat=30, nCrew=30;
+
+	// Instantiate the result matrices : v and phi
+	Eigen::ArrayXd flat(nFlat), crew(nCrew);
+	Eigen::MatrixXd u(nCrew,nFlat);
+	Eigen::MatrixXd phi(nCrew,nFlat);
+
+	// Get the bounds for crew and flat
+	double dCrew= ( pParser_->get("B_MAX")-pParser_->get("B_MIN") ) / (nCrew+1);
+	double dFlat= ( pParser_->get("F_MAX")-pParser_->get("F_MIN") ) / (nFlat+1);
+
+	// Loop on nFlat
+	for(size_t iFlat=0; iFlat<nFlat; iFlat++){
+
+		// set this flat
+		flat(iFlat)= pParser_->get("F_MIN")  + dFlat * iFlat;
+
+		//	loop on nCrew
+		for(size_t iCrew=0; iCrew<nCrew; iCrew++){
+
+			// set this crew
+			crew(iCrew)= pParser_->get("B_MIN")  + dCrew * iCrew;
+
+			//			set flat, crew in the state vector
+			x(2) = crew(iCrew);
+			x(3) = flat(iFlat);
+
+			// 			run NRSolver -> v, phi
+			x.block(0,0,2,1)= nrSolver.run(twv, twa,x).block(0,0,2,1);
+
+			//			store v, phi in MatrixXds
+			u(iCrew,iFlat) = x(0);
+			phi(iCrew,iFlat) = x(1);
+
+		}
+	}
+
+	MagnitudeColoredPlotter3d(crew, flat, u, "velocity opt");
+	MagnitudeColoredPlotter3d(crew, flat, phi, "phi opt");
 
 }
 

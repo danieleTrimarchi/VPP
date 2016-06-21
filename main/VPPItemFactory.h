@@ -92,6 +92,10 @@ class VPPItemFactory {
 		/// Plot the total resistance over a fixed range Fn=0-1
 		void plotTotalResistance();
 
+		/// Make a 3d plot of the optimization variables v, phi when varying the two opt
+		/// parameters flat and crew
+		void plotOptimizationSpace();
+
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 

@@ -401,11 +401,9 @@ void NRSolver::plotXY(size_t iWa) {
 void NRSolver::plotJacobian(){
 
 	// Define a linearization point
-	Eigen::VectorXd xp(4);
-	std::cout<<"--> Please enter the values the state vector: "<<std::endl;
-
-	for(size_t i=0; i<xp.size(); i++) cin >> xp(i);
-	//xp << 1.19772, 1.17027e-20, 0.627295, 1;
+	IOUtils io(vppItemsContainer_->getWind());
+	Eigen::VectorXd xp;
+	io.askUserStateVector(xp);
 
 	// Instantiate a Jacobian
 	VPPJacobian J(xp,vppItemsContainer_,subPbSize_);
@@ -413,20 +411,7 @@ void NRSolver::plotJacobian(){
 	// ask the user which awv, awa
 	// For which TWV, TWA shall we plot the aero forces/moments?
 	size_t twv=0, twa=0;
-
-	std::cout<<"--> Please enter the values of twv and twa for the aero forces plot: "<<std::endl;
-	while(true){
-	cin >> twv >> twa;
-	std::cout<<"got: "<<twv<<" "<<twa<<std::endl;
-	bool vFine= twv < vppItemsContainer_->getWind()->getWVSize();
-	bool aFine= twa < vppItemsContainer_->getWind()->getWASize();
-	if(!vFine)
-		std::cout<<"the value of twv is out of range, max is: "<<vppItemsContainer_->getWind()->getWVSize()-1<<std::endl;
-	if(!aFine)
-		std::cout<<"the value of twa is out of range, max is: "<<vppItemsContainer_->getWind()->getWASize()-1<<std::endl;
-	if(vFine&&aFine)
-		break;
-	}
+	io.askUserWindIndexes(twv, twa);
 
 	// call jacobian.testPlot
 	J.testPlot(twv, twa);

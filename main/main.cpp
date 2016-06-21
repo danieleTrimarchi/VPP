@@ -75,30 +75,6 @@ int main(int argc, char** argv) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-		Eigen::ArrayXd x(40);
-		Eigen::ArrayXd y(55);
-		Eigen::MatrixXd z(x.size(), y.size());
-
-		for(size_t i=0; i<x.size(); i++)
-			x(i) =  2. * i / ( x.size() - 1 );
-
-		for(size_t i=0; i<y.size(); i++)
-			y(i) = -1. + 2. * i / ( y.size() - 1 );
-
-		for ( int i= 0; i < x.size(); i++ ) {
-			for ( int j= 0; j < y.size(); j++ ) {
-
-//				double r = sqrt( x(i) * x(i) + y(j) * y(j) );
-//				z(i,j) = exp( -r * r ) * cos( 2.0 * M_PI * r );
-				z(i,j) = x(i)*x(i)*y(j)*y(j);
-
-			}
-		}
-
-		MagnitudeColoredPlotter3d plotGrey(x,y,z,"GreyScale");
-
-		throw VPPException(HERE, "STOP");
-
 		// Instantiate a parser with the variables
 		VariableFileParser parser("variableFile.txt");
 
@@ -182,6 +158,9 @@ int main(int argc, char** argv) {
 			else if(s == string("plotNegativeResistance") )
 				pVppItems->getNegativeResistanceItem()->plot();
 
+			else if(s == string("plotOptimizationSpace") )
+				pVppItems->plotOptimizationSpace();
+
 			//---
 
 			else if(s == string("reload") ){
@@ -233,6 +212,8 @@ int main(int argc, char** argv) {
 				std::cout<<"   plotDelta_FrictRes_Heel  : plot the Delta Frictional Resistance due to heel for a fixed range\n";
 				std::cout<<"   plotDelta_ResidRes_Heel  : plot the Delta Residuary Resistance due to heel for a fixed range\n";
 				std::cout<<"   plotNegativeResistance   : plot the Negative Resistance for a fixed Fn range\n";
+				std::cout<<" \n";
+				std::cout<<"   plotOptimizationSpace    : plot the optimization 2d space starting at a given configuration\n";
 				std::cout<<" \n";
 				std::cout<<"   reload                   : reload the variables from file \n";
 				std::cout<<"   run                      : launches the computations \n";

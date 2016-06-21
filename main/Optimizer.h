@@ -85,7 +85,7 @@ class Optimizer {
 
 		/// Shared ptr holding the underlying NRSolver used to refine the
 		/// initial guess to be handed to the optimizer
-		boost::shared_ptr<NRSolver> nrSover_;
+		boost::shared_ptr<NRSolver> nrSolver_;
 
 		/// lower and upper bounds for the state variables
 		std::vector<double> lowerBounds_,upperBounds_;
