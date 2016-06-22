@@ -352,8 +352,7 @@ void VPPItemFactory::plotOptimizationSpace() {
 	io.askUserStateVector(x);
 
 	// Instantiate a NRSolver
-	boost::shared_ptr<VPPItemFactory> ptr(this);
-	NRSolver nrSolver(ptr, 4, 2);
+	NRSolver nrSolver(this, 4, 2);
 
 	// Set the number of values for flat and crew -> x, y
 	size_t nFlat=30, nCrew=30;
@@ -393,8 +392,8 @@ void VPPItemFactory::plotOptimizationSpace() {
 		}
 	}
 
-	MagnitudeColoredPlotter3d(crew, flat, u, "velocity opt");
-	MagnitudeColoredPlotter3d(crew, flat, phi, "phi opt");
+	MagnitudeColoredCountourPlotter3d(crew, flat, u, "velocity opt", "crew", "flat" );
+	MagnitudeColoredCountourPlotter3d(crew, flat, phi, "phi opt", "crew", "flat" );
 
 }
 

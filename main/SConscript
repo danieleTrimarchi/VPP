@@ -38,13 +38,17 @@ THIRD_PARTY_LIBPATH=[
 			'/opt/local/lib' # macPorts and lnopt lib path
 		]
 
-#CPPFLAGS = ['-Wc++11-extensions']
 
 #This must be a way to define the path where the executable searches for the dyLib, but for the moment it does not seems to work
 env = DefaultEnvironment()
 
+
 #Compile Debug mode
 #env.Append(CCFLAGS= '-g')
+#env.Append(CPPFLAGS ='-Wc++11-extensions')
+
+#warning: use of enumeration in a nested name specifier is a
+#      C++11 extension [-Wc++11-extensions]
 
 #===============================================================================
 # env = Environment()

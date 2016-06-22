@@ -2,10 +2,10 @@
 #include "mathUtils.h"
 
 // Constructor
-VPPJacobian::VPPJacobian(VectorXd& x,boost::shared_ptr<VPPItemFactory> vppItemsContainer, size_t subProblemSize):
+VPPJacobian::VPPJacobian(VectorXd& x,VPPItemFactory* pVppItemsContainer, size_t subProblemSize):
 x_(x),
 xp0_(x),
-vppItemsContainer_(vppItemsContainer),
+pVppItemsContainer_(pVppItemsContainer),
 subPbSize_(subProblemSize) {
 
 	// Resize this Jacobian to the size of the state vector
@@ -33,14 +33,14 @@ void VPPJacobian::run(int twv, int twa) {
 
 		// Compile the i-th column of the Jacobian matrix with the
 		// residuals for x_plus_epsilon
-		col(iVar) = vppItemsContainer_->getResiduals(twv,twa,xp).block(0,0,subPbSize_,1);
+		col(iVar) = pVppItemsContainer_->getResiduals(twv,twa,xp).block(0,0,subPbSize_,1);
 
 		// set x= x - eps
 		xp(iVar) = x_(iVar) - eps;
 
 		// compile the i-th column of the Jacobian matrix subtracting the
 		// residuals for x_minus_epsilon
-		col(iVar) -= vppItemsContainer_->getResiduals(twv,twa,xp).block(0,0,subPbSize_,1);
+		col(iVar) -= pVppItemsContainer_->getResiduals(twv,twa,xp).block(0,0,subPbSize_,1);
 
 		// divide the column of the Jacobian by 2*eps
 		col(iVar) /= ( 2 * eps );
@@ -48,7 +48,7 @@ void VPPJacobian::run(int twv, int twa) {
 	}
 
 	// Update the items with the initial state vector
-	vppItemsContainer_->update(twv,twa,x_);
+	pVppItemsContainer_->update(twv,twa,x_);
 
 }
 
@@ -82,7 +82,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 		x(0,i)= x_(0);
 
 		// Store the force value for this plot
-		Eigen::VectorXd residuals=vppItemsContainer_->getResiduals(twv,twa,x_);
+		Eigen::VectorXd residuals=pVppItemsContainer_->getResiduals(twv,twa,x_);
 		f(0,i)= residuals(0);
 		M(0,i)= residuals(1);
 
@@ -125,7 +125,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 		x(0,i)= x_(1);
 
 		// Store the force value for this plot
-		Eigen::VectorXd residuals=vppItemsContainer_->getResiduals(twv,twa,x_);
+		Eigen::VectorXd residuals=pVppItemsContainer_->getResiduals(twv,twa,x_);
 		f(0,i)= residuals(0);
 		M(0,i)= residuals(1);
 

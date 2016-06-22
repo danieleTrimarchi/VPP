@@ -11,7 +11,7 @@ using namespace mathUtils;
 //// NRSolver class  //////////////////////////////////////////////
 
 // Constructor
-NRSolver::NRSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory,
+NRSolver::NRSolver(VPPItemFactory* pVPPItemFactory,
 		size_t dimension, size_t subPbSize ):
 dimension_(dimension),
 subPbSize_(subPbSize),
@@ -24,10 +24,10 @@ maxIters_(100){
 	xp_.resize(dimension_);
 
 	// Init the STATIC member vppItemsContainer
-	vppItemsContainer_= VPPItemFactory;
+	pVppItemsContainer_= pVPPItemFactory;
 
 	// Set the parser
-	pParser_= vppItemsContainer_->getParser();
+	pParser_= pVppItemsContainer_->getParser();
 
 	// Set the and apply the lower and the upper bounds
 	// -> make sure the bounds are larger than the initial
@@ -42,7 +42,7 @@ maxIters_(100){
 
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run
-	pWind_=vppItemsContainer_->getWind();
+	pWind_=pVppItemsContainer_->getWind();
 
 	// Init the ResultContainer that will be filled while running the results
 	pResults_.reset(new ResultContainer(pWind_));
@@ -54,13 +54,13 @@ NRSolver::~NRSolver() {
 	// make nothing
 }
 
-void NRSolver::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
+void NRSolver::reset(VPPItemFactory* pVPPItemFactory) {
 
 	// Init the STATIC member vppItemsContainer
-	vppItemsContainer_= VPPItemFactory;
+	pVppItemsContainer_= pVPPItemFactory;
 
 	// Set the parser
-	pParser_= vppItemsContainer_->getParser();
+	pParser_= pVppItemsContainer_->getParser();
 
 	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
 	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
@@ -69,7 +69,7 @@ void NRSolver::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run
-	pWind_=vppItemsContainer_->getWind();
+	pWind_=pVppItemsContainer_->getWind();
 
 	// Init the ResultContainer that will be filled while running the results
 	pResults_.reset(new ResultContainer(pWind_));
@@ -148,7 +148,7 @@ void NRSolver::run(int twv, int twa) {
 		std::vector<double> PhiResiduals;
 
 		// instantiate a Jacobian
-		VPPJacobian J(xp_,vppItemsContainer_,subPbSize_);
+		VPPJacobian J(xp_,pVppItemsContainer_,subPbSize_);
 
 		// Instantiate a JacobianChecker
 		// JacobianChecker JCheck;
@@ -187,7 +187,7 @@ void NRSolver::run(int twv, int twa) {
 			// Build a state vector with the size of the outer vector
 
 			// Compute the residuals vector - here only the part relative to the subproblem
-			Eigen::VectorXd residuals= vppItemsContainer_->getResiduals(twv,twa,xp_).block(0,0,subPbSize_,1);
+			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_).block(0,0,subPbSize_,1);
 			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<std::endl;
 
 			if(it>1) {
@@ -240,7 +240,7 @@ void NRSolver::run(int twv, int twa) {
 	}
 
 	// Get the residuals
-	Eigen::VectorXd res= vppItemsContainer_->getResiduals();
+	Eigen::VectorXd res= pVppItemsContainer_->getResiduals();
 
 	// Print the solution
 	//printf("\n found solution after %d iterations\n     at f(", it);
@@ -401,12 +401,12 @@ void NRSolver::plotXY(size_t iWa) {
 void NRSolver::plotJacobian(){
 
 	// Define a linearization point
-	IOUtils io(vppItemsContainer_->getWind());
+	IOUtils io(pVppItemsContainer_->getWind());
 	Eigen::VectorXd xp;
 	io.askUserStateVector(xp);
 
 	// Instantiate a Jacobian
-	VPPJacobian J(xp,vppItemsContainer_,subPbSize_);
+	VPPJacobian J(xp,pVppItemsContainer_,subPbSize_);
 
 	// ask the user which awv, awa
 	// For which TWV, TWA shall we plot the aero forces/moments?

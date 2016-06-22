@@ -27,7 +27,7 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	// Instantiate a NRSolver that will be used to feed the optimizer with
 	// an equilibrated first guess solution. The solver will solve a subproblem
 	// without optimization variables
-	nrSolver_.reset( new NRSolver(VPPItemFactory,dimension_,subPbSize_) );
+	nrSolver_.reset( new NRSolver(VPPItemFactory.get(),dimension_,subPbSize_) );
 
 	// Init the STATIC member vppItemsContainer
 	vppItemsContainer_= VPPItemFactory;

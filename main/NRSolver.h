@@ -21,13 +21,13 @@ class NRSolver {
 	public:
 
 		/// Constructor
-		NRSolver(boost::shared_ptr<VPPItemFactory>, size_t size, size_t subPbSize);
+		NRSolver(VPPItemFactory*, size_t size, size_t subPbSize);
 
 		/// Destructor
 		~NRSolver();
 
 		/// Reset the NRSolver when reloading the initial data
-		void reset(boost::shared_ptr<VPPItemFactory>);
+		void reset(VPPItemFactory*);
 
 		/// Run the solver
 		void run(int TWV, int TWA);
@@ -79,7 +79,7 @@ class NRSolver {
 
 		/// Ptr to the VPPItemFactory that contains all of the ingredients
 		/// required to compute the optimization constraints
-		boost::shared_ptr<VPPItemFactory> vppItemsContainer_;
+		VPPItemFactory* pVppItemsContainer_;
 
 		/// Ptr to the variableFileParser
 		VariableFileParser* pParser_;

@@ -288,7 +288,8 @@ class Plotter3d {
 	protected:
 
 		/// Protected constructor
-		Plotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title);
+		Plotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+				string title, string xLabel, string yLabel );
 
 		/// Plot!
 		virtual void plot();
@@ -314,7 +315,7 @@ class Plotter3d {
 		double alt_, az_;
 
 		/// Title of the plot
-		string title_;
+		string title_, xLabel_, yLabel_;
 
 };
 
@@ -323,7 +324,8 @@ class DiffuseLightSurfacePlotter3d : public Plotter3d {
 	public:
 
 		/// Constructor
-		DiffuseLightSurfacePlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title);
+		DiffuseLightSurfacePlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+				string title, string xLabel, string yLabel );
 
 		/// Destructor
 		virtual ~DiffuseLightSurfacePlotter3d();
@@ -340,7 +342,8 @@ class MagnitudeColoredPlotter3d : public Plotter3d {
 	public:
 
 		/// Constructor
-		MagnitudeColoredPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title);
+		MagnitudeColoredPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+				string title, string xLabel, string yLabel );
 
 		/// Destructor
 		virtual ~MagnitudeColoredPlotter3d();
@@ -357,7 +360,8 @@ class MagnitudeColoredFacetedPlotter3d : public Plotter3d {
 	public:
 
 		/// Constructor
-		MagnitudeColoredFacetedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title);
+		MagnitudeColoredFacetedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+				string title, string xLabel, string yLabel );
 
 		/// Destructor
 		virtual ~MagnitudeColoredFacetedPlotter3d();
@@ -377,7 +381,8 @@ class CountourPlotter3d : public Plotter3d {
 	protected:
 
 		// Constructor
-		CountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title);
+		CountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+				string title, string xLabel, string yLabel );
 
 		// Destructor
 		~CountourPlotter3d();
@@ -402,7 +407,8 @@ class MagnitudeColoredCountourPlotter3d : public CountourPlotter3d {
 	public:
 
 		/// Constructor
-		MagnitudeColoredCountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title);
+		MagnitudeColoredCountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+																			string title, string xLabel, string yLabel );
 
 		/// Destructor
 		virtual ~MagnitudeColoredCountourPlotter3d();
@@ -419,7 +425,8 @@ class MagnitudeColoredCountourLimitedPlotter3d : public CountourPlotter3d {
 	public:
 
 		/// Constructor
-		MagnitudeColoredCountourLimitedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title);
+		MagnitudeColoredCountourLimitedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+				string title, string xLabel, string yLabel );
 
 		/// Destructor
 		virtual ~MagnitudeColoredCountourLimitedPlotter3d();

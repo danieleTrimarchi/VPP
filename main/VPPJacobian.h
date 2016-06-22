@@ -30,7 +30,7 @@ class VPPJacobian : public Eigen::MatrixXd {
 	public:
 
 		/// Constructor
-		VPPJacobian(VectorXd& x,boost::shared_ptr<VPPItemFactory> vppItemsContainer, size_t subProblemSize);
+		VPPJacobian(VectorXd& x,VPPItemFactory* pVppItemsContainer, size_t subProblemSize);
 
 		/// Compute this Jacobian
 		void run(int twv, int twa);
@@ -53,7 +53,7 @@ class VPPJacobian : public Eigen::MatrixXd {
 
 		/// Ptr to the vppItemContainer, to be called to update the items
 		/// when computing the derivatives by finite difference
-		boost::shared_ptr<VPPItemFactory> vppItemsContainer_;
+		VPPItemFactory* pVppItemsContainer_;
 
 		/// Size of the subproblem we aim to solve with the help of this NR
 		/// the variables of the subProblem are the firsts in the state vector

@@ -756,10 +756,13 @@ void PolarPlotter::plot(size_t skipCircles) {
 // Plotter3d class ////////////////////////////////////////
 
 // Plotter3d Constructor
-Plotter3d::Plotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title) :
+Plotter3d::Plotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		string title, string xLabel, string yLabel) :
 		nPtsX_(x.size()),
 		nPtsY_(y.size()),
 		title_(title),
+		xLabel_(xLabel),
+		yLabel_(yLabel),
 		zMin_(1e38),
 		zMax_(-1e38),
 		alt_(60),
@@ -833,10 +836,10 @@ void Plotter3d::plot() {
 	plmtex( "t", 1.0, 0.5, 0.5, title_.c_str() );
 	plcol0( 1 );
 
-	plw3d( 1.0, 1.0, 1.0, xMin_-1, xMax_+1, yMin_-1, yMax_+1, zMin_, zMax_,alt_, az_ );
-	plbox3( "bnstu", "x axis", 0.0, 0,
-					"bnstu", "y axis", 0.0, 0,
-			"bcdmnstuv", "z axis", 0.0, 0 );
+	plw3d( 1.0, 1.0, 1.0, xMin_-1, xMax_, yMin_, yMax_, zMin_, zMax_,alt_, az_ );
+	plbox3( "bnstu", xLabel_.c_str(), 0.0, 0,
+					"bnstu", yLabel_.c_str(), 0.0, 0,
+			"bcdmnstuv", title_.c_str(), 0.0, 0 );
 
 	plcol0( 2 );
 
@@ -896,8 +899,10 @@ void Plotter3d::cmap1_init( int gray )
 //////////////////////////////////////////////////////////////
 
 // Constructor
-DiffuseLightSurfacePlotter3d::DiffuseLightSurfacePlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title) :
-		Plotter3d( x, y, z, title ) {
+DiffuseLightSurfacePlotter3d::DiffuseLightSurfacePlotter3d(
+		ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		string title, string xLabel, string yLabel ) :
+				Plotter3d( x, y, z, title, xLabel, yLabel ) {
 
 	plot();
 
@@ -924,8 +929,11 @@ void DiffuseLightSurfacePlotter3d::plot() {
 //////////////////////////////////////////////////////////////
 
 /// Constructor
-MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title) :
-		Plotter3d( x, y, z, title ) {
+MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(
+		ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		string title, string xLabel, string yLabel ) :
+				Plotter3d( x, y, z, title, xLabel, yLabel ) {
+
 
 	plot();
 
@@ -952,8 +960,9 @@ void MagnitudeColoredPlotter3d::plot() {
 //////////////////////////////////////////////////////////////
 
 /// Constructor
-MagnitudeColoredFacetedPlotter3d::MagnitudeColoredFacetedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title):
-		Plotter3d( x, y, z, title ) {
+MagnitudeColoredFacetedPlotter3d::MagnitudeColoredFacetedPlotter3d(		ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		string title, string xLabel, string yLabel ) :
+				Plotter3d( x, y, z, title, xLabel, yLabel ) {
 
 	plot();
 
@@ -981,10 +990,12 @@ void MagnitudeColoredFacetedPlotter3d::plot() {
 
 
 /// Constructor
-CountourPlotter3d::CountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title):
-		Plotter3d( x, y, z, title ),
-		nLevels_(10),
-		cLevel_( new double[nLevels_] ){
+CountourPlotter3d::CountourPlotter3d(
+		ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		string title, string xLabel, string yLabel ) :
+				Plotter3d( x, y, z, title, xLabel, yLabel ),
+				nLevels_(10),
+				cLevel_( new double[nLevels_] ){
 
 	double step = ( zMax_ - zMin_ ) / ( nLevels_ + 1 );
 	for ( int i = 0; i < nLevels_; i++ )
@@ -1011,8 +1022,10 @@ void CountourPlotter3d::plot() {
 //////////////////////////////////////////////////////////////
 
 /// Constructor
-MagnitudeColoredCountourPlotter3d::MagnitudeColoredCountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title):
-		CountourPlotter3d( x, y, z, title ) {
+MagnitudeColoredCountourPlotter3d::MagnitudeColoredCountourPlotter3d(
+			ArrayXd& x, ArrayXd& y, MatrixXd& z,
+			string title, string xLabel, string yLabel ) :
+					CountourPlotter3d( x, y, z, title, xLabel, yLabel ) {
 
 	plot();
 
@@ -1039,8 +1052,10 @@ void MagnitudeColoredCountourPlotter3d::plot() {
 //////////////////////////////////////////////////////////////
 
 // Constructor
-MagnitudeColoredCountourLimitedPlotter3d::MagnitudeColoredCountourLimitedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z, string title) :
-		CountourPlotter3d( x, y, z, title ),
+MagnitudeColoredCountourLimitedPlotter3d::MagnitudeColoredCountourLimitedPlotter3d(
+			ArrayXd& x, ArrayXd& y, MatrixXd& z,
+			string title, string xLabel, string yLabel ) :
+					CountourPlotter3d( x, y, z, title, xLabel, yLabel ),
 		indexymin_( new int[ nPtsX_ ] ),
 		indexymax_( new int[ nPtsX_ ] )
 {
