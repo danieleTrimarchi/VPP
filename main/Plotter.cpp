@@ -830,8 +830,7 @@ void Plotter3d::plot() {
 	// Create the viewport (isoparametric coordinates)
 	plvpor( 0.0, 1.0, 0.0, 1 );
 	// Sets up the world coordinates of the edges of the viewport
-				// -1   2
-	plwind( -1,1,-1,1 );
+	plwind( -1,1,-1,1.5 );
 	plcol0( 3 );
 	plmtex( "t", 1.0, 0.5, 0.5, title_.c_str() );
 	plcol0( 1 );

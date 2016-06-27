@@ -135,9 +135,23 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	double fHeel= pAeroForcesItem_->getFSide() / cos(PHI_);
 
 	// Compute the induced resistance Ri = Fheel^2 / (0.5 * rho_w * pi * Te^2 * V^2)
-	if(V_>0)
-		res_ = ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * V_ * V_);
-	else
+	if(V_>0) {
+
+		// The velocity used in the denominator explodes the value of the induced resistance
+		// for small values of V_. We limit then the value of res by bounding the lower value
+		// of the velocity with a parabola. This happens to preserve c1 continuity at the velocity
+		// corresponding to Fn=0.1
+		double vf= 0.1 * sqrt(Physic::g * pParser_->get("LWL"));
+		double a= 1./(2*vf), b=vf/2;
+		double v=0;
+		if( V_<vf)
+			v= a * V_ * V_ + b;
+		else
+			v= V_;
+
+		res_ = ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * v * v);
+
+	} else
 		res_=0;
 	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 

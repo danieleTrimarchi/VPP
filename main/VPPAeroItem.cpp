@@ -104,7 +104,7 @@ const int WindItem::getWVSize() const {
 	return n_twv_;
 }
 
-// Returns the true wind angle for a given step
+// Returns the true wind angle [rad] for a given step
 const double WindItem::getTWA(size_t iA) const {
 	return vTwa_[iA];
 }

@@ -124,38 +124,38 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
 		xp_(0)= 0.1;  	// V_0
 		xp_(1)= 0.1;		// PHI_0
-		xp_(2)= 0.09;		// b_0
-		xp_(3)= .99;		// f_0
+		xp_(2)= 0.01;		// b_0
+		xp_(3)= 0.99;		// f_0
 
 	}
 
-	else if( TWV>1 ) {
-
-		// For twv> 1 we can linearly predict the result of the state vector
-		Extrapolator extrapolator(
-				pResults_->get(TWV-2,TWA).getTWV(),
-				pResults_->get(TWV-2,TWA).getX(),
-				pResults_->get(TWV-1,TWA).getTWV(),
-				pResults_->get(TWV-1,TWA).getX()
-		);
-
-		// Extrapolate the state vector for the current wind
-		// velocity. Note that the items have not been init yet
-		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-
-		// Do extrapolate ONLY if the velocity is increasing
-		// This is beneficial to convergence
-		if(xp(0)>xp_(0))
-			xp_=xp;
-
-		// Make sure the initial guess does not exceeds the bounds
-		for(size_t i=0; i<dimension_; i++) {
-			if(xp_[i]<lowerBounds_[i])
-				xp_[i]=lowerBounds_[i];
-			if(xp_[i]>upperBounds_[i])
-				xp_[i]=upperBounds_[i];
-		}
-	}
+//	else if( TWV>1 ) {
+//
+//		// For twv> 1 we can linearly predict the result of the state vector
+//		Extrapolator extrapolator(
+//				pResults_->get(TWV-2,TWA).getTWV(),
+//				pResults_->get(TWV-2,TWA).getX(),
+//				pResults_->get(TWV-1,TWA).getTWV(),
+//				pResults_->get(TWV-1,TWA).getX()
+//		);
+//
+//		// Extrapolate the state vector for the current wind
+//		// velocity. Note that the items have not been init yet
+//		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
+//
+//		// Do extrapolate ONLY if the velocity is increasing
+//		// This is beneficial to convergence
+//		if(xp(0)>xp_(0))
+//			xp_=xp;
+//
+//		// Make sure the initial guess does not exceeds the bounds
+//		for(size_t i=0; i<dimension_; i++) {
+//			if(xp_[i]<lowerBounds_[i])
+//				xp_[i]=lowerBounds_[i];
+//			if(xp_[i]>upperBounds_[i])
+//				xp_[i]=upperBounds_[i];
+//		}
+//	}
 
 	std::cout<<"-->> optimizer first guess: "<<xp_.transpose()<<std::endl;
 
@@ -264,7 +264,7 @@ void Optimizer::run(int TWV, int TWA) {
 				xp[i]=xp_(i);
 
 			// Launch the optimization
-			result = opt_->optimize(xp, maxf);
+			//result = opt_->optimize(xp, maxf);
 
 			//store the results back to the member state vector
 			for(size_t i=0; i<xp_.size(); i++)

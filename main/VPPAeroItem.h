@@ -32,7 +32,7 @@ class WindItem : public VPPItem {
 		/// Returns the true wind angle for this step
 		const double getTWA() const;
 
-		/// Returns the true wind angle for a given step
+		/// Returns the true wind angle [rad] for a given step
 		const double getTWA(size_t iA) const;
 
 		/// Returns the number of true wind angles
