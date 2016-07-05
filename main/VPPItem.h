@@ -53,7 +53,7 @@ class VPPItem {
 		/// Heeling angle value in the state vector in RADIANS
 		double PHI_;
 
-		/// b value in the sate vector (reef..?)
+		/// b value in the sate vector (Crew position)
 		double b_;
 
 		/// Flat value in the state vector

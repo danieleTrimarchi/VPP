@@ -54,7 +54,11 @@ void ResistanceItem::printWhoAmI() {
 // Constructor
 InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 				ResistanceItem(pAeroForcesItem->getParser(), pAeroForcesItem->getSailSet()),
-				pAeroForcesItem_(pAeroForcesItem) {
+				pAeroForcesItem_(pAeroForcesItem),
+				vf_(0.4 * sqrt(Physic::g * pParser_->get("LWL") )),
+				a_(1./(2*vf_)),
+				c_(vf_/2),
+				v_(0) {
 
 	coeffA_.resize(4,4);
 	coeffA_ << 	3.7455,	-3.6246,	0.0589,	-0.0296,
@@ -96,6 +100,7 @@ InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 // Destructor
 InducedResistanceItem::~InducedResistanceItem() {
 }
+
 
 // Implement pure virtual method of the parent class
 void InducedResistanceItem::update(int vTW, int aTW) {
@@ -141,21 +146,21 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 		// for small values of V_. We limit then the value of res by bounding the lower value
 		// of the velocity with a parabola. This happens to preserve c1 continuity at the velocity
 		// corresponding to Fn=0.1
-		double vf= 0.1 * sqrt(Physic::g * pParser_->get("LWL"));
-		double a= 1./(2*vf), b=vf/2;
-		double v=0;
-		if( V_<vf)
-			v= a * V_ * V_ + b;
+		if( V_<vf_)
+			v_= a_ * V_ * V_ + c_;
 		else
-			v= V_;
+			v_= V_;
 
-		res_ = ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * v * v);
+		res_ = ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * v_ * v_);
 
 	} else
 		res_=0;
+
+	// Whatever we have computed, make sure it is a valid number
 	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
+
 
 // Plot the Induced Resistance curve
 void InducedResistanceItem::plot() {
@@ -168,12 +173,17 @@ void InducedResistanceItem::plot() {
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
 	double bufferPHI= PHI_;
+	double bufferb= b_;
+	double bufferf= f_;
 
 	// Define the number of velocities and angles (+=4!!)
 	size_t nVelocities=40, nAngles=20;
 
 	std::vector<string> curveLabels;
 	std::vector<ArrayXd> froudeNb, indRes;
+
+	// Set b and f
+	b_=0.0, f_=1;
 
 	// Loop on the heel angles
 	for(size_t i=0; i<nAngles; i+=4){
@@ -244,6 +254,7 @@ void InducedResistanceItem::plot() {
 	// Loop on the heel angles
 	for(size_t i=0; i<nAngles; i+=4){
 
+		// Compute the heel angle [Rad]
 		PHI_= ( 1./nAngles * (i+1) ) * M_PI/4;
 
 		// Solution-buffer vectors
@@ -302,14 +313,49 @@ void InducedResistanceItem::plot() {
 	char msg2[256];
 	sprintf(msg2,"plot Induced Resistance vs Fh^2 - "
 			"twv=%2.2f [m/s], twa=%2.2f [deg]",
-			pAeroForcesItem_->getWindItem()->getTWV(0),
-			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(0)) );
+			pAeroForcesItem_->getWindItem()->getTWV(twv),
+			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
 	f2Plotter.plot("Fh^2 [N^2]","Induced Resistance [N]", msg2);
 
 	// Restore the values of the variables
 	V_=bufferV;
 	PHI_=bufferPHI;
+
+	// Ask the user: do you want to plot Te ?
+//	if(io.askUserBool(" Would you like to plot the effective draugh Te ? "))
+//	plotTe(twv, twa);
+
 }
+
+
+// Plot the effective T
+void InducedResistanceItem::plotTe(int twv, int twa) {
+
+	// Call the parent class update to update the Froude number
+	ResistanceItem::update(twv,twa);
+
+	Eigen::VectorXd vectB(2);
+	vectB << 1, fN_;
+
+	// coeffB(4x2) * vectB(2x1) => TeFn(4x1)
+	Eigen::ArrayXd TeFn = coeffB_ * vectB;
+
+	// Note that this is a coefficient-wise operation Tegeo(4x1) * TeFn(4x1) -> Teffective(4x1)
+	Eigen::ArrayXd Teffective = pParser_->get("T") * Tegeo_ * TeFn;
+
+	// Properly interpolate then values of TeD for the current value
+	// of the state variable PHI_ (heeling angle)
+	SplineInterpolator interpolator(phiD_,Teffective);
+	double Te= interpolator.interpolate(PHI_);
+
+	//  std::cout<<"phiDArr= "<<phiD_<<std::endl;
+	//std::cout<<"Teffective= \n"<<Teffective<<std::endl;
+
+	// Make a check plot for the induced resistance6
+	interpolator.plot(0,mathUtils::toRad(30),30,"Effective Span","PHI [rad]","Te");
+
+}
+
 
 void InducedResistanceItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of InducedResistanceItem "<<std::endl;

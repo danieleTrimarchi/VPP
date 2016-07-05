@@ -748,7 +748,7 @@ void AeroForcesItem::plot() {
 			update(twv, twa);
 
 			// Store velocity-wise data:
-			x_v(iTwv)= V_;					// velocities...
+			x_v(iTwv)= V_ / sqrt( Physic::g * pParser_->get("LWL") );	// Fn...
 			lift(iTwv) = getLift(); // lift...
 			drag(iTwv) = getDrag(); // drag...
 			f_v(iTwv)= getFDrive(); // fDrive...
@@ -781,7 +781,7 @@ void AeroForcesItem::plot() {
 			"twv=%2.2f [m/s], twa=%2.2f [deg]",
 			pWindItem_->getTWV(twv),
 			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	liftPlotter.plot("V [m/s]","Lift [N]", msg);
+	liftPlotter.plot("Fn [-]","Lift [N]", msg);
 
 
 	// Instantiate a plotter and plot Drag
@@ -793,7 +793,7 @@ void AeroForcesItem::plot() {
 			"twv=%2.2f [m/s], twa=%2.2f [deg]",
 			pWindItem_->getTWV(twv),
 			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	dragPlotter.plot("V [m/s]","Drag [N]", msg);
+	dragPlotter.plot("Fn [-]","Drag [N]", msg);
 
 	// Instantiate a plotter and plot fDrive
 	Plotter fPlotter;
@@ -804,7 +804,7 @@ void AeroForcesItem::plot() {
 			"twv=%2.2f [m/s], twa=%2.2f [deg]",
 			pWindItem_->getTWV(twv),
 			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	fPlotter.plot("V [m/s]","Fdrive [N]", msg);
+	fPlotter.plot("Fn [-]","Fdrive [N]", msg);
 
 	// Instantiate a plotter and plot fSide
 	Plotter fSidePlotter;
@@ -815,13 +815,13 @@ void AeroForcesItem::plot() {
 			"twv=%2.2f [m/s], twa=%2.2f [deg]",
 			pWindItem_->getTWV(twv),
 			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	fSidePlotter.plot("V [m/s]","Fside [N]", msg);
+	fSidePlotter.plot("Fn [-]","Fside [N]", msg);
 
 	// Instantiate a plotter and plot mHeel
 	Plotter mPlotter;
 	for(size_t i=0; i<v.size(); i++)
 		mPlotter.append(curveLabels[i],v[i],mHeel[i]);
-	mPlotter.plot("V[m/s]","mHeel [N*m]","plot heeling moment vs boat speed");
+	mPlotter.plot("Fn [-]","mHeel [N*m]","plot heeling moment vs boat speed");
 
 	// Restore the current solution
 	V_  = xbuf(0);

@@ -75,8 +75,8 @@ dM_(0) {
 
 	// Instantiate a InducedResistanceItem and push it back to the children vector
 	// For the definition of the Induced Resistance see DSYHS99 ch4 p128
-//	pInducedResistanceItem_.reset(new InducedResistanceItem(pAeroForcesItem_.get()));
-//	vppHydroItems_.push_back( pInducedResistanceItem_ );
+	pInducedResistanceItem_.reset(new InducedResistanceItem(pAeroForcesItem_.get()));
+	vppHydroItems_.push_back( pInducedResistanceItem_ );
 
 	// Instantiate a NegativeResistanceItem and push it back to the children vector
 	// This defines the resistance in the case of negative velocities
@@ -295,8 +295,8 @@ void VPPItemFactory::plotTotalResistance(){
 		// Loop on the velocities
 		for(size_t v=0; v<nVelocities; v++){
 
-			// Set a fictitious velocity (Fn=0-0.6)
-			stateVector(0)= 0.6 * ( 1./nVelocities * v ) * sqrt(Physic::g * pParser_->get("LWL"));
+			// Set a fictitious velocity (Fn=-0.3-0.7)
+			stateVector(0)= ( -0.2 + ( 1./nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
 			update(twv,twa,stateVector);

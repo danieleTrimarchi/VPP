@@ -79,35 +79,40 @@ void NRSolver::reset(VPPItemFactory* pVPPItemFactory) {
 // Set the initial guess for the state variable vector
 void NRSolver::resetInitialGuess(int TWV, int TWA) {
 
-	// In it to something small to start the evals at each velocity
-	if(TWV==0) {
+//	// In it to something small to start the evals at each velocity
+//	if(TWV==0) {
+//
+//		//     V_0   PHI_0 b_0   f_0
+//		xp_ << 0.01, mathUtils::toRad(0.01), 0, 0;
+//
+//	}
+//
+//	else if( TWV>1 ) {
+//
+//		// For twv> 1 we can linearly predict the result of the state vector
+//		Extrapolator extrapolator(
+//				pResults_->get(TWV-2,TWA).getTWV(),
+//				pResults_->get(TWV-2,TWA).getX(),
+//				pResults_->get(TWV-1,TWA).getTWV(),
+//				pResults_->get(TWV-1,TWA).getX()
+//		);
+//
+//		// Extrapolate the state vector for the current wind
+//		// velocity. Note that the items have not been init yet
+//		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
+//
+//		// Do extrapolate ONLY if the velocity is increasing
+//		// This is beneficial to convergence
+//		if(xp(0)>xp_(0))
+//			xp_=xp;
+//
+//		std::cout<<"-->>Extrapolated first guess: "<<xp_.transpose()<<std::endl;
+//	}
 
-		//     V_0   PHI_0 b_0   f_0
-		xp_ << 0.01, mathUtils::toRad(0.01), 0, 0;
+	// Cleanup the solution from values too small
+	for(size_t i=0; i<xp_.size(); i++)
+		if(fabs(xp_(i)) < 1.e-10) xp_(i)=0.;
 
-	}
-
-	else if( TWV>1 ) {
-
-		// For twv> 1 we can linearly predict the result of the state vector
-		Extrapolator extrapolator(
-				pResults_->get(TWV-2,TWA).getTWV(),
-				pResults_->get(TWV-2,TWA).getX(),
-				pResults_->get(TWV-1,TWA).getTWV(),
-				pResults_->get(TWV-1,TWA).getX()
-		);
-
-		// Extrapolate the state vector for the current wind
-		// velocity. Note that the items have not been init yet
-		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-
-		// Do extrapolate ONLY if the velocity is increasing
-		// This is beneficial to convergence
-		if(xp(0)>xp_(0))
-			xp_=xp;
-
-		std::cout<<"-->>Extrapolated first guess: "<<xp_.transpose()<<std::endl;
-	}
 }
 
 // The caller is the Optimizer, that resolves a larger problem with
@@ -133,7 +138,7 @@ void NRSolver::run(int twv, int twa) {
 
 	// For each wind velocity, reset the initial guess for the
 	// state variable vector to zero
-	// resetInitialGuess(twv,twa);
+	resetInitialGuess(twv,twa);
 
 	std::cout<<"Entering NR with first guess: "<<xp_.transpose()<<std::endl;
 
@@ -188,7 +193,7 @@ void NRSolver::run(int twv, int twa) {
 
 			// Compute the residuals vector - here only the part relative to the subproblem
 			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_).block(0,0,subPbSize_,1);
-			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<std::endl;
+			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<"   ";
 
 			if(it>1) {
 				velocityResiduals.push_back( residuals(0) );
@@ -214,7 +219,11 @@ void NRSolver::run(int twv, int twa) {
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
 			xp_.block(0,0,subPbSize_,1) -= deltas;
 
-			std::cout<<" deltas="<<deltas.transpose()<<" - xp_= "<<xp_.transpose()<<std::endl;
+			// Cleanup the values that are too small
+			for(size_t i=0; i<xp_.size(); i++)
+				if(fabs(xp_(i)) < 1.e-10) xp_(i)=0.;
+
+			std::cout<<" - xp_= "<<xp_.transpose()<<std::endl;
 
 		}
 

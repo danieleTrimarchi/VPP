@@ -128,7 +128,7 @@ int main(int argc, char** argv) {
 
 			//---
 
-			else if(s == string("plotTotalRes") )
+			else if(s == string("plotTotalResistance") )
 				pVppItems->plotTotalResistance();
 
 			else if(s == string("plotFrictionalRes") )
@@ -202,7 +202,7 @@ int main(int argc, char** argv) {
 				std::cout<<"   plotSailForceMoment      : plot the drive force and the heeling moment for fixed wind/heel ranges\n";
 				std::cout<<"   plotJacobian             : plot the Jacobian derivative components for fixed wind/heel ranges\n";
 				std::cout<<" \n";
-				std::cout<<"   plotTotalRes               : plot the Total Resistance for a fixed range\n";
+				std::cout<<"   plotTotalResistance      : plot the Total Resistance for a fixed range\n";
 				std::cout<<"   plotResidRes             : plot the Residuary Resistance for a fixed range\n";
 				std::cout<<"   plotInducedRes           : plot the Induced Resistance for a fixed range\n";
 				std::cout<<"   plotResidRes_Keel        : plot the Residuary Resistance of the Keel for a fixed range\n";

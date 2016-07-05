@@ -57,6 +57,9 @@ class InducedResistanceItem : public ResistanceItem {
 		/// Plot the Induced Resistance curve
 		void plot();
 
+		/// Plot the effective T
+		void plotTe(int twv, int twa);
+
 	private:
 
 		/// Implement pure virtual method of the parent class
@@ -69,6 +72,11 @@ class InducedResistanceItem : public ResistanceItem {
 		Eigen::MatrixXd coeffA_, coeffB_;
 		Eigen::VectorXd vectA_;
 		Eigen::ArrayXd phiD_,Tegeo_;
+
+		/// Variables to be used to set a lower bound to the velocity
+		/// ( Parabolic fitting in 0 -> V|(Fn=0.1)  )
+		double vf_, a_, c_, v_;
+
 };
 
 //=================================================================

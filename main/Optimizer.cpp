@@ -264,7 +264,7 @@ void Optimizer::run(int TWV, int TWA) {
 				xp[i]=xp_(i);
 
 			// Launch the optimization
-			//result = opt_->optimize(xp, maxf);
+			result = opt_->optimize(xp, maxf);
 
 			//store the results back to the member state vector
 			for(size_t i=0; i<xp_.size(); i++)
