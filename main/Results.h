@@ -28,12 +28,6 @@ class Result {
 
 		/// Constructor with residual array
 		Result(	double twv, double twa,
-						std::vector<double>& results,
-						Eigen::VectorXd& residuals,
-						bool discarde=false );
-
-		/// Constructor with residual array
-		Result(	double twv, double twa,
 						Eigen::VectorXd& res,
 						Eigen::VectorXd& residuals,
 						bool discarde=false );
@@ -55,12 +49,6 @@ class Result {
 
 		/// Get the moment residuals for this result
 		const double getdM() const;
-
-		/// Get the c1 residual for this result
-		const double getC1() const;
-
-		/// Get the c2 residual for this result
-		const double getC2() const;
 
 		/// Get the state vector for this result
 		const Eigen::VectorXd* getX() const;

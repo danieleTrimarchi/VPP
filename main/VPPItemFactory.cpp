@@ -255,8 +255,8 @@ Eigen::VectorXd VPPItemFactory::getResiduals(int vTW, int aTW, Eigen::VectorXd& 
 // Get the current value for the optimizer constraint residuals dF=0 and dM=0
 Eigen::VectorXd VPPItemFactory::getResiduals() {
 
-	Eigen::VectorXd ret(4);
-	ret << dF_,dM_, 0, 0;
+	Eigen::VectorXd ret(2);
+	ret << dF_,dM_;
 	return ret;
 
 }

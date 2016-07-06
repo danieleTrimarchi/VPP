@@ -16,8 +16,8 @@ Result::Result():
 	result_.resize(4);
 	result_ << 0,0,0,0;
 	// init the residuals container
-	residuals_.resize(4);
-	residuals_<<0,0,0,0;
+	residuals_.resize(2);
+	residuals_<<0,0;
 
 }
 
@@ -32,20 +32,7 @@ Result::Result(double twv, double twa, std::vector<double>& res,
 	result_<<res[0],res[1],res[2],res[3];
 
 	// init the residuals container
-	residuals_<<dF,dM,0,0;
-
-}
-
-// Constructor
-Result::Result(	double twv, double twa,
-				std::vector<double>& results,
-				Eigen::VectorXd& residuals, bool discarde ):
-				twv_(twv),
-				twa_(twa),
-				residuals_(residuals),
-				discard_(discarde) {
-
-	result_<<results[0],results[1],results[2],results[3];
+	residuals_<<dF,dM;
 
 }
 
@@ -74,7 +61,7 @@ void Result::print() {
 	printf("  --  ");
 	for(size_t i=0; i<residuals_.size(); i++)
 		printf("  %4.2e", residuals_(i) );
-	printf("  --  ", discard_ );
+	printf("  --  %i ", discard_ );
 
 
 	std::cout<<"\n";
@@ -99,16 +86,6 @@ const double Result::getdF() const {
 // get the moment residuals for this result
 const double Result::getdM() const {
 	return residuals_(1);
-}
-
-// get the moment residuals for this result
-const double Result::getC1() const {
-	return residuals_(2);
-}
-
-// get the moment residuals for this result
-const double Result::getC2() const {
-	return residuals_(3);
 }
 
 // get the state vector for this result
@@ -162,8 +139,8 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 																double dF, double dM) {
 
 	// Compile an Eigen-vector and call the push_back method
-	Eigen::VectorXd residuals(4);
-	residuals << dF,dM,0,0;
+	Eigen::VectorXd residuals(2);
+	residuals << dF,dM;
 
 	// Call the other signature of the method
 	push_back(iWv,iWa,results,residuals);
@@ -227,10 +204,10 @@ const size_t ResultContainer::windAngleSize() const {
 /// Printout the list of Opt Results, arranged by twv-twa
 void ResultContainer::print() {
 
-	std::cout<<"\n TWV    TWA   --  V    PHI    B    F  --  dF    dM    c1    c2 "<<std::endl;
-	std::cout<<"---------------------------------------------------------------"<<std::endl;
-	std::cout<<"[m/s]  [deg]  -- [m/s] [rad] [m]  [-] --  [N]  [N*m]  [-]   [-]"<<std::endl;
-	std::cout<<"---------------------------------------------------------------"<<std::endl;
+	std::cout<<"\n TWV    TWA   --  V    PHI    B    F  --  dF    dM  -- discard "<<std::endl;
+	std::cout<<"-----------------------------------------------------------------"<<std::endl;
+	std::cout<<"[m/s]  [deg]  -- [m/s] [rad] [m]  [-] --  [N]  [N*m]  --          "<<std::endl;
+	std::cout<<"-----------------------------------------------------------------"<<std::endl;
 	for(size_t iWv=0; iWv<nWv_; iWv++)
 		for(size_t iWa=0; iWa<nWa_; iWa++)
 			resMat_[iWv][iWa].print();

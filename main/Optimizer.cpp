@@ -15,9 +15,9 @@ int optIterations=0;
 
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-				dimension_(4),
-				subPbSize_(2),
-				tol_(1.e-3) {
+						dimension_(4),
+						subPbSize_(2),
+						tol_(1.e-3) {
 
 	// Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
@@ -61,11 +61,11 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	opt_->set_max_objective(VPP_speed, NULL);
 
 	// Set the absolute tolerance on the state variables
-//	opt_->set_xtol_abs(tol_);
+	//	opt_->set_xtol_abs(tol_);
 	opt_->set_xtol_rel(tol_);
 
 	// Set the absolute tolerance on the function value
-//	opt_->set_ftol_abs(tol_);
+	//	opt_->set_ftol_abs(tol_);
 	opt_->set_ftol_rel(tol_);
 
 	// Set the max number of evaluations for a single run
@@ -129,33 +129,33 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
 	}
 
-//	else if( TWV>1 ) {
-//
-//		// For twv> 1 we can linearly predict the result of the state vector
-//		Extrapolator extrapolator(
-//				pResults_->get(TWV-2,TWA).getTWV(),
-//				pResults_->get(TWV-2,TWA).getX(),
-//				pResults_->get(TWV-1,TWA).getTWV(),
-//				pResults_->get(TWV-1,TWA).getX()
-//		);
-//
-//		// Extrapolate the state vector for the current wind
-//		// velocity. Note that the items have not been init yet
-//		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-//
-//		// Do extrapolate ONLY if the velocity is increasing
-//		// This is beneficial to convergence
-//		if(xp(0)>xp_(0))
-//			xp_=xp;
-//
-//		// Make sure the initial guess does not exceeds the bounds
-//		for(size_t i=0; i<dimension_; i++) {
-//			if(xp_[i]<lowerBounds_[i])
-//				xp_[i]=lowerBounds_[i];
-//			if(xp_[i]>upperBounds_[i])
-//				xp_[i]=upperBounds_[i];
-//		}
-//	}
+	//	else if( TWV>1 ) {
+	//
+	//		// For twv> 1 we can linearly predict the result of the state vector
+	//		Extrapolator extrapolator(
+	//				pResults_->get(TWV-2,TWA).getTWV(),
+	//				pResults_->get(TWV-2,TWA).getX(),
+	//				pResults_->get(TWV-1,TWA).getTWV(),
+	//				pResults_->get(TWV-1,TWA).getX()
+	//		);
+	//
+	//		// Extrapolate the state vector for the current wind
+	//		// velocity. Note that the items have not been init yet
+	//		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
+	//
+	//		// Do extrapolate ONLY if the velocity is increasing
+	//		// This is beneficial to convergence
+	//		if(xp(0)>xp_(0))
+	//			xp_=xp;
+	//
+	//		// Make sure the initial guess does not exceeds the bounds
+	//		for(size_t i=0; i<dimension_; i++) {
+	//			if(xp_[i]<lowerBounds_[i])
+	//				xp_[i]=lowerBounds_[i];
+	//			if(xp_[i]>upperBounds_[i])
+	//				xp_[i]=upperBounds_[i];
+	//		}
+	//	}
 
 	std::cout<<"-->> optimizer first guess: "<<xp_.transpose()<<std::endl;
 
@@ -174,11 +174,11 @@ void Optimizer::solveInitialGuess(int TWV, int TWA) {
 			std::cout<<"WARNING: Modifying lower out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
 			xp_[i]=lowerBounds_[i];
 		}
-        if(xp_[i]>upperBounds_[i]){
+		if(xp_[i]>upperBounds_[i]){
 			std::cout<<"WARNING: Modifying upper out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
 			xp_[i]=upperBounds_[i];
-        }
-    }
+		}
+	}
 
 }
 
@@ -253,7 +253,7 @@ void Optimizer::run(int TWV, int TWA) {
 	for(size_t i=0; i<dimension_; i++) residuals(i)=100;
 
 	//while ( residuals.norm() > 0.00001 )
-	for(size_t iRes=0; iRes<10; iRes++ ){
+	for(size_t iRes=0; iRes<3; iRes++ ){
 		try{
 			// Launch the optimization; negative retVal implies failure
 			std::cout<<"Entering the optimizer with: ";
