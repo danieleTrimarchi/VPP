@@ -17,6 +17,7 @@ using namespace Eigen;
 #include "VPPItem.h"
 #include "Optimizer.h"
 #include "NRSolver.h"
+#include "Regression.h"
 #include "Interpolator.h"
 #include "VPPException.h"
 
@@ -74,6 +75,9 @@ int main(int argc, char** argv) {
 		printf("\n=======================\n");
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
+
+		Regression regr;
+		throw VPPException(HERE, "STOP");
 
 		// Instantiate a parser with the variables
 		VariableFileParser parser("variableFile.txt");
