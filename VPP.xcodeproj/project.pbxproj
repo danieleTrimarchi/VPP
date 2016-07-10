@@ -32,6 +32,7 @@
 		64BBD6181C5B748C00F14B38 /* libplplotcxx.12.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD6171C5B748C00F14B38 /* libplplotcxx.12.dylib */; };
 		64BBD61A1C5B749000F14B38 /* libplplotcxx.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD6191C5B749000F14B38 /* libplplotcxx.dylib */; };
 		64BBD61C1C5B74B000F14B38 /* libumfpack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD61B1C5B74B000F14B38 /* libumfpack.a */; };
+		B34E78E01D32DE54009B723D /* Regression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34E78DE1D32DE54009B723D /* Regression.cpp */; };
 		B3855B1C1CC54316002F33AC /* libnlopt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD60B1C5B705000F14B38 /* libnlopt.a */; };
 		B3855B211CC544E4002F33AC /* SparseSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3855B1D1CC544E4002F33AC /* SparseSolver.cpp */; };
 		B3855B221CC544E4002F33AC /* VPPJacobian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3855B1F1CC544E4002F33AC /* VPPJacobian.cpp */; };
@@ -98,6 +99,8 @@
 		64BBD6191C5B749000F14B38 /* libplplotcxx.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.dylib; path = /opt/local/lib/libplplotcxx.dylib; sourceTree = "<absolute>"; };
 		64BBD61B1C5B74B000F14B38 /* libumfpack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libumfpack.a; path = "../third_party/SuiteSparse-4.5.2/UMFPACK/Lib/libumfpack.a"; sourceTree = "<group>"; };
 		64D919501C59F7D70002F585 /* VPP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VPP; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34E78DE1D32DE54009B723D /* Regression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Regression.cpp; path = main/Regression.cpp; sourceTree = "<group>"; };
+		B34E78DF1D32DE54009B723D /* Regression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Regression.h; path = main/Regression.h; sourceTree = "<group>"; };
 		B3855B1D1CC544E4002F33AC /* SparseSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SparseSolver.cpp; path = main/SparseSolver.cpp; sourceTree = "<group>"; };
 		B3855B1E1CC544E4002F33AC /* SparseSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SparseSolver.h; path = main/SparseSolver.h; sourceTree = "<group>"; };
 		B3855B1F1CC544E4002F33AC /* VPPJacobian.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPJacobian.cpp; path = main/VPPJacobian.cpp; sourceTree = "<group>"; };
@@ -143,6 +146,8 @@
 		64D919471C59F7D60002F585 = {
 			isa = PBXGroup;
 			children = (
+				B34E78DE1D32DE54009B723D /* Regression.cpp */,
+				B34E78DF1D32DE54009B723D /* Regression.h */,
 				64BBD5D71C5B701400F14B38 /* Interpolator.cpp */,
 				64BBD5D81C5B701400F14B38 /* Interpolator.h */,
 				64BBD61E1C5B76C900F14B38 /* Libs */,
@@ -254,6 +259,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B34E78E01D32DE54009B723D /* Regression.cpp in Sources */,
 				B3855B221CC544E4002F33AC /* VPPJacobian.cpp in Sources */,
 				64BBD6081C5B701400F14B38 /* VPPItemFactory.cpp in Sources */,
 				64BBD6091C5B701400F14B38 /* VPPRightingMomentItem.cpp in Sources */,

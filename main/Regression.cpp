@@ -38,10 +38,8 @@ Regression::Regression() {
 
 			// compute z with the given polynomial. We now have the nx*ny points to
 			// be used to compute the regression and rebuild the initial polynomial
-			Eigen::MatrixXd z = coords * polynomial.transpose();
+			z(i,j) = coords.transpose() * polynomial;
 
-			// Send this (scalar) value to the z matrix
-			z(i,j) = z(0,0);
 		}
 	}
 
@@ -72,7 +70,6 @@ Regression::Regression() {
 	Eigen::VectorXd p = A.colPivHouseholderQr().solve(b);
 
 	// Compare p with the original polynomial array
-	std::cout<<"Polynomial - p ="<<std::endl;
 	std::cout<< polynomial-p<<std::endl;
 
 
