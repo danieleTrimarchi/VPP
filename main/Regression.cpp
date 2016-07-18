@@ -1,6 +1,7 @@
 #include "Regression.h"
 #include <Eigen/Dense>
 #include "VPPException.h"
+#include "Plotter.h"
 
 // Test Constructor
 Regression::Regression() {
@@ -10,7 +11,7 @@ Regression::Regression() {
 	y_.resize(3,3);
 	z_.resize(3,3);
 
-	runTest();
+	runAnalyticalTest();
 
 }
 
@@ -26,6 +27,7 @@ z_(z) {
 	if( (x_.cols() != y_.cols()) || (x_.cols() != z_.cols()) )
 		throw VPPException(HERE, "The coordinate arrays col size mismatch");
 
+	runNumericalTest();
 }
 
 
@@ -37,10 +39,10 @@ Regression::~Regression() {
 Eigen::VectorXd Regression::compute() {
 
 	// Declare the coordinate matrix A to be inverted
-	Eigen::MatrixXd A(6,6);
+	Eigen::MatrixXd A( Eigen::MatrixXd::Zero(6,6) );
 
 	// Declare the rhs b
-	Eigen::VectorXd b(6);
+	Eigen::VectorXd b( Eigen::VectorXd::Zero(6) );
 
 	// Loop on the mx*my points
 	for(size_t i=0; i<x_.rows(); i++){
@@ -59,13 +61,15 @@ Eigen::VectorXd Regression::compute() {
 		}
 	}
 
+	//std::cout<<"A= \n"<<A<<std::endl;
+	//std::cout<<"b= \n"<<b<<std::endl;
+
 	// Compute the polynomial array p = inv(A) * b
 	return A.colPivHouseholderQr().solve(b);
 
 }
 
-void Regression::runTest() {
-
+void Regression::runAnalyticalTest() {
 
 	// Fill the test coordinate matrices :
 
@@ -109,9 +113,57 @@ void Regression::runTest() {
 	//std::cout<< polynomial-p<<std::endl;
 
 	if((polynomial-p).norm() > 1e-10)
-		throw VPPException(HERE,"\n\n==>> Regression test failed! <<==\n\n");
+		throw VPPException(HERE,"\n\n==>> Analytical regression test failed! <<==\n\n");
 	else
-		std::cout<<"\n\n=>> Regression test succeeded! <<==\n\n"<<std::endl;
+		std::cout<<"\n\n=>> Analytical regression test succeeded! <<==\n\n"<<std::endl;
 
 }
 
+// Run a test : get the points from outside, reconstruct the regression
+// and verify the difference in the z-values. This will be embedded into
+// into an autotest
+void Regression::runNumericalTest() {
+
+	// Assume the coordinates have already been filled using the constructor with
+	// three args
+
+	// Compute the polynomial array by polynomial regression on the given points
+	Eigen::VectorXd p = compute();
+	//std::cout<<"Numerical p= "<<p.transpose()<<std::endl;
+
+	Eigen::MatrixXd z(x_.rows(), y_.cols());
+
+	// Loop on nx and ny
+	for(size_t i=0; i<x_.rows(); i++){
+		for(size_t j=0; j<y_.cols(); j++){
+
+			Eigen::VectorXd Q(6);
+			Q << x_(i,j)*x_(i,j), x_(i,j)*y_(i,j), y_(i,j)*y_(i,j), x_(i,j), y_(i,j), 1;
+
+			z(i,j)= p.transpose() * Q;
+
+//			if( std::fabs( z - z_(i,j) ) > 1e-10 ){
+//				char msg[256];
+//				sprintf(msg,"\n\n==>> Numerical regression test failed! <<== value= %f \n\n", std::fabs( z - z_(i,j) ) );
+//				throw VPPException(HERE,msg);
+//			} else
+//					std::cout<<"\n\n=>> Numerical regression test succeeded! <<==\n\n"<<std::endl;
+
+
+		}
+	}
+
+	// Plot the points and its regression surface
+	Eigen::ArrayXd x(x_.rows()), y(y_.cols());
+
+	for(size_t i=0; i<x_.rows(); i++)
+		x(i) = x_(i,0);
+	for(size_t i=0; i<y_.cols(); i++)
+		y(i) = y_(0,i);
+
+
+//	MagnitudeColoredPlotter3d plotter(
+//			x,y,z_,x,y,z,
+//			"regression plot", "x", "y");
+
+}

@@ -345,6 +345,12 @@ class MagnitudeColoredPlotter3d : public Plotter3d {
 		MagnitudeColoredPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 				string title, string xLabel, string yLabel );
 
+		/// Constructor to plot surface and points
+		MagnitudeColoredPlotter3d(
+				ArrayXd& x, ArrayXd& y, MatrixXd& z,
+				ArrayXd& xp, ArrayXd& yp, ArrayXd& zp,
+				string title, string xLabel, string yLabel );
+
 		/// Destructor
 		virtual ~MagnitudeColoredPlotter3d();
 
@@ -352,6 +358,8 @@ class MagnitudeColoredPlotter3d : public Plotter3d {
 		virtual void plot();
 
 	private:
+
+		ArrayXd* pXp_, *pYp_, *pZp_;
 
 };
 
@@ -368,8 +376,6 @@ class MagnitudeColoredFacetedPlotter3d : public Plotter3d {
 
 		/// Plot!
 		virtual void plot();
-
-	private:
 
 };
 

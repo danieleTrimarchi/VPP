@@ -76,7 +76,26 @@ int main(int argc, char** argv) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-		Regression regr;
+		// test surface: z=x*y^2
+		size_t n=10, m=10;
+		ArrayXd x(n), y(m);
+		MatrixXd z(n,m);
+		for(size_t i=0; i<n; i++)
+			for(size_t j=0; j<m; j++) {
+				x(i) = i;
+				y(j) = j;
+				z(i,j) = 0.01 * i * j * j;
+			}
+
+		ArrayXd xp(n), yp(n), zp(n);
+		for(size_t i=0; i<n; i++){
+			xp(i) = i;
+			yp(i) = 0.01 * i * i;
+			zp(i) = 0.02 * i * i ;
+		}
+
+		MagnitudeColoredPlotter3d plotPts(x,y,z,xp,yp,zp,"test","x","y");
+//		Regression regr;
 		throw VPPException(HERE, "STOP");
 
 		// Instantiate a parser with the variables

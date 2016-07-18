@@ -931,8 +931,10 @@ void DiffuseLightSurfacePlotter3d::plot() {
 MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(
 		ArrayXd& x, ArrayXd& y, MatrixXd& z,
 		string title, string xLabel, string yLabel ) :
-				Plotter3d( x, y, z, title, xLabel, yLabel ) {
-
+				Plotter3d( x, y, z, title, xLabel, yLabel ),
+				pXp_(0),
+				pYp_(0),
+				pZp_(0) {
 
 	plot();
 
@@ -941,6 +943,34 @@ MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(
 
 }
 
+// Constructor
+MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(
+		ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		ArrayXd& xp, ArrayXd& yp, ArrayXd& zp,
+		string title, string xLabel, string yLabel ) :
+				Plotter3d( x, y, z, title, xLabel, yLabel ),
+				pXp_(&xp), pYp_(&yp), pZp_(&zp) {
+
+	if(pXp_->size() != pYp_->size() || pXp_->size() != pZp_->size())
+		throw VPPException(HERE,"Size mismatch");
+
+	// Reset the ranges according to the point arrays
+	// Remember the ranges have already been init in the constructor
+	for(size_t i=0; i<pXp_->size(); i++){
+		if(x(i)<xMin_) xMin_ = x(i);
+		if(x(i)>xMax_) xMax_ = x(i);
+		if(y(i)<yMin_) yMin_ = y(i);
+		if(y(i)>yMax_) yMax_ = y(i);
+		if(z(i)<zMin_) zMin_ = z(i);
+		if(z(i)>zMax_) zMax_ = z(i);
+	}
+
+	plot();
+
+	// Close PLplot library
+	plend();
+
+}
 /// Destructor
 MagnitudeColoredPlotter3d::~MagnitudeColoredPlotter3d() {
 
@@ -954,6 +984,27 @@ void MagnitudeColoredPlotter3d::plot() {
 		cmap1_init( colorplot::colorMap );
 		plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR, NULL, 0 );
 
+		if(pXp_ && pYp_ && pZp_ ) {
+
+			double* x = new double[pXp_->size()];
+			double* y = new double[pYp_->size()];
+			double* z = new double[pZp_->size()];
+
+			for(size_t i=0; i<pXp_->size(); i++) x[i]=pXp_->coeffRef(i);
+			for(size_t i=0; i<pYp_->size(); i++) y[i]=pYp_->coeffRef(i);
+			for(size_t i=0; i<pZp_->size(); i++) z[i]=pZp_->coeffRef(i);
+
+			// Set the color for the point plot
+			plcol0( color::red );
+
+			plstring3( pXp_->size(), x, y, z, "x" );
+
+			// Clean up
+			delete x;
+			delete y;
+			delete z;
+
+		}
 }
 
 //////////////////////////////////////////////////////////////

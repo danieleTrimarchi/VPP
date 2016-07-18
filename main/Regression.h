@@ -25,12 +25,20 @@ class Regression {
 		/// Compute the coefficient of the regression given the point array
 		Eigen::VectorXd compute();
 
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	private:
 
 		/// Run a test : define the points using a polynomial, then reconstruct
 		/// the regression and verify the coefficients are the initial ones. This
 		/// will be embedded into an autotest
-		void runTest();
+		void runAnalyticalTest();
+
+		/// Run a test : get the points from outside, reconstruct the regression
+		/// and verify the difference in the z-values. This will be embedded into
+		/// into an autotest
+		void runNumericalTest();
 
 		/// Point array to be used to compute the regression
 		Eigen::MatrixXd x_, y_, z_;
