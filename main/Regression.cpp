@@ -129,7 +129,7 @@ void Regression::runNumericalTest() {
 
 	// Compute the polynomial array by polynomial regression on the given points
 	Eigen::VectorXd p = compute();
-	//std::cout<<"Numerical p= "<<p.transpose()<<std::endl;
+	std::cout<<"Numerical p= "<<p.transpose()<<std::endl;
 
 	Eigen::MatrixXd z(x_.rows(), y_.cols());
 
@@ -142,13 +142,12 @@ void Regression::runNumericalTest() {
 
 			z(i,j)= p.transpose() * Q;
 
-//			if( std::fabs( z - z_(i,j) ) > 1e-10 ){
-//				char msg[256];
-//				sprintf(msg,"\n\n==>> Numerical regression test failed! <<== value= %f \n\n", std::fabs( z - z_(i,j) ) );
-//				throw VPPException(HERE,msg);
-//			} else
-//					std::cout<<"\n\n=>> Numerical regression test succeeded! <<==\n\n"<<std::endl;
-
+			if( std::fabs( z(i,j) - z_(i,j) ) > 1.e-2 ){
+				char msg[256];
+				sprintf(msg,"\n\n==>> Numerical regression test failed! <<== value= %f \n\n", std::fabs( z(i,j) - z_(i,j) ) );
+				throw VPPException(HERE,msg);
+			} else
+					std::cout<<"\n\n=>> Numerical regression test succeeded! <<==\n\n"<<std::endl;
 
 		}
 	}
@@ -161,9 +160,30 @@ void Regression::runNumericalTest() {
 	for(size_t i=0; i<y_.cols(); i++)
 		y(i) = y_(0,i);
 
+	Eigen::ArrayXd xp(x_.rows()*y_.cols());
+	Eigen::ArrayXd yp(x_.rows()*y_.cols());
+	Eigen::ArrayXd zp(x_.rows()*y_.cols());
+	size_t k=0;
+	for(size_t i=0; i<x_.rows(); i++){
+		for(size_t j=0; j<y_.cols(); j++){
+			xp(k) = x_(i,j);
+			yp(k) = y_(i,j);
+			zp(k) = z(i,j);
+			k++;
+		}
+	}
 
-//	MagnitudeColoredPlotter3d plotter(
-//			x,y,z_,x,y,z,
-//			"regression plot", "x", "y");
+	std::cout<<"x_= \n"<<x_<<std::endl;
+	std::cout<<"y_= \n"<<y_<<std::endl;
+	std::cout<<"z= \n"<<z<<std::endl;
+
+	std::cout<<"xp= \n"<<xp<<std::endl;
+	std::cout<<"yp= \n"<<yp<<std::endl;
+	std::cout<<"zp= \n"<<zp<<std::endl;
+
+	MagnitudeColoredPlotter3d plotter(
+			x,y,z_,
+			xp, yp, zp,
+			"regression plot", "x", "y");
 
 }

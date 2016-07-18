@@ -957,13 +957,16 @@ MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(
 	// Reset the ranges according to the point arrays
 	// Remember the ranges have already been init in the constructor
 	for(size_t i=0; i<pXp_->size(); i++){
-		if(x(i)<xMin_) xMin_ = x(i);
-		if(x(i)>xMax_) xMax_ = x(i);
-		if(y(i)<yMin_) yMin_ = y(i);
-		if(y(i)>yMax_) yMax_ = y(i);
-		if(z(i)<zMin_) zMin_ = z(i);
-		if(z(i)>zMax_) zMax_ = z(i);
+		if(pXp_->coeffRef(i)<xMin_) xMin_ = pXp_->coeffRef(i);
+		if(pXp_->coeffRef(i)>xMax_) xMax_ = pXp_->coeffRef(i);
+		if(pYp_->coeffRef(i)<yMin_) yMin_ = pYp_->coeffRef(i);
+		if(pYp_->coeffRef(i)>yMax_) yMax_ = pYp_->coeffRef(i);
+		if(pZp_->coeffRef(i)<zMin_) zMin_ = pZp_->coeffRef(i);
+		if(pZp_->coeffRef(i)>zMax_) zMax_ = pZp_->coeffRef(i);
 	}
+	std::cout<<"xBds="<<xMin_<<" - "<<xMax_<<std::endl;
+	std::cout<<"yBds="<<yMin_<<" - "<<yMax_<<std::endl;
+	std::cout<<"zBds="<<zMin_<<" - "<<zMax_<<std::endl;
 
 	plot();
 
@@ -995,7 +998,7 @@ void MagnitudeColoredPlotter3d::plot() {
 			for(size_t i=0; i<pZp_->size(); i++) z[i]=pZp_->coeffRef(i);
 
 			// Set the color for the point plot
-			plcol0( color::red );
+			plcol0( color::yellow );
 
 			plstring3( pXp_->size(), x, y, z, "x" );
 
