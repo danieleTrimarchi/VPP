@@ -76,57 +76,6 @@ int main(int argc, char** argv) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-
-		// compute some coordinates
-		Eigen::MatrixXd xPoint(3,3), yPoint(3,3), zPoint(3,3);
-
-		// Set the test polynomial vector: x^2 xy y^2 x y 1
-		Eigen::VectorXd polynomial(6);
-		polynomial << 0.01, .5, 0.03, .2, .3 , 1;
-
-		Eigen::VectorXd factsx(xPoint.rows());
-		factsx << 0.25, 0.5, 0.75;
-		Eigen::VectorXd factsy(yPoint.cols());
-		factsy << 0.25, 0.5, 0.75;
-
-		Eigen::VectorXd coords(6);
-
-		// Set the domain bounds
-		double xMin=0, xMax=1, yMin=0, yMax=1;
-
-
-		double sign=1.;
-
-		// Loop on the mx*my points
-		for(size_t i=0; i<xPoint.rows(); i++){
-			for(size_t j=0; j<xPoint.cols(); j++){
-
-				// compute xi, yi, zi
-				xPoint(i,j) = xMin + factsx(i) * ( xMax - xMin );
-				yPoint(i,j) = yMin + factsy(j) * ( yMax - yMin );
-
-				// x^2 xy y^2 x y 1
-				coords << xPoint(i,j)*xPoint(i,j),
-									xPoint(i,j)*yPoint(i,j),
-									yPoint(i,j)*yPoint(i,j),
-									xPoint(i,j),
-									yPoint(i,j),
-									1;
-
-				sign *= (-2);
-
-				// compute z with the given polynomial. We now have the nx*ny points to
-				// be used to compute the regression and rebuild the initial polynomial
-				zPoint(i,j) = coords.transpose() * polynomial + 0.00005 * sign;
-
-			}
-		}
-
-		Regression regr2(xPoint,yPoint,zPoint);
-
-
-		throw VPPException(HERE, "STOP");
-
 		// Instantiate a parser with the variables
 		VariableFileParser parser("variableFile.txt");
 

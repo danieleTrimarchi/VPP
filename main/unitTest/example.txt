@@ -1,0 +1,44 @@
+SConscript('''Netlister/SConscript
+              Scripting/SConscript
+              SimulatorDataModel/SConscript
+              SimulatorGui/SConscript
+              SimulatorTree/SConscript
+              unitTest/SConscript
+              Resources/SConscript'''.split())
+     
+------------
+
+# If you build an executable, this is about the same as with the dynamic library:
+bin1 = env.Program( 'SimulatorTest', 'TSimulatorTestsMain.cpp TSimulatorTest.cpp'.split() )
+
+# At last for Cpp units, don't call installTargets but addCppUnit
+env.addCppUnitTest( buildEnv, bin1 )
+
+-------------
+
+#ifndef TSIMULATORTEST_H_
+#define TSIMULATORTEST_H_
+
+// Unit test includes
+#include <cppunit/TestFixture.h>
+#include <cppunit/Test.h>
+#include <cppunit/extensions/HelperMacros.h>
+
+class TSimulatorTest : public CppUnit::TestFixture{
+
+  CPPUNIT_TEST_SUITE(TSimulatorTest);
+  /// Matrices test
+  CPPUNIT_TEST(MassMatrixWithSideWallAnglesTest);
+  
+  
+  CPPUNIT_TEST_SUITE_END();
+
+public:
+
+  /// Matrices test
+  void MassMatrixWithSideWallAnglesTest();
+
+  
+};
+
+#endif /* TSIMULATORTEST_H_ */

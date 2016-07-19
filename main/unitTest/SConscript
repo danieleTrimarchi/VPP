@@ -9,7 +9,8 @@ THIRD_PARTY_INCS=[
 			'/Users/dtrimarchi/third_party/nlopt-2.4.2/api',
 			'/opt/local/include',												# macPorts and nlopt include path
 			'/opt/local/share/plplot5.11.1/examples/c++',							#include path for plplot example
-			'/opt/local/include/plplot'
+			'/opt/local/include/plplot',
+			'/Users/dtrimarchi/third_party/cppunit-1.13.2/build/include'
 		]
 
 
@@ -23,7 +24,8 @@ THIRD_PARTY_LIBS=[
 			'plplotcxx',  #libs required by plplot
 			'plplot',
 			'nlopt',
-			'BLAS'
+			'BLAS',
+			'cppunit'
 		]
 			
 					
@@ -35,7 +37,8 @@ THIRD_PARTY_LIBPATH=[
 			'/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib',
 			'/Users/dtrimarchi/third_party/nlopt-2.4.2/libs',
 			'/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A',
-			'/opt/local/lib' # macPorts and lnopt lib path
+			'/opt/local/lib', # macPorts and lnopt lib path
+			'/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib'
 		]
 
 
@@ -50,22 +53,9 @@ env = DefaultEnvironment()
 #warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]
 
-#===============================================================================
-# env = Environment()
-# conf = Configure(env)
-# if not conf.CheckLib('nlopt'):
-# 	print 'Did not find libnlopt.a or nlopt.lib, exiting!'
-# 	Exit(1)
-# env = conf.Finish()
-#===============================================================================
-    
-env.Program('VPP', Glob('*.cpp'),
+
+env.Program('unitTest', Glob('*.cpp'),
 		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,
 		LIBPATH=THIRD_PARTY_LIBPATH
 	)
-
-
-# And now proceed to the subFolders
-SConscript('''unitTest/SConscript'''.split())
-

@@ -15,9 +15,9 @@ int optIterations=0;
 
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-						dimension_(4),
-						subPbSize_(2),
-						tol_(1.e-3) {
+								dimension_(4),
+								subPbSize_(2),
+								tol_(1.e-3) {
 
 	// Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
@@ -129,33 +129,33 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
 	}
 
-	//	else if( TWV>1 ) {
-	//
-	//		// For twv> 1 we can linearly predict the result of the state vector
-	//		Extrapolator extrapolator(
-	//				pResults_->get(TWV-2,TWA).getTWV(),
-	//				pResults_->get(TWV-2,TWA).getX(),
-	//				pResults_->get(TWV-1,TWA).getTWV(),
-	//				pResults_->get(TWV-1,TWA).getX()
-	//		);
-	//
-	//		// Extrapolate the state vector for the current wind
-	//		// velocity. Note that the items have not been init yet
-	//		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-	//
-	//		// Do extrapolate ONLY if the velocity is increasing
-	//		// This is beneficial to convergence
-	//		if(xp(0)>xp_(0))
-	//			xp_=xp;
-	//
-	//		// Make sure the initial guess does not exceeds the bounds
-	//		for(size_t i=0; i<dimension_; i++) {
-	//			if(xp_[i]<lowerBounds_[i])
-	//				xp_[i]=lowerBounds_[i];
-	//			if(xp_[i]>upperBounds_[i])
-	//				xp_[i]=upperBounds_[i];
-	//		}
-	//	}
+	else if( TWV>1 ) {
+
+		// For twv> 1 we can linearly predict the result of the state vector
+		Extrapolator extrapolator(
+				pResults_->get(TWV-2,TWA).getTWV(),
+				pResults_->get(TWV-2,TWA).getX(),
+				pResults_->get(TWV-1,TWA).getTWV(),
+				pResults_->get(TWV-1,TWA).getX()
+		);
+
+		// Extrapolate the state vector for the current wind
+		// velocity. Note that the items have not been init yet
+		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
+
+		// Do extrapolate ONLY if the velocity is increasing
+		// This is beneficial to convergence
+		if(xp(0)>xp_(0))
+			xp_=xp;
+
+		// Make sure the initial guess does not exceeds the bounds
+		for(size_t i=0; i<dimension_; i++) {
+			if(xp_[i]<lowerBounds_[i])
+				xp_[i]=lowerBounds_[i];
+			if(xp_[i]>upperBounds_[i])
+				xp_[i]=upperBounds_[i];
+		}
+	}
 
 	std::cout<<"-->> optimizer first guess: "<<xp_.transpose()<<std::endl;
 
