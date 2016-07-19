@@ -781,15 +781,11 @@ Plotter3d::Plotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 	x_= new double[nPtsX_];
 	y_= new double[nPtsY_];
 
-	// Set the values of the -x and -y axis
+	// Set the values of the -x axis in c-style format for plplot
 	for ( int i = 0; i < nPtsX_; i++ )
 		x_[i] = x(i);
 
-	xMin_= x.minCoeff();
-	yMin_= y.minCoeff();
-	xMax_= x.maxCoeff();
-	yMax_= y.maxCoeff();
-
+	// Set the values of the -y axis in c-style format for plplot
 	for ( size_t j = 0; j < nPtsY_; j++ )
 		y_[j] = y(j);
 
@@ -801,14 +797,12 @@ Plotter3d::Plotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 		for ( int j= 0; j < nPtsY_; j++ )
 			z_[i][j] = z(i,j);
 
-	// Now get the bounds of the function z
-	for ( int i= 0; i < nPtsX_; i++ )
-		for ( int j= 0; j < nPtsY_; j++ ) {
-			if ( zMin_ > z_[i][j] )
-				zMin_ = z_[i][j];
-			if ( zMax_ < z_[i][j] )
-				zMax_ = z_[i][j];
-		}
+	xMin_= x.minCoeff();
+	yMin_= y.minCoeff();
+	xMax_= x.maxCoeff();
+	yMax_= y.maxCoeff();
+	zMin_= z.minCoeff();
+	zMax_= z.maxCoeff();
 
 }
 
@@ -835,7 +829,7 @@ void Plotter3d::plot() {
 	plmtex( "t", 1.0, 0.5, 0.5, title_.c_str() );
 	plcol0( 1 );
 
-	plw3d( 1.0, 1.0, 1.0, xMin_-1, xMax_, yMin_, yMax_, zMin_, zMax_,alt_, az_ );
+	plw3d( 1.0, 1.0, 1.0, xMin_, xMax_, yMin_, yMax_, zMin_, zMax_,alt_, az_ );
 	plbox3( "bnstu", xLabel_.c_str(), 0.0, 0,
 					"bnstu", yLabel_.c_str(), 0.0, 0,
 			"bcdmnstuv", title_.c_str(), 0.0, 0 );

@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
 
 
 		// compute some coordinates
-		Eigen::MatrixXd xPoint(3,3), yPoint(3,3), z(3,3), zPoint(3,3);
+		Eigen::MatrixXd xPoint(3,3), yPoint(3,3), zPoint(3,3);
 
 		// Set the test polynomial vector: x^2 xy y^2 x y 1
 		Eigen::VectorXd polynomial(6);
@@ -106,9 +106,14 @@ int main(int argc, char** argv) {
 				yPoint(i,j) = yMin + factsy(j) * ( yMax - yMin );
 
 				// x^2 xy y^2 x y 1
-				coords << xPoint(i,j)*xPoint(i,j), xPoint(i,j)*yPoint(i,j), yPoint(i,j)*yPoint(i,j), xPoint(i,j), yPoint(i,j), 1;
+				coords << xPoint(i,j)*xPoint(i,j),
+									xPoint(i,j)*yPoint(i,j),
+									yPoint(i,j)*yPoint(i,j),
+									xPoint(i,j),
+									yPoint(i,j),
+									1;
 
-				sign *= (-1.3);
+				sign *= (-2);
 
 				// compute z with the given polynomial. We now have the nx*ny points to
 				// be used to compute the regression and rebuild the initial polynomial

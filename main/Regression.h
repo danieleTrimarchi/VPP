@@ -41,7 +41,7 @@ class Regression {
 		void runNumericalTest();
 
 		/// Point array to be used to compute the regression
-		Eigen::MatrixXd x_, y_, z_;
+		Eigen::MatrixXd xp_, yp_, zp_;
 };
 
 #endif
