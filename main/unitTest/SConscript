@@ -10,7 +10,8 @@ THIRD_PARTY_INCS=[
 			'/opt/local/include',												# macPorts and nlopt include path
 			'/opt/local/share/plplot5.11.1/examples/c++',							#include path for plplot example
 			'/opt/local/include/plplot',
-			'/Users/dtrimarchi/third_party/cppunit-1.13.2/build/include'
+			'/Users/dtrimarchi/third_party/cppunit-1.13.2/build/include',
+			'/Users/dtrimarchi/VPP/main'
 		]
 
 
@@ -54,7 +55,8 @@ env = DefaultEnvironment()
 #      C++11 extension [-Wc++11-extensions]
 
 
-env.Program('unitTest', Glob('*.cpp'),
+env.Program('unitTest', Glob('*.cpp')+
+		["../Regression.o","../Plotter.o","../VPPException.o"],
 		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,
 		LIBPATH=THIRD_PARTY_LIBPATH

@@ -1,19 +1,9 @@
 
 #include <iostream>
-
-using namespace std;
-struct InitHook {
-  InitHook() {
-    cout << "Waiting...";
-    cin.ignore();
-  }
-};
-
-// Add this line to make the test stop and wait for a key press
-//InitHook init;
-
 #include "VPPTest.h"
 #include <cppunit/ui/text/TestRunner.h>
+
+using namespace std;
 
 int main(int argc, char *argv[])
 {

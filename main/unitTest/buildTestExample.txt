@@ -47,11 +47,6 @@ public:
 
 ========
 
-//
-// Copyright (c) 2004, Coventor, Inc. All rights reserved.
-// The contents of this file are Coventor Confidential.
-//
-//
 
 #include "AcisEngine.h"
 

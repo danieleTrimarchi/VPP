@@ -11,15 +11,24 @@ class TVPPTest : public CppUnit::TestFixture{
 
   CPPUNIT_TEST_SUITE(TVPPTest);
 
-  /// Matrices test
+  /// Resistance component tests
   CPPUNIT_TEST(resistanceTest);
+
+  /// Test the regression algorithm
+  CPPUNIT_TEST(regressionTest);
 
   CPPUNIT_TEST_SUITE_END();
 
 public:
 
-  /// Matrices test
+  /// Resistance components test
   void resistanceTest();
+
+  /// Test the regression algorithm
+  void regressionTest();
+
+private:
+
 
 };
 
