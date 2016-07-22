@@ -766,7 +766,7 @@ VPPPlotter3d::VPPPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 		yLabel_(yLabel),
 		zMin_(1e38),
 		zMax_(-1e38),
-		alt_(60),
+		alt_(40),
 		az_(30)
 {
 	// Specify the output device (aquaterm)
@@ -821,6 +821,7 @@ VPPPlotter3d::~VPPPlotter3d() {
 void VPPPlotter3d::plot() {
 
 	pladv( 0 );
+
 
 	// Create the viewport (isoparametric coordinates)
 	plvpor( 0.0, 1.0, 0.0, 1 );

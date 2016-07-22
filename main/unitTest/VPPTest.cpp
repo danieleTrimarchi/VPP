@@ -1,11 +1,11 @@
 #include "VPPTest.h"
-
-#include "../VPPPlotter.h"
+#include "VPPPlotter.h"
 #include "Regression.h"
 
 // Test the resistance components
 void TVPPTest::resistanceTest() {
 	std::cout<<"=== Running resistance tests === "<<std::endl;
+
 
 }
 
@@ -18,9 +18,11 @@ void setPointCoordinates(
 	// Define the iso-parametric coordinates of the domain, where
 	// the points are about to be calculated
 	Eigen::VectorXd factsx(xp.rows());
-	factsx << 0.25, 0.5, 0.75;
+	for(size_t i=0; i<xp.rows(); i++)
+		factsx(i) = double(i) / xp.rows();
 	Eigen::VectorXd factsy(yp.cols());
-	factsy << 0.25, 0.5, 0.75;
+	for(size_t i=0; i<yp.cols(); i++)
+		factsy(i) = double(i) / yp.cols();
 
 	Eigen::VectorXd coords(6);
 
@@ -63,7 +65,7 @@ void TVPPTest::regressionTest() {
 	double xMin=0, xMax=1, yMin=0, yMax=1;
 
 	// Generate a grid of point coordinates
-	Eigen::MatrixXd xp(3,3), yp(3,3), zp(3,3);
+	Eigen::MatrixXd xp(10,10), yp(10,10), zp(10,10);
 
 	setPointCoordinates(polynomial,
 			xMin, xMax, yMin, yMax,
@@ -93,7 +95,7 @@ void TVPPTest::regressionTest() {
 	polynomial2 << 0.1, -.5, 0.0, -1.2, .3 , 0;
 
 	// Set the domain bounds
-	xMin=-5,	xMax=5,	yMin=-5, yMax=5;
+	xMin=-10,	xMax=10,	yMin=-10, yMax=10;
 
 	setPointCoordinates(polynomial2,
 			xMin, xMax, yMin, yMax,
@@ -115,12 +117,13 @@ void TVPPTest::regressionTest() {
 
 	////////////////////////////////////////////////////////////
 
-	// Now perturb the solution with a pseudo-random map
+	// It is hard to estabilish a criterion,
 
+	// Now perturb the solution with a pseudo-random map
 	double perturbationFactor=.05;
 	for(size_t i=0; i<zp.rows(); i++)
 		for(size_t j=0; j<zp.cols(); j++){
-			zp(i,j) *= 1 + perturbationFactor;
+			zp(i,j) *= ( 1 + perturbationFactor );
 			perturbationFactor *= (-1);
 		}
 
@@ -166,21 +169,21 @@ void TVPPTest::regressionTest() {
 		for(size_t j=0; j<yp.cols(); j++){
 			xpArr(k) = xp(i,j);
 			ypArr(k) = yp(i,j);
-			zpArr(k) = z_reconstructed(i,j);
+			zpArr(k) = zp(i,j);
 			k++;
 		}
 	}
 
-//	MagnitudeColoredPlotter3d plotter(
-//			xpArr, ypArr, zp,
-//			xpArr, ypArr, zpArr,
-//			"Regression Plot", "x", "y");
+	VPPMagnitudeColoredPlotter3d plotter(
+			x, y, z_reconstructed,
+			xpArr, ypArr, zpArr,
+			"Regression Plot", "x", "y");
 
 	VPPVectorPlotter plot;
 
 	for(size_t i=0; i<xp.rows(); i++){
 		for(size_t j=0; j<yp.cols(); j++){
-			CPPUNIT_ASSERT_DOUBLES_EQUAL( z_reconstructed(i,j), zp(i,j), fabs(1.5*perturbationFactor));
+			CPPUNIT_ASSERT_DOUBLES_EQUAL( z_reconstructed(i,j), zp(i,j), fabs(2.1*perturbationFactor*zp(i,j)));
 		}
 	}
 }
