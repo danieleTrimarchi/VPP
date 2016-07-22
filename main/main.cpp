@@ -32,7 +32,7 @@ void load(VariableFileParser& parser,
 	// Instantiate the sailset
 	pSailSet.reset( SailSet::SailSetFactory(parser) );
 
-	// Reload the items
+	// Instantiate the items
 	pVppItems.reset( new VPPItemFactory(&parser,pSailSet) );
 
 }

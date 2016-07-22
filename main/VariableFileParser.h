@@ -1,5 +1,5 @@
-#ifndef FILEPARSER_H
-#define FILEPARSER_H
+#ifndef VARIABLE_FILEPARSER_H
+#define VARIABLE_FILEPARSER_H
 
 #include <string>
 #include <fstream>

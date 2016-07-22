@@ -1,10 +1,86 @@
 #include "VPPTest.h"
 #include "VPPPlotter.h"
 #include "Regression.h"
+#include "VariableFileParser.h"
+#include "boost/shared_ptr.hpp"
+#include "SailSet.h"
+#include "VPPItemFactory.h"
 
 // Test the resistance components
 void TVPPTest::resistanceTest() {
 	std::cout<<"=== Running resistance tests === "<<std::endl;
+
+	// Do as in main :
+
+	// Instantiate a parser with the variables
+	VariableFileParser parser("variableFile_test.txt");
+
+	// Declare a ptr with the sail configuration
+	// This is based on the variables that have been read in
+	boost::shared_ptr<SailSet> pSails;
+
+	// Declare a container for all the items that
+	// constitute the VPP components (Wind, Resistance, RightingMoment...)
+	boost::shared_ptr<VPPItemFactory> pVppItems;
+
+	// Parse the variables file
+	parser.parse();
+
+	// Instantiate the sailset
+	pSails.reset( SailSet::SailSetFactory(parser) );
+
+	// Instantiate the items
+	pVppItems.reset( new VPPItemFactory(&parser,pSails) );
+
+	// Define the state vector
+	Eigen::VectorXd x(4);
+	x << 1, 0.1, 0.9, 3;
+
+	// Feed the items with the current state vector
+	pVppItems->update(2,2,x);
+
+	Eigen::VectorXd baseLines(10);
+	baseLines << 13.7794, -0.320969, 8.24592, -0.0451873, 0.0257853, 5.11719, 2.82575, -0.264885, 0, 29.94;
+
+	// ==== Compute and compare to baseline frictional resistance
+	// std::cout<<"FRICT= "<<pVppItems->getFrictionalResistanceItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getFrictionalResistanceItem()->get(),baseLines(0), 1.e-4 );
+
+	// ==== Compute and compare to baseline residual resistance
+	//std::cout<<"RESID= "<<pVppItems->getResiduaryResistanceItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResiduaryResistanceItem()->get(),baseLines(1), 1.e-4 );
+
+	// ==== Compute and compare to baseline induced resistance
+	//std::cout<<"INDUC= "<<pVppItems->getInducedResistanceItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getInducedResistanceItem()->get(), baseLines(2), 1.e-4 );
+
+	// ==== Compute and compare to baseline Delta_FrictRes_Heel resistance
+	//std::cout<<"dFRICT_HEEL= "<<pVppItems->getDelta_FrictionalResistance_HeelItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getDelta_FrictionalResistance_HeelItem()->get(), baseLines(3), 1.e-4 );
+
+	// ==== Compute and compare to baseline Delta_ResidRes_Heel resistance
+	//std::cout<<"dRESID_HEEL= "<<pVppItems->getDelta_ResiduaryResistance_HeelItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getDelta_ResiduaryResistance_HeelItem()->get(), baseLines(4), 1.e-4 );
+
+	// ==== Compute and compare to baseline ViscousRes_Keel resistance
+	//std::cout<<"VISCOUS_KEEL= "<<pVppItems->getViscousResistanceKeelItem()->get()<<std::endl; //-> this does not plot
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getViscousResistanceKeelItem()->get(), baseLines(5), 1.e-4 );
+
+	// ==== Compute and compare to baseline FrictionalRes_Rudder resistance
+	//std::cout<<"VISCOUS_RUDDER= "<<pVppItems->getViscousResistanceRudderItem()->get()<<std::endl; //-> this does not plot
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getViscousResistanceRudderItem()->get(), baseLines(6), 1.e-4 );
+
+	// ==== Compute and compare to baseline ResidRes_Keel resistance
+	//std::cout<<"RESID KEEL= "<<pVppItems->getResiduaryResistanceKeelItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResiduaryResistanceKeelItem()->get(), baseLines(7), 1.e-4 );
+
+	// ==== Compute and compare to baseline NegativeResistance resistance
+	//std::cout<<"NEGATIVE= "<<pVppItems->getNegativeResistanceItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getNegativeResistanceItem()->get(), baseLines(8), 1.e-4 );
+
+	// ==== Compute and compare to baseline TOTAL resistance
+	//std::cout<<"TOTAL= "<<pVppItems->getResistance()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResistance(), baseLines(9), 1.e-4 );
 
 
 }
@@ -153,37 +229,35 @@ void TVPPTest::regressionTest() {
 		}
 	}
 
-	// Plot the points and its regression surface
-	Eigen::ArrayXd x(xp.rows()), y(yp.cols());
-
-	for(size_t i=0; i<xp.rows(); i++)
-		x(i) = xp(i,0);
-	for(size_t i=0; i<yp.cols(); i++)
-		y(i) = yp(0,i);
-
-	Eigen::ArrayXd xpArr(xp.rows()*yp.cols());
-	Eigen::ArrayXd ypArr(xp.rows()*yp.cols());
-	Eigen::ArrayXd zpArr(xp.rows()*yp.cols());
-	size_t k=0;
-	for(size_t i=0; i<xp.rows(); i++){
-		for(size_t j=0; j<yp.cols(); j++){
-			xpArr(k) = xp(i,j);
-			ypArr(k) = yp(i,j);
-			zpArr(k) = zp(i,j);
-			k++;
-		}
-	}
-
-	VPPMagnitudeColoredPlotter3d plotter(
-			x, y, z_reconstructed,
-			xpArr, ypArr, zpArr,
-			"Regression Plot", "x", "y");
-
-	VPPVectorPlotter plot;
+//	// Plot the points and its regression surface
+//	Eigen::ArrayXd x(xp.rows()), y(yp.cols());
+//
+//	for(size_t i=0; i<xp.rows(); i++)
+//		x(i) = xp(i,0);
+//	for(size_t i=0; i<yp.cols(); i++)
+//		y(i) = yp(0,i);
+//
+//	Eigen::ArrayXd xpArr(xp.rows()*yp.cols());
+//	Eigen::ArrayXd ypArr(xp.rows()*yp.cols());
+//	Eigen::ArrayXd zpArr(xp.rows()*yp.cols());
+//	size_t k=0;
+//	for(size_t i=0; i<xp.rows(); i++){
+//		for(size_t j=0; j<yp.cols(); j++){
+//			xpArr(k) = xp(i,j);
+//			ypArr(k) = yp(i,j);
+//			zpArr(k) = zp(i,j);
+//			k++;
+//		}
+//	}
+//
+//	VPPMagnitudeColoredPlotter3d plotter(
+//			x, y, z_reconstructed,
+//			xpArr, ypArr, zpArr,
+//			"Regression Plot", "x", "y");
 
 	for(size_t i=0; i<xp.rows(); i++){
 		for(size_t j=0; j<yp.cols(); j++){
-			CPPUNIT_ASSERT_DOUBLES_EQUAL( z_reconstructed(i,j), zp(i,j), fabs(2.1*perturbationFactor*zp(i,j)));
+			CPPUNIT_ASSERT_DOUBLES_EQUAL( z_reconstructed(i,j), zp(i,j), fabs(2.1*perturbationFactor*zp.maxCoeff()));
 		}
 	}
 }
