@@ -1,10 +1,11 @@
-#include "Plotter.h"
+#include "VPPPlotter.h"
+
 #include "VPPException.h"
 #include "mathUtils.h"
 
 using namespace mathUtils;
 
-PlotterBase::PlotterBase():
+VPPPlotterBase::VPPPlotterBase():
 		minX_(1E20),
 		minY_(1E20),
 		maxX_(-1E20),
@@ -25,12 +26,12 @@ PlotterBase::PlotterBase():
 }
 
 // Destructor
-PlotterBase::~PlotterBase(){
+VPPPlotterBase::~VPPPlotterBase(){
 	// make nothing
 }
 
 // Reset the ranges to very big values
-void PlotterBase::initRanges() {
+void VPPPlotterBase::initRanges() {
 
 	minX_=1E20;
 	minY_=1E20;
@@ -39,7 +40,7 @@ void PlotterBase::initRanges() {
 
 }
 
-void PlotterBase::resetRanges(ArrayXd& x, ArrayXd& y) {
+void VPPPlotterBase::resetRanges(ArrayXd& x, ArrayXd& y) {
 
 	// Set the ranges for the first array
 	if(x.minCoeff()<minX_)
@@ -53,7 +54,7 @@ void PlotterBase::resetRanges(ArrayXd& x, ArrayXd& y) {
 
 }
 
-void PlotterBase::resetRanges(MatrixXd& x, MatrixXd& y, bool axisEqual) {
+void VPPPlotterBase::resetRanges(MatrixXd& x, MatrixXd& y, bool axisEqual) {
 
 	// Set the ranges for the first array
 	if(x.minCoeff()<minX_)
@@ -96,7 +97,7 @@ void PlotterBase::resetRanges(MatrixXd& x, MatrixXd& y, bool axisEqual) {
 
 }
 
-void PlotterBase::resetRanges(std::vector<double>& x, std::vector<double>& y) {
+void VPPPlotterBase::resetRanges(std::vector<double>& x, std::vector<double>& y) {
 
 	// Set the ranges for the first array
 	if(min(x)<minX_)
@@ -111,7 +112,7 @@ void PlotterBase::resetRanges(std::vector<double>& x, std::vector<double>& y) {
 }
 
 // Reset the ranges so that it can contain all of the plot
-void PlotterBase::resetRanges(ArrayXd& x0,ArrayXd& y0,ArrayXd& x1,ArrayXd& y1) {
+void VPPPlotterBase::resetRanges(ArrayXd& x0,ArrayXd& y0,ArrayXd& x1,ArrayXd& y1) {
 
 	resetRanges(x0,y0);
 	resetRanges(x1,y1);
@@ -119,7 +120,7 @@ void PlotterBase::resetRanges(ArrayXd& x0,ArrayXd& y0,ArrayXd& x1,ArrayXd& y1) {
 }
 
 // Reset the ranges so that it can contain all of the plot
-void PlotterBase::resetRanges(std::vector<double>& x0,std::vector<double>& y0,std::vector<double>& x1,std::vector<double>& y1) {
+void VPPPlotterBase::resetRanges(std::vector<double>& x0,std::vector<double>& y0,std::vector<double>& x1,std::vector<double>& y1) {
 
 	resetRanges(x0,y0);
 	resetRanges(x1,y1);
@@ -127,7 +128,7 @@ void PlotterBase::resetRanges(std::vector<double>& x0,std::vector<double>& y0,st
 }
 
 // Find the min of the specified c-style array
-double PlotterBase::min(std::vector<double>& vec) {
+double VPPPlotterBase::min(std::vector<double>& vec) {
 
 	double val=1E+20;
 	for(size_t i=0; i<vec.size(); i++){
@@ -138,7 +139,7 @@ double PlotterBase::min(std::vector<double>& vec) {
 }
 
 // Find the max of the specified c-style array
-double PlotterBase::max(std::vector<double>& vec) {
+double VPPPlotterBase::max(std::vector<double>& vec) {
 	double val=-1E+20;
 	for(size_t i=0; i<vec.size(); i++){
 		if(vec[i]>val)
@@ -150,14 +151,14 @@ double PlotterBase::max(std::vector<double>& vec) {
 // Plotter class ////////////////////////////////////////
 
 // Constructor
-Plotter::Plotter():
-				PlotterBase(),
+VPPPlotter::VPPPlotter():
+				VPPPlotterBase(),
 				nValues_(0),
 				x_(0), y_(0) {
 }
 
 // Destructor
-Plotter::~Plotter() {
+VPPPlotter::~VPPPlotter() {
 
 	delete x_;
 	delete y_;
@@ -165,7 +166,7 @@ Plotter::~Plotter() {
 }
 
 // Copy the values into plplot compatible containers
-void Plotter::setValues(ArrayXd& x, ArrayXd& y) {
+void VPPPlotter::setValues(ArrayXd& x, ArrayXd& y) {
 
 	// make sure the buffers x_ and y_ are init
 	delete x_;
@@ -185,7 +186,7 @@ void Plotter::setValues(ArrayXd& x, ArrayXd& y) {
 }
 
 // Copy the values into plplot compatible containers
-void Plotter::setValues(std::vector<double>& x, std::vector<double>& y) {
+void VPPPlotter::setValues(std::vector<double>& x, std::vector<double>& y) {
 
 	// make sure the buffers x_ and y_ are init
 	delete x_;
@@ -205,7 +206,7 @@ void Plotter::setValues(std::vector<double>& x, std::vector<double>& y) {
 }
 
 // Find the min of the specified c-style array
-double Plotter::min(double* arr) {
+double VPPPlotter::min(double* arr) {
 
 	double val=1E+20;
 	for(size_t i=0; i<nValues_; i++){
@@ -216,7 +217,7 @@ double Plotter::min(double* arr) {
 }
 
 /// Find the max of the specified c-style array
-double Plotter::max(double* arr) {
+double VPPPlotter::max(double* arr) {
 	double val=-1E+20;
 	for(size_t i=0; i<nValues_; i++){
 		if(arr[i]>val)
@@ -226,7 +227,7 @@ double Plotter::max(double* arr) {
 }
 
 // Plot the points of some given arrays
-void Plotter::plot( std::vector<double>& y, string title) {
+void VPPPlotter::plot( std::vector<double>& y, string title) {
 
     if(!y.size()){
         std::cout<<"\n WARNING: Attempting to plot an empty vector. Returning \n"<<std::endl;
@@ -246,7 +247,7 @@ void Plotter::plot( std::vector<double>& y, string title) {
 }
 
 // Produce a 2d plot from Eigen vectors
-void Plotter::plot(ArrayXd& x, ArrayXd& y,string title) {
+void VPPPlotter::plot(ArrayXd& x, ArrayXd& y,string title) {
 
 	// Reset the ranges at the very beginning of the plot
 	initRanges();
@@ -277,7 +278,7 @@ void Plotter::plot(ArrayXd& x, ArrayXd& y,string title) {
 
 }
 
-void Plotter::plot(	ArrayXd& x0,
+void VPPPlotter::plot(	ArrayXd& x0,
 		ArrayXd& y0,
 		ArrayXd& x1,
 		ArrayXd& y1,
@@ -326,7 +327,7 @@ void Plotter::plot(	ArrayXd& x0,
 
 }
 
-void Plotter::plot(
+void VPPPlotter::plot(
 		std::vector<double>& x0,
 		std::vector<double>& y0,
 		std::string title,
@@ -360,7 +361,7 @@ void Plotter::plot(
 
 }
 
-void Plotter::plot(	std::vector<double>& x0,
+void VPPPlotter::plot(	std::vector<double>& x0,
 		std::vector<double>& y0,
 		std::vector<double>& x1,
 		std::vector<double>& y1,
@@ -411,7 +412,7 @@ void Plotter::plot(	std::vector<double>& x0,
 
 
 // Append a set of data
-void Plotter::append(string curveLabel, ArrayXd& xs, ArrayXd& ys) {
+void VPPPlotter::append(string curveLabel, ArrayXd& xs, ArrayXd& ys) {
 
 	// make sure the size of the arrays are the same
 	if(xs.size() != ys.size())
@@ -436,7 +437,7 @@ void Plotter::append(string curveLabel, ArrayXd& xs, ArrayXd& ys) {
 }
 
 // Plot the data that have been previously appended to the buffer vectors
-void Plotter::plot(string xLabel,string yLabel,string plotTitle) {
+void VPPPlotter::plot(string xLabel,string yLabel,string plotTitle) {
 
 	// Create a labeled box to hold the plot.
 	plcol0( color::grey );
@@ -470,15 +471,15 @@ void Plotter::plot(string xLabel,string yLabel,string plotTitle) {
 //=====================================================================
 
 // Constructor
-VectorPlotter::VectorPlotter() :
-				PlotterBase(),
+VPPVectorPlotter::VPPVectorPlotter() :
+				VPPPlotterBase(),
 				nX_(0),
 				nY_(0) {
 
 }
 
-//// instantiate a vectorPlotter and quit. Usage for a single vector plot:
-// VectorPlotter testplot;
+//// instantiate a VPPVectorPlotter and quit. Usage for a single vector plot:
+// VPPVectorPlotter testplot;
 // Eigen::MatrixXd x(1,4), y(1,4), du(1,4), dv(1,4);
 //// Coordinate vectors. Will form a coordinate matrix
 //x  << 0, 1, 2, 3;
@@ -487,7 +488,7 @@ VectorPlotter::VectorPlotter() :
 //du << 0.5, 0.2, 1., 0.5;
 //dv << 0.5, 0.2, 1., 0.5;
 //testplot.plot(x,y,du,dv,"vector plot","x","y");
-void VectorPlotter::plot(
+void VPPVectorPlotter::plot(
 		MatrixXd& x,  MatrixXd& y,
 		MatrixXd& du, MatrixXd& dv,
 		double scale,
@@ -568,13 +569,13 @@ void VectorPlotter::plot(
 }
 
 // Destructor
-VectorPlotter::~VectorPlotter() {
+VPPVectorPlotter::~VPPVectorPlotter() {
 	// make nothing
 }
 
 //=====================================================================
 
-PolarPlotter::PolarPlotter( string title ) :
+VPPPolarPlotter::VPPPolarPlotter( string title ) :
 			title_(title),
 			minAlphaRange_(1E+20),
 			maxAlphaRange_(-1E20),
@@ -588,12 +589,12 @@ PolarPlotter::PolarPlotter( string title ) :
 
 }
 
-PolarPlotter::~PolarPlotter() {
+VPPPolarPlotter::~VPPPolarPlotter() {
 	// Do nothing
 }
 
 // Append a set of polar data
-void PolarPlotter::append(string curveLabel, ArrayXd& alpha, ArrayXd& vals) {
+void VPPPolarPlotter::append(string curveLabel, ArrayXd& alpha, ArrayXd& vals) {
 
 	// make sure the size of the arrays are the same
 	if(alpha.size() != vals.size())
@@ -623,7 +624,7 @@ void PolarPlotter::append(string curveLabel, ArrayXd& alpha, ArrayXd& vals) {
 }
 
 // Append a set of polar data
-void PolarPlotter::append(string curveLabel, std::vector<double>& alphaV, std::vector<double>& valsV){
+void VPPPolarPlotter::append(string curveLabel, std::vector<double>& alphaV, std::vector<double>& valsV){
 
 	// Convert vector->ArrayXd and call the append method for ArrayXd
 	ArrayXd alpha(alphaV.size());
@@ -640,7 +641,7 @@ void PolarPlotter::append(string curveLabel, std::vector<double>& alphaV, std::v
 }
 
 // Copy the values into plplot compatible containers
-void PolarPlotter::setValues(ArrayXd& x, ArrayXd& vals) {
+void VPPPolarPlotter::setValues(ArrayXd& x, ArrayXd& vals) {
 
 	// make sure the size of x and y are the same
 	if(x.size() != vals.size())
@@ -666,7 +667,7 @@ void PolarPlotter::setValues(ArrayXd& x, ArrayXd& vals) {
 }
 
 // Plot the data appended to the plotter
-void PolarPlotter::plot(size_t skipCircles) {
+void VPPPolarPlotter::plot(size_t skipCircles) {
 
 	// Specify the output device (aquaterm)
 	plsdev("aqt");
@@ -756,7 +757,7 @@ void PolarPlotter::plot(size_t skipCircles) {
 // Plotter3d class ////////////////////////////////////////
 
 // Plotter3d Constructor
-Plotter3d::Plotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+VPPPlotter3d::VPPPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 		string title, string xLabel, string yLabel) :
 		nPtsX_(x.size()),
 		nPtsY_(y.size()),
@@ -807,7 +808,7 @@ Plotter3d::Plotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 }
 
 // Destructor
-Plotter3d::~Plotter3d() {
+VPPPlotter3d::~VPPPlotter3d() {
 
 	// Deallocate the space used for z_ and zLimited_
 	plFree2dGrid( z_, nPtsX_, nPtsY_ );
@@ -817,7 +818,7 @@ Plotter3d::~Plotter3d() {
 
 }
 
-void Plotter3d::plot() {
+void VPPPlotter3d::plot() {
 
 	pladv( 0 );
 
@@ -839,7 +840,7 @@ void Plotter3d::plot() {
 }
 
 // Init the colormap
-void Plotter3d::cmap1_init( int gray )
+void VPPPlotter3d::cmap1_init( int gray )
 {
 	double* intensity   = new double[2];
 	double* hue = new double[2];
@@ -892,10 +893,10 @@ void Plotter3d::cmap1_init( int gray )
 //////////////////////////////////////////////////////////////
 
 // Constructor
-DiffuseLightSurfacePlotter3d::DiffuseLightSurfacePlotter3d(
+VPPDiffuseLightSurfacePlotter3d::VPPDiffuseLightSurfacePlotter3d(
 		ArrayXd& x, ArrayXd& y, MatrixXd& z,
 		string title, string xLabel, string yLabel ) :
-				Plotter3d( x, y, z, title, xLabel, yLabel ) {
+				VPPPlotter3d( x, y, z, title, xLabel, yLabel ) {
 
 	plot();
 
@@ -905,14 +906,14 @@ DiffuseLightSurfacePlotter3d::DiffuseLightSurfacePlotter3d(
 }
 
 // Destructor
-DiffuseLightSurfacePlotter3d::~DiffuseLightSurfacePlotter3d() {
+VPPDiffuseLightSurfacePlotter3d::~VPPDiffuseLightSurfacePlotter3d() {
 
 }
 
-void DiffuseLightSurfacePlotter3d::plot() {
+void VPPDiffuseLightSurfacePlotter3d::plot() {
 
 	// Decorator pattern
-	Plotter3d::plot();
+	VPPPlotter3d::plot();
 
 	cmap1_init( colorplot::greyScale );
 	plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, 0, NULL, 0 );
@@ -922,10 +923,10 @@ void DiffuseLightSurfacePlotter3d::plot() {
 //////////////////////////////////////////////////////////////
 
 /// Constructor
-MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(
+VPPMagnitudeColoredPlotter3d::VPPMagnitudeColoredPlotter3d(
 		ArrayXd& x, ArrayXd& y, MatrixXd& z,
 		string title, string xLabel, string yLabel ) :
-				Plotter3d( x, y, z, title, xLabel, yLabel ),
+				VPPPlotter3d( x, y, z, title, xLabel, yLabel ),
 				pXp_(0),
 				pYp_(0),
 				pZp_(0) {
@@ -938,11 +939,11 @@ MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(
 }
 
 // Constructor
-MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(
+VPPMagnitudeColoredPlotter3d::VPPMagnitudeColoredPlotter3d(
 		ArrayXd& x, ArrayXd& y, MatrixXd& z,
 		ArrayXd& xp, ArrayXd& yp, ArrayXd& zp,
 		string title, string xLabel, string yLabel ) :
-				Plotter3d( x, y, z, title, xLabel, yLabel ),
+				VPPPlotter3d( x, y, z, title, xLabel, yLabel ),
 				pXp_(&xp), pYp_(&yp), pZp_(&zp) {
 
 	if(pXp_->size() != pYp_->size() || pXp_->size() != pZp_->size())
@@ -969,14 +970,14 @@ MagnitudeColoredPlotter3d::MagnitudeColoredPlotter3d(
 
 }
 /// Destructor
-MagnitudeColoredPlotter3d::~MagnitudeColoredPlotter3d() {
+VPPMagnitudeColoredPlotter3d::~VPPMagnitudeColoredPlotter3d() {
 
 }
 
-void MagnitudeColoredPlotter3d::plot() {
+void VPPMagnitudeColoredPlotter3d::plot() {
 
 		// Decorator pattern
-		Plotter3d::plot();
+		VPPPlotter3d::plot();
 
 		cmap1_init( colorplot::colorMap );
 		plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR, NULL, 0 );
@@ -997,9 +998,9 @@ void MagnitudeColoredPlotter3d::plot() {
 			plstring3( pXp_->size(), x, y, z, "x" );
 
 			// Clean up
-			delete x;
-			delete y;
-			delete z;
+			delete[] x;
+			delete[] y;
+			delete[] z;
 
 		}
 }
@@ -1007,9 +1008,9 @@ void MagnitudeColoredPlotter3d::plot() {
 //////////////////////////////////////////////////////////////
 
 /// Constructor
-MagnitudeColoredFacetedPlotter3d::MagnitudeColoredFacetedPlotter3d(		ArrayXd& x, ArrayXd& y, MatrixXd& z,
+VPPMagnitudeColoredFacetedPlotter3d::VPPMagnitudeColoredFacetedPlotter3d(		ArrayXd& x, ArrayXd& y, MatrixXd& z,
 		string title, string xLabel, string yLabel ) :
-				Plotter3d( x, y, z, title, xLabel, yLabel ) {
+				VPPPlotter3d( x, y, z, title, xLabel, yLabel ) {
 
 	plot();
 
@@ -1019,14 +1020,14 @@ MagnitudeColoredFacetedPlotter3d::MagnitudeColoredFacetedPlotter3d(		ArrayXd& x,
 }
 
 /// Destructor
-MagnitudeColoredFacetedPlotter3d::~MagnitudeColoredFacetedPlotter3d() {
+VPPMagnitudeColoredFacetedPlotter3d::~VPPMagnitudeColoredFacetedPlotter3d() {
 
 }
 
-void MagnitudeColoredFacetedPlotter3d::plot() {
+void VPPMagnitudeColoredFacetedPlotter3d::plot() {
 
 		// Decorator pattern
-		Plotter3d::plot();
+		VPPPlotter3d::plot();
 
 		cmap1_init( colorplot::colorMap );
 		plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR | FACETED, NULL, 0 );
@@ -1037,10 +1038,10 @@ void MagnitudeColoredFacetedPlotter3d::plot() {
 
 
 /// Constructor
-CountourPlotter3d::CountourPlotter3d(
+VPPCountourPlotter3d::VPPCountourPlotter3d(
 		ArrayXd& x, ArrayXd& y, MatrixXd& z,
 		string title, string xLabel, string yLabel ) :
-				Plotter3d( x, y, z, title, xLabel, yLabel ),
+				VPPPlotter3d( x, y, z, title, xLabel, yLabel ),
 				nLevels_(10),
 				cLevel_( new double[nLevels_] ){
 
@@ -1051,28 +1052,28 @@ CountourPlotter3d::CountourPlotter3d(
 }
 
 /// Destructor
-CountourPlotter3d::~CountourPlotter3d() {
+VPPCountourPlotter3d::~VPPCountourPlotter3d() {
 
 	// De-allocate the space used for the level array
 	delete[] cLevel_;
 
 }
 
-void CountourPlotter3d::plot() {
+void VPPCountourPlotter3d::plot() {
 
 		// Do not repeat the loop (?) for this mother class plot
 		// Decorator pattern
-		Plotter3d::plot();
+		VPPPlotter3d::plot();
 
 }
 
 //////////////////////////////////////////////////////////////
 
 /// Constructor
-MagnitudeColoredCountourPlotter3d::MagnitudeColoredCountourPlotter3d(
+VPPMagnitudeColoredCountourPlotter3d::VPPMagnitudeColoredCountourPlotter3d(
 			ArrayXd& x, ArrayXd& y, MatrixXd& z,
 			string title, string xLabel, string yLabel ) :
-					CountourPlotter3d( x, y, z, title, xLabel, yLabel ) {
+					VPPCountourPlotter3d( x, y, z, title, xLabel, yLabel ) {
 
 	plot();
 
@@ -1082,14 +1083,14 @@ MagnitudeColoredCountourPlotter3d::MagnitudeColoredCountourPlotter3d(
 }
 
 /// Destructor
-MagnitudeColoredCountourPlotter3d::~MagnitudeColoredCountourPlotter3d() {
+VPPMagnitudeColoredCountourPlotter3d::~VPPMagnitudeColoredCountourPlotter3d() {
 
 }
 
-void MagnitudeColoredCountourPlotter3d::plot() {
+void VPPMagnitudeColoredCountourPlotter3d::plot() {
 
 		// Decorator pattern
-		CountourPlotter3d::plot();
+		VPPCountourPlotter3d::plot();
 
 		cmap1_init( colorplot::colorMap );
 		plsurf3d( x_, y_, z_, nPtsX_, nPtsY_, MAG_COLOR | SURF_CONT | BASE_CONT, cLevel_, nLevels_ );
@@ -1099,10 +1100,10 @@ void MagnitudeColoredCountourPlotter3d::plot() {
 //////////////////////////////////////////////////////////////
 
 // Constructor
-MagnitudeColoredCountourLimitedPlotter3d::MagnitudeColoredCountourLimitedPlotter3d(
+VPPMagnitudeColoredCountourLimitedPlotter3d::VPPMagnitudeColoredCountourLimitedPlotter3d(
 			ArrayXd& x, ArrayXd& y, MatrixXd& z,
 			string title, string xLabel, string yLabel ) :
-					CountourPlotter3d( x, y, z, title, xLabel, yLabel ),
+					VPPCountourPlotter3d( x, y, z, title, xLabel, yLabel ),
 		indexymin_( new int[ nPtsX_ ] ),
 		indexymax_( new int[ nPtsX_ ] )
 {
@@ -1139,7 +1140,7 @@ MagnitudeColoredCountourLimitedPlotter3d::MagnitudeColoredCountourLimitedPlotter
 }
 
 // Destructor
-MagnitudeColoredCountourLimitedPlotter3d::~MagnitudeColoredCountourLimitedPlotter3d() {
+VPPMagnitudeColoredCountourLimitedPlotter3d::~VPPMagnitudeColoredCountourLimitedPlotter3d() {
 
 	// De-allocate the space for zLimited and for the index arrays
 	plFree2dGrid( zLimited_, nPtsX_, nPtsY_ );
@@ -1148,10 +1149,10 @@ MagnitudeColoredCountourLimitedPlotter3d::~MagnitudeColoredCountourLimitedPlotte
 	delete[] indexymax_;
 }
 
-void MagnitudeColoredCountourLimitedPlotter3d::plot() {
+void VPPMagnitudeColoredCountourLimitedPlotter3d::plot() {
 
 	// Decorator pattern
-	Plotter3d::plot();
+	VPPPlotter3d::plot();
 
 	int indexxmin  = 0;
 	int indexxmax  = nPtsX_;

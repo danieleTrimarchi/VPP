@@ -326,10 +326,10 @@ void Optimizer::plotPolars() {
 
 	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
 	// Sail flat, Crew B, dF and dM
-	PolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot");
-	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot");
-	PolarPlotter crewBPolarPlotter("Crew B Polar Plot");
-	PolarPlotter sailFlatPolarPlotter("Sail Flat");
+	VPPPolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot");
+	VPPPolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot");
+	VPPPolarPlotter crewBPolarPlotter("Crew B Polar Plot");
+	VPPPolarPlotter sailFlatPolarPlotter("Sail Flat");
 
 	// Instantiate the list of wind angles that will serve
 	// for each velocity
@@ -415,32 +415,32 @@ void Optimizer::plotXY(size_t iWa) {
 	sprintf(title,"AWA= %4.2f", toDeg(pWind_->getTWA(iWa)) );
 
 	// Instantiate a plotter for the velocity
-	Plotter plotter;
+	VPPPlotter plotter;
 	string t=string("Boat Speed")+string(title);
 	plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
 			t,"Wind Speed [m/s]","Boat Speed [m/s]");
 
 
 	// Instantiate a plotter for the heel
-	Plotter plotter2;
+	VPPPlotter plotter2;
 	string t2=string("Boat Heel")+string(title);
 	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
 			t2,"Wind Speed [m/s]","Boat Heel [deg]");
 
 	// Instantiate a plotter for the Flat
-	Plotter plotter3;
+	VPPPlotter plotter3;
 	string t3=string("Sail FLAT")+string(title);
 	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
 			t3,"Wind Speed [m/s]","Sail FLAT [-]");
 
 	// Instantiate a plotter for the position of the movable crew B
-	Plotter plotter4;
+	VPPPlotter plotter4;
 	string t4=string("Crew position")+string(title);
 	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
 			t4,"Wind Speed [m/s]","Position of the movable crew [m]");
 
 	// Instantiate a plotter for the residuals
-	Plotter plotter5;
+	VPPPlotter plotter5;
 	string t5=string("Residuals")+string(title);
 	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
 			t5,"Wind Speed [m/s]","Residuals [N,N*m]");

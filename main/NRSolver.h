@@ -7,9 +7,9 @@
 #include <math.h>
 
 #include "VPPItemFactory.h"
-#include "Plotter.h"
 #include "Results.h"
 #include "IOUtils.h"
+#include "VPPPlotter.h"
 
 using namespace std;
 

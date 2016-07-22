@@ -27,9 +27,6 @@ public:
   /// Test the regression algorithm
   void regressionTest();
 
-private:
-
-
 };
 
 #endif /* VPP_TEST_H */

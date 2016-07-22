@@ -106,11 +106,11 @@ void VPPJacobian::testPlot(int twv, int twa) {
 	}
 
 	// Instantiate a vector plotter and produce the plot
-	VectorPlotter dFdx;
+	VPPVectorPlotter dFdx;
 	dFdx.plot(x,f,du_f,df,10,"dF/du Jacobian test plot","Vboat [m/s]","F[N]");
 
 	// Instantiate a vector plotter and produce the plot
-	VectorPlotter dMdx;
+	VPPVectorPlotter dMdx;
 	dMdx.plot(x,M,du_M,dM,10,"dM/du Jacobian test plot","Vboat [m/s]","M[N*m]");
 
 	// Reset the state vector to its initial state
@@ -149,11 +149,11 @@ void VPPJacobian::testPlot(int twv, int twa) {
 	}
 
 	// Instantiate a vector plotter and produce the plot
-	VectorPlotter dFdPhi;
+	VPPVectorPlotter dFdPhi;
 	dFdPhi.plot(x,f,du_f,df,.05,"dF/dPhi Jacobian test plot","Phi [RAD]","F[N]");
 
 	// Instantiate a vector plotter and produce the plot
-	VectorPlotter dMdPhi;
+	VPPVectorPlotter dMdPhi;
 	dMdPhi.plot(x,M,du_M,dM,500,"dM/dPhi Jacobian test plot","Phi [RAD]","M[N*m]");
 
 }
@@ -212,7 +212,7 @@ void JacobianChecker::testPlot() {
 	}
 
 	// Instantiate the vector plotters and produce the plots
-	VectorPlotter dFdx;
+	VPPVectorPlotter dFdx;
 	dFdx.plot(x,f,du_f,df,1,"dF/du JacobianChecker test plot","Vb [m/s]","F [N]");
 
 	// ----------
@@ -232,7 +232,7 @@ void JacobianChecker::testPlot() {
 
 	}
 
-	VectorPlotter dMdx;
+	VPPVectorPlotter dMdx;
 	dMdx.plot(x,m,du_m,dm,1,"dM/du JacobianChecker test plot","Vb [m/s]","M [N*m]");
 
 	// ----------
@@ -252,7 +252,7 @@ void JacobianChecker::testPlot() {
 
 	}
 
-	VectorPlotter dFdPhi;
+	VPPVectorPlotter dFdPhi;
 	dFdPhi.plot(x,m,du_m,dm,1,"dF/dPhi JacobianChecker test plot","Phi [rad]","F [N]");
 
 	// ----------
@@ -272,7 +272,7 @@ void JacobianChecker::testPlot() {
 
 	}
 
-	VectorPlotter dMdPhi;
+	VPPVectorPlotter dMdPhi;
 	dMdPhi.plot(x,m,du_m,dm,1,"dM/dPhi JacobianChecker test plot","Phi [rad]","M [N*m]");
 
 }

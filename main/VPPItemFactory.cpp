@@ -325,7 +325,7 @@ void VPPItemFactory::plotTotalResistance(){
 	}
 
 	// Instantiate a plotter and plot
-	Plotter fPlotter;
+	VPPPlotter fPlotter;
 	for(size_t i=0; i<froudeNb.size(); i++)
 		fPlotter.append(curveLabels[i],froudeNb[i],totRes[i]);
 
@@ -392,8 +392,8 @@ void VPPItemFactory::plotOptimizationSpace() {
 		}
 	}
 
-	MagnitudeColoredCountourPlotter3d(crew, flat, u, "velocity opt", "crew", "flat" );
-	MagnitudeColoredCountourPlotter3d(crew, flat, phi, "phi opt", "crew", "flat" );
+	VPPMagnitudeColoredCountourPlotter3d(crew, flat, u, "velocity opt", "crew", "flat" );
+	VPPMagnitudeColoredCountourPlotter3d(crew, flat, phi, "phi opt", "crew", "flat" );
 
 }
 

@@ -11,7 +11,7 @@
 
 #include "VPPItemFactory.h"
 #include "Results.h"
-#include "Plotter.h"
+#include "VPPPlotter.h"
 
 using namespace std;
 

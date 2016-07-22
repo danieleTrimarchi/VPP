@@ -1,7 +1,7 @@
 #include "Interpolator.h"
 #include <math.h>
-#include "Plotter.h"
 #include "VPPException.h"
+#include "VPPPlotter.h"
 
 // Constructor
 Interpolator::Interpolator() {
@@ -134,7 +134,7 @@ void Interpolator::test() {
 	ArrayXd x1=InterpVals.row(0);
 	ArrayXd y1=InterpVals.row(1);
 
-	Plotter plotter;
+	VPPPlotter plotter;
 	plotter.plot(x0,y0,x1,y1);
 
 }
@@ -248,7 +248,7 @@ void SplineInterpolator::plot(double minVal,double maxVal,int nVals,
 	}
 
 	// Instantiate a plotter and prepare the data
-	Plotter plotter;
+	VPPPlotter plotter;
 	std::vector<double> x0(s_.get_points(0));
 	std::vector<double> y0(s_.get_points(1));
 
@@ -286,7 +286,7 @@ void SplineInterpolator::plotD1(double minVal,double maxVal,int nVals,
 	}
 
 	// Instantiate a plotter and plot the data
-	Plotter plotter;
+	VPPPlotter plotter;
 	plotter.plot(x1,y1,title,xLabel,yLabel);
 
 }
@@ -316,7 +316,7 @@ void SplineInterpolator::plotD2(double minVal,double maxVal,int nVals,
 	}
 
 	// Instantiate a plotter and plot the data
-	Plotter plotter;
+	VPPPlotter plotter;
 	plotter.plot(x2,y2,title,xLabel,yLabel);
 
 }

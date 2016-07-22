@@ -56,7 +56,11 @@ env = DefaultEnvironment()
 
 
 env.Program('unitTest', Glob('*.cpp')+
-		["../Regression.o","../Plotter.o","../VPPException.o"],
+		[
+		"../Regression.o",
+		"../VPPPlotter.o",
+		"../VPPException.o"
+		],
 		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,
 		LIBPATH=THIRD_PARTY_LIBPATH

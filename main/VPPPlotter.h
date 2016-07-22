@@ -1,11 +1,17 @@
-#ifndef PLOTTER_H
-#define PLOTTER_H
+#ifndef VPP_PLOTTER_H
+#define VPP_PLOTTER_H
 
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
 using namespace std;
+
+// This resolves a name collision between eigen and X11 that results in the compiler
+// error: #error The preprocessor symbol 'Success' is defined, possibly by the X11 head...
+#ifdef Success
+	#undef Success
+#endif
 
 #include <Eigen/Core>
 using namespace Eigen;
@@ -38,15 +44,15 @@ enum colorplot{
 	greyScale
 };
 
-class PlotterBase {
+class VPPPlotterBase {
 
 	public:
 
 		/// Constructor
-		PlotterBase();
+		VPPPlotterBase();
 
 		/// Destructor
-		~PlotterBase();
+		~VPPPlotterBase();
 
 	protected:
 
@@ -81,15 +87,15 @@ class PlotterBase {
 
 
 /// Wrapper class for ploPlot
-class Plotter : public PlotterBase {
+class VPPPlotter : public VPPPlotterBase {
 
 	public:
 
 		/// Constructor
-		Plotter();
+		VPPPlotter();
 
 		/// Destructor
-		virtual ~Plotter();
+		virtual ~VPPPlotter();
 
 		/// Plot the points of some given arrays
 		void plot( std::vector<double>& y, string title="Plot");
@@ -191,15 +197,15 @@ class Plotter : public PlotterBase {
 //VectorPlotter vecplot;
 //vecplot.plot(x,y,du,dv);
 
-class VectorPlotter : public PlotterBase {
+class VPPVectorPlotter : public VPPPlotterBase {
 
 	public:
 
 		/// Constructor
-		VectorPlotter();
+		VPPVectorPlotter();
 
 		/// Destructor
-		~VectorPlotter();
+		~VPPVectorPlotter();
 
 		/// Vector plot for a grid of m points,
 		/// the coordinates of which are x,y
@@ -226,15 +232,15 @@ class VectorPlotter : public PlotterBase {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class PolarPlotter {
+class VPPPolarPlotter {
 
 	public:
 
 		/// Constructor
-		PolarPlotter( string title );
+		VPPPolarPlotter( string title );
 
 		/// Destructor
-		~PolarPlotter();
+		~VPPPolarPlotter();
 
 		/// Append a set of polar data
 		void append(string curveLabel, Eigen::ArrayXd& alpha, Eigen::ArrayXd& vals);
@@ -275,12 +281,12 @@ class PolarPlotter {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class Plotter3d {
+class VPPPlotter3d {
 
 	public:
 
 		/// Destructor
-		virtual ~Plotter3d();
+		virtual ~VPPPlotter3d();
 
 		/// Init method
 		void cmap1_init( int );
@@ -288,7 +294,7 @@ class Plotter3d {
 	protected:
 
 		/// Protected constructor
-		Plotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		VPPPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 				string title, string xLabel, string yLabel );
 
 		/// Plot!
@@ -319,16 +325,16 @@ class Plotter3d {
 
 };
 
-class DiffuseLightSurfacePlotter3d : public Plotter3d {
+class VPPDiffuseLightSurfacePlotter3d : public VPPPlotter3d {
 
 	public:
 
 		/// Constructor
-		DiffuseLightSurfacePlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		VPPDiffuseLightSurfacePlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 				string title, string xLabel, string yLabel );
 
 		/// Destructor
-		virtual ~DiffuseLightSurfacePlotter3d();
+		virtual ~VPPDiffuseLightSurfacePlotter3d();
 
 		/// Plot!
 		virtual void plot();
@@ -337,22 +343,22 @@ class DiffuseLightSurfacePlotter3d : public Plotter3d {
 
 };
 
-class MagnitudeColoredPlotter3d : public Plotter3d {
+class VPPMagnitudeColoredPlotter3d : public VPPPlotter3d {
 
 	public:
 
 		/// Constructor
-		MagnitudeColoredPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		VPPMagnitudeColoredPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 				string title, string xLabel, string yLabel );
 
 		/// Constructor to plot surface and points
-		MagnitudeColoredPlotter3d(
+		VPPMagnitudeColoredPlotter3d(
 				ArrayXd& x, ArrayXd& y, MatrixXd& z,
 				ArrayXd& xp, ArrayXd& yp, ArrayXd& zp,
 				string title, string xLabel, string yLabel );
 
 		/// Destructor
-		virtual ~MagnitudeColoredPlotter3d();
+		virtual ~VPPMagnitudeColoredPlotter3d();
 
 		/// Plot!
 		virtual void plot();
@@ -363,16 +369,16 @@ class MagnitudeColoredPlotter3d : public Plotter3d {
 
 };
 
-class MagnitudeColoredFacetedPlotter3d : public Plotter3d {
+class VPPMagnitudeColoredFacetedPlotter3d : public VPPPlotter3d {
 
 	public:
 
 		/// Constructor
-		MagnitudeColoredFacetedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		VPPMagnitudeColoredFacetedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 				string title, string xLabel, string yLabel );
 
 		/// Destructor
-		virtual ~MagnitudeColoredFacetedPlotter3d();
+		virtual ~VPPMagnitudeColoredFacetedPlotter3d();
 
 		/// Plot!
 		virtual void plot();
@@ -380,18 +386,18 @@ class MagnitudeColoredFacetedPlotter3d : public Plotter3d {
 };
 
 /// Base class for 3d plots featuring contours
-class CountourPlotter3d : public Plotter3d {
+class VPPCountourPlotter3d : public VPPPlotter3d {
 
 	public:
 
 	protected:
 
 		// Constructor
-		CountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		VPPCountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 				string title, string xLabel, string yLabel );
 
 		// Destructor
-		~CountourPlotter3d();
+		~VPPCountourPlotter3d();
 
 		/// Plot!
 		virtual void plot();
@@ -408,16 +414,16 @@ class CountourPlotter3d : public Plotter3d {
 };
 
 
-class MagnitudeColoredCountourPlotter3d : public CountourPlotter3d {
+class VPPMagnitudeColoredCountourPlotter3d : public VPPCountourPlotter3d {
 
 	public:
 
 		/// Constructor
-		MagnitudeColoredCountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		VPPMagnitudeColoredCountourPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 																			string title, string xLabel, string yLabel );
 
 		/// Destructor
-		virtual ~MagnitudeColoredCountourPlotter3d();
+		virtual ~VPPMagnitudeColoredCountourPlotter3d();
 
 		/// Plot!
 		virtual void plot();
@@ -426,16 +432,16 @@ class MagnitudeColoredCountourPlotter3d : public CountourPlotter3d {
 
 };
 
-class MagnitudeColoredCountourLimitedPlotter3d : public CountourPlotter3d {
+class VPPMagnitudeColoredCountourLimitedPlotter3d : public VPPCountourPlotter3d {
 
 	public:
 
 		/// Constructor
-		MagnitudeColoredCountourLimitedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
+		VPPMagnitudeColoredCountourLimitedPlotter3d(ArrayXd& x, ArrayXd& y, MatrixXd& z,
 				string title, string xLabel, string yLabel );
 
 		/// Destructor
-		virtual ~MagnitudeColoredCountourLimitedPlotter3d();
+		virtual ~VPPMagnitudeColoredCountourLimitedPlotter3d();
 
 		/// Plot!
 		virtual void plot();

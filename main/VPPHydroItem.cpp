@@ -1,7 +1,6 @@
 #include "VPPHydroItem.h"
-#include "Plotter.h"
-
 #include "mathUtils.h"
+#include "VPPPlotter.h"
 using namespace mathUtils;
 
 #include "IOUtils.h"
@@ -235,7 +234,7 @@ void InducedResistanceItem::plot() {
 	}
 
 	// Instantiate a plotter and plot
-	Plotter fPlotter;
+	VPPPlotter fPlotter;
 	for(size_t i=0; i<froudeNb.size(); i++)
 		fPlotter.append(curveLabels[i],froudeNb[i],indRes[i]);
 
@@ -306,7 +305,7 @@ void InducedResistanceItem::plot() {
 	}
 
 	// Instantiate a plotter and plot
-	Plotter f2Plotter;
+	VPPPlotter f2Plotter;
 	for(size_t i=0; i<sideForce2.size(); i++)
 		f2Plotter.append(curveLabels[i],sideForce2[i],indRes[i]);
 
@@ -773,7 +772,7 @@ void FrictionalResistanceItem::plot() {
 	}
 
 	// Instantiate a plotter and plot the curves
-	Plotter plotter;
+	VPPPlotter plotter;
 	plotter.plot(x,y,"Frictional Resistance","Fn [-]","Resistance [N]");
 
 	// Restore the initial buffered values
@@ -952,7 +951,7 @@ void ViscousResistanceKeelItem::plot() {
 	}
 
 	// Instantiate a plotter and plot the curves
-	Plotter plotter;
+	VPPPlotter plotter;
 	plotter.plot(x,y,"Viscous Resistance of the Keel","Fn [-]","Resistance [N]");
 
 	// Restore the initial buffered values
@@ -1028,7 +1027,7 @@ void ViscousResistanceRudderItem::plot() {
 	}
 
 	// Instantiate a plotter and plot the curves
-	Plotter plotter;
+	VPPPlotter plotter;
 	plotter.plot(x,y,"Viscous Resistance of the Rudder","Fn [-]","Resistance [N]");
 
 	// Restore the initial buffered values
@@ -1093,7 +1092,7 @@ void NegativeResistanceItem::plot() {
 	}
 
 	// Instantiate a plotter and plot the curves
-	Plotter plotter;
+	VPPPlotter plotter;
 	plotter.plot(x,y,"Negative Resistance","Fn [-]","Resistance [N]");
 
 	// Restore the initial buffered values

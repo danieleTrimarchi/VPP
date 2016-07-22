@@ -5,8 +5,9 @@
 
 #include "Eigen/Core"
 #include "Spline.h"
-#include "Plotter.h"
 #include <vector>
+
+#include "VPPPlotter.h"
 
 class Interpolator {
 

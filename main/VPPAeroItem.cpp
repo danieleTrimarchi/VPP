@@ -772,7 +772,7 @@ void AeroForcesItem::plot() {
 	}
 
 	// Instantiate a plotter and plot Lift
-	Plotter liftPlotter;
+	VPPPlotter liftPlotter;
 	for(size_t i=0; i<v.size(); i++)
 		liftPlotter.append(curveLabels[i],v[i],Lift[i]);
 
@@ -785,7 +785,7 @@ void AeroForcesItem::plot() {
 
 
 	// Instantiate a plotter and plot Drag
-	Plotter dragPlotter;
+	VPPPlotter dragPlotter;
 	for(size_t i=0; i<v.size(); i++)
 		dragPlotter.append(curveLabels[i],v[i],Drag[i]);
 
@@ -796,7 +796,7 @@ void AeroForcesItem::plot() {
 	dragPlotter.plot("Fn [-]","Drag [N]", msg);
 
 	// Instantiate a plotter and plot fDrive
-	Plotter fPlotter;
+	VPPPlotter fPlotter;
 	for(size_t i=0; i<v.size(); i++)
 		fPlotter.append(curveLabels[i],v[i],fDrive[i]);
 
@@ -807,7 +807,7 @@ void AeroForcesItem::plot() {
 	fPlotter.plot("Fn [-]","Fdrive [N]", msg);
 
 	// Instantiate a plotter and plot fSide
-	Plotter fSidePlotter;
+	VPPPlotter fSidePlotter;
 	for(size_t i=0; i<v.size(); i++)
 		fSidePlotter.append(curveLabels[i],v[i],fSide[i]);
 
@@ -818,7 +818,7 @@ void AeroForcesItem::plot() {
 	fSidePlotter.plot("Fn [-]","Fside [N]", msg);
 
 	// Instantiate a plotter and plot mHeel
-	Plotter mPlotter;
+	VPPPlotter mPlotter;
 	for(size_t i=0; i<v.size(); i++)
 		mPlotter.append(curveLabels[i],v[i],mHeel[i]);
 	mPlotter.plot("Fn [-]","mHeel [N*m]","plot heeling moment vs boat speed");

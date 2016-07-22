@@ -1,19 +1,8 @@
 #include "Regression.h"
 #include <Eigen/Dense>
 #include "VPPException.h"
-#include "Plotter.h"
+#include "VPPPlotter.h"
 
-// Test Constructor
-Regression::Regression() {
-
-	// Set the size of the coordinate matrices
-	xp_.resize(3,3);
-	yp_.resize(3,3);
-	zp_.resize(3,3);
-
-	runAnalyticalTest();
-
-}
 
 // Constructor
 Regression::Regression(Eigen::MatrixXd& x, Eigen::MatrixXd& y, Eigen::MatrixXd& z ) :
@@ -69,110 +58,6 @@ Eigen::VectorXd Regression::compute() {
 	return A.colPivHouseholderQr().solve(b);
 
 }
-
-void Regression::runAnalyticalTest() {
-
-	// Fill the test coordinate matrices with well chosen values:
-
-	// Set the test polynomial vector
-	Eigen::VectorXd polynomial(6);
-	// x^2 xy y^2 x y 1
-	polynomial << 0.01, .5, 0.03, .2, .3 , 1;
-
-	Eigen::VectorXd factsx(xp_.rows());
-	factsx << 0.25, 0.5, 0.75;
-	Eigen::VectorXd factsy(yp_.cols());
-	factsy << 0.25, 0.5, 0.75;
-
-	Eigen::VectorXd coords(6);
-
-	// Set the domain bounds
-	double xMin=0, xMax=1, yMin=0, yMax=1;
-
-	// Loop on the mx*my points
-	for(size_t i=0; i<xp_.rows(); i++){
-		for(size_t j=0; j<xp_.cols(); j++){
-
-			// compute xi, yi, zi
-			xp_(i,j) = xMin + factsx(i) * ( xMax - xMin );
-			yp_(i,j) = yMin + factsy(j) * ( yMax - yMin );
-
-			// x^2 xy y^2 x y 1
-			coords << xp_(i,j)*xp_(i,j),
-								xp_(i,j)*yp_(i,j),
-								yp_(i,j)*yp_(i,j),
-								xp_(i,j),
-								yp_(i,j),
-								1;
-
-			// compute z with the given polynomial. We now have the nx*ny points to
-			// be used to compute the regression and rebuild the initial polynomial
-			zp_(i,j) = coords.transpose() * polynomial;
-
-		}
-	}
-
-	// Compute the polynomial array by polynomial regression on the given point array
-	Eigen::VectorXd p = compute();
-
-	// Compare p with the original polynomial array
-	//std::cout<< polynomial-p<<std::endl;
-
-	if((polynomial-p).norm() > 1e-10)
-		throw VPPException(HERE,"\n\n==>> Analytical regression test failed! <<==\n\n");
-	else
-		std::cout<<"\n\n=>> Analytical regression test succeeded! <<==\n\n"<<std::endl;
-
-}
-
-// TEST TO BE PUT IN AUTOTESTS!
-//
-//// compute some coordinates
-//Eigen::MatrixXd xPoint(3,3), yPoint(3,3), zPoint(3,3);
-//
-//// Set the test polynomial vector: x^2 xy y^2 x y 1
-//Eigen::VectorXd polynomial(6);
-//polynomial << 0.01, .5, 0.03, .2, .3 , 1;
-//
-//Eigen::VectorXd factsx(xPoint.rows());
-//factsx << 0.25, 0.5, 0.75;
-//Eigen::VectorXd factsy(yPoint.cols());
-//factsy << 0.25, 0.5, 0.75;
-//
-//Eigen::VectorXd coords(6);
-//
-//// Set the domain bounds
-//double xMin=0, xMax=1, yMin=0, yMax=1;
-//
-//
-//double sign=1.;
-//
-//// Loop on the mx*my points
-//for(size_t i=0; i<xPoint.rows(); i++){
-//	for(size_t j=0; j<xPoint.cols(); j++){
-//
-//		// compute xi, yi, zi
-//		xPoint(i,j) = xMin + factsx(i) * ( xMax - xMin );
-//		yPoint(i,j) = yMin + factsy(j) * ( yMax - yMin );
-//
-//		// x^2 xy y^2 x y 1
-//		coords << xPoint(i,j)*xPoint(i,j),
-//							xPoint(i,j)*yPoint(i,j),
-//							yPoint(i,j)*yPoint(i,j),
-//							xPoint(i,j),
-//							yPoint(i,j),
-//							1;
-//
-//		sign *= (-2);
-//
-//		// compute z with the given polynomial. We now have the nx*ny points to
-//		// be used to compute the regression and rebuild the initial polynomial
-//		zPoint(i,j) = coords.transpose() * polynomial + 0.00005 * sign;
-//
-//	}
-//}
-//
-//Regression regr2(xPoint,yPoint,zPoint);
 
 // Run a test : get the points from outside, reconstruct the regression
 // and verify the difference in the z-values. This will be embedded into
@@ -232,7 +117,7 @@ void Regression::runNumericalTest() {
 		}
 	}
 
-	MagnitudeColoredPlotter3d plotter(
+	VPPMagnitudeColoredPlotter3d plotter(
 			x,y,z,
 			xp, yp, zp,
 			"Regression Plot", "x", "y");

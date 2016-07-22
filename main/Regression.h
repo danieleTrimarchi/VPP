@@ -13,9 +13,6 @@ class Regression {
 
 	public:
 
-		/// Test Constructor. Underneath calls compute, so it is standalone
-		Regression();
-
 		/// Constructor with point arrays. Requires calling compute()
 		Regression(Eigen::MatrixXd&, Eigen::MatrixXd&, Eigen::MatrixXd& );
 

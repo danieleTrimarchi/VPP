@@ -171,10 +171,10 @@ void NRSolver::run(int twv, int twa) {
 				}
 
 				// plot the velocity residuals and throw
-				Plotter vResPlot;
+				VPPPlotter vResPlot;
 				vResPlot.plot(velocityResiduals,"V_residuals");
 
-				Plotter phiResPlot;
+				VPPPlotter phiResPlot;
 				phiResPlot.plot(PhiResiduals,"PHI_residuals");
 
 				// Also plot some Jacobian diagnostics
@@ -299,8 +299,8 @@ void NRSolver::plotPolars() {
 
 	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
 	// Sail flat, Crew B, dF and dM
-	PolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot [m/s]");
-	PolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot [deg]");
+	VPPPolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot [m/s]");
+	VPPPolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot [deg]");
 
 	// Instantiate the list of wind angles that will serve
 	// for each velocity
@@ -385,20 +385,20 @@ void NRSolver::plotXY(size_t iWa) {
 	sprintf(title,"AWA= %4.2f", mathUtils::toDeg( pWind_->getTWA(iWa) ) );
 
 	// Instantiate a plotter for the velocity
-	Plotter plotter;
+	VPPPlotter plotter;
 	string t=string("Boat Speed")+string(title);
 	plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
 			t,"Wind Speed [m/s]","Boat Speed [m/s]");
 
 
 	// Instantiate a plotter for the heel
-	Plotter plotter2;
+	VPPPlotter plotter2;
 	string t2=string("Boat Heel")+string(title);
 	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
 			t2,"Wind Speed [m/s]","Boat Heel [deg]");
 
 	// Instantiate a plotter for the residuals
-	Plotter plotter5;
+	VPPPlotter plotter5;
 	string t5=string("dF and dM Residuals")+string(title);
 	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
 			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
