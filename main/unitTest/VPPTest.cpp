@@ -5,12 +5,11 @@
 #include "boost/shared_ptr.hpp"
 #include "SailSet.h"
 #include "VPPItemFactory.h"
+#include "NRSolver.h"
 
 // Test the resistance components
-void TVPPTest::resistanceTest() {
+void TVPPTest::itemComponentTest() {
 	std::cout<<"=== Running resistance tests === "<<std::endl;
-
-	// Do as in main :
 
 	// Instantiate a parser with the variables
 	VariableFileParser parser("variableFile_test.txt");
@@ -39,49 +38,59 @@ void TVPPTest::resistanceTest() {
 	// Feed the items with the current state vector
 	pVppItems->update(2,2,x);
 
+	//==>> TEST RESISTANCE COMPONENTS
+
 	Eigen::VectorXd baseLines(10);
-	baseLines << 13.7794, -0.320969, 8.24592, -0.0451873, 0.0257853, 5.11719, 2.82575, -0.264885, 0, 29.94;
+	baseLines << 13.7793728326077, -0.320969, 8.24591799105104,
+			 -0.0451873, 0.0257853, 5.11719177721191, 2.82574575845714,
+			 -0.264885, 0, 29.9399568769181;
 
 	// ==== Compute and compare to baseline frictional resistance
 	// std::cout<<"FRICT= "<<pVppItems->getFrictionalResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getFrictionalResistanceItem()->get(),baseLines(0), 1.e-4 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getFrictionalResistanceItem()->get(),baseLines(0), 1.e-6 );
 
 	// ==== Compute and compare to baseline residual resistance
 	//std::cout<<"RESID= "<<pVppItems->getResiduaryResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResiduaryResistanceItem()->get(),baseLines(1), 1.e-4 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResiduaryResistanceItem()->get(),baseLines(1), 1.e-6 );
 
 	// ==== Compute and compare to baseline induced resistance
 	//std::cout<<"INDUC= "<<pVppItems->getInducedResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getInducedResistanceItem()->get(), baseLines(2), 1.e-4 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getInducedResistanceItem()->get(), baseLines(2), 1.e-6 );
 
 	// ==== Compute and compare to baseline Delta_FrictRes_Heel resistance
 	//std::cout<<"dFRICT_HEEL= "<<pVppItems->getDelta_FrictionalResistance_HeelItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getDelta_FrictionalResistance_HeelItem()->get(), baseLines(3), 1.e-4 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getDelta_FrictionalResistance_HeelItem()->get(), baseLines(3), 1.e-6 );
 
 	// ==== Compute and compare to baseline Delta_ResidRes_Heel resistance
 	//std::cout<<"dRESID_HEEL= "<<pVppItems->getDelta_ResiduaryResistance_HeelItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getDelta_ResiduaryResistance_HeelItem()->get(), baseLines(4), 1.e-4 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getDelta_ResiduaryResistance_HeelItem()->get(), baseLines(4), 1.e-6 );
 
 	// ==== Compute and compare to baseline ViscousRes_Keel resistance
 	//std::cout<<"VISCOUS_KEEL= "<<pVppItems->getViscousResistanceKeelItem()->get()<<std::endl; //-> this does not plot
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getViscousResistanceKeelItem()->get(), baseLines(5), 1.e-4 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getViscousResistanceKeelItem()->get(), baseLines(5), 1.e-6 );
 
 	// ==== Compute and compare to baseline FrictionalRes_Rudder resistance
 	//std::cout<<"VISCOUS_RUDDER= "<<pVppItems->getViscousResistanceRudderItem()->get()<<std::endl; //-> this does not plot
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getViscousResistanceRudderItem()->get(), baseLines(6), 1.e-4 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getViscousResistanceRudderItem()->get(), baseLines(6), 1.e-6 );
 
 	// ==== Compute and compare to baseline ResidRes_Keel resistance
 	//std::cout<<"RESID KEEL= "<<pVppItems->getResiduaryResistanceKeelItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResiduaryResistanceKeelItem()->get(), baseLines(7), 1.e-4 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResiduaryResistanceKeelItem()->get(), baseLines(7), 1.e-6 );
 
 	// ==== Compute and compare to baseline NegativeResistance resistance
 	//std::cout<<"NEGATIVE= "<<pVppItems->getNegativeResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getNegativeResistanceItem()->get(), baseLines(8), 1.e-4 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getNegativeResistanceItem()->get(), baseLines(8), 1.e-6 );
 
 	// ==== Compute and compare to baseline TOTAL resistance
 	//std::cout<<"TOTAL= "<<pVppItems->getResistance()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResistance(), baseLines(9), 1.e-4 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResistance(), baseLines(9), 1.e-6 );
 
+	//==>> TEST AEREO FORCE-MOMENT COMPONENTS
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(pVppItems->getAeroForcesItem()->getLift(),278.191922062844, 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(pVppItems->getAeroForcesItem()->getDrag(),127.118973356939, 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(pVppItems->getAeroForcesItem()->getFDrive(),-22.1321642219849, 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(pVppItems->getAeroForcesItem()->getFSide(),305.057611272351, 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(pVppItems->getAeroForcesItem()->getMHeel(),1590.44564961559, 1.e-6 );
 
 }
 
@@ -261,6 +270,53 @@ void TVPPTest::regressionTest() {
 		}
 	}
 }
+
+// Test the Newton-Raphson algorithm
+void TVPPTest::newtonRaphsonTest() {
+
+	// Instantiate a parser with the variables
+	VariableFileParser parser("variableFile_test.txt");
+
+	// Declare a ptr with the sail configuration
+	// This is based on the variables that have been read in
+	boost::shared_ptr<SailSet> pSails;
+
+	// Declare a container for all the items that
+	// constitute the VPP components (Wind, Resistance, RightingMoment...)
+	boost::shared_ptr<VPPItemFactory> pVppItems;
+
+	// Parse the variables file
+	parser.parse();
+
+	// Instantiate the sailset
+	pSails.reset( SailSet::SailSetFactory(parser) );
+
+	// Instantiate the items
+	pVppItems.reset( new VPPItemFactory(&parser,pSails) );
+
+	// Define the state vector: V, Phi, B, f
+	Eigen::VectorXd x(4);
+	x << .2, 0.1, .2, .99;
+
+	size_t dimension=4, subPbsize=2;
+	// Instantiate a NR solver
+	NRSolver solver(pVppItems.get(),dimension,subPbsize);
+
+	// ask the NR solver to solve -- as the Optimizer
+	x.block(0,0,subPbsize,1) = solver.run(4,2,x).block(0,0,subPbsize,1);
+
+	// compare the solution with a given refererence
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( x(0), 1.06887731574018, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( x(1), 0.0125887, 1.e-6);
+
+}
+
+
+
+
+
+
+
 
 
 

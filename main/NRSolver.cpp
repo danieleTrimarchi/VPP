@@ -193,7 +193,7 @@ void NRSolver::run(int twv, int twa) {
 
 			// Compute the residuals vector - here only the part relative to the subproblem
 			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_).block(0,0,subPbSize_,1);
-			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<"   ";
+			//std::cout<<"NR it: "<<it<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<"   ";
 
 			if(it>1) {
 				velocityResiduals.push_back( residuals(0) );
@@ -223,7 +223,7 @@ void NRSolver::run(int twv, int twa) {
 			for(size_t i=0; i<xp_.size(); i++)
 				if(fabs(xp_(i)) < 1.e-10) xp_(i)=0.;
 
-			std::cout<<" - xp_= "<<xp_.transpose()<<std::endl;
+			//std::cout<<" - xp_= "<<xp_.transpose()<<std::endl;
 
 		}
 
@@ -253,7 +253,7 @@ void NRSolver::run(int twv, int twa) {
 
 	// Print the solution
 	//printf("\n found solution after %d iterations\n     at f(", it);
-	printf("\n solution: ");
+	printf("\n NR solver solution: ");
 	for(size_t i=0; i<xp_.size(); i++)
 		printf("%g  ",xp_(i));
 	printf("\n");

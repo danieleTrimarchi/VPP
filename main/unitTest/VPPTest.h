@@ -11,21 +11,27 @@ class TVPPTest : public CppUnit::TestFixture{
 
   CPPUNIT_TEST_SUITE(TVPPTest);
 
-  /// Resistance component tests
-  CPPUNIT_TEST(resistanceTest);
+  /// Resistance and aero force components test
+  CPPUNIT_TEST(itemComponentTest);
 
   /// Test the regression algorithm
   CPPUNIT_TEST(regressionTest);
+
+  /// Test the Newton-Raphson algorithm
+  CPPUNIT_TEST(newtonRaphsonTest);
 
   CPPUNIT_TEST_SUITE_END();
 
 public:
 
-  /// Resistance components test
-  void resistanceTest();
+  /// Resistance and aero force components test
+  void itemComponentTest();
 
   /// Test the regression algorithm
   void regressionTest();
+
+  /// Test the Newton-Raphson algorithm
+  void newtonRaphsonTest();
 
 };
 
