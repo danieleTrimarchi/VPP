@@ -20,6 +20,12 @@ class TVPPTest : public CppUnit::TestFixture{
   /// Test the Newton-Raphson algorithm
   CPPUNIT_TEST(newtonRaphsonTest);
 
+  /// Test NLOpt -- mma algorithm
+  CPPUNIT_TEST(nlOptTest_mma);
+
+  /// Test NLOpt -- cobyla algorithm
+  CPPUNIT_TEST(nlOptTest_cobyla);
+
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -32,6 +38,12 @@ public:
 
   /// Test the Newton-Raphson algorithm
   void newtonRaphsonTest();
+
+  /// Test NLOpt
+  void nlOptTest_mma();
+
+  /// Test NLOpt -- cobyla algorithm
+  void nlOptTest_cobyla();
 
 };
 
