@@ -166,7 +166,7 @@ VPPJacobian::~VPPJacobian(){
 //// JacobianChecker  ///////////////////////////////////////////////////
 //
 // Class used to plot the Jacobian derivatives for a step that
-// has failed to converge. Note that the Jacobian contains a
+// has failed to converge. Note that the class Jacobian contains a
 // method 'test' used to check for the derivatives on a generic
 // interval. The JacobianChecker differs from that method because
 // it stores the actual iteration-wise history of Jacobian-solution

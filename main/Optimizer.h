@@ -75,7 +75,7 @@ class Optimizer {
 		} Loop_data;
 
 		/// Size of the problem this Optimizer is handling
-		size_t dimension_; // --> v, phi, reef, flat
+		size_t dimension_; // --> v, phi, crew, flat
 
 		/// Size of the sub-problem to be pre-solved with the NRSolver
 		size_t subPbSize_; // --> v, phi

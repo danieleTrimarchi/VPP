@@ -7,10 +7,11 @@
 #include "VPPItemFactory.h"
 #include "NRSolver.h"
 #include <nlopt.hpp>
+#include "VPPJacobian.h"
 
 // Test the resistance components
 void TVPPTest::itemComponentTest() {
-	std::cout<<"=== Running item component (resistance, sailForce) tests === "<<std::endl;
+	std::cout<<"=== Running item component (resistance, sailForce) tests === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
 	VariableFileParser parser("variableFile_test.txt");
@@ -140,7 +141,7 @@ void setPointCoordinates(
 // Test the regression algorithm
 void TVPPTest::regressionTest() {
 
-	std::cout<<"=== Testing the regression algorithm === "<<std::endl;
+	std::cout<<"=== Testing the regression algorithm === \n"<<std::endl;
 
 	// Set a test polynomial vector that will be reconstructed point-wise
 	Eigen::VectorXd polynomial(6);
@@ -272,8 +273,58 @@ void TVPPTest::regressionTest() {
 	}
 }
 
+// Test the computation of the Jacobian matrix
+void TVPPTest::jacobianTest() {
+
+	std::cout<<"=== Testing the computation of the Jacobian matrix === \n"<<std::endl;
+
+	// Instantiate a parser with the variables
+	VariableFileParser parser("variableFile_test.txt");
+
+	// Declare a ptr with the sail configuration
+	// This is based on the variables that have been read in
+	boost::shared_ptr<SailSet> pSails;
+
+	// Declare a container for all the items that
+	// constitute the VPP components (Wind, Resistance, RightingMoment...)
+	boost::shared_ptr<VPPItemFactory> pVppItems;
+
+	// Parse the variables file
+	parser.parse();
+
+	// Instantiate the sailset
+	pSails.reset( SailSet::SailSetFactory(parser) );
+
+	// Instantiate the items
+	pVppItems.reset( new VPPItemFactory(&parser,pSails) );
+
+	// Define a state vector: v, phi, crew, flat
+	Eigen::VectorXd x(4);
+	x << 2, 0.4, 2, .9;
+
+	size_t subProblemSize=2;
+
+	// Instantiate a Jacobian
+	VPPJacobian J(x, pVppItems.get(), subProblemSize);
+
+	// Compute the Jacobian matrix
+	J.run(3,6);
+
+//	for(size_t i=0; i<J.rows(); i++)
+//		for(size_t j=0; j<J.cols(); j++)
+//			printf("(%d %d) %8.12f\n",i,j,J(i,j));
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( J(0,0), -168.144225120544, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( J(1,0), 340.367431640625, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( J(0,1), -27.884762287140, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( J(1,1), -31634.527587890625, 1.e-6);
+
+}
+
 // Test the Newton-Raphson algorithm
 void TVPPTest::newtonRaphsonTest() {
+
+	std::cout<<"=== Testing the Newton-Raphson algorithm === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
 	VariableFileParser parser("variableFile_test.txt");
@@ -474,9 +525,187 @@ void TVPPTest::nlOptTest_cobyla() {
 
 }
 
+// Test NLOpt -- ISRES "Improved Stochastic Ranking Evolution Strategy" algorithm.
+// Global optimization algorithm with non-linear equality constraints
+void TVPPTest::runISRES(){
+
+	std::cout<<"\n=== Testing NLOpt ISRES algorithm === "<<std::endl;
+
+	// Set the dimension of this problem
+	size_t dimension=2;
+
+  // Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
+	// algorithm for nonlinearly-constrained global optimization
+	///GN_ISRES
+	nlopt::opt opt(nlopt::GN_ISRES,dimension);
+
+ 	// Set the and apply the lower and the upper bounds for the constraints
+	// -> make sure the bounds are larger than the initial
+	// 		guess!
+   std::vector<double> lb(2),ub(2);
+   for(size_t i=0; i<2; i++){
+  	 lb[i] = 0;
+  	 ub[i] = 6.;
+   }
+
+   // Set the bounds for the constraints
+   opt.set_lower_bounds(lb);
+   opt.set_upper_bounds(ub);
+
+   // Set the objective function to be minimized (or maximized, using set_max_objective)
+   opt.set_min_objective(myfunc, NULL);
+
+   // Set the coefficients for the constraint equations :
+   // a1 = 2, b1=0, a2=-1, b2=1
+   my_constraint_data data[2] = { {2,0}, {-1,1} };
+
+   // Set the constraint equations
+   opt.add_inequality_constraint(myconstraint, &data[0], 1e-8);
+   opt.add_inequality_constraint(myconstraint, &data[1], 1e-8);
+
+   // Set the relative tolerance
+   opt.set_xtol_rel(1e-4);
+
+   // Set some initial guess. Make sure it is within the
+   // bounds that have been set
+   std::vector<double> xp(dimension);
+   xp[0]= 1.234;
+   xp[1]= 5.678;
+
+   // Instantiate the minimum objective value, upon return
+   double minf;
+
+   // Reset the nlOpt iteration counter to 0
+   optIterations=0;
+
+   // Launch the optimization; negative retVal implies failure
+   nlopt::result result = opt.optimize(xp, minf);
+
+   if (result < 0) {
+       printf("nlopt failed!\n");
+   }
+   else {
+   		printf("found minimum after %d evaluations\n", optIterations);
+       printf("found minimum at f(%g,%g) = %0.10g\n", xp[0], xp[1], minf);
+   }
+
+  	CPPUNIT_ASSERT_DOUBLES_EQUAL( xp[0], 0.333068000574163, 1.e-3);
+  	CPPUNIT_ASSERT_DOUBLES_EQUAL( xp[1], 0.296318043091439, 1.e-3);
+  	CPPUNIT_ASSERT_DOUBLES_EQUAL( minf, 0.544348535721313, 1.e-3);
+
+}
 
 
+// Set the objective function and gradient for example1:
+// Find min : sqrt(x2)
+// Subjected to y>0, y>=(a1*x + b1)^3 , y>=(a2*x +b2)^3
+double myfunc_g06(unsigned n, const double *x, double *grad, void *my_func_data) {
 
+		// Increment the number of iterations for each call of the objective function
+		++optIterations;
+
+    return (std::pow((x[0]-10),3) + std::pow((x[1]-20),3) );
+
+}
+
+/// Struct requested by example g06. Coefficient for each constraint in the
+/// shape : y >= (ax+b)^3
+typedef struct {
+
+		int s1;
+    double a;
+		int s2;
+		double b, c;
+} g06_constraint_data;
+
+// Set the constraint function and gradient for example1:
+// Set the inequality in the shape: (-1)^s1 (x1 + a)^2 + (-1)^s2 (x2 + b)^2 + c ≤ 0
+double myconstraint_g06(unsigned n, const double *x, double *grad, void *data) {
+
+	g06_constraint_data *d = (g06_constraint_data *) data;
+
+	return (
+					d->s1 * std::pow(x[0]+d->a,2) +
+					d->s2 * std::pow(x[1]+d->b,2) +
+					d->c
+				);
+}
+
+// Test NLOpt -- ISRES "Improved Stochastic Ranking Evolution Strategy" algorithm.
+// Global optimization algorithm with non-linear equality constraints. Here in then example g06
+void TVPPTest::runISRES_g06(){
+
+	std::cout<<"\n=== Testing NLOpt ISRES algorithm -- example06 === "<<std::endl;
+
+	// g06:
+	// Test function: f(⃗x) = (x1 − 10)^3 + (x2 − 20)^3
+	// Constraints: g1(x) : −(x1 −5)^2 − (x2 −5)^2 + 100 ≤ 0
+	//					 		g2(x) :  (x1 −6)^2 + (x2 −5)^2 − 82.81 ≤ 0
+	// where 13 ≤ x1 ≤ 100 and 0 ≤ x2 ≤ 100.
+	// The optimum solution is x = (14.095, 0.84296)
+	// where f(x) = −6961.81388
+
+	// Set the dimension of this problem
+	size_t dimension=3;
+
+  // Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
+	// algorithm for nonlinearly-constrained global optimization
+	///GN_ISRES
+	nlopt::opt opt(nlopt::GN_ISRES,dimension);
+
+ 	// Set the and apply the lower and the upper bounds
+	// -> make sure the bounds are larger than the initial
+	// 		guess!
+
+   std::vector<double> lb(dimension),ub(dimension);
+   lb[0] = 13;
+   ub[0] = 100;
+   lb[1] = 0;
+   ub[1] = 100;
+
+   // Set the bounds for the constraints
+   opt.set_lower_bounds(lb);
+   opt.set_upper_bounds(ub);
+
+   // Set the objective function to be minimized (or maximized, using set_max_objective)
+   opt.set_min_objective(myfunc_g06, NULL);
+
+   // Set the constraint equations
+   g06_constraint_data data[2] = { {-1,-5,-1,-5,+100}, {1,-6,1,-5,-82.81} };
+
+   opt.add_inequality_constraint(myconstraint_g06, &data[0], 1e-8);
+   opt.add_inequality_constraint(myconstraint_g06, &data[1], 1e-8);
+
+   // Set the relative tolerance
+   opt.set_xtol_rel(1e-4);
+
+   opt.set_maxeval(100000);
+
+   // Set some initial guess. Make sure it is within the
+   // bounds that have been set
+   std::vector<double> xp(dimension);
+   xp[0]= 13.5;
+   xp[1]= 0.1;
+
+   // Instantiate the minimum objective value, upon return
+   double minf;
+
+   // Launch the optimization; negative retVal implies failure
+   nlopt::result result = opt.optimize(xp, minf);
+
+   if (result < 0) {
+       printf("nlopt failed!\n");
+   }
+   else {
+   		printf("found minimum after %d evaluations\n", optIterations);
+       printf("found minimum at f(%g,%g) = %0.10g\n", xp[0], xp[1], minf);
+   }
+
+  	CPPUNIT_ASSERT_DOUBLES_EQUAL( xp[0], 14.09789016015, 1.e-2);
+  	CPPUNIT_ASSERT_DOUBLES_EQUAL( xp[1], 0.845411, 1.e-2);
+  	CPPUNIT_ASSERT_DOUBLES_EQUAL( minf, -6958.48271784916, 6958*0.01);
+
+}
 
 
 
