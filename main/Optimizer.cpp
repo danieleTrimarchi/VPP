@@ -6,6 +6,8 @@
 
 using namespace mathUtils;
 
+namespace Optim {
+
 // Init static member
 boost::shared_ptr<VPPItemFactory> Optimizer::vppItemsContainer_;
 size_t Optimizer::maxIters_;
@@ -15,9 +17,9 @@ int optIterations=0;
 
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-								dimension_(4),
-								subPbSize_(2),
-								tol_(1.e-3) {
+										dimension_(4),
+										subPbSize_(2),
+										tol_(1.e-3) {
 
 	// Instantiate a NLOpobject and set the ISRES "Improved Stochastic Ranking Evolution Strategy"
 	// algorithm for nonlinearly-constrained global optimization
@@ -303,6 +305,11 @@ void Optimizer::run(int TWV, int TWA) {
 
 }
 
+// Returns the state vector for a given wind configuration
+const Eigen::VectorXd Optimizer::getResult(int TWV, int TWA) {
+	return *(pResults_->get(TWV,TWA).getX());
+}
+
 // Make a printout of the results for this run
 void Optimizer::printResults() {
 
@@ -452,7 +459,7 @@ void Optimizer::plotJacobian() {
 	nrSolver_->plotJacobian();
 }
 
-
+}
 
 
 

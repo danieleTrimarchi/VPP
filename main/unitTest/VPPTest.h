@@ -7,6 +7,8 @@
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
 
+namespace Test {
+
 class TVPPTest : public CppUnit::TestFixture{
 
   CPPUNIT_TEST_SUITE(TVPPTest);
@@ -31,11 +33,14 @@ class TVPPTest : public CppUnit::TestFixture{
 
   /// Test NLOpt -- ISRES "Improved Stochastic Ranking Evolution Strategy" algorithm.
 	/// Global optimization algorithm with non-linear equality constraints
-  CPPUNIT_TEST(runISRES);
+  CPPUNIT_TEST(runISRESTest);
 
   /// Test NLOpt -- ISRES "Improved Stochastic Ranking Evolution Strategy" algorithm.
 	/// Global optimization algorithm with non-linear equality constraints. Here in then example g06
-  CPPUNIT_TEST(runISRES_g06);
+  CPPUNIT_TEST(runISRESTest_g06);
+
+  /// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
+  CPPUNIT_TEST(vppPointTest);
 
   CPPUNIT_TEST_SUITE_END();
 
@@ -61,13 +66,16 @@ public:
 
   /// Test NLOpt -- ISRES "Improved Stochastic Ranking Evolution Strategy" algorithm.
 	/// Global optimization algorithm with non-linear equality constraints
-	void runISRES();
+	void runISRESTest();
 
   /// Test NLOpt -- ISRES "Improved Stochastic Ranking Evolution Strategy" algorithm.
 	/// Global optimization algorithm with non-linear equality constraints. Here in then example g06
-  void runISRES_g06();
+  void runISRESTest_g06();
 
+  /// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
+  void vppPointTest();
 
 };
+}; // namespace Test
 
 #endif /* VPP_TEST_H */

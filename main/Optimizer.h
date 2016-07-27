@@ -15,6 +15,8 @@
 
 using namespace std;
 
+namespace Optim {
+
 /// Wrapper class around NLOPT non-linear
 /// optimization library
 class Optimizer {
@@ -33,6 +35,9 @@ class Optimizer {
 		/// Execute a VPP-like analysis. Returns 0 on success,
 		/// -1 if the residuals are found to exceed a tolerance
 		void run(int TWV, int TWA);
+
+		/// Returns the state vector for a given wind configuration
+		const Eigen::VectorXd getResult(int TWV, int TWA);
 
 		/// Make a printout of the results for this run
 		/// TODO dtrimarchi : shift this to a mother class
@@ -113,5 +118,6 @@ class Optimizer {
 		static size_t maxIters_;
 
 };
+};// namespace optimizer
 
 #endif

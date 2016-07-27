@@ -21,6 +21,8 @@ using namespace Eigen;
 #include "Interpolator.h"
 #include "VPPException.h"
 
+using namespace Optim;
+
 /// Reload the variable file and update the items accordingly
 void load(VariableFileParser& parser,
 		boost::shared_ptr<SailSet>& pSailSet,
@@ -90,8 +92,6 @@ int main(int argc, char** argv) {
 		// Load variables and items
 		load(parser,pSails,pVppItems);
 
-		// Instantiate a Newton Raphson solver
-		//NRSolver solver(pVppItems);
 		// Instantiate an optimizer
 		Optimizer solver(pVppItems);
 
