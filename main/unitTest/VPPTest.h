@@ -13,6 +13,9 @@ class TVPPTest : public CppUnit::TestFixture{
 
   CPPUNIT_TEST_SUITE(TVPPTest);
 
+  /// Test the variables parsed in the variablefile
+  CPPUNIT_TEST(variableParseTest);
+
   /// Resistance and aero force components test
   CPPUNIT_TEST(itemComponentTest);
 
@@ -45,6 +48,9 @@ class TVPPTest : public CppUnit::TestFixture{
   CPPUNIT_TEST_SUITE_END();
 
 public:
+
+  /// Test the variables parsed in the variablefile
+  void variableParseTest();
 
   /// Resistance and aero force components test
   void itemComponentTest();

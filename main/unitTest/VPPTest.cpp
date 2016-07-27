@@ -12,12 +12,97 @@
 
 namespace Test {
 
-// Test the resistance components
-void TVPPTest::itemComponentTest() {
-	std::cout<<"=== Running item component (resistance, sailForce) tests === \n"<<std::endl;
+/// Test the variables parsed in the variable file
+void TVPPTest::variableParseTest() {
 
 	// Instantiate a parser with the variables
 	VariableFileParser parser("variableFile_test.txt");
+
+	// Parse the variables file
+	parser.parse();
+
+	// VPP CONFIGURATION
+	CPPUNIT_ASSERT_EQUAL( parser.get("V_MIN"), 0. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("V_MAX"), 15. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("PHI_MIN"), 0. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("PHI_MAX"), mathUtils::toRad(85) );
+	CPPUNIT_ASSERT_EQUAL( parser.get("B_MIN"), 0. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("B_MAX"), 3. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("F_MIN"), 0.4 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("F_MAX"), 1. );
+
+	// WIND CONFIGURATION
+	CPPUNIT_ASSERT_EQUAL( parser.get("V_TW_MIN"), .5 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("V_TW_MAX"), 10. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("N_TWV"), 45. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("ALPHA_TW_MIN"), mathUtils::toRad(35) );
+	CPPUNIT_ASSERT_EQUAL( parser.get("ALPHA_TW_MAX"), mathUtils::toRad(179) );
+	CPPUNIT_ASSERT_EQUAL( parser.get("N_ALPHA_TW"), 40. );
+
+	// These data are measurements and estimates for a Freedom 25
+	CPPUNIT_ASSERT_EQUAL( parser.get("DIVCAN"), 1.549 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("LWL"), 6.096 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("BWL"), 1.737 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("B"), 2.591 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("AVGFREB"), 0.853 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("XFB"), 3.483 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("XFF"), 3.483 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("CPL"), 0.55 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("HULLFF"), 1.0 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("AW"), 6.503 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("SC"), 7.432 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("CMS"), 0.710 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("T"), 1.372 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("TCAN"), 0.305 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("ALT"), 5.528 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("KG"), 0.305 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("KM"), 2.511 );
+
+	// KEEL
+	CPPUNIT_ASSERT_EQUAL( parser.get("DVK"), 0.046 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("APK"), 1.007 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("ASK"), 0.850 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("SK"), 2.014 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("ZCBK"), 0.653 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("CHMEK"), 0.925 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("CHRTK"), 1.197 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("CHTPK"), 0.653 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("KEELFF"), 1. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("DELTTK"), 0. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("TAK"), 0.545 );
+
+	// RUDDER
+	CPPUNIT_ASSERT_EQUAL( parser.get("DVR"), 0. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("APR"), 0.480 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("SR"), 0.960 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("CHMER"), 0.490 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("CHRTR"), 0.544 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("CHTPR"), 0.435 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("DELTTR"), 0. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("RUDDFF"), 1. );
+
+  // SAILS
+	CPPUNIT_ASSERT_EQUAL( parser.get("SAILSET"), 3. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("P"), 8.9 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("E"), 4.084 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("MROACH"), 1.3 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("MFLB"), 0. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("BAD"), 0.610 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("I"), 8.626 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("J"), 1.890 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("LPG"), 4.115 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("SL"), 8.077 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("EHM"), 9.754 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("EMDC"), 0.254 );
+
+	// CREW
+	CPPUNIT_ASSERT_EQUAL( parser.get("MMVBLCRW"), 228. );
+
+}
+
+// Test the resistance components
+void TVPPTest::itemComponentTest() {
+	std::cout<<"=== Running item component (resistance, sailForce) tests === \n"<<std::endl;
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -26,6 +111,9 @@ void TVPPTest::itemComponentTest() {
 	// Declare a container for all the items that
 	// constitute the VPP components (Wind, Resistance, RightingMoment...)
 	boost::shared_ptr<VPPItemFactory> pVppItems;
+
+	// Instantiate a parser with the variables
+	VariableFileParser parser("variableFile_test.txt");
 
 	// Parse the variables file
 	parser.parse();

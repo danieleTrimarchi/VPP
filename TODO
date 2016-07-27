@@ -5,8 +5,6 @@
 - Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 		mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
 	To be investigated on UML!
 
-- use cppunit to make a test suite in main/test -> see howto in MEMSp
-
 - eigen support for xcode?
 
 - download and install Doxygen
