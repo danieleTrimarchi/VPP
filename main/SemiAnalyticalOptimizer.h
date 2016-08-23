@@ -1,5 +1,5 @@
-#ifndef OPTIMIZER_H
-#define OPTIMIZER_H
+#ifndef SEMIANALYTICAL_OPTIMIZER_H
+#define SEMIANALYTICAL_OPTIMIZER_H
 
 #include <stdio.h>
 #include <iostream>
@@ -15,21 +15,27 @@
 
 using namespace std;
 
-namespace Optim {
+namespace SAOA {
 
-/// Wrapper class around NLOPT non-linear
-/// optimization library
-class Optimizer {
+/// This class implements the SAOA (Semi-Analytical Optimization Approach)
+/// which is used to improve the performance of the underlying optimizer NLOpt.
+/// The idea is to use the NRSolver to find a series of solutions in the
+/// optimization space (crew, flat) and feed a parabolic regression with these
+/// solutions. In the end we will be building a polynomial that approximates the
+/// optimization space. Given this polynomial, not only we can feed the optimizer
+/// with an analytical formulation, but we can compute derivatives which will ease
+/// the convergence and the accuracy of the solution.
+class SemiAnalyticalOptimizer {
 
 	public:
 
 		/// Constructor
-		Optimizer(boost::shared_ptr<VPPItemFactory>);
+		SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactory>);
 
 		/// Destructor
-		~Optimizer();
+		~SemiAnalyticalOptimizer();
 
-		/// Reset the optimizer when reloading the initial data
+		/// Reset the SemiAnalyticalOptimizer when reloading the initial data
 		void reset(boost::shared_ptr<VPPItemFactory>);
 
 		/// Execute a VPP-like analysis
@@ -63,9 +69,6 @@ class Optimizer {
 		/// Boat velocity objective function
 		static double VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data);
 
-		/// Set the constraint: dF=0 and dM=0
-		static void VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* f_data);
-
 		/// Set the initial guess for the state variable vector
 		void resetInitialGuess(int TWV, int TWA);
 
@@ -78,17 +81,17 @@ class Optimizer {
 				int twv_, twa_;
 		} Loop_data;
 
-		/// Size of the problem this Optimizer is handling
+		/// Size of the problem this SemiAnalyticalOptimizer is handling
 		size_t dimension_; // --> v, phi, crew, flat
 
 		/// Size of the sub-problem to be pre-solved with the NRSolver
 		size_t subPbSize_; // --> v, phi
 
-		/// Shared ptr holding the underlying optimizer
+		/// Shared ptr holding the underlying SemiAnalyticalOptimizer
 		boost::shared_ptr<nlopt::opt> opt_;
 
 		/// Shared ptr holding the underlying NRSolver used to refine the
-		/// initial guess to be handed to the optimizer
+		/// initial guess to be handed to the SemiAnalyticalOptimizer
 		boost::shared_ptr<NRSolver> nrSolver_;
 
 		/// lower and upper bounds for the state variables
@@ -101,7 +104,7 @@ class Optimizer {
 		/// Ptr to the variableFileParser
 		VariableFileParser* pParser_;
 
-		/// Vector with the initial guess/optimizer results
+		/// Vector with the initial guess/SemiAnalyticalOptimizer results
 		Eigen::VectorXd xp_;
 
 		/// Matrix of results, one result per wind velocity/angle
@@ -113,10 +116,10 @@ class Optimizer {
 		/// tolerance
 		double tol_;
 
-		/// max iters allowed for the optimizer
+		/// max iters allowed for the SemiAnalyticalOptimizer
 		static size_t maxIters_;
 
 };
-};// namespace optimizer
+};// namespace SemiAnalyticalOptimizer
 
 #endif

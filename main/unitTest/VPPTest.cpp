@@ -792,9 +792,51 @@ void TVPPTest::runISRESTest_g06(){
 		printf("found minimum at f(%g,%g) = %0.10g\n", xp[0], xp[1], minf);
 	}
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( xp[0], 14.09789016015, 1.e-2);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( xp[1], 0.845411, 1.e-2);
+	// Note that the tolerance is relatively high on the values of x[0] and x[1]
+	// This is to be expected because the ISRES algorithm attempts finding the
+	// global minimum but it does not detail well the local minimum. The stopping
+	// criterion can vary based on the initial guess, that is randomly generated.
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( xp[0], 14.09789016015, 1.e-1);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( xp[1], 0.845411, 1.e-1);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( minf, -6958.48271784916, 6958*0.01);
+
+	// Use a local opt algorithm and verify the results up to a tight tolerance
+	std::cout<<"\n=== Keep solving g06 using NLOpt COBYLA algorithm === "<<std::endl;
+
+	// Instantiate a NLOpobject and set the COBYLA (Constrained Optimization BY Linear Approximations)
+	// algorithm and the dimensionality.
+	// This is a derivative-free local optimization with nonlinear inequality and equality constraints
+	nlopt::opt locOpt(nlopt::LN_COBYLA,dimension);
+
+	locOpt.set_lower_bounds(lb);
+
+	// Set the objective function
+	locOpt.set_min_objective(myfunc_g06, NULL);
+
+	// Set the constraint equations
+	locOpt.add_inequality_constraint(myconstraint_g06, &data[0], 1e-8);
+	locOpt.add_inequality_constraint(myconstraint_g06, &data[1], 1e-8);
+
+	// Set the relative tolerance
+	locOpt.set_xtol_rel(1e-6);
+
+	// Reset the nlOpt iteration counter to 0
+	optIterations=0;
+
+	// Launch the optimization; negative retVal implies failure
+	nlopt::result locResult = locOpt.optimize(xp, minf);
+
+	if (locResult < 0) {
+		printf("nlopt failed while attempting local optimization!\n");
+	}
+	else {
+		printf("found minimum after %d evaluations\n", optIterations);
+		printf("found minimum at f(%g,%g) = %0.10g\n", xp[0], xp[1], minf);
+	}
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( xp[0], 14.095, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( xp[1], 0.842960789215449, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( minf, -6961.81387558016, 1.e-6);
 
 }
 

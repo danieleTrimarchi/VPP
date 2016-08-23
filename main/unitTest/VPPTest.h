@@ -49,7 +49,7 @@ class TVPPTest : public CppUnit::TestFixture{
 
 public:
 
-  /// Test the variables parsed in the variablefile
+  /// Test the variables parsed in the variable file
   void variableParseTest();
 
   /// Resistance and aero force components test

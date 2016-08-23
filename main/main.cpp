@@ -119,7 +119,7 @@ int main(int argc, char** argv) {
 			else if( s == string("plot_D2_SailCoeffs"))
 				pVppItems->getSailCoefficientItem()->plot_D2_InterpolatedCoefficients();
 
-			//---
+			// ---
 
 			else if( s == string("plotSailForceMoment"))
 				pVppItems->getAeroForcesItem()->plot();

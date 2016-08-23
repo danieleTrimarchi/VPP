@@ -27,16 +27,6 @@ class Regression {
 
 	private:
 
-		/// Run a test : define the points using a polynomial, then reconstruct
-		/// the regression and verify the coefficients are the initial ones. This
-		/// will be embedded into an autotest
-		void runAnalyticalTest();
-
-		/// Run a test : get the points from outside, reconstruct the regression
-		/// and verify the difference in the z-values. This will be embedded into
-		/// into an autotest
-		void runNumericalTest();
-
 		/// Point array to be used to compute the regression
 		Eigen::MatrixXd xp_, yp_, zp_;
 };
