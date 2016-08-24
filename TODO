@@ -1,3 +1,4 @@
+- Optimiser and SAOA derive from a common base. Simplify the interface in main (rm RUN) 
 
 - Download UMLet 
 	  

@@ -8,6 +8,8 @@
 /// Aim of this class is to return a size-6 vector with the coefficients of a
 /// paraboloid that minimizes the distance from a given array of points.
 /// It is a regression in 3d.
+/// The polynomial vector returned by compute() is arranged with coeffs for:
+/// x^2, xy, y^2, x, y, 1;
 
 class Regression {
 

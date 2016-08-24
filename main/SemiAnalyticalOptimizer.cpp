@@ -22,10 +22,9 @@ SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactor
 										subPbSize_(2),
 										tol_(1.e-3) {
 
-	// Instantiate a NLOpobject and set the COBYLA algorithm for
-	// nonlinearly-constrained global optimization
-	// opt_.reset( new nlopt::opt(nlopt::GN_ISRES,dimension_) );
-	opt_.reset( new nlopt::opt(nlopt::LN_COBYLA,dimension_) );
+	// Instantiate a NLOpobject and set the LD_MMA algorithm for gradient-based
+	// local optimization including nonlinear inequality (not equality!) constraints
+	opt_.reset( new nlopt::opt(nlopt::LD_MMA,dimension_) );
 
 	// Instantiate a NRSolver that will be used to feed the SemiAnalyticalOptimizer with
 	// an equilibrated first guess solution. The solver will solve a subproblem
@@ -59,9 +58,6 @@ SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactor
 
 	// Resize the vector with the initial guess/SemiAnalyticalOptimizer results
 	xp_.resize(dimension_);
-
-	// Set the objective function to be maximized (using set_max_objective)
-	opt_->set_max_objective(VPP_speed, NULL);
 
 	// Set the absolute tolerance on the state variables
 	//	opt_->set_xtol_abs(tol_);
@@ -185,23 +181,41 @@ void SemiAnalyticalOptimizer::solveInitialGuess(int TWV, int TWA) {
 
 }
 
-// Set the objective function for tutorial g13
+// Struct holding the coefficients of the regression polynomial
+typedef struct {
+		Eigen::VectorXd coeffs;
+} regression_coeffs;
+
+// Set the function to be optimized and its gradient
 double SemiAnalyticalOptimizer::VPP_speed(unsigned n, const double* x, double *grad, void *my_func_data) {
 
-	// throw till this does not return the z of the paraboloid computed with the regression
-	// and the derivatives on the use of grad
-	throw VPPException(HERE, "To be modified still!");
+	// Cast the regression coefficients struct passed in as void*
+	regression_coeffs* c = (regression_coeffs *) my_func_data;
 
 	// Increment the number of iterations for each call of the objective function
 	++optIterations;
 
-	if(grad)
-		throw VPPException(HERE,"VPP_speed can only be used for derivative-free algorithms!");
+	// Fill the coordinate vector: x^2, xy, y^2, x, y, 1;
+	// --> 	Note that in this case x <- x[2] ; y <- x[3]
+	// 			because we are in the opt space where the state vars
+	//			u=x[0], phi=x[1] are left constant
+	Eigen::VectorXd coords(6);
+	coords << x[2]*x[2], x[2]*x[3], x[3]*x[3], x[2], x[3], 1;
 
-	if(mathUtils::isNotValid(x[0])) throw VPPException(HERE,"x[0] is NAN!");
+	// c0 x^2 + c1 xy + c2 y^2 + c3 x + c4 y + c5
+	// d/dx= 2 c0 x + c1 y + c3
+	// d/dy= 2 c2 y + c1 x + c4
+	if (grad) {
 
-	// Return x[0], or the velocity to be maximized
-	return x[0];
+		grad[0] = 2 * c->coeffs(0) * x[2] + c->coeffs(1) * x[3] + c->coeffs(3);
+		if(mathUtils::isNotValid(grad[0])) throw VPPException(HERE,"grad[0] is NAN!");
+
+		grad[1] = 2 * c->coeffs(2) * x[3] + c->coeffs(1) * x[2] + c->coeffs(4);
+		if(mathUtils::isNotValid(grad[1])) throw VPPException(HERE,"grad[1] is NAN!");
+	}
+
+	// Return the value of the function
+	return c->coeffs.transpose()*coords;
 
 }
 
@@ -247,38 +261,38 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		}
 	}
 
-	// Instantiate a Regression based on the computational points contained in u
+	// At this point I have three arrays: x <- flat ; y <- crew ; u
+	// that describes the change of velocity for each opt parameter.
+	// The heeling angle is free to change but we do not care about its value
+
+	// Instantiate a Regression based on the computational points contained in u,
+	// so to express u(flat,crew)
 	Regression regr(x,y,u);
 	Eigen::VectorXd polynomial= regr.compute();
 
 	// ====== Set NLOPT ============================================
 
-	// Reset the iteration counter
-	optIterations=0;
-
-	// Note that the Number of constraints is determined by tol.size!!
-	// Here we have box constraints: bmin<b<bmax; fmin<f<fmax
-	std::vector<double> tol(4);
-	tol[0]=tol[1]=tol[2]=tol[3]=tol_;
-
-	// Clear the optimizer from any previously defined constraint
-	// In this case we evolve in the optimization space, so we do not
-	// need to impose constraints on the df dm
-	opt_->remove_equality_constraints();
-	opt_->remove_inequality_constraints();
-
 	// Reset the number of iterations
 	optIterations = 0;
 
-	// Instantiate an Optimizer
 	try{
+
 		// Launch the optimization; negative retVal implies failure
 		std::cout<<"Entering the SemiAnalyticalOptimizer with: ";
 		printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
+
 		// convert to standard vector
 		std::vector<double> xp(xp_.rows());
 		for(size_t i=0; i<xp_.rows(); i++)
 			xp[i]=xp_(i);
+
+		// Place the regression polynomial into an object to be sent to nlOpt
+		// todo dtrimarchi : improve the init of the regression_coeffs struct!
+		regression_coeffs c;
+		c.coeffs= polynomial;
+
+		// Set the objective function to be maximized using the regression coeffs
+		opt_->set_max_objective(VPP_speed, &c);
 
 		// Instantiate the maximum objective value, upon return
 		double maxf;
@@ -310,74 +324,13 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	printf("      at f(%g,%g,%g,%g)\n",
 			xp_(0),xp_(1),xp_(2),xp_(3) );
 
+	// We have now tuned the optimization variables. Re-run NR to assure that the solution
+	// is indeed an equilibrium state. We must be very close to the solution already
+	solveInitialGuess(TWV, TWA);
 
-	// =============================================================
-	// =============================================================
-
-
-
-	// Drive the loop info to the struct
-	Loop_data loopData={TWV,TWA};
-
-	// For the Semi-Analytical Optimization Approach we do not need
-	// to enforce constraints: enforcing bounds is enough!
-	// Make a ptr to the non static member function VPPconstraint
-	//opt_->add_equality_mconstraint(VPPconstraint, &loopData, tol);
-
-	// Instantiate the maximum objective value, upon return
-	double maxf;
-
-	nlopt::result result;
-
-	// Init an arbitrarily high residuals vector
-	Eigen::VectorXd residuals(dimension_);
-	for(size_t i=0; i<dimension_; i++) residuals(i)=100;
-
-	//while ( residuals.norm() > 0.00001 )
-	for(size_t iRes=0; iRes<3; iRes++ ){
-		try{
-			// Launch the optimization; negative retVal implies failure
-			std::cout<<"Entering the SemiAnalyticalOptimizer with: ";
-			printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
-			// convert to standard vector
-			std::vector<double> xp(xp_.rows());
-			for(size_t i=0; i<xp_.rows(); i++)
-				xp[i]=xp_(i);
-
-			// Launch the optimization
-			result = opt_->optimize(xp, maxf);
-
-			//store the results back to the member state vector
-			for(size_t i=0; i<xp_.size(); i++)
-				xp_(i)=xp[i];
-		}
-		catch( nlopt::roundoff_limited& e ){
-			std::cout<<"Roundoff limited result"<<std::endl;
-			// do nothing because the result of roundoff-limited exception
-			// is meant to be still a meaningful result
-		}
-		catch (std::exception& e) {
-
-			// throw exceptions catched by NLOpt
-			char msg[256];
-			sprintf(msg,"%s\n",e.what());
-			throw VPPException(HERE,msg);
-		}
-		catch (...) {
-			throw VPPException(HERE,"nlopt unknown exception catched!\n");
-		}
-
-
-		printf("found maximum after %d evaluations\n", optIterations);
-		printf("      at f(%g,%g,%g,%g)\n",
-				xp_(0),xp_(1),xp_(2),xp_(3) );
-
-		residuals= vppItemsContainer_->getResiduals();
-		printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
-
-		if( residuals.norm() < 0.0001 )
-			break;
-	}
+	// Get and print the final residuals
+	Eigen::VectorXd residuals= vppItemsContainer_->getResiduals();
+	printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
 
 	// Push the result to the result container
 	pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
