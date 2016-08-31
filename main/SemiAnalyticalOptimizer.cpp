@@ -18,9 +18,9 @@ int optIterations=0;
 
 // Constructor
 SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-										dimension_(4),
-										subPbSize_(2),
-										tol_(1.e-3) {
+												dimension_(4),
+												subPbSize_(2),
+												tol_(1.e-3) {
 
 	// Instantiate a NLOpobject and set the LD_MMA algorithm for gradient-based
 	// local optimization including nonlinear inequality (not equality!) constraints
@@ -232,6 +232,9 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	// optimization variables. This is x1
 	solveInitialGuess(TWV,TWA);
 
+	// Buffer initial guess before entering the regression loop
+	Eigen::VectorXd xpBuf= xp_;
+
 	// Declare the number of evaluations in the optimization space
 	// Remember the state vector x={v phi b f}
 	size_t nCrew=3, nFlat=3;
@@ -243,12 +246,12 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	for(size_t iCrew=0; iCrew<nCrew; iCrew++){
 
 		// Set the value of b in the state vector
-		xp_(2)= lowerBounds_[2] + iCrew / (nCrew-1) * (upperBounds_[2]-lowerBounds_[2]);
+		xp_(2)= lowerBounds_[2] + double(iCrew) / (nCrew-1) * (upperBounds_[2]-lowerBounds_[2]);
 
 		for(size_t iFlat=0; iFlat<nCrew; iFlat++){
 
 			// Set the value of Flat in the state vector
-			xp_(3)= lowerBounds_[3] + iFlat / (nFlat-1) * (upperBounds_[3]-lowerBounds_[3]);
+			xp_(3)= lowerBounds_[3] + double(iFlat) / (nFlat-1) * (upperBounds_[3]-lowerBounds_[3]);
 
 			// Store the coordinates of this point in the optimization space
 			x(iCrew,iFlat)= xp_(2);
@@ -261,6 +264,9 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		}
 	}
 
+	// Restore the value of xp_ prior to the regression loop
+	xp_= xpBuf;
+
 	// At this point I have three arrays: x <- flat ; y <- crew ; u
 	// that describes the change of velocity for each opt parameter.
 	// The heeling angle is free to change but we do not care about its value
@@ -269,6 +275,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	// so to express u(flat,crew)
 	Regression regr(x,y,u);
 	Eigen::VectorXd polynomial= regr.compute();
+	std::cout<<" POLYNOMIAL: "<<polynomial<<std::endl;
 
 	// ====== Set NLOPT ============================================
 

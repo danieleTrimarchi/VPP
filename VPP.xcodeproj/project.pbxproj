@@ -12,7 +12,6 @@
 		64BBD5FC1C5B701400F14B38 /* Interpolator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5D71C5B701400F14B38 /* Interpolator.cpp */; };
 		64BBD5FD1C5B701400F14B38 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5D91C5B701400F14B38 /* main.cpp */; };
 		64BBD5FE1C5B701400F14B38 /* Optimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5DC1C5B701400F14B38 /* Optimizer.cpp */; };
-		64BBD5FF1C5B701400F14B38 /* Plotter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5E01C5B701400F14B38 /* Plotter.cpp */; };
 		64BBD6001C5B701400F14B38 /* SailSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5E21C5B701400F14B38 /* SailSet.cpp */; };
 		64BBD6011C5B701400F14B38 /* Solver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5E61C5B701400F14B38 /* Solver.cpp */; };
 		64BBD6021C5B701400F14B38 /* VariableFileParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64BBD5EA1C5B701400F14B38 /* VariableFileParser.cpp */; };
@@ -32,6 +31,8 @@
 		64BBD6181C5B748C00F14B38 /* libplplotcxx.12.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD6171C5B748C00F14B38 /* libplplotcxx.12.dylib */; };
 		64BBD61A1C5B749000F14B38 /* libplplotcxx.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD6191C5B749000F14B38 /* libplplotcxx.dylib */; };
 		64BBD61C1C5B74B000F14B38 /* libumfpack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD61B1C5B74B000F14B38 /* libumfpack.a */; };
+		B32816341D7558A100263BFD /* SemiAnalyticalOptimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B32816301D7558A100263BFD /* SemiAnalyticalOptimizer.cpp */; };
+		B32816351D7558A100263BFD /* VPPPlotter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B32816321D7558A100263BFD /* VPPPlotter.cpp */; };
 		B34E78E01D32DE54009B723D /* Regression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34E78DE1D32DE54009B723D /* Regression.cpp */; };
 		B3855B1C1CC54316002F33AC /* libnlopt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD60B1C5B705000F14B38 /* libnlopt.a */; };
 		B3855B211CC544E4002F33AC /* SparseSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3855B1D1CC544E4002F33AC /* SparseSolver.cpp */; };
@@ -62,8 +63,6 @@
 		64BBD5DC1C5B701400F14B38 /* Optimizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Optimizer.cpp; path = main/Optimizer.cpp; sourceTree = "<group>"; };
 		64BBD5DD1C5B701400F14B38 /* Optimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Optimizer.h; path = main/Optimizer.h; sourceTree = "<group>"; };
 		64BBD5DF1C5B701400F14B38 /* Physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Physics.h; path = main/Physics.h; sourceTree = "<group>"; };
-		64BBD5E01C5B701400F14B38 /* Plotter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Plotter.cpp; path = main/Plotter.cpp; sourceTree = "<group>"; };
-		64BBD5E11C5B701400F14B38 /* Plotter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plotter.h; path = main/Plotter.h; sourceTree = "<group>"; };
 		64BBD5E21C5B701400F14B38 /* SailSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SailSet.cpp; path = main/SailSet.cpp; sourceTree = "<group>"; };
 		64BBD5E31C5B701400F14B38 /* SailSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SailSet.h; path = main/SailSet.h; sourceTree = "<group>"; };
 		64BBD5E41C5B701400F14B38 /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SConscript; path = main/SConscript; sourceTree = "<group>"; };
@@ -99,6 +98,11 @@
 		64BBD6191C5B749000F14B38 /* libplplotcxx.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libplplotcxx.dylib; path = /opt/local/lib/libplplotcxx.dylib; sourceTree = "<absolute>"; };
 		64BBD61B1C5B74B000F14B38 /* libumfpack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libumfpack.a; path = "../third_party/SuiteSparse-4.5.2/UMFPACK/Lib/libumfpack.a"; sourceTree = "<group>"; };
 		64D919501C59F7D70002F585 /* VPP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VPP; sourceTree = BUILT_PRODUCTS_DIR; };
+		B328162F1D7558A100263BFD /* IOutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOutils.h; path = main/IOutils.h; sourceTree = "<group>"; };
+		B32816301D7558A100263BFD /* SemiAnalyticalOptimizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SemiAnalyticalOptimizer.cpp; path = main/SemiAnalyticalOptimizer.cpp; sourceTree = "<group>"; };
+		B32816311D7558A100263BFD /* SemiAnalyticalOptimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SemiAnalyticalOptimizer.h; path = main/SemiAnalyticalOptimizer.h; sourceTree = "<group>"; };
+		B32816321D7558A100263BFD /* VPPPlotter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPPlotter.cpp; path = main/VPPPlotter.cpp; sourceTree = "<group>"; };
+		B32816331D7558A100263BFD /* VPPPlotter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPPlotter.h; path = main/VPPPlotter.h; sourceTree = "<group>"; };
 		B34E78DE1D32DE54009B723D /* Regression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Regression.cpp; path = main/Regression.cpp; sourceTree = "<group>"; };
 		B34E78DF1D32DE54009B723D /* Regression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Regression.h; path = main/Regression.h; sourceTree = "<group>"; };
 		B3855B1D1CC544E4002F33AC /* SparseSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SparseSolver.cpp; path = main/SparseSolver.cpp; sourceTree = "<group>"; };
@@ -146,6 +150,11 @@
 		64D919471C59F7D60002F585 = {
 			isa = PBXGroup;
 			children = (
+				B328162F1D7558A100263BFD /* IOutils.h */,
+				B32816301D7558A100263BFD /* SemiAnalyticalOptimizer.cpp */,
+				B32816311D7558A100263BFD /* SemiAnalyticalOptimizer.h */,
+				B32816321D7558A100263BFD /* VPPPlotter.cpp */,
+				B32816331D7558A100263BFD /* VPPPlotter.h */,
 				B34E78DE1D32DE54009B723D /* Regression.cpp */,
 				B34E78DF1D32DE54009B723D /* Regression.h */,
 				64BBD5D71C5B701400F14B38 /* Interpolator.cpp */,
@@ -158,8 +167,6 @@
 				64BBD5DC1C5B701400F14B38 /* Optimizer.cpp */,
 				64BBD5DD1C5B701400F14B38 /* Optimizer.h */,
 				64BBD5DF1C5B701400F14B38 /* Physics.h */,
-				64BBD5E01C5B701400F14B38 /* Plotter.cpp */,
-				64BBD5E11C5B701400F14B38 /* Plotter.h */,
 				64D919511C59F7D70002F585 /* Products */,
 				64598B591C8E1D740038AC6C /* Results.cpp */,
 				64598B5A1C8E1D740038AC6C /* Results.h */,
@@ -262,6 +269,7 @@
 				B34E78E01D32DE54009B723D /* Regression.cpp in Sources */,
 				B3855B221CC544E4002F33AC /* VPPJacobian.cpp in Sources */,
 				64BBD6081C5B701400F14B38 /* VPPItemFactory.cpp in Sources */,
+				B32816341D7558A100263BFD /* SemiAnalyticalOptimizer.cpp in Sources */,
 				64BBD6091C5B701400F14B38 /* VPPRightingMomentItem.cpp in Sources */,
 				64BBD6011C5B701400F14B38 /* Solver.cpp in Sources */,
 				64598B5B1C8E1D740038AC6C /* Results.cpp in Sources */,
@@ -270,7 +278,6 @@
 				64BBD5FD1C5B701400F14B38 /* main.cpp in Sources */,
 				64BBD5FC1C5B701400F14B38 /* Interpolator.cpp in Sources */,
 				B3855B211CC544E4002F33AC /* SparseSolver.cpp in Sources */,
-				64BBD5FF1C5B701400F14B38 /* Plotter.cpp in Sources */,
 				64598B581C8E1D1C0038AC6C /* NRSolver.cpp in Sources */,
 				64BBD6051C5B701400F14B38 /* VPPException.cpp in Sources */,
 				64BBD6001C5B701400F14B38 /* SailSet.cpp in Sources */,
@@ -278,6 +285,7 @@
 				64BBD6041C5B701400F14B38 /* VPPAeroItem.cpp in Sources */,
 				64BBD6021C5B701400F14B38 /* VariableFileParser.cpp in Sources */,
 				64BBD6031C5B701400F14B38 /* Variables.cpp in Sources */,
+				B32816351D7558A100263BFD /* VPPPlotter.cpp in Sources */,
 				64BBD60A1C5B701400F14B38 /* Warning.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
