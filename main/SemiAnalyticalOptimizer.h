@@ -85,7 +85,7 @@ class SemiAnalyticalOptimizer {
 		size_t dimension_; // --> v, phi, crew, flat
 
 		/// Size of the sub-problem to be pre-solved with the NRSolver
-		size_t subPbSize_; // --> v, phi
+		size_t subPbSize_, saPbSize_; // --> v, phi
 
 		/// Shared ptr holding the underlying SemiAnalyticalOptimizer
 		boost::shared_ptr<nlopt::opt> opt_;

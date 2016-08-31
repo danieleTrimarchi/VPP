@@ -20,11 +20,20 @@ int optIterations=0;
 SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 												dimension_(4),
 												subPbSize_(2),
+												saPbSize_(dimension_-subPbSize_),
 												tol_(1.e-3) {
+
+	// Compute the size of the Semi-Analytical-Optimization-Approach pb size. This is
+	// the size of the pb that will be handed to the optimizer. See explanation below
+	if(saPbSize_!=2)
+		throw VPPException(HERE,"saPbSize is supposed to be 2!");
 
 	// Instantiate a NLOpobject and set the LD_MMA algorithm for gradient-based
 	// local optimization including nonlinear inequality (not equality!) constraints
-	opt_.reset( new nlopt::opt(nlopt::LD_MMA,dimension_) );
+	// The size of the problem to optimize is subPbSize because I will be handing an
+	// analytical polynomial where we recover the value of the objective function VPP_SPEED
+	// when varying the optimization variables crew, flat.
+	opt_.reset( new nlopt::opt(nlopt::LD_MMA,saPbSize_) );
 
 	// Instantiate a NRSolver that will be used to feed the SemiAnalyticalOptimizer with
 	// an equilibrated first guess solution. The solver will solve a subproblem
@@ -40,17 +49,13 @@ SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactor
 	// Set the and apply the lower and the upper bounds
 	// -> make sure the bounds are larger than the initial
 	// 		guess!
-	lowerBounds_.resize(dimension_);
-	upperBounds_.resize(dimension_);
+	lowerBounds_.resize(saPbSize_);
+	upperBounds_.resize(saPbSize_);
 
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
-	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
+	lowerBounds_[0] = pParser_->get("B_MIN"); ;	// lower reef
+	upperBounds_[0] = pParser_->get("B_MAX"); ;	// upper reef
+	lowerBounds_[1] = pParser_->get("F_MIN"); ;	// lower FLAT
+	upperBounds_[1] = pParser_->get("F_MAX"); ;	// upper FLAT
 
 	// Set the bounds for the constraints
 	opt_->set_lower_bounds(lowerBounds_);
@@ -93,14 +98,10 @@ void SemiAnalyticalOptimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFac
 	// Set the parser
 	pParser_= vppItemsContainer_->getParser();
 
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
-	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
+	lowerBounds_[0] = pParser_->get("B_MIN"); ;	// lower reef
+	upperBounds_[0] = pParser_->get("B_MAX"); ;	// upper reef
+	lowerBounds_[1] = pParser_->get("F_MIN"); ;	// lower FLAT
+	upperBounds_[1] = pParser_->get("F_MAX"); ;	// upper FLAT
 
 	// Set the bounds for the constraints
 	opt_->set_lower_bounds(lowerBounds_);
@@ -191,7 +192,7 @@ double SemiAnalyticalOptimizer::VPP_speed(unsigned n, const double* x, double *g
 
 	// Cast the regression coefficients struct passed in as void*
 	regression_coeffs* c = (regression_coeffs *) my_func_data;
-
+    
 	// Increment the number of iterations for each call of the objective function
 	++optIterations;
 
@@ -200,17 +201,17 @@ double SemiAnalyticalOptimizer::VPP_speed(unsigned n, const double* x, double *g
 	// 			because we are in the opt space where the state vars
 	//			u=x[0], phi=x[1] are left constant
 	Eigen::VectorXd coords(6);
-	coords << x[2]*x[2], x[2]*x[3], x[3]*x[3], x[2], x[3], 1;
+	coords << x[0]*x[0], x[0]*x[1], x[1]*x[1], x[0], x[1], 1;
 
 	// c0 x^2 + c1 xy + c2 y^2 + c3 x + c4 y + c5
 	// d/dx= 2 c0 x + c1 y + c3
 	// d/dy= 2 c2 y + c1 x + c4
 	if (grad) {
 
-		grad[0] = 2 * c->coeffs(0) * x[2] + c->coeffs(1) * x[3] + c->coeffs(3);
+		grad[0] = 2 * c->coeffs(0) * x[0] + c->coeffs(1) * x[1] + c->coeffs(3);
 		if(mathUtils::isNotValid(grad[0])) throw VPPException(HERE,"grad[0] is NAN!");
 
-		grad[1] = 2 * c->coeffs(2) * x[3] + c->coeffs(1) * x[2] + c->coeffs(4);
+		grad[1] = 2 * c->coeffs(2) * x[1] + c->coeffs(1) * x[0] + c->coeffs(4);
 		if(mathUtils::isNotValid(grad[1])) throw VPPException(HERE,"grad[1] is NAN!");
 	}
 
@@ -246,12 +247,12 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	for(size_t iCrew=0; iCrew<nCrew; iCrew++){
 
 		// Set the value of b in the state vector
-		xp_(2)= lowerBounds_[2] + double(iCrew) / (nCrew-1) * (upperBounds_[2]-lowerBounds_[2]);
+		xp_(2)= lowerBounds_[0] + double(iCrew) / (nCrew-1) * (upperBounds_[0]-lowerBounds_[0]);
 
 		for(size_t iFlat=0; iFlat<nCrew; iFlat++){
 
 			// Set the value of Flat in the state vector
-			xp_(3)= lowerBounds_[3] + double(iFlat) / (nFlat-1) * (upperBounds_[3]-lowerBounds_[3]);
+			xp_(3)= lowerBounds_[1] + double(iFlat) / (nFlat-1) * (upperBounds_[1]-lowerBounds_[1]);
 
 			// Store the coordinates of this point in the optimization space
 			x(iCrew,iFlat)= xp_(2);
@@ -271,11 +272,17 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	// that describes the change of velocity for each opt parameter.
 	// The heeling angle is free to change but we do not care about its value
 
-	// Instantiate a Regression based on the computational points contained in u,
+    std::cout<<"---------------\n";
+    std::cout<<"x <- xp_[2]= \n"<<x.transpose()<<std::endl;
+    std::cout<<"y <- xp_[3]= \n"<<y.transpose()<<std::endl;
+    std::cout<<"u= \n"<<u.transpose()<<std::endl;
+    std::cout<<"---------------\n";
+
+    // Instantiate a Regression based on the computational points contained in u,
 	// so to express u(flat,crew)
 	Regression regr(x,y,u);
 	Eigen::VectorXd polynomial= regr.compute();
-	std::cout<<" POLYNOMIAL: "<<polynomial<<std::endl;
+	std::cout<<" POLYNOMIAL: \n"<<polynomial<<std::endl;
 
 	// ====== Set NLOPT ============================================
 
@@ -289,9 +296,9 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
 
 		// convert to standard vector
-		std::vector<double> xp(xp_.rows());
-		for(size_t i=0; i<xp_.rows(); i++)
-			xp[i]=xp_(i);
+		std::vector<double> xp(saPbSize_);
+		for(size_t i=0; i<saPbSize_; i++)
+			xp[i]=xp_(subPbSize_+i);
 
 		// Place the regression polynomial into an object to be sent to nlOpt
 		// todo dtrimarchi : improve the init of the regression_coeffs struct!
@@ -308,8 +315,8 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		nlopt::result result = opt_->optimize(xp, maxf);
 
 		//store the results back to the member state vector
-		for(size_t i=0; i<xp_.size(); i++)
-			xp_(i)=xp[i];
+		for(size_t i=0; i<saPbSize_; i++)
+			xp_(subPbSize_+i)=xp[i];
 	}
 	catch( nlopt::roundoff_limited& e ){
 		std::cout<<"Roundoff limited result"<<std::endl;
