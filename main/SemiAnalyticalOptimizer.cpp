@@ -148,12 +148,12 @@ void SemiAnalyticalOptimizer::resetInitialGuess(int TWV, int TWA) {
 		if(xp(0)>xp_(0))
 			xp_=xp;
 
-		// Make sure the initial guess does not exceeds the bounds
-		for(size_t i=0; i<dimension_; i++) {
-			if(xp_[i]<lowerBounds_[i])
-				xp_[i]=lowerBounds_[i];
-			if(xp_[i]>upperBounds_[i])
-				xp_[i]=upperBounds_[i];
+		// Make sure the initial guess does not exceeds the bounds for the opt vars
+		for(size_t i=0; i<saPbSize_; i++) {
+			if(xp_[subPbSize_+i]<lowerBounds_[i])
+				xp_[subPbSize_+i]=lowerBounds_[i];
+			if(xp_[subPbSize_+i]>upperBounds_[i])
+				xp_[subPbSize_+i]=upperBounds_[i];
 		}
 	}
 
@@ -167,18 +167,6 @@ void SemiAnalyticalOptimizer::solveInitialGuess(int TWV, int TWA) {
 
 	// Get
 	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
-
-	// Make sure the initial guess does not exceeds the bounds
-	for(size_t i=0; i<subPbSize_; i++) {
-		if(xp_[i]<lowerBounds_[i]){
-			std::cout<<"WARNING: Modifying lower out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
-			xp_[i]=lowerBounds_[i];
-		}
-		if(xp_[i]>upperBounds_[i]){
-			std::cout<<"WARNING: Modifying upper out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
-			xp_[i]=upperBounds_[i];
-		}
-	}
 
 }
 
@@ -235,6 +223,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 
 	// Buffer initial guess before entering the regression loop
 	Eigen::VectorXd xpBuf= xp_;
+    std::cout<<"xp_= "<<xp_.transpose()<<std::endl;
 
 	// Declare the number of evaluations in the optimization space
 	// Remember the state vector x={v phi b f}
@@ -311,7 +300,13 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		// Instantiate the maximum objective value, upon return
 		double maxf;
 
-		// Launch the optimization
+        for(size_t i=0; i<lowerBounds_.size(); i++){
+            std::cout<<"lowerBounds["<<i<<"]= "<<lowerBounds_[i]<<std::endl;
+            std::cout<<"upperBounds["<<i<<"]= "<<upperBounds_[i]<<std::endl;
+            std::cout<<"xp["<<i<<"]= "<<xp[i]<<std::endl;
+        }
+        
+        // Launch the optimization
 		nlopt::result result = opt_->optimize(xp, maxf);
 
 		//store the results back to the member state vector
