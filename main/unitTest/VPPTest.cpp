@@ -9,6 +9,7 @@
 #include <nlopt.hpp>
 #include "VPPJacobian.h"
 #include "Optimizer.h"
+#include "mathUtils.h"
 
 namespace Test {
 
@@ -880,6 +881,35 @@ void TVPPTest::vppPointTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( res(1), 2.15527e-05, 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( res(2), 0.0738957, 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( res(3), 1., 1.e-6);
+
+}
+
+
+// Test the SmoothedStepFunction values
+void TVPPTest::smoothedTestFunctionTest() {
+
+	std::cout<<"=== Testing smoothedStep function === \n"<<std::endl;
+
+	double xMin=0, xMax=0.5;
+
+	// Instantiate a SmoothedStepFunction
+	mathUtils::SmoothedStepFunction sdf(0,0.5);
+
+	// Verify the values of the function at the constraint points
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( sdf.f(xMin), 1e-3, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( sdf.f(xMax), 0.999, 1.e-6);
+
+	// Verify that all values <xMin are approx 0 and all values >xMax are approx 1
+	// Remember we have enforced a value of 1e-3 on xMin and xMax, so tolerances
+	// cannot be too tight
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( sdf.f(xMin-100), 0., 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( sdf.f(xMin-10), 0., 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( sdf.f(xMin-1), 0., 1.e-5);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( sdf.f(xMin-0.5), 0., 1.e-5);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( sdf.f(xMax+0.5), 1., 1.e-5);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( sdf.f(xMax+1), 1., 1.e-5);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( sdf.f(xMax+10), 1., 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( sdf.f(xMax+100), 1., 1.e-6);
 
 }
 

@@ -45,6 +45,9 @@ class TVPPTest : public CppUnit::TestFixture{
   /// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
   CPPUNIT_TEST(vppPointTest);
 
+  /// Test the SmoothedStepFunction values
+  CPPUNIT_TEST(smoothedTestFunctionTest);
+
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -80,6 +83,10 @@ public:
 
   /// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
   void vppPointTest();
+
+  /// Test the SmoothedStepFunction values
+  void smoothedTestFunctionTest();
+
 
 };
 }; // namespace Test

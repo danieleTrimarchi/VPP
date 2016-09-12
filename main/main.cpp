@@ -96,7 +96,6 @@ int main(int argc, char** argv) {
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
 
-
 		// Instantiate a parser with the variables
 		VariableFileParser parser("variableFile.txt");
 
