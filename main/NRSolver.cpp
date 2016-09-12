@@ -140,7 +140,7 @@ void NRSolver::run(int twv, int twa) {
 	// state variable vector to zero
 	resetInitialGuess(twv,twa);
 
-	std::cout<<"Entering NR with first guess: "<<xp_.transpose()<<std::endl;
+	//std::cout<<"\n Entering NR with first guess: "<<xp_.transpose()<<std::endl;
 
 	// declare an out-of-scope loop variable to report the number
 	// of Newton's iterations
@@ -184,16 +184,18 @@ void NRSolver::run(int twv, int twa) {
 				string s;
 				std::cin>>s;
 
-				//throw VPPException(HERE,"VPP Solver could not converge");
+				// Restore the buffer and throw
 				xp_=xpBuf_;
-				return;
+
+				throw NonConvergedException(HERE,"VPP Solver could not converge");
+
 			}
 
 			// Build a state vector with the size of the outer vector
 
 			// Compute the residuals vector - here only the part relative to the subproblem
 			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_).block(0,0,subPbSize_,1);
-			//std::cout<<"NR it: "<<it<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<"   ";
+			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<"   \n";
 
 			if(it>1) {
 				velocityResiduals.push_back( residuals(0) );
@@ -236,13 +238,12 @@ void NRSolver::run(int twv, int twa) {
 //			break;
 //		}
 
-
+	}
+	catch(NonConvergedException& e ){
+		throw NonConvergedException( HERE,e.what() );
 	}
 	catch (std::exception& e) {
-
-		char msg[256];
-		sprintf(msg,"%s\n",e.what());
-		throw VPPException(HERE,msg);
+		throw VPPException(HERE,e.what());
 	}
 	catch (...) {
 		throw VPPException(HERE,"Unknown exception catched!\n");
@@ -253,7 +254,7 @@ void NRSolver::run(int twv, int twa) {
 
 	// Print the solution
 	//printf("\n found solution after %d iterations\n     at f(", it);
-	printf("\n NR solver solution: ");
+	printf("NR solver solution: ");
 	for(size_t i=0; i<xp_.size(); i++)
 		printf("%g  ",xp_(i));
 	printf("\n");

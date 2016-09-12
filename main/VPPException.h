@@ -20,11 +20,34 @@ class VPPException : public std::exception {
 		/// Output the error message
 		virtual const char* what() const throw();
 
-	private:
+	protected:
 
 		std::string msg;
 
 };
+
+// This exception is a copy of VPPException. I need to have a different type to discriminate
+// what is a non-convergence exception and continue on non-convergence error. It is exactly like
+// a goto statement
+class NonConvergedException : public std::exception {
+
+	public:
+
+		// Constructor
+		NonConvergedException(const char* inFile, int inLine, const char* inFunction, const char* message );
+
+		// Destructor
+		virtual ~NonConvergedException() throw();
+
+		/// Output the error message
+		virtual const char* what() const throw();
+
+	protected:
+
+		std::string msg;
+
+};
+
 
 
 #endif

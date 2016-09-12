@@ -355,7 +355,7 @@ void VPPItemFactory::plotOptimizationSpace() {
 	NRSolver nrSolver(this, 4, 2);
 
 	// Set the number of values for flat and crew -> x, y
-	size_t nFlat=30, nCrew=30;
+	size_t nFlat=10, nCrew=10;
 
 	// Instantiate the result matrices : v and phi
 	Eigen::ArrayXd flat(nFlat), crew(nCrew);
@@ -363,8 +363,8 @@ void VPPItemFactory::plotOptimizationSpace() {
 	Eigen::MatrixXd phi(nCrew,nFlat);
 
 	// Get the bounds for crew and flat
-	double dCrew= ( pParser_->get("B_MAX")-pParser_->get("B_MIN") ) / (nCrew+1);
-	double dFlat= ( pParser_->get("F_MAX")-pParser_->get("F_MIN") ) / (nFlat+1);
+	double dCrew= ( pParser_->get("B_MAX")-pParser_->get("B_MIN") ) / (nCrew-1);
+	double dFlat= ( pParser_->get("F_MAX")-pParser_->get("F_MIN") ) / (nFlat-1);
 
 	// Loop on nFlat
 	for(size_t iFlat=0; iFlat<nFlat; iFlat++){

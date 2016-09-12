@@ -219,104 +219,119 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 
 	// Refine the initial guess solving a sub-problem with no
 	// optimization variables. This is x1
+	std::cout<<"SAOA, solveInitialGuess: "<<std::endl;
 	solveInitialGuess(TWV,TWA);
+	std::cout<<"-------------------------"<<std::endl;
 
 	// Buffer initial guess before entering the regression loop
 	Eigen::VectorXd xpBuf= xp_;
-    std::cout<<"xp_= "<<xp_.transpose()<<std::endl;
 
 	// Declare the number of evaluations in the optimization space
 	// Remember the state vector x={v phi b f}
-	size_t nCrew=3, nFlat=3;
+	size_t nCrew=4, nFlat=4;
 
 	// Declare a matrix that stores the velocity values in the opt space
 	Eigen::MatrixXd x(nCrew,nFlat), y(nCrew,nFlat), u(nCrew,nFlat);
 
-	// Loop on the optimization space
-	for(size_t iCrew=0; iCrew<nCrew; iCrew++){
+	// Beginning of the outer try-catch block used to stop the algorithm for this step
+	// when the NR solver cannot converge
+	try{
 
-		// Set the value of b in the state vector
-		xp_(2)= lowerBounds_[0] + double(iCrew) / (nCrew-1) * (upperBounds_[0]-lowerBounds_[0]);
-
-		for(size_t iFlat=0; iFlat<nCrew; iFlat++){
+		// Loop on the optimization space
+		for(size_t iFlat=0; iFlat<nFlat; iFlat++){
 
 			// Set the value of Flat in the state vector
 			xp_(3)= lowerBounds_[1] + double(iFlat) / (nFlat-1) * (upperBounds_[1]-lowerBounds_[1]);
 
-			// Store the coordinates of this point in the optimization space
-			x(iCrew,iFlat)= xp_(2);
-			y(iCrew,iFlat)= xp_(3);
+			for(size_t iCrew=0; iCrew<nCrew; iCrew++){
 
-			// Solve this opt configuration with the Newton solver.
-			// Store x(0) into the buffer matrix u
-			u.block(iCrew,iFlat,1,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,1,1);
+				// Set the value of b in the state vector
+				xp_(2)= lowerBounds_[0] + double(iCrew) / (nCrew-1) * (upperBounds_[0]-lowerBounds_[0]);
 
+				// Store the coordinates of this point in the optimization space
+				x(iCrew,iFlat)= xp_(2);
+				y(iCrew,iFlat)= xp_(3);
+
+				// Solve this opt configuration with the Newton solver.
+				// Store x(0) into the buffer matrix u
+				//std::cout<<"\n-->> Running nrSolver for : iCrew= "<<iCrew<<"  iFlat= "<<iFlat<<std::endl;
+				xp_= nrSolver_->run(TWV,TWA,xp_);
+
+				// store u
+				u(iCrew,iFlat)= xp_(0);
+			}
 		}
+
+		// Restore the value of xp_ prior to the regression loop
+		xp_= xpBuf;
+
+		// At this point I have three arrays: x <- flat ; y <- crew ; u
+		// that describes the change of velocity for each opt parameter.
+		// The heeling angle is free to change but we do not care about its value
+
+		// Instantiate a Regression based on the computational points contained in u,
+		// so to express u(flat,crew)
+		Regression regr(x,y,u);
+		Eigen::VectorXd polynomial= regr.compute();
+		//std::cout<<" POLYNOMIAL: \n"<<polynomial<<std::endl;
+
+		// ====== Set NLOPT ============================================
+
+		// Reset the number of iterations
+		optIterations = 0;
+
+		try{
+
+			// Launch the optimization; negative retVal implies failure
+			std::cout<<"Entering the SemiAnalyticalOptimizer with: ";
+			printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
+
+			// convert to standard vector
+			std::vector<double> xp(saPbSize_);
+			for(size_t i=0; i<saPbSize_; i++)
+				xp[i]=xp_(subPbSize_+i);
+
+			// Place the regression polynomial into an object to be sent to nlOpt
+			// todo dtrimarchi : improve the init of the regression_coeffs struct!
+			regression_coeffs c;
+			c.coeffs= polynomial;
+
+			// Set the objective function to be maximized using the regression coeffs
+			opt_->set_max_objective(VPP_speed, &c);
+
+			// Instantiate the maximum objective value, upon return
+			double maxf;
+
+			// Launch the optimization
+			nlopt::result result = opt_->optimize(xp, maxf);
+
+			//store the results back to the member state vector
+			for(size_t i=0; i<saPbSize_; i++)
+				xp_(subPbSize_+i)=xp[i];
+		}
+		catch( nlopt::roundoff_limited& e ){
+			std::cout<<"Roundoff limited result"<<std::endl;
+			// do nothing because the result of roundoff-limited exception
+			// is meant to be still a meaningful result
+		}
+
+		printf("found maximum after %d evaluations\n", optIterations);
+		printf("      at f(%g,%g,%g,%g)\n",
+				xp_(0),xp_(1),xp_(2),xp_(3) );
+
+		// We have now tuned the optimization variables. Re-run NR to assure that the solution
+		// is indeed an equilibrium state. We must be very close to the solution already
+		solveInitialGuess(TWV, TWA);
+
+		// Get and print the final residuals
+		Eigen::VectorXd residuals= vppItemsContainer_->getResiduals();
+		printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
+
+		// Push the result to the result container
+		pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
 	}
-
-	// Restore the value of xp_ prior to the regression loop
-	xp_= xpBuf;
-
-	// At this point I have three arrays: x <- flat ; y <- crew ; u
-	// that describes the change of velocity for each opt parameter.
-	// The heeling angle is free to change but we do not care about its value
-
-    std::cout<<"---------------\n";
-    std::cout<<"x <- xp_[2]= \n"<<x.transpose()<<std::endl;
-    std::cout<<"y <- xp_[3]= \n"<<y.transpose()<<std::endl;
-    std::cout<<"u= \n"<<u.transpose()<<std::endl;
-    std::cout<<"---------------\n";
-
-    // Instantiate a Regression based on the computational points contained in u,
-	// so to express u(flat,crew)
-	Regression regr(x,y,u);
-	Eigen::VectorXd polynomial= regr.compute();
-	std::cout<<" POLYNOMIAL: \n"<<polynomial<<std::endl;
-
-	// ====== Set NLOPT ============================================
-
-	// Reset the number of iterations
-	optIterations = 0;
-
-	try{
-
-		// Launch the optimization; negative retVal implies failure
-		std::cout<<"Entering the SemiAnalyticalOptimizer with: ";
-		printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
-
-		// convert to standard vector
-		std::vector<double> xp(saPbSize_);
-		for(size_t i=0; i<saPbSize_; i++)
-			xp[i]=xp_(subPbSize_+i);
-
-		// Place the regression polynomial into an object to be sent to nlOpt
-		// todo dtrimarchi : improve the init of the regression_coeffs struct!
-		regression_coeffs c;
-		c.coeffs= polynomial;
-
-		// Set the objective function to be maximized using the regression coeffs
-		opt_->set_max_objective(VPP_speed, &c);
-
-		// Instantiate the maximum objective value, upon return
-		double maxf;
-
-        for(size_t i=0; i<lowerBounds_.size(); i++){
-            std::cout<<"lowerBounds["<<i<<"]= "<<lowerBounds_[i]<<std::endl;
-            std::cout<<"upperBounds["<<i<<"]= "<<upperBounds_[i]<<std::endl;
-            std::cout<<"xp["<<i<<"]= "<<xp[i]<<std::endl;
-        }
-        
-        // Launch the optimization
-		nlopt::result result = opt_->optimize(xp, maxf);
-
-		//store the results back to the member state vector
-		for(size_t i=0; i<saPbSize_; i++)
-			xp_(subPbSize_+i)=xp[i];
-	}
-	catch( nlopt::roundoff_limited& e ){
-		std::cout<<"Roundoff limited result"<<std::endl;
-		// do nothing because the result of roundoff-limited exception
-		// is meant to be still a meaningful result
+	catch( NonConvergedException& e ){
+		// do nothing, just keep going but do not save the result
 	}
 	catch (std::exception& e) {
 
@@ -328,22 +343,6 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	catch (...) {
 		throw VPPException(HERE,"nlopt unknown exception catched!\n");
 	}
-
-	printf("found maximum after %d evaluations\n", optIterations);
-	printf("      at f(%g,%g,%g,%g)\n",
-			xp_(0),xp_(1),xp_(2),xp_(3) );
-
-	// We have now tuned the optimization variables. Re-run NR to assure that the solution
-	// is indeed an equilibrium state. We must be very close to the solution already
-	solveInitialGuess(TWV, TWA);
-
-	// Get and print the final residuals
-	Eigen::VectorXd residuals= vppItemsContainer_->getResiduals();
-	printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
-
-	// Push the result to the result container
-	pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
-
 }
 
 // Returns the state vector for a given wind configuration

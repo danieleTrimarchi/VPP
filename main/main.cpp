@@ -21,6 +21,7 @@ using namespace Eigen;
 #include "Regression.h"
 #include "Interpolator.h"
 #include "VPPException.h"
+#include "mathUtils.h"
 
 using namespace Optim;
 
@@ -94,6 +95,7 @@ int main(int argc, char** argv) {
 		printf("\n=======================\n");
 		printf("===  V++ PROGRAM  =====\n");
 		printf("=======================\n");
+
 
 		// Instantiate a parser with the variables
 		VariableFileParser parser("variableFile.txt");
@@ -243,7 +245,7 @@ int main(int argc, char** argv) {
 				std::cout<<"   plotPolars               : plot the polar result graphs \n";
 				std::cout<<"   plotXY                   : plot the XY velocity-wise result graphs \n";
 				std::cout<<" \n";
-				std::cout<<"   exit                     : terminates the program \n";
+				std::cout<<"   exit / q                 : terminates the program \n";
 				std::cout<<"======================================================================\n\n";
 
 			}
