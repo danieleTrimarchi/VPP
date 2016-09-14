@@ -94,6 +94,11 @@ const Eigen::VectorXd* Result::getX() const {
 }
 
 // Discard this solution: do not plot it
+void Result::setDiscard( const bool discard ) {
+	discard_= discard;
+}
+
+// Discard this solution: do not plot it
 const bool Result::discard() const {
 	return discard_;
 }
@@ -173,7 +178,10 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 
 }
 
-
+// Push a trivial result marked as to be discarded -> not plot
+void ResultContainer::remove(size_t iWv, size_t iWa){
+	resMat_[iWv][iWa].setDiscard(true);
+}
 
 /// Get the result for a given wind velocity/angle
 const Result& ResultContainer::get(size_t iWv, size_t iWa) const {
@@ -191,6 +199,33 @@ const size_t ResultContainer::size() const {
 	return nWv_*nWa_;
 }
 
+// Count the number of results that must not be plotted
+// Note that the method is brute force, but it has the
+// advantage of assuring the sync
+const size_t ResultContainer::getNumDiscardedResultsForAngle(size_t iWa) const {
+
+	size_t numDiscarded=0;
+
+	for(size_t iWv=0; iWv<nWv_; iWv++ )
+		if( resMat_[iWv][iWa].discard() )
+			numDiscarded++;
+
+	return numDiscarded;
+}
+
+// Count the number of results that must not be plotted
+// Note that the method is brute force, but it has the
+// advantage of assuring the sync
+const size_t ResultContainer::getNumDiscardedResults() const{
+
+	size_t numDiscarded=0;
+
+	for(size_t iWa=0; iWa<nWa_; iWa++ )
+		numDiscarded+=getNumDiscardedResultsForAngle(iWa);
+
+	return numDiscarded;
+}
+
 /// How many wind velocities?
 const size_t ResultContainer::windVelocitySize() const {
 	return nWv_;
@@ -199,6 +234,17 @@ const size_t ResultContainer::windVelocitySize() const {
 /// How many wind angles?
 const size_t ResultContainer::windAngleSize() const {
 	return nWa_;
+}
+
+// Return the total number of valid results: the results that have not
+// been discarded
+const size_t ResultContainer::getNumValidResults() const {
+	return nWv_*nWa_ - getNumDiscardedResults();
+}
+
+// Return the number of valid velocity-wise results for a given angle
+const size_t ResultContainer::getNumValidResultsForAngle( size_t iWa ) const {
+	return nWv_ - getNumDiscardedResultsForAngle(iWa);
 }
 
 /// Printout the list of Opt Results, arranged by twv-twa

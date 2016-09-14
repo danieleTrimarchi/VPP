@@ -124,7 +124,7 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 	// In it to something small to start the evals at each velocity
 	if(TWV==0) {
 
-		xp_(0)= 0.1;  	// V_0
+		xp_(0)= 1.0;  	// V_0
 		xp_(1)= 0.1;		// PHI_0
 		xp_(2)= 0.01;		// b_0
 		xp_(3)= 0.99;		// f_0

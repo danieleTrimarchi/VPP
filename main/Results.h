@@ -54,6 +54,9 @@ class Result {
 		const Eigen::VectorXd* getX() const;
 
 		/// Discard this solution: do not plot it
+		void setDiscard( const bool discard );
+
+		/// Discard this solution: do not plot it
 		const bool discard() const;
 
 
@@ -101,17 +104,37 @@ class ResultContainer {
 										Eigen::VectorXd& residuals,
 										bool discard=false );
 
+		/// Push a trivial result marked as to be discarded -> not plot
+		void remove(size_t iWv, size_t iWa);
+
 		/// Get the result for a given wind velocity/angle
 		const Result& get(size_t iWv, size_t iWa) const;
 
 		/// How many results have been stored?
 		const size_t size() const;
 
+		/// Count the number of results that must not be plotted
+		/// Note that the method is brute force, but it has the
+		/// advantage of assuring the sync
+		const size_t getNumDiscardedResultsForAngle(size_t iWa) const;
+
+		/// Count the number of results that must not be plotted for a
+		/// given angle. Note that the method is brute force, but it has
+		/// the advantage of assuring the sync
+		const size_t getNumDiscardedResults() const;
+
 		/// How many wind velocities?
 		const size_t windVelocitySize() const;
 
 		/// How many wind angles?
 		const size_t windAngleSize() const;
+
+		/// Return the total number of valid results: the results that have not
+		/// been discarded
+		const size_t getNumValidResults() const;
+
+		/// Return the number of valid velocity-wise results for a given angle
+		const size_t getNumValidResultsForAngle( size_t iWa ) const;
 
 		/// Printout the list of Opt Results, arranged by twv-twa
 		void print();
@@ -132,6 +155,7 @@ class ResultContainer {
 
 		/// Result matrix for each wind velocity/angle
 		vector<vector<Result> > resMat_;
+
 };
 
 #endif

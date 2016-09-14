@@ -122,7 +122,7 @@ void SemiAnalyticalOptimizer::resetInitialGuess(int TWV, int TWA) {
 	// In it to something small to start the evals at each velocity
 	if(TWV==0) {
 
-		xp_(0)= 0.1;  	// V_0
+		xp_(0)= 1.0;  	// V_0
 		xp_(1)= 0.1;		// PHI_0
 		xp_(2)= 0.01;		// b_0
 		xp_(3)= 0.99;		// f_0
@@ -164,6 +164,8 @@ void SemiAnalyticalOptimizer::resetInitialGuess(int TWV, int TWA) {
 // Ask the NRSolver to solve a sub-problem without the optimization variables
 // this makes the initial guess an equilibrated solution
 void SemiAnalyticalOptimizer::solveInitialGuess(int TWV, int TWA) {
+
+	std::cout<<"-->> SemiAnalyticalOptimizer solve first guess: "<<xp_.transpose()<<std::endl;
 
 	// Get
 	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
@@ -228,7 +230,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 
 	// Declare the number of evaluations in the optimization space
 	// Remember the state vector x={v phi b f}
-	size_t nCrew=4, nFlat=4;
+	size_t nCrew=3, nFlat=3;
 
 	// Declare a matrix that stores the velocity values in the opt space
 	Eigen::MatrixXd x(nCrew,nFlat), y(nCrew,nFlat), u(nCrew,nFlat);
@@ -331,7 +333,10 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
 	}
 	catch( NonConvergedException& e ){
-		// do nothing, just keep going but do not save the result
+
+		// Push to the result container a result to be discarded -> that won't be plot
+		pResults_->remove(TWV, TWA);
+
 	}
 	catch (std::exception& e) {
 
@@ -437,25 +442,34 @@ void SemiAnalyticalOptimizer::plotXY(size_t iWa) {
 		return;
 	}
 
-	// Prepare the data for the plotter
-	Eigen::ArrayXd windSpeeds(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatVelocity(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatHeel(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatFlat(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatB(pResults_->windVelocitySize());
-	Eigen::ArrayXd dF(pResults_->windVelocitySize());
-	Eigen::ArrayXd dM(pResults_->windVelocitySize());
+	// This can't be correct, because it does NOT take into account the 'discard'
+	size_t numValidResults = pResults_->getNumValidResultsForAngle(iWa);
 
+	// Prepare the data for the plotter
+	Eigen::ArrayXd windSpeeds(numValidResults);
+	Eigen::ArrayXd boatVelocity(numValidResults);
+	Eigen::ArrayXd boatHeel(numValidResults);
+	Eigen::ArrayXd boatFlat(numValidResults);
+	Eigen::ArrayXd boatB(numValidResults);
+	Eigen::ArrayXd dF(numValidResults);
+	Eigen::ArrayXd dM(numValidResults);
+
+	// Loop on all results but only plot the valid ones
+	size_t idx=0;
 	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
 
-		windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
-		boatVelocity(iWv)= pResults_->get(iWv,iWa).getX()->coeff(0);
-		boatHeel(iWv)    = mathUtils::toDeg(pResults_->get(iWv,iWa).getX()->coeff(1));
-		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
-		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(3);
-		dF(iWv)          = pResults_->get(iWv,iWa).getdF();
-		dM(iWv)          = pResults_->get(iWv,iWa).getdM();
+		if(!pResults_->get(iWv,iWa).discard()) {
 
+			windSpeeds(idx)  = pResults_->get(iWv,iWa).getTWV();
+			boatVelocity(idx)= pResults_->get(iWv,iWa).getX()->coeff(0);
+			boatHeel(idx)    = mathUtils::toDeg(pResults_->get(iWv,iWa).getX()->coeff(1));
+			boatB(idx)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
+			boatFlat(idx)    = pResults_->get(iWv,iWa).getX()->coeff(3);
+			dF(idx)          = pResults_->get(iWv,iWa).getdF();
+			dM(idx)          = pResults_->get(iWv,iWa).getdM();
+			idx++;
+
+		}
 	}
 
 	char title[256];
@@ -466,7 +480,6 @@ void SemiAnalyticalOptimizer::plotXY(size_t iWa) {
 	string t=string("Boat Speed")+string(title);
 	plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
 			t,"Wind Speed [m/s]","Boat Speed [m/s]");
-
 
 	// Instantiate a plotter for the heel
 	VPPPlotter plotter2;
