@@ -136,6 +136,9 @@ class ResultContainer {
 		/// Return the number of valid velocity-wise results for a given angle
 		const size_t getNumValidResultsForAngle( size_t iWa ) const;
 
+		/// Get a ptr to the wind item
+		const WindItem* getWind() const;
+
 		/// Printout the list of Opt Results, arranged by twv-twa
 		void print();
 

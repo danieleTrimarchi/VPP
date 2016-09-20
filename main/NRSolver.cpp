@@ -170,15 +170,16 @@ void NRSolver::run(int twv, int twa) {
 					PhiResiduals[i]=PhiResiduals[PhiResiduals.size()-1];
 				}
 
-				// plot the velocity residuals and throw
-				VPPPlotter vResPlot;
-				vResPlot.plot(velocityResiduals,"V_residuals");
-
-				VPPPlotter phiResPlot;
-				phiResPlot.plot(PhiResiduals,"PHI_residuals");
-
-				// Also plot some Jacobian diagnostics
-				//J.testPlot(twv,twa);
+//				// Plot the velocity residuals and throw
+//				VPPPlotter vResPlot;
+//				vResPlot.plot(velocityResiduals,"V_residuals");
+//
+//				// Plot the angular residuals and throw
+//				VPPPlotter phiResPlot;
+//				phiResPlot.plot(PhiResiduals,"PHI_residuals");
+//
+//				// Also plot some Jacobian diagnostics
+//				J.testPlot(twv,twa);
 
 				std::cout<<"\n\nWARNING: NR-Solver could not converge. Please press a key to continue"<<std::endl;
 				string s;

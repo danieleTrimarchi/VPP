@@ -4,6 +4,7 @@
 #include "Regression.h"
 #include <fstream>
 #include "mathUtils.h"
+#include "VPPPlotSet.h"
 
 using namespace mathUtils;
 
@@ -23,8 +24,8 @@ SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactor
 												saPbSize_(dimension_-subPbSize_),
 												tol_(1.e-3) {
 
-	// Compute the size of the Semi-Analytical-Optimization-Approach pb size. This is
-	// the size of the pb that will be handed to the optimizer. See explanation below
+	// Compute the size of the Semi-Analytical-Optimization-Approach problem size. This is
+	// the size of the problem that will be handed to the optimizer. See explanation below
 	if(saPbSize_!=2)
 		throw VPPException(HERE,"saPbSize is supposed to be 2!");
 
@@ -442,68 +443,13 @@ void SemiAnalyticalOptimizer::plotXY(size_t iWa) {
 		return;
 	}
 
-	// This can't be correct, because it does NOT take into account the 'discard'
-	size_t numValidResults = pResults_->getNumValidResultsForAngle(iWa);
+	// Ask the plotter manager to produce the plots given the
+	// results. The plotter manager prepares the results (makes
+	// sure to manage only valid results) and instantiates the
+	// plotter to prepare the XY plot
+	VPPPlotSet vppPlotSet(pResults_.get());
+	vppPlotSet.plotXY(iWa);
 
-	// Prepare the data for the plotter
-	Eigen::ArrayXd windSpeeds(numValidResults);
-	Eigen::ArrayXd boatVelocity(numValidResults);
-	Eigen::ArrayXd boatHeel(numValidResults);
-	Eigen::ArrayXd boatFlat(numValidResults);
-	Eigen::ArrayXd boatB(numValidResults);
-	Eigen::ArrayXd dF(numValidResults);
-	Eigen::ArrayXd dM(numValidResults);
-
-	// Loop on all results but only plot the valid ones
-	size_t idx=0;
-	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
-
-		if(!pResults_->get(iWv,iWa).discard()) {
-
-			windSpeeds(idx)  = pResults_->get(iWv,iWa).getTWV();
-			boatVelocity(idx)= pResults_->get(iWv,iWa).getX()->coeff(0);
-			boatHeel(idx)    = mathUtils::toDeg(pResults_->get(iWv,iWa).getX()->coeff(1));
-			boatB(idx)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
-			boatFlat(idx)    = pResults_->get(iWv,iWa).getX()->coeff(3);
-			dF(idx)          = pResults_->get(iWv,iWa).getdF();
-			dM(idx)          = pResults_->get(iWv,iWa).getdM();
-			idx++;
-
-		}
-	}
-
-	char title[256];
-	sprintf(title,"AWA= %4.2f", toDeg(pWind_->getTWA(iWa)) );
-
-	// Instantiate a plotter for the velocity
-	VPPPlotter plotter;
-	string t=string("Boat Speed")+string(title);
-	plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
-			t,"Wind Speed [m/s]","Boat Speed [m/s]");
-
-	// Instantiate a plotter for the heel
-	VPPPlotter plotter2;
-	string t2=string("Boat Heel")+string(title);
-	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
-			t2,"Wind Speed [m/s]","Boat Heel [deg]");
-
-	// Instantiate a plotter for the Flat
-	VPPPlotter plotter3;
-	string t3=string("Sail FLAT")+string(title);
-	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
-			t3,"Wind Speed [m/s]","Sail FLAT [-]");
-
-	// Instantiate a plotter for the position of the movable crew B
-	VPPPlotter plotter4;
-	string t4=string("Crew position")+string(title);
-	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
-			t4,"Wind Speed [m/s]","Position of the movable crew [m]");
-
-	// Instantiate a plotter for the residuals
-	VPPPlotter plotter5;
-	string t5=string("Residuals")+string(title);
-	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
-			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
 }
 
 // Add this method for compatibility with the NR solver.

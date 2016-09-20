@@ -247,6 +247,11 @@ const size_t ResultContainer::getNumValidResultsForAngle( size_t iWa ) const {
 	return nWv_ - getNumDiscardedResultsForAngle(iWa);
 }
 
+// Get a ptr to the wind item
+const WindItem* ResultContainer::getWind() const {
+	return pWind_;
+}
+
 /// Printout the list of Opt Results, arranged by twv-twa
 void ResultContainer::print() {
 
