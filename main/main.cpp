@@ -191,10 +191,16 @@ int main(int argc, char** argv) {
 			else if(s == string("run") )
 				run(parser,solver);
 
+			else if(s == string("import") )
+				solver.importResults();
+
 			//---
 
 			else if( s == string("print"))
 				solver.printResults();
+
+			else if( s == string("save"))
+				solver.saveResults();
 
 			else if( s == string("bounds"))
 				solver.printResultBounds();
@@ -237,8 +243,10 @@ int main(int argc, char** argv) {
 				std::cout<<" \n";
 				std::cout<<"   reload                   : reload the variables from file \n";
 				std::cout<<"   run                      : launches the computations \n";
+				std::cout<<"   import                   : import the results from a file named results.vpp \n";
 				std::cout<<" \n";
 				std::cout<<"   print                    : print results to screen \n";
+				std::cout<<"   save                     : save results to a file named results.vpp \n";
 				std::cout<<"   bounds                   : print result bounds to screen \n";
 				std::cout<<" \n";
 				std::cout<<"   plotPolars               : plot the polar result graphs \n";

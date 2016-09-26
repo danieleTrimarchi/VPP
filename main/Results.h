@@ -20,14 +20,24 @@ class Result {
 		/// Default constructor
 		Result();
 
+		/// Constructor -- only doubles
+		Result(	size_t itwv, double twv,
+						size_t itwa, double twa,
+						double  v, double phi,
+						double b, double f,
+						double dF, double dM,
+						bool discarde=false);
+
 		/// Constructor
-		Result(	double twv, double twa,
+		Result(	size_t itwv, double twv,
+						size_t itwa, double twa,
 						std::vector<double>& res,
 						double dF, double dM,
 						bool discarde=false);
 
 		/// Constructor with residual array
-		Result(	double twv, double twa,
+		Result(	size_t itwv, double twv,
+						size_t itwa, double twa,
 						Eigen::VectorXd& res,
 						Eigen::VectorXd& residuals,
 						bool discarde=false );
@@ -35,8 +45,8 @@ class Result {
 		/// Destructor
 		~Result();
 
-		/// PrintOut the values stored in this result
-		void print();
+		/// PrintOut the values stored in this result. Use stdout as default stream
+		void print(FILE* outStream=stdout) const;
 
 		/// Get the twv for this result
 		const double getTWV() const;
@@ -64,6 +74,9 @@ class Result {
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	private:
+
+		/// Indices of this result in the result array
+		size_t itwv_, itwa_;
 
 		/// Value of wind TRUE velocity/angle
 		double twv_,twa_;
@@ -93,7 +106,12 @@ class ResultContainer {
 		/// Destructor
 		~ResultContainer();
 
-		/// Alternative signature for push_back
+		/// Alternative signature for push_back (compatibility)
+		void push_back(size_t iWv, size_t iWa,
+										double v, double phi, double b, double f,
+										double dF, double dM );
+
+		/// Alternative signature for push_back (compatibility)
 		void push_back(size_t iWv, size_t iWa,
 										Eigen::VectorXd& results,
 										double dF, double dM );
@@ -113,10 +131,15 @@ class ResultContainer {
 		/// How many results have been stored?
 		const size_t size() const;
 
-		/// Count the number of results that must not be plotted
-		/// Note that the method is brute force, but it has the
-		/// advantage of assuring the sync
+		/// Count the number of results that must not be plotted for
+		/// a given wind angle. Note that the method is brute force,
+		/// but it has the advantage of assuring the sync
 		const size_t getNumDiscardedResultsForAngle(size_t iWa) const;
+
+		/// Count the number of results that must not be plotted for
+		/// a given wind velocity. Note that the method is brute force,
+		/// but it has the advantage of assuring the sync
+		const size_t getNumDiscardedResultsForVelocity(size_t iWv) const;
 
 		/// Count the number of results that must not be plotted for a
 		/// given angle. Note that the method is brute force, but it has
@@ -140,10 +163,13 @@ class ResultContainer {
 		const WindItem* getWind() const;
 
 		/// Printout the list of Opt Results, arranged by twv-twa
-		void print();
+		void print(FILE* outStream=stdout);
 
 		/// Printout the bounds of the state variables for the whole run
 		void printBounds();
+
+		/// CLear the result vector
+		void clear();
 
 	private:
 

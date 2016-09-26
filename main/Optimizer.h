@@ -1,5 +1,5 @@
-#ifndef OPTIMIZER_H
-#define OPTIMIZER_H
+#ifndef VPP_OPTIMIZER_H
+#define VPP_OPTIMIZER_H
 
 #include <stdio.h>
 #include <iostream>
@@ -11,7 +11,6 @@
 
 #include "VPPItemFactory.h"
 #include "Results.h"
-#include "VPPPlotter.h"
 
 using namespace std;
 
@@ -41,6 +40,14 @@ class Optimizer {
 		/// Make a printout of the results for this run
 		/// TODO dtrimarchi : shift this to a mother class
 		void printResults();
+
+		/// Save the current results to file
+		/// TODO dtrimarchi : shift this to a mother class
+		void saveResults();
+
+		/// Read results from file and places them in the current results
+		/// TODO dtrimarchi : shift this to a mother class
+		void importResults();
 
 		/// Make a printout of the result bounds for this run
 		/// TODO dtrimarchi : shift this to a mother class

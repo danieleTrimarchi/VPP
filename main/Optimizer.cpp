@@ -3,6 +3,8 @@
 #include "Interpolator.h"
 #include <fstream>
 #include "mathUtils.h"
+#include "VPPPlotSet.h"
+#include "VPPResultIO.h"
 
 using namespace mathUtils;
 
@@ -320,6 +322,27 @@ void Optimizer::printResults() {
 
 }
 
+// Save the current results to file
+void Optimizer::saveResults() {
+
+	std::cout<<"==== Optimizer RESULTS SAVING... ==================="<<std::endl;
+	VPPResultIO writer(pResults_.get());
+	writer.write();
+	std::cout<<"---------------------------------------------------\n"<<std::endl;
+
+}
+
+// Read results from file and places them in the current results
+void Optimizer::importResults() {
+
+	std::cout<<"==== Optimizer RESULTS IMPORT... ==================="<<std::endl;
+	VPPResultIO reader(pResults_.get());
+	reader.read();
+	std::cout<<"---------------------------------------------------\n"<<std::endl;
+
+}
+
+
 // Make a printout of the result bounds for this run
 void Optimizer::printResultBounds() {
 
@@ -332,62 +355,10 @@ void Optimizer::printResultBounds() {
 /// Make a printout of the results for this run
 void Optimizer::plotPolars() {
 
-	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
-	// Sail flat, Crew B, dF and dM
-	VPPPolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot");
-	VPPPolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot");
-	VPPPolarPlotter crewBPolarPlotter("Crew B Polar Plot");
-	VPPPolarPlotter sailFlatPolarPlotter("Sail Flat");
+	// Instantiate a VPPPlotSet and sub-contract the plot
+	VPPPlotSet plotSet(pResults_.get());
+//	plotSet.plotPolars();
 
-	// Instantiate the list of wind angles that will serve
-	// for each velocity
-	Eigen::ArrayXd windAngles(pResults_->windAngleSize());
-	Eigen::ArrayXd boatVelocity(pResults_->windAngleSize());
-	Eigen::ArrayXd boatHeel(pResults_->windAngleSize());
-	Eigen::ArrayXd crewB(pResults_->windAngleSize());
-	Eigen::ArrayXd sailFlat(pResults_->windAngleSize());
-
-	// Loop on the wind velocities
-	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
-
-		// Store the wind velocity as a label for this curve
-		char windVelocityLabel[256];
-		sprintf(windVelocityLabel,"%3.1f", pResults_->get(iWv,0).getTWV() );
-		string wVLabel(windVelocityLabel);
-
-		// Loop on the wind angles
-		for(size_t iWa=0; iWa<pResults_->windAngleSize(); iWa++) {
-
-			// fill the list of wind angles
-			windAngles(iWa) = mathUtils::toDeg(pResults_->get(iWv,iWa).getTWA());
-
-			// fill the list of boat speeds to an ArrayXd
-			boatVelocity(iWa) = pResults_->get(iWv,iWa).getX()->coeff(0);
-
-			// fill the list of boat heel to an ArrayXd
-			boatHeel(iWa) = mathUtils::toDeg(pResults_->get(iWv,iWa).getX()->coeff(1));
-
-			// fill the list of Crew B to an ArrayXd
-			crewB(iWa) = pResults_->get(iWv,iWa).getX()->coeff(2);
-
-			// fill the list of Sail flat to an ArrayXd
-			sailFlat(iWa) = pResults_->get(iWv,iWa).getX()->coeff(3);
-
-		}
-
-		// Append the angles-data to the relevant plotter
-		boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
-		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
-		crewBPolarPlotter.append(wVLabel,windAngles,crewB);
-		sailFlatPolarPlotter.append(wVLabel,windAngles,sailFlat);
-
-	}
-
-	// Ask all plotters to plot
-	boatSpeedPolarPlotter.plot();
-	boatHeelPolarPlotter.plot(5);
-	crewBPolarPlotter.plot();
-	sailFlatPolarPlotter.plot();
 }
 
 /// Make a printout of the results for this run
@@ -398,60 +369,13 @@ void Optimizer::plotXY(size_t iWa) {
 		return;
 	}
 
-	// Prepare the data for the plotter
-	Eigen::ArrayXd windSpeeds(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatVelocity(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatHeel(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatFlat(pResults_->windVelocitySize());
-	Eigen::ArrayXd boatB(pResults_->windVelocitySize());
-	Eigen::ArrayXd dF(pResults_->windVelocitySize());
-	Eigen::ArrayXd dM(pResults_->windVelocitySize());
+	// Ask the plotter manager to produce the plots given the
+	// results. The plotter manager prepares the results (makes
+	// sure to manage only valid results) and instantiates the
+	// plotter to prepare the XY plot
+//	VPPPlotSet vppPlotSet(pResults_.get());
+//	vppPlotSet.plotXY(iWa);
 
-	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
-
-		windSpeeds(iWv)  = pResults_->get(iWv,iWa).getTWV();
-		boatVelocity(iWv)= pResults_->get(iWv,iWa).getX()->coeff(0);
-		boatHeel(iWv)    = mathUtils::toDeg(pResults_->get(iWv,iWa).getX()->coeff(1));
-		boatB(iWv)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
-		boatFlat(iWv)    = pResults_->get(iWv,iWa).getX()->coeff(3);
-		dF(iWv)          = pResults_->get(iWv,iWa).getdF();
-		dM(iWv)          = pResults_->get(iWv,iWa).getdM();
-
-	}
-
-	char title[256];
-	sprintf(title,"AWA= %4.2f", toDeg(pWind_->getTWA(iWa)) );
-
-	// Instantiate a plotter for the velocity
-	VPPPlotter plotter;
-	string t=string("Boat Speed")+string(title);
-	plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
-			t,"Wind Speed [m/s]","Boat Speed [m/s]");
-
-
-	// Instantiate a plotter for the heel
-	VPPPlotter plotter2;
-	string t2=string("Boat Heel")+string(title);
-	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
-			t2,"Wind Speed [m/s]","Boat Heel [deg]");
-
-	// Instantiate a plotter for the Flat
-	VPPPlotter plotter3;
-	string t3=string("Sail FLAT")+string(title);
-	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
-			t3,"Wind Speed [m/s]","Sail FLAT [-]");
-
-	// Instantiate a plotter for the position of the movable crew B
-	VPPPlotter plotter4;
-	string t4=string("Crew position")+string(title);
-	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
-			t4,"Wind Speed [m/s]","Position of the movable crew [m]");
-
-	// Instantiate a plotter for the residuals
-	VPPPlotter plotter5;
-	string t5=string("Residuals")+string(title);
-	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
-			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
 }
 
 // Add this method for compatibility with the NR solver.

@@ -111,7 +111,7 @@ void VariableFileParser::parse() {
 		// printout the line we have read
 		//std::cout<<" Original line = "<<line<<std::endl;
 
-		// searches for the comment char (%) in this file and erase from there
+		// Searches for the comment char (%) in this file and erase from there
 		size_t comment = line.find("%");
 		if(comment != std::string::npos) {
 			// erase the string from the comment onward
@@ -119,10 +119,10 @@ void VariableFileParser::parse() {
 		}
 		//std::cout<<" Uncommented line= "<<line<<std::endl;
 
-		// if the string is not empty, attempt reading the variable
+		// If the string is not empty, attempt reading the variable
 		if(!line.empty()){
 
-			// use stringstream to read the name of the variable and its value
+			// Use stringstream to read the name of the variable and its value
 			std::stringstream ss(line);
 
 			Variable newVariable;

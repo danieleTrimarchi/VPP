@@ -8,6 +8,8 @@ using namespace mathUtils;
 
 // Default constructor
 Result::Result():
+			itwv_(0),
+			itwa_(0),
 			twv_(0),
 			twa_(0),
 			discard_(false) {
@@ -21,9 +23,30 @@ Result::Result():
 
 }
 
+// Constructor -- only doubles
+Result::Result(	size_t itwv, double twv, size_t itwa,
+				double twa, double  v, double phi,
+				double b, double f, double dF, double dM,
+				bool discarde):
+					itwv_(itwv),
+					itwa_(itwa),
+					twv_(twv),
+					twa_(twa),
+					discard_(discarde) {
+
+	// Init the result container
+	result_<< v, phi, b, f;
+
+	// init the residuals container
+	residuals_<<dF,dM;
+
+}
+
 // Constructor
-Result::Result(double twv, double twa, std::vector<double>& res,
+Result::Result(size_t itwv, double twv, size_t itwa, double twa, std::vector<double>& res,
 		double dF, double dM, bool discarde) :
+				itwv_(itwv),
+				itwa_(itwa),
 				twv_(twv),
 				twa_(twa),
 				discard_(discarde) {
@@ -37,9 +60,11 @@ Result::Result(double twv, double twa, std::vector<double>& res,
 }
 
 // Constructor with residual array
-Result::Result(	double twv, double twa,
+Result::Result(	size_t itwv, double twv, size_t itwa, double twa,
 				Eigen::VectorXd& result,
 				Eigen::VectorXd& residuals, bool discarde ) :
+					itwv_(itwv),
+					itwa_(itwa),
 					twv_(twv),
 					twa_(twa),
 					result_(result),
@@ -53,18 +78,19 @@ Result::~Result(){
 }
 
 // PrintOut the values stored in this result
-void Result::print() {
+void Result::print(FILE* outStream) const {
 
-	printf("%4.2f  %4.2f  -- ", twv_,mathUtils::toDeg(twa_));
+	fprintf(outStream,"%zu %4.2f %zu %4.2f  -- ", itwv_, twv_, itwa_, mathUtils::toDeg(twa_));
 	for(size_t iRes=0; iRes<result_.size(); iRes++)
-		printf("  %4.2e",result_[iRes]);
-	printf("  --  ");
+		fprintf(outStream,"  %4.2e",result_[iRes]);
+	fprintf(outStream,"  --  ");
 	for(size_t i=0; i<residuals_.size(); i++)
-		printf("  %4.2e", residuals_(i) );
-	printf("  --  %i ", discard_ );
+		fprintf(outStream,"  %4.2e", residuals_(i) );
+	fprintf(outStream,"  --  %i ", discard_ );
 
-
-	std::cout<<"\n";
+	// This is for readability, but also it flushes the stdout buffering
+	// thus allowing line-to-line printing
+	fprintf(outStream,"\n");
 }
 
 
@@ -138,6 +164,18 @@ ResultContainer::~ResultContainer() {
 
 }
 
+// Alternative signature for push_back (compatibility)
+void ResultContainer::push_back(size_t iWv, size_t iWa,
+																double v, double phi, double b, double f,
+																double dF, double dM ) {
+
+	Eigen::VectorXd results(4);
+	results << v, phi, b, f;
+
+	push_back(iWv,iWa,results,dF,dM);
+
+}
+
 // push_back a result taking care of the allocation
 void ResultContainer::push_back(size_t iWv, size_t iWa,
 																Eigen::VectorXd& results,
@@ -151,6 +189,7 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 	push_back(iWv,iWa,results,residuals);
 
 }
+
 
 // push_back a result taking care of the allocation
 void ResultContainer::push_back(size_t iWv, size_t iWa,
@@ -174,7 +213,7 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 	// Ask the wind to get the current wind velocity/angles. Note that this
 	// implies that the call must be in sync, which seems rather dangerous!
 	// todo dtrimarchi: the wind must have calls such as pWind_->getTWV(iWv)
-	resMat_[iWv][iWa] = Result(pWind_->getTWV(), pWind_->getTWA(), results, residuals, discard );
+	resMat_[iWv][iWa] = Result(iWv, pWind_->getTWV(), iWa, pWind_->getTWA(), results, residuals, discard );
 
 }
 
@@ -207,6 +246,20 @@ const size_t ResultContainer::getNumDiscardedResultsForAngle(size_t iWa) const {
 	size_t numDiscarded=0;
 
 	for(size_t iWv=0; iWv<nWv_; iWv++ )
+		if( resMat_[iWv][iWa].discard() )
+			numDiscarded++;
+
+	return numDiscarded;
+}
+
+// Count the number of results that must not be plotted
+// Note that the method is brute force, but it has the
+// advantage of assuring the sync
+const size_t ResultContainer::getNumDiscardedResultsForVelocity(size_t iWv) const {
+
+	size_t numDiscarded=0;
+
+	for(size_t iWa=0; iWa<nWa_; iWa++ )
 		if( resMat_[iWv][iWa].discard() )
 			numDiscarded++;
 
@@ -253,18 +306,24 @@ const WindItem* ResultContainer::getWind() const {
 }
 
 /// Printout the list of Opt Results, arranged by twv-twa
-void ResultContainer::print() {
+void ResultContainer::print(FILE* outStream) {
 
-	std::cout<<"\n TWV    TWA   --  V    PHI    B    F  --  dF    dM  -- discard "<<std::endl;
-	std::cout<<"-----------------------------------------------------------------"<<std::endl;
-	std::cout<<"[m/s]  [deg]  -- [m/s] [rad] [m]  [-] --  [N]  [N*m]  --          "<<std::endl;
-	std::cout<<"-----------------------------------------------------------------"<<std::endl;
+	fprintf(outStream,"\n%%  iTWV    TWV    iTWa    TWA   --  V    PHI    B    F  --  dF    dM    -- discard \n");
+	fprintf(outStream,  "%%----------------------------------------------------------------------------------\n");
+	fprintf(outStream,  "%%  [-]    [m/s]    [-]   [deg]  -- [m/s] [rad] [m]  [-] --  [N]  [N*m]  --         \n");
+	fprintf(outStream,  "%%----------------------------------------------------------------------------------\n");
+
 	for(size_t iWv=0; iWv<nWv_; iWv++)
 		for(size_t iWa=0; iWa<nWa_; iWa++)
-			resMat_[iWv][iWa].print();
+			resMat_[iWv][iWa].print(outStream);
 }
 
-/// Printout the bounds of the Results for the whole run
+// CLear the result vector
+void ResultContainer::clear() {
+	resMat_.clear();
+}
+
+// Printout the bounds of the Results for the whole run
 void ResultContainer::printBounds() {
 
 	double minV=1e22;

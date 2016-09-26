@@ -1,5 +1,5 @@
-#ifndef VPPPLOTSET_H
-#define VPPPLOTSET_H
+#ifndef VPP_PLOT_SET_H
+#define VPP_PLOT_SET_H
 
 #include <stdio.h>
 #include <iostream>
@@ -24,6 +24,9 @@ class VPPPlotSet {
 
 		/// Make XY plots for a given angle
 		void plotXY(size_t iWa);
+
+		/// Make polar plots
+		void plotPolars();
 
 	private:
 

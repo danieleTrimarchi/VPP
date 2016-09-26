@@ -11,7 +11,6 @@
 
 #include "VPPItemFactory.h"
 #include "Results.h"
-#include "VPPPlotter.h"
 
 using namespace std;
 
@@ -47,6 +46,14 @@ class SemiAnalyticalOptimizer {
 		/// Make a printout of the results for this run
 		/// TODO dtrimarchi : shift this to a mother class
 		void printResults();
+
+		/// Save the current results to file
+		/// TODO dtrimarchi : shift this to a mother class
+		void saveResults();
+
+		/// Read results from file and places them in the current results
+		/// TODO dtrimarchi : shift this to a mother class
+		void importResults();
 
 		/// Make a printout of the result bounds for this run
 		/// TODO dtrimarchi : shift this to a mother class

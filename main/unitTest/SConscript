@@ -74,7 +74,9 @@ env.Program('unitTest', Glob('*.cpp')+
 		"../VariableFileParser.o",
 		"../Variables.o",
 		"../Warning.o",
-		"../mathUtils.o"
+		"../mathUtils.o",
+		"../VPPPlotSet.o",
+		"../VPPResultIO.o"
 		],
 		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,
