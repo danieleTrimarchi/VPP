@@ -10,6 +10,7 @@
 #include "VPPJacobian.h"
 #include "Optimizer.h"
 #include "mathUtils.h"
+#include "VPPResultIO.h"
 
 namespace Test {
 
@@ -82,7 +83,7 @@ void TVPPTest::variableParseTest() {
 	CPPUNIT_ASSERT_EQUAL( parser.get("DELTTR"), 0. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("RUDDFF"), 1. );
 
-  // SAILS
+	// SAILS
 	CPPUNIT_ASSERT_EQUAL( parser.get("SAILSET"), 3. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("P"), 8.9 );
 	CPPUNIT_ASSERT_EQUAL( parser.get("E"), 4.084 );
@@ -877,10 +878,10 @@ void TVPPTest::vppPointTest() {
 
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( res(0), 0.578552, 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( res(1), 2.15527e-05, 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( res(2), 0.0738957, 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( res(3), 1., 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.578552, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 2.15527e-05, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0738957, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 }
 
@@ -912,6 +913,65 @@ void TVPPTest::smoothedTestFunctionTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( sdf.f(xMax+100), 1., 1.e-6);
 
 }
+
+// Test the VPPResultIO utility : instantiate results, write them to file,
+// read them back and check if the values are unchanged
+void TVPPTest::vppResultIOTest() {
+
+	std::cout<<"=== Testing VPP Results IO === \n"<<std::endl;
+
+	// Instantiate a parser with the variables
+	VariableFileParser parser("variableFile_test.txt");
+
+	// Declare a ptr with the sail configuration
+	// This is based on the variables that have been read in
+	boost::shared_ptr<SailSet> pSails;
+
+	// Declare a container for all the items that
+	// constitute the VPP components (Wind, Resistance, RightingMoment...)
+	boost::shared_ptr<VPPItemFactory> pVppItems;
+
+	// Parse the variables file
+	parser.parse();
+
+	// Instantiate the sailset
+	pSails.reset( SailSet::SailSetFactory(parser) );
+
+	// Instantiate the wind
+	boost::shared_ptr<WindItem> pWind(new WindItem(&parser,pSails));
+
+	// Instantiate a result container
+	ResultContainer resWriteContainer(pWind.get());
+
+	// Push some baseline results to the resultContainer
+	//                   iWv,iWa, v,  phi, b,    f,   dF,   dM
+	resWriteContainer.push_back(1, 2, 0.2, 0.3, 3.2, 0.9, 1e-5, 1.e-6 );
+	resWriteContainer.push_back(2, 3, 0.44,0.1, 2.2, 0.88, 4e-5, 2.e-6 );
+	resWriteContainer.push_back(5, 1, 1.4 ,0.4, 2.5, 0.48, 2e-6, 1.e-5 );
+	resWriteContainer.push_back(8, 6, 3.4 ,0.12,1.5, 0.87, 4e-5, 2.e-6 );
+
+	// Mark result (2,3) as to be discarded
+	resWriteContainer.remove(2,3);
+
+	// Write the results to a file named testResult.vpp
+	VPPResultIO writer(&resWriteContainer);
+	writer.write("testResult.vpp");
+
+	// Instantiate a new result container to push the results the writer has
+	// written to file
+	ResultContainer resReadContainer(pWind.get());
+
+	// Read the results from file and push them back to a new ResultContainer
+	VPPResultIO reader(&resReadContainer);
+	reader.read("testResult.vpp");
+
+	// Compare the results with the baseline
+	CPPUNIT_ASSERT(resReadContainer.get(2,3) == resWriteContainer.get(1,2));
+	CPPUNIT_ASSERT(resReadContainer.get(5,1) == resWriteContainer.get(1,2));
+	CPPUNIT_ASSERT(resReadContainer.get(8,6) == resWriteContainer.get(1,2));
+
+}
+
 
 } // namespace Test
 

@@ -48,6 +48,10 @@ class TVPPTest : public CppUnit::TestFixture{
   /// Test the SmoothedStepFunction values
   CPPUNIT_TEST(smoothedTestFunctionTest);
 
+  /// Test the VPPResultIO utility : instantiate results, write them to file,
+  /// read them back and check if the values are unchanged
+//  CPPUNIT_TEST(vppResultIOTest);
+
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -87,6 +91,9 @@ public:
   /// Test the SmoothedStepFunction values
   void smoothedTestFunctionTest();
 
+  /// Test the VPPResultIO utility : instantiate results, write them to file,
+  /// read them back and check if the values are unchanged
+  void vppResultIOTest();
 
 };
 }; // namespace Test

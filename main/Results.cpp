@@ -129,6 +129,44 @@ const bool Result::discard() const {
 	return discard_;
 }
 
+/// Comparison operator =
+bool Result::operator == (const Result& rhs) const{
+
+	// First compare the integers with operator ==
+	if( (itwv_==rhs.itwv_) &&
+			(itwa_==rhs.itwa_) &&
+			(twv_== rhs.twv_)  &&
+			(twa_==rhs.twa_)   &&
+			(discard_==rhs.discard_) ) {
+
+		// todo dtrimarchi :shall I use an iterator to be faster?
+
+		// Compare VectorXd result_
+		if(result_.size() != rhs.result_.size())
+			return false;
+
+		// Compare the values of the results
+		for(size_t iRes=0; iRes<result_.size(); iRes++)
+			if(fabs((result_(iRes)-rhs.result_(iRes))/result_(iRes))>1e-6)
+				return false;
+
+		// Compare VectorXd residuals
+		if(residuals_.size() != rhs.residuals_.size())
+					return false;
+
+		// Compare the values of the residuals
+		for(size_t iRes=0; iRes<residuals_.size(); iRes++)
+			if(fabs((residuals_(iRes)-rhs.residuals_(iRes))/residuals_(iRes))>1e-6)
+				return false;
+
+		// Nothing was found to differ, return true
+		return true;
+
+	}
+	else
+		return false;
+}
+
 
 /////  ResultContainer   /////////////////////////////////
 

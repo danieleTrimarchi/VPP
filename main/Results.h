@@ -69,6 +69,8 @@ class Result {
 		/// Discard this solution: do not plot it
 		const bool discard() const;
 
+		/// Comparison operator
+		bool operator == (const Result& ) const;
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
