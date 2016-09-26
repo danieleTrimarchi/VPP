@@ -50,7 +50,7 @@ class TVPPTest : public CppUnit::TestFixture{
 
   /// Test the VPPResultIO utility : instantiate results, write them to file,
   /// read them back and check if the values are unchanged
-//  CPPUNIT_TEST(vppResultIOTest);
+  //CPPUNIT_TEST(vppResultIOTest);
 
   CPPUNIT_TEST_SUITE_END();
 
