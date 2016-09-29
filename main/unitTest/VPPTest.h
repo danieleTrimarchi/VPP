@@ -13,40 +13,40 @@ class TVPPTest : public CppUnit::TestFixture{
 
   CPPUNIT_TEST_SUITE(TVPPTest);
 
-//  /// Test the variables parsed in the variablefile
-//  CPPUNIT_TEST(variableParseTest);
-//
-//  /// Resistance and aero force components test
-//  CPPUNIT_TEST(itemComponentTest);
-//
-//  /// Test the regression algorithm
-//  CPPUNIT_TEST(regressionTest);
-//
-//  /// Test the computation of the Jacobian matrix
-//  CPPUNIT_TEST(jacobianTest);
-//
-//  /// Test the Newton-Raphson algorithm
-//  CPPUNIT_TEST(newtonRaphsonTest);
-//
-//  /// Test NLOpt -- mma algorithm
-//  CPPUNIT_TEST(nlOptTest_mma);
-//
-//  /// Test NLOpt -- cobyla algorithm
-//  CPPUNIT_TEST(nlOptTest_cobyla);
-//
-//  /// Test NLOpt -- ISRES "Improved Stochastic Ranking Evolution Strategy" algorithm.
-//	/// Global optimization algorithm with non-linear equality constraints
-//  CPPUNIT_TEST(runISRESTest);
-//
-//  /// Test NLOpt -- ISRES "Improved Stochastic Ranking Evolution Strategy" algorithm.
-//	/// Global optimization algorithm with non-linear equality constraints. Here in then example g06
-//  CPPUNIT_TEST(runISRESTest_g06);
-//
-//  /// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
-//  CPPUNIT_TEST(vppPointTest);
-//
-//  /// Test the SmoothedStepFunction values
-//  CPPUNIT_TEST(smoothedTestFunctionTest);
+  /// Test the variables parsed in the variablefile
+  CPPUNIT_TEST(variableParseTest);
+
+  /// Resistance and aero force components test
+  CPPUNIT_TEST(itemComponentTest);
+
+  /// Test the regression algorithm
+  CPPUNIT_TEST(regressionTest);
+
+  /// Test the computation of the Jacobian matrix
+  CPPUNIT_TEST(jacobianTest);
+
+  /// Test the Newton-Raphson algorithm
+  CPPUNIT_TEST(newtonRaphsonTest);
+
+  /// Test NLOpt -- mma algorithm
+  CPPUNIT_TEST(nlOptTest_mma);
+
+  /// Test NLOpt -- cobyla algorithm
+  CPPUNIT_TEST(nlOptTest_cobyla);
+
+  /// Test NLOpt -- ISRES "Improved Stochastic Ranking Evolution Strategy" algorithm.
+	/// Global optimization algorithm with non-linear equality constraints
+  CPPUNIT_TEST(runISRESTest);
+
+  /// Test NLOpt -- ISRES "Improved Stochastic Ranking Evolution Strategy" algorithm.
+	/// Global optimization algorithm with non-linear equality constraints. Here in then example g06
+  CPPUNIT_TEST(runISRESTest_g06);
+
+  /// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
+  CPPUNIT_TEST(vppPointTest);
+
+  /// Test the SmoothedStepFunction values
+  CPPUNIT_TEST(smoothedTestFunctionTest);
 
   /// Test the VPPResultIO utility : instantiate results, write them to file,
   /// read them back and check if the values are unchanged

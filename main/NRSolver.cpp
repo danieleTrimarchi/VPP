@@ -16,7 +16,8 @@ NRSolver::NRSolver(VPPItemFactory* pVPPItemFactory,
 dimension_(dimension),
 subPbSize_(subPbSize),
 tol_(1.e-6),
-maxIters_(100){
+maxIters_(100),
+it_(0){
 
 	// Resize the state vectors. Note that xp_ == xFull if the optimizer is
 	// not used. If NR is the sub-problem solver for the otpimizer, xp_ is a
@@ -74,6 +75,8 @@ void NRSolver::reset(VPPItemFactory* pVPPItemFactory) {
 	// Init the ResultContainer that will be filled while running the results
 	pResults_.reset(new ResultContainer(pWind_));
 
+	// Reset the iteration counter
+	it_=0;
 }
 
 // Set the initial guess for the state variable vector
@@ -142,10 +145,6 @@ void NRSolver::run(int twv, int twa) {
 
 	//std::cout<<"\n Entering NR with first guess: "<<xp_.transpose()<<std::endl;
 
-	// declare an out-of-scope loop variable to report the number
-	// of Newton's iterations
-	int it=0;
-
 	try{
 		// Launch the optimization; negative retVal implies failure
 
@@ -159,10 +158,10 @@ void NRSolver::run(int twv, int twa) {
 		// JacobianChecker JCheck;
 
 		// Newton loop
-		for( it=0; it<=maxIters_; it++ ) {
+		for( it_=0; it_<=maxIters_; it_++ ) {
 
 			// throw if the solution was not found within the max number of iterations
-			if(it==maxIters_){
+			if(it_==maxIters_){
 
 				// Erase the first 20 vals with the last val to improve the view
 				for(size_t i=0; i<50; i++) {
@@ -196,9 +195,9 @@ void NRSolver::run(int twv, int twa) {
 
 			// Compute the residuals vector - here only the part relative to the subproblem
 			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_).block(0,0,subPbSize_,1);
-			std::cout<<"NR it: "<<it<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<"   \n";
+			//std::cout<<"NR it: "<<it_<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<"   \n";
 
-			if(it>1) {
+			if(it_>1) {
 				velocityResiduals.push_back( residuals(0) );
 				PhiResiduals.push_back(residuals(1) );
 			}
@@ -277,6 +276,12 @@ void NRSolver::run(int twv, int twa) {
 	pResults_->push_back(twv, twa, xp_, res, discard);
 
 }
+
+// Returns the current number of iterations for the last run
+size_t NRSolver::getNumIters(){
+	return it_;
+}
+
 
 // Make a printout of the results for this run
 void NRSolver::printResults() {

@@ -453,7 +453,7 @@ void TVPPTest::newtonRaphsonTest() {
 	// compare the solution with a given refererence
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( x(0), 1.06887731574018, 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( x(1), 0.0125887, 1.e-6);
-
+	CPPUNIT_ASSERT( solver.getNumIters() == 15);
 }
 
 // number of iterations required for this run
@@ -921,7 +921,7 @@ void TVPPTest::vppResultIOTest() {
 	std::cout<<"=== Testing VPP Results IO === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("variableFile_test.txt");
+	VariableFileParser parser("variableFile_small_test.txt");
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -949,9 +949,14 @@ void TVPPTest::vppResultIOTest() {
 	resWriteContainer.push_back(0, 1, 0.44,0.1, 2.2, 0.88, 0.004, 0.003 );
 	resWriteContainer.push_back(1, 0, 1.4 ,0.4, 2.5, 0.48, 0.001, 0.002 );
 	resWriteContainer.push_back(1, 1, 3.4 ,0.12,1.5, 0.87, 0.004, 0.003 );
+	resWriteContainer.push_back(2, 3, 0.4 ,0.,1.45, 0.1, 0.0005, 0.001 );
+	resWriteContainer.push_back(3, 4, 3.4 ,0.33,6.45, 11.1, 0.0005, 0.001 );
 
-	// Mark result (2,3) as to be discarded
+	// Mark some results as to be discarded
 	resWriteContainer.remove(1,0);
+	resWriteContainer.remove(1,0);
+	resWriteContainer.remove(1,1);
+	resWriteContainer.remove(3,4);
 
 	// Write the results to a file named testResult.vpp
 	VPPResultIO writer(&resWriteContainer);
@@ -970,6 +975,8 @@ void TVPPTest::vppResultIOTest() {
 	CPPUNIT_ASSERT(resReadContainer.get(0,1) == resWriteContainer.get(0,1));
 	CPPUNIT_ASSERT(resReadContainer.get(1,0) == resWriteContainer.get(1,0));
 	CPPUNIT_ASSERT(resReadContainer.get(1,1) == resWriteContainer.get(1,1));
+	CPPUNIT_ASSERT(resReadContainer.get(2,3) == resWriteContainer.get(2,3));
+	CPPUNIT_ASSERT(resReadContainer.get(3,4) == resWriteContainer.get(3,4));
 
 }
 

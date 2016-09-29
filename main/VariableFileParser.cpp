@@ -102,8 +102,11 @@ void VariableFileParser::parse() {
 
 	// Get the file as an ifstream
 	std::ifstream infile(fileName_.c_str());
-	if(!infile.good())
-		throw VPPException(HERE, "Variable file not found!");
+	if(!infile.good()){
+		char msg[256];
+		sprintf(msg,"Variable file: %s  not found!", fileName_.c_str());
+		throw VPPException(HERE, msg);
+	}
 
 	std::string line;
 	while(std::getline(infile,line)){

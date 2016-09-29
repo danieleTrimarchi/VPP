@@ -72,7 +72,7 @@ void VPPResultIO::read(string fileName){
 					pResults_->remove(itwv,itwa);
 
 				// Debug: print to screen the Result just read
-				pResults_->get(itwv,itwa).print();
+				// pResults_->get(itwv,itwa).print();
 
 			} else
 					throw VPPException(HERE,"Unknown format!");

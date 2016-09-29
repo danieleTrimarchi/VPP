@@ -35,6 +35,9 @@ class NRSolver {
 		/// Run the solver with an external initial guess
 		Eigen::VectorXd run(int twv, int twa, Eigen::VectorXd& xp );
 
+		/// Returns the current number of iterations for the last run
+		size_t getNumIters();
+
 		/// Make a printout of the results for this run
 		void printResults();
 
@@ -95,6 +98,10 @@ class NRSolver {
 
 		/// tolerance
 		double tol_;
+
+		/// Current number of iterations -- number of iters the last
+		/// run required to converge
+		size_t it_;
 
 		/// max iterations allowed for the Newton loop
 		size_t maxIters_;
