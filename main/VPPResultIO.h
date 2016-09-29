@@ -26,6 +26,9 @@ class VPPResultIO {
 		/// Read results from file
 		void read(string fileName=string("vppResults.vpp"));
 
+		/// Declare the macro to allow for fixed size vector support
+		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	private:
 
 		/// Ptr to the result container

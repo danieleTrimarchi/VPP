@@ -22,6 +22,9 @@ void VPPResultIO::write(string fileName){
 	// Ask the results to print to the file
 	pResults_->print(outFile);
 
+	// close the file and make sure the buffer has been flushed
+	fclose(outFile);
+
 }
 
 // Read results from file
@@ -30,8 +33,8 @@ void VPPResultIO::read(string fileName){
 	// Verify the extension of the file (.vpp)
 	// -> throw if the extension is not correct
 
-	// Clear the results
-	pResults_->clear();
+	// Clear the results before writing
+	pResults_->initResultMatrix();
 
 	// Get the file as an ifstream
 	std::ifstream infile(fileName.c_str());
@@ -62,7 +65,7 @@ void VPPResultIO::read(string fileName){
 					                     &itwv, &twv, &itwa, &twa, &v, &phi, &b, &f, &df, &dm, &discard) == 11 ){
 
 				// Push the result to the stack
-				pResults_->push_back(	itwv, itwa, v, phi, b, f, df, dm);
+				pResults_->push_back( itwv, itwa, v, phi, b, f, df, dm);
 
 				// Set the parameter discard
 				if(discard)

@@ -6,13 +6,13 @@ using namespace mathUtils;
 
 ///////// Result Class ///////////////////////////////
 
-// Default constructor
+// (disallowed) Default constructor
 Result::Result():
-			itwv_(0),
-			itwa_(0),
-			twv_(0),
-			twa_(0),
-			discard_(false) {
+							itwv_(0),
+							itwa_(0),
+							twv_(0),
+							twa_(0),
+							discard_(false) {
 
 	// init the result container
 	result_.resize(4);
@@ -23,16 +23,36 @@ Result::Result():
 
 }
 
+// Constructor with no results
+Result::Result(	size_t itwv, double twv,
+				size_t itwa, double twa):
+							itwv_(itwv),
+							itwa_(itwa),
+							twv_(twv),
+							twa_(twa),
+							discard_(false) {
+
+	// init the result container
+	result_.resize(4);
+	result_ << 0,0,0,0;
+	// init the residuals container
+	residuals_.resize(2);
+	residuals_<<0,0;
+
+}
+
+
+
 // Constructor -- only doubles
 Result::Result(	size_t itwv, double twv, size_t itwa,
-				double twa, double  v, double phi,
-				double b, double f, double dF, double dM,
-				bool discarde):
-					itwv_(itwv),
-					itwa_(itwa),
-					twv_(twv),
-					twa_(twa),
-					discard_(discarde) {
+		double twa, double  v, double phi,
+		double b, double f, double dF, double dM,
+		bool discarde):
+									itwv_(itwv),
+									itwa_(itwa),
+									twv_(twv),
+									twa_(twa),
+									discard_(discarde) {
 
 	// Init the result container
 	result_<< v, phi, b, f;
@@ -45,11 +65,11 @@ Result::Result(	size_t itwv, double twv, size_t itwa,
 // Constructor
 Result::Result(size_t itwv, double twv, size_t itwa, double twa, std::vector<double>& res,
 		double dF, double dM, bool discarde) :
-				itwv_(itwv),
-				itwa_(itwa),
-				twv_(twv),
-				twa_(twa),
-				discard_(discarde) {
+								itwv_(itwv),
+								itwa_(itwa),
+								twv_(twv),
+								twa_(twa),
+								discard_(discarde) {
 
 	// Init the result container
 	result_<<res[0],res[1],res[2],res[3];
@@ -61,15 +81,28 @@ Result::Result(size_t itwv, double twv, size_t itwa, double twa, std::vector<dou
 
 // Constructor with residual array
 Result::Result(	size_t itwv, double twv, size_t itwa, double twa,
-				Eigen::VectorXd& result,
-				Eigen::VectorXd& residuals, bool discarde ) :
-					itwv_(itwv),
-					itwa_(itwa),
-					twv_(twv),
-					twa_(twa),
-					result_(result),
-					residuals_(residuals),
-					discard_(discarde) {
+		Eigen::VectorXd& result,
+		Eigen::VectorXd& residuals, bool discarde ) :
+									itwv_(itwv),
+									itwa_(itwa),
+									twv_(twv),
+									twa_(twa),
+									result_(result),
+									residuals_(residuals),
+									discard_(discarde) {
+}
+
+// Constructor with residual array
+void Result::reset(	size_t itwv, double twv, size_t itwa, double twa,
+		Eigen::VectorXd& result,
+		Eigen::VectorXd& residuals, bool discarde ){
+	itwv_= itwv;
+	itwa_= itwa;
+	twv_= twv;
+	twa_= twa;
+	result_= result;
+	residuals_= residuals;
+	discard_= discarde;
 }
 
 // Destructor
@@ -152,7 +185,7 @@ bool Result::operator == (const Result& rhs) const{
 
 		// Compare VectorXd residuals
 		if(residuals_.size() != rhs.residuals_.size())
-					return false;
+			return false;
 
 		// Compare the values of the residuals
 		for(size_t iRes=0; iRes<residuals_.size(); iRes++)
@@ -172,15 +205,15 @@ bool Result::operator == (const Result& rhs) const{
 
 // Default constructor
 ResultContainer::ResultContainer():
-	nWv_(0),
-	nWa_(0),
-	pWind_(0) {
+					nWv_(0),
+					nWa_(0),
+					pWind_(0) {
 
 }
 
 // Constructor using a windItem
 ResultContainer::ResultContainer(WindItem* pWindItem):
-		pWind_(pWindItem) {
+						pWind_(pWindItem) {
 
 	// Get the parser
 	VariableFileParser* pParser = pWind_->getParser();
@@ -189,23 +222,19 @@ ResultContainer::ResultContainer(WindItem* pWindItem):
 	nWv_= pParser->get("N_TWV");
 	nWa_= pParser->get("N_ALPHA_TW");
 
-	// Allocate enough space in the resMat_[Wv][Wa] and init
-    resMat_.clear();
-    resMat_.resize(nWv_);
-	for(size_t iWv=0; iWv<nWv_; iWv++){
-		resMat_[iWv].resize(nWa_);
-	}
+	// Make sure the resMat is empty and correctly resized
+	initResultMatrix();
+
 }
 
 // Destructor
 ResultContainer::~ResultContainer() {
-
 }
 
 // Alternative signature for push_back (compatibility)
 void ResultContainer::push_back(size_t iWv, size_t iWa,
-																double v, double phi, double b, double f,
-																double dF, double dM ) {
+		double v, double phi, double b, double f,
+		double dF, double dM ) {
 
 	Eigen::VectorXd results(4);
 	results << v, phi, b, f;
@@ -216,8 +245,8 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 
 // push_back a result taking care of the allocation
 void ResultContainer::push_back(size_t iWv, size_t iWa,
-																Eigen::VectorXd& results,
-																double dF, double dM) {
+		Eigen::VectorXd& results,
+		double dF, double dM) {
 
 	// Compile an Eigen-vector and call the push_back method
 	Eigen::VectorXd residuals(2);
@@ -231,9 +260,9 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 
 // push_back a result taking care of the allocation
 void ResultContainer::push_back(size_t iWv, size_t iWa,
-																Eigen::VectorXd& results,
-																Eigen::VectorXd& residuals,
-																bool discard ) {
+		Eigen::VectorXd& results,
+		Eigen::VectorXd& residuals,
+		bool discard ) {
 
 	if(iWv>=nWv_){
 		char msg[256];
@@ -251,7 +280,7 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 	// Ask the wind to get the current wind velocity/angles. Note that this
 	// implies that the call must be in sync, which seems rather dangerous!
 	// todo dtrimarchi: the wind must have calls such as pWind_->getTWV(iWv)
-	resMat_[iWv][iWa] = Result(iWv, pWind_->getTWV(), iWa, pWind_->getTWA(), results, residuals, discard );
+	resMat_[iWv][iWa].reset(iWv, pWind_->getTWV(iWv), iWa, pWind_->getTWA(iWa), results, residuals, discard );
 
 }
 
@@ -357,8 +386,24 @@ void ResultContainer::print(FILE* outStream) {
 }
 
 // CLear the result vector
-void ResultContainer::clear() {
+void ResultContainer::initResultMatrix() {
+
+	// Reserve the space for the results
 	resMat_.clear();
+	resMat_.resize(nWv_);
+	for(size_t iWv=0; iWv<nWv_; iWv++){
+		resMat_[iWv].reserve(nWa_);
+	}
+
+	// Init the counters itw and itwa for each result. The allocation
+	// should not take too much time because the space has been preallocated
+	for(size_t iWv=0; iWv<nWv_; iWv++){
+		for(size_t iWa=0; iWa<nWa_; iWa++){
+			resMat_[iWv].push_back(
+					Result(iWv, pWind_->getTWV(iWv),iWa, pWind_->getTWA(iWa))
+					);
+		}
+	}
 }
 
 // Printout the bounds of the Results for the whole run

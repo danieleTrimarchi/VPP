@@ -37,6 +37,9 @@
 		B3855B1C1CC54316002F33AC /* libnlopt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD60B1C5B705000F14B38 /* libnlopt.a */; };
 		B3855B211CC544E4002F33AC /* SparseSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3855B1D1CC544E4002F33AC /* SparseSolver.cpp */; };
 		B3855B221CC544E4002F33AC /* VPPJacobian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3855B1F1CC544E4002F33AC /* VPPJacobian.cpp */; };
+		B3E8B1791D998B9F0069B308 /* mathUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3E8B1781D998B9F0069B308 /* mathUtils.cpp */; };
+		B3E8B17E1D998BAB0069B308 /* VPPPlotSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3E8B17A1D998BAB0069B308 /* VPPPlotSet.cpp */; };
+		B3E8B17F1D998BAB0069B308 /* VPPResultIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3E8B17C1D998BAB0069B308 /* VPPResultIO.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -109,6 +112,11 @@
 		B3855B1E1CC544E4002F33AC /* SparseSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SparseSolver.h; path = main/SparseSolver.h; sourceTree = "<group>"; };
 		B3855B1F1CC544E4002F33AC /* VPPJacobian.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPJacobian.cpp; path = main/VPPJacobian.cpp; sourceTree = "<group>"; };
 		B3855B201CC544E4002F33AC /* VPPJacobian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPJacobian.h; path = main/VPPJacobian.h; sourceTree = "<group>"; };
+		B3E8B1781D998B9F0069B308 /* mathUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mathUtils.cpp; path = main/mathUtils.cpp; sourceTree = "<group>"; };
+		B3E8B17A1D998BAB0069B308 /* VPPPlotSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPPlotSet.cpp; path = main/VPPPlotSet.cpp; sourceTree = "<group>"; };
+		B3E8B17B1D998BAB0069B308 /* VPPPlotSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPPlotSet.h; path = main/VPPPlotSet.h; sourceTree = "<group>"; };
+		B3E8B17C1D998BAB0069B308 /* VPPResultIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPResultIO.cpp; path = main/VPPResultIO.cpp; sourceTree = "<group>"; };
+		B3E8B17D1D998BAB0069B308 /* VPPResultIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPResultIO.h; path = main/VPPResultIO.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +158,11 @@
 		64D919471C59F7D60002F585 = {
 			isa = PBXGroup;
 			children = (
+				B3E8B17A1D998BAB0069B308 /* VPPPlotSet.cpp */,
+				B3E8B17B1D998BAB0069B308 /* VPPPlotSet.h */,
+				B3E8B17C1D998BAB0069B308 /* VPPResultIO.cpp */,
+				B3E8B17D1D998BAB0069B308 /* VPPResultIO.h */,
+				B3E8B1781D998B9F0069B308 /* mathUtils.cpp */,
 				64BBD5D71C5B701400F14B38 /* Interpolator.cpp */,
 				64BBD5D81C5B701400F14B38 /* Interpolator.h */,
 				B328162F1D7558A100263BFD /* IOutils.h */,
@@ -277,6 +290,7 @@
 				64BBD6061C5B701400F14B38 /* VPPHydroItem.cpp in Sources */,
 				64BBD5FD1C5B701400F14B38 /* main.cpp in Sources */,
 				64BBD5FC1C5B701400F14B38 /* Interpolator.cpp in Sources */,
+				B3E8B17E1D998BAB0069B308 /* VPPPlotSet.cpp in Sources */,
 				B3855B211CC544E4002F33AC /* SparseSolver.cpp in Sources */,
 				64598B581C8E1D1C0038AC6C /* NRSolver.cpp in Sources */,
 				64BBD6051C5B701400F14B38 /* VPPException.cpp in Sources */,
@@ -286,7 +300,9 @@
 				64BBD6021C5B701400F14B38 /* VariableFileParser.cpp in Sources */,
 				64BBD6031C5B701400F14B38 /* Variables.cpp in Sources */,
 				B32816351D7558A100263BFD /* VPPPlotter.cpp in Sources */,
+				B3E8B17F1D998BAB0069B308 /* VPPResultIO.cpp in Sources */,
 				64BBD60A1C5B701400F14B38 /* Warning.cpp in Sources */,
+				B3E8B1791D998B9F0069B308 /* mathUtils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

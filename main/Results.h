@@ -17,8 +17,9 @@ class Result {
 
 	public:
 
-		/// Default constructor
-		Result();
+		/// Constructor with no results
+		Result(	size_t itwv, double twv,
+						size_t itwa, double twa);
 
 		/// Constructor -- only doubles
 		Result(	size_t itwv, double twv,
@@ -41,6 +42,13 @@ class Result {
 						Eigen::VectorXd& res,
 						Eigen::VectorXd& residuals,
 						bool discarde=false );
+
+		/// Method used to avoid copying over a full result when storing in the result container
+		void reset(	size_t itwv, double twv,
+						size_t itwa, double twa,
+						Eigen::VectorXd& res,
+						Eigen::VectorXd& residuals,
+						bool discarde );
 
 		/// Destructor
 		~Result();
@@ -76,6 +84,9 @@ class Result {
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	private:
+
+		/// Disallow default constructor
+		Result();
 
 		/// Indices of this result in the result array
 		size_t itwv_, itwa_;
@@ -171,7 +182,7 @@ class ResultContainer {
 		void printBounds();
 
 		/// CLear the result vector
-		void clear();
+		void initResultMatrix();
 
 	private:
 

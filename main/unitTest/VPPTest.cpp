@@ -945,13 +945,13 @@ void TVPPTest::vppResultIOTest() {
 
 	// Push some baseline results to the resultContainer
 	//                   iWv,iWa, v,  phi, b,    f,   dF,   dM
-	resWriteContainer.push_back(1, 2, 0.2, 0.3, 3.2, 0.9, 1e-5, 1.e-6 );
-	resWriteContainer.push_back(2, 3, 0.44,0.1, 2.2, 0.88, 4e-5, 2.e-6 );
-	resWriteContainer.push_back(5, 1, 1.4 ,0.4, 2.5, 0.48, 2e-6, 1.e-5 );
-	resWriteContainer.push_back(8, 6, 3.4 ,0.12,1.5, 0.87, 4e-5, 2.e-6 );
+	resWriteContainer.push_back(0, 0, 0.2, 0.3, 3.2, 0.9, 0.001, 0.002 );
+	resWriteContainer.push_back(0, 1, 0.44,0.1, 2.2, 0.88, 0.004, 0.003 );
+	resWriteContainer.push_back(1, 0, 1.4 ,0.4, 2.5, 0.48, 0.001, 0.002 );
+	resWriteContainer.push_back(1, 1, 3.4 ,0.12,1.5, 0.87, 0.004, 0.003 );
 
 	// Mark result (2,3) as to be discarded
-	resWriteContainer.remove(2,3);
+	resWriteContainer.remove(1,0);
 
 	// Write the results to a file named testResult.vpp
 	VPPResultIO writer(&resWriteContainer);
@@ -966,9 +966,10 @@ void TVPPTest::vppResultIOTest() {
 	reader.read("testResult.vpp");
 
 	// Compare the results with the baseline
-	CPPUNIT_ASSERT(resReadContainer.get(2,3) == resWriteContainer.get(1,2));
-	CPPUNIT_ASSERT(resReadContainer.get(5,1) == resWriteContainer.get(1,2));
-	CPPUNIT_ASSERT(resReadContainer.get(8,6) == resWriteContainer.get(1,2));
+	CPPUNIT_ASSERT(resReadContainer.get(0,0) == resWriteContainer.get(0,0));
+	CPPUNIT_ASSERT(resReadContainer.get(0,1) == resWriteContainer.get(0,1));
+	CPPUNIT_ASSERT(resReadContainer.get(1,0) == resWriteContainer.get(1,0));
+	CPPUNIT_ASSERT(resReadContainer.get(1,1) == resWriteContainer.get(1,1));
 
 }
 

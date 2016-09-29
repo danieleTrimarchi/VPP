@@ -23,6 +23,8 @@ using namespace Eigen;
 #include "VPPException.h"
 #include "mathUtils.h"
 
+#include "VPPResultIO.h"
+
 using namespace Optim;
 
 /// Reload the variable file and update the items accordingly
@@ -90,6 +92,70 @@ void run(VariableFileParser& parser, NRSolver& solver){
 // MAIN
 int main(int argc, char** argv) {
 
+
+	std::cout<<"=== Testing VPP Results IO === \n"<<std::endl;
+
+	// Instantiate a parser with the variables
+	VariableFileParser parser("variableFile.txt");
+
+	// Declare a ptr with the sail configuration
+	// This is based on the variables that have been read in
+	boost::shared_ptr<SailSet> pSails;
+
+	// Declare a container for all the items that
+	// constitute the VPP components (Wind, Resistance, RightingMoment...)
+	boost::shared_ptr<VPPItemFactory> pVppItems;
+
+	// Parse the variables file
+	parser.parse();
+
+	// Instantiate the sailset
+	pSails.reset( SailSet::SailSetFactory(parser) );
+
+	// Instantiate the wind
+	boost::shared_ptr<WindItem> pWind(new WindItem(&parser,pSails));
+
+	// Instantiate a result container
+	ResultContainer resWriteContainer(pWind.get());
+
+	// Push some baseline results to the resultContainer
+	//                   iWv,iWa, v,  phi, b,    f,   dF,   dM
+	resWriteContainer.push_back(0, 0, 0.2, 0.3, 3.2, 0.9, 0.001, 0.002 );
+	resWriteContainer.push_back(0, 1, 0.44,0.1, 2.2, 0.88, 0.004, 0.003 );
+	resWriteContainer.push_back(1, 0, 1.4 ,0.4, 2.5, 0.48, 0.001, 0.002 );
+	resWriteContainer.push_back(1, 1, 3.4 ,0.12,1.5, 0.87, 0.004, 0.003 );
+
+	// Mark result (2,3) as to be discarded
+	resWriteContainer.remove(1,0);
+
+	// Write the results to a file named testResult.vpp
+	VPPResultIO writer(&resWriteContainer);
+	writer.write("testResult.vpp");
+
+	// Instantiate a new result container to push the results the writer has
+	// written to file
+	ResultContainer resReadContainer(pWind.get());
+
+	// Read the results from file and push them back to a new ResultContainer
+	VPPResultIO reader(&resReadContainer);
+	reader.read("testResult.vpp");
+
+	std::cout<<"vv-----------vv"<<std::endl;
+	resWriteContainer.get(0,0).print();
+	resReadContainer.get(0,0).print();
+	std::cout<<"^^-----------^^"<<std::endl;
+	resWriteContainer.get(0,1).print();
+	resReadContainer.get(0,1).print();
+	std::cout<<"^^-----------^^"<<std::endl;
+	resWriteContainer.get(1,0).print();
+	resReadContainer.get(1,0).print();
+	std::cout<<"^^-----------^^"<<std::endl;
+	resWriteContainer.get(1,1).print();
+	resReadContainer.get(1,1).print();
+	std::cout<<"^^-----------^^"<<std::endl;
+
+
+
 	try{
 
 		printf("\n=======================\n");
@@ -120,7 +186,7 @@ int main(int argc, char** argv) {
 		while(cin >> s){
 
 			// Exit the program on demand
-			if(s==string("exit") || s==string("q") )
+			if(s==string("exit") || s==string("q") || s==string("Q") )
 				break;
 
 			// Parse other options
@@ -258,7 +324,7 @@ int main(int argc, char** argv) {
 			}
 			else
 				std::cout<<"Option not recognized, type -help- "
-						"for a list of available options \n";
+				"for a list of available options \n";
 
 			std::cout<<"\nPlease enter a command or type -help-\n";
 		}
