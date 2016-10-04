@@ -1,6 +1,9 @@
 #ifndef MATHUTILS_H
 #define MATHUTILS_H
 
+#include <stdio.h>
+#include <iostream>
+
 #include "math.h"
 #include <cmath>
 #include "VPPException.h"

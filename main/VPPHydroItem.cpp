@@ -1,7 +1,5 @@
 #include "VPPHydroItem.h"
-#include "mathUtils.h"
 #include "VPPPlotter.h"
-using namespace mathUtils;
 
 #include "IOUtils.h"
 #include "VPPException.h"
@@ -20,7 +18,7 @@ void ResistanceItem::update(int vTW, int aTW) {
 
 	// Update the Froude number using the state variable boat velocity
 	fN_= V_ / sqrt(Physic::g * pParser_->get("LWL"));
-	if(mathUtils::isNotValid(fN_)) throw VPPException(HERE,"fN_ is Nan");
+	if(isNotValid(fN_)) throw VPPException(HERE,"fN_ is Nan");
 
 
 	// todo dtrimarchi : possibly re-introduce the warning
@@ -40,7 +38,7 @@ ResistanceItem::~ResistanceItem() {
 
 // Get the value of the resistance for this ResistanceItem
 const double ResistanceItem::get() const {
-	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 	return res_;
 }
 
@@ -94,6 +92,9 @@ InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 	// coeffA(4x4) * vectA(4x1) = Tegeo(4x1)
 	Tegeo_ = (coeffA_ * vectA_).array();
 
+	// Define a smoothing function for Fn=0-0.2
+	pSf_.reset( new SmoothedStepFunction(0, 0.2) );
+
 }
 
 // Destructor
@@ -132,7 +133,7 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	// Make a check plot for the induced resistance6
 	// WARNING: as we are in update, this potentially leads to a
 	// large number of plots!
-	// interpolator.plot(0,mathUtils::toRad(30),30,"Effective Span","PHI [deg]","Te");
+	// interpolator.plot(0,toRad(30),30,"Effective Span","PHI [deg]","Te");
 
 	// Get the aerodynamic side force. See DSYHS99 p 129. AeroForcesItem is supposedly up to
 	// date because it is stored in the aeroItems vector that is updated before the hydroItemsVector
@@ -155,8 +156,11 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	} else
 		res_=0;
 
+	// Superpose a further smoothing using a step function for  Fn=0-0.05
+	res_ *= pSf_->f( fN_ );
+
 	// Whatever we have computed, make sure it is a valid number
-	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -228,7 +232,7 @@ void InducedResistanceItem::plot() {
 		indRes.push_back(tmpRes);
 
 		char msg[256];
-		sprintf(msg,"%3.1f [deg]", mathUtils::toDeg(PHI_));
+		sprintf(msg,"%3.1f [deg]", toDeg(PHI_));
 		curveLabels.push_back(msg);
 
 	}
@@ -242,7 +246,7 @@ void InducedResistanceItem::plot() {
 	sprintf(msg,"plot Induced Resistance vs boat speed - "
 			"twv=%2.2f [m/s], twa=%2.2f [deg]",
 			pAeroForcesItem_->getWindItem()->getTWV(twv),
-			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
+			toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
 	fPlotter.plot("Fn [-]","Induced Resistance [N]", msg);
 
 	/// ----- Verify the linearity Ri/Fh^2 -----------------------------------
@@ -299,7 +303,7 @@ void InducedResistanceItem::plot() {
 		indRes.push_back(tmpRes);
 
 		char msg[256];
-		sprintf(msg,"%3.1f [deg]", mathUtils::toDeg(PHI_));
+		sprintf(msg,"%3.1f [deg]", toDeg(PHI_));
 		curveLabels.push_back(msg);
 
 	}
@@ -313,7 +317,7 @@ void InducedResistanceItem::plot() {
 	sprintf(msg2,"plot Induced Resistance vs Fh^2 - "
 			"twv=%2.2f [m/s], twa=%2.2f [deg]",
 			pAeroForcesItem_->getWindItem()->getTWV(twv),
-			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
+			toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
 	f2Plotter.plot("Fh^2 [N^2]","Induced Resistance [N]", msg2);
 
 	// Restore the values of the variables
@@ -351,7 +355,7 @@ void InducedResistanceItem::plotTe(int twv, int twa) {
 	//std::cout<<"Teffective= \n"<<Teffective<<std::endl;
 
 	// Make a check plot for the induced resistance6
-	interpolator.plot(0,mathUtils::toRad(30),30,"Effective Span","PHI [rad]","Te");
+	interpolator.plot(0,toRad(30),30,"Effective Span","PHI [rad]","Te");
 
 }
 
@@ -434,7 +438,7 @@ void ResiduaryResistanceItem::update(int vTW, int aTW) {
 
 	// Compute the residuary resistance for the current froude number
 	res_ = pInterpolator_->interpolate(fN_);
-	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -537,7 +541,7 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	// Compute the residuary resistance for the current froude number
 	// RrhH = RrhH20 .* 6 .* ( phi ).^1.7;
 	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( PHI_,1.7) ;
-	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -623,7 +627,7 @@ void ResiduaryResistanceKeelItem::update(int vTW, int aTW) {
 
 	// Updates the value of the Residuary Resistance due to the Keel
 	res_= pInterpolator_->interpolate(fN_);
-	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -688,7 +692,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 	// Compute the resistance
 	// RrkH = (geom.DVK.*phys.rho_w.*phys.g.*Ch)*Fn.^2.*phi*pi/180;
 	res_= Ch_ * fN_ * fN_ * PHI_;
-	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -740,7 +744,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 
 	// Compute the frictional resistance
 	res_ = rfh * pParser_->get("HULLFF");
-	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -868,7 +872,7 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	// todo dtrimarchi: does it make sense to use the same hull form factor both for the upright and the heeled hull?
 	// See DSYHS99 p119, where the form factor is also defined. Here we ask the user to prompt a value
 	res_ = rfhH * pParser_->get("HULLFF");
-	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -919,7 +923,7 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 	// todo dtrimarchi : this form factor can be computed from the
 	// Keel geometry (see DSYHS99) Ch.3.2.11
 	res_ = rfk * pParser_->get("KEELFF");
-	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
@@ -995,7 +999,7 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 	// todo dtrimarchi : this form factor can be computed from the
 	// Rudder geometry (see DSYHS99) Ch.3.2.11
 	res_ = rfr * pParser_->get("RUDDFF");
-	if(mathUtils::isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
+	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 

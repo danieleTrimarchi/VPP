@@ -232,7 +232,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 
 	// Declare the number of evaluations in the optimization space
 	// Remember the state vector x={v phi b f}
-	size_t nCrew=3, nFlat=3;
+	size_t nCrew=5, nFlat=5;
 
 	// Declare a matrix that stores the velocity values in the opt space
 	Eigen::MatrixXd x(nCrew,nFlat), y(nCrew,nFlat), u(nCrew,nFlat);
@@ -335,7 +335,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
 	}
 	catch( NonConvergedException& e ){
-
+		std::cout<<"Catching NonConvergedException in SAOA"<<std::endl;
 		// Push to the result container a result to be discarded -> that won't be plot
 		pResults_->remove(TWV, TWA);
 
@@ -372,7 +372,6 @@ void SemiAnalyticalOptimizer::saveResults() {
 	std::cout<<"==== SemiAnalyticalOptimizer RESULTS SAVING... ==================="<<std::endl;
 	VPPResultIO writer(pResults_.get());
 	writer.write();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
 
 }
 
@@ -382,7 +381,6 @@ void SemiAnalyticalOptimizer::importResults() {
 	std::cout<<"==== SemiAnalyticalOptimizer RESULTS IMPORT... ==================="<<std::endl;
 	VPPResultIO reader(pResults_.get());
 	reader.read();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
 
 }
 

@@ -4,6 +4,9 @@
 #include "VPPItem.h"
 #include "VPPAeroItem.h"
 
+#include "mathUtils.h"
+using namespace mathUtils;
+
 // TODO dtrimarchi : we are not considering the resistance
 // contribution of the rudder. Add it!
 
@@ -76,6 +79,10 @@ class InducedResistanceItem : public ResistanceItem {
 		/// Variables to be used to set a lower bound to the velocity
 		/// ( Parabolic fitting in 0 -> V|(Fn=0.1)  )
 		double vf_, a_, c_, v_;
+
+		/// Smoothed step function used to smooth the values of the induced
+		/// resistance in the neighborhood of 0
+		boost::shared_ptr<SmoothedStepFunction> pSf_;
 
 };
 

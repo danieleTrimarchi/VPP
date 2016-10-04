@@ -273,6 +273,9 @@ void VPPItemFactory::plotTotalResistance(){
 	Eigen::VectorXd stateVector;
 	io.askUserStateVector(stateVector);
 
+	// Ask a scaling factor (1 does nothing) to viz closer to the origin
+	double plotScaling= io.askUserDouble("please enter a plot scaling factor. default is 1");
+
 	// Define the number of velocities and angles
 	// ( the angles are incremented of 10!)
 	size_t nVelocities=40, nAngles=40;
@@ -296,7 +299,7 @@ void VPPItemFactory::plotTotalResistance(){
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			stateVector(0)= ( -0.2 + ( 1./nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			stateVector(0)= ( -0.1 + plotScaling * ( 1./nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
 			update(twv,twa,stateVector);
@@ -355,7 +358,7 @@ void VPPItemFactory::plotOptimizationSpace() {
 	NRSolver nrSolver(this, 4, 2);
 
 	// Set the number of values for flat and crew -> x, y
-	size_t nFlat=10, nCrew=10;
+	size_t nFlat=5, nCrew=5;
 
 	// Instantiate the result matrices : v and phi
 	Eigen::ArrayXd flat(nFlat), crew(nCrew);

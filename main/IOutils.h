@@ -32,7 +32,7 @@ class IOUtils {
 			if(!pWindItem_)
 				throw VPPException(HERE, "pWind == 0!");
 
-			std::cout<<"--> Please enter the values of twv and twa for the Induced Resistance plot: "<<std::endl;
+			std::cout<<"--> Please enter the values of twv and twa: "<<std::endl;
 			while(true){
 			cin >> twv >> twa;
 			bool vFine= twv < pWindItem_->getWVSize();
@@ -60,6 +60,19 @@ class IOUtils {
 
 			std::cout<<"--> Got: "<<x<<std::endl;
 
+		};
+
+		/// Ask the user to prompt the value of the state vector
+		double askUserDouble(string msg){
+
+			std::cout<<msg<<std::endl;
+
+			double val;
+			cin >> val;
+
+			std::cout<<"--> Got: "<<val<<std::endl;
+
+			return val;
 		};
 
 // Not sure if this works. In the context of inducedResistanceItem::plot calling

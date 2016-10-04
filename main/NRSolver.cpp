@@ -240,6 +240,7 @@ void NRSolver::run(int twv, int twa) {
 
 	}
 	catch(NonConvergedException& e ){
+		std::cout<<"Catching NonConvergedexception in NRSolver..."<<std::endl;
 		throw NonConvergedException( HERE,e.what() );
 	}
 	catch (std::exception& e) {
@@ -254,7 +255,7 @@ void NRSolver::run(int twv, int twa) {
 
 	// Print the solution
 	//printf("\n found solution after %d iterations\n     at f(", it);
-	printf("NR solver solution: ");
+	printf("NR solver solution for iTwv= %i iTwa=%i : ", twv,twa);
 	for(size_t i=0; i<xp_.size(); i++)
 		printf("%g  ",xp_(i));
 	printf("\n");

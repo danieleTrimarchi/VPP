@@ -52,6 +52,12 @@ void VPPPlotterBase::resetRanges(ArrayXd& x, ArrayXd& y) {
 	if(y.maxCoeff()>maxY_)
 		maxY_=y.maxCoeff();
 
+	// In the case where all of the values of y are exacly the same, we need
+	// to allow for some threeshold on dy, say ±5%
+	if( (maxY_- maxY_)<1e-6 ){
+		maxY_ += 0.05 * maxY_;
+		minY_ -= 0.05 * minY_;
+	}
 }
 
 void VPPPlotterBase::resetRanges(MatrixXd& x, MatrixXd& y, bool axisEqual) {

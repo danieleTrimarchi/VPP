@@ -68,8 +68,13 @@ void run(VariableFileParser& parser, SAOA::SemiAnalyticalOptimizer& optimizer){
 
 			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
 
-			// Run the optimizer for the current wind speed/angle
-			optimizer.run(vTW,aTW);
+			try{
+				// Run the optimizer for the current wind speed/angle
+				optimizer.run(vTW,aTW);
+			}
+			catch(...){
+				std::cout<<"Something went very wrong while running the solver..."<<std::endl;
+			}
 
 		}
 }

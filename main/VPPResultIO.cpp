@@ -16,6 +16,8 @@ VPPResultIO::~VPPResultIO(){
 // Write results to file
 void VPPResultIO::write(string fileName){
 
+	std::cout<<"writing result to file "<<fileName<<std::endl;
+
 	// Open a file
 	FILE* outFile= fopen(fileName.c_str(), "w");
 
