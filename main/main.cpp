@@ -117,8 +117,11 @@ int main(int argc, char** argv) {
 		// Load variables and items
 		load(parser,pSails,pVppItems);
 
-		// Instantiate an optimizer
-		//Optimizer solver(pVppItems);
+		// Instantiate a solver. This can be an optimizer (with opt vars)
+		// or a simple solver that will keep fixed the values of the optimization
+		// vars
+		// Solver solver(vppItems);
+		// Optimizer solver(pVppItems);
 		SAOA::SemiAnalyticalOptimizer solver(pVppItems);
 
 		std::cout<<"Please enter a command or type -help-\n";

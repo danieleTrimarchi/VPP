@@ -11,7 +11,6 @@ using namespace mathUtils;
 namespace Optim {
 
 // Init static member
-boost::shared_ptr<VPPItemFactory> Optimizer::vppItemsContainer_;
 size_t Optimizer::maxIters_;
 int optIterations=0;
 
@@ -19,25 +18,7 @@ int optIterations=0;
 
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-										dimension_(4),
-										subPbSize_(2),
-										tol_(1.e-3) {
-
-	// Instantiate a NLOpobject and set the COBYLA algorithm for
-	// nonlinearly-constrained local optimization
-	// opt_.reset( new nlopt::opt(nlopt::GN_ISRES,dimension_) );
-	opt_.reset( new nlopt::opt(nlopt::LN_COBYLA,dimension_) );
-
-	// Instantiate a NRSolver that will be used to feed the optimizer with
-	// an equilibrated first guess solution. The solver will solve a subproblem
-	// without optimization variables
-	nrSolver_.reset( new NRSolver(VPPItemFactory.get(),dimension_,subPbSize_) );
-
-	// Init the STATIC member vppItemsContainer
-	vppItemsContainer_= VPPItemFactory;
-
-	// Set the parser
-	pParser_= vppItemsContainer_->getParser();
+				VPPSolverBase(VPPItemFactory){
 
 	// Set the and apply the lower and the upper bounds
 	// -> make sure the bounds are larger than the initial
@@ -54,12 +35,14 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
 	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
 
+	// Instantiate a NLOpobject and set the COBYLA algorithm for
+	// nonlinearly-constrained local optimization
+	// opt_.reset( new nlopt::opt(nlopt::GN_ISRES,dimension_) );
+	opt_.reset( new nlopt::opt(nlopt::LN_COBYLA,dimension_) );
+
 	// Set the bounds for the constraints
 	opt_->set_lower_bounds(lowerBounds_);
 	opt_->set_upper_bounds(upperBounds_);
-
-	// Resize the vector with the initial guess/optimizer results
-	xp_.resize(dimension_);
 
 	// Set the objective function to be maximized (using set_max_objective)
 	opt_->set_max_objective(VPP_speed, NULL);
@@ -76,13 +59,6 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	maxIters_= 4000;
 	opt_->set_maxeval(maxIters_);
 
-	// Also get a reference to the WindItem that has computed the
-	// real wind velocity/angle for the current run
-	pWind_=vppItemsContainer_->getWind();
-
-	// Init the ResultContainer that will be filled while running the results
-	pResults_.reset(new ResultContainer(pWind_));
-
 }
 
 // Destructor
@@ -90,13 +66,11 @@ Optimizer::~Optimizer() {
 	// make nothing
 }
 
+// Reset the Optimizer when reloading the initial data
 void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
-	// Init the STATIC member vppItemsContainer
-	vppItemsContainer_= VPPItemFactory;
-
-	// Set the parser
-	pParser_= vppItemsContainer_->getParser();
+	// Decorator for the mother class method reset
+	VPPSolverBase::reset(VPPItemFactory);
 
 	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
 	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
@@ -111,14 +85,8 @@ void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 	opt_->set_lower_bounds(lowerBounds_);
 	opt_->set_upper_bounds(upperBounds_);
 
-	// Also get a reference to the WindItem that has computed the
-	// real wind velocity/angle for the current run
-	pWind_=vppItemsContainer_->getWind();
-
-	// Init the ResultContainer that will be filled while running the results
-	pResults_.reset(new ResultContainer(pWind_));
-
 }
+
 
 // Set the initial guess for the state variable vector
 void Optimizer::resetInitialGuess(int TWV, int TWA) {
@@ -169,14 +137,20 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 // this makes the initial guess an equilibrated solution
 void Optimizer::solveInitialGuess(int TWV, int TWA) {
 
-	// Get
-	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
+	try{
+		// Get
+		xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
 
-	// Make sure the initial guess does not exceeds the bounds
-	for(size_t i=0; i<subPbSize_; i++) {
-		if(xp_[i]<lowerBounds_[i]){
-			std::cout<<"WARNING: Modifying lower out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
-			xp_[i]=lowerBounds_[i];
+		// Make sure the initial guess does not exceeds the bounds
+		for(size_t i=0; i<subPbSize_; i++) {
+			if(xp_[i]<lowerBounds_[i]){
+				std::cout<<"WARNING: Modifying lower out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
+				xp_[i]=lowerBounds_[i];
+			}
+			if(xp_[i]>upperBounds_[i]){
+				std::cout<<"WARNING: Modifying upper out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
+				xp_[i]=upperBounds_[i];
+			}
 		}
 		if(xp_[i]>upperBounds_[i]){
 			std::cout<<"WARNING: Modifying upper out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
@@ -259,7 +233,9 @@ void Optimizer::run(int TWV, int TWA) {
 
 	//while ( residuals.norm() > 0.00001 )
 	for(size_t iRes=0; iRes<3; iRes++ ){
+
 		try{
+
 			// Launch the optimization; negative retVal implies failure
 			std::cout<<"Entering the optimizer with: ";
 			printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
@@ -306,82 +282,6 @@ void Optimizer::run(int TWV, int TWA) {
 	// Push the result to the result container
 	pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
 
-}
-
-// Returns the state vector for a given wind configuration
-const Eigen::VectorXd Optimizer::getResult(int TWV, int TWA) {
-	return *(pResults_->get(TWV,TWA).getX());
-}
-
-// Make a printout of the results for this run
-void Optimizer::printResults() {
-
-	std::cout<<"==== OPTIMIZER RESULTS PRINTOUT ==================="<<std::endl;
-	pResults_->print();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
-
-}
-
-// Save the current results to file
-void Optimizer::saveResults() {
-
-	std::cout<<"==== Optimizer RESULTS SAVING... ==================="<<std::endl;
-	VPPResultIO writer(pResults_.get());
-	writer.write();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
-
-}
-
-// Read results from file and places them in the current results
-void Optimizer::importResults() {
-
-	std::cout<<"==== Optimizer RESULTS IMPORT... ==================="<<std::endl;
-	VPPResultIO reader(pResults_.get());
-	reader.read();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
-
-}
-
-
-// Make a printout of the result bounds for this run
-void Optimizer::printResultBounds() {
-
-	std::cout<<"==== OPTIMIZER RESULT BOUNDS PRINTOUT ==================="<<std::endl;
-	pResults_->printBounds();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
-
-}
-
-/// Make a printout of the results for this run
-void Optimizer::plotPolars() {
-
-	// Instantiate a VPPPlotSet and sub-contract the plot
-	VPPPlotSet plotSet(pResults_.get());
-//	plotSet.plotPolars();
-
-}
-
-/// Make a printout of the results for this run
-void Optimizer::plotXY(size_t iWa) {
-
-	if( iWa>=pResults_->windAngleSize() ){
-		std::cout<<"User requested a wrong index! \n";
-		return;
-	}
-
-	// Ask the plotter manager to produce the plots given the
-	// results. The plotter manager prepares the results (makes
-	// sure to manage only valid results) and instantiates the
-	// plotter to prepare the XY plot
-//	VPPPlotSet vppPlotSet(pResults_.get());
-//	vppPlotSet.plotXY(iWa);
-
-}
-
-// Add this method for compatibility with the NR solver.
-// TODO dtrimarchi: this could go to a common parent class
-void Optimizer::plotJacobian() {
-	nrSolver_->plotJacobian();
 }
 
 }

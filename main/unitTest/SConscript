@@ -59,6 +59,7 @@ env.Program('unitTest', Glob('*.cpp')+
 		[
 		"../Interpolator.o",
 		"../NRSolver.o",
+		"../VPPSolverBase.o",
 		"../Optimizer.o",
 		"../Regression.o",
 		"../Results.o", 

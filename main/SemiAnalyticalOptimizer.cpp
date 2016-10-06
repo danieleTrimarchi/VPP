@@ -12,7 +12,6 @@ using namespace mathUtils;
 namespace SAOA {
 
 // Init static member
-boost::shared_ptr<VPPItemFactory> SemiAnalyticalOptimizer::vppItemsContainer_;
 size_t SemiAnalyticalOptimizer::maxIters_;
 int optIterations=0;
 
@@ -20,10 +19,8 @@ int optIterations=0;
 
 // Constructor
 SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-												dimension_(4),
-												subPbSize_(2),
-												saPbSize_(dimension_-subPbSize_),
-												tol_(1.e-3) {
+		VPPSolverBase(VPPItemFactory),
+		saPbSize_(dimension_-subPbSize_) {
 
 	// Compute the size of the Semi-Analytical-Optimization-Approach problem size. This is
 	// the size of the problem that will be handed to the optimizer. See explanation below
@@ -36,17 +33,6 @@ SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactor
 	// analytical polynomial where we recover the value of the objective function VPP_SPEED
 	// when varying the optimization variables crew, flat.
 	opt_.reset( new nlopt::opt(nlopt::LD_MMA,saPbSize_) );
-
-	// Instantiate a NRSolver that will be used to feed the SemiAnalyticalOptimizer with
-	// an equilibrated first guess solution. The solver will solve a subproblem
-	// without optimization variables
-	nrSolver_.reset( new NRSolver(VPPItemFactory.get(),dimension_,subPbSize_) );
-
-	// Init the STATIC member vppItemsContainer
-	vppItemsContainer_= VPPItemFactory;
-
-	// Set the parser
-	pParser_= vppItemsContainer_->getParser();
 
 	// Set the and apply the lower and the upper bounds
 	// -> make sure the bounds are larger than the initial
@@ -63,9 +49,6 @@ SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactor
 	opt_->set_lower_bounds(lowerBounds_);
 	opt_->set_upper_bounds(upperBounds_);
 
-	// Resize the vector with the initial guess/SemiAnalyticalOptimizer results
-	xp_.resize(dimension_);
-
 	// Set the absolute tolerance on the state variables
 	//	opt_->set_xtol_abs(tol_);
 	opt_->set_xtol_rel(tol_);
@@ -78,13 +61,6 @@ SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactor
 	maxIters_= 4000;
 	opt_->set_maxeval(maxIters_);
 
-	// Also get a reference to the WindItem that has computed the
-	// real wind velocity/angle for the current run
-	pWind_=vppItemsContainer_->getWind();
-
-	// Init the ResultContainer that will be filled while running the results
-	pResults_.reset(new ResultContainer(pWind_));
-
 }
 
 // Destructor
@@ -94,12 +70,12 @@ SemiAnalyticalOptimizer::~SemiAnalyticalOptimizer() {
 
 void SemiAnalyticalOptimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
-	// Init the STATIC member vppItemsContainer
-	vppItemsContainer_= VPPItemFactory;
+	// Decorator for the mother class method reset
+	VPPSolverBase::reset(VPPItemFactory);
 
-	// Set the parser
-	pParser_= vppItemsContainer_->getParser();
-
+	// Set the bounds - here I make the choice to ONLY set the bounds
+	// for the optim variables.Not sure if this is a winning strategy
+	// as the phi often happens to be negative in the end. todo dtrimarchi
 	lowerBounds_[0] = pParser_->get("B_MIN"); ;	// lower reef
 	upperBounds_[0] = pParser_->get("B_MAX"); ;	// upper reef
 	lowerBounds_[1] = pParser_->get("F_MIN"); ;	// lower FLAT
@@ -108,13 +84,6 @@ void SemiAnalyticalOptimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFac
 	// Set the bounds for the constraints
 	opt_->set_lower_bounds(lowerBounds_);
 	opt_->set_upper_bounds(upperBounds_);
-
-	// Also get a reference to the WindItem that has computed the
-	// real wind velocity/angle for the current run
-	pWind_=vppItemsContainer_->getWind();
-
-	// Init the ResultContainer that will be filled while running the results
-	pResults_.reset(new ResultContainer(pWind_));
 
 }
 
@@ -352,80 +321,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	}
 }
 
-// Returns the state vector for a given wind configuration
-const Eigen::VectorXd SemiAnalyticalOptimizer::getResult(int TWV, int TWA) {
-	return *(pResults_->get(TWV,TWA).getX());
-}
-
-// Make a printout of the results for this run
-void SemiAnalyticalOptimizer::printResults() {
-
-	std::cout<<"==== SemiAnalyticalOptimizer RESULTS PRINTOUT ==================="<<std::endl;
-	pResults_->print();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
-
-}
-
-// Make a printout of the results for this run
-void SemiAnalyticalOptimizer::saveResults() {
-
-	std::cout<<"==== SemiAnalyticalOptimizer RESULTS SAVING... ==================="<<std::endl;
-	VPPResultIO writer(pResults_.get());
-	writer.write();
-
-}
-
-// Read results from file and places them in the current results
-void SemiAnalyticalOptimizer::importResults() {
-
-	std::cout<<"==== SemiAnalyticalOptimizer RESULTS IMPORT... ==================="<<std::endl;
-	VPPResultIO reader(pResults_.get());
-	reader.read();
-
-}
-
-// Make a printout of the result bounds for this run
-void SemiAnalyticalOptimizer::printResultBounds() {
-
-	std::cout<<"==== SemiAnalyticalOptimizer RESULT BOUNDS PRINTOUT ==================="<<std::endl;
-	pResults_->printBounds();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
-
-}
-
-/// Make a printout of the results for this run
-void SemiAnalyticalOptimizer::plotPolars() {
-
-	// Instantiate a VPPPlotSet and sub-contract the plot
-	VPPPlotSet plotSet(pResults_.get());
-	plotSet.plotPolars();
-
-}
-
-/// Make a printout of the results for this run
-void SemiAnalyticalOptimizer::plotXY(size_t iWa) {
-
-	if( iWa>=pResults_->windAngleSize() ){
-		std::cout<<"User requested a wrong index! \n";
-		return;
-	}
-
-	// Ask the plotter manager to produce the plots given the
-	// results. The plotter manager prepares the results (makes
-	// sure to manage only valid results) and instantiates the
-	// plotter to prepare the XY plot
-	VPPPlotSet vppPlotSet(pResults_.get());
-	vppPlotSet.plotXY(iWa);
-
-}
-
-// Add this method for compatibility with the NR solver.
-// TODO dtrimarchi: this could go to a common parent class
-void SemiAnalyticalOptimizer::plotJacobian() {
-	nrSolver_->plotJacobian();
-}
-
-}
+} // end namespace SAOA
 
 
 
