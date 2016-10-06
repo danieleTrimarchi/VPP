@@ -9,6 +9,7 @@
 #include <nlopt.hpp>
 #include "VPPJacobian.h"
 #include "Optimizer.h"
+#include "SemiAnalyticalOptimizer.h"
 #include "mathUtils.h"
 #include "VPPResultIO.h"
 
@@ -885,6 +886,24 @@ void TVPPTest::vppPointTest() {
 
 	//throw VPPException(HERE, "No test is done for the SAOA!");
 	//throw VPPException(HERE, "No test is done for the simple non-optimizer solver!");
+
+	// Now repeat the exercise with the SAOA
+	SAOA::SemiAnalyticalOptimizer saSolver(pVppItems);
+
+	// Set the input: twv and twa, and run the optimizer for the current wind speed/angle
+	saSolver.run(vTW,aTW);
+
+	res= saSolver.getResult(vTW,aTW);
+
+	std::cout<<"RESULT: \n"<<res<<std::endl;
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581451, res(0), 1.e-6);
+
+	// Note that this value is absolutely unacceptable : no angle should be negative!
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.00173631, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.101993, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
+
 
 }
 

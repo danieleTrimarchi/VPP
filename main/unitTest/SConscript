@@ -61,6 +61,7 @@ env.Program('unitTest', Glob('*.cpp')+
 		"../NRSolver.o",
 		"../VPPSolverBase.o",
 		"../Optimizer.o",
+		"../SemiAnalyticalOptimizer.o",
 		"../Regression.o",
 		"../Results.o", 
 		"../SailSet.o",
