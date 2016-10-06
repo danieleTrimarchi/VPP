@@ -136,49 +136,49 @@ void TVPPTest::itemComponentTest() {
 	//==>> TEST RESISTANCE COMPONENTS
 
 	Eigen::VectorXd baseLines(10);
-	baseLines << 13.7793728326077, -0.320969, 8.24591799105104,
+	baseLines << 13.7793728326077, -0.320969, 7.28536991539402,
 			-0.0451873, 0.0257853, 5.11719177721191, 2.82574575845714,
-			-0.264885, 0, 29.9399568769181;
+			-0.264885, 0, 28.9794088012611;
 
 	// ==== Compute and compare to baseline frictional resistance
 	// std::cout<<"FRICT= "<<pVppItems->getFrictionalResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getFrictionalResistanceItem()->get(),baseLines(0), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(0), pVppItems->getFrictionalResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline residual resistance
 	//std::cout<<"RESID= "<<pVppItems->getResiduaryResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResiduaryResistanceItem()->get(),baseLines(1), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(1), pVppItems->getResiduaryResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline induced resistance
 	//std::cout<<"INDUC= "<<pVppItems->getInducedResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getInducedResistanceItem()->get(), baseLines(2), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(2), pVppItems->getInducedResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline Delta_FrictRes_Heel resistance
 	//std::cout<<"dFRICT_HEEL= "<<pVppItems->getDelta_FrictionalResistance_HeelItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getDelta_FrictionalResistance_HeelItem()->get(), baseLines(3), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(3), pVppItems->getDelta_FrictionalResistance_HeelItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline Delta_ResidRes_Heel resistance
 	//std::cout<<"dRESID_HEEL= "<<pVppItems->getDelta_ResiduaryResistance_HeelItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getDelta_ResiduaryResistance_HeelItem()->get(), baseLines(4), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(4), pVppItems->getDelta_ResiduaryResistance_HeelItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline ViscousRes_Keel resistance
 	//std::cout<<"VISCOUS_KEEL= "<<pVppItems->getViscousResistanceKeelItem()->get()<<std::endl; //-> this does not plot
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getViscousResistanceKeelItem()->get(), baseLines(5), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(5), pVppItems->getViscousResistanceKeelItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline FrictionalRes_Rudder resistance
 	//std::cout<<"VISCOUS_RUDDER= "<<pVppItems->getViscousResistanceRudderItem()->get()<<std::endl; //-> this does not plot
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getViscousResistanceRudderItem()->get(), baseLines(6), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(6), pVppItems->getViscousResistanceRudderItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline ResidRes_Keel resistance
 	//std::cout<<"RESID KEEL= "<<pVppItems->getResiduaryResistanceKeelItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResiduaryResistanceKeelItem()->get(), baseLines(7), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(7), pVppItems->getResiduaryResistanceKeelItem()->get(),  1.e-6 );
 
 	// ==== Compute and compare to baseline NegativeResistance resistance
 	//std::cout<<"NEGATIVE= "<<pVppItems->getNegativeResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getNegativeResistanceItem()->get(), baseLines(8), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(8), pVppItems->getNegativeResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline TOTAL resistance
 	//std::cout<<"TOTAL= "<<pVppItems->getResistance()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResistance(), baseLines(9), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(9), pVppItems->getResistance(), 1.e-6 );
 
 	//==>> TEST AEREO FORCE-MOMENT COMPONENTS
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(pVppItems->getAeroForcesItem()->getLift(),278.191922062844, 1.e-6 );
@@ -407,10 +407,10 @@ void TVPPTest::jacobianTest() {
 	//		for(size_t j=0; j<J.cols(); j++)
 	//			printf("(%d %d) %8.12f\n",i,j,J(i,j));
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( J(0,0), -168.144225120544, 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( J(1,0), 340.367431640625, 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( J(0,1), -27.884762287140, 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( J(1,1), -31634.527587890625, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -168.144710540771, J(0,0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(  340.367431640625, J(1,0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -27.884693145752,  J(0,1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -31634.527587890625, J(1,1), 1.e-6);
 
 }
 
@@ -451,9 +451,9 @@ void TVPPTest::newtonRaphsonTest() {
 	x.block(0,0,subPbsize,1) = solver.run(4,2,x).block(0,0,subPbsize,1);
 
 	// compare the solution with a given refererence
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( x(0), 1.06887731574018, 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( x(1), 0.0125887, 1.e-6);
-	CPPUNIT_ASSERT( solver.getNumIters() == 15);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.07136053300365, x(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0126204456341185, x(1), 1.e-6);
+	CPPUNIT_ASSERT( solver.getNumIters() == 9);
 }
 
 // number of iterations required for this run
@@ -878,9 +878,9 @@ void TVPPTest::vppPointTest() {
 
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.578552, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581335537819063, res(0), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0742369659898477, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0744933624586633, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 }
