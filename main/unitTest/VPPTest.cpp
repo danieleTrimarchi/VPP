@@ -876,7 +876,6 @@ void TVPPTest::vppPointTest() {
 	solver.run(vTW,aTW);
 
 	Eigen::VectorXd res( solver.getResult(vTW,aTW) );
-
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581335537819063, res(0), 1.e-6);
@@ -884,8 +883,22 @@ void TVPPTest::vppPointTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0744933624586633, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
-	//throw VPPException(HERE, "No test is done for the SAOA!");
-	//throw VPPException(HERE, "No test is done for the simple non-optimizer solver!");
+
+	// Set new velocity/angle
+	vTW=5, aTW=5;
+	solver.run(vTW,aTW);
+
+	res= solver.getResult(vTW,aTW);
+	// std::cout<<"RESULT: \n"<<res<<std::endl;
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.5091317763801, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.20172e-20, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.641675, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1, res(3), 1.e-6);
+
+
+	// Reset velocity/angle
+	vTW=0, aTW=5;
 
 	// Now repeat the exercise with the SAOA
 	SAOA::SemiAnalyticalOptimizer saSolver(pVppItems);
@@ -894,14 +907,28 @@ void TVPPTest::vppPointTest() {
 	saSolver.run(vTW,aTW);
 
 	res= saSolver.getResult(vTW,aTW);
-
-	std::cout<<"RESULT: \n"<<res<<std::endl;
+	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581451, res(0), 1.e-6);
 
 	// Note that this value is absolutely unacceptable : no angle should be negative!
+	// I should make sure this test fails by enforcing negative angles to be positive
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.00173631, res(1), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.101993, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
+
+	// Reset new velocity/angle
+	vTW=5, aTW=5;
+
+	// Set the input: twv and twa, and run the optimizer for the current wind speed/angle
+	saSolver.run(vTW,aTW);
+
+	res= saSolver.getResult(vTW,aTW);
+	//std::cout<<"RESULT: \n"<<res<<std::endl;
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50396, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0325143, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.124652, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 
