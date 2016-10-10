@@ -10,6 +10,7 @@
 #include "VPPJacobian.h"
 #include "Optimizer.h"
 #include "SemiAnalyticalOptimizer.h"
+#include "VPPSolver.h"
 #include "mathUtils.h"
 #include "VPPResultIO.h"
 
@@ -868,6 +869,8 @@ void TVPPTest::vppPointTest() {
 	// Instantiate the items
 	pVppItems.reset( new VPPItemFactory(&parser,pSails) );
 
+	// -- Testing the Optimizer -- ///////////////////////////////////////////
+
 	// Instantiate an optimizer
 	Optim::Optimizer solver(pVppItems);
 
@@ -883,7 +886,7 @@ void TVPPTest::vppPointTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0744933624586633, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
-	//////////////////////////////////////////////////////////////////
+	// ---
 
 	// Set new velocity/angle
 	vTW=5, aTW=5;
@@ -897,7 +900,7 @@ void TVPPTest::vppPointTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.641675, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1, res(3), 1.e-6);
 
-	//////////////////////////////////////////////////////////////////
+	// -- Testing the SAOASolver -- ///////////////////////////////////////////
 
 	// Reset velocity/angle
 	vTW=0, aTW=5;
@@ -919,7 +922,7 @@ void TVPPTest::vppPointTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.101993, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
-	//////////////////////////////////////////////////////////////////
+	// ----
 
 	// Reset new velocity/angle
 	vTW=5, aTW=5;
@@ -933,6 +936,41 @@ void TVPPTest::vppPointTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50396, res(0), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0325143, res(1), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.124652, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
+
+	// -- Testing the VPPSolver -- ///////////////////////////////////////////
+
+	// Reset velocity/angle
+	vTW=0, aTW=5;
+
+	// Now repeat the exercise with the SAOA
+	VPPSolve::VPPSolver vppSolver(pVppItems);
+
+	// Set the input: twv and twa, and run the optimizer for the current wind speed/angle
+	vppSolver.run(vTW,aTW);
+
+	res= vppSolver.getResult(vTW,aTW);
+	//std::cout<<"RESULT: \n"<<res<<std::endl;
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581022106074208, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.00470332603349499, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
+
+	// ---
+
+	// Reset new velocity/angle
+	vTW=5, aTW=5;
+
+	// Set the input: twv and twa, and run the optimizer for the current wind speed/angle
+	vppSolver.run(vTW,aTW);
+
+	res= vppSolver.getResult(vTW,aTW);
+	//std::cout<<"RESULT: \n"<<res<<std::endl;
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50264538873034, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.040337856794928, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 }
