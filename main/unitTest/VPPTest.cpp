@@ -843,7 +843,7 @@ void TVPPTest::runISRESTest_g06(){
 
 }
 
-/// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
+// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
 void TVPPTest::vppPointTest() {
 
 	std::cout<<"=== Testing one point computed by the vpp === \n"<<std::endl;
@@ -883,6 +883,7 @@ void TVPPTest::vppPointTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0744933624586633, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
+	//////////////////////////////////////////////////////////////////
 
 	// Set new velocity/angle
 	vTW=5, aTW=5;
@@ -896,6 +897,7 @@ void TVPPTest::vppPointTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.641675, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1, res(3), 1.e-6);
 
+	//////////////////////////////////////////////////////////////////
 
 	// Reset velocity/angle
 	vTW=0, aTW=5;
@@ -917,6 +919,8 @@ void TVPPTest::vppPointTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.101993, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
+	//////////////////////////////////////////////////////////////////
+
 	// Reset new velocity/angle
 	vTW=5, aTW=5;
 
@@ -930,7 +934,6 @@ void TVPPTest::vppPointTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0325143, res(1), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.124652, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
-
 
 }
 

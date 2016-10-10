@@ -1,11 +1,6 @@
 #ifndef VPP_OPTIMIZER_H
 #define VPP_OPTIMIZER_H
 
-#include <stdio.h>
-#include <iostream>
-#include <fstream>
-#include <math.h>
-
 #include "nlopt.hpp"
 #include "VPPSolverBase.h"
 
