@@ -5,7 +5,7 @@
 %%%% VPP CONFIGURATION %%%%%%%%%
 V_MIN	0		% [m/s] Min allowed boat velocity
 V_MAX	15		% [m/s] Max allowed boat velocity
-PHI_MIN	0		% [deg] Min allowed boat heel angle
+PHI_MIN	-0.001		% [deg] Min allowed boat heel angle
 PHI_MAX	85		% [deg] Max allowed boat heel angle
 B_MIN	0		% [m]   Min crew distance from boat’s centreline 
 B_MAX	3		% [m]   Max crew distance from boat’s centreline 
@@ -14,8 +14,8 @@ F_MAX	1		% [-] 	Max allowed flat
 
 %%%% WIND CONFIGURATION
 V_TW_MIN		0.5  % [m/s] Min true wind speed 
-V_TW_MAX 		6    % [m/s] Max true wind speed
-N_TWV 			20   % [-]   Number of wind speeds to be computed
+V_TW_MAX 		12    % [m/s] Max true wind speed
+N_TWV 			40   % [-]   Number of wind speeds to be computed
 ALPHA_TW_MIN		35   % [deg] Min true wind angle
 ALPHA_TW_MAX 		179  % [deg] Max true wind angle
 N_ALPHA_TW		30   % [-]   Number of wind angles to be computed

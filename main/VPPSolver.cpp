@@ -14,9 +14,9 @@ namespace VPPSolve {
 
 // Constructor
 VPPSolver::VPPSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-				VPPSolverBase(VPPItemFactory),
-				 fixedB_(0.),
-				 fixedF_(1.){
+						VPPSolverBase(VPPItemFactory),
+						fixedB_(0.),
+						fixedF_(1.){
 
 	// Set the and apply the lower and the upper bounds
 	// -> make sure the bounds are larger than the initial
@@ -113,18 +113,6 @@ void VPPSolver::solveInitialGuess(int TWV, int TWA) {
 	// Get
 	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
 
-	// Make sure the initial guess does not exceeds the bounds
-	for(size_t i=0; i<subPbSize_; i++) {
-		if(xp_[i]<lowerBounds_[i]){
-			std::cout<<"WARNING: Modifying lower out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
-			xp_[i]=lowerBounds_[i];
-		}
-		if(xp_[i]>upperBounds_[i]){
-			std::cout<<"WARNING: Modifying upper out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
-			xp_[i]=upperBounds_[i];
-		}
-	}
-
 }
 
 
@@ -146,6 +134,13 @@ void VPPSolver::run(int TWV, int TWA) {
 
 	// Push the result to the result container
 	pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
+
+	// Make sure the result does not exceeds the bounds
+	for(size_t i=0; i<subPbSize_; i++)
+		if(xp_[i]<lowerBounds_[i] || xp_[i]>upperBounds_[i]){
+			std::cout<<"WARNING: VPPSolver result for tWv="<<TWV<<" and tWa="<<TWA<<" is out-of-bounds for variable "<<i<<std::endl;
+			pResults_->remove(TWV, TWA);
+		}
 
 }
 

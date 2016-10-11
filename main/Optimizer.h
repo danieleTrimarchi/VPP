@@ -44,6 +44,10 @@ class Optimizer : public VPPSolverBase {
 		/// this makes the initial guess an equilibrated solution
 		virtual void solveInitialGuess(int TWV, int TWA);
 
+		/// Returns the index of the previous velocity-wise (twv) result that is marked as
+		/// converged (discarde==false). It starts from 'current', so it can be used recursively
+		size_t getPreviousConverged(size_t current, size_t TWA);
+
 		// Struct used to drive twv and twa into the update methods of the VPPItems
 		typedef struct {
 				int twv_, twa_;

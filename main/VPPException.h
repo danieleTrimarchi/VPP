@@ -49,5 +49,29 @@ class NonConvergedException : public std::exception {
 };
 
 
+/// This exception is thrown by the optimizer if it is not possible to
+/// find a previous converged step, while computing an initial guess of
+/// the solution. It is exactly like a goto statement used to stop guessing
+/// the result
+class NoPreviousConvergedException : public std::exception {
+
+	public:
+
+		// Constructor
+		NoPreviousConvergedException(const char* inFile, int inLine, const char* inFunction, const char* message );
+
+		// Destructor
+		virtual ~NoPreviousConvergedException() throw();
+
+		/// Output the error message
+		virtual const char* what() const throw();
+
+	protected:
+
+		std::string msg;
+
+};
+
+
 
 #endif

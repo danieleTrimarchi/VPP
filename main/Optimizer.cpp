@@ -18,7 +18,7 @@ int optIterations=0;
 
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-				VPPSolverBase(VPPItemFactory){
+						VPPSolverBase(VPPItemFactory){
 
 	// Set the and apply the lower and the upper bounds
 	// -> make sure the bounds are larger than the initial
@@ -88,6 +88,20 @@ void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 }
 
 
+// Returns the index of the previous velocity-wise (twv) result that is marked as
+// converged (discarde==false). It starts from 'current', so it can be used recursively
+size_t Optimizer::getPreviousConverged(size_t idx, size_t TWA) {
+
+	while(idx){
+		idx--;
+		if(!pResults_->get(idx,TWA).discard())
+			return idx;
+	}
+
+	throw NoPreviousConvergedException(HERE,"No previous converged index found");
+}
+
+
 // Set the initial guess for the state variable vector
 void Optimizer::resetInitialGuess(int TWV, int TWA) {
 
@@ -95,30 +109,43 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 	if(TWV==0) {
 
 		xp_(0)= 1.0;  	// V_0
-		xp_(1)= 0.1;		// PHI_0
-		xp_(2)= 0.01;		// b_0
-		xp_(3)= 0.99;		// f_0
+		xp_(1)= 0.; 		// PHI_0
+		xp_(2)= 0.0;		// b_0
+		xp_(3)= 1.;		// f_0
 
 	}
 
 	else if( TWV>1 ) {
 
 		// For twv> 1 we can linearly predict the result of the state vector
-		Extrapolator extrapolator(
-				pResults_->get(TWV-2,TWA).getTWV(),
-				pResults_->get(TWV-2,TWA).getX(),
-				pResults_->get(TWV-1,TWA).getTWV(),
-				pResults_->get(TWV-1,TWA).getX()
-		);
+		// we search for the last two converged results and we do discard the
+		// diverged results, that would not serve our cause
+		// Enclose by try-catch block in case getPreviousConverged does not find
+		// a valid solution to be used for the linear guess
+		try {
 
-		// Extrapolate the state vector for the current wind
-		// velocity. Note that the items have not been init yet
-		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
+			size_t tmOne=getPreviousConverged(TWV-1,TWA);
+			size_t tmTwo=getPreviousConverged(tmOne,TWA);
 
-		// Do extrapolate ONLY if the velocity is increasing
-		// This is beneficial to convergence
-		if(xp(0)>xp_(0))
-			xp_=xp;
+			Extrapolator extrapolator(
+					pResults_->get(tmTwo,TWA).getTWV(),
+					pResults_->get(tmTwo,TWA).getX(),
+					pResults_->get(tmOne,TWA).getTWV(),
+					pResults_->get(tmOne,TWA).getX()
+			);
+
+			// Extrapolate the state vector for the current wind
+			// velocity. Note that the items have not been init yet
+			Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
+
+			// Do extrapolate ONLY if the velocity is increasing
+			// This is beneficial to convergence
+			if(xp(0)>xp_(0))
+				xp_=xp;
+
+		} catch( NoPreviousConvergedException& e){
+			// do nothing
+		}
 
 		// Make sure the initial guess does not exceeds the bounds
 		for(size_t i=0; i<dimension_; i++) {
@@ -276,9 +303,15 @@ void Optimizer::run(int TWV, int TWA) {
 	// Push the result to the result container
 	pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
 
+	// Make sure the result does not exceeds the bounds
+	for(size_t i=0; i<subPbSize_; i++)
+		if(xp_[i]<lowerBounds_[i] || xp_[i]>upperBounds_[i]){
+			std::cout<<"WARNING: Optimizer result for tWv="<<TWV<<" and tWa="<<TWA<<" is out-of-bounds for variable "<<i<<std::endl;
+			pResults_->remove(TWV, TWA);
+		}
 }
 
-}
+} // End namespace Optim
 
 
 

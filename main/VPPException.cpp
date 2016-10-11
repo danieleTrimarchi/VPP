@@ -43,3 +43,23 @@ const char* NonConvergedException::what() const throw() {
 }
 
 
+////////////////////
+
+// Constructor
+NoPreviousConvergedException::NoPreviousConvergedException(const char* inFile, int inLine, const char* inFunction, const char* message ){
+
+	std::ostringstream oss;
+	oss<<"Error in function: "<<inFunction<<"\n in file: "<<inFile<<" line: "<<inLine<<std::endl;
+	oss<<" Message: "<<message<<std::endl;
+	msg=oss.str();
+	std::cout<<msg<<std::endl;
+}
+
+// Destructor
+NoPreviousConvergedException::~NoPreviousConvergedException() throw() {
+
+}
+
+const char* NoPreviousConvergedException::what() const throw() {
+	return msg.c_str();
+}

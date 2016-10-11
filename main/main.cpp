@@ -15,6 +15,7 @@ using namespace Eigen;
 #include "VariableFileParser.h"
 #include "SailSet.h"
 #include "VPPItem.h"
+#include "VPPSolver.h"
 #include "Optimizer.h"
 #include "SemiAnalyticalOptimizer.h"
 #include "NRSolver.h"
@@ -25,7 +26,9 @@ using namespace Eigen;
 
 #include "VPPResultIO.h"
 
+using namespace VPPSolve;
 using namespace Optim;
+using namespace SAOA;
 
 /// Reload the variable file and update the items accordingly
 void load(VariableFileParser& parser,
@@ -58,9 +61,9 @@ void run(VariableFileParser& parser, Optimizer& optimizer){
 		}
 }
 
-/// RUN -- todo dtrimarchi : this method disappear as SAOA and opt derive from
-/// a common base class
-void run(VariableFileParser& parser, SAOA::SemiAnalyticalOptimizer& optimizer){
+
+/// RUN
+void run(VariableFileParser& parser, VPPSolverBase* pSolver){
 
 	// Loop on the wind ANGLES and VELOCITIES
 	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
@@ -70,26 +73,11 @@ void run(VariableFileParser& parser, SAOA::SemiAnalyticalOptimizer& optimizer){
 
 			try{
 				// Run the optimizer for the current wind speed/angle
-				optimizer.run(vTW,aTW);
+				pSolver->run(vTW,aTW);
 			}
 			catch(...){
 				std::cout<<"Something went very wrong while running the solver..."<<std::endl;
 			}
-
-		}
-}
-
-/// RUN
-void run(VariableFileParser& parser, NRSolver& solver){
-
-	// Loop on the wind ANGLES and VELOCITIES
-	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
-		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++){
-
-			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
-
-			// Run the optimizer for the current wind speed/angle
-			solver.run(vTW,aTW);
 
 		}
 }
@@ -120,9 +108,9 @@ int main(int argc, char** argv) {
 		// Instantiate a solver. This can be an optimizer (with opt vars)
 		// or a simple solver that will keep fixed the values of the optimization
 		// vars
-		// Solver solver(vppItems);
-		// Optimizer solver(pVppItems);
-		SAOA::SemiAnalyticalOptimizer solver(pVppItems);
+		//VPPSolver solver(pVppItems);
+		Optimizer solver(pVppItems);
+		// SemiAnalyticalOptimizer solver(pVppItems);
 
 		std::cout<<"Please enter a command or type -help-\n";
 
@@ -199,7 +187,7 @@ int main(int argc, char** argv) {
 			}
 
 			else if(s == string("run") )
-				run(parser,solver);
+				run(parser,&solver);
 
 			else if(s == string("import") )
 				solver.importResults();

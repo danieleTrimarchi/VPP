@@ -431,9 +431,9 @@ void ResultContainer::printBounds() {
 		}
 
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
-	std::cout<<"\n MinV [m/s]    MaxV [m/s]  --   MinPhi [rad]    MaxPhi [rad]"<<std::endl;
+	std::cout<<"\n MinV [m/s]    MaxV [m/s]  --   MinPhi [deg]    MaxPhi [def]"<<std::endl;
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
-	std::cout<<"  "<<minV<<"     "<<maxV<<"     --     "<<minPhi<<"     "<<maxPhi<<std::endl;
+	std::cout<<"  "<<minV<<"     "<<maxV<<"     --     "<<mathUtils::toDeg(minPhi)<<"     "<<mathUtils::toDeg(maxPhi)<<std::endl;
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
 
 }

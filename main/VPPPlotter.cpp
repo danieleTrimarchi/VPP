@@ -72,16 +72,6 @@ void VPPPlotterBase::resetRanges(MatrixXd& x, MatrixXd& y, bool axisEqual) {
 	if(y.maxCoeff()>maxY_)
 		maxY_=y.maxCoeff();
 
-	// In the case the max and min are the same, give an arbitrary depht
-	if(minX_==maxX_){
-		minX_ -= 0.5;
-		maxX_ += 0.5;
-	}
-	if(minY_==maxY_){
-		minY_ -= 0.5;
-		maxY_ += 0.5;
-	}
-
 	if(axisEqual){
 		double tmp=std::min(minX_,minY_);
 		minX_=tmp;
@@ -624,6 +614,7 @@ void VPPPolarPlotter::append(string curveLabel, ArrayXd& alpha, ArrayXd& vals) {
 		minAlphaRange_=alpha.minCoeff();
 	if(alpha.maxCoeff()>maxAlphaRange_)
 		maxAlphaRange_=alpha.maxCoeff();
+
 	if(vals.maxCoeff()>maxValRange_)
 		maxValRange_=ceil(vals.maxCoeff());
 
@@ -683,6 +674,9 @@ void VPPPolarPlotter::plot(size_t skipCircles) {
 
 	// Initialize plplot
 	plinit();
+
+	if(maxValRange_<1.e-8)
+		maxValRange_=1.e-6;
 
 	// Set up viewport and window, but do not draw box
 	plenv( -maxValRange_, maxValRange_, -maxValRange_, maxValRange_, 1, -2 );
