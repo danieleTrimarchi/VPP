@@ -23,7 +23,7 @@ using namespace Eigen;
 #include "Interpolator.h"
 #include "VPPException.h"
 #include "mathUtils.h"
-
+#include "VPPCommand.h"
 #include "VPPResultIO.h"
 
 using namespace VPPSolve;
@@ -112,6 +112,9 @@ int main(int argc, char** argv) {
 		Optimizer solver(pVppItems);
 		// SemiAnalyticalOptimizer solver(pVppItems);
 
+		// Instantiate a vector of commands that will have the role of undo/redo stack
+		std::vector<VPPCommand> vppCommandStack;
+
 		std::cout<<"Please enter a command or type -help-\n";
 
 		string s;
@@ -128,7 +131,7 @@ int main(int argc, char** argv) {
 			}
 
 			else if( s == string("plotSailCoeffs"))
-				pVppItems->getSailCoefficientItem()->plotInterpolatedCoefficients();
+				vppCommandStack.push_back( PlotInterpolatedCoefficientsCommand(pVppItems) );
 
 			else if( s == string("plot_D_SailCoeffs"))
 				pVppItems->getSailCoefficientItem()->plot_D_InterpolatedCoefficients();
@@ -212,6 +215,16 @@ int main(int argc, char** argv) {
 				cin >> idx;
 				solver.plotXY(idx);
 			}
+
+			else if ( s == string ("zoom")){
+
+				// this is a command to be applied to the previous plot
+				// 1_ reject because the previous command (sPrevious) is not a 2d plotting command
+				// 2_ ask the user to prompt two doubles xMin and xMax
+				// 3_ call the plotting cmd, each with a new signature with bounds xMin, xMax
+
+
+			}
 			//---
 
 			else if( s == string("help") || s == string("h") ){
@@ -237,6 +250,8 @@ int main(int argc, char** argv) {
 				std::cout<<"   plotDelta_ResidRes_Heel  : plot the Delta Residuary Resistance due to heel for a fixed range\n";
 				std::cout<<"   plotNegativeResistance   : plot the Negative Resistance for a fixed Fn range\n";
 				std::cout<<" \n";
+				std::cout<<"   zoom                     : repeat the previous plot but redefine the bounds of the plot\n";
+				std::cout<<" \n";
 				std::cout<<"   plotOptimizationSpace    : plot the optimization 2d space starting at a given configuration\n";
 				std::cout<<" \n";
 				std::cout<<"   reload                   : reload the variables from file \n";
@@ -259,6 +274,7 @@ int main(int argc, char** argv) {
 				"for a list of available options \n";
 
 			std::cout<<"\nPlease enter a command or type -help-\n";
+
 		}
 
 	} catch(std::exception& e) {
