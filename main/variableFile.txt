@@ -13,7 +13,7 @@ F_MIN	0.4		% [-] 	Min allowed flat
 F_MAX	1		% [-] 	Max allowed flat
 
 %%%% WIND CONFIGURATION
-V_TW_MIN		0.5  % [m/s] Min true wind speed 
+V_TW_MIN		2  % [m/s] Min true wind speed 
 V_TW_MAX 		12    % [m/s] Max true wind speed
 N_TWV 			40   % [-]   Number of wind speeds to be computed
 ALPHA_TW_MIN		35   % [deg] Min true wind angle

@@ -424,7 +424,8 @@ void VPPPlotter::append(string curveLabel, ArrayXd& xs, ArrayXd& ys) {
 	curveLabels_.push_back(curveLabel);
 
 	// place the labels in the center of the curve
-	size_t pos= xs.size() / 2;
+	// introduce a shift of one for each new curve
+	size_t pos= xs.size() / 2 + ( xs_.size() - 1 );
 	idx_.push_back(pos);
 
 	// Set the ranges

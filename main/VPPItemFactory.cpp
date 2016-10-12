@@ -299,7 +299,7 @@ void VPPItemFactory::plotTotalResistance(){
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			stateVector(0)= ( -0.1 + plotScaling * ( 1./nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			stateVector(0)= plotScaling * ( -0.1 + ( 1./nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
 			update(twv,twa,stateVector);

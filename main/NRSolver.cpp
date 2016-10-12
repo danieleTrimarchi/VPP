@@ -261,10 +261,10 @@ void NRSolver::run(int twv, int twa) {
 	printf("\n");
 
 	// Print the residuals
-//	printf("\n     residuals: ");
-//	for(size_t i=0; i<res.size(); i++)
-//		printf("%g  ",res(i));
-//	printf("\n ");
+	printf("     residuals: ");
+	for(size_t i=0; i<res.size(); i++)
+		printf("%g  ",res(i));
+	printf("\n\n");
 
 	// Push the result to the result container. Hide from plotting if
 	// out-of-bounds
