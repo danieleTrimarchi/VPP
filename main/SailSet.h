@@ -30,6 +30,9 @@ class SailSet {
 		/// Constructor
 		SailSet(const VariableFileParser& parser);
 
+		/// Default (empty) constructor
+		SailSet();
+
 		/// Factory method
 		static SailSet* SailSetFactory(VariableFileParser& parser);
 

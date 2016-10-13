@@ -34,6 +34,14 @@ pParser_(&parser) {
 
 }
 
+
+// Default (empty) constructor
+SailSet::SailSet():
+		pParser_(0) {
+
+}
+
+
 /// Factory method
 SailSet* SailSet::SailSetFactory(VariableFileParser& parser){
 

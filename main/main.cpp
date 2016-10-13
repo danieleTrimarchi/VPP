@@ -125,64 +125,89 @@ int main(int argc, char** argv) {
 				break;
 
 			// Parse other options
-			if(s == string("printVars") ){
-				parser.printVariables();
-				pSails->printVariables();
-			}
+			if(s == string("printVars") )
+				vppCommandStack.push_back( PrintVariablesCommand(&parser,pSails.get() ) );
 
 			else if( s == string("plotSailCoeffs"))
-				vppCommandStack.push_back( PlotInterpolatedCoefficientsCommand(pVppItems) );
+				vppCommandStack.push_back( PlotInterpolatedCoefficientsCommand(pVppItems.get()) );
 
 			else if( s == string("plot_D_SailCoeffs"))
-				pVppItems->getSailCoefficientItem()->plot_D_InterpolatedCoefficients();
+				vppCommandStack.push_back( plot_D_InterpolatedCoefficientsCommand(pVppItems.get()) );
 
 			else if( s == string("plot_D2_SailCoeffs"))
-				pVppItems->getSailCoefficientItem()->plot_D2_InterpolatedCoefficients();
+				vppCommandStack.push_back( plot_D2_InterpolatedCoefficientsCommand(pVppItems.get()) );
+
 
 			// ---
 
 			else if( s == string("plotSailForceMoment"))
-				pVppItems->getAeroForcesItem()->plot();
+				vppCommandStack.push_back( plotSailForceMomentCommand(pVppItems.get()) );
 
 			else if( s == string("plotJacobian"))
-				solver.plotJacobian();
+				vppCommandStack.push_back( PlotJacobianCommand(pVppItems.get(),&solver) );
 
 			//---
 
 			else if(s == string("plotTotalResistance") )
-				pVppItems->plotTotalResistance();
+				vppCommandStack.push_back( plotResistanceCommand(
+						plotResistanceCommand::totalResistance,
+						pVppItems.get()) );
 
 			else if(s == string("plotFrictionalRes") )
-				pVppItems->getFrictionalResistanceItem()->plot();
+				vppCommandStack.push_back( plotResistanceCommand(
+						plotResistanceCommand::frictionalResistance,
+						pVppItems.get()) );
 
 			else if( s == string("plotResidRes"))
-				pVppItems->getResiduaryResistanceItem()->plot(pVppItems->getWind());
+				vppCommandStack.push_back( plotResistanceCommand(
+						plotResistanceCommand::residuaryResistance,
+						pVppItems.get()) );
 
 			else if(s == string("plotInducedRes") )
-				pVppItems->getInducedResistanceItem()->plot();
+				vppCommandStack.push_back( plotResistanceCommand(
+						plotResistanceCommand::inducedResistance,
+						pVppItems.get()) );
 
 			else if(s == string("plotDelta_FrictRes_Heel") )
-				pVppItems->getDelta_FrictionalResistance_HeelItem()->plot();
+				vppCommandStack.push_back( plotResistanceCommand(
+						plotResistanceCommand::delta_frictionalResistance_heel,
+						pVppItems.get()) );
 
 			else if(s == string("plotDelta_ResidRes_Heel") )
-				pVppItems->getDelta_ResiduaryResistance_HeelItem()->plot(pVppItems->getWind());
+				vppCommandStack.push_back( plotResistanceCommand(
+						plotResistanceCommand::delta_residualResistance_heel,
+						pVppItems.get()) );
 
 			else if(s == string("plotFrictionalRes_Keel") )
-				pVppItems->getViscousResistanceKeelItem()->plot(); //-> this does not plot
+				vppCommandStack.push_back( plotResistanceCommand(
+						plotResistanceCommand::frictionalResistance_keel,
+						pVppItems.get()) );
 
 			else if(s == string("plotFrictionalRes_Rudder") )
-				pVppItems->getViscousResistanceRudderItem()->plot(); //-> this does not plot
+				vppCommandStack.push_back( plotResistanceCommand(
+						plotResistanceCommand::frictionalResistance_rudder,
+						pVppItems.get()) );
 
 			else if(s == string("plotResidRes_Keel") )
-				pVppItems->getResiduaryResistanceKeelItem()->plot();
+				vppCommandStack.push_back( plotResistanceCommand(
+						plotResistanceCommand::residuaryResistance_keel,
+						pVppItems.get()) );
 
 			else if(s == string("plotNegativeResistance") )
-				pVppItems->getNegativeResistanceItem()->plot();
+				vppCommandStack.push_back( plotResistanceCommand(
+						plotResistanceCommand::negativeResistance,
+						pVppItems.get()) );
 
 			else if(s == string("plotOptimizationSpace") )
-				pVppItems->plotOptimizationSpace();
+				vppCommandStack.push_back( plotOptimizationSpaceCommand(pVppItems.get()) );
 
-			//---
+			else if( s == string("plotPolars"))
+				vppCommandStack.push_back( PlotJacobianCommand(pVppItems.get(),&solver) );
+
+			else if( s == string("plotXY"))
+				vppCommandStack.push_back( plotXYCommand(pVppItems.get(),&solver) );
+
+			//--- not undoable commands
 
 			else if(s == string("reload") ){
 				load(parser,pSails,pVppItems);
@@ -205,16 +230,6 @@ int main(int argc, char** argv) {
 
 			else if( s == string("bounds"))
 				solver.printResultBounds();
-
-			else if( s == string("plotPolars"))
-				solver.plotPolars();
-
-			else if( s == string("plotXY")) {
-				std::cout<<"Please enter the index of the wind angle: \n";
-				int idx;
-				cin >> idx;
-				solver.plotXY(idx);
-			}
 
 			else if ( s == string ("zoom")){
 
