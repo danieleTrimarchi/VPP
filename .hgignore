@@ -19,3 +19,4 @@ EclipseWorkSpace/*
 *.pdf
 */gvpp/*
 *.gcx
+*docs/*
