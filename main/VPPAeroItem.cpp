@@ -373,24 +373,24 @@ void MainOnlySailCoefficientItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of MainOnlySailCoefficientItem "<<std::endl;
 }
 
-void MainOnlySailCoefficientItem::plotInterpolatedCoefficients() const {
+void MainOnlySailCoefficientItem::plotInterpolatedCoefficients(double angle0, double angleEnd) const {
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
-
-}
-
-void MainOnlySailCoefficientItem::plot_D_InterpolatedCoefficients() const {
-
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[0] -> plot(angle0,angleEnd,50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[0] -> plot(angle0,angleEnd,50,"Interpolated CD for MAIN","AWA [rad]","[-]");
 
 }
 
-void MainOnlySailCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+void MainOnlySailCoefficientItem::plot_D_InterpolatedCoefficients(double angle0, double angleEnd) const {
 
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[0] -> plotD1(angle0,angleEnd,50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(angle0,angleEnd,50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainOnlySailCoefficientItem::plot_D2_InterpolatedCoefficients(double angle0, double angleEnd) const {
+
+	interpClVec_[0] -> plotD2(angle0,angleEnd,50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(angle0,angleEnd,50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
 
 }
 
@@ -444,30 +444,30 @@ void MainAndJibCoefficientItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of MainAndJibCoefficientItem "<<std::endl;
 }
 
-void MainAndJibCoefficientItem::plotInterpolatedCoefficients() const {
+void MainAndJibCoefficientItem::plotInterpolatedCoefficients(double angle0, double angleEnd) const {
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
-	interpClVec_[1] -> plot(0,toRad(180),50,"Interpolated CL for JIB","AWA [rad]","[-]");
-	interpCdVec_[1] -> plot(0,toRad(180),50,"Interpolated CD for JIB","AWA [rad]","[-]");
-
-}
-
-void MainAndJibCoefficientItem::plot_D_InterpolatedCoefficients() const {
-
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
+	interpClVec_[0] -> plot(angle0,angleEnd,50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[0] -> plot(angle0,angleEnd,50,"Interpolated CD for MAIN","AWA [rad]","[-]");
+	interpClVec_[1] -> plot(angle0,angleEnd,50,"Interpolated CL for JIB","AWA [rad]","[-]");
+	interpCdVec_[1] -> plot(angle0,angleEnd,50,"Interpolated CD for JIB","AWA [rad]","[-]");
 
 }
 
-void MainAndJibCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+void MainAndJibCoefficientItem::plot_D_InterpolatedCoefficients(double angle0, double angleEnd) const {
 
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
+	interpClVec_[0] -> plotD1(angle0,angleEnd,50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(angle0,angleEnd,50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD1(angle0,angleEnd,50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD1(angle0,angleEnd,50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainAndJibCoefficientItem::plot_D2_InterpolatedCoefficients(double angle0, double angleEnd) const {
+
+	interpClVec_[0] -> plotD2(angle0,angleEnd,50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(angle0,angleEnd,50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD2(angle0,angleEnd,50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD2(angle0,angleEnd,50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
 
 }
 
@@ -520,30 +520,30 @@ void MainAndSpiCoefficientItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of MainAndSpiCoefficientItem "<<std::endl;
 }
 
-void MainAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
+void MainAndSpiCoefficientItem::plotInterpolatedCoefficients(double angle0, double angleEnd) const {
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
-	interpClVec_[2] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
-	interpCdVec_[2] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
-
-}
-
-void MainAndSpiCoefficientItem::plot_D_InterpolatedCoefficients() const {
-
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
+	interpClVec_[0] -> plot(angle0, angleEnd,50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[0] -> plot(angle0, angleEnd,50,"Interpolated CD for MAIN","AWA [rad]","[-]");
+	interpClVec_[2] -> plot(angle0, angleEnd,50,"Interpolated CL for SPI","AWA [rad]","[-]");
+	interpCdVec_[2] -> plot(angle0, angleEnd,50,"Interpolated CD for SPI","AWA [rad]","[-]");
 
 }
 
-void MainAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+void MainAndSpiCoefficientItem::plot_D_InterpolatedCoefficients(double angle0, double angleEnd) const {
 
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
+	interpClVec_[0] -> plotD1(angle0,angleEnd,50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(angle0,angleEnd,50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD1(angle0,angleEnd,50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD1(angle0,angleEnd,50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients(double angle0, double angleEnd) const {
+
+	interpClVec_[0] -> plotD2(angle0,angleEnd,50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(angle0,angleEnd,50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD2(angle0,angleEnd,50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD2(angle0,angleEnd,50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
 
 }
 
@@ -597,36 +597,36 @@ void MainJibAndSpiCoefficientItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of MainJibAndSpiCoefficientItem "<<std::endl;
 }
 
-void MainJibAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
+void MainJibAndSpiCoefficientItem::plotInterpolatedCoefficients(double angle0, double angleEnd) const {
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
-	interpClVec_[1] -> plot(0,toRad(180),50,"Interpolated CL for JIB","AWA [rad]","[-]");
-	interpCdVec_[1] -> plot(0,toRad(180),50,"Interpolated CD for JIB","AWA [rad]","[-]");
-	interpClVec_[2] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
-	interpCdVec_[2] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
-
-}
-
-void MainJibAndSpiCoefficientItem::plot_D_InterpolatedCoefficients() const {
-
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
+	interpClVec_[0] -> plot(angle0, angleEnd, 50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[0] -> plot(angle0, angleEnd,50,"Interpolated CD for MAIN","AWA [rad]","[-]");
+	interpClVec_[1] -> plot(angle0, angleEnd,50,"Interpolated CL for JIB","AWA [rad]","[-]");
+	interpCdVec_[1] -> plot(angle0, angleEnd,50,"Interpolated CD for JIB","AWA [rad]","[-]");
+	interpClVec_[2] -> plot(angle0, angleEnd,50,"Interpolated CL for SPI","AWA [rad]","[-]");
+	interpCdVec_[2] -> plot(angle0, angleEnd,50,"Interpolated CD for SPI","AWA [rad]","[-]");
 
 }
 
-void MainJibAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+void MainJibAndSpiCoefficientItem::plot_D_InterpolatedCoefficients(double angle0, double angleEnd) const {
 
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
+	interpClVec_[0] -> plotD1(angle0,angleEnd,50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD1(angle0,angleEnd,50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD1(angle0,angleEnd,50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD1(angle0,angleEnd,50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD1(angle0,angleEnd,50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD1(angle0,angleEnd,50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
+
+}
+
+void MainJibAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients(double angle0, double angleEnd) const {
+
+	interpClVec_[0] -> plotD2(angle0,angleEnd,50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[0] -> plotD2(angle0,angleEnd,50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[1] -> plotD2(angle0,angleEnd,50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
+	interpCdVec_[1] -> plotD2(angle0,angleEnd,50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
+	interpClVec_[2] -> plotD2(angle0,angleEnd,50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
+	interpCdVec_[2] -> plotD2(angle0,angleEnd,50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
 
 }
 
@@ -685,149 +685,6 @@ void AeroForcesItem::update(int vTW, int aTW) {
 	// the hydrodynamic center, scaled with cos(PHI)
 	mHeel_ = fSide_ * ( 0.45 * pParser_->get("T") + pParser_->get("AVGFREB") + pSailSet_->get("ZCE") ) * cos( PHI_ );
 	if(mathUtils::isNotValid(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
-
-}
-
-// plot the aeroForces for a fixed range
-void AeroForcesItem::plot() {
-
-	// Number of points of the plots
-	size_t nVelocities=60;
-
-	// For which TWV, TWA shall we plot the aero forces/moments?
-	size_t twv=0, twa=0;
-	IOUtils io(pWindItem_);
-	io.askUserWindIndexes(twv, twa);
-
-	// Buffer the current solution
-	Eigen::VectorXd xbuf(4);
-	xbuf << V_,PHI_,b_,f_;
-
-	// Now fix the value of b_ and f_
-	b_= 0.01;
-	f_= 0.99;
-
-	// Declare containers for the velocity and angle-wise data
-	std::vector<ArrayXd> v, Lift, Drag, fDrive, fSide, mHeel;
-	std::vector<string> curveLabels;
-
-	// Loop on heel angles : from 0 to 90 deg in steps of 15 deg
-	for(size_t hAngle=0; hAngle<90; hAngle+=15){
-
-		// Convert the heeling angle into radians
-		PHI_= toRad(hAngle);
-		// vectors with the current boat velocity, the drive force
-		// and heeling moment values
-		ArrayXd x_v, lift, drag, f_v, fs_v, m_v;
-		x_v.resize(nVelocities);
-		lift.resize(nVelocities);
-		drag.resize(nVelocities);
-		f_v.resize(nVelocities);
-		fs_v.resize(nVelocities);
-		m_v.resize(nVelocities);
-
-		// loop on the boat velocity, from 0.1 to 5m/s in step on 1 m/s
-		for(size_t iTwv=0; iTwv<nVelocities; iTwv++ ) {
-
-			// Set the value for the state variable boat velocity
-			// Linearly from -1 to 1 m/s
-			V_ = -1 + double(iTwv) / (nVelocities-1) * 2;
-
-			// Declare a state vector to give the windItem
-			VectorXd stateVector(4);
-			stateVector << V_,PHI_,b_,f_;
-
-			// Update the wind. For the moment fix the apparent wind velocity and angle
-			// to the first values contained in the variableFiles.
-			pWindItem_->updateSolution(twv, twa, stateVector);
-
-			// Update the sail coefficients for the current wind
-			pSailCoeffs_->updateSolution(twv, twa, stateVector);
-
-			// Update 'this': compute sail forces
-			update(twv, twa);
-
-			// Store velocity-wise data:
-			x_v(iTwv)= V_ / sqrt( Physic::g * pParser_->get("LWL") );	// Fn...
-			lift(iTwv) = getLift(); // lift...
-			drag(iTwv) = getDrag(); // drag...
-			f_v(iTwv)= getFDrive(); // fDrive...
-			fs_v(iTwv)= getFSide(); // fSide_...
-			m_v(iTwv)= getMHeel();  // mHeel...
-
-		}
-
-		// Append the velocity-wise curve for each heel angle
-		v.push_back(x_v);
-		Lift.push_back(lift);
-		Drag.push_back(drag);
-		fDrive.push_back(f_v);
-		fSide.push_back(fs_v);
-		mHeel.push_back(m_v);
-
-		char msg[256];
-		sprintf(msg,"heel=%d deg",hAngle);
-		curveLabels.push_back(msg);
-
-	}
-
-	// Instantiate a plotter and plot Lift
-	VPPPlotter liftPlotter;
-	for(size_t i=0; i<v.size(); i++)
-		liftPlotter.append(curveLabels[i],v[i],Lift[i]);
-
-	char msg[256];
-	sprintf(msg,"plot Sail Lift vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
-			pWindItem_->getTWV(twv),
-			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	liftPlotter.plot("Fn [-]","Lift [N]", msg);
-
-
-	// Instantiate a plotter and plot Drag
-	VPPPlotter dragPlotter;
-	for(size_t i=0; i<v.size(); i++)
-		dragPlotter.append(curveLabels[i],v[i],Drag[i]);
-
-	sprintf(msg,"plot Sail Drag vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
-			pWindItem_->getTWV(twv),
-			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	dragPlotter.plot("Fn [-]","Drag [N]", msg);
-
-	// Instantiate a plotter and plot fDrive
-	VPPPlotter fPlotter;
-	for(size_t i=0; i<v.size(); i++)
-		fPlotter.append(curveLabels[i],v[i],fDrive[i]);
-
-	sprintf(msg,"plot drive force vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
-			pWindItem_->getTWV(twv),
-			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	fPlotter.plot("Fn [-]","Fdrive [N]", msg);
-
-	// Instantiate a plotter and plot fSide
-	VPPPlotter fSidePlotter;
-	for(size_t i=0; i<v.size(); i++)
-		fSidePlotter.append(curveLabels[i],v[i],fSide[i]);
-
-	sprintf(msg,"plot side force vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
-			pWindItem_->getTWV(twv),
-			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	fSidePlotter.plot("Fn [-]","Fside [N]", msg);
-
-	// Instantiate a plotter and plot mHeel
-	VPPPlotter mPlotter;
-	for(size_t i=0; i<v.size(); i++)
-		mPlotter.append(curveLabels[i],v[i],mHeel[i]);
-	mPlotter.plot("Fn [-]","mHeel [N*m]","plot heeling moment vs boat speed");
-
-	// Restore the current solution
-	V_  = xbuf(0);
-	PHI_= xbuf(1);
-	b_  = xbuf(2);
-	f_  = xbuf(3);
 
 }
 

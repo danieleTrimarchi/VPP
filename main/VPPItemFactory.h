@@ -38,6 +38,9 @@ class VPPItemFactory {
 		/// Getter for the sail coefficients container
 		const SailCoefficientItem* getSailCoefficientItem() const;
 
+		/// Getter for the sail coefficients container - non const version
+		SailCoefficientItem* getSailCoefficientItem();
+
 		/// Getter for the aero forces item that stores the driving forces
 		const AeroForcesItem* getAeroForcesItem() const;
 

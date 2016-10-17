@@ -145,6 +145,11 @@ const SailCoefficientItem* VPPItemFactory::getSailCoefficientItem() const {
 	return pSailCoeffItem_.get();
 }
 
+/// Getter for the sail coefficients container - non const version
+SailCoefficientItem* VPPItemFactory::getSailCoefficientItem() {
+	return pSailCoeffItem_.get();
+}
+
 // Getter for the aero forces item that stores the driving forces
 const AeroForcesItem* VPPItemFactory::getAeroForcesItem() const {
 	return pAeroForcesItem_.get();

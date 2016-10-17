@@ -23,8 +23,11 @@ class VPPCommand {
 		/// Copy constructor
 		VPPCommand(const VPPCommand& );
 
+		/// Pure virtual : redo the command with modified specs
+		virtual void redo() =0;
+
 		/// Dtor
-		~VPPCommand();
+		virtual ~VPPCommand();
 
 };
 
@@ -42,6 +45,9 @@ class PrintVariablesCommand : public VPPCommand {
 
 		/// Dtor
 		~PrintVariablesCommand();
+
+		/// Implement pure virtual : redo the command with modified specs
+		virtual void redo();
 
 	private:
 
@@ -68,6 +74,11 @@ class PlotVPPCommand : public VPPCommand {
 		/// Dtor
 		~PlotVPPCommand();
 
+		/// The pure virtual defined in the mother class remains
+		/// pure virtual. In the child classes redo will repeat
+		/// the command with modified specs
+		virtual void redo() =0;
+
 	protected:
 
 		/// Disallow default Ctor
@@ -90,6 +101,9 @@ class PlotInterpolatedCoefficientsCommand : public PlotVPPCommand {
 		/// Dtor
 		~PlotInterpolatedCoefficientsCommand();
 
+		/// Implement the pure virtual : re-plot asking the user new bounds
+		virtual void redo();
+
 	private:
 
 		/// Disallow default Ctor
@@ -108,6 +122,9 @@ class plot_D_InterpolatedCoefficientsCommand : public PlotVPPCommand {
 
 		/// Dtor
 		~plot_D_InterpolatedCoefficientsCommand();
+
+		/// Implement the pure virtual : re-plot asking the user new bounds
+		virtual void redo();
 
 	private:
 
@@ -128,6 +145,9 @@ class plot_D2_InterpolatedCoefficientsCommand : public PlotVPPCommand {
 		/// Dtor
 		~plot_D2_InterpolatedCoefficientsCommand();
 
+		/// Implement the pure virtual : re-plot asking the user new bounds
+		virtual void redo();
+
 	private:
 
 		/// Disallow default Ctor
@@ -147,11 +167,19 @@ class plotSailForceMomentCommand : public PlotVPPCommand {
 		/// Dtor
 		~plotSailForceMomentCommand();
 
+		/// Implement the pure virtual : re-plot asking the user new bounds
+		virtual void redo();
+
 	private:
 
 		/// Disallow default Ctor
 		plotSailForceMomentCommand();
 
+		/// Ptr to the parser
+		VariableFileParser* pParser_;
+
+		/// Ptr to the wind
+		WindItem* pWindItem_;
 };
 
 ////////////////////////////////////////////////////////////////
@@ -178,6 +206,9 @@ class plotResistanceCommand : public PlotVPPCommand {
 
 		/// Dtor
 		~plotResistanceCommand();
+
+		/// Implement the pure virtual : re-plot asking the user new bounds
+		virtual void redo();
 
 	private:
 

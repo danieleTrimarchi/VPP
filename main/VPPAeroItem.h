@@ -4,6 +4,7 @@
 #include "VPPItem.h"
 #include "SailSet.h"
 #include "Physics.h"
+#include "mathUtils.h"
 #include "boost/shared_ptr.hpp"
 
 using namespace Physic;
@@ -115,17 +116,17 @@ class SailCoefficientItem : public VPPItem {
 
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
-		virtual void plotInterpolatedCoefficients() const=0;
+		virtual void plotInterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const=0;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D_InterpolatedCoefficients() const=0;
+		virtual void plot_D_InterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const=0;
 
 		/// Plot the second derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D2_InterpolatedCoefficients() const=0;
+		virtual void plot_D2_InterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const=0;
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
@@ -200,17 +201,17 @@ class MainOnlySailCoefficientItem : public SailCoefficientItem {
 
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
-		virtual void plotInterpolatedCoefficients() const;
+		virtual void plotInterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D_InterpolatedCoefficients() const;
+		virtual void plot_D_InterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 		/// Plot the second derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D2_InterpolatedCoefficients() const;
+		virtual void plot_D2_InterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 	private:
 
@@ -241,17 +242,17 @@ class MainAndJibCoefficientItem : public SailCoefficientItem {
 
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
-		virtual void plotInterpolatedCoefficients() const;
+		virtual void plotInterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D_InterpolatedCoefficients() const;
+		virtual void plot_D_InterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 		/// Plot the second derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D2_InterpolatedCoefficients() const;
+		virtual void plot_D2_InterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 	private:
 
@@ -282,17 +283,17 @@ class MainAndSpiCoefficientItem : public SailCoefficientItem {
 
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
-		virtual void plotInterpolatedCoefficients() const;
+		virtual void plotInterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D_InterpolatedCoefficients() const;
+		virtual void plot_D_InterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 		/// Plot the second derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D2_InterpolatedCoefficients() const;
+		virtual void plot_D2_InterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 	private:
 
@@ -323,17 +324,17 @@ class MainJibAndSpiCoefficientItem : public SailCoefficientItem {
 
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
-		virtual void plotInterpolatedCoefficients() const;
+		virtual void plotInterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D_InterpolatedCoefficients() const;
+		virtual void plot_D_InterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 		/// Plot the second derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D2_InterpolatedCoefficients() const;
+		virtual void plot_D2_InterpolatedCoefficients(double angle0=0, double angleEnd=mathUtils::toRad(180)) const;
 
 	private:
 
@@ -385,9 +386,6 @@ class AeroForcesItem : public VPPItem {
 
 		/// Get a ptr to the sailCoeffs Item - const variety
 		const SailCoefficientItem* getSailCoeffItem() const;
-
-		/// plot the aeroForces for a fixed range
-		void plot();
 
 		/// Print the class name -> in this case AeroForcesItem
 		virtual void printWhoAmI();
