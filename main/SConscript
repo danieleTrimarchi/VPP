@@ -9,7 +9,10 @@ THIRD_PARTY_INCS=[
 			'/Users/dtrimarchi/third_party/nlopt-2.4.2/api',
 			'/opt/local/include',												# macPorts and nlopt include path
 			'/opt/local/share/plplot5.11.1/examples/c++',							#include path for plplot example
-			'/opt/local/include/plplot'
+			'/opt/local/include/plplot',
+			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/Ipopt/src/Interfaces',
+			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/include',
+			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/include/coin'
 		]
 
 
@@ -23,7 +26,8 @@ THIRD_PARTY_LIBS=[
 			'plplotcxx',  #libs required by plplot
 			'plplot',
 			'nlopt',
-			'BLAS'
+			'BLAS',
+			'ipopt'
 		]
 			
 					
@@ -35,8 +39,9 @@ THIRD_PARTY_LIBPATH=[
 			'/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib',
 			'/Users/dtrimarchi/third_party/nlopt-2.4.2/libs',
 			'/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A',
-			'/opt/local/lib' # macPorts and lnopt lib path
-		]
+			'/opt/local/lib', # macPorts and lnopt lib path
+			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib'	
+			]
 
 
 #This must be a way to define the path where the executable searches for the dyLib, but for the moment it does not seems to work
@@ -46,6 +51,7 @@ env = DefaultEnvironment()
 #Compile Debug mode
 #env.Append(CCFLAGS= '-g')
 #env.Append(CPPFLAGS ='-Wc++11-extensions')
+env.Append(LINKFLAGS ='-framework Accelerate -lm -ldl')
 
 #warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]
