@@ -135,7 +135,7 @@ void TVPPTest::itemComponentTest() {
 	// Feed the items with the current state vector
 	pVppItems->update(2,2,x);
 
-	//==>> TEST RESISTANCE COMPONENTS
+	//==>> TEST RESISTANCE COMPONENTS @ LOW SPEED AND ANGLE
 
 	Eigen::VectorXd baseLines(10);
 	baseLines << 13.7793728326077, -0.320969, 7.28536991539402,
@@ -188,6 +188,68 @@ void TVPPTest::itemComponentTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(pVppItems->getAeroForcesItem()->getFDrive(),-22.1321642219849, 1.e-6 );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(pVppItems->getAeroForcesItem()->getFSide(),305.057611272351, 1.e-6 );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(pVppItems->getAeroForcesItem()->getMHeel(),1590.44564961559, 1.e-6 );
+
+	// ASSIGN SOME REAL VELOCITY AND HEEL NOW
+
+	x << 5, 0.9, 0.8, 3;
+
+	// Feed the items with the current state vector
+	pVppItems->update(5,5,x);
+
+	//==>> TEST RESISTANCE COMPONENTS @ LOW SPEED AND ANGLE
+
+	baseLines << 258.926085131635, 2126.65183639941,
+			215.630377661538, -32.4831069901788, 543.165486198652,
+			91.9349840264342, 49.6072127078136,
+			83.8661310956139,
+			0, 3467.12050034572;
+
+	// ==== Compute and compare to baseline frictional resistance
+	// std::cout<<"FRICT= "<<pVppItems->getFrictionalResistanceItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(0), pVppItems->getFrictionalResistanceItem()->get(), 1.e-6 );
+
+	// ==== Compute and compare to baseline residual resistance
+	//std::cout<<"RESID= "<<pVppItems->getResiduaryResistanceItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(1), pVppItems->getResiduaryResistanceItem()->get(), 1.e-6 );
+
+	// ==== Compute and compare to baseline induced resistance
+	//std::cout<<"INDUC= "<<pVppItems->getInducedResistanceItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(2), pVppItems->getInducedResistanceItem()->get(), 1.e-6 );
+
+	// ==== Compute and compare to baseline Delta_FrictRes_Heel resistance
+	//std::cout<<"dFRICT_HEEL= "<<pVppItems->getDelta_FrictionalResistance_HeelItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(3), pVppItems->getDelta_FrictionalResistance_HeelItem()->get(), 1.e-6 );
+
+	// ==== Compute and compare to baseline Delta_ResidRes_Heel resistance
+	//std::cout<<"dRESID_HEEL= "<<pVppItems->getDelta_ResiduaryResistance_HeelItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(4), pVppItems->getDelta_ResiduaryResistance_HeelItem()->get(), 1.e-6 );
+
+	// ==== Compute and compare to baseline ViscousRes_Keel resistance
+	//std::cout<<"VISCOUS_KEEL= "<<pVppItems->getViscousResistanceKeelItem()->get()<<std::endl; //-> this does not plot
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(5), pVppItems->getViscousResistanceKeelItem()->get(), 1.e-6 );
+
+	// ==== Compute and compare to baseline FrictionalRes_Rudder resistance
+	//std::cout<<"VISCOUS_RUDDER= "<<pVppItems->getViscousResistanceRudderItem()->get()<<std::endl; //-> this does not plot
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(6), pVppItems->getViscousResistanceRudderItem()->get(), 1.e-6 );
+
+	// ==== Compute and compare to baseline ResidRes_Keel resistance
+	//std::cout<<"RESID KEEL= "<<pVppItems->getResiduaryResistanceKeelItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(7), pVppItems->getResiduaryResistanceKeelItem()->get(),  1.e-6 );
+
+	// ==== Compute and compare to baseline NegativeResistance resistance
+	//std::cout<<"NEGATIVE= "<<pVppItems->getNegativeResistanceItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(8), pVppItems->getNegativeResistanceItem()->get(), 1.e-6 );
+
+	// ==== Compute and compare to baseline TOTAL resistance
+	//std::cout<<"TOTAL= "<<pVppItems->getResistance()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(9), pVppItems->getResistance(), 1.e-6 );
+
+	//==>> TEST AEREO FORCE-MOMENT COMPONENTS
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(1211.8596858754, pVppItems->getAeroForcesItem()->getLift(), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(385.401323794002, pVppItems->getAeroForcesItem()->getDrag(), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(-123.710007701537, pVppItems->getAeroForcesItem()->getFDrive(), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(1265.63577407826, pVppItems->getAeroForcesItem()->getFSide(), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(4122.29227759593, pVppItems->getAeroForcesItem()->getMHeel(), 1.e-6 );
 
 }
 
