@@ -7,9 +7,9 @@
 
 // Constructor
 ResistanceItem::ResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
-			VPPItem(pParser,pSailSet),
-			fN_(0),
-			res_(0){
+VPPItem(pParser,pSailSet),
+fN_(0),
+res_(0){
 	// make nothing
 }
 
@@ -22,12 +22,12 @@ void ResistanceItem::update(int vTW, int aTW) {
 
 
 	// todo dtrimarchi : possibly re-introduce the warning
-//	if(fN_ > 0.6) {
-//		char msg[256];
-//		sprintf(msg,"The value of the Froude Number %f exceeds the limit value 0.6! "
-//				"Results might be incorrect.",fN_);
-//		Warning warning(msg);
-//	}
+	//	if(fN_ > 0.6) {
+	//		char msg[256];
+	//		sprintf(msg,"The value of the Froude Number %f exceeds the limit value 0.6! "
+	//				"Results might be incorrect.",fN_);
+	//		Warning warning(msg);
+	//	}
 
 }
 
@@ -50,24 +50,24 @@ void ResistanceItem::printWhoAmI() {
 // For the definition of the Induced Resistance see DSYHS99 ch4 p128
 // Constructor
 InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
-				ResistanceItem(pAeroForcesItem->getParser(), pAeroForcesItem->getSailSet()),
-				pAeroForcesItem_(pAeroForcesItem),
-				vf_(0.4 * sqrt(Physic::g * pParser_->get("LWL") )),
-				a_(1./(2*vf_)),
-				c_(vf_/2),
-				v_(0) {
+						ResistanceItem(pAeroForcesItem->getParser(), pAeroForcesItem->getSailSet()),
+						pAeroForcesItem_(pAeroForcesItem),
+						vf_(0.4 * sqrt(Physic::g * pParser_->get("LWL") )),
+						a_(1./(2*vf_)),
+						c_(vf_/2),
+						v_(0) {
 
 	coeffA_.resize(4,4);
 	coeffA_ << 	3.7455,	-3.6246,	0.0589,	-0.0296,
-							4.4892,	-4.8454,	0.0294,	-0.0176,
-							3.9592,	-3.9804,	0.0283,	-0.0075,
-							3.4891,	-2.9577,	0.0250,	-0.0272;
+			4.4892,	-4.8454,	0.0294,	-0.0176,
+			3.9592,	-3.9804,	0.0283,	-0.0075,
+			3.4891,	-2.9577,	0.0250,	-0.0272;
 
 	coeffB_.resize(4,2);
 	coeffB_ << 	1.2306,	-0.7256,
-							1.4231,	-1.2971,
-							1.545,	-1.5622,
-							1.4744,	-1.3499;
+			1.4231,	-1.2971,
+			1.545,	-1.5622,
+			1.4744,	-1.3499;
 
 	// Declare the angular value array and convert to RAD
 	phiD_.resize(4);
@@ -173,6 +173,9 @@ void InducedResistanceItem::plot() {
 	IOUtils io(pAeroForcesItem_->getWindItem());
 	io.askUserWindIndexes(twv, twa);
 
+	// Ask a scaling factor (1 does nothing) to viz closer to the origin
+	double plotScaling= io.askUserDouble("please enter a plot scaling factor. default is 1");
+
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
 	double bufferPHI= PHI_;
@@ -201,7 +204,7 @@ void InducedResistanceItem::plot() {
 		for(size_t v=0; v<nVelocities-7; v++){
 
 			// Set a fictitious velocity (Fn=0-1)
-			V_= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			V_= plotScaling * ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 			Eigen::VectorXd x(pbSize_);
 			x << V_, PHI_, b_, f_;
@@ -325,8 +328,8 @@ void InducedResistanceItem::plot() {
 	PHI_=bufferPHI;
 
 	// Ask the user: do you want to plot Te ?
-//	if(io.askUserBool(" Would you like to plot the effective draugh Te ? "))
-//	plotTe(twv, twa);
+	//	if(io.askUserBool(" Would you like to plot the effective draugh Te ? "))
+	//	plotTe(twv, twa);
 
 }
 
@@ -368,22 +371,22 @@ void InducedResistanceItem::printWhoAmI() {
 // Residuary Resistance: see DSYHS99 3.1.1.2 p112
 // Constructor
 ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-				ResistanceItem(pParser, pSailSet) {
+						ResistanceItem(pParser, pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(12,9);
 	coeff <<  0.,			 0.,			0.,			 0.,			0., 		 0.,			0.,			 0.,			0.,
-						-0.0014, 0.0403,  0.0470, -0.0227, -0.0119,  0.0061, -0.0086, -0.0307, -0.0553,
-						0.0004, -0.1808,  0.1793, -0.0004,  0.0097,  0.0118, -0.0055,  0.1721, -0.1728,
-						0.0014, -0.1071,  0.0637,  0.0090,  0.0153,  0.0011,  0.0012,  0.1021, -0.0648,
-						0.0027,  0.0463, -0.1263,  0.0150,  0.0274, -0.0299,  0.0110, -0.0595,  0.1220,
-						0.0056, -0.8005,  0.4891,  0.0269,  0.0519, -0.0313,  0.0292,  0.7314, -0.3619,
-						0.0032, -0.1011, -0.0813, -0.0382,  0.0320, -0.1481,  0.0837,  0.0223,  0.1587,
-					 -0.0064,  2.3095, -1.5152,  0.0751, -0.0858, -0.5349,  0.1715, -2.4550,  1.1865,
-					 -0.0171,  3.4017, -1.9862,  0.3242, -0.1450, -0.8043,  0.2952, -3.5284,  1.3575,
-					 -0.0201,  7.1576, -6.3304,  0.5829,  0.1630, -0.3966,  0.5023, -7.1579,  5.2534,
-					  0.0495,  1.5618, -6.0661,  0.8641,  1.1702,  1.7610,  0.9176, -2.1191,  5.4281,
-						0.0808, -5.3233, -1.1513,  0.9663,  1.6084,  2.7459,  0.8491,  4.7129,  1.1089;
+			-0.0014, 0.0403,  0.0470, -0.0227, -0.0119,  0.0061, -0.0086, -0.0307, -0.0553,
+			0.0004, -0.1808,  0.1793, -0.0004,  0.0097,  0.0118, -0.0055,  0.1721, -0.1728,
+			0.0014, -0.1071,  0.0637,  0.0090,  0.0153,  0.0011,  0.0012,  0.1021, -0.0648,
+			0.0027,  0.0463, -0.1263,  0.0150,  0.0274, -0.0299,  0.0110, -0.0595,  0.1220,
+			0.0056, -0.8005,  0.4891,  0.0269,  0.0519, -0.0313,  0.0292,  0.7314, -0.3619,
+			0.0032, -0.1011, -0.0813, -0.0382,  0.0320, -0.1481,  0.0837,  0.0223,  0.1587,
+			-0.0064,  2.3095, -1.5152,  0.0751, -0.0858, -0.5349,  0.1715, -2.4550,  1.1865,
+			-0.0171,  3.4017, -1.9862,  0.3242, -0.1450, -0.8043,  0.2952, -3.5284,  1.3575,
+			-0.0201,  7.1576, -6.3304,  0.5829,  0.1630, -0.3966,  0.5023, -7.1579,  5.2534,
+			0.0495,  1.5618, -6.0661,  0.8641,  1.1702,  1.7610,  0.9176, -2.1191,  5.4281,
+			0.0808, -5.3233, -1.1513,  0.9663,  1.6084,  2.7459,  0.8491,  4.7129,  1.1089;
 
 	// Define the vector with the physical quantities multiplying the
 	// polynomial coefficients
@@ -470,7 +473,7 @@ void ResiduaryResistanceItem::plot(WindItem* pWind) {
 // Constructor
 Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
-				ResistanceItem(pParser,pSailSet) {
+						ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(10,6);
@@ -478,12 +481,12 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 						0.,			 0.,			0.,			0.,			0.,				0.,
 						0.,			 0.,			0.,			0.,			0.,				0.,
 					 -0.0268, -0.0014, -0.0057, 0.0016, -0.0070, -0.0017,
-						0.6628, -0.0632, -0.0699, 0.0069,  0.0459, -0.0004,
+					  0.6628, -0.0632, -0.0699, 0.0069,  0.0459, -0.0004,
 						1.6433, -0.2144, -0.1640, 0.0199, -0.0540, -0.0268,
 					 -0.8659, -0.0354,  0.2226, 0.0188, -0.5800, -0.1133,
 					 -3.2715,	 0.1372,  0.5547, 0.0268, -1.0064, -0.2026,
 					 -0.1976, -0.1480, -0.6593, 0.1862, -0.7489, -0.1648,
-						1.5873, -0.3749, -0.7105, 0.2146, -0.4818, -0.1174;
+					  1.5873, -0.3749, -0.7105, 0.2146, -0.4818, -0.1174;
 
 	// Divided the coefficients by 10^3, as stated in the article table6
 	coeff /= 1000.;
@@ -552,17 +555,77 @@ void Delta_ResiduaryResistance_HeelItem::printWhoAmI() {
 // Plot the Residuary Resistance versus Fn curve
 void Delta_ResiduaryResistance_HeelItem::plot(WindItem* pWind) {
 
-
-	// For which TWV, TWA shall we plot the aero forces/moments?
+	// Ask the user for twv and twa
 	size_t twv=0, twa=0;
 	IOUtils io(pWind);
 	io.askUserWindIndexes(twv, twa);
 
-	// update the item
-	update(twv,twa);
+	// Init the state vector
+	b_= io.askUserDouble("Please enter the crew position");
+	f_= io.askUserDouble("Please enter the value of flat");
 
-	// Make a check plot for the induced resistance
-	pInterpolator_->plot(0,.7,20,"Delta Residuary Resistance","Fn [-]","Resistance [N]" );
+	double fnMin= io.askUserDouble("Please enter the min value of the Fn");
+	double fnMax= io.askUserDouble("Please enter the max value of the Fn");
+
+	size_t nVelocities=40, maxAngleDeg=30;
+
+	// Instantiate containers for the curve labels, the
+	// Fn and the resistance
+	std::vector<string> curveLabels;
+	std::vector<ArrayXd> froudeNb, totRes;
+
+	// Loop on the heel angles
+	for(size_t iAngle=0; iAngle<maxAngleDeg+1; iAngle+=5){
+
+		// Compute the value of PHI
+		PHI_ = mathUtils::toRad(iAngle);
+
+		// declare some tmp containers
+		vector<double> fn, res;
+
+		// Loop on the velocities
+		for(size_t v=0; v<nVelocities; v++){
+
+			// Set a fictitious velocity (Fn=-0.3-0.7)
+			V_= ( fnMin + ( ( fnMax-fnMin ) / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+
+			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
+			update(twv,twa);
+
+			// Fill the vectors to be plot
+			fn.push_back( V_/sqrt(Physic::g * pParser_->get("LWL") ) );
+			res.push_back( get() );
+
+		}
+
+		// Now transform fn and res to ArrayXd and push_back to vector
+		ArrayXd tmpFn(fn.size());
+		ArrayXd tmpRes(fn.size());
+		for(size_t j=0; j<fn.size(); j++){
+			tmpFn(j)=fn[j];
+			tmpRes(j)=res[j];
+		}
+
+		froudeNb.push_back(tmpFn);
+		totRes.push_back(tmpRes);
+
+		char msg[256];
+		sprintf(msg,"%3.1f [deg]", mathUtils::toDeg(PHI_));
+		curveLabels.push_back(msg);
+
+	}
+
+	// Instantiate a plotter and plot
+	VPPPlotter fPlotter;
+	for(size_t i=0; i<froudeNb.size(); i++)
+		fPlotter.append(curveLabels[i],froudeNb[i],totRes[i]);
+
+	char msg[256];
+	sprintf(msg,"plot Delta Residuary Resistance due to Heel - "
+			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			pWind->getTWV(twv),
+			mathUtils::toDeg(pWind->getTWA(twa)) );
+	fPlotter.plot("Fn [-]","dResistance [N]", msg);
 
 }
 
@@ -570,21 +633,21 @@ void Delta_ResiduaryResistance_HeelItem::plot(WindItem* pWind) {
 // For the definition of the Residuary Resistance of the Keel see DSYHS99 3.2.1.2 p.120 and following
 // Constructor
 ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-				ResistanceItem(pParser,pSailSet) {
+						ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(11,4);
 	coeff <<	 0.,			0.,			 0.,			 0.,
-						 0.,			0.,			 0.,			 0.,
-						-0.00104, 0.00172, 0.00117, -0.00008,
-						-0.00550, 0.00597, 0.00390, -0.00009,
-						-0.01110, 0.01421, 0.00069,  0.00021,
-						-0.00713, 0.02632,-0.00232,  0.00039,
-						-0.03581, 0.08649, 0.00999,  0.00017,
-						-0.00470, 0.11592,-0.00064,  0.00035,
-						 0.00553, 0.07371, 0.05991, -0.00114,
-						 0.04822, 0.00660, 0.07048, -0.00035,
-						 0.01021, 0.14173, 0.06409, -0.00192;
+			0.,			0.,			 0.,			 0.,
+			-0.00104, 0.00172, 0.00117, -0.00008,
+			-0.00550, 0.00597, 0.00390, -0.00009,
+			-0.01110, 0.01421, 0.00069,  0.00021,
+			-0.00713, 0.02632,-0.00232,  0.00039,
+			-0.03581, 0.08649, 0.00999,  0.00017,
+			-0.00470, 0.11592,-0.00064,  0.00035,
+			0.00553, 0.07371, 0.05991, -0.00114,
+			0.04822, 0.00660, 0.07048, -0.00035,
+			0.01021, 0.14173, 0.06409, -0.00192;
 
 	// Define the vector with the physical quantities multiplying the
 	// polynomial coefficients
@@ -650,7 +713,7 @@ void ResiduaryResistanceKeelItem::plot() {
 // Constructor
 Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-				ResistanceItem(pParser,pSailSet) {
+						ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::VectorXd coeff(4);
@@ -704,7 +767,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::printWhoAmI() {
 // For the definition of the Frictional Resistance see DSYHS99 2.1 p108
 // Constructor
 FrictionalResistanceItem::FrictionalResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-				ResistanceItem(pParser,pSailSet) {
+						ResistanceItem(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_
 	rN0_= pParser->get("LWL") * 0.7 / Physic::ni_w;
@@ -793,7 +856,7 @@ void FrictionalResistanceItem::plot() {
 // Constructor
 Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-						ResistanceItem(pParser,pSailSet) {
+								ResistanceItem(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_. The definition of the Rn
 	// is given by DSYHS99, p109. 0.7 is an arbitrary factor used to reduce the lwl
@@ -802,13 +865,13 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(8,4);
 	coeff <<	 0.000,	 0.000,	 0.000,	0.000,
-						-4.112,  0.054, -0.027,	6.329,
-						-4.522, -0.132, -0.077,	8.738,
-						-3.291, -0.389, -0.118,	8.949,
-						 1.850, -1.200, -0.109,	5.364,
-						 6.510, -2.305, -0.066,	3.443,
-						12.334, -3.911,	 0.024,	1.767,
-					  14.648, -5.182,	 0.102,	3.497;
+			-4.112,  0.054, -0.027,	6.329,
+			-4.522, -0.132, -0.077,	8.738,
+			-3.291, -0.389, -0.118,	8.949,
+			1.850, -1.200, -0.109,	5.364,
+			6.510, -2.305, -0.066,	3.443,
+			12.334, -3.911,	 0.024,	1.767,
+			14.648, -5.182,	 0.102,	3.497;
 
 	// Define the vector with the physical quantities multiplying the
 	// polynomial coefficients
@@ -893,7 +956,7 @@ void Delta_FrictionalResistance_HeelItem::plot() {
 // Constructor
 ViscousResistanceKeelItem::ViscousResistanceKeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-										ResistanceItem(pParser,pSailSet) {
+												ResistanceItem(pParser,pSailSet) {
 }
 
 // Destructor
@@ -969,7 +1032,7 @@ void ViscousResistanceKeelItem::plot() {
 // Constructor
 ViscousResistanceRudderItem::ViscousResistanceRudderItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-																ResistanceItem(pParser,pSailSet) {
+																		ResistanceItem(pParser,pSailSet) {
 }
 
 // Destructor
@@ -1045,7 +1108,7 @@ void ViscousResistanceRudderItem::plot() {
 // Constructor
 NegativeResistanceItem::NegativeResistanceItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
-																ResistanceItem(pParser,pSailSet) {
+																		ResistanceItem(pParser,pSailSet) {
 }
 
 // Destructor

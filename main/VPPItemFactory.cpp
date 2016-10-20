@@ -49,6 +49,7 @@ dM_(0) {
 	// Instantiate a Delta_ResiduaryResistance_HeelItem Item push it back to the children vector
 	// For the definition of the change in Residuary Resistance due to heel
 	// see DSYHS99 ch3.1.2.2 p116
+	// => THIS IS THE GUY !
 	pDelta_ResiduaryResistance_HeelItem_.reset(new Delta_ResiduaryResistance_HeelItem(pParser_,pSailSet));
 	vppHydroItems_.push_back( pDelta_ResiduaryResistance_HeelItem_ );
 

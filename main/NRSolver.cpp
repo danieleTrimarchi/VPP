@@ -15,7 +15,7 @@ NRSolver::NRSolver(VPPItemFactory* pVPPItemFactory,
 		size_t dimension, size_t subPbSize ):
 dimension_(dimension),
 subPbSize_(subPbSize),
-tol_(1.e-6),
+tol_(1.e-8),
 maxIters_(100),
 it_(0){
 
