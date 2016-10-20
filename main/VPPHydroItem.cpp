@@ -476,11 +476,8 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 						ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
-	Eigen::MatrixXd coeff(10,6);
-	coeff << 	0.,			 0.,			0.,			0.,			0.,				0.,
-						0.,			 0.,			0.,			0.,			0.,				0.,
-						0.,			 0.,			0.,			0.,			0.,				0.,
-					 -0.0268, -0.0014, -0.0057, 0.0016, -0.0070, -0.0017,
+	Eigen::MatrixXd coeff(7,6);
+	coeff << -0.0268, -0.0014, -0.0057, 0.0016, -0.0070, -0.0017,
 					  0.6628, -0.0632, -0.0699, 0.0069,  0.0459, -0.0004,
 						1.6433, -0.2144, -0.1640, 0.0199, -0.0540, -0.0268,
 					 -0.8659, -0.0354,  0.2226, 0.0188, -0.5800, -0.1133,
@@ -515,8 +512,8 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 
 	// Values of the froude number on which the coefficients of the
 	// residuary resistance are computed
-	Eigen::ArrayXd fnD(10);
-	fnD << 0., .1, .2, .25, .3, .35, .4, .45, .5, .55;
+	Eigen::ArrayXd fnD(7);
+	fnD << .25, .3, .35, .4, .45, .5, .55;
 
 	// generate the cubic spline values for the coefficients
 	Eigen::ArrayXd RrhH20DArr=RrhH20D.array();
@@ -535,8 +532,8 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
 
-	// limit the values to positive angles
-	if(PHI_<1e-12) {
+	// limit the values to positive angles and Fn>0.25, as in the definition of the DHYS
+	if(PHI_<1e-12 || fN_<0.25) {
 		res_=0.;
 		return;
 	}
