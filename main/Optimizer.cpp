@@ -89,7 +89,7 @@ void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 
 // Returns the index of the previous velocity-wise (twv) result that is marked as
-// converged (discarde==false). It starts from 'current', so it can be used recursively
+// converged (discard==false). It starts from 'current', so it can be used recursively
 size_t Optimizer::getPreviousConverged(size_t idx, size_t TWA) {
 
 	while(idx){
@@ -108,10 +108,20 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 	// In it to something small to start the evals at each velocity
 	if(TWV==0) {
 
-		xp_(0)= 1.0;  	// V_0
-		xp_(1)= 0.; 		// PHI_0
-		xp_(2)= 0.0;		// b_0
-		xp_(3)= 1.;		// f_0
+		// This is the very first solution, so we must guess a solution
+		// but we have nothing to establish our guess
+		if(TWA==0){
+
+			xp_(0)= .5;  	// V_0
+			xp_(1)= 0.; 		// PHI_0
+			xp_(2)= 0.0;		// b_0
+			xp_(3)= 1.;		// f_0
+
+		}
+		else
+			// In this case we have a solution at a previous angle we can use
+			// to set the guess
+			xp_ = *(pResults_->get(TWV,TWA-1).getX());
 
 	}
 
