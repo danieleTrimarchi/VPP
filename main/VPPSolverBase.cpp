@@ -16,7 +16,7 @@ boost::shared_ptr<VPPItemFactory> VPPSolverBase::vppItemsContainer_;
 VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 																dimension_(4),
 																subPbSize_(2),
-																tol_(1.e-3) {
+																tol_(1.e-4) {
 
 	// Instantiate a NRSolver that will be used to feed the VPPSolverBase with
 	// an equilibrated first guess solution. The solver will solve a subproblem

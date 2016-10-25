@@ -109,13 +109,13 @@ void Optimizer::resetInitialGuess(int TWV, int TWA) {
 	if(TWV==0) {
 
 		// This is the very first solution, so we must guess a solution
-		// but we have nothing to establish our guess
+		// but have nothing to establish our guess
 		if(TWA==0){
 
-			xp_(0)= .5;  	// V_0
+			xp_(0)= .5;  		// V_0
 			xp_(1)= 0.; 		// PHI_0
 			xp_(2)= 0.0;		// b_0
-			xp_(3)= 1.;		// f_0
+			xp_(3)= 1.;			// f_0
 
 		}
 		else
@@ -298,7 +298,6 @@ void Optimizer::run(int TWV, int TWA) {
 			throw VPPException(HERE,"nlopt unknown exception catched!\n");
 		}
 
-
 		printf("found maximum after %d evaluations\n", optIterations);
 		printf("      at f(%g,%g,%g,%g)\n",
 				xp_(0),xp_(1),xp_(2),xp_(3) );
@@ -306,9 +305,12 @@ void Optimizer::run(int TWV, int TWA) {
 		residuals= vppItemsContainer_->getResiduals();
 		printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
 
-		if( residuals.norm() < 0.0001 )
+		if( residuals.norm() < 1.e-6 )
 			break;
 	}
+
+	// Refine the solution from the optimizer with NR -> this is meant to fix the residuals
+	solveInitialGuess(TWV,TWA);
 
 	// Push the result to the result container
 	pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
