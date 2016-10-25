@@ -359,7 +359,7 @@ void VPPItemFactory::plotOptimizationSpace() {
 	NRSolver nrSolver(this, 4, 2);
 
 	// Set the number of values for flat and crew -> x, y
-	size_t nFlat=5, nCrew=5;
+	size_t nFlat=15, nCrew=15;
 
 	// Instantiate the result matrices : v and phi
 	Eigen::ArrayXd flat(nFlat), crew(nCrew);

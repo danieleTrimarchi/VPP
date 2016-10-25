@@ -860,14 +860,14 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 	rN0_= pParser->get("LWL") * 0.7 / Physic::ni_w;
 
 	// Define an array of coefficients and instantiate an interpolator over it
-	Eigen::MatrixXd coeff(8,4);
-	coeff <<	 0.000,	 0.000,	 0.000,	0.000,
+	Eigen::MatrixXd coeff(7,4);
+	coeff <<
 			-4.112,  0.054, -0.027,	6.329,
 			-4.522, -0.132, -0.077,	8.738,
 			-3.291, -0.389, -0.118,	8.949,
-			1.850, -1.200, -0.109,	5.364,
-			6.510, -2.305, -0.066,	3.443,
-			12.334, -3.911,	 0.024,	1.767,
+			 1.850, -1.200, -0.109,	5.364,
+			 6.510, -2.305, -0.066,	3.443,
+            12.334, -3.911,	 0.024,	1.767,
 			14.648, -5.182,	 0.102,	3.497;
 
 	// Define the vector with the physical quantities multiplying the
@@ -883,8 +883,8 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 			pParser_->get("CMS");
 
 	// Values of the heel angle on which the coefficients and convert to radians
-	Eigen::ArrayXd phiD(8);
-	phiD << 0, 5, 10, 15, 20, 25, 30, 35;
+	Eigen::ArrayXd phiD(7);
+	phiD << 5, 10, 15, 20, 25, 30, 35;
 	phiD *= ( M_PI / 180.0);
 
 	// Compute the coefficients for the current geometry
@@ -893,6 +893,9 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 
 	// generate the cubic spline values for the coefficients
 	pInterpolator_.reset( new SplineInterpolator(phiD,SCphiDArr) );
+
+	// Plot the change in wetted surf due to heel
+	// pInterpolator_->plot(0,mathUtils::toRad(20),20,"Change in wetted area due to HEEL","PHI [rad]","dS [m**2]" );
 
 }
 
@@ -907,8 +910,8 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
 
-	// Limit the computations to positive values
-	if(V_<0.001) {
+	// Limit the computations to positive values and the heeling angles defined by the DHYS
+	if(V_<0.001 || PHI_ < mathUtils::toRad(5) ) {
 		res_=0.;
 		return;
 	}
@@ -920,14 +923,14 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	// Compute the Frictional coefficient
 	double cF = 0.075 / std::pow( (std::log10(rN) - 2), 2);
 
-	// Compute the interpolated value of the change in wetted area wrt PHI [deg]
+	// Compute the interpolated value of the change in wetted area wrt PHI [rad]
 	double SCphi = pInterpolator_->interpolate(PHI_);
 
 	// Compute the change in Frictional resistance using the delta of wetted surface
 	// Apart for the def. of the surface, the frictional resistance uses the std definition
 	// see DSYHS99 3.2.1.1 p119
 	// Rfh = 1/2 .* phys.rho_w .* V.^2 .* Cf .* ( S - S0 );
-	double rfhH = 0.5 * Physic::rho_w * V_ * V_ * cF * (SCphi-pParser_->get("SC"));
+	double rfhH = 0.5 * Physic::rho_w * V_ * V_ * cF * ( SCphi - pParser_->get("SC") );
 
 	// todo dtrimarchi: does it make sense to use the same hull form factor both for the upright and the heeled hull?
 	// See DSYHS99 p119, where the form factor is also defined. Here we ask the user to prompt a value
@@ -944,7 +947,78 @@ void Delta_FrictionalResistance_HeelItem::printWhoAmI() {
 void Delta_FrictionalResistance_HeelItem::plot() {
 
 	// Make a check plot for the frictional resistance
-	pInterpolator_->plot(0,40,20,"Frictional Resistance due to HEEL","Fn [-]","Resistance [N]" );
+	pInterpolator_->plot(0,0.6,20,"Change in wetted area due to HEEL","Fn [-]","dS [m**2]" );
+
+}
+
+// Plot the Frictional Resistance due to heel versus Fn curve
+void Delta_FrictionalResistance_HeelItem::plot(WindItem* pWind) {
+
+	// Ask the user for twv and twa
+	size_t twv=0, twa=0;
+	IOUtils io(pWind);
+	io.askUserWindIndexes(twv, twa);
+
+	double fnMin= io.askUserDouble("Please enter the min value of the Fn");
+	double fnMax= io.askUserDouble("Please enter the max value of the Fn");
+
+	size_t nVelocities=40, maxAngleDeg=30;
+
+	// Instantiate containers for the curve labels, the
+	// Fn and the resistance
+	std::vector<string> curveLabels;
+	std::vector<ArrayXd> froudeNb, totRes;
+
+	// Loop on the heel angles
+	for(int iAngle=0; iAngle<maxAngleDeg+1; iAngle+=5){
+
+		// Compute the value of PHI
+		PHI_ = mathUtils::toRad(iAngle);
+
+		// declare some tmp containers
+		vector<double> fn, res;
+
+		// Loop on the velocities
+		for(size_t v=0; v<nVelocities; v++){
+
+			// Set a fictitious velocity (Fn=-0.3-0.7)
+			V_= ( fnMin + ( ( fnMax-fnMin ) / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+
+			update(twv,twa);
+
+			// Fill the vectors to be plot
+			fn.push_back( V_/sqrt(Physic::g * pParser_->get("LWL") ) );
+			res.push_back( get() );
+
+			// Now transform fn and res to ArrayXd and push_back to vector
+			ArrayXd tmpFn(fn.size());
+			ArrayXd tmpRes(fn.size());
+			for(size_t j=0; j<fn.size(); j++){
+				tmpFn(j)=fn[j];
+				tmpRes(j)=res[j];
+			}
+
+			froudeNb.push_back(tmpFn);
+			totRes.push_back(tmpRes);
+
+			char msg[256];
+			sprintf(msg,"%3.1f [deg]", mathUtils::toDeg(PHI_));
+			curveLabels.push_back(msg);
+
+		}
+	}
+
+	// Instantiate a plotter and plot
+	VPPPlotter fPlotter;
+	for(size_t i=0; i<froudeNb.size(); i++)
+		fPlotter.append(curveLabels[i],froudeNb[i],totRes[i]);
+
+	char msg[256];
+	sprintf(msg,"plot Delta Frictional Resistance due to Heel - "
+			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			pWind->getTWV(twv),
+			mathUtils::toDeg(pWind->getTWA(twa)) );
+	fPlotter.plot("Fn [-]","dResistance [N]", msg);
 
 }
 

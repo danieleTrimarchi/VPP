@@ -196,7 +196,7 @@ void TVPPTest::itemComponentTest() {
 	// Feed the items with the current state vector
 	pVppItems->update(5,5,x);
 
-	//==>> TEST RESISTANCE COMPONENTS @ LOW SPEED AND ANGLE
+	//==>> TEST RESISTANCE COMPONENTS @ HIGH SPEED AND ANGLE
 
 	baseLines << 258.926085131635, 2126.65183639941,
 			215.630377661538, -32.4831069901788, 543.165486198652,

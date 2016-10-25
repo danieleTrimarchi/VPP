@@ -248,6 +248,9 @@ class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
 		/// Plot the Frictional Resistance due to heel vs Fn curve
 		void plot();
 
+		/// Plot the Frictional Resistance due to heel vs Fn curve for a range of heeling angles
+		void plot(WindItem* pWind);
+
 	private:
 
 		/// Implement pure virtual method of the parent class

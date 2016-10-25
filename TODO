@@ -1,3 +1,8 @@
+- when starting @vTW=0 , use vector @vTA precedente & Vtv=0! This can largely improve the starting points, that are always a problem!!!
+
+
+- group resistanceItem plot(wind)
+
 
 - Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 		mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
 	To be investigated on UML!

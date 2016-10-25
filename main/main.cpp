@@ -159,7 +159,7 @@ int main(int argc, char** argv) {
 				pVppItems->getInducedResistanceItem()->plot();
 
 			else if(s == string("plotDelta_FrictRes_Heel") )
-				pVppItems->getDelta_FrictionalResistance_HeelItem()->plot();
+				pVppItems->getDelta_FrictionalResistance_HeelItem()->plot(pVppItems->getWind());
 
 			else if(s == string("plotDelta_ResidRes_Heel") )
 				pVppItems->getDelta_ResiduaryResistance_HeelItem()->plot(pVppItems->getWind());
