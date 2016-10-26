@@ -1,3 +1,7 @@
+vTW=3  aTW=5
+2.529276  0.004303  1.738542  1 
+
+
 - when starting @vTW=0 , use vector @vTA precedente & Vtv=0! This can largely improve the starting points, that are always a problem!!!
 
 

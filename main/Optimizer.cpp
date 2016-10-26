@@ -18,7 +18,7 @@ int optIterations=0;
 
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-						VPPSolverBase(VPPItemFactory){
+								VPPSolverBase(VPPItemFactory){
 
 	// Set the and apply the lower and the upper bounds
 	// -> make sure the bounds are larger than the initial
@@ -262,52 +262,46 @@ void Optimizer::run(int TWV, int TWA) {
 	Eigen::VectorXd residuals(dimension_);
 	for(size_t i=0; i<dimension_; i++) residuals(i)=100;
 
-	//while ( residuals.norm() > 0.00001 )
-	for(size_t iRes=0; iRes<3; iRes++ ){
 
-		try{
+	try{
 
-			// Launch the optimization; negative retVal implies failure
-			std::cout<<"Entering the optimizer with: ";
-			printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
-			// convert to standard vector
-			std::vector<double> xp(xp_.rows());
-			for(size_t i=0; i<xp_.rows(); i++)
-				xp[i]=xp_(i);
+		// Launch the optimization; negative retVal implies failure
+		std::cout<<"Entering the optimizer with: ";
+		printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
+		// convert to standard vector
+		std::vector<double> xp(xp_.rows());
+		for(size_t i=0; i<xp_.rows(); i++)
+			xp[i]=xp_(i);
 
-			// Launch the optimization
-			result = opt_->optimize(xp, maxf);
+		// Launch the optimization
+		result = opt_->optimize(xp, maxf);
 
-			//store the results back to the member state vector
-			for(size_t i=0; i<xp_.size(); i++)
-				xp_(i)=xp[i];
-		}
-		catch( nlopt::roundoff_limited& e ){
-			std::cout<<"Roundoff limited result"<<std::endl;
-			// do nothing because the result of roundoff-limited exception
-			// is meant to be still a meaningful result
-		}
-		catch (std::exception& e) {
-
-			// throw exceptions catched by NLOpt
-			char msg[256];
-			sprintf(msg,"%s\n",e.what());
-			throw VPPException(HERE,msg);
-		}
-		catch (...) {
-			throw VPPException(HERE,"nlopt unknown exception catched!\n");
-		}
-
-		printf("found maximum after %d evaluations\n", optIterations);
-		printf("      at f(%g,%g,%g,%g)\n",
-				xp_(0),xp_(1),xp_(2),xp_(3) );
-
-		residuals= vppItemsContainer_->getResiduals();
-		printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
-
-		if( residuals.norm() < 1.e-6 )
-			break;
+		//store the results back to the member state vector
+		for(size_t i=0; i<xp_.size(); i++)
+			xp_(i)=xp[i];
 	}
+	catch( nlopt::roundoff_limited& e ){
+		std::cout<<"Roundoff limited result"<<std::endl;
+		// do nothing because the result of roundoff-limited exception
+		// is meant to be still a meaningful result
+	}
+	catch (std::exception& e) {
+
+		// throw exceptions catched by NLOpt
+		char msg[256];
+		sprintf(msg,"%s\n",e.what());
+		throw VPPException(HERE,msg);
+	}
+	catch (...) {
+		throw VPPException(HERE,"nlopt unknown exception catched!\n");
+	}
+
+	printf("found maximum after %d evaluations\n", optIterations);
+	printf("      at f(%g,%g,%g,%g)\n",
+			xp_(0),xp_(1),xp_(2),xp_(3) );
+
+	residuals= vppItemsContainer_->getResiduals();
+	printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
 
 	// Refine the solution from the optimizer with NR -> this is meant to fix the residuals
 	solveInitialGuess(TWV,TWA);
@@ -317,7 +311,8 @@ void Optimizer::run(int TWV, int TWA) {
 
 	// Make sure the result does not exceeds the bounds
 	for(size_t i=0; i<subPbSize_; i++)
-		if(xp_[i]<lowerBounds_[i] || xp_[i]>upperBounds_[i]){
+		if(xp_[i]<lowerBounds_[i] || xp_[i]>upperBounds_[i] ||
+				residuals.norm() > 100 ){
 			std::cout<<"WARNING: Optimizer result for tWv="<<TWV<<" and tWa="<<TWA<<" is out-of-bounds for variable "<<i<<std::endl;
 			pResults_->remove(TWV, TWA);
 		}

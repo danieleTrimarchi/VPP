@@ -138,11 +138,6 @@ Eigen::VectorXd NRSolver::run(int twv, int twa, Eigen::VectorXd& xp ) {
 void NRSolver::run(int twv, int twa) {
 
 	// std::cout<<"    "<<pWind_->getTWV(twv)<<"    "<<toDeg( pWind_->getTWA(twa) )<<std::endl;
-
-	// For each wind velocity, reset the initial guess for the
-	// state variable vector to zero
-	resetInitialGuess(twv,twa);
-
 	//std::cout<<"\n Entering NR with first guess: "<<xp_.transpose()<<std::endl;
 
 	try{
