@@ -1,16 +1,25 @@
-vTW=3  aTW=5
-2.529276  0.004303  1.738542  1 
+- plot sailForce/moments for negative angles
 
+- understand what is wrong with this point for the variableFile@233 (e799e2a71f84)
+	vTW=3  aTW=5
+	2.529276  0.004303  1.738542  1 
 
-- when starting @vTW=0 , use vector @vTA precedente & Vtv=0! This can largely improve the starting points, that are always a problem!!!
+- add a scons target scons makeDocs
 
+- add a scone target: scons makeTest
+
+- Where to place latex packages required by Doxigen
+
+- How to build PDF from the latex Doxygen
+ 
+- build Qt integration. Allow for 2/3d dynamic plotting (scale, move, zoom)
+
+- build ipOtp integration
 
 - group resistanceItem plot(wind)
-
 
 - Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 		mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
 	To be investigated on UML!
 
 - eigen support for xcode?
 
-- download and install Doxygen

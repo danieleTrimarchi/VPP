@@ -17,18 +17,15 @@ res_(0){
 void ResistanceItem::update(int vTW, int aTW) {
 
 	// Update the Froude number using the state variable boat velocity
-	fN_= V_ / sqrt(Physic::g * pParser_->get("LWL"));
+	fN_= convertToFn( V_ );
 	if(isNotValid(fN_)) throw VPPException(HERE,"fN_ is Nan");
 
-
-	// todo dtrimarchi : possibly re-introduce the warning
-	//	if(fN_ > 0.6) {
-	//		char msg[256];
-	//		sprintf(msg,"The value of the Froude Number %f exceeds the limit value 0.6! "
-	//				"Results might be incorrect.",fN_);
-	//		Warning warning(msg);
-	//	}
-
+		if(fN_ > 0.6) {
+			char msg[256];
+			sprintf(msg,"The value of the Froude Number %f exceeds the limit value 0.6! "
+					"Results might be incorrect.",fN_);
+			Warning warning(msg);
+		}
 }
 
 // Destructor
@@ -41,6 +38,20 @@ const double ResistanceItem::get() const {
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 	return res_;
 }
+
+// Convert a velocity [m/s] to a Fn[-]
+double ResistanceItem::convertToFn( double velocity ){
+
+	return velocity / sqrt(Physic::g * pParser_->get("LWL"));
+}
+
+// Convert a Fn[-] to a velocity [m/s]
+double ResistanceItem::convertToVelocity( double fN ) {
+
+	return fN * sqrt(Physic::g * pParser_->get("LWL"));
+
+}
+
 
 void ResistanceItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of ResistanceItem "<<std::endl;

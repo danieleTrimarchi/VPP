@@ -127,6 +127,26 @@ int main(int argc, char** argv) {
 				pSails->printVariables();
 			}
 
+			//---
+
+			else if(s == string("convertVelocityToFn")) {
+				IOUtils io(pVppItems->getWind());
+				std::cout<<"Fn= "<<
+				pVppItems->getFrictionalResistanceItem()->convertToFn(
+						io.askUserDouble("Please enter the value of the velocity...")
+				)<<std::endl;
+			}
+
+			else if(s == string("convertFnToVelocity")) {
+				IOUtils io(pVppItems->getWind());
+				std::cout<<"Velocity= "<<
+				pVppItems->getFrictionalResistanceItem()->convertToVelocity(
+						io.askUserDouble("Please enter the value of the Fn...")
+				)<<std::endl;
+			}
+
+			//---
+
 			else if( s == string("plotSailCoeffs"))
 				pVppItems->getSailCoefficientItem()->plotInterpolatedCoefficients();
 
@@ -181,6 +201,18 @@ int main(int argc, char** argv) {
 
 			//---
 
+			else if( s == string("plotPolars"))
+				solver.plotPolars();
+
+			else if( s == string("plotXY")) {
+				std::cout<<"Please enter the index of the wind angle: \n";
+				int idx;
+				cin >> idx;
+				solver.plotXY(idx);
+			}
+
+			//---
+
 			else if(s == string("reload") ){
 				load(parser,pSails,pVppItems);
 				solver.reset(pVppItems);
@@ -203,21 +235,15 @@ int main(int argc, char** argv) {
 			else if( s == string("bounds"))
 				solver.printResultBounds();
 
-			else if( s == string("plotPolars"))
-				solver.plotPolars();
-
-			else if( s == string("plotXY")) {
-				std::cout<<"Please enter the index of the wind angle: \n";
-				int idx;
-				cin >> idx;
-				solver.plotXY(idx);
-			}
 			//---
 
 			else if( s == string("help") || s == string("h") ){
 
 				std::cout<<"\n== AVAILABLE OPTIONS =============================================== \n";
 				std::cout<<"   printVars                : print the variables read from file \n";
+				std::cout<<" \n";
+				std::cout<<"   convertVelocityToFn      : print out the Fn, given a velocity: Fn = v/sqrt(gL)\n";
+				std::cout<<"   convertFnToVelocity      : print out the velocity, given a Fn: v = Fn*sqrt(gL) \n";
 				std::cout<<" \n";
 				std::cout<<"   plotSailCoeffs           : plot the aerodynamic coeffs for the current sails \n";
 				std::cout<<"   plot_D_SailCoeffs        : plot the first derivative of the aerodynamic coeffs for the current sails \n";
