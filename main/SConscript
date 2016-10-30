@@ -57,51 +57,41 @@ THIRD_PARTY_LIBPATH=[
 env = DefaultEnvironment()
 
 
-
+# Do some work to produce the version info
 import subprocess
-
-currentBranch = subprocess.check_output(["hg", "branch"])
-print '==>>hg branch: ',currentBranch
-# default
-
-currentHash = subprocess.check_output(["hg", "id","-i"])
-print '==>>hg hash: ',currentHash
-# default
-
 import time
-buildDate = time.strftime("%c")
-print "==> buildDate: ", buildDate
-
-# Get the current directory
-import os
-print 'buildDir= ',os.getcwd()
-buildDir = os.getcwd()
-
-
-srcFile= File('Version.h').srcnode().abspath
-destFile= buildDir + '/Version.h'
-print "Copy: ",srcFile," to: ",destFile
-
-# Copy the version_prototype.h to version .h
 from shutil import copyfile
+
+currentBranch = (subprocess.check_output(["hg", "branch"]).rstrip())
+currentRevNumber=(subprocess.check_output(["hg", "identify","-n"]).rstrip())
+currentHash = (subprocess.check_output(["hg", "id","-i"]).rstrip())
+buildDate = time.strftime("%c").rstrip()
+
+# Get the full abs path of the file in the src tree and produce the 
+# path of the same file with the timestamp
+srcFile= str(File('Version.prototypeCpp').srcnode())
+destFile= Dir('.').srcnode().abspath +'/Version.cpp'
+
+# Copy the Version.prototypeCpp to Version.cpp
 copyfile(srcFile,destFile)
 
  
 # gsed currentBranch, currentHash, buildDate
 newText=""
-with open('Version.h') as f:
+with open(destFile) as f:
 	newText=f.read()
-	newText= newText.replace('currentBranch_stringVar', currentBranch ) 
-	newText= newText.replace('currentHash_stringVar', currentHash )
-	newText= newText.replace('buildDate_stringVar', buildDate )
+	newText= newText.replace("currentBranch_stringVar", currentBranch ) 
+	newText= newText.replace("currentRevNumber_stringVar", currentRevNumber )
+	newText= newText.replace("currentHash_stringVar", currentHash )
+	newText= newText.replace("buildDate_stringVar", buildDate )
 	f.close()
 
-print "newText= ", newText
-
-with open('Version.h', "w") as f:
+with open(destFile, "w") as f:
     f.write(newText)
     f.close()
 
+
+# Build
 env.Program('VPP', Glob('*.cpp'),
 		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,

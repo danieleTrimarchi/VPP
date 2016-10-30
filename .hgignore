@@ -20,3 +20,4 @@ EclipseWorkSpace/*
 */gvpp/*
 *.gcx
 *docs/*
+main/Version.cpp

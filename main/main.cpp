@@ -238,6 +238,7 @@ int main(int argc, char** argv) {
 			else if (s == "buildInfo" ){
 				std::cout<<"-------------------------"<<std::endl;
 				std::cout<<" Branch: "<<currentBranch<<std::endl;
+				std::cout<<" Revision number: "<<currentRevNumber<<std::endl;
 				std::cout<<" Commit hash: "<<currentHash<<std::endl;
 				std::cout<<" Build on: "<<buildDate<<std::endl;
 				std::cout<<"-------------------------"<<std::endl;
