@@ -38,11 +38,6 @@ THIRD_PARTY_LIBPATH=[
 			'/opt/local/lib' # macPorts and lnopt lib path
 		]
 
-
-#This must be a way to define the path where the executable searches for the dyLib, but for the moment it does not seems to work
-env = DefaultEnvironment()
-
-
 #Compile Debug mode
 #env.Append(CCFLAGS= '-g')
 #env.Append(CPPFLAGS ='-Wc++11-extensions')
@@ -58,7 +53,55 @@ env = DefaultEnvironment()
 # 	Exit(1)
 # env = conf.Finish()
 #===============================================================================
-    
+# Get the environement 
+env = DefaultEnvironment()
+
+
+
+import subprocess
+
+currentBranch = subprocess.check_output(["hg", "branch"])
+print '==>>hg branch: ',currentBranch
+# default
+
+currentHash = subprocess.check_output(["hg", "id","-i"])
+print '==>>hg hash: ',currentHash
+# default
+
+import time
+buildDate = time.strftime("%c")
+print "==> buildDate: ", buildDate
+
+# Get the current directory
+import os
+print 'buildDir= ',os.getcwd()
+buildDir = os.getcwd()
+
+
+srcFile= File('Version.h').srcnode().abspath
+destFile= buildDir + '/Version.h'
+print "Copy: ",srcFile," to: ",destFile
+
+# Copy the version_prototype.h to version .h
+from shutil import copyfile
+copyfile(srcFile,destFile)
+
+ 
+# gsed currentBranch, currentHash, buildDate
+newText=""
+with open('Version.h') as f:
+	newText=f.read()
+	newText= newText.replace('currentBranch_stringVar', currentBranch ) 
+	newText= newText.replace('currentHash_stringVar', currentHash )
+	newText= newText.replace('buildDate_stringVar', buildDate )
+	f.close()
+
+print "newText= ", newText
+
+with open('Version.h', "w") as f:
+    f.write(newText)
+    f.close()
+
 env.Program('VPP', Glob('*.cpp'),
 		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,

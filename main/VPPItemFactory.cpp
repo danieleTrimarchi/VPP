@@ -279,7 +279,7 @@ void VPPItemFactory::plotTotalResistance(){
 
 	// Define the number of velocities and angles
 	// ( the angles are incremented of 10!)
-	size_t nVelocities=40, nAngles=40;
+	size_t nVelocities=40, nAngles=80;
 
 	// Instantiate containers for the curve labels, the
 	// Fn and the resistance
@@ -287,10 +287,10 @@ void VPPItemFactory::plotTotalResistance(){
 	std::vector<ArrayXd> froudeNb, totRes;
 
 	// Loop on the heel angles
-	for(size_t iAngle=0; iAngle<nAngles+1; iAngle+=10){
+	for(int iAngle=0; iAngle<nAngles+1; iAngle+=20){
 
 		// Compute the value of PHI
-		stateVector(1) = mathUtils::toRad(iAngle);
+		stateVector(1) = mathUtils::toRad(iAngle-20);
 		//std::cout<<"PHI= "<<stateVector(1)<<std::endl;
 
 		// declare some tmp containers

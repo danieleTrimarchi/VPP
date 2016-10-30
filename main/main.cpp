@@ -23,7 +23,7 @@ using namespace Eigen;
 #include "Interpolator.h"
 #include "VPPException.h"
 #include "mathUtils.h"
-
+#include "Version.h"
 #include "VPPResultIO.h"
 
 using namespace VPPSolve;
@@ -235,6 +235,14 @@ int main(int argc, char** argv) {
 			else if( s == string("bounds"))
 				solver.printResultBounds();
 
+			else if (s == "buildInfo" ){
+				std::cout<<"-------------------------"<<std::endl;
+				std::cout<<" Branch: "<<currentBranch<<std::endl;
+				std::cout<<" Commit hash: "<<currentHash<<std::endl;
+				std::cout<<" Build on: "<<buildDate<<std::endl;
+				std::cout<<"-------------------------"<<std::endl;
+			}
+
 			//---
 
 			else if( s == string("help") || s == string("h") ){
@@ -276,6 +284,7 @@ int main(int argc, char** argv) {
 				std::cout<<"   plotPolars               : plot the polar result graphs \n";
 				std::cout<<"   plotXY                   : plot the XY velocity-wise result graphs \n";
 				std::cout<<" \n";
+				std::cout<<"   buildInfo                : plot build info such as the date, the branch and the commit\n";
 				std::cout<<"   exit / q                 : terminates the program \n";
 				std::cout<<"======================================================================\n\n";
 

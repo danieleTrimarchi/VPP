@@ -1,3 +1,7 @@
+- Add version.c editing the scons script with 
+hg branch and hg branches
+This should not be too hard in python
+
 - plot sailForce/moments for negative angles
 
 - understand what is wrong with this point for the variableFile@233 (e799e2a71f84)
