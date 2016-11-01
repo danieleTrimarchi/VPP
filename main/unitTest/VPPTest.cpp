@@ -139,8 +139,8 @@ void TVPPTest::itemComponentTest() {
 
 	Eigen::VectorXd baseLines(10);
 	baseLines << 13.7793728326077, -0.320969, 7.28536991539402,
-			-0.0451873, 0., 5.11719177721191, 2.82574575845714,
-			-0.264885, 0, 28.9536234692808;
+			-0.0538096001381927, 0., 5.11719177721191, 2.82574575845714,
+			-0.264885, 0, 28.9450011272918;
 
 	// ==== Compute and compare to baseline frictional resistance
 	// std::cout<<"FRICT= "<<pVppItems->getFrictionalResistanceItem()->get()<<std::endl;
@@ -199,10 +199,10 @@ void TVPPTest::itemComponentTest() {
 	//==>> TEST RESISTANCE COMPONENTS @ HIGH SPEED AND ANGLE
 
 	baseLines << 258.926085131635, 2126.65183639941,
-			215.630377661538, -32.4831069901788, 543.165486198652,
+			215.630377661538, -32.4866766474215, 543.165486198652,
 			91.9349840264342, 49.6072127078136,
 			83.8661310956139,
-			0, 3467.12050034572;
+			0, 3467.11693068848;
 
 	// ==== Compute and compare to baseline frictional resistance
 	// std::cout<<"FRICT= "<<pVppItems->getFrictionalResistanceItem()->get()<<std::endl;
@@ -471,9 +471,9 @@ void TVPPTest::jacobianTest() {
 	//		for(size_t j=0; j<J.cols(); j++)
 	//			printf("(%d %d) %8.12f\n",i,j,J(i,j));
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( -171.796402454376, J(0,0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -171.797068595886, J(0,0), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(  340.367431640625, J(1,0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( -29.4982862472534,  J(0,1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -29.4818377494812,  J(0,1), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( -31634.527587890625, J(1,1), 1.e-6);
 
 }
@@ -515,9 +515,9 @@ void TVPPTest::newtonRaphsonTest() {
 	x.block(0,0,subPbsize,1) = solver.run(4,2,x).block(0,0,subPbsize,1);
 
 	// compare the solution with a given refererence
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0713746226405, x(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.07141666232877, x(0), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0126204456341185, x(1), 1.e-6);
-	CPPUNIT_ASSERT( solver.getNumIters() == 8);
+	CPPUNIT_ASSERT_EQUAL( 9, static_cast<int>(solver.getNumIters()));
 }
 
 // number of iterations required for this run
@@ -943,9 +943,9 @@ void TVPPTest::vppPointTest() {
 	Eigen::VectorXd res( solver.getResult(vTW,aTW) );
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581335537819063, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.5813224837168, res(0), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0744933624586633, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0744917563361641, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 	// ---
@@ -957,10 +957,10 @@ void TVPPTest::vppPointTest() {
 	res= solver.getResult(vTW,aTW);
 	// std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.80999131348862, res(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0382191630365271, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.67612810735268e-05, res(2), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.811534959612858, res(3), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.8101143882781, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0382217232127032, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 3.41042331585086e-06, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.811530870111135, res(3), 1.e-6);
 
 	// -- Testing the SAOASolver -- ///////////////////////////////////////////
 
@@ -976,12 +976,12 @@ void TVPPTest::vppPointTest() {
 	res= saSolver.getResult(vTW,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581451, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581432662645763, res(0), 1.e-6);
 
 	// Note that this value is absolutely unacceptable : no angle should be negative!
 	// I should make sure this test fails by enforcing negative angles to be positive
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.00173836512663653, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.102025758711328, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.00151963071962918, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0985610526858202, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 	// ----
@@ -995,9 +995,9 @@ void TVPPTest::vppPointTest() {
 	res= saSolver.getResult(vTW,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50398088347458, res(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0325181735404945, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.12459745585187, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50405756771471, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0327765096341055, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.120523479793497, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 	// -- Testing the VPPSolver -- ///////////////////////////////////////////
@@ -1014,7 +1014,7 @@ void TVPPTest::vppPointTest() {
 	res= vppSolver.getResult(vTW,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581019959163799, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581032579334975, res(0), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.00470332603349499, res(1), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
@@ -1030,8 +1030,8 @@ void TVPPTest::vppPointTest() {
 	res= vppSolver.getResult(vTW,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50267804407059, res(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.040337856794928, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50278674876735, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0403408480941486, res(1), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
