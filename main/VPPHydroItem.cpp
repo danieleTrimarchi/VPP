@@ -17,18 +17,15 @@ res_(0){
 void ResistanceItem::update(int vTW, int aTW) {
 
 	// Update the Froude number using the state variable boat velocity
-	fN_= V_ / sqrt(Physic::g * pParser_->get("LWL"));
+	fN_= convertToFn( V_ );
 	if(isNotValid(fN_)) throw VPPException(HERE,"fN_ is Nan");
 
-
-	// todo dtrimarchi : possibly re-introduce the warning
-	//	if(fN_ > 0.6) {
-	//		char msg[256];
-	//		sprintf(msg,"The value of the Froude Number %f exceeds the limit value 0.6! "
-	//				"Results might be incorrect.",fN_);
-	//		Warning warning(msg);
-	//	}
-
+//		if(fN_ > 0.6) {
+//			char msg[256];
+//			sprintf(msg,"The value of the Froude Number %f exceeds the limit value 0.6! "
+//					"Results might be incorrect.",fN_);
+//			Warning warning(msg);
+//		}
 }
 
 // Destructor
@@ -41,6 +38,20 @@ const double ResistanceItem::get() const {
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 	return res_;
 }
+
+// Convert a velocity [m/s] to a Fn[-]
+double ResistanceItem::convertToFn( double velocity ){
+
+	return velocity / sqrt(Physic::g * pParser_->get("LWL"));
+}
+
+// Convert a Fn[-] to a velocity [m/s]
+double ResistanceItem::convertToVelocity( double fN ) {
+
+	return fN * sqrt(Physic::g * pParser_->get("LWL"));
+
+}
+
 
 void ResistanceItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of ResistanceItem "<<std::endl;
@@ -192,9 +203,9 @@ void InducedResistanceItem::plot() {
 	b_=0.0, f_=1;
 
 	// Loop on the heel angles
-	for(size_t i=0; i<nAngles; i+=4){
+	for(int i=0; i<nAngles; i+=5){
 
-		PHI_= ( 1./nAngles * (i+1) ) * M_PI/4;
+		PHI_= mathUtils::toRad( i - 5 );
 		//std::cout<<"PHI= "<<PHI_<<std::endl;
 
 		// declare some tmp containers
@@ -533,14 +544,16 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// limit the values to positive angles and Fn>0.25, as in the definition of the DHYS
-	if(PHI_<1e-12 || fN_<0.25) {
+	if( fN_<0.25) {
 		res_=0.;
 		return;
 	}
 
 	// Compute the residuary resistance for the current froude number
 	// RrhH = RrhH20 .* 6 .* ( phi ).^1.7;
-	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( PHI_,1.7) ;
+	// No matter the sign of phi, this is a positive resistance item and I want to
+	// make sure that negative angles increase the total resistance
+	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( std::fabs(PHI_),1.7) ;
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
@@ -711,6 +724,8 @@ void ResiduaryResistanceKeelItem::plot() {
 Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 						ResistanceItem(pParser,pSailSet) {
+
+	//plot this guy and be happy!
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::VectorXd coeff(4);
@@ -962,7 +977,7 @@ void Delta_FrictionalResistance_HeelItem::plot(WindItem* pWind) {
 	double fnMin= io.askUserDouble("Please enter the min value of the Fn");
 	double fnMax= io.askUserDouble("Please enter the max value of the Fn");
 
-	size_t nVelocities=40, maxAngleDeg=30;
+	size_t nVelocities=40, maxAngleDeg=40;
 
 	// Instantiate containers for the curve labels, the
 	// Fn and the resistance
@@ -970,10 +985,10 @@ void Delta_FrictionalResistance_HeelItem::plot(WindItem* pWind) {
 	std::vector<ArrayXd> froudeNb, totRes;
 
 	// Loop on the heel angles
-	for(int iAngle=0; iAngle<maxAngleDeg+1; iAngle+=5){
+	for(int iAngle=0; iAngle<maxAngleDeg+1; iAngle+=10){
 
 		// Compute the value of PHI
-		PHI_ = mathUtils::toRad(iAngle);
+		PHI_ = mathUtils::toRad(iAngle-10);
 
 		// declare some tmp containers
 		vector<double> fn, res;
