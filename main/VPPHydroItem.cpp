@@ -144,7 +144,7 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	// Make a check plot for the induced resistance6
 	// WARNING: as we are in update, this potentially leads to a
 	// large number of plots!
-	// interpolator.plot(0,toRad(30),30,"Effective Span","PHI [deg]","Te");
+	// interpolator.plot(0,toRad(30),30,"Effective Span","PHIº","Te");
 
 	// Get the aerodynamic side force. See DSYHS99 p 129. AeroForcesItem is supposedly up to
 	// date because it is stored in the aeroItems vector that is updated before the hydroItemsVector
@@ -246,7 +246,7 @@ void InducedResistanceItem::plot() {
 		indRes.push_back(tmpRes);
 
 		char msg[256];
-		sprintf(msg,"%3.1f [deg]", toDeg(PHI_));
+		sprintf(msg,"%3.1fº", toDeg(PHI_));
 		curveLabels.push_back(msg);
 
 	}
@@ -258,7 +258,7 @@ void InducedResistanceItem::plot() {
 
 	char msg[256];
 	sprintf(msg,"plot Induced Resistance vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			"twv=%2.2f [m/s], twa=%2.2fº",
 			pAeroForcesItem_->getWindItem()->getTWV(twv),
 			toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
 	fPlotter.plot("Fn [-]","Induced Resistance [N]", msg);
@@ -317,7 +317,7 @@ void InducedResistanceItem::plot() {
 		indRes.push_back(tmpRes);
 
 		char msg[256];
-		sprintf(msg,"%3.1f [deg]", toDeg(PHI_));
+		sprintf(msg,"%3.1f [º]", toDeg(PHI_));
 		curveLabels.push_back(msg);
 
 	}
@@ -329,7 +329,7 @@ void InducedResistanceItem::plot() {
 
 	char msg2[256];
 	sprintf(msg2,"plot Induced Resistance vs Fh^2 - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			"twv=%2.2f [m/s], twa=%2.2fº",
 			pAeroForcesItem_->getWindItem()->getTWV(twv),
 			toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
 	f2Plotter.plot("Fh^2 [N^2]","Induced Resistance [N]", msg2);
@@ -620,7 +620,7 @@ void Delta_ResiduaryResistance_HeelItem::plot(WindItem* pWind) {
 		totRes.push_back(tmpRes);
 
 		char msg[256];
-		sprintf(msg,"%3.1f [deg]", mathUtils::toDeg(PHI_));
+		sprintf(msg,"%3.1fº", mathUtils::toDeg(PHI_));
 		curveLabels.push_back(msg);
 
 	}
@@ -632,7 +632,7 @@ void Delta_ResiduaryResistance_HeelItem::plot(WindItem* pWind) {
 
 	char msg[256];
 	sprintf(msg,"plot Delta Residuary Resistance due to Heel - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			"twv=%2.2f [m/s], twa=%2.2fº",
 			pWind->getTWV(twv),
 			mathUtils::toDeg(pWind->getTWA(twa)) );
 	fPlotter.plot("Fn [-]","dResistance [N]", msg);
@@ -1017,7 +1017,7 @@ void Delta_FrictionalResistance_HeelItem::plot(WindItem* pWind) {
 			totRes.push_back(tmpRes);
 
 			char msg[256];
-			sprintf(msg,"%3.1f [deg]", mathUtils::toDeg(PHI_));
+			sprintf(msg,"%3.1fº", mathUtils::toDeg(PHI_));
 			curveLabels.push_back(msg);
 
 		}
@@ -1030,7 +1030,7 @@ void Delta_FrictionalResistance_HeelItem::plot(WindItem* pWind) {
 
 	char msg[256];
 	sprintf(msg,"plot Delta Frictional Resistance due to Heel - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			"twv=%2.2f [m/s], twa=%2.2fº",
 			pWind->getTWV(twv),
 			mathUtils::toDeg(pWind->getTWA(twa)) );
 	fPlotter.plot("Fn [-]","dResistance [N]", msg);

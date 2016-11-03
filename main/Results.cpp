@@ -376,7 +376,7 @@ void ResultContainer::print(FILE* outStream) {
 
 	fprintf(outStream,"\n%%  iTWV    TWV    iTWa    TWA   --  V    PHI    B    F  --  dF    dM    -- discard \n");
 	fprintf(outStream,  "%%----------------------------------------------------------------------------------\n");
-	fprintf(outStream,  "%%  [-]    [m/s]    [-]   [deg]  -- [m/s] [rad] [m]  [-] --  [N]  [N*m]  --         \n");
+	fprintf(outStream,  "%%  [-]    [m/s]    [-]    [º]  -- [m/s] [rad] [m]  [-] --  [N]  [N*m]  --         \n");
 	fprintf(outStream,  "%%----------------------------------------------------------------------------------\n");
 
 	for(size_t iWv=0; iWv<nWv_; iWv++)
@@ -432,7 +432,7 @@ void ResultContainer::printBounds() {
 		}
 
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
-	std::cout<<"\n MinV [m/s]    MaxV [m/s]  --   MinPhi [deg]    MaxPhi [def]"<<std::endl;
+	std::cout<<"\n MinV [m/s]    MaxV [m/s]  --   MinPhi [º]    MaxPhi [def]"<<std::endl;
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
 	std::cout<<"  "<<minV<<"     "<<maxV<<"     --     "<<mathUtils::toDeg(minPhi)<<"     "<<mathUtils::toDeg(maxPhi)<<std::endl;
 	std::cout<<"---------------------------------------------------------------"<<std::endl;

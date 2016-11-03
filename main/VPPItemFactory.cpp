@@ -323,7 +323,7 @@ void VPPItemFactory::plotTotalResistance(){
 		totRes.push_back(tmpRes);
 
 		char msg[256];
-		sprintf(msg,"%3.1f [deg]", mathUtils::toDeg(stateVector(1)));
+		sprintf(msg,"%3.1fº", mathUtils::toDeg(stateVector(1)));
 		curveLabels.push_back(msg);
 
 	}
@@ -335,7 +335,7 @@ void VPPItemFactory::plotTotalResistance(){
 
 	char msg[256];
 	sprintf(msg,"plot TOTAL Resistance vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			"twv=%2.2f [m/s], twa=%2.2fº",
 			pAeroForcesItem_->getWindItem()->getTWV(twv),
 			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
 	fPlotter.plot("Fn [-]","Total Resistance [N]", msg);

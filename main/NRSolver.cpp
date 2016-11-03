@@ -303,7 +303,7 @@ void NRSolver::plotPolars() {
 	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
 	// Sail flat, Crew B, dF and dM
 	VPPPolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot [m/s]");
-	VPPPolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot [deg]");
+	VPPPolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot [º]");
 
 	// Instantiate the list of wind angles that will serve
 	// for each velocity
@@ -398,7 +398,7 @@ void NRSolver::plotXY(size_t iWa) {
 	VPPPlotter plotter2;
 	string t2=string("Boat Heel")+string(title);
 	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
-			t2,"Wind Speed [m/s]","Boat Heel [deg]");
+			t2,"Wind Speed [m/s]","Boat Heel [º]");
 
 	// Instantiate a plotter for the residuals
 	VPPPlotter plotter5;

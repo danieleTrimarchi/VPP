@@ -60,7 +60,7 @@ void VPPPlotSet::plotXY(size_t iWa) {
 	VPPPlotter plotter2;
 	string t2=string("Boat Heel")+string(title);
 	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
-			t2,"Wind Speed [m/s]","Boat Heel [deg]");
+			t2,"Wind Speed [m/s]","Boat Heelº");
 
 	// Instantiate a plotter for the Flat
 	VPPPlotter plotter3;

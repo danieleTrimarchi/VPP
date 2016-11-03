@@ -712,7 +712,7 @@ void AeroForcesItem::plot() {
 	std::vector<string> curveLabels;
 
 	// Loop on heel angles : from 0 to 90 deg in steps of 15 deg
-	for(size_t hAngle=0; hAngle<90; hAngle+=15){
+	for(int hAngle=-20; hAngle<90; hAngle+=15){
 
 		// Convert the heeling angle into radians
 		PHI_= toRad(hAngle);
@@ -766,7 +766,7 @@ void AeroForcesItem::plot() {
 		mHeel.push_back(m_v);
 
 		char msg[256];
-		sprintf(msg,"heel=%d deg",hAngle);
+		sprintf(msg,"%dº",hAngle);
 		curveLabels.push_back(msg);
 
 	}
@@ -778,7 +778,7 @@ void AeroForcesItem::plot() {
 
 	char msg[256];
 	sprintf(msg,"plot Sail Lift vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			"twv=%2.2f [m/s], twa=%2.2fº",
 			pWindItem_->getTWV(twv),
 			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
 	liftPlotter.plot("Fn [-]","Lift [N]", msg);
@@ -790,7 +790,7 @@ void AeroForcesItem::plot() {
 		dragPlotter.append(curveLabels[i],v[i],Drag[i]);
 
 	sprintf(msg,"plot Sail Drag vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			"twv=%2.2f [m/s], twa=%2.2fº",
 			pWindItem_->getTWV(twv),
 			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
 	dragPlotter.plot("Fn [-]","Drag [N]", msg);
@@ -801,7 +801,7 @@ void AeroForcesItem::plot() {
 		fPlotter.append(curveLabels[i],v[i],fDrive[i]);
 
 	sprintf(msg,"plot drive force vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			"twv=%2.2f [m/s], twa=%2.2fº",
 			pWindItem_->getTWV(twv),
 			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
 	fPlotter.plot("Fn [-]","Fdrive [N]", msg);
@@ -812,7 +812,7 @@ void AeroForcesItem::plot() {
 		fSidePlotter.append(curveLabels[i],v[i],fSide[i]);
 
 	sprintf(msg,"plot side force vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			"twv=%2.2f [m/s], twa=%2.2fº",
 			pWindItem_->getTWV(twv),
 			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
 	fSidePlotter.plot("Fn [-]","Fside [N]", msg);
