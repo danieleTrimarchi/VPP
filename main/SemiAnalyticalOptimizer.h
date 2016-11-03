@@ -40,9 +40,6 @@ class SemiAnalyticalOptimizer : public VPPSolverBase {
 		/// Boat velocity objective function
 		static double VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data);
 
-		/// Set the initial guess for the state variable vector
-		void resetInitialGuess(int TWV, int TWA);
-
 		/// Ask the NRSolver to solve a sub-problem without the optimization variables
 		/// this makes the initial guess an equilibrated solution
 		void solveInitialGuess(int TWV, int TWA);

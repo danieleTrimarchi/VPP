@@ -63,7 +63,11 @@ class VPPSolverBase {
 		virtual void reset(boost::shared_ptr<VPPItemFactory>);
 
 		/// Set the initial guess for the state variable vector
-		virtual void resetInitialGuess(int TWV, int TWA) =0;
+		virtual void resetInitialGuess(int TWV, int TWA);
+
+		/// Returns the index of the previous velocity-wise (twv) result that is marked as
+		/// converged (discarde==false). It starts from 'current', so it can be used recursively
+		size_t getPreviousConverged(size_t current, size_t TWA);
 
 		/// Ask the NRSolver to solve a sub-problem without the optimization variables
 		/// this makes the initial guess an equilibrated solution
@@ -105,6 +109,9 @@ class VPPSolverBase {
 
 		/// Disallow default constructor
 		VPPSolverBase();
+
+		/// Declare a static const initial guess state vector
+		static Eigen::VectorXd xp0_;
 
 
 };

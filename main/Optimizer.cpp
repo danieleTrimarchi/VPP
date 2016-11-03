@@ -87,89 +87,6 @@ void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 }
 
-
-// Returns the index of the previous velocity-wise (twv) result that is marked as
-// converged (discard==false). It starts from 'current', so it can be used recursively
-size_t Optimizer::getPreviousConverged(size_t idx, size_t TWA) {
-
-	while(idx){
-		idx--;
-		if(!pResults_->get(idx,TWA).discard())
-			return idx;
-	}
-
-	throw NoPreviousConvergedException(HERE,"No previous converged index found");
-}
-
-
-// Set the initial guess for the state variable vector
-void Optimizer::resetInitialGuess(int TWV, int TWA) {
-
-	// In it to something small to start the evals at each velocity
-	if(TWV==0) {
-
-		// This is the very first solution, so we must guess a solution
-		// but have nothing to establish our guess
-		if(TWA==0){
-
-			xp_(0)= .5;  		// V_0
-			xp_(1)= 0.; 		// PHI_0
-			xp_(2)= 0.0;		// b_0
-			xp_(3)= 1.;			// f_0
-
-		}
-		else
-			// In this case we have a solution at a previous angle we can use
-			// to set the guess
-			xp_ = *(pResults_->get(TWV,TWA-1).getX());
-
-	}
-
-	else if( TWV>1 ) {
-
-		// For twv> 1 we can linearly predict the result of the state vector
-		// we search for the last two converged results and we do discard the
-		// diverged results, that would not serve our cause
-		// Enclose by try-catch block in case getPreviousConverged does not find
-		// a valid solution to be used for the linear guess
-		try {
-
-			size_t tmOne=getPreviousConverged(TWV-1,TWA);
-			size_t tmTwo=getPreviousConverged(tmOne,TWA);
-
-			Extrapolator extrapolator(
-					pResults_->get(tmTwo,TWA).getTWV(),
-					pResults_->get(tmTwo,TWA).getX(),
-					pResults_->get(tmOne,TWA).getTWV(),
-					pResults_->get(tmOne,TWA).getX()
-			);
-
-			// Extrapolate the state vector for the current wind
-			// velocity. Note that the items have not been init yet
-			Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-
-			// Do extrapolate ONLY if the velocity is increasing
-			// This is beneficial to convergence
-			if(xp(0)>xp_(0))
-				xp_=xp;
-
-		} catch( NoPreviousConvergedException& e){
-			// do nothing
-		}
-
-		// Make sure the initial guess does not exceeds the bounds
-		for(size_t i=0; i<dimension_; i++) {
-			if(xp_[i]<lowerBounds_[i])
-				xp_[i]=lowerBounds_[i];
-			if(xp_[i]>upperBounds_[i])
-				xp_[i]=upperBounds_[i];
-		}
-	}
-
-	std::cout<<"-->> optimizer first guess: "<<xp_.transpose()<<std::endl;
-
-}
-
 // Ask the NRSolver to solve a sub-problem without the optimization variables
 // this makes the initial guess an equilibrated solution
 void Optimizer::solveInitialGuess(int TWV, int TWA) {
@@ -306,7 +223,7 @@ void Optimizer::run(int TWV, int TWA) {
 	// Refine the solution from the optimizer with NR -> this is meant to fix the residuals
 	solveInitialGuess(TWV,TWA);
 
-	// Push the result to the result container
+	// Push the result to the result container and mark this as a converged result
 	pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
 
 	// Make sure the result does not exceeds the bounds
