@@ -154,6 +154,10 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	// Buffer initial guess before entering the regression loop
 	Eigen::VectorXd xpBuf= xp_;
 
+	// Declare a buffer vector xp for the optimizer. Declare it here so
+	// that is available to the invalid_argument exception
+	std::vector<double> xp(saPbSize_);
+
 	// Declare the number of evaluations in the optimization space
 	// Remember the state vector x={v phi b f}
 	size_t nCrew=5, nFlat=5;
@@ -215,7 +219,6 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 			printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
 
 			// convert to standard vector
-			std::vector<double> xp(saPbSize_);
 			for(size_t i=0; i<saPbSize_; i++)
 				xp[i]=xp_(subPbSize_+i);
 
@@ -263,6 +266,16 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		// Push to the result container a result to be discarded -> that won't be plot
 		pResults_->remove(TWV, TWA);
 
+	}
+	catch(std::invalid_argument& e){
+		std::cout<<"\nThe optimizer returned an invalid argument exception."<<std::endl;
+		std::cout<<"This often happens if the specified initial guess exceeds the variable bounds."<<std::endl;
+		std::cout<<"Initial guess: ";
+		for(size_t i=0; i<xp.size(); i++) std::cout<<xp[i]<<", ";
+		std::cout<<"\n\n";
+		char msg[256];
+		sprintf(msg,"%s",e.what());
+		throw VPPException(HERE,msg);
 	}
 	catch (std::exception& e) {
 

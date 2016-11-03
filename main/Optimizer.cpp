@@ -179,6 +179,9 @@ void Optimizer::run(int TWV, int TWA) {
 	Eigen::VectorXd residuals(dimension_);
 	for(size_t i=0; i<dimension_; i++) residuals(i)=100;
 
+	// Declare a buffer vector xp. Declare it here so
+	// that is available to the invalid_argument exception
+	std::vector<double> xp(xp_.rows());
 
 	try{
 
@@ -186,7 +189,6 @@ void Optimizer::run(int TWV, int TWA) {
 		std::cout<<"Entering the optimizer with: ";
 		printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
 		// convert to standard vector
-		std::vector<double> xp(xp_.rows());
 		for(size_t i=0; i<xp_.rows(); i++)
 			xp[i]=xp_(i);
 
@@ -201,6 +203,16 @@ void Optimizer::run(int TWV, int TWA) {
 		std::cout<<"Roundoff limited result"<<std::endl;
 		// do nothing because the result of roundoff-limited exception
 		// is meant to be still a meaningful result
+	}
+	catch(std::invalid_argument& e){
+		std::cout<<"\nThe optimizer returned an invalid argument exception."<<std::endl;
+		std::cout<<"This often happens if the specified initial guess exceeds the variable bounds."<<std::endl;
+		std::cout<<"Initial guess: ";
+		for(size_t i=0; i<xp.size(); i++) std::cout<<xp[i]<<", ";
+		std::cout<<"\n\n";
+		char msg[256];
+		sprintf(msg,"%s",e.what());
+		throw VPPException(HERE,msg);
 	}
 	catch (std::exception& e) {
 

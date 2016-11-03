@@ -1,5 +1,3 @@
-- Why do we get such a wrong solution in VPPPoint test..??? When did this start? This appears fucking strange..!
-
 - can we get a reasonable exception from nlOpt in case of out-of-bounds initial guess
 
 - plot sailForce/moments for negative angles

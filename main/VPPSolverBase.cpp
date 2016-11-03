@@ -159,7 +159,6 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 // converged (discard==false). It starts from 'current', so it can be used recursively
 size_t VPPSolverBase::getPreviousConverged(size_t idx, size_t TWA) {
 
-
 	while(idx){
 		idx--;
 		if(!pResults_->get(idx,TWA).discard())
