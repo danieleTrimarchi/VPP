@@ -19,7 +19,8 @@ class Result {
 
 		/// Constructor with no results
 		Result(	size_t itwv, double twv,
-						size_t itwa, double twa);
+						size_t itwa, double twa,
+						bool discarde=false);
 
 		/// Constructor -- only doubles
 		Result(	size_t itwv, double twv,

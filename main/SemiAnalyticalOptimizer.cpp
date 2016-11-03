@@ -87,51 +87,6 @@ void SemiAnalyticalOptimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFac
 
 }
 
-// Set the initial guess for the state variable vector
-void SemiAnalyticalOptimizer::resetInitialGuess(int TWV, int TWA) {
-
-	// In it to something small to start the evals at each velocity
-	if(TWV==0) {
-
-		xp_(0)= 1.0;  	// V_0
-		xp_(1)= 0.1;		// PHI_0
-		xp_(2)= 0.01;		// b_0
-		xp_(3)= 0.99;		// f_0
-
-	}
-
-	else if( TWV>1 ) {
-
-		// For twv> 1 we can linearly predict the result of the state vector
-		Extrapolator extrapolator(
-				pResults_->get(TWV-2,TWA).getTWV(),
-				pResults_->get(TWV-2,TWA).getX(),
-				pResults_->get(TWV-1,TWA).getTWV(),
-				pResults_->get(TWV-1,TWA).getX()
-		);
-
-		// Extrapolate the state vector for the current wind
-		// velocity. Note that the items have not been init yet
-		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-
-		// Do extrapolate ONLY if the velocity is increasing
-		// This is beneficial to convergence
-		if(xp(0)>xp_(0))
-			xp_=xp;
-
-		// Make sure the initial guess does not exceeds the bounds for the opt vars
-		for(size_t i=0; i<saPbSize_; i++) {
-			if(xp_[subPbSize_+i]<lowerBounds_[i])
-				xp_[subPbSize_+i]=lowerBounds_[i];
-			if(xp_[subPbSize_+i]>upperBounds_[i])
-				xp_[subPbSize_+i]=upperBounds_[i];
-		}
-	}
-
-	std::cout<<"-->> SemiAnalyticalOptimizer first guess: "<<xp_.transpose()<<std::endl;
-
-}
-
 // Ask the NRSolver to solve a sub-problem without the optimization variables
 // this makes the initial guess an equilibrated solution
 void SemiAnalyticalOptimizer::solveInitialGuess(int TWV, int TWA) {

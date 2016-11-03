@@ -909,6 +909,10 @@ void TVPPTest::runISRESTest_g06(){
 // Test a run on a complete computation point : initial guess, NR and solution with NLOpt
 void TVPPTest::vppPointTest() {
 
+	// Set the precision for cout in order to visualize results that can be used
+	// to reset the baselines
+	std::cout.precision(15);
+
 	std::cout<<"=== Testing one point computed by the vpp === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
@@ -931,87 +935,104 @@ void TVPPTest::vppPointTest() {
 	// Instantiate the items
 	pVppItems.reset( new VPPItemFactory(&parser,pSails) );
 
+	// Set this run for wind angle 5
+	size_t aTW=5;
+
 	// -- Testing the Optimizer -- ///////////////////////////////////////////
 
 	// Instantiate an optimizer
 	Optim::Optimizer solver(pVppItems);
 
-	// Set the input: twv and twa, and run the optimizer for the current wind speed/angle
-	size_t vTW=0, aTW=5;
-	solver.run(vTW,aTW);
+	// Loop on the first 5 wind VELOCITIES.
+	// Five is of course arbitrary
+	for(size_t vTW=0; vTW<6; vTW++){
 
-	Eigen::VectorXd res( solver.getResult(vTW,aTW) );
+		try{
+			// Run the optimizer for the current wind speed/angle
+			solver.run(vTW,aTW);
+		}
+		catch(...){
+			std::cout<<"Something went very wrong while running the solver..."<<std::endl;
+		}
+	}
+
+	Eigen::VectorXd res( solver.getResult(1,aTW) );
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.5813224837168, res(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0744917563361641, res(2), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.770433161272144, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.00891823551917864, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.31172986853623e-05, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.97880739967609, res(3), 1.e-6);
 
 	// ---
 
 	// Set new velocity/angle
-	vTW=5, aTW=5;
-	solver.run(vTW,aTW);
+	res= solver.getResult(5,aTW);
+	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	res= solver.getResult(vTW,aTW);
-	// std::cout<<"RESULT: \n"<<res<<std::endl;
-
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.8101143882781, res(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0382217232127032, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 3.41042331585086e-06, res(2), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.811530870111135, res(3), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50913137230025, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.641721899201751, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1, res(3), 1.e-6);
 
 	// -- Testing the SAOASolver -- ///////////////////////////////////////////
-
-	// Reset velocity/angle
-	vTW=0, aTW=5;
 
 	// Now repeat the exercise with the SAOA
 	SAOA::SemiAnalyticalOptimizer saSolver(pVppItems);
 
-	// Set the input: twv and twa, and run the optimizer for the current wind speed/angle
-	saSolver.run(vTW,aTW);
+	// Loop on the first 5 wind VELOCITIES.
+	// Five is of course arbitrary
+	for(size_t vTW=0; vTW<6; vTW++){
 
-	res= saSolver.getResult(vTW,aTW);
+		std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
+
+		try{
+			// Run the optimizer for the current wind speed/angle
+			saSolver.run(vTW,aTW);
+		}
+		catch(...){
+			std::cout<<"Something went very wrong while running the SAOA solver..."<<std::endl;
+		}
+	}
+
+	res= saSolver.getResult(1,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581432662645763, res(0), 1.e-6);
-
-	// Note that this value is absolutely unacceptable : no angle should be negative!
-	// I should make sure this test fails by enforcing negative angles to be positive
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.00151963071962918, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0985610526858202, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.774293133613769, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.00792863138184042, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0193559384776055, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 	// ----
 
-	// Reset new velocity/angle
-	vTW=5, aTW=5;
-
-	// Set the input: twv and twa, and run the optimizer for the current wind speed/angle
-	saSolver.run(vTW,aTW);
-
-	res= saSolver.getResult(vTW,aTW);
+	res= saSolver.getResult(5,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50405756771471, res(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0327765096341055, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.120523479793497, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.52324759186468, res(0), 1.e-6);
+	// this is a non acceptable value!
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.148017118825571, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 3, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 	// -- Testing the VPPSolver -- ///////////////////////////////////////////
 
-	// Reset velocity/angle
-	vTW=0, aTW=5;
-
-	// Now repeat the exercise with the SAOA
+	// Now repeat the exercise with the vppSolver
 	VPPSolve::VPPSolver vppSolver(pVppItems);
 
-	// Set the input: twv and twa, and run the optimizer for the current wind speed/angle
-	vppSolver.run(vTW,aTW);
+	// Loop on the first 5 wind VELOCITIES.
+	// Five is of course arbitrary
+	for(size_t vTW=0; vTW<6; vTW++){
 
-	res= vppSolver.getResult(vTW,aTW);
+		try{
+			// Run the optimizer for the current wind speed/angle
+			vppSolver.run(vTW,aTW);
+		}
+		catch(...){
+			std::cout<<"Something went very wrong while running the SAOA solver..."<<std::endl;
+		}
+	}
+
+	res= vppSolver.getResult(0,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581032579334975, res(0), 1.e-6);
@@ -1021,13 +1042,7 @@ void TVPPTest::vppPointTest() {
 
 	// ---
 
-	// Reset new velocity/angle
-	vTW=5, aTW=5;
-
-	// Set the input: twv and twa, and run the optimizer for the current wind speed/angle
-	vppSolver.run(vTW,aTW);
-
-	res= vppSolver.getResult(vTW,aTW);
+	res= vppSolver.getResult(5,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50278674876735, res(0), 1.e-6);
