@@ -195,6 +195,9 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
+		/// Plot
+		void plot(WindItem* pWind);
+
 	private:
 
 		/// Implement pure virtual method of the parent class

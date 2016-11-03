@@ -71,8 +71,8 @@ dM_(0) {
 
 	// Instantiate a Delta_ResiduaryResistanceKeel_HeelItem Item and push it back to the children vector
 	// Express the change in Appendage Resistance due to Heel. See DSYHS99 3.2.2 p 126-127
-	boost::shared_ptr<Delta_ResiduaryResistanceKeel_HeelItem> pDelta_ResiduaryResistanceKeel_HeelItem(new Delta_ResiduaryResistanceKeel_HeelItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pDelta_ResiduaryResistanceKeel_HeelItem );
+	pDelta_ResiduaryResistanceKeel_HeelItem_.reset(new Delta_ResiduaryResistanceKeel_HeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pDelta_ResiduaryResistanceKeel_HeelItem_ );
 
 	// Instantiate a InducedResistanceItem and push it back to the children vector
 	// For the definition of the Induced Resistance see DSYHS99 ch4 p128
@@ -194,6 +194,11 @@ Delta_FrictionalResistance_HeelItem* VPPItemFactory::getDelta_FrictionalResistan
 // Getter for the Delta Residuary Resistance due to heel item
 Delta_ResiduaryResistance_HeelItem* VPPItemFactory::getDelta_ResiduaryResistance_HeelItem() const {
 	return pDelta_ResiduaryResistance_HeelItem_.get();
+}
+
+// Getter for the Delta Residuary Resistance of the keel due to heel item
+Delta_ResiduaryResistanceKeel_HeelItem* VPPItemFactory::getDelta_ResiduaryResistanceKeel_HeelItem() const {
+	return pDelta_ResiduaryResistanceKeel_HeelItem_.get();
 }
 
 // Getter for the negative resistance item

@@ -168,6 +168,9 @@ int main(int argc, char** argv) {
 			else if(s == string("plotDelta_ResidRes_Heel") )
 				pVppItems->getDelta_ResiduaryResistance_HeelItem()->plot(pVppItems->getWind());
 
+			else if(s == string("plotDelta_ResidResKeel_Heel") )
+				pVppItems->getDelta_ResiduaryResistanceKeel_HeelItem()->plot(pVppItems->getWind());
+
 			else if(s == string("plotFrictionalRes_Keel") )
 				pVppItems->getViscousResistanceKeelItem()->plot(); //-> this does not plot
 
@@ -232,46 +235,48 @@ int main(int argc, char** argv) {
 
 			else if( s == string("help") || s == string("h") ){
 
-				std::cout<<"\n== AVAILABLE OPTIONS =============================================== \n";
-				std::cout<<"   printVars                : print the variables read from file \n";
+				std::cout<<"\n== AVAILABLE OPTIONS ================================================== \n";
+				std::cout<<"   printVars                   : print the variables read from file \n";
 				std::cout<<" \n";
-				std::cout<<"   convertVelocityToFn      : print out the Fn, given a velocity: Fn = v/sqrt(gL)\n";
-				std::cout<<"   convertFnToVelocity      : print out the velocity, given a Fn: v = Fn*sqrt(gL) \n";
+				std::cout<<"   convertVelocityToFn         : print out the Fn, given a velocity: Fn = v/sqrt(gL)\n";
+				std::cout<<"   convertFnToVelocity         : print out the velocity, given a Fn: v = Fn*sqrt(gL) \n";
 				std::cout<<" \n";
-				std::cout<<"   plotSailCoeffs           : plot the aerodynamic coeffs for the current sails \n";
-				std::cout<<"   plot_D_SailCoeffs        : plot the first derivative of the aerodynamic coeffs for the current sails \n";
-				std::cout<<"   plot_D2_SailCoeffs       : plot the second derivative of the aerodynamic coeffs for the current sails \n";
+				std::cout<<"   plotSailCoeffs              : plot the aerodynamic coeffs for the current sails \n";
+				std::cout<<"   plot_D_SailCoeffs           : plot the first derivative of the aerodynamic coeffs for the current sails \n";
+				std::cout<<"   plot_D2_SailCoeffs          : plot the second derivative of the aerodynamic coeffs for the current sails \n";
 				std::cout<<" \n";
-				std::cout<<"   plotSailForceMoment      : plot the drive force and the heeling moment for fixed wind/heel ranges\n";
-				std::cout<<"   plotJacobian             : plot the Jacobian derivative components for fixed wind/heel ranges\n";
+				std::cout<<"   plotSailForceMoment         : plot the drive force and the heeling moment for fixed wind/heel ranges\n";
+				std::cout<<"   plotJacobian                : plot the Jacobian derivative components for fixed wind/heel ranges\n";
 				std::cout<<" \n";
-				std::cout<<"   plotTotalResistance      : plot the Total Resistance for a fixed range\n";
-				std::cout<<"   plotResidRes             : plot the Residuary Resistance for a fixed range\n";
-				std::cout<<"   plotInducedRes           : plot the Induced Resistance for a fixed range\n";
-				std::cout<<"   plotResidRes_Keel        : plot the Residuary Resistance of the Keel for a fixed range\n";
-				std::cout<<"   plotFrictionalRes        : plot the Viscous Resistance for a fixed range\n";
-				std::cout<<"   plotFrictionalRes_Keel   : plot the Viscous Resistance of the Keel for a fixed range\n";
-				std::cout<<"   plotFrictionalRes_Rudder : plot the Viscous Resistance of the Rudder for a fixed range\n";
-				std::cout<<"   plotDelta_FrictRes_Heel  : plot the Delta Frictional Resistance due to heel for a fixed range\n";
-				std::cout<<"   plotDelta_ResidRes_Heel  : plot the Delta Residuary Resistance due to heel for a fixed range\n";
-				std::cout<<"   plotNegativeResistance   : plot the Negative Resistance for a fixed Fn range\n";
+				std::cout<<"   plotTotalResistance         : plot the Total Resistance for a fixed range\n";
+				std::cout<<"   plotResidRes                : plot the Residuary Resistance for a fixed range\n";
+				std::cout<<"   plotInducedRes              : plot the Induced Resistance for a fixed range\n";
+				std::cout<<"   plotResidRes_Keel           : plot the Residuary Resistance of the Keel for a fixed range\n";
+				std::cout<<"   plotFrictionalRes           : plot the Viscous Resistance for a fixed range\n";
+				std::cout<<"   plotFrictionalRes_Keel      : plot the Viscous Resistance of the Keel for a fixed range\n";
+				std::cout<<"   plotFrictionalRes_Rudder    : plot the Viscous Resistance of the Rudder for a fixed range\n";
+				std::cout<<"   plotDelta_FrictRes_Heel     : plot the Delta Frictional Resistance due to heel for a fixed range\n";
+				std::cout<<"   plotDelta_ResidRes_Heel     : plot the Delta Residuary Resistance due to heel for a fixed range\n";
+				std::cout<<"   plotDelta_ResidResKeel_Heel : plot the Delta Residuary Resistance of the keel due to heel for a fixed range\n";
 				std::cout<<" \n";
-				std::cout<<"   plotOptimizationSpace    : plot the optimization 2d space starting at a given configuration\n";
+				std::cout<<"   plotNegativeResistance      : plot the Negative Resistance for a fixed Fn range\n";
 				std::cout<<" \n";
-				std::cout<<"   reload                   : reload the variables from file \n";
-				std::cout<<"   run                      : launches the computations \n";
-				std::cout<<"   import                   : import the results from a file named results.vpp \n";
+				std::cout<<"   plotOptimizationSpace       : plot the optimization 2d space starting at a given configuration\n";
 				std::cout<<" \n";
-				std::cout<<"   print                    : print results to screen \n";
-				std::cout<<"   save                     : save results to a file named results.vpp \n";
-				std::cout<<"   bounds                   : print result bounds to screen \n";
+				std::cout<<"   reload                      : reload the variables from file \n";
+				std::cout<<"   run                         : launches the computations \n";
+				std::cout<<"   import                      : import the results from a file named results.vpp \n";
 				std::cout<<" \n";
-				std::cout<<"   plotPolars               : plot the polar result graphs \n";
-				std::cout<<"   plotXY                   : plot the XY velocity-wise result graphs \n";
+				std::cout<<"   print                       : print results to screen \n";
+				std::cout<<"   save                        : save results to a file named results.vpp \n";
+				std::cout<<"   bounds                      : print result bounds to screen \n";
 				std::cout<<" \n";
-				std::cout<<"   buildInfo                : plot build info such as the date, the branch and the commit\n";
-				std::cout<<"   exit / q                 : terminates the program \n";
-				std::cout<<"======================================================================\n\n";
+				std::cout<<"   plotPolars                  : plot the polar result graphs \n";
+				std::cout<<"   plotXY                      : plot the XY velocity-wise result graphs \n";
+				std::cout<<" \n";
+				std::cout<<"   buildInfo                   : plot build info such as the date, the branch and the commit\n";
+				std::cout<<"   exit / q                    : terminates the program \n";
+				std::cout<<"=========================================================================\n\n";
 
 			}
 			else

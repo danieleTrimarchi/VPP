@@ -725,8 +725,6 @@ Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 						ResistanceItem(pParser,pSailSet) {
 
-	//plot this guy and be happy!
-
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::VectorXd coeff(4);
 	coeff << -3.5837, -0.0518,	0.5958,	0.2055;
@@ -773,6 +771,83 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 
 void Delta_ResiduaryResistanceKeel_HeelItem::printWhoAmI() {
 	std::cout<<"--> WhoAmI of Delta_ResiduaryResistanceKeel_HeelItem "<<std::endl;
+}
+
+// Plot
+void Delta_ResiduaryResistanceKeel_HeelItem::plot(WindItem* pWind) {
+
+	// Ask the user for twv and twa
+	size_t twv=0, twa=0;
+	IOUtils io(pWind);
+	io.askUserWindIndexes(twv, twa);
+
+	// Init the state vector
+	b_= io.askUserDouble("Please enter the crew position");
+	f_= io.askUserDouble("Please enter the value of flat");
+
+	double fnMin= io.askUserDouble("Please enter the min value of the Fn");
+	double fnMax= io.askUserDouble("Please enter the max value of the Fn");
+
+	size_t nVelocities=40, maxAngleDeg=30;
+
+	// Instantiate containers for the curve labels, the
+	// Fn and the resistance
+	std::vector<string> curveLabels;
+	std::vector<ArrayXd> froudeNb, totRes;
+
+	// Loop on the heel angles
+	for(size_t iAngle=0; iAngle<maxAngleDeg+1; iAngle+=5){
+
+		// Compute the value of PHI
+		PHI_ = mathUtils::toRad(iAngle);
+
+		// declare some tmp containers
+		vector<double> fn, res;
+
+		// Loop on the velocities
+		for(size_t v=0; v<nVelocities; v++){
+
+			// Set a fictitious velocity (Fn=-0.3-0.7)
+			V_= ( fnMin + ( ( fnMax-fnMin ) / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+
+			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
+			update(twv,twa);
+
+			// Fill the vectors to be plot
+			fn.push_back( V_/sqrt(Physic::g * pParser_->get("LWL") ) );
+			res.push_back( get() );
+
+		}
+
+		// Now transform fn and res to ArrayXd and push_back to vector
+		ArrayXd tmpFn(fn.size());
+		ArrayXd tmpRes(fn.size());
+		for(size_t j=0; j<fn.size(); j++){
+			tmpFn(j)=fn[j];
+			tmpRes(j)=res[j];
+		}
+
+		froudeNb.push_back(tmpFn);
+		totRes.push_back(tmpRes);
+
+		char msg[256];
+		sprintf(msg,"%3.1fº", mathUtils::toDeg(PHI_));
+		curveLabels.push_back(msg);
+
+	}
+
+	// Instantiate a plotter and plot
+	VPPPlotter fPlotter;
+	for(size_t i=0; i<froudeNb.size(); i++)
+		fPlotter.append(curveLabels[i],froudeNb[i],totRes[i]);
+
+	char msg[256];
+	sprintf(msg,"plot Delta Residuary Resistance of the keel due to Heel - "
+			"twv=%2.2f [m/s], twa=%2.2fº",
+			pWind->getTWV(twv),
+			mathUtils::toDeg(pWind->getTWA(twa)) );
+	fPlotter.plot("Fn [-]","dResistance [N]", msg);
+
 }
 
 //=================================================================
