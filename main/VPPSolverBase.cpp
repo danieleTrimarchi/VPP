@@ -103,20 +103,8 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 		// a valid solution to be used for the linear guess
 		try {
 
-			std::cout<<"Print the result tvw, twa!"<<std::endl;
-			pResults_->get(TWV,TWA).print();
-
 			size_t tmOne=getPreviousConverged(TWV,TWA);
-
-			std::cout<<"tmOne= "<<tmOne<<std::endl;
-			std::cout<<"Print the result tmOne, twa!"<<std::endl;
-			pResults_->get(tmOne,TWA).print();
-
 			size_t tmTwo=getPreviousConverged(tmOne,TWA);
-
-			std::cout<<"tmTwo= "<<tmTwo<<std::endl;
-			std::cout<<"Print the result tmTwo, twa!"<<std::endl;
-			pResults_->get(tmTwo,TWA).print();
 
 			Extrapolator extrapolator(
 					pResults_->get(tmTwo,TWA).getTWV(),
@@ -127,12 +115,7 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 
 			// Extrapolate the state vector for the current wind
 			// velocity. Note that the items have not been init yet
-			Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-			std::cout<<"Extrapolated solution: "<<xp.transpose()<<std::endl;
-			// Do extrapolate ONLY if the velocity is increasing
-			// This is beneficial to convergence
-			//if(xp(0)>xp_(0))
-			xp_=xp;
+			xp_= extrapolator.get( pWind_->getTWV(TWV) );
 
 		} catch( NoPreviousConvergedException& e){
 			// do nothing
