@@ -5,9 +5,18 @@
 #include "VPPException.h"
 #include "mathUtils.h"
 
+//  As an example program, we don't want to use any deprecated features
+#define BOOST_FILESYSTEM_NO_DEPRECATED
+
+#include "boost/filesystem/operations.hpp"
+#include "boost/filesystem/path.hpp"
+
 // Constructor
 VariableFileParser::VariableFileParser(std::string fileName) :
 fileName_(fileName) {
+
+	boost::filesystem::path full_path( boost::filesystem::current_path() );
+	std::cout<<"Running path= "<<full_path<<std::endl;
 
 	// Set the variable the user must define in the input file.
 	// Method check() will assure all variables have been defined

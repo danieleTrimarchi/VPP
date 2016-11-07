@@ -1,10 +1,6 @@
 - add a scons target scons makeDocs
 
 - add a scone target: scons makeTest
-
-- Where to place latex packages required by Doxigen
-
-- How to build PDF from the latex Doxygen
  
 - build ipOtp integration
 

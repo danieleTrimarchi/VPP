@@ -23,7 +23,9 @@ THIRD_PARTY_LIBS=[
 			'plplotcxx',  #libs required by plplot
 			'plplot',
 			'nlopt',
-			'BLAS'
+			'BLAS',
+			'boost_system',
+			'libboost_filesystem'
 		]
 			
 					
@@ -35,8 +37,10 @@ THIRD_PARTY_LIBPATH=[
 			'/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib',
 			'/Users/dtrimarchi/third_party/nlopt-2.4.2/libs',
 			'/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A',
-			'/opt/local/lib' # macPorts and lnopt lib path
-		]
+			'/opt/local/lib', # macPorts and lnopt lib path
+			'/Users/dtrimarchi/third_party/boost_1_60_0/bin.v2/libs/system/build/darwin-4.2.1/release/link-static/threading-multi',
+			'/Users/dtrimarchi/third_party/boost_1_60_0/bin.v2/libs/filesystem/build/darwin-4.2.1/release/link-static/threading-multi']
+
 
 #Compile Debug mode
 #env.Append(CCFLAGS= '-g')
@@ -56,7 +60,6 @@ THIRD_PARTY_LIBPATH=[
 # Get the environement 
 env = DefaultEnvironment()
 
-
 # Do some work to produce the version info
 import subprocess
 import time
@@ -74,7 +77,6 @@ destFile= Dir('.').srcnode().abspath +'/Version.cpp'
 
 # Copy the Version.prototypeCpp to Version.cpp
 copyfile(srcFile,destFile)
-
  
 # gsed currentBranch, currentHash, buildDate
 newText=""
@@ -90,6 +92,8 @@ with open(destFile, "w") as f:
     f.write(newText)
     f.close()
 
+env.Append(LINKFLAGS = ['-install_name /Users/dtrimarchi/third_party/boost_1_60_0/bin.v2/libs/filesystem/build/darwin-4.2.1/release/threading-multi/libboost_filesystem.dylib'])
+
 
 # Build
 env.Program('VPP', Glob('*.cpp'),
@@ -98,7 +102,12 @@ env.Program('VPP', Glob('*.cpp'),
 		LIBPATH=THIRD_PARTY_LIBPATH
 	)
 
-
 # And now proceed to the subFolders
 SConscript('''unitTest/SConscript'''.split())
+
+# Add a runTest target that allows running the tests
+#if 'runTest' in COMMAND_LINE_TARGETS:
+ #       Default(Program('foo.c'))
+  #      Program('bar.c')
+# https://bitbucket.org/scons/scons/wiki/UnitTests
 

@@ -26,7 +26,9 @@ THIRD_PARTY_LIBS=[
 			'plplot',
 			'nlopt',
 			'BLAS',
-			'cppunit'
+			'cppunit',
+			'boost_system',
+			'boost_filesystem'
 		]
 			
 					
@@ -39,13 +41,14 @@ THIRD_PARTY_LIBPATH=[
 			'/Users/dtrimarchi/third_party/nlopt-2.4.2/libs',
 			'/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A',
 			'/opt/local/lib', # macPorts and lnopt lib path
-			'/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib'
+			'/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib',
+			'/Users/dtrimarchi/third_party/boost_1_60_0/bin.v2/libs/system/build/darwin-4.2.1/release/link-static/threading-multi',
+			'/Users/dtrimarchi/third_party/boost_1_60_0/bin.v2/libs/filesystem/build/darwin-4.2.1/release/link-static/threading-multi'
 		]
 
 
 #This must be a way to define the path where the executable searches for the dyLib, but for the moment it does not seems to work
 env = DefaultEnvironment()
-
 
 #Compile Debug mode
 #env.Append(CCFLAGS= '-g')
@@ -54,8 +57,7 @@ env = DefaultEnvironment()
 #warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]
 
-
-env.Program('unitTest', Glob('*.cpp')+
+autotestsProgram= env.Program('unitTest', Glob('*.cpp')+
 		[
 		"../Interpolator.o",
 		"../NRSolver.o",
@@ -85,3 +87,10 @@ env.Program('unitTest', Glob('*.cpp')+
 		LIBS=THIRD_PARTY_LIBS,
 		LIBPATH=THIRD_PARTY_LIBPATH
 	)
+
+# Add a target 'runTest' that will ensure that it's built before running the test suite
+test_alias = Alias('runTest', [autotestsProgram], autotestsProgram[0].path)
+
+# Simply required.  Without it, 'test' is never considered out of date.
+AlwaysBuild(test_alias)
+
