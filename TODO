@@ -1,11 +1,5 @@
-- add a scons target scons makeDocs
-
-- add a scone target: scons makeTest
-
-- Where to place latex packages required by Doxigen
-
-- How to build PDF from the latex Doxygen
- 
+- add a scone target: scons makeTest : ask Stephane about execution path
+  
 - build ipOtp integration
 
 - build Qt integration. Allow for 2/3d dynamic plotting (scale, move, zoom). 

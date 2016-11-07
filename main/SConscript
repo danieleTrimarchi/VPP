@@ -1,4 +1,11 @@
 #Remember the macports command:  port contents packageName
+import subprocess
+import sys
+
+if 'makeDocs' in COMMAND_LINE_TARGETS:
+	print 'Generating doxygen documentation...'
+	proc= subprocess.Popen(['doxygen', 'doxiConfig'], cwd='/Users/dtrimarchi/VPP/main')
+	
 
 THIRD_PARTY_INCS=[
 			'/Users/dtrimarchi/third_party/eigen-3.2.7',
