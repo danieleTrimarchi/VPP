@@ -15,7 +15,7 @@ NRSolver::NRSolver(VPPItemFactory* pVPPItemFactory,
 		size_t dimension, size_t subPbSize ):
 dimension_(dimension),
 subPbSize_(subPbSize),
-tol_(1.e-8),
+tol_(1.e-6),
 maxIters_(100),
 it_(0){
 
@@ -79,45 +79,6 @@ void NRSolver::reset(VPPItemFactory* pVPPItemFactory) {
 	it_=0;
 }
 
-// Set the initial guess for the state variable vector
-void NRSolver::resetInitialGuess(int TWV, int TWA) {
-
-//	// In it to something small to start the evals at each velocity
-//	if(TWV==0) {
-//
-//		//     V_0   PHI_0 b_0   f_0
-//		xp_ << 0.01, mathUtils::toRad(0.01), 0, 0;
-//
-//	}
-//
-//	else if( TWV>1 ) {
-//
-//		// For twv> 1 we can linearly predict the result of the state vector
-//		Extrapolator extrapolator(
-//				pResults_->get(TWV-2,TWA).getTWV(),
-//				pResults_->get(TWV-2,TWA).getX(),
-//				pResults_->get(TWV-1,TWA).getTWV(),
-//				pResults_->get(TWV-1,TWA).getX()
-//		);
-//
-//		// Extrapolate the state vector for the current wind
-//		// velocity. Note that the items have not been init yet
-//		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-//
-//		// Do extrapolate ONLY if the velocity is increasing
-//		// This is beneficial to convergence
-//		if(xp(0)>xp_(0))
-//			xp_=xp;
-//
-//		std::cout<<"-->>Extrapolated first guess: "<<xp_.transpose()<<std::endl;
-//	}
-
-	// Cleanup the solution from values too small
-	for(size_t i=0; i<xp_.size(); i++)
-		if(fabs(xp_(i)) < 1.e-10) xp_(i)=0.;
-
-}
-
 // The caller is the Optimizer, that resolves a larger problem with
 // optimization variables. Here we get the initial guess of the optimizer
 // and we try to solve a std sub-problem with no optimization vars
@@ -130,6 +91,9 @@ Eigen::VectorXd NRSolver::run(int twv, int twa, Eigen::VectorXd& xp ) {
 
 	// now run std
 	run(twv, twa);
+
+	// Print the result to screen and save it to the result container
+	printAndSave(twv, twa);
 
 	return xp_;
 
@@ -157,12 +121,6 @@ void NRSolver::run(int twv, int twa) {
 
 			// throw if the solution was not found within the max number of iterations
 			if(it_==maxIters_){
-
-				// Erase the first 20 vals with the last val to improve the view
-				for(size_t i=0; i<50; i++) {
-					velocityResiduals[i]=velocityResiduals[velocityResiduals.size()-1];
-					PhiResiduals[i]=PhiResiduals[PhiResiduals.size()-1];
-				}
 
 //				// Plot the velocity residuals and throw
 //				VPPPlotter vResPlot;
@@ -244,6 +202,10 @@ void NRSolver::run(int twv, int twa) {
 	catch (...) {
 		throw VPPException(HERE,"Unknown exception catched!\n");
 	}
+}
+
+// Print the result to screen and save it to the result container
+void NRSolver::printAndSave(int twv, int twa) {
 
 	// Get the residuals
 	Eigen::VectorXd res= pVppItemsContainer_->getResiduals();

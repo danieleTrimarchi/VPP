@@ -129,7 +129,7 @@ void VPPSolver::run(int TWV, int TWA) {
 	solveInitialGuess(TWV,TWA);
 
 	// Do nothing else, the solution is already found
-	Eigen::VectorXd residuals= vppItemsContainer_->getResiduals();
+	Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals();
 	printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
 
 	// Push the result to the result container

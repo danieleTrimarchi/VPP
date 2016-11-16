@@ -58,13 +58,13 @@ class NRSolver {
 		/// points and for given awv, awa
 		void plotJacobian();
 
+		/// Print the result to screen and save it to the result container
+		void printAndSave(int twv, int twa);
+
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	private:
-
-		/// Set the initial guess for the state variable vector
-		void resetInitialGuess(int twv, int twa);
 
 		// Struct used to drive twv and twa into the update methods of the VPPItems
 		typedef struct {

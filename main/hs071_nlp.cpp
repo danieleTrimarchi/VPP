@@ -31,7 +31,9 @@ bool HS071_NLP::get_nlp_info(Index& n, Index& m, Index& nnz_jac_g,
   // one equality constraint and one inequality constraint
   m = 2;
 
-  // in this example the jacobian is dense and contains 8 nonzeros
+  // The jacobian of the constraints is dense and contains 8 nonzeros
+  // dg1/dx1 dg1/dx2 ...
+  // dg2/dx1 ...
   nnz_jac_g = 8;
 
   // the hessian is also dense and has 16 total nonzeros, but we

@@ -20,8 +20,8 @@ using namespace Eigen;
 
 /// Compute the Jacobian matrix:
 ///
-/// J = | dF /du dF /dPhi |	|du	 | 	 |dF |    |0|
-///	    | dM /du dM /dPhi |	|dPhi| = |dM | -> |0|
+/// J = | dF/du dF/dPhi |	|du	 | 	 |dF |    |0|
+///	    | dM/du dM/dPhi |	|dPhi| = |dM | -> |0|
 ///
 /// where the derivatives in the Jacobian matrix are computed by
 /// centered finite differences

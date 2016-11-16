@@ -25,17 +25,17 @@ VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	nrSolver_.reset( new NRSolver(VPPItemFactory.get(),dimension_,subPbSize_) );
 
 	// Init the STATIC member vppItemsContainer
-	vppItemsContainer_= VPPItemFactory;
+	pVppItemsContainer_= VPPItemFactory;
 
 	// Set the parser
-	pParser_= vppItemsContainer_->getParser();
+	pParser_= pVppItemsContainer_->getParser();
 
 	// Resize the vector with the initial guess/VPPSolverBase results
 	xp_.resize(dimension_);
 
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run
-	pWind_= vppItemsContainer_->getWind();
+	pWind_= pVppItemsContainer_->getWind();
 
 	// Init the ResultContainer that will be filled while running the results
 	pResults_.reset(new ResultContainer(pWind_));
@@ -59,14 +59,14 @@ VPPSolverBase::~VPPSolverBase() {
 void VPPSolverBase::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Init the STATIC member vppItemsContainer
-	vppItemsContainer_= VPPItemFactory;
+	pVppItemsContainer_= VPPItemFactory;
 
 	// Set the parser
-	pParser_= vppItemsContainer_->getParser();
+	pParser_= pVppItemsContainer_->getParser();
 
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run
-	pWind_=vppItemsContainer_->getWind();
+	pWind_=pVppItemsContainer_->getWind();
 
 	// Init the ResultContainer that will be filled while running the results
 	pResults_.reset(new ResultContainer(pWind_));

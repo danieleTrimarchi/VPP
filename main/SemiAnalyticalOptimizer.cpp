@@ -255,7 +255,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		solveInitialGuess(TWV, TWA);
 
 		// Get and print the final residuals
-		Eigen::VectorXd residuals= vppItemsContainer_->getResiduals();
+		Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals();
 		printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
 
 		// Push the result to the result container

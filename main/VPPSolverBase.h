@@ -88,7 +88,7 @@ class VPPSolverBase {
 
 		/// Ptr to the VPPItemFactory that contains all of the ingredients
 		/// required to compute the optimization constraints
-		static boost::shared_ptr<VPPItemFactory> vppItemsContainer_;
+		static boost::shared_ptr<VPPItemFactory> pVppItemsContainer_;
 
 		/// Ptr to the variableFileParser
 		VariableFileParser* pParser_;
