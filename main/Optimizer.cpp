@@ -134,10 +134,10 @@ void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const doub
 	int twa= d-> twa_;
 
 	// Now call update on the VPPItem container
-	vppItemsContainer_->update(twv,twa,x);
+	pVppItemsContainer_->update(twv,twa,x);
 
 	// And compute the residuals for force and moment
-	vppItemsContainer_->getResiduals(result[0],result[1]);
+	pVppItemsContainer_->getResiduals(result[0],result[1]);
 
 }
 
@@ -229,7 +229,7 @@ void Optimizer::run(int TWV, int TWA) {
 	printf("      at f(%g,%g,%g,%g)\n",
 			xp_(0),xp_(1),xp_(2),xp_(3) );
 
-	residuals= vppItemsContainer_->getResiduals();
+	residuals= pVppItemsContainer_->getResiduals();
 	printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
 
 	// Refine the solution from the optimizer with NR -> this is meant to fix the residuals

@@ -10,7 +10,7 @@ using namespace mathUtils;
 
 //// VPPSolverBase class  //////////////////////////////////////////////
 // Init static member
-boost::shared_ptr<VPPItemFactory> VPPSolverBase::vppItemsContainer_;
+boost::shared_ptr<VPPItemFactory> VPPSolverBase::pVppItemsContainer_;
 Eigen::VectorXd VPPSolverBase::xp0_((Eigen::VectorXd(4) << .5, 0., 0., 1.).finished());
 
 // Constructor
