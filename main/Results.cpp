@@ -25,12 +25,12 @@ Result::Result():
 
 // Constructor with no results
 Result::Result(	size_t itwv, double twv,
-				size_t itwa, double twa):
+				size_t itwa, double twa,bool discard/*=false*/):
 							itwv_(itwv),
 							itwa_(itwa),
 							twv_(twv),
 							twa_(twa),
-							discard_(false) {
+							discard_(discard) {
 
 	// init the result container
 	result_.resize(4);
@@ -47,7 +47,7 @@ Result::Result(	size_t itwv, double twv,
 Result::Result(	size_t itwv, double twv, size_t itwa,
 		double twa, double  v, double phi,
 		double b, double f, double dF, double dM,
-		bool discarde):
+		bool discarde /*=false*/):
 									itwv_(itwv),
 									itwa_(itwa),
 									twv_(twv),
@@ -262,7 +262,7 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 void ResultContainer::push_back(size_t iWv, size_t iWa,
 		Eigen::VectorXd& results,
 		Eigen::VectorXd& residuals,
-		bool discard ) {
+		bool discard/*=false*/ ) {
 
 	if(iWv>=nWv_){
 		char msg[256];
@@ -279,7 +279,6 @@ void ResultContainer::push_back(size_t iWv, size_t iWa,
 
 	// Ask the wind to get the current wind velocity/angles. Note that this
 	// implies that the call must be in sync, which seems rather dangerous!
-	// todo dtrimarchi: the wind must have calls such as pWind_->getTWV(iWv)
 	resMat_[iWv][iWa].reset(iWv, pWind_->getTWV(iWv), iWa, pWind_->getTWA(iWa), results, residuals, discard );
 
 }
@@ -377,7 +376,7 @@ void ResultContainer::print(FILE* outStream) {
 
 	fprintf(outStream,"\n%%  iTWV    TWV    iTWa    TWA   --  V    PHI    B    F  --  dF    dM    -- discard \n");
 	fprintf(outStream,  "%%----------------------------------------------------------------------------------\n");
-	fprintf(outStream,  "%%  [-]    [m/s]    [-]   [deg]  -- [m/s] [rad] [m]  [-] --  [N]  [N*m]  --         \n");
+	fprintf(outStream,  "%%  [-]    [m/s]    [-]    [º]  -- [m/s] [rad] [m]  [-] --  [N]  [N*m]  --         \n");
 	fprintf(outStream,  "%%----------------------------------------------------------------------------------\n");
 
 	for(size_t iWv=0; iWv<nWv_; iWv++)
@@ -397,10 +396,12 @@ void ResultContainer::initResultMatrix() {
 
 	// Init the counters itw and itwa for each result. The allocation
 	// should not take too much time because the space has been preallocated
+	// Set the optional argument bool discarde to true because this is a
+	// placeHolder for a result, not  an actual result yet
 	for(size_t iWv=0; iWv<nWv_; iWv++){
 		for(size_t iWa=0; iWa<nWa_; iWa++){
 			resMat_[iWv].push_back(
-					Result(iWv, pWind_->getTWV(iWv),iWa, pWind_->getTWA(iWa))
+					Result(iWv, pWind_->getTWV(iWv),iWa, pWind_->getTWA(iWa),true)
 					);
 		}
 	}
@@ -431,7 +432,7 @@ void ResultContainer::printBounds() {
 		}
 
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
-	std::cout<<"\n MinV [m/s]    MaxV [m/s]  --   MinPhi [deg]    MaxPhi [def]"<<std::endl;
+	std::cout<<"\n MinV [m/s]    MaxV [m/s]  --   MinPhi [º]    MaxPhi [def]"<<std::endl;
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
 	std::cout<<"  "<<minV<<"     "<<maxV<<"     --     "<<mathUtils::toDeg(minPhi)<<"     "<<mathUtils::toDeg(maxPhi)<<std::endl;
 	std::cout<<"---------------------------------------------------------------"<<std::endl;

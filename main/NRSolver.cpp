@@ -15,7 +15,7 @@ NRSolver::NRSolver(VPPItemFactory* pVPPItemFactory,
 		size_t dimension, size_t subPbSize ):
 dimension_(dimension),
 subPbSize_(subPbSize),
-tol_(1.e-6),
+tol_(1.e-8),
 maxIters_(100),
 it_(0){
 
@@ -138,11 +138,6 @@ Eigen::VectorXd NRSolver::run(int twv, int twa, Eigen::VectorXd& xp ) {
 void NRSolver::run(int twv, int twa) {
 
 	// std::cout<<"    "<<pWind_->getTWV(twv)<<"    "<<toDeg( pWind_->getTWA(twa) )<<std::endl;
-
-	// For each wind velocity, reset the initial guess for the
-	// state variable vector to zero
-	resetInitialGuess(twv,twa);
-
 	//std::cout<<"\n Entering NR with first guess: "<<xp_.transpose()<<std::endl;
 
 	try{
@@ -308,7 +303,7 @@ void NRSolver::plotPolars() {
 	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
 	// Sail flat, Crew B, dF and dM
 	VPPPolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot [m/s]");
-	VPPPolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot [deg]");
+	VPPPolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot [º]");
 
 	// Instantiate the list of wind angles that will serve
 	// for each velocity
@@ -403,7 +398,7 @@ void NRSolver::plotXY(size_t iWa) {
 	VPPPlotter plotter2;
 	string t2=string("Boat Heel")+string(title);
 	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
-			t2,"Wind Speed [m/s]","Boat Heel [deg]");
+			t2,"Wind Speed [m/s]","Boat Heel [º]");
 
 	// Instantiate a plotter for the residuals
 	VPPPlotter plotter5;

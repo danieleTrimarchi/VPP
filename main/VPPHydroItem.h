@@ -20,6 +20,12 @@ class ResistanceItem : public VPPItem {
 		// Get the value of the resistance for this ResistanceItem
 		const double get() const;
 
+		/// Convert a velocity [m/s] to a Fn[-]
+		double convertToFn( double velocity );
+
+		/// Convert a Fn[-] to a velocity [m/s]
+		double convertToVelocity( double Fn );
+
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
@@ -189,6 +195,9 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
+		/// Plot
+		void plot(WindItem* pWind);
+
 	private:
 
 		/// Implement pure virtual method of the parent class
@@ -247,6 +256,9 @@ class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
 
 		/// Plot the Frictional Resistance due to heel vs Fn curve
 		void plot();
+
+		/// Plot the Frictional Resistance due to heel vs Fn curve for a range of heeling angles
+		void plot(WindItem* pWind);
 
 	private:
 

@@ -18,7 +18,7 @@ int optIterations=0;
 
 // Constructor
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-						VPPSolverBase(VPPItemFactory){
+								VPPSolverBase(VPPItemFactory){
 
 	// Set the and apply the lower and the upper bounds
 	// -> make sure the bounds are larger than the initial
@@ -84,79 +84,6 @@ void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 	// Set the bounds for the constraints
 	opt_->set_lower_bounds(lowerBounds_);
 	opt_->set_upper_bounds(upperBounds_);
-
-}
-
-
-// Returns the index of the previous velocity-wise (twv) result that is marked as
-// converged (discarde==false). It starts from 'current', so it can be used recursively
-size_t Optimizer::getPreviousConverged(size_t idx, size_t TWA) {
-
-	while(idx){
-		idx--;
-		if(!pResults_->get(idx,TWA).discard())
-			return idx;
-	}
-
-	throw NoPreviousConvergedException(HERE,"No previous converged index found");
-}
-
-
-// Set the initial guess for the state variable vector
-void Optimizer::resetInitialGuess(int TWV, int TWA) {
-
-	// In it to something small to start the evals at each velocity
-	if(TWV==0) {
-
-		xp_(0)= 1.0;  	// V_0
-		xp_(1)= 0.; 		// PHI_0
-		xp_(2)= 0.0;		// b_0
-		xp_(3)= 1.;		// f_0
-
-	}
-
-	else if( TWV>1 ) {
-
-		// For twv> 1 we can linearly predict the result of the state vector
-		// we search for the last two converged results and we do discard the
-		// diverged results, that would not serve our cause
-		// Enclose by try-catch block in case getPreviousConverged does not find
-		// a valid solution to be used for the linear guess
-		try {
-
-			size_t tmOne=getPreviousConverged(TWV-1,TWA);
-			size_t tmTwo=getPreviousConverged(tmOne,TWA);
-
-			Extrapolator extrapolator(
-					pResults_->get(tmTwo,TWA).getTWV(),
-					pResults_->get(tmTwo,TWA).getX(),
-					pResults_->get(tmOne,TWA).getTWV(),
-					pResults_->get(tmOne,TWA).getX()
-			);
-
-			// Extrapolate the state vector for the current wind
-			// velocity. Note that the items have not been init yet
-			Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-
-			// Do extrapolate ONLY if the velocity is increasing
-			// This is beneficial to convergence
-			if(xp(0)>xp_(0))
-				xp_=xp;
-
-		} catch( NoPreviousConvergedException& e){
-			// do nothing
-		}
-
-		// Make sure the initial guess does not exceeds the bounds
-		for(size_t i=0; i<dimension_; i++) {
-			if(xp_[i]<lowerBounds_[i])
-				xp_[i]=lowerBounds_[i];
-			if(xp_[i]>upperBounds_[i])
-				xp_[i]=upperBounds_[i];
-		}
-	}
-
-	std::cout<<"-->> optimizer first guess: "<<xp_.transpose()<<std::endl;
 
 }
 
@@ -252,60 +179,69 @@ void Optimizer::run(int TWV, int TWA) {
 	Eigen::VectorXd residuals(dimension_);
 	for(size_t i=0; i<dimension_; i++) residuals(i)=100;
 
-	//while ( residuals.norm() > 0.00001 )
-	for(size_t iRes=0; iRes<3; iRes++ ){
+	// Declare a buffer vector xp. Declare it here so
+	// that is available to the invalid_argument exception
+	std::vector<double> xp(xp_.rows());
 
-		try{
+	try{
 
-			// Launch the optimization; negative retVal implies failure
-			std::cout<<"Entering the optimizer with: ";
-			printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
-			// convert to standard vector
-			std::vector<double> xp(xp_.rows());
-			for(size_t i=0; i<xp_.rows(); i++)
-				xp[i]=xp_(i);
+		// Launch the optimization; negative retVal implies failure
+		std::cout<<"Entering the optimizer with: ";
+		printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
+		// convert to standard vector
+		for(size_t i=0; i<xp_.rows(); i++)
+			xp[i]=xp_(i);
 
-			// Launch the optimization
-			result = opt_->optimize(xp, maxf);
+		// Launch the optimization
+		result = opt_->optimize(xp, maxf);
 
-			//store the results back to the member state vector
-			for(size_t i=0; i<xp_.size(); i++)
-				xp_(i)=xp[i];
-		}
-		catch( nlopt::roundoff_limited& e ){
-			std::cout<<"Roundoff limited result"<<std::endl;
-			// do nothing because the result of roundoff-limited exception
-			// is meant to be still a meaningful result
-		}
-		catch (std::exception& e) {
+		//store the results back to the member state vector
+		for(size_t i=0; i<xp_.size(); i++)
+			xp_(i)=xp[i];
+	}
+	catch( nlopt::roundoff_limited& e ){
+		std::cout<<"Roundoff limited result"<<std::endl;
+		// do nothing because the result of roundoff-limited exception
+		// is meant to be still a meaningful result
+	}
+	catch(std::invalid_argument& e){
+		std::cout<<"\nThe optimizer returned an invalid argument exception."<<std::endl;
+		std::cout<<"This often happens if the specified initial guess exceeds the variable bounds."<<std::endl;
+		std::cout<<"Initial guess: ";
+		for(size_t i=0; i<xp.size(); i++) std::cout<<xp[i]<<", ";
+		std::cout<<"\n\n";
+		char msg[256];
+		sprintf(msg,"%s",e.what());
+		throw VPPException(HERE,msg);
+	}
+	catch (std::exception& e) {
 
-			// throw exceptions catched by NLOpt
-			char msg[256];
-			sprintf(msg,"%s\n",e.what());
-			throw VPPException(HERE,msg);
-		}
-		catch (...) {
-			throw VPPException(HERE,"nlopt unknown exception catched!\n");
-		}
-
-
-		printf("found maximum after %d evaluations\n", optIterations);
-		printf("      at f(%g,%g,%g,%g)\n",
-				xp_(0),xp_(1),xp_(2),xp_(3) );
-
-		residuals= vppItemsContainer_->getResiduals();
-		printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
-
-		if( residuals.norm() < 0.0001 )
-			break;
+		// throw exceptions catched by NLOpt
+		char msg[256];
+		sprintf(msg,"%s\n",e.what());
+		throw VPPException(HERE,msg);
+	}
+	catch (...) {
+		throw VPPException(HERE,"nlopt unknown exception catched!\n");
 	}
 
-	// Push the result to the result container
+	printf("found maximum after %d evaluations\n", optIterations);
+	printf("      at f(%g,%g,%g,%g)\n",
+			xp_(0),xp_(1),xp_(2),xp_(3) );
+
+	residuals= vppItemsContainer_->getResiduals();
+	printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
+
+	// Refine the solution from the optimizer with NR -> this is meant to fix the residuals
+	solveInitialGuess(TWV,TWA);
+
+	// Push the result to the result container and mark this as a converged result
 	pResults_->push_back(TWV, TWA, xp_, residuals(0), residuals(1) );
 
 	// Make sure the result does not exceeds the bounds
 	for(size_t i=0; i<subPbSize_; i++)
-		if(xp_[i]<lowerBounds_[i] || xp_[i]>upperBounds_[i]){
+		if(xp_[i]<lowerBounds_[i] || xp_[i]>upperBounds_[i] ||
+				residuals.norm() > 100 ){
 			std::cout<<"WARNING: Optimizer result for tWv="<<TWV<<" and tWa="<<TWA<<" is out-of-bounds for variable "<<i<<std::endl;
 			pResults_->remove(TWV, TWA);
 		}

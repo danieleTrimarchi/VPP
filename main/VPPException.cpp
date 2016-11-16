@@ -49,7 +49,7 @@ const char* NonConvergedException::what() const throw() {
 NoPreviousConvergedException::NoPreviousConvergedException(const char* inFile, int inLine, const char* inFunction, const char* message ){
 
 	std::ostringstream oss;
-	oss<<"Error in function: "<<inFunction<<"\n in file: "<<inFile<<" line: "<<inLine<<std::endl;
+	oss<<"Warning: in function: "<<inFunction<<"\n in file: "<<inFile<<" line: "<<inLine<<std::endl;
 	oss<<" Message: "<<message<<std::endl;
 	msg=oss.str();
 	std::cout<<msg<<std::endl;

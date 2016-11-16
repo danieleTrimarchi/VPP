@@ -46,7 +46,7 @@ class IOUtils {
 			}
 
 			std::cout<<" twv["<<twv<<"] = "<<pWindItem_->getTWV(twv)<<" [m/s]"<<std::endl;
-			std::cout<<" twa["<<twa<<"] = "<<mathUtils::toDeg(pWindItem_->getTWA(twa))<<" [deg]"<<std::endl;
+			std::cout<<" twa["<<twa<<"] = "<<mathUtils::toDeg(pWindItem_->getTWA(twa))<<"º"<<std::endl;
 		};
 
 		/// Ask the user to prompt the value of the state vector

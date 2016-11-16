@@ -87,51 +87,6 @@ void SemiAnalyticalOptimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFac
 
 }
 
-// Set the initial guess for the state variable vector
-void SemiAnalyticalOptimizer::resetInitialGuess(int TWV, int TWA) {
-
-	// In it to something small to start the evals at each velocity
-	if(TWV==0) {
-
-		xp_(0)= 1.0;  	// V_0
-		xp_(1)= 0.1;		// PHI_0
-		xp_(2)= 0.01;		// b_0
-		xp_(3)= 0.99;		// f_0
-
-	}
-
-	else if( TWV>1 ) {
-
-		// For twv> 1 we can linearly predict the result of the state vector
-		Extrapolator extrapolator(
-				pResults_->get(TWV-2,TWA).getTWV(),
-				pResults_->get(TWV-2,TWA).getX(),
-				pResults_->get(TWV-1,TWA).getTWV(),
-				pResults_->get(TWV-1,TWA).getX()
-		);
-
-		// Extrapolate the state vector for the current wind
-		// velocity. Note that the items have not been init yet
-		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-
-		// Do extrapolate ONLY if the velocity is increasing
-		// This is beneficial to convergence
-		if(xp(0)>xp_(0))
-			xp_=xp;
-
-		// Make sure the initial guess does not exceeds the bounds for the opt vars
-		for(size_t i=0; i<saPbSize_; i++) {
-			if(xp_[subPbSize_+i]<lowerBounds_[i])
-				xp_[subPbSize_+i]=lowerBounds_[i];
-			if(xp_[subPbSize_+i]>upperBounds_[i])
-				xp_[subPbSize_+i]=upperBounds_[i];
-		}
-	}
-
-	std::cout<<"-->> SemiAnalyticalOptimizer first guess: "<<xp_.transpose()<<std::endl;
-
-}
-
 // Ask the NRSolver to solve a sub-problem without the optimization variables
 // this makes the initial guess an equilibrated solution
 void SemiAnalyticalOptimizer::solveInitialGuess(int TWV, int TWA) {
@@ -199,6 +154,10 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	// Buffer initial guess before entering the regression loop
 	Eigen::VectorXd xpBuf= xp_;
 
+	// Declare a buffer vector xp for the optimizer. Declare it here so
+	// that is available to the invalid_argument exception
+	std::vector<double> xp(saPbSize_);
+
 	// Declare the number of evaluations in the optimization space
 	// Remember the state vector x={v phi b f}
 	size_t nCrew=5, nFlat=5;
@@ -260,7 +219,6 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 			printf("%8.6f,%8.6f,%8.6f,%8.6f \n", xp_(0),xp_(1),xp_(2),xp_(3));
 
 			// convert to standard vector
-			std::vector<double> xp(saPbSize_);
 			for(size_t i=0; i<saPbSize_; i++)
 				xp[i]=xp_(subPbSize_+i);
 
@@ -308,6 +266,16 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		// Push to the result container a result to be discarded -> that won't be plot
 		pResults_->remove(TWV, TWA);
 
+	}
+	catch(std::invalid_argument& e){
+		std::cout<<"\nThe optimizer returned an invalid argument exception."<<std::endl;
+		std::cout<<"This often happens if the specified initial guess exceeds the variable bounds."<<std::endl;
+		std::cout<<"Initial guess: ";
+		for(size_t i=0; i<xp.size(); i++) std::cout<<xp[i]<<", ";
+		std::cout<<"\n\n";
+		char msg[256];
+		sprintf(msg,"%s",e.what());
+		throw VPPException(HERE,msg);
 	}
 	catch (std::exception& e) {
 

@@ -49,6 +49,7 @@ dM_(0) {
 	// Instantiate a Delta_ResiduaryResistance_HeelItem Item push it back to the children vector
 	// For the definition of the change in Residuary Resistance due to heel
 	// see DSYHS99 ch3.1.2.2 p116
+	// => THIS IS THE GUY !
 	pDelta_ResiduaryResistance_HeelItem_.reset(new Delta_ResiduaryResistance_HeelItem(pParser_,pSailSet));
 	vppHydroItems_.push_back( pDelta_ResiduaryResistance_HeelItem_ );
 
@@ -70,8 +71,8 @@ dM_(0) {
 
 	// Instantiate a Delta_ResiduaryResistanceKeel_HeelItem Item and push it back to the children vector
 	// Express the change in Appendage Resistance due to Heel. See DSYHS99 3.2.2 p 126-127
-	boost::shared_ptr<Delta_ResiduaryResistanceKeel_HeelItem> pDelta_ResiduaryResistanceKeel_HeelItem(new Delta_ResiduaryResistanceKeel_HeelItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pDelta_ResiduaryResistanceKeel_HeelItem );
+	pDelta_ResiduaryResistanceKeel_HeelItem_.reset(new Delta_ResiduaryResistanceKeel_HeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pDelta_ResiduaryResistanceKeel_HeelItem_ );
 
 	// Instantiate a InducedResistanceItem and push it back to the children vector
 	// For the definition of the Induced Resistance see DSYHS99 ch4 p128
@@ -195,6 +196,11 @@ Delta_ResiduaryResistance_HeelItem* VPPItemFactory::getDelta_ResiduaryResistance
 	return pDelta_ResiduaryResistance_HeelItem_.get();
 }
 
+// Getter for the Delta Residuary Resistance of the keel due to heel item
+Delta_ResiduaryResistanceKeel_HeelItem* VPPItemFactory::getDelta_ResiduaryResistanceKeel_HeelItem() const {
+	return pDelta_ResiduaryResistanceKeel_HeelItem_.get();
+}
+
 // Getter for the negative resistance item
 NegativeResistanceItem* VPPItemFactory::getNegativeResistanceItem() const {
 	return pNegativeResistance_.get();
@@ -278,7 +284,7 @@ void VPPItemFactory::plotTotalResistance(){
 
 	// Define the number of velocities and angles
 	// ( the angles are incremented of 10!)
-	size_t nVelocities=40, nAngles=40;
+	size_t nVelocities=40, nAngles=80;
 
 	// Instantiate containers for the curve labels, the
 	// Fn and the resistance
@@ -286,10 +292,10 @@ void VPPItemFactory::plotTotalResistance(){
 	std::vector<ArrayXd> froudeNb, totRes;
 
 	// Loop on the heel angles
-	for(size_t iAngle=0; iAngle<nAngles+1; iAngle+=10){
+	for(int iAngle=0; iAngle<nAngles+1; iAngle+=20){
 
 		// Compute the value of PHI
-		stateVector(1) = mathUtils::toRad(iAngle);
+		stateVector(1) = mathUtils::toRad(iAngle-20);
 		//std::cout<<"PHI= "<<stateVector(1)<<std::endl;
 
 		// declare some tmp containers
@@ -322,7 +328,7 @@ void VPPItemFactory::plotTotalResistance(){
 		totRes.push_back(tmpRes);
 
 		char msg[256];
-		sprintf(msg,"%3.1f [deg]", mathUtils::toDeg(stateVector(1)));
+		sprintf(msg,"%3.1fº", mathUtils::toDeg(stateVector(1)));
 		curveLabels.push_back(msg);
 
 	}
@@ -334,7 +340,7 @@ void VPPItemFactory::plotTotalResistance(){
 
 	char msg[256];
 	sprintf(msg,"plot TOTAL Resistance vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2f [deg]",
+			"twv=%2.2f [m/s], twa=%2.2fº",
 			pAeroForcesItem_->getWindItem()->getTWV(twv),
 			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
 	fPlotter.plot("Fn [-]","Total Resistance [N]", msg);
@@ -358,7 +364,7 @@ void VPPItemFactory::plotOptimizationSpace() {
 	NRSolver nrSolver(this, 4, 2);
 
 	// Set the number of values for flat and crew -> x, y
-	size_t nFlat=5, nCrew=5;
+	size_t nFlat=15, nCrew=15;
 
 	// Instantiate the result matrices : v and phi
 	Eigen::ArrayXd flat(nFlat), crew(nCrew);

@@ -1,4 +1,11 @@
 #Remember the macports command:  port contents packageName
+import subprocess
+import sys
+
+if 'makeDocs' in COMMAND_LINE_TARGETS:
+	print 'Generating doxygen documentation...'
+	proc= subprocess.Popen(['doxygen', 'doxiConfig'], cwd='/Users/dtrimarchi/VPP/main')
+	
 
 THIRD_PARTY_INCS=[
 			'/Users/dtrimarchi/third_party/eigen-3.2.7',
@@ -43,11 +50,6 @@ THIRD_PARTY_LIBPATH=[
 			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib'	
 			]
 
-
-#This must be a way to define the path where the executable searches for the dyLib, but for the moment it does not seems to work
-env = DefaultEnvironment()
-
-
 #Compile Debug mode
 #env.Append(CCFLAGS= '-g')
 #env.Append(CPPFLAGS ='-Wc++11-extensions')
@@ -64,7 +66,45 @@ env.Append(LINKFLAGS ='-framework Accelerate -lm -ldl')
 # 	Exit(1)
 # env = conf.Finish()
 #===============================================================================
-    
+# Get the environement 
+env = DefaultEnvironment()
+
+
+# Do some work to produce the version info
+import subprocess
+import time
+from shutil import copyfile
+
+currentBranch = (subprocess.check_output(["hg", "branch"]).rstrip())
+currentRevNumber=(subprocess.check_output(["hg", "identify","-n"]).rstrip())
+currentHash = (subprocess.check_output(["hg", "id","-i"]).rstrip())
+buildDate = time.strftime("%c").rstrip()
+
+# Get the full abs path of the file in the src tree and produce the 
+# path of the same file with the timestamp
+srcFile= str(File('Version.prototypeCpp').srcnode())
+destFile= Dir('.').srcnode().abspath +'/Version.cpp'
+
+# Copy the Version.prototypeCpp to Version.cpp
+copyfile(srcFile,destFile)
+
+ 
+# gsed currentBranch, currentHash, buildDate
+newText=""
+with open(destFile) as f:
+	newText=f.read()
+	newText= newText.replace("currentBranch_stringVar", currentBranch ) 
+	newText= newText.replace("currentRevNumber_stringVar", currentRevNumber )
+	newText= newText.replace("currentHash_stringVar", currentHash )
+	newText= newText.replace("buildDate_stringVar", buildDate )
+	f.close()
+
+with open(destFile, "w") as f:
+    f.write(newText)
+    f.close()
+
+
+# Build
 env.Program('VPP', Glob('*.cpp'),
 		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,

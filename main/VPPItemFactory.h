@@ -69,6 +69,9 @@ class VPPItemFactory {
 		/// Getter for the Delta Residuary Resistance due to heel item
 		Delta_ResiduaryResistance_HeelItem* getDelta_ResiduaryResistance_HeelItem() const;
 
+		/// Getter for the Delta Residuary Resistance of the keel due to heel item
+		Delta_ResiduaryResistanceKeel_HeelItem* getDelta_ResiduaryResistanceKeel_HeelItem() const;
+
 		/// Getter for the negative resistance item
 		NegativeResistanceItem* getNegativeResistanceItem() const;
 
@@ -140,8 +143,11 @@ class VPPItemFactory {
 		/// Pointer to the Frictional Resistance due to Heel Item
 		boost::shared_ptr<Delta_FrictionalResistance_HeelItem> pDelta_FrictionalResistance_HeelItem_;
 
-		/// Pointer to the Residuary Resistance due to Heel Item
+		/// Pointer to the Delta Residuary Resistance due to Heel Item
 		boost::shared_ptr<Delta_ResiduaryResistance_HeelItem> pDelta_ResiduaryResistance_HeelItem_;
+
+		/// Pointer to the Delta Residuary Resistance of the keel due to Heel Item
+		boost::shared_ptr<Delta_ResiduaryResistanceKeel_HeelItem> pDelta_ResiduaryResistanceKeel_HeelItem_;
 
 		/// Pointer to the Negative Resistance
 		boost::shared_ptr<NegativeResistanceItem> pNegativeResistance_;

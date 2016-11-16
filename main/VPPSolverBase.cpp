@@ -11,12 +11,13 @@ using namespace mathUtils;
 //// VPPSolverBase class  //////////////////////////////////////////////
 // Init static member
 boost::shared_ptr<VPPItemFactory> VPPSolverBase::vppItemsContainer_;
+Eigen::VectorXd VPPSolverBase::xp0_((Eigen::VectorXd(4) << .5, 0., 0., 1.).finished());
 
 // Constructor
 VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 																dimension_(4),
 																subPbSize_(2),
-																tol_(1.e-3) {
+																tol_(1.e-4) {
 
 	// Instantiate a NRSolver that will be used to feed the VPPSolverBase with
 	// an equilibrated first guess solution. The solver will solve a subproblem
@@ -70,6 +71,84 @@ void VPPSolverBase::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 	// Init the ResultContainer that will be filled while running the results
 	pResults_.reset(new ResultContainer(pWind_));
 
+}
+
+// Set the initial guess for the state variable vector
+void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
+
+	// In it to something small to start the evals at each velocity
+	if(TWV==0) {
+
+		// This is the very first solution, so we must guess a solution
+		// but have nothing to establish our guess
+		if(TWA==0)
+			xp_= xp0_;
+
+		else
+
+			if(!pResults_->get(TWV,TWA-1).discard())// In this case we have a solution at a previous angle we can use
+				// to set the guess
+				xp_ = *(pResults_->get(TWV,TWA-1).getX());
+			else
+				xp_= xp0_;
+
+	}
+
+	else if( TWV>1 ) {
+
+		// For twv> 1 we can linearly predict the result of the state vector
+		// we search for the last two converged results and we do discard the
+		// diverged results, that would not serve our cause
+		// Enclose by try-catch block in case getPreviousConverged does not find
+		// a valid solution to be used for the linear guess
+		try {
+
+			size_t tmOne=getPreviousConverged(TWV,TWA);
+			size_t tmTwo=getPreviousConverged(tmOne,TWA);
+
+			Extrapolator extrapolator(
+					pResults_->get(tmTwo,TWA).getTWV(),
+					pResults_->get(tmTwo,TWA).getX(),
+					pResults_->get(tmOne,TWA).getTWV(),
+					pResults_->get(tmOne,TWA).getX()
+			);
+
+			// Extrapolate the state vector for the current wind
+			// velocity. Note that the items have not been init yet
+			xp_= extrapolator.get( pWind_->getTWV(TWV) );
+
+		} catch( NoPreviousConvergedException& e){
+			// do nothing
+		}
+
+		// Make sure the initial guess does not exceeds the bounds
+		for(size_t i=0; i<lowerBounds_.size(); i++) {
+			if(xp_[i]<lowerBounds_[i]){
+				std::cout<<"Resetting the lower bounds to "<<lowerBounds_[i]<<std::endl;
+				xp_[i]=lowerBounds_[i];
+			}
+			if(xp_[i]>upperBounds_[i]){
+				xp_[i]=upperBounds_[i];
+				std::cout<<"Resetting the upper bounds to "<<upperBounds_[i]<<std::endl;
+			}
+		}
+	}
+
+	std::cout<<"-->> solver first guess: "<<xp_.transpose()<<std::endl;
+
+}
+
+// Returns the index of the previous velocity-wise (twv) result that is marked as
+// converged (discard==false). It starts from 'current', so it can be used recursively
+size_t VPPSolverBase::getPreviousConverged(size_t idx, size_t TWA) {
+
+	while(idx){
+		idx--;
+		if(!pResults_->get(idx,TWA).discard())
+			return idx;
+	}
+
+	throw NoPreviousConvergedException(HERE,"No previous converged index found");
 }
 
 // Returns the state vector for a given wind configuration
