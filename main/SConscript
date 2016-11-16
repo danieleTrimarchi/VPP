@@ -50,26 +50,6 @@ THIRD_PARTY_LIBPATH=[
 			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib'	
 			]
 
-#Compile Debug mode
-#env.Append(CCFLAGS= '-g')
-#env.Append(CPPFLAGS ='-Wc++11-extensions')
-env.Append(LINKFLAGS ='-framework Accelerate -lm -ldl')
-
-#warning: use of enumeration in a nested name specifier is a
-#      C++11 extension [-Wc++11-extensions]
-
-#===============================================================================
-# env = Environment()
-# conf = Configure(env)
-# if not conf.CheckLib('nlopt'):
-# 	print 'Did not find libnlopt.a or nlopt.lib, exiting!'
-# 	Exit(1)
-# env = conf.Finish()
-#===============================================================================
-# Get the environement 
-env = DefaultEnvironment()
-
-
 # Do some work to produce the version info
 import subprocess
 import time
@@ -103,6 +83,16 @@ with open(destFile, "w") as f:
     f.write(newText)
     f.close()
 
+# Get the environement 
+env = DefaultEnvironment()
+
+#Compile Debug mode
+#env.Append(CCFLAGS= '-g')
+#env.Append(CPPFLAGS ='-Wc++11-extensions')
+env.Append(LINKFLAGS ='-framework Accelerate -lm -ldl')
+
+#warning: use of enumeration in a nested name specifier is a
+#      C++11 extension [-Wc++11-extensions]
 
 # Build
 env.Program('VPP', Glob('*.cpp'),
