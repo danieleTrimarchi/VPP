@@ -42,6 +42,9 @@ class TVPPTest : public CppUnit::TestFixture{
 	/// Global optimization algorithm with non-linear equality constraints. Here in then example g06
   CPPUNIT_TEST(runISRESTest_g06);
 
+  /// Test ipOpt -- from example HS071_NLP
+  CPPUNIT_TEST(ipOptTest);
+
   /// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
   CPPUNIT_TEST(vppPointTest);
 
@@ -84,6 +87,9 @@ public:
   /// Test NLOpt -- ISRES "Improved Stochastic Ranking Evolution Strategy" algorithm.
 	/// Global optimization algorithm with non-linear equality constraints. Here in then example g06
   void runISRESTest_g06();
+
+  /// Test ipOpt -- from example HS071_NLP
+  void ipOptTest();
 
   /// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
   void vppPointTest();

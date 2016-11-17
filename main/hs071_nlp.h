@@ -10,6 +10,7 @@
 #define __HS071_NLP_H__
 
 #include "IpTNLP.hpp"
+#include "Eigen/Core"
 
 using namespace Ipopt;
 
@@ -98,6 +99,18 @@ public:
 				 IpoptCalculatedQuantities* ip_cq);
   //@}
 
+  /// Returns the dimensionality of this pb, or the number of variables (4)
+  size_t getDimension() const;
+
+  /// Returns the solution vector
+  Eigen::VectorXd getSolution() const;
+
+  /// Returns the residuals vector
+  Eigen::VectorXd getConstraints() const;
+
+  /// Returns the value of the objective function
+  double getObjectiveValue() const;
+
 private:
   /**@name Methods to block default compiler methods.
    * The compiler automatically generates the following three methods.
@@ -114,6 +127,16 @@ private:
   HS071_NLP(const HS071_NLP&);
   HS071_NLP& operator=(const HS071_NLP&);
   //@}
+
+  // Size of the pb and number of equality constraints
+  size_t dimension_, nEqualityConstraints_;
+
+  /// Vectors storing the solution and the residuals
+  Eigen::VectorXd solution_, constraints_;
+
+  /// Value of the objective function after the optimization
+  double objectiveVaue_;
+
 };
 
 

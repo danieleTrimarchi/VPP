@@ -430,16 +430,16 @@ void VPP_NLP::finalize_solution(SolverReturn status,
   }
 
   // Map the c-style container x to an Eigen object
-  Eigen::Map<const Eigen::VectorXd> xMap(x,dimension_);
-  Eigen::VectorXd solution(xMap);
+  Eigen::Map<const Eigen::VectorXd> solutionMap(x,dimension_);
+  Eigen::VectorXd solution(solutionMap);
 
   // Map the c-style container g to an Eigen object
   Eigen::Map<const Eigen::VectorXd> resMap(g,nEqualityConstraints_);
   Eigen::VectorXd residuals(resMap);
 
 	bool discard=false;
-	for(size_t i=0; i<xMap.size(); i++){
-		if( xMap(i)<lowerBounds_[i] || xMap(i)>upperBounds_[i] )
+	for(size_t i=0; i<solutionMap.size(); i++){
+		if( solutionMap(i)<lowerBounds_[i] || solutionMap(i)>upperBounds_[i] )
 			discard=true;
 	}
 

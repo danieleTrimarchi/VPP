@@ -11,7 +11,10 @@ THIRD_PARTY_INCS=[
 			'/opt/local/share/plplot5.11.1/examples/c++',							#include path for plplot example
 			'/opt/local/include/plplot',
 			'/Users/dtrimarchi/third_party/cppunit-1.13.2/build/include',
-			'/Users/dtrimarchi/VPP/main'
+			'/Users/dtrimarchi/VPP/main',
+			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/Ipopt/src/Interfaces',
+			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/include',
+			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/include/coin'
 		]
 
 
@@ -26,7 +29,8 @@ THIRD_PARTY_LIBS=[
 			'plplot',
 			'nlopt',
 			'BLAS',
-			'cppunit'
+			'cppunit',
+			'ipopt'
 		]
 			
 					
@@ -39,7 +43,8 @@ THIRD_PARTY_LIBPATH=[
 			'/Users/dtrimarchi/third_party/nlopt-2.4.2/libs',
 			'/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A',
 			'/opt/local/lib', # macPorts and lnopt lib path
-			'/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib'
+			'/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib',
+			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib'	
 		]
 
 
@@ -79,7 +84,8 @@ env.Program('unitTest', Glob('*.cpp')+
 		"../Warning.o",
 		"../mathUtils.o",
 		"../VPPPlotSet.o",
-		"../VPPResultIO.o"
+		"../VPPResultIO.o",
+		"../hs071_nlp.o"
 		],
 		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,
