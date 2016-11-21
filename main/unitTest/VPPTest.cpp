@@ -911,10 +911,8 @@ void TVPPTest::runISRESTest_g06(){
 /// Test ipOpt -- from example HS071_NLP
 void TVPPTest::ipOptTest() {
 
-
-  // Create a new instance of your nlp
-  //  (use a SmartPtr, not raw)
-  SmartPtr<HS071_NLP> mynlp = new HS071_NLP();
+  // Create a new instance of the nlp problem
+	SmartPtr<HS071_NLP> mynlp = new HS071_NLP();
 
   // Create a new instance of IpoptApplication
   //  (use a SmartPtr, not raw)

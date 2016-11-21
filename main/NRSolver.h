@@ -29,6 +29,12 @@ class NRSolver {
 		/// Reset the NRSolver when reloading the initial data
 		void reset(VPPItemFactory*);
 
+		/// This is similar to a reset, but it is used to change the subPbSize only.
+		/// Used - for example - when computing the derivatives of the objective function
+		/// in VPP_NLP::computederivative. In that case, the subPbSize is one for du/dphi
+		/// but 2 for the other derivatives
+		void setSubPbSize(size_t subPbSize);
+
 		/// Run the solver
 		void run(int TWV, int TWA);
 

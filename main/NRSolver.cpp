@@ -79,6 +79,14 @@ void NRSolver::reset(VPPItemFactory* pVPPItemFactory) {
 	it_=0;
 }
 
+// This is similar to a reset, but it is used to change the subPbSize only.
+// Used - for example - when computing the derivatives of the objective function
+// in VPP_NLP::computederivative. In that case, the subPbSize is one for du/dphi
+// but 2 for the other derivatives
+void NRSolver::setSubPbSize(size_t subPbSize) {
+	subPbSize_= subPbSize;
+}
+
 // The caller is the Optimizer, that resolves a larger problem with
 // optimization variables. Here we get the initial guess of the optimizer
 // and we try to solve a std sub-problem with no optimization vars

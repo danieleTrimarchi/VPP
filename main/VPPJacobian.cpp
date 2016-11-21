@@ -1,15 +1,31 @@
 #include "VPPJacobian.h"
 #include "mathUtils.h"
 
-// Constructor
-VPPJacobian::VPPJacobian(VectorXd& x,VPPItemFactory* pVppItemsContainer, size_t subProblemSize):
+// Constructor - square pb
+VPPJacobian::VPPJacobian(VectorXd& x,VPPItemFactory* pVppItemsContainer,
+		size_t subProblemSize):
 x_(x),
 xp0_(x),
 pVppItemsContainer_(pVppItemsContainer),
-subPbSize_(subProblemSize) {
+subPbSize_(subProblemSize),
+size_(subProblemSize) {
 
 	// Resize this Jacobian to the size of the state vector
-	resize(subPbSize_,subPbSize_);
+	resize(subPbSize_,size_);
+
+}
+
+// Constructor - non square pb
+VPPJacobian::VPPJacobian(VectorXd& x,VPPItemFactory* pVppItemsContainer,
+		size_t subProblemSize, size_t size):
+x_(x),
+xp0_(x),
+pVppItemsContainer_(pVppItemsContainer),
+subPbSize_(subProblemSize),
+size_(size) {
+
+	// Resize this Jacobian to the size of the state vector
+	resize(subPbSize_,size_);
 
 }
 
@@ -19,7 +35,7 @@ void VPPJacobian::run(int twv, int twa) {
 	// state vector of the class calling the constructor of this!
 
 	// loop on the state variables
-	for(size_t iVar=0; iVar<subPbSize_; iVar++) {
+	for(size_t iVar=0; iVar<size_; iVar++) {
 
 		// Compute the optimum eps for this variable
 		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
@@ -32,7 +48,7 @@ void VPPJacobian::run(int twv, int twa) {
 		xp(iVar) = x_(iVar) + eps;
 
 		// Compile the i-th column of the Jacobian matrix with the
-		// residuals for x_plus_epsilon
+		// residuals for x_plus_epsilon: ( dF/dvar(i) dM/dvar(i) )^T
 		col(iVar) = pVppItemsContainer_->getResiduals(twv,twa,xp).block(0,0,subPbSize_,1);
 
 		// set x= x - eps

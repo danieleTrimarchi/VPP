@@ -113,12 +113,17 @@ class VPP_NLP : public TNLP
 		/// Assignment operator
 		VPP_NLP& operator=(const VPP_NLP&);
 
-		/// Compute the component of the gradient vector: du/dPhi
-		double computedudPhi(const double* x);
-
-		/// Compute the components of the gradient vector wrt the
-		/// optimization variables
+		/// du/dPhi = u(phi2) - u(Phi1) / dPhi
+		/// where u(phi1), u(phi2) are computed with 1d NR
+		/// du/db, du/df are computed in a similar way but using
+		/// a 2d Newton-Raphson
 		double computederivative(const double*, size_t);
+
+		/// Recode this VPPSolverBase method here. To be removed when refactoring VPP_NLP
+		/// as a child of VPPSolverBase
+		/// Returns the index of the previous velocity-wise (twv) result that is marked as
+		/// converged (discard==false). It starts from 'current', so it can be used recursively
+		size_t getPreviousConverged(size_t idx, size_t TWA);
 
 		/// Ptr to the VPPItemFactory that contains all of the ingredients
 		/// required to compute the optimization constraints
@@ -136,6 +141,7 @@ class VPP_NLP : public TNLP
 		/// Ptr to the parser that contains all of the user variables
 		VariableFileParser* pParser_;
 
+		/// Wind angle and velocity indexes. Set with setWind(size_t, size_t)
 		static size_t twa_, twv_;
 
 		/// NRSolver used to compute the derivatives of the objective function
@@ -152,6 +158,9 @@ class VPP_NLP : public TNLP
 
 		/// lower and upper bounds for the state variables
 		std::vector<double> lowerBounds_, upperBounds_;
+
+		/// Declare a static const initial guess state vector
+		static Eigen::VectorXd xp0_;
 
 };
 
