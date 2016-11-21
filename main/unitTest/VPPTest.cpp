@@ -911,6 +911,7 @@ void TVPPTest::runISRESTest_g06(){
 /// Test ipOpt -- from example HS071_NLP
 void TVPPTest::ipOptTest() {
 
+
   // Create a new instance of your nlp
   //  (use a SmartPtr, not raw)
   SmartPtr<HS071_NLP> mynlp = new HS071_NLP();
@@ -928,6 +929,10 @@ void TVPPTest::ipOptTest() {
   app->Options()->SetNumericValue("tol", 1e-7);
   app->Options()->SetStringValue("mu_strategy", "adaptive");
   app->Options()->SetStringValue("output_file", "ipopt.out");
+  // Leave ipOpt silent
+  app->Options()->SetNumericValue("print_level",0);
+  app->Options()->SetNumericValue("file_print_level", 12);
+
   // The following overwrites the default name (ipopt.opt) of the
   // options file
   // app->Options()->SetStringValue("option_file_name", "hs071.opt");
