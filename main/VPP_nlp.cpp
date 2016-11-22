@@ -144,7 +144,7 @@ bool VPP_NLP::get_starting_point(int n, bool init_x, double* x,
 
 	///////////// Transfer the code of VPPSolverBase::resetInitialGuess ///////////////
 	// Use an Eigen::Map to manipulate the solution buffer x
-	Eigen::Map<Eigen::VectorXd> xp(x,n);
+	Eigen::Map<Eigen::RowVectorXd> xp(x,n);
 
 	// In it to something small to start the evals at each velocity
 	if(twv_==0) {
@@ -302,12 +302,12 @@ double VPP_NLP::computederivative(const double* x0, size_t pos) {
 		pSolver_->setSubPbSize(2);
 
 	// set x= x + eps
-	xp(pos) = xp(pos) * ( 1 + eps );
-
+	std::fabs(xp(pos))>0 ? xp(pos) = xp(pos) * ( 1 + eps ) : xp(pos) = eps;
+    
 	xp.block(0,0,1,1)= pSolver_->run(twv_,twa_,xp).block(0,0,1,1);
 
 	// set x= x + eps
-	xm(pos) = xm(pos) * ( 1 - eps );
+	std::fabs(xm(pos))>0 ? xm(pos)= xm(pos) * ( 1 - eps ) : xm(pos) = - eps;
 
 	// Compute u_m s.t. dF=0
 	xm.block(0,0,1,1)= pSolver_->run(twv_,twa_,xm).block(0,0,1,1);

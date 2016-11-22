@@ -155,8 +155,8 @@ void NRSolver::run(int twv, int twa) {
 			// Build a state vector with the size of the outer vector
 
 			// Compute the residuals vector - here only the part relative to the subproblem
-			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_).block(0,0,subPbSize_,1);
-			//std::cout<<"NR it: "<<it_<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<"   \n";
+			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_);
+			std::cout<<"NR it: "<<it_<<", residuals= "<<residuals.transpose()<<"   \n";
 
 			if(it_>1) {
 				velocityResiduals.push_back( residuals(0) );
@@ -164,27 +164,27 @@ void NRSolver::run(int twv, int twa) {
 			}
 
 			//  break if converged. TODO dtrimarchi: this condition is way too simple!
-			if( residuals.norm()<1e-5 )
+			if( residuals.block(0,0,subPbSize_,1).norm()<1e-5 )
 				break;
 
 			// Compute the Jacobian matrix
 			J.run(twv,twa);
-//			std::cout<<"J= \n"<<J<<std::endl;
+			std::cout<<"J= \n"<<J<<std::endl;
 
 			// Right before computing the solution, store the relevant data to the JacobianChecker
 			//JCheck.push_back(J,xp_,residuals);
 
 			// A * x = residuals --  J * deltas = residuals
 			// where deltas are also equal to f(x_i) / f'(x_i)
-			VectorXd deltas = J.colPivHouseholderQr().solve(residuals);
+			VectorXd deltas = J.colPivHouseholderQr().solve(residuals.block(0,0,subPbSize_,1));
 
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
 			xp_.block(0,0,subPbSize_,1) -= deltas;
 
 			// Cleanup the values that are too small
-			for(size_t i=0; i<xp_.size(); i++)
-				if(fabs(xp_(i)) < 1.e-10) xp_(i)=0.;
+			//for(size_t i=0; i<xp_.size(); i++)
+			//	if(fabs(xp_(i)) < 1.e-10) xp_(i)=0.;
 
 			//std::cout<<" - xp_= "<<xp_.transpose()<<std::endl;
 
