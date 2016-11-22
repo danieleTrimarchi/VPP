@@ -138,6 +138,7 @@ int main(int argc, char** argv) {
 	  app->Options()->SetNumericValue("tol", 1e-7);
 	  app->Options()->SetStringValue("mu_strategy", "adaptive");
 	  app->Options()->SetStringValue("output_file", "ipopt.out");
+	  app->Options()->SetStringValue("hessian_approximation", "limited-memory");
 //	  // Leave ipOpt silent
 //	  app->Options()->SetNumericValue("print_level",0);
 //	  app->Options()->SetNumericValue("file_print_level", 12);

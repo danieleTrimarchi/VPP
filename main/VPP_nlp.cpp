@@ -81,7 +81,7 @@ bool VPP_NLP::get_nlp_info(int& dimension, int& nEqualityConstraints, int& nnz_j
 	// The hessian is also dense and has 16 total non-zeros, but
 	// a priori we do not need it because we have set
 	// hessian_approximation","limited-memory"
-	nnz_h_lag = dimension_*dimension_;
+	nnz_h_lag = 10;
 
 	// Use the C style indexing (0-based)
 	int_style = TNLP::C_STYLE;
@@ -117,14 +117,14 @@ bool VPP_NLP::get_bounds_info(int n, double* x_l, double* x_u,
 
 	// Set the upper bounds for the state variables
 	for(size_t i=0; i<upperBounds_.size(); i++)
-		x_l[i] = upperBounds_[i];
+		x_u[i] = upperBounds_[i];
 
 	// Bounds on the constraints : as we only have equality constraints we set the
 	// upper and lower bound to the same value.
 	// It could be the case that relaxing this condition helps convergence.
 	// test todo dtrimarchi
-	g_l[0] = g_u[0] = 0.;
-	g_l[1] = g_u[1] = 0.;
+	g_l[0] = g_l[1] = -0.1;
+	g_u[0] = g_u[1] =  0.1;
 
 	return true;
 }
