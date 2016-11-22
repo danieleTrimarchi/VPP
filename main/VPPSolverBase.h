@@ -27,19 +27,15 @@ class VPPSolverBase {
 		const Eigen::VectorXd getResult(int TWV, int TWA);
 
 		/// Make a printout of the results for this run
-		/// TODO dtrimarchi : shift this to a mother class
 		void printResults();
 
 		/// Save the current results to file
-		/// TODO dtrimarchi : shift this to a mother class
 		void saveResults();
 
 		/// Read results from file and places them in the current results
-		/// TODO dtrimarchi : shift this to a mother class
 		void importResults();
 
 		/// Make a printout of the result bounds for this run
-		/// TODO dtrimarchi : shift this to a mother class
 		void printResultBounds();
 
 		/// Plot the polar plots for the state variables

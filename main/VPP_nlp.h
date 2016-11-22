@@ -93,6 +93,10 @@ class VPP_NLP : public TNLP
 		/// Set twv and twa for this run
 		void setWind(size_t twv, size_t twa);
 
+		/// Make a printout of the results for this run
+		/// TODO dtrimarchi : shift this to a mother class
+	void printResults();
+
 	private:
 
 		///@name Methods to block default compiler methods.

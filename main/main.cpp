@@ -27,7 +27,7 @@ using namespace Eigen;
 #include "VPPResultIO.h"
 
 #include "IpIpoptApplication.hpp"
-#include "hs071_nlp.h"
+#include "VPP_nlp.h"
 
 using namespace VPPSolve;
 using namespace Optim;
@@ -71,6 +71,37 @@ void run(VariableFileParser& parser, VPPSolverBase* pSolver){
 		}
 }
 
+/// Run the solver/Optimizer
+void run(VariableFileParser& parser, SmartPtr<IpoptApplication>& pApp, SmartPtr<VPP_NLP>& pMyNlp ){
+
+	// Loop on the wind ANGLES and VELOCITIES
+	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
+		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++){
+
+			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
+
+			try{
+
+				// Set the wind indexes
+				pMyNlp->setWind(vTW,aTW);
+
+				// Run the optimizer for the current wind speed/angle
+				ApplicationReturnStatus status = pApp->OptimizeTNLP(pMyNlp);
+
+			  if (status == Solve_Succeeded) {
+			    std::cout << std::endl << std::endl << "*** The problem solved!" << std::endl;
+			  }
+			  else
+			    throw VPPException(HERE,"ipOpt failed to find the solution!");
+
+			}
+			catch(...){
+				//do nothing and keep going
+			}
+
+		}
+}
+
 // MAIN
 int main(int argc, char** argv) {
 
@@ -98,8 +129,24 @@ int main(int argc, char** argv) {
 		// or a simple solver that will keep fixed the values of the optimization
 		// vars
 		//VPPSolver solver(pVppItems);
-		Optimizer solver(pVppItems);
+		//Optimizer solver(pVppItems);
 		// SemiAnalyticalOptimizer solver(pVppItems);
+		// ---
+		SmartPtr<VPP_NLP> mynlp = new VPP_NLP(pVppItems);
+	  SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
+	  app->RethrowNonIpoptException(true);
+	  app->Options()->SetNumericValue("tol", 1e-7);
+	  app->Options()->SetStringValue("mu_strategy", "adaptive");
+	  app->Options()->SetStringValue("output_file", "ipopt.out");
+//	  // Leave ipOpt silent
+//	  app->Options()->SetNumericValue("print_level",0);
+//	  app->Options()->SetNumericValue("file_print_level", 12);
+	  ApplicationReturnStatus status;
+	  status = app->Initialize();
+	  if (status != Solve_Succeeded)
+	  	throw VPPException(HERE,"Error during initialization of ipOpt!");
+
+		// ---
 
 		std::cout<<"Please enter a command or type -help-\n";
 
@@ -151,7 +198,8 @@ int main(int argc, char** argv) {
 				pVppItems->getAeroForcesItem()->plot();
 
 			else if( s == string("plotJacobian"))
-				solver.plotJacobian();
+				throw VPPException(HERE,"not implemented");
+				// solver.plotJacobian();
 
 			//---
 
@@ -194,38 +242,46 @@ int main(int argc, char** argv) {
 			//---
 
 			else if( s == string("plotPolars"))
-				solver.plotPolars();
+				throw VPPException(HERE,"not implemented");
+			//	solver.plotPolars();
 
 			else if( s == string("plotXY")) {
+				throw VPPException(HERE,"not implemented");
 				std::cout<<"Please enter the index of the wind angle: \n";
 				int idx;
 				cin >> idx;
-				solver.plotXY(idx);
+				//solver.plotXY(idx);
 			}
 
 			//---
 
 			else if(s == string("reload") ){
+				throw VPPException(HERE,"not implemented");
 				load(parser,pSails,pVppItems);
-				solver.reset(pVppItems);
+				//solver.reset(pVppItems);
 			}
 
 			else if(s == string("run") )
-				run(parser,&solver);
+				//run(parser,&solver);
+				run(parser,app,mynlp);
 
 			else if(s == string("import") )
-				solver.importResults();
+				throw VPPException(HERE,"not implemented");
+				//solver.importResults();
 
 			//---
 
 			else if( s == string("print"))
-				solver.printResults();
+				//solver.printResults();
+				mynlp->printResults();
 
 			else if( s == string("save"))
-				solver.saveResults();
+				throw VPPException(HERE,"not implemented");
+			 //solver.saveResults();
 
 			else if( s == string("bounds"))
-				solver.printResultBounds();
+				throw VPPException(HERE,"not implemented");
+				//solver.printResultBounds();
 
 			else if (s == "buildInfo" ){
 				std::cout<<"-------------------------"<<std::endl;

@@ -40,6 +40,10 @@
 		B3855B221CC544E4002F33AC /* VPPJacobian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3855B1F1CC544E4002F33AC /* VPPJacobian.cpp */; };
 		B3940AC01DAD603900FDD141 /* VPPSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3940ABC1DAD603900FDD141 /* VPPSolver.cpp */; };
 		B3940AC11DAD603900FDD141 /* VPPSolverBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3940ABE1DAD603900FDD141 /* VPPSolverBase.cpp */; };
+		B3DEF5C41DE36A6B00A4CD1B /* hs071_nlp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3DEF5C01DE36A6B00A4CD1B /* hs071_nlp.cpp */; };
+		B3DEF5C51DE36A6B00A4CD1B /* VPP_nlp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3DEF5C21DE36A6B00A4CD1B /* VPP_nlp.cpp */; };
+		B3DEF5C81DE42A9900A4CD1B /* libipopt.la in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEF5C71DE42A9900A4CD1B /* libipopt.la */; };
+		B3DEF5CB1DE42ADB00A4CD1B /* libipopt.1.10.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEF5C91DE42AC300A4CD1B /* libipopt.1.10.6.dylib */; };
 		B3E8B1791D998B9F0069B308 /* mathUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3E8B1781D998B9F0069B308 /* mathUtils.cpp */; };
 		B3E8B17E1D998BAB0069B308 /* VPPPlotSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3E8B17A1D998BAB0069B308 /* VPPPlotSet.cpp */; };
 		B3E8B17F1D998BAB0069B308 /* VPPResultIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3E8B17C1D998BAB0069B308 /* VPPResultIO.cpp */; };
@@ -121,6 +125,12 @@
 		B3940ABD1DAD603900FDD141 /* VPPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPSolver.h; path = main/VPPSolver.h; sourceTree = "<group>"; };
 		B3940ABE1DAD603900FDD141 /* VPPSolverBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPSolverBase.cpp; path = main/VPPSolverBase.cpp; sourceTree = "<group>"; };
 		B3940ABF1DAD603900FDD141 /* VPPSolverBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPSolverBase.h; path = main/VPPSolverBase.h; sourceTree = "<group>"; };
+		B3DEF5C01DE36A6B00A4CD1B /* hs071_nlp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hs071_nlp.cpp; path = main/hs071_nlp.cpp; sourceTree = "<group>"; };
+		B3DEF5C11DE36A6B00A4CD1B /* hs071_nlp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hs071_nlp.h; path = main/hs071_nlp.h; sourceTree = "<group>"; };
+		B3DEF5C21DE36A6B00A4CD1B /* VPP_nlp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPP_nlp.cpp; path = main/VPP_nlp.cpp; sourceTree = "<group>"; };
+		B3DEF5C31DE36A6B00A4CD1B /* VPP_nlp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPP_nlp.h; path = main/VPP_nlp.h; sourceTree = "<group>"; };
+		B3DEF5C71DE42A9900A4CD1B /* libipopt.la */ = {isa = PBXFileReference; lastKnownFileType = text; name = libipopt.la; path = "../third_party/Ipopt-3.12.6/lib/libipopt.la"; sourceTree = "<group>"; };
+		B3DEF5C91DE42AC300A4CD1B /* libipopt.1.10.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libipopt.1.10.6.dylib; path = "../third_party/Ipopt-3.12.6/lib/libipopt.1.10.6.dylib"; sourceTree = "<group>"; };
 		B3E8B1781D998B9F0069B308 /* mathUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mathUtils.cpp; path = main/mathUtils.cpp; sourceTree = "<group>"; };
 		B3E8B17A1D998BAB0069B308 /* VPPPlotSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPPlotSet.cpp; path = main/VPPPlotSet.cpp; sourceTree = "<group>"; };
 		B3E8B17B1D998BAB0069B308 /* VPPPlotSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPPlotSet.h; path = main/VPPPlotSet.h; sourceTree = "<group>"; };
@@ -133,6 +143,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3DEF5CB1DE42ADB00A4CD1B /* libipopt.1.10.6.dylib in Frameworks */,
+				B3DEF5C81DE42A9900A4CD1B /* libipopt.la in Frameworks */,
 				B3855B1C1CC54316002F33AC /* libnlopt.a in Frameworks */,
 				64BBD60E1C5B746A00F14B38 /* libplot.a in Frameworks */,
 				64BBD61C1C5B74B000F14B38 /* libumfpack.a in Frameworks */,
@@ -167,6 +179,10 @@
 		64D919471C59F7D60002F585 = {
 			isa = PBXGroup;
 			children = (
+				B3DEF5C01DE36A6B00A4CD1B /* hs071_nlp.cpp */,
+				B3DEF5C11DE36A6B00A4CD1B /* hs071_nlp.h */,
+				B3DEF5C21DE36A6B00A4CD1B /* VPP_nlp.cpp */,
+				B3DEF5C31DE36A6B00A4CD1B /* VPP_nlp.h */,
 				B304A1051DCB1B84002F2AAC /* Version.cpp */,
 				B304A1061DCB1B84002F2AAC /* Version.h */,
 				B3940ABC1DAD603900FDD141 /* VPPSolver.cpp */,
@@ -227,6 +243,7 @@
 				64BBD5F91C5B701400F14B38 /* VPPRightingMomentItem.h */,
 				64BBD5FA1C5B701400F14B38 /* Warning.cpp */,
 				64BBD5FB1C5B701400F14B38 /* Warning.h */,
+				B3DEF5C61DE42A9900A4CD1B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -236,6 +253,15 @@
 				64D919501C59F7D70002F585 /* VPP */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B3DEF5C61DE42A9900A4CD1B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B3DEF5C91DE42AC300A4CD1B /* libipopt.1.10.6.dylib */,
+				B3DEF5C71DE42A9900A4CD1B /* libipopt.la */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -300,8 +326,10 @@
 				B32816341D7558A100263BFD /* SemiAnalyticalOptimizer.cpp in Sources */,
 				B3940AC01DAD603900FDD141 /* VPPSolver.cpp in Sources */,
 				64BBD6091C5B701400F14B38 /* VPPRightingMomentItem.cpp in Sources */,
+				B3DEF5C41DE36A6B00A4CD1B /* hs071_nlp.cpp in Sources */,
 				64BBD6011C5B701400F14B38 /* Solver.cpp in Sources */,
 				64598B5B1C8E1D740038AC6C /* Results.cpp in Sources */,
+				B3DEF5C51DE36A6B00A4CD1B /* VPP_nlp.cpp in Sources */,
 				B304A1071DCB1B84002F2AAC /* Version.cpp in Sources */,
 				64BBD6071C5B701400F14B38 /* VPPItem.cpp in Sources */,
 				64BBD6061C5B701400F14B38 /* VPPHydroItem.cpp in Sources */,
@@ -380,6 +408,9 @@
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2/api",
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2",
 					/opt/local/include,
+					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/include/coin",
+					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/include",
+					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/Ipopt/src/Interfaces",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/opt/local/lib,
@@ -390,6 +421,7 @@
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2",
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2/api",
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2/.libs",
+					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -446,6 +478,9 @@
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2/api",
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2",
 					/opt/local/include,
+					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/include/coin",
+					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/include",
+					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/Ipopt/src/Interfaces",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/opt/local/lib,
@@ -456,6 +491,7 @@
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2",
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2/api",
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2/.libs",
+					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;

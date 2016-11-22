@@ -242,6 +242,15 @@ void VPP_NLP::setWind(size_t twv, size_t twa) {
 	twv_= twv;
 }
 
+// Make a printout of the results for this run
+void VPP_NLP::printResults() {
+
+	std::cout<<"==== VPP_NLP RESULTS PRINTOUT ==================="<<std::endl;
+	pResults_->print();
+	std::cout<<"---------------------------------------------------\n"<<std::endl;
+
+}
+
 // Return the gradient of the objective function grad_{x} f(x)
 bool VPP_NLP::eval_grad_f(int n, const double* x, bool new_x, double* grad_f) {
 
