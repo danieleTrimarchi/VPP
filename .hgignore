@@ -21,3 +21,5 @@ EclipseWorkSpace/*
 *.gcx
 *docs/*
 main/Version.cpp
+DerivedData/*
+*.xcsettings

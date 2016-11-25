@@ -124,8 +124,8 @@ bool VPP_NLP::get_bounds_info(int n, double* x_l, double* x_u,
 	// upper and lower bound to the same value.
 	// It could be the case that relaxing this condition helps convergence.
 	// test todo dtrimarchi
-	g_l[0] = g_l[1] = -0.1;
-	g_u[0] = g_u[1] =  0.1;
+	g_l[0] = g_l[1] = 0.0;
+	g_u[0] = g_u[1] = 0.0;
 
 	return true;
 }
@@ -195,7 +195,29 @@ bool VPP_NLP::get_starting_point(int n, bool init_x, double* x,
 				xp= xp0_;
 
 	}
+	else if( twv_==1 ) {
 
+		///////////////////
+
+		// IF twv==1 and twa==0, just take the solution of twv-1, 0
+		// if this is acceptable. Otherwise restart from x0
+		if(twa_==0)
+			if(!pResults_->get(twv_-1,twa_).discard())
+				xp= *(pResults_->get(twv_-1,twa_).getX());
+			else
+				xp= xp0_;
+
+		// twv_==1 and twa_ > 0. Do as for twv_==0 : use the previous converged solution
+		else
+
+			if(!pResults_->get(twv_,twa_-1).discard())// In this case we have a solution at a previous angle we can use
+				// to set the guess
+				xp = *(pResults_->get(twv_,twa_-1).getX());
+			else
+				xp= xp0_;
+
+		///////////////////
+	}
 	else if( twv_>1 ) {
 
 		// For twv> 1 we can linearly predict the result of the state vector
@@ -314,7 +336,7 @@ bool VPP_NLP::eval_grad_f(int n, const double* x, bool new_x, double* grad_f) {
 double VPP_NLP::computederivative(const double* x0, size_t pos) {
 
 	// Set cout precision
-	std::cout.precision(15);
+	std::cout.precision(5);
 
 	// Transform the c-style container into an Eigen container
 	Map<const VectorXd>x(x0,dimension_);
@@ -347,7 +369,6 @@ double VPP_NLP::computederivative(const double* x0, size_t pos) {
 	// Compute u_m s.t. dF=0
 	xm.block(0,0,1,1)= pSolver_->run(twv_,twa_,xm).block(0,0,1,1);
 
-	std::cout<<"derivative= "<< ( xp(0) - xm(0) ) / ( 2 * eps)<<std::endl;
 	// Return du / dPhi = ( u_p - u_m ) / ( 2 * eps )
 	return ( xp(0) - xm(0) ) / ( 2 * eps);
 
@@ -447,10 +468,10 @@ void VPP_NLP::finalize_solution(SolverReturn status,
 	// so we could use the solution.
 
 	// For this example, we write the solution to the console
-	std::cout << std::endl << std::endl << "Solution of the primal variables, x" << std::endl;
-	for (int i=0; i<n; i++) {
-		std::cout << "x[" << i << "] = " << x[i] << std::endl;
-	}
+	std::cout << std::endl << std::endl << "Solution of the state variables, x" << std::endl;
+	for (int i=0; i<n; i++)
+		std::cout <<  x[i] << "  ";
+	std::cout<<"\n";
 
 	// Map the c-style container x to an Eigen object
 	Eigen::Map<const Eigen::VectorXd> solutionMap(x,dimension_);
@@ -470,19 +491,20 @@ void VPP_NLP::finalize_solution(SolverReturn status,
 	pResults_->push_back(twv_, twa_, solution, residuals, discard);
 
 
-	std::cout << std::endl << std::endl << "Solution of the bound multipliers, z_L and z_U" << std::endl;
-	for (int i=0; i<n; i++) {
-		std::cout << "z_L[" << i << "] = " << z_L[i] << std::endl;
-	}
-	for (int i=0; i<n; i++) {
-		std::cout << "z_U[" << i << "] = " << z_U[i] << std::endl;
-	}
+//	std::cout << std::endl << std::endl << "Solution of the bound multipliers, z_L and z_U" << std::endl;
+//	for (int i=0; i<n; i++) {
+//		std::cout << "z_L[" << i << "] = " << z_L[i] << std::endl;
+//	}
+//	for (int i=0; i<n; i++) {
+//		std::cout << "z_U[" << i << "] = " << z_U[i] << std::endl;
+//	}
 
-	std::cout << std::endl << std::endl << "Objective value" << std::endl;
-	std::cout << "f(x*) = " << obj_value << std::endl;
+//	std::cout << std::endl << std::endl << "Objective value" << std::endl;
+//	std::cout << "f(x*) = " << obj_value << std::endl;
 
 	std::cout << std::endl << "Final value of the constraints:" << std::endl;
-	for (int i=0; i<m ;i++) {
-		std::cout << "g(" << i << ") = " << g[i] << std::endl;
-	}
+	for (int i=0; i<m ;i++)
+		std::cout << g[i] << "  ";
+	std::cout<<"\n";
+
 }

@@ -80,9 +80,7 @@ void run(VariableFileParser& parser, SmartPtr<IpoptApplication>& pApp, SmartPtr<
 
 			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
 
-			// In an initial debugging phase I do not want the solver to
-			// procede if exceptions are thrown
-			//try{
+			try{
 
 				// Set the wind indexes
 				pMyNlp->setWind(vTW,aTW);
@@ -90,19 +88,16 @@ void run(VariableFileParser& parser, SmartPtr<IpoptApplication>& pApp, SmartPtr<
 				// Run the optimizer for the current wind speed/angle
 				ApplicationReturnStatus status = pApp->OptimizeTNLP(pMyNlp);
 
-			  if (status == Solve_Succeeded) {
-			    std::cout << std::endl << std::endl << "*** The problem solved!" << std::endl;
-			  }
-			  else
-			    throw VPPException(HERE,"ipOpt failed to find the solution!");
+				if (status == Solve_Succeeded) {
+					std::cout << std::endl << std::endl << "*** The problem solved!" << std::endl;
+				}
+				else
+					throw VPPException(HERE,"ipOpt failed to find the solution!");
 
-			  throw VPPException(HERE,"STOP");
-
-//			}
-//			catch(...){
-//				//do nothing and keep going
-//			}
-
+			}
+			catch(...){
+				//do nothing and keep going
+			}
 		}
 }
 
@@ -137,26 +132,28 @@ int main(int argc, char** argv) {
 		// SemiAnalyticalOptimizer solver(pVppItems);
 		// ---
 		SmartPtr<VPP_NLP> mynlp = new VPP_NLP(pVppItems);
-	  SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
-	  app->RethrowNonIpoptException(true);
-	  app->Options()->SetNumericValue("tol", 1e-7);
-	  app->Options()->SetStringValue("mu_strategy", "adaptive");
-	  app->Options()->SetStringValue("output_file", "ipopt.out");
-	  app->Options()->SetStringValue("hessian_approximation", "limited-memory");
+		SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
+		app->RethrowNonIpoptException(true);
+		app->Options()->SetNumericValue("tol", 1e-3);
+		app->Options()->SetStringValue("mu_strategy", "adaptive");
+		app->Options()->SetStringValue("output_file", "ipopt.out");
+		app->Options()->SetStringValue("hessian_approximation", "limited-memory");
 
-	  // Call method VPP_NLP::get_scaling_parameters which is used to set the pb to
-	  // maximization and eventually to improve the conditioning of the pb
-	  app->Options()->SetStringValue("nlp_scaling_method", "user-scaling");
+		// Call method VPP_NLP::get_scaling_parameters which is used to set the pb to
+		// maximization and eventually to improve the conditioning of the pb
+		app->Options()->SetStringValue("nlp_scaling_method", "user-scaling");
 
-	  // Set ipOpt verbosity
-	  app->Options()->SetNumericValue("print_level",12);
-//	  app->Options()->SetNumericValue("file_print_level", 12);
-	  ApplicationReturnStatus status;
-	  status = app->Initialize();
-	  if (status != Solve_Succeeded)
-	  	throw VPPException(HERE,"Error during initialization of ipOpt!");
+		// Set ipOpt verbosity
+		app->Options()->SetIntegerValue("print_level",0);
+		app->Options()->SetIntegerValue("file_print_level", 0);
+
+		ApplicationReturnStatus status;
+		status = app->Initialize();
+		if (status != Solve_Succeeded)
+			throw VPPException(HERE,"Error during initialization of ipOpt!");
 
 		// ---
+		VPP_NLP solver(pVppItems);
 
 		std::cout<<"Please enter a command or type -help-\n";
 
@@ -178,17 +175,17 @@ int main(int argc, char** argv) {
 			else if(s == string("convertVelocityToFn")) {
 				IOUtils io(pVppItems->getWind());
 				std::cout<<"Fn= "<<
-				pVppItems->getFrictionalResistanceItem()->convertToFn(
-						io.askUserDouble("Please enter the value of the velocity...")
-				)<<std::endl;
+						pVppItems->getFrictionalResistanceItem()->convertToFn(
+								io.askUserDouble("Please enter the value of the velocity...")
+						)<<std::endl;
 			}
 
 			else if(s == string("convertFnToVelocity")) {
 				IOUtils io(pVppItems->getWind());
 				std::cout<<"Velocity= "<<
-				pVppItems->getFrictionalResistanceItem()->convertToVelocity(
-						io.askUserDouble("Please enter the value of the Fn...")
-				)<<std::endl;
+						pVppItems->getFrictionalResistanceItem()->convertToVelocity(
+								io.askUserDouble("Please enter the value of the Fn...")
+						)<<std::endl;
 			}
 
 			//---
@@ -209,7 +206,7 @@ int main(int argc, char** argv) {
 
 			else if( s == string("plotJacobian"))
 				throw VPPException(HERE,"not implemented");
-				// solver.plotJacobian();
+			// solver.plotJacobian();
 
 			//---
 
@@ -277,7 +274,7 @@ int main(int argc, char** argv) {
 
 			else if(s == string("import") )
 				throw VPPException(HERE,"not implemented");
-				//solver.importResults();
+			//solver.importResults();
 
 			//---
 
@@ -287,11 +284,11 @@ int main(int argc, char** argv) {
 
 			else if( s == string("save"))
 				throw VPPException(HERE,"not implemented");
-			 //solver.saveResults();
+			//solver.saveResults();
 
 			else if( s == string("bounds"))
 				throw VPPException(HERE,"not implemented");
-				//solver.printResultBounds();
+			//solver.printResultBounds();
 
 			else if (s == "buildInfo" ){
 				std::cout<<"-------------------------"<<std::endl;

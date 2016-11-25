@@ -156,7 +156,7 @@ void NRSolver::run(int twv, int twa) {
 
 			// Compute the residuals vector - here only the part relative to the subproblem
 			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_);
-			std::cout<<"NR it: "<<it_<<", residuals= "<<residuals.transpose()<<"   \n";
+			//std::cout<<"NR it: "<<it_<<", residuals= "<<residuals.transpose()<<"   \n";
 
 			if(it_>1) {
 				velocityResiduals.push_back( residuals(0) );
@@ -220,16 +220,16 @@ void NRSolver::printAndSave(int twv, int twa) {
 
 	// Print the solution
 	//printf("\n found solution after %d iterations\n     at f(", it);
-	printf("NR solver solution for iTwv= %i iTwa=%i : ", twv,twa);
-	for(size_t i=0; i<xp_.size(); i++)
-		printf("%g  ",xp_(i));
-	printf("\n");
-
-	// Print the residuals
-	printf("     residuals: ");
-	for(size_t i=0; i<res.size(); i++)
-		printf("%g  ",res(i));
-	printf("\n\n");
+//	printf("NR solver solution for iTwv= %i iTwa=%i : ", twv,twa);
+//	for(size_t i=0; i<xp_.size(); i++)
+//		printf("%g  ",xp_(i));
+//	printf("\n");
+//
+//	// Print the residuals
+//	printf("     residuals: ");
+//	for(size_t i=0; i<res.size(); i++)
+//		printf("%g  ",res(i));
+//	printf("\n\n");
 
 	// Push the result to the result container. Hide from plotting if
 	// out-of-bounds
