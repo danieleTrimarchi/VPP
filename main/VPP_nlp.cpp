@@ -12,6 +12,7 @@
 #include <iostream>
 #include "VPPException.h"
 #include "VPPJacobian.h"
+#include "VPPException.h"
 
 using namespace Ipopt;
 using namespace Eigen;
@@ -76,7 +77,7 @@ bool VPP_NLP::get_nlp_info(int& dimension, int& nEqualityConstraints, int& nnz_j
 	// Note that the first two cols of this Jacobian are already
 	// computed by VPPJacobian. We need to extend that class to
 	// compute the full jacobian then!
-	nnz_jac_g = dimension_*nEqualityConstraints_;
+	nnz_jac_g = dimension_ * nEqualityConstraints_;
 
 	// The hessian is also dense and has 16 total non-zeros, but
 	// a priori we do not need it because we have set
@@ -125,6 +126,37 @@ bool VPP_NLP::get_bounds_info(int n, double* x_l, double* x_u,
 	// test todo dtrimarchi
 	g_l[0] = g_l[1] = -0.1;
 	g_u[0] = g_u[1] =  0.1;
+
+	return true;
+}
+
+// Overrides Ipopt::TPNLP get_scaling_parameters. Provide scaling
+// factors for the objective function as well as for the optimization
+// variables and/or constraints. The return value should be true,
+// unless an error occurred, and the program is to be aborted.
+// This method is called if the nlp scaling method is chosen as "user-scaling".
+// if the value of obj_scaling is negative, then Ipopt will maximize
+// the objective function instead of minimizing it.
+// -----
+// Note that this method should be used to improve the conditioning of the pb
+// so that all sensitivities, i.e., all non-zero first partial derivatives, are
+// typically of the order 0.1   10.
+// -----
+bool VPP_NLP::get_scaling_parameters(double& obj_scaling,
+                                    bool& use_x_scaling, Index n,
+																		double* x_scaling,
+                                    bool& use_g_scaling, Index m,
+																		double* g_scaling) {
+
+	assert(n == dimension_);
+	assert(m == subPbSize_);
+
+	// Maximize the objective function by setting obj_scaling = -1
+	obj_scaling= -1;
+
+	// No other scaling required
+	use_x_scaling= false;
+	use_g_scaling= false;
 
 	return true;
 }
@@ -204,7 +236,7 @@ bool VPP_NLP::get_starting_point(int n, bool init_x, double* x,
 		}
 	}
 
-	std::cout<<"-->> solver first guess: "<<xp.transpose()<<std::endl;
+	std::cout<<"-->> solver first guess: "<<xp<<std::endl;
 
 	return true;
 }
@@ -231,7 +263,7 @@ bool VPP_NLP::eval_f(int n, const double* x, bool new_x, double& obj_value) {
 	assert(n == dimension_);
 
 	// Maximize speed
-	obj_value = -x[0];
+	obj_value = x[0];
 
 	return true;
 }
@@ -281,6 +313,9 @@ bool VPP_NLP::eval_grad_f(int n, const double* x, bool new_x, double* grad_f) {
 // a 2d Newton-Raphson
 double VPP_NLP::computederivative(const double* x0, size_t pos) {
 
+	// Set cout precision
+	std::cout.precision(15);
+
 	// Transform the c-style container into an Eigen container
 	Map<const VectorXd>x(x0,dimension_);
 
@@ -303,7 +338,7 @@ double VPP_NLP::computederivative(const double* x0, size_t pos) {
 
 	// set x= x + eps
 	std::fabs(xp(pos))>0 ? xp(pos) = xp(pos) * ( 1 + eps ) : xp(pos) = eps;
-    
+
 	xp.block(0,0,1,1)= pSolver_->run(twv_,twa_,xp).block(0,0,1,1);
 
 	// set x= x + eps
@@ -312,6 +347,7 @@ double VPP_NLP::computederivative(const double* x0, size_t pos) {
 	// Compute u_m s.t. dF=0
 	xm.block(0,0,1,1)= pSolver_->run(twv_,twa_,xm).block(0,0,1,1);
 
+	std::cout<<"derivative= "<< ( xp(0) - xm(0) ) / ( 2 * eps)<<std::endl;
 	// Return du / dPhi = ( u_p - u_m ) / ( 2 * eps )
 	return ( xp(0) - xm(0) ) / ( 2 * eps);
 
@@ -337,6 +373,9 @@ bool VPP_NLP::eval_g(int n, const double* x0, bool new_x, int m, double* g) {
 bool VPP_NLP::eval_jac_g(int n, const double* x0, bool new_x,
 		int m, int nele_jac, int* iRow, int *jCol,
 		double* values) {
+
+	assert(n == dimension_);
+	assert(m == nEqualityConstraints_);
 
 	if (values == NULL) {
 
@@ -394,62 +433,6 @@ bool VPP_NLP::eval_h(int n, const double* x, bool new_x,
 	// not require the hessian matrix
 	throw VPPException(HERE, "The hessian should not be requested!");
 
-	if (values == NULL) {
-		// Return the structure. This is a symmetric matrix, fill the lower left
-		// triangle only.
-
-		// The hessian for this problem is actually dense
-		int idx=0;
-		for (int row = 0; row < 4; row++) {
-			for (int col = 0; col <= row; col++) {
-				iRow[idx] = row;
-				jCol[idx] = col;
-				idx++;
-			}
-		}
-
-		assert(idx == nele_hess);
-	}
-	else {
-		// Return the values. This is a symmetric matrix, fill the lower left
-		// triangle only
-
-		// Fill the objective portion
-		values[0] = obj_factor * (2*x[3]); // 0,0
-
-		values[1] = obj_factor * (x[3]);   // 1,0
-		values[2] = 0.;                    // 1,1
-
-		values[3] = obj_factor * (x[3]);   // 2,0
-		values[4] = 0.;                    // 2,1
-		values[5] = 0.;                    // 2,2
-
-		values[6] = obj_factor * (2*x[0] + x[1] + x[2]); // 3,0
-		values[7] = obj_factor * (x[0]);                 // 3,1
-		values[8] = obj_factor * (x[0]);                 // 3,2
-		values[9] = 0.;                                  // 3,3
-
-
-		// Add the portion for the first constraint
-		values[1] += lambda[0] * (x[2] * x[3]); // 1,0
-
-		values[3] += lambda[0] * (x[1] * x[3]); // 2,0
-		values[4] += lambda[0] * (x[0] * x[3]); // 2,1
-
-		values[6] += lambda[0] * (x[1] * x[2]); // 3,0
-		values[7] += lambda[0] * (x[0] * x[2]); // 3,1
-		values[8] += lambda[0] * (x[0] * x[1]); // 3,2
-
-		// Add the portion for the second constraint
-		values[0] += lambda[1] * 2; // 0,0
-
-		values[2] += lambda[1] * 2; // 1,1
-
-		values[5] += lambda[1] * 2; // 2,2
-
-		values[9] += lambda[1] * 2; // 3,3
-	}
-
 	return true;
 }
 
@@ -474,8 +457,8 @@ void VPP_NLP::finalize_solution(SolverReturn status,
 	Eigen::VectorXd solution(solutionMap);
 
 	// Map the c-style container g to an Eigen object
-	Eigen::Map<const Eigen::VectorXd> resMap(g,nEqualityConstraints_);
-	Eigen::VectorXd residuals(resMap);
+	Eigen::Map<const Eigen::VectorXd> residualMap(g,nEqualityConstraints_);
+	Eigen::VectorXd residuals(residualMap);
 
 	bool discard=false;
 	for(size_t i=0; i<solutionMap.size(); i++){

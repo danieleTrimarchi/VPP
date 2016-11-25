@@ -40,10 +40,10 @@ void VPPItem::updateSolution(int vTW, int aTW, const double* x) {
 	if(mathUtils::isNotValid(x[3])) throw VPPException(HERE,"x[3] is NAN!");
 
 	// Update the local copy of the state variables
-	V_= x[0];
+	V_=   x[0];
 	PHI_= x[1]; // Note that PHI_ is in rad
-	b_= x[2];
-	f_= x[3];
+	b_=   x[2];
+	f_=   x[3];
 
 
 	// Now call the implementation of the pure virtual update(int,int)

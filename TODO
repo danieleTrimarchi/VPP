@@ -1,3 +1,5 @@
+- logForCxx : drive the output with env vars
+
 - add a scone target: scons makeTest : ask Stephane about execution path
   
 - build ipOtp integration

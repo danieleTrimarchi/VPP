@@ -51,6 +51,24 @@ class VPP_NLP : public TNLP
 		virtual bool get_bounds_info(Index n, Number* x_l, Number* x_u,
 				Index m, Number* g_l, Number* g_u);
 
+		/// Overrides Ipopt::TPNLP get_scaling_parameters. Provide scaling
+		/// factors for the objective function as well as for the optimization
+		/// variables and/or constraints. The return value should be true,
+		/// unless an error occurred, and the program is to be aborted.
+		/// This method is called if the nlp scaling method is chosen as "user-scaling".
+		/// if the value of obj_scaling is negative, then Ipopt will maximize
+		/// the objective function instead of minimizing it
+ 	 	// -----
+ 	 	// Note that this method should be used to improve the conditioning of the pb
+ 	 	// so that all sensitivities, i.e., all non-zero first partial derivatives, are
+ 	 	// typically of the order 0.1   10.
+ 	 	// -----
+		virtual bool get_scaling_parameters(Number& obj_scaling,
+		                                    bool& use_x_scaling, Index n,
+		                                    Number* x_scaling,
+		                                    bool& use_g_scaling, Index m,
+		                                    Number* g_scaling);
+
 		/// Method to return the starting point for the algorithm
 		virtual bool get_starting_point(Index n, bool init_x, Number* x,
 				bool init_z, Number* z_L, Number* z_U,

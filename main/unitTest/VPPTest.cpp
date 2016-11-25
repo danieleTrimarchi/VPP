@@ -927,13 +927,17 @@ void TVPPTest::ipOptTest() {
   app->Options()->SetNumericValue("tol", 1e-7);
   app->Options()->SetStringValue("mu_strategy", "adaptive");
   app->Options()->SetStringValue("output_file", "ipopt.out");
+
+  // Do not request the hessian matrix
+  app->Options()->SetStringValue("hessian_approximation", "limited-memory");
+
   // Leave ipOpt silent
   app->Options()->SetNumericValue("print_level",0);
   app->Options()->SetNumericValue("file_print_level", 12);
 
   // The following overwrites the default name (ipopt.opt) of the
   // options file
-  // app->Options()->SetStringValue("option_file_name", "hs071.opt");
+  app->Options()->SetStringValue("option_file_name", "hs071.opt");
 
   // Initialize the IpoptApplication and process the options
   ApplicationReturnStatus status;

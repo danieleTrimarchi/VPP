@@ -169,7 +169,7 @@ void NRSolver::run(int twv, int twa) {
 
 			// Compute the Jacobian matrix
 			J.run(twv,twa);
-			std::cout<<"J= \n"<<J<<std::endl;
+			//std::cout<<"J= \n"<<J<<std::endl;
 
 			// Right before computing the solution, store the relevant data to the JacobianChecker
 			//JCheck.push_back(J,xp_,residuals);

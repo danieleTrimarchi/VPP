@@ -80,7 +80,9 @@ void run(VariableFileParser& parser, SmartPtr<IpoptApplication>& pApp, SmartPtr<
 
 			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
 
-			try{
+			// In an initial debugging phase I do not want the solver to
+			// procede if exceptions are thrown
+			//try{
 
 				// Set the wind indexes
 				pMyNlp->setWind(vTW,aTW);
@@ -94,10 +96,12 @@ void run(VariableFileParser& parser, SmartPtr<IpoptApplication>& pApp, SmartPtr<
 			  else
 			    throw VPPException(HERE,"ipOpt failed to find the solution!");
 
-			}
-			catch(...){
-				//do nothing and keep going
-			}
+			  throw VPPException(HERE,"STOP");
+
+//			}
+//			catch(...){
+//				//do nothing and keep going
+//			}
 
 		}
 }
@@ -139,8 +143,13 @@ int main(int argc, char** argv) {
 	  app->Options()->SetStringValue("mu_strategy", "adaptive");
 	  app->Options()->SetStringValue("output_file", "ipopt.out");
 	  app->Options()->SetStringValue("hessian_approximation", "limited-memory");
-//	  // Leave ipOpt silent
-//	  app->Options()->SetNumericValue("print_level",0);
+
+	  // Call method VPP_NLP::get_scaling_parameters which is used to set the pb to
+	  // maximization and eventually to improve the conditioning of the pb
+	  app->Options()->SetStringValue("nlp_scaling_method", "user-scaling");
+
+	  // Set ipOpt verbosity
+	  app->Options()->SetNumericValue("print_level",12);
 //	  app->Options()->SetNumericValue("file_print_level", 12);
 	  ApplicationReturnStatus status;
 	  status = app->Initialize();
