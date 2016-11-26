@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
 		//Optimizer solver(pVppItems);
 		// SemiAnalyticalOptimizer solver(pVppItems);
 		// ---
-		SmartPtr<VPP_NLP> mynlp = new VPP_NLP(pVppItems);
+		SmartPtr<VPP_NLP> pSolver = new VPP_NLP(pVppItems);
 		SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
 		app->RethrowNonIpoptException(true);
 		app->Options()->SetNumericValue("tol", 1e-3);
@@ -144,16 +144,13 @@ int main(int argc, char** argv) {
 		app->Options()->SetStringValue("nlp_scaling_method", "user-scaling");
 
 		// Set ipOpt verbosity
-		app->Options()->SetIntegerValue("print_level",0);
-		app->Options()->SetIntegerValue("file_print_level", 0);
+		app->Options()->SetIntegerValue("print_level",2);
+		app->Options()->SetIntegerValue("file_print_level", 2);
 
 		ApplicationReturnStatus status;
 		status = app->Initialize();
 		if (status != Solve_Succeeded)
 			throw VPPException(HERE,"Error during initialization of ipOpt!");
-
-		// ---
-		VPP_NLP solver(pVppItems);
 
 		std::cout<<"Please enter a command or type -help-\n";
 
@@ -205,8 +202,7 @@ int main(int argc, char** argv) {
 				pVppItems->getAeroForcesItem()->plot();
 
 			else if( s == string("plotJacobian"))
-				throw VPPException(HERE,"not implemented");
-			// solver.plotJacobian();
+				pSolver->plotJacobian();
 
 			//---
 
@@ -249,46 +245,40 @@ int main(int argc, char** argv) {
 			//---
 
 			else if( s == string("plotPolars"))
-				throw VPPException(HERE,"not implemented");
-			//	solver.plotPolars();
+				pSolver->plotPolars();
 
 			else if( s == string("plotXY")) {
-				throw VPPException(HERE,"not implemented");
 				std::cout<<"Please enter the index of the wind angle: \n";
 				int idx;
 				cin >> idx;
-				//solver.plotXY(idx);
+				pSolver->plotXY(idx);
 			}
 
 			//---
 
 			else if(s == string("reload") ){
-				throw VPPException(HERE,"not implemented");
 				load(parser,pSails,pVppItems);
-				//solver.reset(pVppItems);
+				pSolver->reset(pVppItems);
 			}
 
 			else if(s == string("run") )
 				//run(parser,&solver);
-				run(parser,app,mynlp);
+				run(parser,app,pSolver);
 
 			else if(s == string("import") )
-				throw VPPException(HERE,"not implemented");
-			//solver.importResults();
+				pSolver->importResults();
 
 			//---
 
 			else if( s == string("print"))
 				//solver.printResults();
-				mynlp->printResults();
+				pSolver->printResults();
 
 			else if( s == string("save"))
-				throw VPPException(HERE,"not implemented");
-			//solver.saveResults();
+				pSolver->saveResults();
 
 			else if( s == string("bounds"))
-				throw VPPException(HERE,"not implemented");
-			//solver.printResultBounds();
+				pSolver->printResultBounds();
 
 			else if (s == "buildInfo" ){
 				std::cout<<"-------------------------"<<std::endl;

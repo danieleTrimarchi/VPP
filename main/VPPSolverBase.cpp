@@ -56,6 +56,7 @@ VPPSolverBase::~VPPSolverBase() {
 	// make nothing
 }
 
+// Reset the optimizer when reloading the initial data
 void VPPSolverBase::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Init the STATIC member vppItemsContainer
@@ -187,8 +188,6 @@ void VPPSolverBase::importResults() {
 
 }
 
-
-
 // Make a printout of the result bounds for this run
 void VPPSolverBase::printResultBounds() {
 
@@ -198,7 +197,7 @@ void VPPSolverBase::printResultBounds() {
 
 }
 
-/// Make a printout of the results for this run
+// Make a printout of the results for this run
 void VPPSolverBase::plotPolars() {
 
 	// Instantiate a VPPPlotSet and sub-contract the plot
@@ -207,7 +206,7 @@ void VPPSolverBase::plotPolars() {
 
 }
 
-/// Make a printout of the results for this run
+// Make a printout of the results for this run
 void VPPSolverBase::plotXY(size_t iWa) {
 
 	if( iWa>=pResults_->windAngleSize() ){
@@ -225,7 +224,6 @@ void VPPSolverBase::plotXY(size_t iWa) {
 }
 
 // Add this method for compatibility with the NR solver.
-// TODO dtrimarchi: this could go to a common parent class
 void VPPSolverBase::plotJacobian() {
 	nrSolver_->plotJacobian();
 }

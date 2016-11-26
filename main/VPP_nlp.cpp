@@ -13,6 +13,8 @@
 #include "VPPException.h"
 #include "VPPJacobian.h"
 #include "VPPException.h"
+#include "VPPPlotSet.h"
+#include "VPPResultIO.h"
 
 using namespace Ipopt;
 using namespace Eigen;
@@ -28,7 +30,8 @@ VPP_NLP::VPP_NLP():
 				dimension_(0),
 				subPbSize_(0),
 				nEqualityConstraints_(0),
-				pParser_(NULL){
+				pParser_(NULL),
+				pWind_(0) {
 
 }
 
@@ -38,7 +41,8 @@ VPP_NLP::VPP_NLP(boost::shared_ptr<VPPItemFactory> pVppItemsContainer):
 				dimension_(4),  /* v, phi, crew, flat */
 				subPbSize_(2),  /* v, phi */
 				nEqualityConstraints_(2),
-				pParser_(pVppItemsContainer->getParser()) {
+				pParser_(pVppItemsContainer->getParser()),
+				pWind_(pVppItemsContainer_->getWind()){
 
 	// Instantiate a nrSolver that will be used to compute the gradient
 	// of the objective function : the vector [ du/du du/dPhi du/db du/df ]
@@ -48,7 +52,6 @@ VPP_NLP::VPP_NLP(boost::shared_ptr<VPPItemFactory> pVppItemsContainer):
 	pResults_.reset(new ResultContainer(pVppItemsContainer->getWind()));
 
 }
-
 
 // Default (virtual) destructor
 VPP_NLP::~VPP_NLP(){
@@ -506,5 +509,84 @@ void VPP_NLP::finalize_solution(SolverReturn status,
 	for (int i=0; i<m ;i++)
 		std::cout << g[i] << "  ";
 	std::cout<<"\n";
+
+}
+
+// Make a printout of the results for this run
+void VPP_NLP::plotXY(size_t iWa) {
+
+	if( iWa>=pResults_->windAngleSize() ){
+		std::cout<<"User requested a wrong index! \n";
+		return;
+	}
+
+	// Ask the plotter manager to produce the plots given the
+	// results. The plotter manager prepares the results (makes
+	// sure to manage only valid results) and instantiates the
+	// plotter to prepare the XY plot
+		VPPPlotSet vppPlotSet(pResults_.get());
+		vppPlotSet.plotXY(iWa);
+
+}
+
+// Add this method for compatibility with the NR solver.
+// TODO dtrimarchi: this could go to a common parent class
+void VPP_NLP::plotJacobian() {
+	pSolver_->plotJacobian();
+}
+
+// Make a printout of the results for this run
+void VPP_NLP::plotPolars() {
+
+	// Instantiate a VPPPlotSet and sub-contract the plot
+	VPPPlotSet plotSet(pResults_.get());
+	plotSet.plotPolars();
+
+}
+
+// Reset the optimizer when reloading the initial data
+void VPP_NLP::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
+
+	// Init the STATIC member vppItemsContainer
+	pVppItemsContainer_= VPPItemFactory;
+
+	// Set the parser
+	pParser_= pVppItemsContainer_->getParser();
+
+	// Also get a reference to the WindItem that has computed the
+	// real wind velocity/angle for the current run
+	pWind_=pVppItemsContainer_->getWind();
+
+	// Init the ResultContainer that will be filled while running the results
+	pResults_.reset(new ResultContainer(pWind_));
+
+}
+
+// Read results from file and places them in the current results
+void VPP_NLP::importResults() {
+
+	std::cout<<"==== VPP_NLP RESULTS IMPORT... ==================="<<std::endl;
+	VPPResultIO reader(pResults_.get());
+	reader.read();
+	std::cout<<"---------------------------------------------------\n"<<std::endl;
+
+}
+
+// Make a printout of the result bounds for this run
+void VPP_NLP::printResultBounds() {
+
+	std::cout<<"==== VPP_NLP RESULT BOUNDS PRINTOUT ==================="<<std::endl;
+	pResults_->printBounds();
+	std::cout<<"---------------------------------------------------\n"<<std::endl;
+
+}
+
+// Save the current results to file
+void VPP_NLP::saveResults() {
+
+	std::cout<<"==== VPP_NLP RESULTS SAVING... ==================="<<std::endl;
+	VPPResultIO writer(pResults_.get());
+	writer.write();
+	std::cout<<"---------------------------------------------------\n"<<std::endl;
 
 }
