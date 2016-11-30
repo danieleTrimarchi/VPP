@@ -20,6 +20,11 @@ void VPPPlotSet::plotXY(size_t iWa) {
 	// Get the number of valid results (discard==false)
 	size_t numValidResults = pResults_->getNumValidResultsForAngle(iWa);
 
+	if(!numValidResults){
+		std::cout<<"No valid results found for plotXY! \n";
+		return;
+	}
+
 	// Prepare the data for the plotter
 	Eigen::ArrayXd windSpeeds(numValidResults);
 	Eigen::ArrayXd boatVelocity(numValidResults);

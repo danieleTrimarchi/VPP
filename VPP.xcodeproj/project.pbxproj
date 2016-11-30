@@ -34,6 +34,7 @@
 		B304A1071DCB1B84002F2AAC /* Version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B304A1051DCB1B84002F2AAC /* Version.cpp */; };
 		B32816341D7558A100263BFD /* SemiAnalyticalOptimizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B32816301D7558A100263BFD /* SemiAnalyticalOptimizer.cpp */; };
 		B32816351D7558A100263BFD /* VPPPlotter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B32816321D7558A100263BFD /* VPPPlotter.cpp */; };
+		B33D86BC1DED63650028E112 /* VPPGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33D86BA1DED63650028E112 /* VPPGradient.cpp */; };
 		B34E78E01D32DE54009B723D /* Regression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34E78DE1D32DE54009B723D /* Regression.cpp */; };
 		B3855B1C1CC54316002F33AC /* libnlopt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64BBD60B1C5B705000F14B38 /* libnlopt.a */; };
 		B3855B211CC544E4002F33AC /* SparseSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3855B1D1CC544E4002F33AC /* SparseSolver.cpp */; };
@@ -115,6 +116,8 @@
 		B32816311D7558A100263BFD /* SemiAnalyticalOptimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SemiAnalyticalOptimizer.h; path = main/SemiAnalyticalOptimizer.h; sourceTree = "<group>"; };
 		B32816321D7558A100263BFD /* VPPPlotter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPPlotter.cpp; path = main/VPPPlotter.cpp; sourceTree = "<group>"; };
 		B32816331D7558A100263BFD /* VPPPlotter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPPlotter.h; path = main/VPPPlotter.h; sourceTree = "<group>"; };
+		B33D86BA1DED63650028E112 /* VPPGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPGradient.cpp; path = main/VPPGradient.cpp; sourceTree = "<group>"; };
+		B33D86BB1DED63650028E112 /* VPPGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPGradient.h; path = main/VPPGradient.h; sourceTree = "<group>"; };
 		B34E78DE1D32DE54009B723D /* Regression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Regression.cpp; path = main/Regression.cpp; sourceTree = "<group>"; };
 		B34E78DF1D32DE54009B723D /* Regression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Regression.h; path = main/Regression.h; sourceTree = "<group>"; };
 		B3855B1D1CC544E4002F33AC /* SparseSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SparseSolver.cpp; path = main/SparseSolver.cpp; sourceTree = "<group>"; };
@@ -179,26 +182,15 @@
 		64D919471C59F7D60002F585 = {
 			isa = PBXGroup;
 			children = (
+				B3DEF5C61DE42A9900A4CD1B /* Frameworks */,
 				B3DEF5C01DE36A6B00A4CD1B /* hs071_nlp.cpp */,
 				B3DEF5C11DE36A6B00A4CD1B /* hs071_nlp.h */,
-				B3DEF5C21DE36A6B00A4CD1B /* VPP_nlp.cpp */,
-				B3DEF5C31DE36A6B00A4CD1B /* VPP_nlp.h */,
-				B304A1051DCB1B84002F2AAC /* Version.cpp */,
-				B304A1061DCB1B84002F2AAC /* Version.h */,
-				B3940ABC1DAD603900FDD141 /* VPPSolver.cpp */,
-				B3940ABD1DAD603900FDD141 /* VPPSolver.h */,
-				B3940ABE1DAD603900FDD141 /* VPPSolverBase.cpp */,
-				B3940ABF1DAD603900FDD141 /* VPPSolverBase.h */,
-				B3E8B17A1D998BAB0069B308 /* VPPPlotSet.cpp */,
-				B3E8B17B1D998BAB0069B308 /* VPPPlotSet.h */,
-				B3E8B17C1D998BAB0069B308 /* VPPResultIO.cpp */,
-				B3E8B17D1D998BAB0069B308 /* VPPResultIO.h */,
-				B3E8B1781D998B9F0069B308 /* mathUtils.cpp */,
 				64BBD5D71C5B701400F14B38 /* Interpolator.cpp */,
 				64BBD5D81C5B701400F14B38 /* Interpolator.h */,
 				B328162F1D7558A100263BFD /* IOutils.h */,
 				64BBD61E1C5B76C900F14B38 /* Libs */,
 				64BBD5D91C5B701400F14B38 /* main.cpp */,
+				B3E8B1781D998B9F0069B308 /* mathUtils.cpp */,
 				64BBD5DB1C5B701400F14B38 /* mathUtils.h */,
 				64598B561C8E1D1C0038AC6C /* NRSolver.cpp */,
 				64598B571C8E1D1C0038AC6C /* NRSolver.h */,
@@ -225,10 +217,16 @@
 				64BBD5EB1C5B701400F14B38 /* VariableFileParser.h */,
 				64BBD5EC1C5B701400F14B38 /* Variables.cpp */,
 				64BBD5ED1C5B701400F14B38 /* Variables.h */,
+				B304A1051DCB1B84002F2AAC /* Version.cpp */,
+				B304A1061DCB1B84002F2AAC /* Version.h */,
+				B3DEF5C21DE36A6B00A4CD1B /* VPP_nlp.cpp */,
+				B3DEF5C31DE36A6B00A4CD1B /* VPP_nlp.h */,
 				64BBD5EE1C5B701400F14B38 /* VPPAeroItem.cpp */,
 				64BBD5EF1C5B701400F14B38 /* VPPAeroItem.h */,
 				64BBD5F01C5B701400F14B38 /* VPPException.cpp */,
 				64BBD5F11C5B701400F14B38 /* VPPException.h */,
+				B33D86BA1DED63650028E112 /* VPPGradient.cpp */,
+				B33D86BB1DED63650028E112 /* VPPGradient.h */,
 				64BBD5F21C5B701400F14B38 /* VPPHydroItem.cpp */,
 				64BBD5F31C5B701400F14B38 /* VPPHydroItem.h */,
 				64BBD5F41C5B701400F14B38 /* VPPItem.cpp */,
@@ -237,13 +235,20 @@
 				64BBD5F71C5B701400F14B38 /* VPPItemFactory.h */,
 				B3855B1F1CC544E4002F33AC /* VPPJacobian.cpp */,
 				B3855B201CC544E4002F33AC /* VPPJacobian.h */,
+				B3E8B17A1D998BAB0069B308 /* VPPPlotSet.cpp */,
+				B3E8B17B1D998BAB0069B308 /* VPPPlotSet.h */,
 				B32816321D7558A100263BFD /* VPPPlotter.cpp */,
 				B32816331D7558A100263BFD /* VPPPlotter.h */,
+				B3E8B17C1D998BAB0069B308 /* VPPResultIO.cpp */,
+				B3E8B17D1D998BAB0069B308 /* VPPResultIO.h */,
 				64BBD5F81C5B701400F14B38 /* VPPRightingMomentItem.cpp */,
 				64BBD5F91C5B701400F14B38 /* VPPRightingMomentItem.h */,
+				B3940ABC1DAD603900FDD141 /* VPPSolver.cpp */,
+				B3940ABD1DAD603900FDD141 /* VPPSolver.h */,
+				B3940ABE1DAD603900FDD141 /* VPPSolverBase.cpp */,
+				B3940ABF1DAD603900FDD141 /* VPPSolverBase.h */,
 				64BBD5FA1C5B701400F14B38 /* Warning.cpp */,
 				64BBD5FB1C5B701400F14B38 /* Warning.h */,
-				B3DEF5C61DE42A9900A4CD1B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -340,6 +345,7 @@
 				B3940AC11DAD603900FDD141 /* VPPSolverBase.cpp in Sources */,
 				64598B581C8E1D1C0038AC6C /* NRSolver.cpp in Sources */,
 				64BBD6051C5B701400F14B38 /* VPPException.cpp in Sources */,
+				B33D86BC1DED63650028E112 /* VPPGradient.cpp in Sources */,
 				64BBD6001C5B701400F14B38 /* SailSet.cpp in Sources */,
 				64BBD5FE1C5B701400F14B38 /* Optimizer.cpp in Sources */,
 				64BBD6041C5B701400F14B38 /* VPPAeroItem.cpp in Sources */,

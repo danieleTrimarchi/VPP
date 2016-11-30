@@ -144,8 +144,8 @@ int main(int argc, char** argv) {
 		app->Options()->SetStringValue("nlp_scaling_method", "user-scaling");
 
 		// Set ipOpt verbosity
-		app->Options()->SetIntegerValue("print_level",2);
-		app->Options()->SetIntegerValue("file_print_level", 2);
+		app->Options()->SetIntegerValue("print_level",5);
+		app->Options()->SetIntegerValue("file_print_level", 5);
 
 		ApplicationReturnStatus status;
 		status = app->Initialize();
@@ -203,6 +203,9 @@ int main(int argc, char** argv) {
 
 			else if( s == string("plotJacobian"))
 				pSolver->plotJacobian();
+
+			else if( s == string("plotGradient"))
+				pSolver->plotGradient();
 
 			//---
 
@@ -305,6 +308,7 @@ int main(int argc, char** argv) {
 				std::cout<<" \n";
 				std::cout<<"   plotSailForceMoment         : plot the drive force and the heeling moment for fixed wind/heel ranges\n";
 				std::cout<<"   plotJacobian                : plot the Jacobian derivative components for fixed wind/heel ranges\n";
+				std::cout<<"   plotGradient                : plot the Gradient derivative components for fixed wind/heel ranges\n";
 				std::cout<<" \n";
 				std::cout<<"   plotTotalResistance         : plot the Total Resistance for a fixed range\n";
 				std::cout<<"   plotResidRes                : plot the Residuary Resistance for a fixed range\n";

@@ -12,6 +12,7 @@
 #include <iostream>
 #include "VPPException.h"
 #include "VPPJacobian.h"
+#include "VPPGradient.h"
 #include "VPPException.h"
 #include "VPPPlotSet.h"
 #include "VPPResultIO.h"
@@ -191,8 +192,9 @@ bool VPP_NLP::get_starting_point(int n, bool init_x, double* x,
 
 		else
 
-			if(!pResults_->get(twv_,twa_-1).discard())// In this case we have a solution at a previous angle we can use
-				// to set the guess
+			// In this case we have a solution at a previous angle we can use
+			// to set the guess
+			if(!pResults_->get(twv_,twa_-1).discard())
 				xp = *(pResults_->get(twv_,twa_-1).getX());
 			else
 				xp= xp0_;
@@ -533,6 +535,26 @@ void VPP_NLP::plotXY(size_t iWa) {
 // TODO dtrimarchi: this could go to a common parent class
 void VPP_NLP::plotJacobian() {
 	pSolver_->plotJacobian();
+}
+
+void VPP_NLP::plotGradient() {
+
+	// Define a linearization point
+	IOUtils io(pVppItemsContainer_->getWind());
+	Eigen::VectorXd xp;
+	io.askUserStateVector(xp);
+
+	// Instantiate a Jacobian
+	VPPGradient G(xp,pVppItemsContainer_.get());
+
+	// ask the user which awv, awa
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	size_t twv=0, twa=0;
+	io.askUserWindIndexes(twv, twa);
+
+	// call jacobian.testPlot
+	G.testPlot(twv, twa);
+
 }
 
 // Make a printout of the results for this run

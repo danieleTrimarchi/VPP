@@ -127,7 +127,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VPPVectorPlotter dMdx;
-	dMdx.plot(x,M,du_M,dM,10,"dM/du Jacobian test plot","Vboat [m/s]","M[N*m]");
+	dMdx.plot(x,M,du_M,dM,30,"dM/du Jacobian test plot","Vboat [m/s]","M[N*m]");
 
 	// Reset the state vector to its initial state
 	x_=xp0_;

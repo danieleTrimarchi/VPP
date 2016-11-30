@@ -122,6 +122,10 @@ class VPP_NLP : public TNLP
 		/// TODO dtrimarchi: this could go to a common parent class
 		void plotJacobian();
 
+		/// Plot the jacobian vector component (sanity check)
+		/// TODO dtrimarchi: this could go to a common parent class
+		void plotGradient();
+
 		/// Make a printout of the results for this run
 		void plotPolars();
 

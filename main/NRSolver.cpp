@@ -109,8 +109,10 @@ Eigen::VectorXd NRSolver::run(int twv, int twa, Eigen::VectorXd& xp ) {
 
 void NRSolver::run(int twv, int twa) {
 
+	std::cout.precision(15);
+
 	// std::cout<<"    "<<pWind_->getTWV(twv)<<"    "<<toDeg( pWind_->getTWA(twa) )<<std::endl;
-	//std::cout<<"\n Entering NR with first guess: "<<xp_.transpose()<<std::endl;
+	std::cout<<"\n Entering NR with first guess: "<<xp_.transpose()<<std::endl;
 
 	try{
 		// Launch the optimization; negative retVal implies failure
@@ -130,16 +132,16 @@ void NRSolver::run(int twv, int twa) {
 			// throw if the solution was not found within the max number of iterations
 			if(it_==maxIters_){
 
-//				// Plot the velocity residuals and throw
-//				VPPPlotter vResPlot;
-//				vResPlot.plot(velocityResiduals,"V_residuals");
-//
-//				// Plot the angular residuals and throw
-//				VPPPlotter phiResPlot;
-//				phiResPlot.plot(PhiResiduals,"PHI_residuals");
-//
-//				// Also plot some Jacobian diagnostics
-//				J.testPlot(twv,twa);
+				// Plot the velocity residuals and throw
+				VPPPlotter vResPlot;
+				vResPlot.plot(velocityResiduals,"V_residuals");
+
+				// Plot the angular residuals and throw
+				VPPPlotter phiResPlot;
+				phiResPlot.plot(PhiResiduals,"PHI_residuals");
+
+				// Also plot some Jacobian diagnostics
+				J.testPlot(twv,twa);
 
 				std::cout<<"\n\nWARNING: NR-Solver could not converge. Please press a key to continue"<<std::endl;
 				string s;
@@ -156,7 +158,7 @@ void NRSolver::run(int twv, int twa) {
 
 			// Compute the residuals vector - here only the part relative to the subproblem
 			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_);
-			//std::cout<<"NR it: "<<it_<<", residuals= "<<residuals.transpose()<<"   \n";
+			std::cout<<"NR it: "<<it_<<", residuals= "<<residuals.transpose()<<"   \n";
 
 			if(it_>1) {
 				velocityResiduals.push_back( residuals(0) );
@@ -164,12 +166,12 @@ void NRSolver::run(int twv, int twa) {
 			}
 
 			//  break if converged. TODO dtrimarchi: this condition is way too simple!
-			if( residuals.block(0,0,subPbSize_,1).norm()<1e-5 )
+			if( residuals.block(0,0,subPbSize_,1).norm()<1e-5 && it_>0 )
 				break;
 
 			// Compute the Jacobian matrix
 			J.run(twv,twa);
-			//std::cout<<"J= \n"<<J<<std::endl;
+			//std::cout<<"  in NRSolver: J= \n"<<J<<std::endl;
 
 			// Right before computing the solution, store the relevant data to the JacobianChecker
 			//JCheck.push_back(J,xp_,residuals);
@@ -182,11 +184,7 @@ void NRSolver::run(int twv, int twa) {
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
 			xp_.block(0,0,subPbSize_,1) -= deltas;
 
-			// Cleanup the values that are too small
-			//for(size_t i=0; i<xp_.size(); i++)
-			//	if(fabs(xp_(i)) < 1.e-10) xp_(i)=0.;
-
-			//std::cout<<" - xp_= "<<xp_.transpose()<<std::endl;
+			//std::cout<<"  In NRSolver: xp_= "<<xp_.transpose()<<std::endl;
 
 		}
 
