@@ -92,8 +92,9 @@ void VPPGradient::testPlot(int twv, int twa) {
 	// Plot the Jacobian components when varying the boat velocity x(0)
 	for(int iStep=0; iStep<n; iStep++) {
 
-		// Vary Phi and record its value to the plotting
-		x_(1)=	0.01 * iStep;
+		// Vary Phi from 0 to p/4 and record its value to the plotting
+		LinSpace space(0,0.785,n);
+		x_(1)= space.get( iStep );
 
 		// Set the subPbSize to 1 for this Pb as Phi remains fixed (iVar is
 		// consistently =1), so we are only interested into du as phi evolves.
@@ -127,7 +128,7 @@ void VPPGradient::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VPPVectorPlotter dudPhi;
-	dudPhi.plot(phi,u,dPhi,du_dPhi,1,"du/dPhi Gradient test plot","Phi [rad]","u [m/s]");
+	dudPhi.plot(phi,u,dPhi,du_dPhi,10,"du/dPhi Gradient test plot","Phi [rad]","u [m/s]");
 
 	// Reset the state vector to its initial state
 	x_=xp0_;
@@ -143,8 +144,9 @@ void VPPGradient::testPlot(int twv, int twa) {
 	// Plot the Jacobian components when varying the boat velocity x(0)
 	for(int iStep=0; iStep<n; iStep++) {
 
-		// Vary Phi and record its value to the plotting
-		x_(2)=	0.05 * iStep;
+		// Vary the crew position b 0 to 3 and record its value to the plotting
+		LinSpace space(0,3,n);
+		x_(2)= space.get(iStep);
 
 		pSolver_->setSubPbSize(2);
 
@@ -189,8 +191,10 @@ void VPPGradient::testPlot(int twv, int twa) {
 	// Plot the Jacobian components when varying the boat velocity x(0)
 	for(int iStep=0; iStep<n; iStep++) {
 
-		// Vary flat from 0.5 to 1 and record its value to the plotting
-		x_(3)=	0.5 + 0.01 * iStep;
+		// Vary flat from 0 to 1 and record its value to the plotting
+		// todo: enhance this condition which is not robust enough!
+		LinSpace space(.3,1,n);
+		x_(3)= space.get(iStep);
 
 		pSolver_->setSubPbSize(2);
 
@@ -218,7 +222,7 @@ void VPPGradient::testPlot(int twv, int twa) {
 	}
 
 	VPPVectorPlotter dudf;
-	dudf.plot(f,u,df,du_df,10,"du/df Gradient test plot","f [m]","u [m/s]");
+	dudf.plot(f,u,df,du_df,5,"du/df Gradient test plot","f [m]","u [m/s]");
 
 	// Reset the state vector to its initial state
 	x_=xp0_;

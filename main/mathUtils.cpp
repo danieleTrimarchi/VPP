@@ -44,4 +44,35 @@ double SmoothedStepFunction::f(double x) {
 // Dtor
 SmoothedStepFunction::~SmoothedStepFunction(){ /* make nothing */ };
 
+///////////////////////////////////////////////////
+
+// Ctor
+LinSpace::LinSpace(double start, double end, size_t n) :
+		start_(start),
+		end_(end),
+		n_(n) {
+
+}
+
+// Disallowed default Ctor
+LinSpace::LinSpace():
+		start_(0),
+		end_(1),
+		n_(2) {
+
+}
+
+/// Dtor
+LinSpace::~LinSpace(){
+
+}
+
+/// Returns the value of the i-th step of the linSpace
+double LinSpace::get(size_t i) {
+	if(i>n_)
+		std::cout<<"WARNING Linspace, requested out of bound index!";
+	return start_ + (end_-start_)/n_ * i;
+}
+
+
 } // end namespace mathUtils

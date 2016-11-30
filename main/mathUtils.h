@@ -55,6 +55,34 @@ class SmoothedStepFunction {
 		double eps_;
 
 };
+
+/// Utility class used to generate a linear space
+class LinSpace {
+
+	public:
+
+		/// Ctor
+		LinSpace(double start, double end, size_t n);
+
+		/// Dtor
+		~LinSpace();
+
+		/// Returns the value of the i-th step of the linSpace
+		double get(size_t i);
+
+	private:
+
+		/// Disallow default Ctor
+		LinSpace();
+
+		/// Start and end values
+		double start_, end_;
+
+		/// Number of values this linspace is made of
+		size_t n_;
+
+};
+
 }
 
 #endif
