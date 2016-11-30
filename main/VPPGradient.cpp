@@ -90,7 +90,7 @@ void VPPGradient::testPlot(int twv, int twa) {
 	Eigen::MatrixXd phi(1,n), u(1,n), du_dPhi(1,n), dPhi(1,n);
 
 	// Plot the Jacobian components when varying the boat velocity x(0)
-	for(int iStep=0; iStep<n; iStep++){
+	for(int iStep=0; iStep<n; iStep++) {
 
 		// Vary Phi and record its value to the plotting
 		x_(1)=	0.01 * iStep;
@@ -113,8 +113,6 @@ void VPPGradient::testPlot(int twv, int twa) {
 		// Now run the vppGradient
 		run(twv, twa);
 
-		std::cout<<"Gradient vector = "<<this->transpose()<<std::endl;
-
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences. But here we use d./dPhi
 		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
@@ -128,8 +126,99 @@ void VPPGradient::testPlot(int twv, int twa) {
 	}
 
 	// Instantiate a vector plotter and produce the plot
-	VPPVectorPlotter dFdx;
-	dFdx.plot(phi,u,dPhi,du_dPhi,1,"du/dPhi Gradient test plot","Phi [rad]","u [m/s]");
+	VPPVectorPlotter dudPhi;
+	dudPhi.plot(phi,u,dPhi,du_dPhi,1,"du/dPhi Gradient test plot","Phi [rad]","u [m/s]");
+
+	// Reset the state vector to its initial state
+	x_=xp0_;
+
+	// --
+
+	// Repeat the procedure for the third state variable b, the position of the crew
+	// Instantiate the containers used to feed the plotter
+	// for the moment just one variable at the time...
+	Eigen::MatrixXd b(1,n), /*u(1,n),*/ du_db(1,n), db(1,n);
+	u.setZero();
+
+	// Plot the Jacobian components when varying the boat velocity x(0)
+	for(int iStep=0; iStep<n; iStep++) {
+
+		// Vary Phi and record its value to the plotting
+		x_(2)=	0.05 * iStep;
+
+		pSolver_->setSubPbSize(2);
+
+		// Compute the equilibrium velocity for this Phi
+		x_= pSolver_->run(twv,twa,x_);
+
+		// Store the values into the buffer vectors
+		// These buffers will be used to plot(phi,u)
+		b(0,iStep) = x_(2);
+		u(0,iStep) = x_(0);
+
+		// Now run the vppGradient
+		run(twv, twa);
+
+		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
+		// finite differences. But here we use d./dPhi
+		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
+		if(x_(2)) eps *= std::fabs(x_(2));
+
+		// x-component of the gradient vector du/dPhi
+		db(0,iStep) = eps;
+		// y-component of the gradient vector du/dPhi
+		du_db(0,iStep) = coeffRef(2) * eps;
+
+	}
+
+
+	VPPVectorPlotter dudb;
+	dudb.plot(b,u,db,du_db,3,"du/db Gradient test plot","b [m]","u [m/s]");
+
+	// Reset the state vector to its initial state
+	x_=xp0_;
+
+	// --
+
+	// Repeat the procedure for the fourth state variable f, the sail flat
+	// Instantiate the containers used to feed the plotter
+	// for the moment just one variable at the time...
+	Eigen::MatrixXd f(1,n), /*u(1,n),*/ du_df(1,n), df(1,n);
+	u.setZero();
+
+	// Plot the Jacobian components when varying the boat velocity x(0)
+	for(int iStep=0; iStep<n; iStep++) {
+
+		// Vary flat from 0.5 to 1 and record its value to the plotting
+		x_(3)=	0.5 + 0.01 * iStep;
+
+		pSolver_->setSubPbSize(2);
+
+		// Compute the equilibrium velocity for this Phi
+		x_= pSolver_->run(twv,twa,x_);
+
+		// Store the values into the buffer vectors
+		// These buffers will be used to plot(phi,u)
+		f(0,iStep) = x_(3);
+		u(0,iStep) = x_(0);
+
+		// Now run the vppGradient
+		run(twv, twa);
+
+		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
+		// finite differences. But here we use d./dPhi
+		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
+		if(x_(3)) eps *= std::fabs(x_(2));
+
+		// x-component of the gradient vector du/dPhi
+		df(0,iStep) = eps;
+		// y-component of the gradient vector du/dPhi
+		du_df(0,iStep) = coeffRef(3) * eps;
+
+	}
+
+	VPPVectorPlotter dudf;
+	dudf.plot(f,u,df,du_df,10,"du/df Gradient test plot","f [m]","u [m/s]");
 
 	// Reset the state vector to its initial state
 	x_=xp0_;
