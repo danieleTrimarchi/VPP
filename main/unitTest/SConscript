@@ -77,6 +77,7 @@ env.Program('unitTest', Glob('*.cpp')+
 		"../VPPItem.o",
 		"../VPPItemFactory.o",
 		"../VPPJacobian.o",
+		"../VPPGradient.o",
 		"../VPPPlotter.o",
 		"../VPPRightingMomentItem.o",
 		"../VariableFileParser.o",

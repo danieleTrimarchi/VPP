@@ -112,7 +112,7 @@ void NRSolver::run(int twv, int twa) {
 	std::cout.precision(15);
 
 	// std::cout<<"    "<<pWind_->getTWV(twv)<<"    "<<toDeg( pWind_->getTWA(twa) )<<std::endl;
-	std::cout<<"\n Entering NR with first guess: "<<xp_.transpose()<<std::endl;
+	// std::cout<<"\n Entering NR with first guess: "<<xp_.transpose()<<std::endl;
 
 	try{
 		// Launch the optimization; negative retVal implies failure
@@ -158,7 +158,7 @@ void NRSolver::run(int twv, int twa) {
 
 			// Compute the residuals vector - here only the part relative to the subproblem
 			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_);
-			std::cout<<"NR it: "<<it_<<", residuals= "<<residuals.transpose()<<"   \n";
+			//std::cout<<"NR it: "<<it_<<", residuals= "<<residuals.transpose()<<"   \n";
 
 			if(it_>1) {
 				velocityResiduals.push_back( residuals(0) );

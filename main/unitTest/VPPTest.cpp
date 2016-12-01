@@ -8,6 +8,7 @@
 #include "NRSolver.h"
 #include <nlopt.hpp>
 #include "VPPJacobian.h"
+#include "VPPGradient.h"
 #include "Optimizer.h"
 #include "SemiAnalyticalOptimizer.h"
 #include "VPPSolver.h"
@@ -477,6 +478,52 @@ void TVPPTest::jacobianTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(  340.367431640625, J(1,0), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( -29.4818377494812,  J(0,1), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( -31634.527587890625, J(1,1), 1.e-6);
+
+}
+
+// Test the computation of the Gradient vector
+void TVPPTest::gradientTest() {
+
+	std::cout<<"=== Testing the computation of the Gradient vector === \n"<<std::endl;
+
+	// Instantiate a parser with the variables
+	VariableFileParser parser("variableFile_test.txt");
+
+	// Declare a ptr with the sail configuration
+	// This is based on the variables that have been read in
+	boost::shared_ptr<SailSet> pSails;
+
+	// Declare a container for all the items that
+	// constitute the VPP components (Wind, Resistance, RightingMoment...)
+	boost::shared_ptr<VPPItemFactory> pVppItems;
+
+	// Parse the variables file
+	parser.parse();
+
+	// Instantiate the sailset
+	pSails.reset( SailSet::SailSetFactory(parser) );
+
+	// Instantiate the items
+	pVppItems.reset( new VPPItemFactory(&parser,pSails) );
+
+	// Define a state vector: v, phi, crew, flat
+	Eigen::VectorXd x(4);
+	x << 2, 0.4, 2, .9;
+
+	// Instantiate a VPPGradient
+	VPPGradient G( x,pVppItems.get() );
+
+	// Compute this Gradient
+	G.run(3,6);
+
+//	std::cout.precision(15);
+//	for(int i=0; i<G.rows(); i++)
+//		printf("%d --  %8.12f\n",i,G(i));
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0,           G(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.289633162320,G(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.003742001951,G(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.394538715482,G(3), 1.e-6);
 
 }
 

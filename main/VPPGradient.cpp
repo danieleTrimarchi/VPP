@@ -1,5 +1,6 @@
 #include "VPPGradient.h"
 #include "mathUtils.h"
+#include "math.h"
 
 // Constructor - square pb
 VPPGradient::VPPGradient(VectorXd& x,VPPItemFactory* pVppItemsContainer):
@@ -18,6 +19,17 @@ size_(4) {
 
 }
 
+// Set the operation point and run to compute the derivatives
+void VPPGradient::run(const VectorXd& x, int twv, int twa) {
+
+	// Set the operation point x
+	x_=x;
+
+	// Run to compute the derivatives
+	run(twv,twa);
+}
+
+// Compute this Gradient
 void VPPGradient::run(int twv, int twa) {
 
 	// Set cout precision
@@ -93,7 +105,7 @@ void VPPGradient::testPlot(int twv, int twa) {
 	for(int iStep=0; iStep<n; iStep++) {
 
 		// Vary Phi from 0 to p/4 and record its value to the plotting
-		LinSpace space(0,0.785,n);
+		LinSpace space(0,M_PI/4,n);
 		x_(1)= space.get( iStep );
 
 		// Set the subPbSize to 1 for this Pb as Phi remains fixed (iVar is
@@ -128,7 +140,7 @@ void VPPGradient::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VPPVectorPlotter dudPhi;
-	dudPhi.plot(phi,u,dPhi,du_dPhi,10,"du/dPhi Gradient test plot","Phi [rad]","u [m/s]");
+	dudPhi.plot(phi,u,dPhi,du_dPhi,30,"du/dPhi Gradient test plot","Phi [rad]","u [m/s]");
 
 	// Reset the state vector to its initial state
 	x_=xp0_;

@@ -14,6 +14,7 @@ using namespace Ipopt;
 
 #include "VPPItemFactory.h"
 #include "NRSolver.h"
+#include "VPPGradient.h"
 
 /// VPP application for solving the optimization problem with IPOPT
 ///  The class is direcly inspired by VPP_NLP, which implements a
@@ -161,12 +162,6 @@ class VPP_NLP : public TNLP
 		/// Assignment operator
 		VPP_NLP& operator=(const VPP_NLP&);
 
-		/// du/dPhi = u(phi2) - u(Phi1) / dPhi
-		/// where u(phi1), u(phi2) are computed with 1d NR
-		/// du/db, du/df are computed in a similar way but using
-		/// a 2d Newton-Raphson
-		double computederivative(const double*, size_t);
-
 		/// Recode this VPPSolverBase method here. To be removed when refactoring VPP_NLP
 		/// as a child of VPPSolverBase
 		/// Returns the index of the previous velocity-wise (twv) result that is marked as
@@ -200,6 +195,10 @@ class VPP_NLP : public TNLP
 		/// In all of the other cases, the state vars u,Phi are free while the
 		/// optimization variables are infinitesimally incremented or decremented
 		boost::shared_ptr<NRSolver> pSolver_;
+
+		/// VPPGradient used to compute the gradient by finite differences
+		/// and feed the nlp solver
+		boost::shared_ptr<VPPGradient> pGradient_;
 
 		/// Matrix of results, one result per wind velocity/angle
 		boost::shared_ptr<ResultContainer> pResults_;

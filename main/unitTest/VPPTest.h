@@ -25,6 +25,9 @@ class TVPPTest : public CppUnit::TestFixture{
   /// Test the computation of the Jacobian matrix
   CPPUNIT_TEST(jacobianTest);
 
+  /// Test the computation of the Gradient vector
+  CPPUNIT_TEST(gradientTest);
+
   /// Test the Newton-Raphson algorithm
   CPPUNIT_TEST(newtonRaphsonTest);
 
@@ -70,6 +73,9 @@ public:
 
   /// Test the computation of the Jacobian matrix
   void jacobianTest();
+
+  /// Test the computation of the Gradient vector
+  void gradientTest();
 
   /// Test the Newton-Raphson algorithm
   void newtonRaphsonTest();

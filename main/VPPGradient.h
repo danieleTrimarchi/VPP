@@ -24,6 +24,9 @@ class VPPGradient : public Eigen::VectorXd {
 		/// Constructor
 		VPPGradient(VectorXd& x,VPPItemFactory* pVppItemsContainer );
 
+		/// Set the operation point and run to compute the derivatives
+		void run(const VectorXd& x, int twv, int twa);
+
 		/// Compute this Gradient
 		void run(int twv, int twa);
 

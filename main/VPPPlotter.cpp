@@ -520,7 +520,7 @@ void VPPVectorPlotter::plot(
 	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
 
 	// Compute the autoscale factor: dx / n
-	double autoScale = fabs(maxX_ - minY_) / x.size();
+	double autoScale = fabs(maxX_ - minX_) / x.size();
 
 	// scale each du, dv vector according to its norm to obtain 1-normed vectors
 	for ( int i = 0; i < x.rows(); i++ )

@@ -12,7 +12,6 @@
 #include <iostream>
 #include "VPPException.h"
 #include "VPPJacobian.h"
-#include "VPPGradient.h"
 #include "VPPException.h"
 #include "VPPPlotSet.h"
 #include "VPPResultIO.h"
@@ -48,6 +47,10 @@ VPP_NLP::VPP_NLP(boost::shared_ptr<VPPItemFactory> pVppItemsContainer):
 	// Instantiate a nrSolver that will be used to compute the gradient
 	// of the objective function : the vector [ du/du du/dPhi du/db du/df ]
 	pSolver_.reset(new NRSolver(pVppItemsContainer.get(),dimension_,subPbSize_) );
+
+	// Instantiate a VPPGradient that will be used to compute the gradient
+	// of the objective function : the vector [ du/du du/dPhi du/db du/df ]
+	pGradient_.reset(new VPPGradient(xp0_,pVppItemsContainer_.get()) );
 
 	// Instantiate a result container
 	pResults_.reset(new ResultContainer(pVppItemsContainer->getWind()));
@@ -315,68 +318,17 @@ bool VPP_NLP::eval_grad_f(int n, const double* x, bool new_x, double* grad_f) {
 
 	assert(n == dimension_);
 
-	// Buffer the solution vector x to be used in Eigen world
+	// Map the solution x to an Eigen object
+	Eigen::Map<const Eigen::VectorXd> xMap(x,n);
 
-	// grad(u) = [ du/du du/dPhi du/db du/df ]
-	//         = [ 1 du/dPhi du/db du/df ]
-	// This requires being able to compute u when all of the other quantities are fixed.
-	// It requires a simple NR 1d
-	// f(x) = f(x0) + f'(x0) (x-x0) = 0 => x = x0 - f(x0) / f'(x0)
-	// so u(Phi) = u(Phi0) + u'(Phi0) (Phi-Phi0) => u = u0 - u(Phi0) / u'(Phi0)
-	// u(Phi0)=
-	grad_f[0] = 1;
+	// Run the Gradient to compute the derivatives
+	pGradient_->run(xMap,twv_,twa_);
 
-	// Compute du/dPhi, du/db and du/df
-	grad_f[1] = computederivative(x,1);
-	grad_f[2] = computederivative(x,2);
-	grad_f[3] = computederivative(x,3);
+	// Copy the values of the gradient to the c-style array
+	for(size_t iVar=0; iVar<n; iVar++)
+		grad_f[iVar] = pGradient_->coeffRef(iVar);
 
 	return true;
-}
-
-// du/dPhi = u(phi2) - u(Phi1) / dPhi
-// where u(phi1), u(phi2) are computed with 1d NR
-// du/db, du/df are computed in a similar way but using
-// a 2d Newton-Raphson
-double VPP_NLP::computederivative(const double* x0, size_t pos) {
-
-	// Set cout precision
-	std::cout.precision(5);
-
-	// Transform the c-style container into an Eigen container
-	Map<const VectorXd>x(x0,dimension_);
-
-	// Compute the optimum eps for this variable
-	double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
-
-	// Init a buffer of the state vector xp_
-	VectorXd xp=x, xm=x;
-
-	// Reset the subPBsize based on the variable we are computing for.
-	// The subPbSize is 1 when computing du/dPhi, as this is not an
-	// optimization variable and we want effectively to find u st: dF=0
-	// while we enforce Phi (and thus dM!=0). Not so for the other derivatives
-	// where we fix optimization variables and want to assure the equilibrium
-	// dF=0, dM=0.
-	if(pos==1)
-		pSolver_->setSubPbSize(1);
-	else
-		pSolver_->setSubPbSize(2);
-
-	// set x= x + eps
-	std::fabs(xp(pos))>0 ? xp(pos) = xp(pos) * ( 1 + eps ) : xp(pos) = eps;
-
-	xp.block(0,0,1,1)= pSolver_->run(twv_,twa_,xp).block(0,0,1,1);
-
-	// set x= x + eps
-	std::fabs(xm(pos))>0 ? xm(pos)= xm(pos) * ( 1 - eps ) : xm(pos) = - eps;
-
-	// Compute u_m s.t. dF=0
-	xm.block(0,0,1,1)= pSolver_->run(twv_,twa_,xm).block(0,0,1,1);
-
-	// Return du / dPhi = ( u_p - u_m ) / ( 2 * eps )
-	return ( xp(0) - xm(0) ) / ( 2 * eps);
-
 }
 
 // Return the value of the constraints: g(x)
@@ -526,8 +478,8 @@ void VPP_NLP::plotXY(size_t iWa) {
 	// results. The plotter manager prepares the results (makes
 	// sure to manage only valid results) and instantiates the
 	// plotter to prepare the XY plot
-		VPPPlotSet vppPlotSet(pResults_.get());
-		vppPlotSet.plotXY(iWa);
+	VPPPlotSet vppPlotSet(pResults_.get());
+	vppPlotSet.plotXY(iWa);
 
 }
 
@@ -544,7 +496,7 @@ void VPP_NLP::plotGradient() {
 	Eigen::VectorXd xp;
 	io.askUserStateVector(xp);
 
-	// Instantiate a Jacobian
+	// Instantiate a Gradient
 	VPPGradient G(xp,pVppItemsContainer_.get());
 
 	// ask the user which awv, awa
