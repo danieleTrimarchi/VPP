@@ -140,7 +140,7 @@ void VPPGradient::testPlot(int twv, int twa) {
 
 	// Instantiate a vector plotter and produce the plot
 	VPPVectorPlotter dudPhi;
-	dudPhi.plot(phi,u,dPhi,du_dPhi,30,"du/dPhi Gradient test plot","Phi [rad]","u [m/s]");
+	dudPhi.plot(phi,u,dPhi,du_dPhi,2,"du/dPhi Gradient test plot","Phi [rad]","u [m/s]");
 
 	// Reset the state vector to its initial state
 	x_=xp0_;

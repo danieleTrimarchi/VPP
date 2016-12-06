@@ -164,11 +164,13 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 
 		res_ = ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * v_ * v_);
 
-	} else
-		res_=0;
+		// Superpose a further smoothing using a step function for  Fn=0-0.2
+		res_ *= pSf_->f( fN_ );
 
-	// Superpose a further smoothing using a step function for  Fn=0-0.05
-	res_ *= pSf_->f( fN_ );
+	} else {
+		need to compute v_!
+		res_= pSf_->f( 0 ) *  ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * v_ * v_);
+	}
 
 	// Whatever we have computed, make sure it is a valid number
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
@@ -184,8 +186,8 @@ void InducedResistanceItem::plot() {
 	IOUtils io(pAeroForcesItem_->getWindItem());
 	io.askUserWindIndexes(twv, twa);
 
-	// Ask a scaling factor (1 does nothing) to viz closer to the origin
-	double plotScaling= io.askUserDouble("please enter a plot scaling factor. default is 1");
+	double fnMin= io.askUserDouble("Please enter the min value of the Fn");
+	double fnMax= io.askUserDouble("Please enter the max value of the Fn");
 
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
@@ -212,10 +214,10 @@ void InducedResistanceItem::plot() {
 		vector<double> fn, res;
 
 		// Loop on the velocities
-		for(size_t v=0; v<nVelocities-7; v++){
+		for(size_t v=0; v<nVelocities; v++){
 
-			// Set a fictitious velocity (Fn=0-1)
-			V_= plotScaling * ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			// Set a fictitious velocity (Fn=-0.3-0.7)
+			V_= ( fnMin + ( ( fnMax-fnMin ) / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 			Eigen::VectorXd x(pbSize_);
 			x << V_, PHI_, b_, f_;
@@ -544,7 +546,9 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// limit the values to positive angles and Fn>0.25, as in the definition of the DHYS
-	if( fN_<0.25) {
+	// todo dtrimarchi : this might generate problems, we need to smooth the function down
+	// gently!!!
+	if(fN_<0.25) {
 		res_=0.;
 		return;
 	}
@@ -876,7 +880,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<1.e-12) {
+	if(V_<=0) {
 		res_=0.;
 		return;
 	}
@@ -957,7 +961,7 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 			-3.291, -0.389, -0.118,	8.949,
 			 1.850, -1.200, -0.109,	5.364,
 			 6.510, -2.305, -0.066,	3.443,
-            12.334, -3.911,	 0.024,	1.767,
+      12.334, -3.911,	 0.024,	1.767,
 			14.648, -5.182,	 0.102,	3.497;
 
 	// Define the vector with the physical quantities multiplying the
@@ -1000,8 +1004,8 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
 
-	// Limit the computations to positive values and the heeling angles defined by the DHYS
-	if(V_<0.001 || PHI_ < mathUtils::toRad(5) ) {
+	// Limit the computations to positive values and the heeling angles -> defined by the DHYS
+	if(V_<=0. || PHI_ < mathUtils::toRad(5) ) {
 		res_=0.;
 		return;
 	}
@@ -1132,7 +1136,7 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<0.001) {
+	if(V_<=0.) {
 		res_=0.;
 		return;
 	}
@@ -1208,7 +1212,7 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(V_<0.001) {
+	if(V_<=0.) {
 		res_=0.;
 		return;
 	}

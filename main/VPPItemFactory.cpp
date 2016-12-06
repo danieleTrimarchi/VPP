@@ -41,10 +41,12 @@ dM_(0) {
 	pResiduaryResistanceItem_.reset(new ResiduaryResistanceItem(pParser_,pSailSet));
 	vppHydroItems_.push_back( pResiduaryResistanceItem_ );
 
+	//??
 	// Instantiate a Delta_FrictionalResistance_HeelItem Item and push it back to the children vector
 	// For the definition of the Change in Frictional Resistance due to heel see Keuning ch3.1.2.1 p115-116
 	pDelta_FrictionalResistance_HeelItem_.reset(new Delta_FrictionalResistance_HeelItem(pParser_,pSailSet));
 	vppHydroItems_.push_back( pDelta_FrictionalResistance_HeelItem_ );
+	//??
 
 	// Instantiate a Delta_ResiduaryResistance_HeelItem Item push it back to the children vector
 	// For the definition of the change in Residuary Resistance due to heel

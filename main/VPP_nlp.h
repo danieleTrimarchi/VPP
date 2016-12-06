@@ -17,7 +17,7 @@ using namespace Ipopt;
 #include "VPPGradient.h"
 
 /// VPP application for solving the optimization problem with IPOPT
-///  The class is direcly inspired by VPP_NLP, which implements a
+///  The class is direcly inspired by hs071_nlp, which implements a
 ///  C++ example of problem 71 of the Hock-Schittkowski test suite.
 ///
 /// Problem hs071 looks like this
@@ -59,11 +59,11 @@ class VPP_NLP : public TNLP
 		/// This method is called if the nlp scaling method is chosen as "user-scaling".
 		/// if the value of obj_scaling is negative, then Ipopt will maximize
 		/// the objective function instead of minimizing it
-		// -----
-		// Note that this method should be used to improve the conditioning of the pb
-		// so that all sensitivities, i.e., all non-zero first partial derivatives, are
-		// typically of the order 0.1   10.
-		// -----
+		/// -----
+		/// Note that this method should be used to improve the conditioning of the pb
+		/// so that all sensitivities, i.e., all non-zero first partial derivatives, are
+		/// typically of the order 0.1   10.
+		/// -----
 		virtual bool get_scaling_parameters(Number& obj_scaling,
 				bool& use_x_scaling, Index n,
 				Number* x_scaling,
@@ -88,7 +88,6 @@ class VPP_NLP : public TNLP
 		/// Method to return:
 		///  1) The structure of the jacobian (if "values" is NULL)
 		///  2) The values of the jacobian (if "values" is not NULL)
-
 		virtual bool eval_jac_g(Index n, const Number* x, bool new_x,
 				Index m, Index nele_jac, Index* iRow, Index *jCol,
 				Number* values);
@@ -188,7 +187,7 @@ class VPP_NLP : public TNLP
 		static size_t twa_, twv_;
 
 		/// NRSolver used to compute the derivatives of the objective function
-		/// wrt the state variables, eg: the component of the Gradient vector
+		/// wrt the state variables, i.e: the component of the Gradient vector
 		/// Note that the component du/dPhi is not computed with this NRSolver,
 		/// because in this case I resolve a mono-dimensional pb (instead of a 2d pb)
 		/// This, because I compute du/dPhi fixing phi and finding u s.t. dF=0.

@@ -15,7 +15,7 @@ Eigen::VectorXd VPPSolverBase::xp0_((Eigen::VectorXd(4) << .5, 0., 0., 1.).finis
 
 // Constructor
 VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-																dimension_(4),
+																dimension_(xp0_.size()),
 																subPbSize_(2),
 																tol_(1.e-4) {
 
@@ -44,7 +44,7 @@ VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 
 // Disallowed default constructor
 VPPSolverBase::VPPSolverBase():
-		dimension_(4),
+		dimension_(xp0_.size()),
 		subPbSize_(2),
 		tol_(1.e-3),
 		pParser_(0),

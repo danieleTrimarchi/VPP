@@ -1,8 +1,25 @@
+- PlotJacobian : dF/du @0 =-inf???
+
+- Delta_ResiduaryResistance_HeelItem : condition Fn=0.25 is way too rough! 
+
+- plotDelta_FrictRes_Heel
+	- 3 3 
+	- 0 0.7 
+	- What a hell happens in VPPPlotter::append(string curveLabel, ArrayXd& xs, ArrayXd& ys)?? Why are the labels skewed? Do some cout/debugger to understand what’s wrong with the indexes!
+
+- Why plotting the Graident 0.5 0.02 0.1 0.99 is discontinuous???
+
+- build ipOtp integration : 
+	- IPOPT SOLVER TEST
+	- refactor
+
 - logForCxx : drive the output with env vars
 
 - add a scone target: scons makeTest : ask Stephane about execution path
+	Hp : the code could simply search the files in a target path defined 
+	in the sconscript. See what MEMSp does.
   
-- build ipOtp integration
+	
 
 - build Qt integration. Allow for 2/3d dynamic plotting (scale, move, zoom). 
 	in that phase think how to refactor the code in order to provide a flexible
