@@ -1083,7 +1083,6 @@ void Delta_FrictionalResistance_HeelItem::plot(WindItem* pWind) {
 
 			// Fill the vectors to be plot
 			fn.push_back( V_/sqrt(Physic::g * pParser_->get("LWL") ) );
-			std::cout<<"Fn= "<<fn[fn.size()-1]<<"  -  res= "<<get()<<std::endl;
 			res.push_back( get() );
 
 		}
