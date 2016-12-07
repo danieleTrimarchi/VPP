@@ -1,11 +1,11 @@
-- PlotJacobian : dF/du @0 =-inf???
-
-- Delta_ResiduaryResistance_HeelItem : condition Fn=0.25 is way too rough! 
-
-- plotDelta_FrictRes_Heel
+- the plot : plotDelta_FrictRes_Heel does something weird, why?
 	- 3 3 
 	- 0 0.7 
 	- What a hell happens in VPPPlotter::append(string curveLabel, ArrayXd& xs, ArrayXd& ys)?? Why are the labels skewed? Do some cout/debugger to understand what’s wrong with the indexes!
+
+- PlotJacobian : dF/du @0 =-inf???
+
+- Delta_ResiduaryResistance_HeelItem : condition Fn=0.25 is way too rough! 
 
 - Why plotting the Graident 0.5 0.02 0.1 0.99 is discontinuous???
 

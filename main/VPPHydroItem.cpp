@@ -1041,8 +1041,8 @@ void Delta_FrictionalResistance_HeelItem::printWhoAmI() {
 // Plot the Frictional Resistance due to heel versus Fn curve
 void Delta_FrictionalResistance_HeelItem::plot_deltaWettedArea_heel() {
 
-	// Make a check plot for the frictional resistance
-	pInterpolator_->plot(0,0.6,20,"Change in wetted area due to HEEL","Fn [-]","dS [m**2]" );
+	// Plot the change in wetted surf due to heel
+	pInterpolator_->plot(0,mathUtils::toRad(20),20,"Change in wetted area due to HEEL","PHI [rad]","dS [m**2]" );
 
 }
 
@@ -1083,24 +1083,26 @@ void Delta_FrictionalResistance_HeelItem::plot(WindItem* pWind) {
 
 			// Fill the vectors to be plot
 			fn.push_back( V_/sqrt(Physic::g * pParser_->get("LWL") ) );
+			std::cout<<"Fn= "<<fn[fn.size()-1]<<"  -  res= "<<get()<<std::endl;
 			res.push_back( get() );
 
-			// Now transform fn and res to ArrayXd and push_back to vector
-			ArrayXd tmpFn(fn.size());
-			ArrayXd tmpRes(fn.size());
-			for(size_t j=0; j<fn.size(); j++){
-				tmpFn(j)=fn[j];
-				tmpRes(j)=res[j];
-			}
-
-			froudeNb.push_back(tmpFn);
-			totRes.push_back(tmpRes);
-
-			char msg[256];
-			sprintf(msg,"%3.1fº", mathUtils::toDeg(PHI_));
-			curveLabels.push_back(msg);
-
 		}
+
+		// Now transform fn and res to ArrayXd and push_back to vector
+		ArrayXd tmpFn(fn.size());
+		ArrayXd tmpRes(fn.size());
+		for(size_t j=0; j<fn.size(); j++){
+			tmpFn(j)=fn[j];
+			tmpRes(j)=res[j];
+		}
+
+		froudeNb.push_back(tmpFn);
+		totRes.push_back(tmpRes);
+
+		char msg[256];
+		sprintf(msg,"%3.1fº", mathUtils::toDeg(PHI_));
+		curveLabels.push_back(msg);
+
 	}
 
 	// Instantiate a plotter and plot

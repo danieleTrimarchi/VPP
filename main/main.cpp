@@ -104,7 +104,7 @@ void run(VariableFileParser& parser, SmartPtr<IpoptApplication>& pApp, SmartPtr<
 // MAIN
 int main(int argc, char** argv) {
 
-	try{
+		try{
 
 		printf("\n=======================\n");
 		printf("===  V++ PROGRAM  =====\n");
