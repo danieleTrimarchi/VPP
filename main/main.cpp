@@ -209,6 +209,11 @@ int main(int argc, char** argv) {
 
 			//---
 
+			else if( s == string("plot_deltaWettedArea_heel"))
+				pVppItems->plot_deltaWettedArea_heel();
+
+			//---
+
 			else if(s == string("plotTotalResistance") )
 				pVppItems->plotTotalResistance();
 
@@ -309,6 +314,8 @@ int main(int argc, char** argv) {
 				std::cout<<"   plotSailForceMoment         : plot the drive force and the heeling moment for fixed wind/heel ranges\n";
 				std::cout<<"   plotJacobian                : plot the Jacobian derivative components for fixed wind/heel ranges\n";
 				std::cout<<"   plotGradient                : plot the Gradient derivative components for fixed wind/heel ranges\n";
+				std::cout<<" \n";
+				std::cout<<"   plot_deltaWettedArea_heel   : plot the change in wetted area due to the heel (DSYHS99 p116) \n";
 				std::cout<<" \n";
 				std::cout<<"   plotTotalResistance         : plot the Total Resistance for a fixed range\n";
 				std::cout<<"   plotResidRes                : plot the Residuary Resistance for a fixed range\n";

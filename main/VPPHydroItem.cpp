@@ -942,7 +942,7 @@ void FrictionalResistanceItem::plot() {
 
 // For the definition of the Change in wetted surface see DSYHS99 3.1.2.1 p115-116
 // For the definition of the Frictional Resistance use the std definition of
-// DSYHS99,
+// DSYHS99
 
 // Constructor
 Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
@@ -1005,7 +1005,8 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values and the heeling angles -> defined by the DHYS
-	if(V_<=0. || PHI_ < mathUtils::toRad(5) ) {
+	//if(V_<=0. || PHI_ < mathUtils::toRad(5) ) {
+	if(V_<=0.){
 		res_=0.;
 		return;
 	}
@@ -1038,7 +1039,7 @@ void Delta_FrictionalResistance_HeelItem::printWhoAmI() {
 }
 
 // Plot the Frictional Resistance due to heel versus Fn curve
-void Delta_FrictionalResistance_HeelItem::plot() {
+void Delta_FrictionalResistance_HeelItem::plot_deltaWettedArea_heel() {
 
 	// Make a check plot for the frictional resistance
 	pInterpolator_->plot(0,0.6,20,"Change in wetted area due to HEEL","Fn [-]","dS [m**2]" );

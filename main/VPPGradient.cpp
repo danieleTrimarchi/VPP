@@ -95,7 +95,7 @@ void VPPGradient::testPlot(int twv, int twa) {
 	x_= xp0_;
 
 	// How many values this test is made of
-	size_t n=50;
+	size_t n=100;
 
 	// Instantiate the containers used to feed the plotter
 	// for the moment just one variable at the time...

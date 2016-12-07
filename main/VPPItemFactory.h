@@ -92,6 +92,9 @@ class VPPItemFactory {
 		/// and for c1 and c2
 		Eigen::VectorXd getResiduals();
 
+		/// Plot the change of wetted area due to heel - see DSYHS99 p 116
+		void plot_deltaWettedArea_heel();
+
 		/// Plot the total resistance over a fixed range Fn=0-1
 		void plotTotalResistance();
 
