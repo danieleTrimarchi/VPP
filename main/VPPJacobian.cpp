@@ -74,7 +74,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 	// How many values this test is made of. The analyzed velocity range varies
 	// from -n/2 to n/2
-	size_t n=6;
+	size_t n=50;
 
 	// Init the state vector at the value of the state vector at the beginning of
 	// the current iteration

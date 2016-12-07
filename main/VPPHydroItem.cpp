@@ -167,10 +167,10 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 		// Superpose a further smoothing using a step function for  Fn=0-0.2
 		res_ *= pSf_->f( fN_ );
 
-	} else {
-		need to compute v_!
-		res_= pSf_->f( 0 ) *  ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * v_ * v_);
 	}
+	else
+		res_= pSf_->f( 0 ) *  ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * c_ * c_);
+
 
 	// Whatever we have computed, make sure it is a valid number
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
