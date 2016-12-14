@@ -138,8 +138,14 @@ class VPP_NLP : public TNLP
 		/// Save the current results to file
 		void saveResults();
 
+		/// Return a ptr to the results.
+		ResultContainer* getResults();
+
 		/// Make a printout of the result bounds for this run
 		void printResultBounds();
+
+		/// Returns the dimensionality of this problem (the size of the state vector)
+		size_t getDimension() const;
 
 	private:
 

@@ -16,6 +16,7 @@
 #include "VPPResultIO.h"
 #include "IpIpoptApplication.hpp"
 #include "hs071_nlp.h"
+#include "VPP_nlp.h"
 
 namespace Test {
 
@@ -516,9 +517,9 @@ void TVPPTest::gradientTest() {
 	// Compute this Gradient
 	G.run(3,6);
 
-//	std::cout.precision(15);
-//	for(int i=0; i<G.rows(); i++)
-//		printf("%d --  %8.12f\n",i,G(i));
+	//	std::cout.precision(15);
+	//	for(int i=0; i<G.rows(); i++)
+	//		printf("%d --  %8.12f\n",i,G(i));
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0,                 G(0), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.289633162320,      G(1), 1.e-6);
@@ -958,55 +959,55 @@ void TVPPTest::runISRESTest_g06(){
 /// Test ipOpt -- from example HS071_NLP
 void TVPPTest::ipOptTest() {
 
-  // Create a new instance of the nlp problem
+	// Create a new instance of the nlp problem
 	SmartPtr<HS071_NLP> mynlp = new HS071_NLP();
 
-  // Create a new instance of IpoptApplication
-  //  (use a SmartPtr, not raw)
-  // We are using the factory, since this allows us to compile this
-  // example with an Ipopt Windows DLL
-  SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
-  app->RethrowNonIpoptException(true);
+	// Create a new instance of IpoptApplication
+	//  (use a SmartPtr, not raw)
+	// We are using the factory, since this allows us to compile this
+	// example with an Ipopt Windows DLL
+	SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
+	app->RethrowNonIpoptException(true);
 
-  // Change some options
-  // Note: The following choices are only examples, they might not be
-  //       suitable for your optimization problem.
-  app->Options()->SetNumericValue("tol", 1e-7);
-  app->Options()->SetStringValue("mu_strategy", "adaptive");
-  app->Options()->SetStringValue("output_file", "ipopt.out");
+	// Change some options
+	// Note: The following choices are only examples, they might not be
+	//       suitable for your optimization problem.
+	app->Options()->SetNumericValue("tol", 1e-7);
+	app->Options()->SetStringValue("mu_strategy", "adaptive");
+	app->Options()->SetStringValue("output_file", "ipopt.out");
 
-  // Do not request the hessian matrix
-  app->Options()->SetStringValue("hessian_approximation", "limited-memory");
+	// Do not request the hessian matrix
+	app->Options()->SetStringValue("hessian_approximation", "limited-memory");
 
-  // Leave ipOpt silent
-  app->Options()->SetNumericValue("print_level",0);
-  app->Options()->SetNumericValue("file_print_level", 12);
+	// Leave ipOpt silent
+	app->Options()->SetNumericValue("print_level",0);
+	app->Options()->SetNumericValue("file_print_level", 12);
 
-  // The following overwrites the default name (ipopt.opt) of the
-  // options file
-  app->Options()->SetStringValue("option_file_name", "hs071.opt");
+	// The following overwrites the default name (ipopt.opt) of the
+	// options file
+	app->Options()->SetStringValue("option_file_name", "hs071.opt");
 
-  // Initialize the IpoptApplication and process the options
-  ApplicationReturnStatus status;
-  status = app->Initialize();
-  if (status != Solve_Succeeded)
-    CPPUNIT_FAIL("Error during initialization of ipOpt!");
+	// Initialize the IpoptApplication and process the options
+	ApplicationReturnStatus status;
+	status = app->Initialize();
+	if (status != Solve_Succeeded)
+		CPPUNIT_FAIL("Error during initialization of ipOpt!");
 
-  // Ask Ipopt to solve the problem
-  status = app->OptimizeTNLP(mynlp);
+	// Ask Ipopt to solve the problem
+	status = app->OptimizeTNLP(mynlp);
 
-  if (status == Solve_Succeeded) {
-    std::cout << std::endl << std::endl << "*** The problem solved!" << std::endl;
-  }
-  else
-    CPPUNIT_FAIL("ipOpt failed to find the solution!");
+	if (status == Solve_Succeeded) {
+		std::cout << std::endl << std::endl << "*** The problem solved!" << std::endl;
+	}
+	else
+		CPPUNIT_FAIL("ipOpt failed to find the solution!");
 
-  // Get the value of the state vector and of the objective (minimized) function
-//  std::cout<<"-- ipOpt Res in autotests -- "<<std::endl;
-//  std::cout<<"Solution = "<< mynlp->getSolution() <<std::endl;
-//  std::cout<<"Residuals = "<< mynlp->getConstraints()<<std::endl;
-//  std::cout<<"minimized function = "<< mynlp->getObjectiveValue() <<std::endl;
-//  std::cout<<"-----------------------------"<<std::endl;
+	// Get the value of the state vector and of the objective (minimized) function
+	//  std::cout<<"-- ipOpt Res in autotests -- "<<std::endl;
+	//  std::cout<<"Solution = "<< mynlp->getSolution() <<std::endl;
+	//  std::cout<<"Residuals = "<< mynlp->getConstraints()<<std::endl;
+	//  std::cout<<"minimized function = "<< mynlp->getObjectiveValue() <<std::endl;
+	//  std::cout<<"-----------------------------"<<std::endl;
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( mynlp->getSolution()(0), 1, 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( mynlp->getSolution()(1), 4.743, 1.e-6);
@@ -1162,6 +1163,116 @@ void TVPPTest::vppPointTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0402998751229445, res(1), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
+
+}
+
+
+// Make a full run, and compare the full results with a baseline
+void TVPPTest::ipOptFullRunTest() {
+
+
+	// Set the precision for cout in order to visualize results that can be used
+	// to reset the baselines
+	std::cout.precision(15);
+
+	std::cout<<"=== Testing one point computed by the vpp === \n"<<std::endl;
+
+	// Instantiate a parser with the variables
+	VariableFileParser parser("variableFile_ipOptFullTest.txt");
+
+	// Declare a ptr with the sail configuration
+	// This is based on the variables that have been read in
+	boost::shared_ptr<SailSet> pSails;
+
+	// Declare a container for all the items that
+	// constitute the VPP components (Wind, Resistance, RightingMoment...)
+	boost::shared_ptr<VPPItemFactory> pVppItems;
+
+	// Parse the variables file
+	parser.parse();
+
+	// Instantiate the sailset
+	pSails.reset( SailSet::SailSetFactory(parser) );
+
+	// Instantiate the items
+	pVppItems.reset( new VPPItemFactory(&parser,pSails) );
+
+	SmartPtr<VPP_NLP> pSolver = new VPP_NLP(pVppItems);
+	SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
+	app->RethrowNonIpoptException(true);
+	app->Options()->SetNumericValue("tol", 1e-3);
+	app->Options()->SetStringValue("mu_strategy", "adaptive");
+	app->Options()->SetStringValue("output_file", "ipopt.out");
+	app->Options()->SetStringValue("hessian_approximation", "limited-memory");
+
+	// Call method VPP_NLP::get_scaling_parameters which is used to set the pb to
+	// maximization and eventually to improve the conditioning of the pb
+	app->Options()->SetStringValue("nlp_scaling_method", "user-scaling");
+
+	// Set ipOpt verbosity
+	app->Options()->SetIntegerValue("print_level",0);
+	app->Options()->SetIntegerValue("file_print_level",0);
+
+	ApplicationReturnStatus status;
+	status = app->Initialize();
+	if (status != Solve_Succeeded)
+		throw VPPException(HERE,"Error during initialization of ipOpt!");
+
+	// Loop on the wind ANGLES and VELOCITIES
+	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
+		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++){
+
+			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
+
+			try{
+
+				// Set the wind indexes
+				pSolver->setWind(vTW,aTW);
+
+				// Run the optimizer for the current wind speed/angle
+				ApplicationReturnStatus status = app->OptimizeTNLP(pSolver);
+
+				if (status == Solve_Succeeded) {
+					std::cout << std::endl << std::endl << "*** The problem solved!" << std::endl;
+				}
+				else
+					throw VPPException(HERE,"ipOpt failed to find the solution!");
+
+			}
+			catch(...){
+				//do nothing and keep going
+			}
+		}
+
+	// Save the results (usefult for debugging)
+	VPPResultIO writer(pSolver->getResults());
+	writer.write("vppRunTest_curResults.vpp");
+
+	// Now import some baseline results
+	ResultContainer baselineResults(pVppItems->getWind());
+
+	// Read the results from file and push them back to the baselineResults container
+	VPPResultIO reader(&baselineResults);
+	reader.read("vppRunTest_baseline.vpp");
+
+	// Get a ptr to the current results
+	ResultContainer* pCurrentResults= pSolver->getResults();
+
+	// Compare the size of the results with the baseline
+	CPPUNIT_ASSERT_EQUAL( baselineResults.windVelocitySize(), pCurrentResults->windVelocitySize() );
+	CPPUNIT_ASSERT_EQUAL( baselineResults.windAngleSize(), pCurrentResults->windAngleSize() );
+
+	// Now compare each result using CPPUnit comparators
+	for(size_t iWv=0; iWv<baselineResults.windVelocitySize(); iWv++)
+		for(size_t iWa=0; iWa<baselineResults.windAngleSize(); iWa++) {
+
+			for(size_t iCmp=0; iCmp<pSolver->getDimension(); iCmp++)
+				CPPUNIT_ASSERT_DOUBLES_EQUAL(
+						baselineResults.get(iWv,iWa).getX()->coeffRef(iCmp),
+						pCurrentResults->get(iWv,iWa).getX()->coeffRef(iCmp),
+						1.e-6
+				);
+		}
 
 }
 

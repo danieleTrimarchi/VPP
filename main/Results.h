@@ -106,8 +106,8 @@ class Result {
 
 } ;
 
-/// Container for OptResult, which is a wrapper around
-/// vector<vector<OptResults? > >
+/// Container for VPPResult, which is a wrapper around
+/// vector<vector<VPPResults > >
 /// This utility class is used to store a result for each
 /// twv and twa
 class ResultContainer {

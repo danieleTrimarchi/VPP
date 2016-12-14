@@ -555,6 +555,11 @@ void VPP_NLP::printResultBounds() {
 
 }
 
+// Returns the dimensionality of this problem (the size of the state vector)
+size_t VPP_NLP::getDimension() const {
+	return dimension_;
+}
+
 // Save the current results to file
 void VPP_NLP::saveResults() {
 
@@ -564,3 +569,8 @@ void VPP_NLP::saveResults() {
 	std::cout<<"---------------------------------------------------\n"<<std::endl;
 
 }
+
+ResultContainer* VPP_NLP::getResults() {
+	return pResults_.get();
+}
+

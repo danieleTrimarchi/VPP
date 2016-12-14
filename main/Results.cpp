@@ -113,12 +113,12 @@ Result::~Result(){
 // PrintOut the values stored in this result
 void Result::print(FILE* outStream) const {
 
-	fprintf(outStream,"%zu %4.2f %zu %4.2f  -- ", itwv_, twv_, itwa_, mathUtils::toDeg(twa_));
+	fprintf(outStream,"%zu %8.6f %zu %8.6f  -- ", itwv_, twv_, itwa_, mathUtils::toDeg(twa_));
 	for(size_t iRes=0; iRes<result_.size(); iRes++)
-		fprintf(outStream,"  %4.2e",result_[iRes]);
+		fprintf(outStream,"  %8.6e",result_[iRes]);
 	fprintf(outStream,"  --  ");
 	for(size_t i=0; i<residuals_.size(); i++)
-		fprintf(outStream,"  %4.2e", residuals_(i) );
+		fprintf(outStream,"  %8.6e", residuals_(i) );
 	fprintf(outStream,"  --  %i ", discard_ );
 
 	// This is for readability, but also it flushes the stdout buffering
