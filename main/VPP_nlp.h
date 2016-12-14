@@ -13,11 +13,12 @@
 using namespace Ipopt;
 
 #include "VPPItemFactory.h"
+#include "VPPSolverBase.h"
 #include "NRSolver.h"
 #include "VPPGradient.h"
 
 /// VPP application for solving the optimization problem with IPOPT
-///  The class is direcly inspired by hs071_nlp, which implements a
+///  The class is directly inspired by hs071_nlp, which implements a
 ///  C++ example of problem 71 of the Hock-Schittkowski test suite.
 ///
 /// Problem hs071 looks like this
@@ -34,8 +35,8 @@ using namespace Ipopt;
 ///        x = (1.00000000, 4.74299963, 3.82114998, 1.37940829)
 ///
 
-class VPP_NLP : public TNLP
-{
+class VPP_NLP : public TNLP, public VPPSolverBase {
+
 	public:
 
 		/// Default constructor
@@ -109,7 +110,7 @@ class VPP_NLP : public TNLP
 				IpoptCalculatedQuantities* ip_cq);
 
 		/// Set twv and twa for this run
-		void setWind(size_t twv, size_t twa);
+		void run(int twv, int twa);
 
 		/// Make a printout of the results for this run
 		/// TODO dtrimarchi : shift this to a mother class
@@ -173,43 +174,20 @@ class VPP_NLP : public TNLP
 		/// converged (discard==false). It starts from 'current', so it can be used recursively
 		size_t getPreviousConverged(size_t idx, size_t TWA);
 
-		/// Ptr to the VPPItemFactory that contains all of the ingredients
-		/// required to compute the optimization constraints
-		boost::shared_ptr<VPPItemFactory> pVppItemsContainer_;
-
-		/// Size of the problem this Optimizer is handling
-		size_t dimension_; // --> v, phi, crew, flat
-
-		/// Size of the sub-problem to be pre-solved with the NRSolver
-		size_t subPbSize_; // --> v, phi
+		/// Ask the NRSolver to solve a sub-problem without the optimization variables
+		/// this makes the initial guess an equilibrated solution
+		/// For the VPP_nlp, make nothing to start with
+		virtual void solveInitialGuess(int TWV, int TWA);
 
 		/// Number of equality constraints: dF=0, dM=0
 		const size_t nEqualityConstraints_; // --> v, phi
 
-		/// Ptr to the parser that contains all of the user variables
-		VariableFileParser* pParser_;
-
 		/// Wind angle and velocity indexes. Set with setWind(size_t, size_t)
 		static size_t twa_, twv_;
-
-		/// NRSolver used to compute the derivatives of the objective function
-		/// wrt the state variables, i.e: the component of the Gradient vector
-		/// Note that the component du/dPhi is not computed with this NRSolver,
-		/// because in this case I resolve a mono-dimensional pb (instead of a 2d pb)
-		/// This, because I compute du/dPhi fixing phi and finding u s.t. dF=0.
-		/// In all of the other cases, the state vars u,Phi are free while the
-		/// optimization variables are infinitesimally incremented or decremented
-		boost::shared_ptr<NRSolver> pSolver_;
 
 		/// VPPGradient used to compute the gradient by finite differences
 		/// and feed the nlp solver
 		boost::shared_ptr<VPPGradient> pGradient_;
-
-		/// Matrix of results, one result per wind velocity/angle
-		boost::shared_ptr<ResultContainer> pResults_;
-
-		/// Ptr to the wind
-		WindItem* pWind_;
 
 		/// lower and upper bounds for the state variables
 		std::vector<double> lowerBounds_, upperBounds_;

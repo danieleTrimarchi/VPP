@@ -25,14 +25,11 @@ using namespace Eigen;
 #include "mathUtils.h"
 #include "Version.h"
 #include "VPPResultIO.h"
-
-#include "IpIpoptApplication.hpp"
-#include "VPP_nlp.h"
+#include "VPPSolverFactory.h"
 
 using namespace VPPSolve;
 using namespace Optim;
 using namespace SAOA;
-using namespace Ipopt;
 
 
 /// Reload the variable file and update the items accordingly
@@ -72,27 +69,18 @@ void run(VariableFileParser& parser, VPPSolverBase* pSolver){
 }
 
 /// Run the solver/Optimizer
-void run(VariableFileParser& parser, SmartPtr<IpoptApplication>& pApp, SmartPtr<VPP_NLP>& pMyNlp ){
+void run(VariableFileParser& parser, VPPSolverFactory* solverFactory ){
 
 	// Loop on the wind ANGLES and VELOCITIES
-	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
-		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++){
+	for(int aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
+		for(int vTW=0; vTW<parser.get("N_TWV"); vTW++){
 
 			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
 
 			try{
 
-				// Set the wind indexes
-				pMyNlp->setWind(vTW,aTW);
-
 				// Run the optimizer for the current wind speed/angle
-				ApplicationReturnStatus status = pApp->OptimizeTNLP(pMyNlp);
-
-				if (status == Solve_Succeeded) {
-					std::cout << std::endl << std::endl << "*** The problem solved!" << std::endl;
-				}
-				else
-					throw VPPException(HERE,"ipOpt failed to find the solution!");
+				solverFactory->run(vTW,aTW);
 
 			}
 			catch(...){
@@ -130,27 +118,9 @@ int main(int argc, char** argv) {
 		//VPPSolver solver(pVppItems);
 		//Optimizer solver(pVppItems);
 		// SemiAnalyticalOptimizer solver(pVppItems);
+		IppOptSolverFactory solverFactory(pVppItems);
+
 		// ---
-		SmartPtr<VPP_NLP> pSolver = new VPP_NLP(pVppItems);
-		SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
-		app->RethrowNonIpoptException(true);
-		app->Options()->SetNumericValue("tol", 1e-3);
-		app->Options()->SetStringValue("mu_strategy", "adaptive");
-		app->Options()->SetStringValue("output_file", "ipopt.out");
-		app->Options()->SetStringValue("hessian_approximation", "limited-memory");
-
-		// Call method VPP_NLP::get_scaling_parameters which is used to set the pb to
-		// maximization and eventually to improve the conditioning of the pb
-		app->Options()->SetStringValue("nlp_scaling_method", "user-scaling");
-
-		// Set ipOpt verbosity
-		app->Options()->SetIntegerValue("print_level",5);
-		app->Options()->SetIntegerValue("file_print_level", 5);
-
-		ApplicationReturnStatus status;
-		status = app->Initialize();
-		if (status != Solve_Succeeded)
-			throw VPPException(HERE,"Error during initialization of ipOpt!");
 
 		std::cout<<"Please enter a command or type -help-\n";
 
@@ -202,10 +172,10 @@ int main(int argc, char** argv) {
 				pVppItems->getAeroForcesItem()->plot();
 
 			else if( s == string("plotJacobian"))
-				pSolver->plotJacobian();
+				solverFactory.get()->plotJacobian();
 
 			else if( s == string("plotGradient"))
-				pSolver->plotGradient();
+				solverFactory.get()->plotGradient();
 
 			//---
 
@@ -253,40 +223,38 @@ int main(int argc, char** argv) {
 			//---
 
 			else if( s == string("plotPolars"))
-				pSolver->plotPolars();
+				solverFactory.get()->plotPolars();
 
 			else if( s == string("plotXY")) {
 				std::cout<<"Please enter the index of the wind angle: \n";
 				int idx;
 				cin >> idx;
-				pSolver->plotXY(idx);
+				solverFactory.get()->plotXY(idx);
 			}
 
 			//---
 
 			else if(s == string("reload") ){
 				load(parser,pSails,pVppItems);
-				pSolver->reset(pVppItems);
+				solverFactory.get()->reset(pVppItems);
 			}
 
 			else if(s == string("run") )
-				//run(parser,&solver);
-				run(parser,app,pSolver);
+				run(parser,&solverFactory);
 
 			else if(s == string("import") )
-				pSolver->importResults();
+				solverFactory.get()->importResults();
 
 			//---
 
 			else if( s == string("print"))
-				//solver.printResults();
-				pSolver->printResults();
+				solverFactory.get()->printResults();
 
 			else if( s == string("save"))
-				pSolver->saveResults();
+				solverFactory.get()->saveResults();
 
 			else if( s == string("bounds"))
-				pSolver->printResultBounds();
+				solverFactory.get()->printResultBounds();
 
 			else if (s == "buildInfo" ){
 				std::cout<<"-------------------------"<<std::endl;

@@ -69,6 +69,9 @@ class VPPSolverBase {
 		/// this makes the initial guess an equilibrated solution
 		virtual void solveInitialGuess(int TWV, int TWA) =0;
 
+		/// Disallow default constructor
+		VPPSolverBase();
+
 		/// Size of the problem this Optimizer is handling
 		size_t dimension_; // --> v, phi, crew, flat
 
@@ -102,9 +105,6 @@ class VPPSolverBase {
 		double tol_;
 
 	private:
-
-		/// Disallow default constructor
-		VPPSolverBase();
 
 		/// Declare a static const initial guess state vector
 		static Eigen::VectorXd xp0_;

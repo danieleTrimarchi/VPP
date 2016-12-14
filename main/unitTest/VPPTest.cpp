@@ -1227,7 +1227,7 @@ void TVPPTest::ipOptFullRunTest() {
 			try{
 
 				// Set the wind indexes
-				pSolver->setWind(vTW,aTW);
+				pSolver->run(vTW,aTW);
 
 				// Run the optimizer for the current wind speed/angle
 				ApplicationReturnStatus status = app->OptimizeTNLP(pSolver);

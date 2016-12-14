@@ -94,7 +94,29 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 				xp_= xp0_;
 
 	}
+	else if( TWV==1 ) {
 
+		///////////////////
+
+		// IF twv==1 and twa==0, just take the solution of twv-1, 0
+		// if this is acceptable. Otherwise restart from x0
+		if(TWA==0)
+			if(!pResults_->get(TWV-1,TWA).discard())
+				xp_= *(pResults_->get(TWV-1,TWA).getX());
+			else
+				xp_= xp0_;
+
+		// twv_==1 and twa_ > 0. Do as for twv_==0 : use the previous converged solution
+		else
+
+			if(!pResults_->get(TWV,TWA-1).discard())// In this case we have a solution at a previous angle we can use
+				// to set the guess
+				xp_ = *(pResults_->get(TWV,TWA-1).getX());
+			else
+				xp_= xp0_;
+
+		///////////////////
+	}
 	else if( TWV>1 ) {
 
 		// For twv> 1 we can linearly predict the result of the state vector
@@ -125,12 +147,12 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 		// Make sure the initial guess does not exceeds the bounds
 		for(size_t i=0; i<lowerBounds_.size(); i++) {
 			if(xp_[i]<lowerBounds_[i]){
-				std::cout<<"Resetting the lower bounds to "<<lowerBounds_[i]<<std::endl;
+				std::cout<<"Resetting xp_["<<i<<"]= "<< xp_[i]<<" to the lower bound "<<lowerBounds_[i]<<std::endl;
 				xp_[i]=lowerBounds_[i];
 			}
 			if(xp_[i]>upperBounds_[i]){
+				std::cout<<"Resetting xp_["<<i<<"]= "<< xp_[i]<<" to the upper bound "<<upperBounds_[i]<<std::endl;
 				xp_[i]=upperBounds_[i];
-				std::cout<<"Resetting the upper bounds to "<<upperBounds_[i]<<std::endl;
 			}
 		}
 	}

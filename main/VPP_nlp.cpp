@@ -27,33 +27,18 @@ Eigen::VectorXd VPP_NLP::xp0_((Eigen::VectorXd(4) << .5, 0., 0., 1.).finished())
 
 // Disallowed default constructor
 VPP_NLP::VPP_NLP():
-				dimension_(0),
-				subPbSize_(0),
-				nEqualityConstraints_(0),
-				pParser_(NULL),
-				pWind_(0) {
+		nEqualityConstraints_(0) {
 
 }
 
 // Constructor with ptr to then VPPItemFactory
 VPP_NLP::VPP_NLP(boost::shared_ptr<VPPItemFactory> pVppItemsContainer):
-				pVppItemsContainer_(pVppItemsContainer),
-				dimension_(4),  /* v, phi, crew, flat */
-				subPbSize_(2),  /* v, phi */
-				nEqualityConstraints_(2),
-				pParser_(pVppItemsContainer->getParser()),
-				pWind_(pVppItemsContainer_->getWind()){
-
-	// Instantiate a nrSolver that will be used to compute the gradient
-	// of the objective function : the vector [ du/du du/dPhi du/db du/df ]
-	pSolver_.reset(new NRSolver(pVppItemsContainer.get(),dimension_,subPbSize_) );
+		VPPSolverBase(pVppItemsContainer),
+				nEqualityConstraints_(2) {
 
 	// Instantiate a VPPGradient that will be used to compute the gradient
 	// of the objective function : the vector [ du/du du/dPhi du/db du/df ]
 	pGradient_.reset(new VPPGradient(xp0_,pVppItemsContainer_.get()) );
-
-	// Instantiate a result container
-	pResults_.reset(new ResultContainer(pVppItemsContainer->getWind()));
 
 }
 
@@ -185,88 +170,17 @@ bool VPP_NLP::get_starting_point(int n, bool init_x, double* x,
 	// Use an Eigen::Map to manipulate the solution buffer x
 	Eigen::Map<Eigen::RowVectorXd> xp(x,n);
 
-	// In it to something small to start the evals at each velocity
-	if(twv_==0) {
+	// Update the value of the current state vector
+	xp_=xp;
 
-		// This is the very first solution, so we must guess a solution
-		// but have nothing to establish our guess
-		if(twa_==0)
-			xp= xp0_;
+	// Call the parent class method to make a guess of the solution
+	resetInitialGuess(twv_, twa_);
 
-		else
-
-			// In this case we have a solution at a previous angle we can use
-			// to set the guess
-			if(!pResults_->get(twv_,twa_-1).discard())
-				xp = *(pResults_->get(twv_,twa_-1).getX());
-			else
-				xp= xp0_;
-
-	}
-	else if( twv_==1 ) {
-
-		///////////////////
-
-		// IF twv==1 and twa==0, just take the solution of twv-1, 0
-		// if this is acceptable. Otherwise restart from x0
-		if(twa_==0)
-			if(!pResults_->get(twv_-1,twa_).discard())
-				xp= *(pResults_->get(twv_-1,twa_).getX());
-			else
-				xp= xp0_;
-
-		// twv_==1 and twa_ > 0. Do as for twv_==0 : use the previous converged solution
-		else
-
-			if(!pResults_->get(twv_,twa_-1).discard())// In this case we have a solution at a previous angle we can use
-				// to set the guess
-				xp = *(pResults_->get(twv_,twa_-1).getX());
-			else
-				xp= xp0_;
-
-		///////////////////
-	}
-	else if( twv_>1 ) {
-
-		// For twv> 1 we can linearly predict the result of the state vector
-		// we search for the last two converged results and we do discard the
-		// diverged results, that would not serve our cause
-		// Enclose by try-catch block in case getPreviousConverged does not find
-		// a valid solution to be used for the linear guess
-		try {
-
-			size_t tmOne=getPreviousConverged(twv_,twa_);
-			size_t tmTwo=getPreviousConverged(tmOne,twa_);
-
-			Extrapolator extrapolator(
-					pResults_->get(tmTwo,twa_).getTWV(),
-					pResults_->get(tmTwo,twa_).getX(),
-					pResults_->get(tmOne,twa_).getTWV(),
-					pResults_->get(tmOne,twa_).getX()
-			);
-
-			// Extrapolate the state vector for the current wind
-			// velocity. Note that the items have not been init yet
-			xp= extrapolator.get( pVppItemsContainer_->getWind()->getTWV(twv_) );
-
-		} catch( NoPreviousConvergedException& e){
-			// do nothing
-		}
-
-		// Make sure the initial guess does not exceeds the bounds
-		for(size_t i=0; i<lowerBounds_.size(); i++) {
-			if(xp[i]<lowerBounds_[i]){
-				std::cout<<"Resetting the lower bounds to "<<lowerBounds_[i]<<std::endl;
-				xp[i]=lowerBounds_[i];
-			}
-			if(xp[i]>upperBounds_[i]){
-				xp[i]=upperBounds_[i];
-				std::cout<<"Resetting the upper bounds to "<<upperBounds_[i]<<std::endl;
-			}
-		}
-	}
-
-	std::cout<<"-->> solver first guess: "<<xp<<std::endl;
+	// Copy the current state vector to the c-style ipOpt buffer
+	// not sure if this is required or if I could get out of this
+	// with the map
+	for(size_t i=0; i<xp_.size(); i++)
+		x[i]=xp_(i);
 
 	return true;
 }
@@ -286,6 +200,14 @@ size_t VPP_NLP::getPreviousConverged(size_t idx, size_t TWA) {
 	throw NoPreviousConvergedException(HERE,"No previous converged index found");
 }
 
+// Ask the NRSolver to solve a sub-problem without the optimization variables
+// this makes the initial guess an equilibrated solution
+// For the VPP_nlp, make nothing to start with
+void VPP_NLP::solveInitialGuess(int TWV, int TWA) {
+
+	// Make nothing for the moment
+
+}
 
 // Returns the value of the objective function. This is the equivalent of VPP_Speed
 bool VPP_NLP::eval_f(int n, const double* x, bool new_x, double& obj_value) {
@@ -299,7 +221,7 @@ bool VPP_NLP::eval_f(int n, const double* x, bool new_x, double& obj_value) {
 }
 
 // Set twv and twa for this run
-void VPP_NLP::setWind(size_t twv, size_t twa) {
+void VPP_NLP::run(int twv, int twa) {
 	twa_= twa;
 	twv_= twv;
 }
@@ -486,7 +408,7 @@ void VPP_NLP::plotXY(size_t iWa) {
 // Add this method for compatibility with the NR solver.
 // TODO dtrimarchi: this could go to a common parent class
 void VPP_NLP::plotJacobian() {
-	pSolver_->plotJacobian();
+	nrSolver_->plotJacobian();
 }
 
 void VPP_NLP::plotGradient() {
