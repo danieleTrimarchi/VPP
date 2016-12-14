@@ -18,21 +18,6 @@ VPPSolver::VPPSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 						fixedB_(0.),
 						fixedF_(1.){
 
-	// Set the and apply the lower and the upper bounds
-	// -> make sure the bounds are larger than the initial
-	// 		guess!
-	lowerBounds_.resize(dimension_);
-	upperBounds_.resize(dimension_);
-
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
-	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
-
 }
 
 // Destructor
@@ -45,15 +30,6 @@ void VPPSolver::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Decorator for the mother class method reset
 	VPPSolverBase::reset(VPPItemFactory);
-
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
-	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
 
 }
 

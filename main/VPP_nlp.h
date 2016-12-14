@@ -15,7 +15,6 @@ using namespace Ipopt;
 #include "VPPItemFactory.h"
 #include "VPPSolverBase.h"
 #include "NRSolver.h"
-#include "VPPGradient.h"
 
 /// VPP application for solving the optimization problem with IPOPT
 ///  The class is directly inspired by hs071_nlp, which implements a
@@ -184,13 +183,6 @@ class VPP_NLP : public TNLP, public VPPSolverBase {
 
 		/// Wind angle and velocity indexes. Set with setWind(size_t, size_t)
 		static size_t twa_, twv_;
-
-		/// VPPGradient used to compute the gradient by finite differences
-		/// and feed the nlp solver
-		boost::shared_ptr<VPPGradient> pGradient_;
-
-		/// lower and upper bounds for the state variables
-		std::vector<double> lowerBounds_, upperBounds_;
 
 		/// Declare a static const initial guess state vector
 		static Eigen::VectorXd xp0_;

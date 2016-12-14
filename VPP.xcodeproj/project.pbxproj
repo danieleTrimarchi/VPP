@@ -41,6 +41,7 @@
 		B3855B221CC544E4002F33AC /* VPPJacobian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3855B1F1CC544E4002F33AC /* VPPJacobian.cpp */; };
 		B3940AC01DAD603900FDD141 /* VPPSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3940ABC1DAD603900FDD141 /* VPPSolver.cpp */; };
 		B3940AC11DAD603900FDD141 /* VPPSolverBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3940ABE1DAD603900FDD141 /* VPPSolverBase.cpp */; };
+		B3C304FA1E01EB5F00B4BC6B /* VPPSolverFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C304F81E01EB5F00B4BC6B /* VPPSolverFactory.cpp */; };
 		B3DEF5C41DE36A6B00A4CD1B /* hs071_nlp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3DEF5C01DE36A6B00A4CD1B /* hs071_nlp.cpp */; };
 		B3DEF5C51DE36A6B00A4CD1B /* VPP_nlp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3DEF5C21DE36A6B00A4CD1B /* VPP_nlp.cpp */; };
 		B3DEF5C81DE42A9900A4CD1B /* libipopt.la in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEF5C71DE42A9900A4CD1B /* libipopt.la */; };
@@ -128,6 +129,8 @@
 		B3940ABD1DAD603900FDD141 /* VPPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPSolver.h; path = main/VPPSolver.h; sourceTree = "<group>"; };
 		B3940ABE1DAD603900FDD141 /* VPPSolverBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPSolverBase.cpp; path = main/VPPSolverBase.cpp; sourceTree = "<group>"; };
 		B3940ABF1DAD603900FDD141 /* VPPSolverBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPSolverBase.h; path = main/VPPSolverBase.h; sourceTree = "<group>"; };
+		B3C304F81E01EB5F00B4BC6B /* VPPSolverFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPPSolverFactory.cpp; path = main/VPPSolverFactory.cpp; sourceTree = "<group>"; };
+		B3C304F91E01EB5F00B4BC6B /* VPPSolverFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VPPSolverFactory.h; path = main/VPPSolverFactory.h; sourceTree = "<group>"; };
 		B3DEF5C01DE36A6B00A4CD1B /* hs071_nlp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hs071_nlp.cpp; path = main/hs071_nlp.cpp; sourceTree = "<group>"; };
 		B3DEF5C11DE36A6B00A4CD1B /* hs071_nlp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hs071_nlp.h; path = main/hs071_nlp.h; sourceTree = "<group>"; };
 		B3DEF5C21DE36A6B00A4CD1B /* VPP_nlp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VPP_nlp.cpp; path = main/VPP_nlp.cpp; sourceTree = "<group>"; };
@@ -182,6 +185,8 @@
 		64D919471C59F7D60002F585 = {
 			isa = PBXGroup;
 			children = (
+				B3C304F81E01EB5F00B4BC6B /* VPPSolverFactory.cpp */,
+				B3C304F91E01EB5F00B4BC6B /* VPPSolverFactory.h */,
 				B3DEF5C61DE42A9900A4CD1B /* Frameworks */,
 				B3DEF5C01DE36A6B00A4CD1B /* hs071_nlp.cpp */,
 				B3DEF5C11DE36A6B00A4CD1B /* hs071_nlp.h */,
@@ -329,6 +334,7 @@
 				B3855B221CC544E4002F33AC /* VPPJacobian.cpp in Sources */,
 				64BBD6081C5B701400F14B38 /* VPPItemFactory.cpp in Sources */,
 				B32816341D7558A100263BFD /* SemiAnalyticalOptimizer.cpp in Sources */,
+				B3C304FA1E01EB5F00B4BC6B /* VPPSolverFactory.cpp in Sources */,
 				B3940AC01DAD603900FDD141 /* VPPSolver.cpp in Sources */,
 				64BBD6091C5B701400F14B38 /* VPPRightingMomentItem.cpp in Sources */,
 				B3DEF5C41DE36A6B00A4CD1B /* hs071_nlp.cpp in Sources */,

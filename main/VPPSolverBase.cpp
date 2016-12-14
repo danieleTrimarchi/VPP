@@ -15,14 +15,9 @@ Eigen::VectorXd VPPSolverBase::xp0_((Eigen::VectorXd(4) << .5, 0., 0., 1.).finis
 
 // Constructor
 VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-																dimension_(xp0_.size()),
-																subPbSize_(2),
-																tol_(1.e-4) {
-
-	// Instantiate a NRSolver that will be used to feed the VPPSolverBase with
-	// an equilibrated first guess solution. The solver will solve a subproblem
-	// without optimization variables
-	nrSolver_.reset( new NRSolver(VPPItemFactory.get(),dimension_,subPbSize_) );
+																		dimension_(xp0_.size()),
+																		subPbSize_(2),
+																		tol_(1.e-4) {
 
 	// Init the STATIC member vppItemsContainer
 	pVppItemsContainer_= VPPItemFactory;
@@ -40,15 +35,37 @@ VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	// Init the ResultContainer that will be filled while running the results
 	pResults_.reset(new ResultContainer(pWind_));
 
+	// Instantiate a NRSolver that will be used to feed the VPPSolverBase with
+	// an equilibrated first guess solution. The solver will solve a subproblem
+	// without optimization variables
+	nrSolver_.reset( new NRSolver(VPPItemFactory.get(),dimension_,subPbSize_) );
+
+	// Instantiate a VPPGradient that will be used to compute the gradient
+	// of the objective function : the vector [ du/du du/dPhi du/db du/df ]
+	pGradient_.reset(new VPPGradient(xp0_,pVppItemsContainer_.get()) );
+
+	// Resize the bound containers
+	lowerBounds_.resize(dimension_);
+	upperBounds_.resize(dimension_);
+
+	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
+	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
+	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
+	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
+	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
+	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
+	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
+	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
+
 }
 
 // Disallowed default constructor
 VPPSolverBase::VPPSolverBase():
-		dimension_(xp0_.size()),
-		subPbSize_(2),
-		tol_(1.e-3),
-		pParser_(0),
-		pWind_(0){
+				dimension_(xp0_.size()),
+				subPbSize_(2),
+				tol_(1.e-3),
+				pParser_(0),
+				pWind_(0){
 }
 
 // Destructor
@@ -240,8 +257,8 @@ void VPPSolverBase::plotXY(size_t iWa) {
 	// results. The plotter manager prepares the results (makes
 	// sure to manage only valid results) and instantiates the
 	// plotter to prepare the XY plot
-		VPPPlotSet vppPlotSet(pResults_.get());
-		vppPlotSet.plotXY(iWa);
+	VPPPlotSet vppPlotSet(pResults_.get());
+	vppPlotSet.plotXY(iWa);
 
 }
 

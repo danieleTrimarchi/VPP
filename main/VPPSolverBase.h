@@ -9,6 +9,7 @@
 #include "VPPItemFactory.h"
 #include "Results.h"
 #include "NRSolver.h"
+#include "VPPGradient.h"
 
 using namespace std;
 
@@ -81,6 +82,9 @@ class VPPSolverBase {
 		/// Shared ptr holding the underlying NRSolver used to refine the
 		/// initial guess to be handed to the optimizer
 		boost::shared_ptr<NRSolver> nrSolver_;
+
+		/// VPPGradient used to compute the gradient by finite differences
+		boost::shared_ptr<VPPGradient> pGradient_;
 
 		/// lower and upper bounds for the state variables
 		std::vector<double> lowerBounds_,upperBounds_;

@@ -36,10 +36,6 @@ VPP_NLP::VPP_NLP(boost::shared_ptr<VPPItemFactory> pVppItemsContainer):
 		VPPSolverBase(pVppItemsContainer),
 				nEqualityConstraints_(2) {
 
-	// Instantiate a VPPGradient that will be used to compute the gradient
-	// of the objective function : the vector [ du/du du/dPhi du/db du/df ]
-	pGradient_.reset(new VPPGradient(xp0_,pVppItemsContainer_.get()) );
-
 }
 
 // Default (virtual) destructor
@@ -78,19 +74,6 @@ bool VPP_NLP::get_nlp_info(int& dimension, int& nEqualityConstraints, int& nnz_j
 
 	// Use the C style indexing (0-based)
 	int_style = TNLP::C_STYLE;
-
-	// Resize the bound containers
-	lowerBounds_.resize(dimension_);
-	upperBounds_.resize(dimension_);
-
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
-	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
 
 	return true;
 }
@@ -381,10 +364,10 @@ void VPP_NLP::finalize_solution(SolverReturn status,
 //	std::cout << std::endl << std::endl << "Objective value" << std::endl;
 //	std::cout << "f(x*) = " << obj_value << std::endl;
 
-	std::cout << std::endl << "Final value of the constraints:" << std::endl;
-	for (int i=0; i<m ;i++)
-		std::cout << g[i] << "  ";
-	std::cout<<"\n";
+//	std::cout << std::endl << "Final value of the constraints:" << std::endl;
+//	for (int i=0; i<m ;i++)
+//		std::cout << g[i] << "  ";
+//	std::cout<<"\n";
 
 }
 

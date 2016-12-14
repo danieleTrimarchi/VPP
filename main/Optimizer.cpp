@@ -20,21 +20,6 @@ int optIterations=0;
 Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 								VPPSolverBase(VPPItemFactory){
 
-	// Set the and apply the lower and the upper bounds
-	// -> make sure the bounds are larger than the initial
-	// 		guess!
-	lowerBounds_.resize(dimension_);
-	upperBounds_.resize(dimension_);
-
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
-	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
-
 	// Instantiate a NLOpobject and set the COBYLA algorithm for
 	// nonlinearly-constrained local optimization
 	// opt_.reset( new nlopt::opt(nlopt::GN_ISRES,dimension_) );
@@ -71,19 +56,6 @@ void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Decorator for the mother class method reset
 	VPPSolverBase::reset(VPPItemFactory);
-
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
-	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
-
-	// Set the bounds for the constraints
-	opt_->set_lower_bounds(lowerBounds_);
-	opt_->set_upper_bounds(upperBounds_);
 
 }
 
