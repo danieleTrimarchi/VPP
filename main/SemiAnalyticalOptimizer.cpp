@@ -9,11 +9,11 @@
 
 using namespace mathUtils;
 
-namespace SAOA {
+namespace Optim {
 
 // Init static member
 size_t SemiAnalyticalOptimizer::maxIters_;
-int optIterations=0;
+int SemiAnalyticalOptimizer::optIterations_=0;
 
 //// SemiAnalyticalOptimizer class  //////////////////////////////////////////////
 
@@ -88,7 +88,7 @@ double SemiAnalyticalOptimizer::VPP_speed(unsigned n, const double* x, double *g
 	regression_coeffs* c = (regression_coeffs *) my_func_data;
     
 	// Increment the number of iterations for each call of the objective function
-	++optIterations;
+	++optIterations_;
 
 	// Fill the coordinate vector: x^2, xy, y^2, x, y, 1;
 	// --> 	Note that in this case x <- x[2] ; y <- x[3]
@@ -188,7 +188,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		// ====== Set NLOPT ============================================
 
 		// Reset the number of iterations
-		optIterations = 0;
+		optIterations_ = 0;
 
 		try{
 
@@ -224,7 +224,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 			// is meant to be still a meaningful result
 		}
 
-		printf("found maximum after %d evaluations\n", optIterations);
+		printf("found maximum after %d evaluations\n", optIterations_);
 		printf("      at f(%g,%g,%g,%g)\n",
 				xp_(0),xp_(1),xp_(2),xp_(3) );
 
@@ -267,7 +267,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	}
 }
 
-} // end namespace SAOA
+} // end namespace Optim
 
 
 

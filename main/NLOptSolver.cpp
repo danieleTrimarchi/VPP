@@ -1,4 +1,5 @@
-#include "Optimizer.h"
+#include "NLOptSolver.h"
+
 #include "VPPException.h"
 #include "Interpolator.h"
 #include <fstream>
@@ -11,13 +12,13 @@ using namespace mathUtils;
 namespace Optim {
 
 // Init static member
-size_t Optimizer::maxIters_;
-int optIterations=0;
+size_t NLOptSolver::maxIters_;
+int NLOptSolver::optIterations_;
 
 //// Optimizer class  //////////////////////////////////////////////
 
 // Constructor
-Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
+NLOptSolver::NLOptSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 								VPPSolverBase(VPPItemFactory){
 
 	// Instantiate a NLOpobject and set the COBYLA algorithm for
@@ -47,12 +48,12 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 }
 
 // Destructor
-Optimizer::~Optimizer() {
+NLOptSolver::~NLOptSolver() {
 	// make nothing
 }
 
 // Reset the Optimizer when reloading the initial data
-void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
+void NLOptSolver::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Decorator for the mother class method reset
 	VPPSolverBase::reset(VPPItemFactory);
@@ -60,10 +61,10 @@ void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 }
 
 // Set the objective function for tutorial g13
-double Optimizer::VPP_speed(unsigned n, const double* x, double *grad, void *my_func_data) {
+double NLOptSolver::VPP_speed(unsigned n, const double* x, double *grad, void *my_func_data) {
 
 	// Increment the number of iterations for each call of the objective function
-	++optIterations;
+	++optIterations_;
 
 	if(grad)
 		throw VPPException(HERE,"VPP_speed can only be used for derivative-free algorithms!");
@@ -76,7 +77,7 @@ double Optimizer::VPP_speed(unsigned n, const double* x, double *grad, void *my_
 }
 
 // Set the constraint function for benchmark g13:
-void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* loopData) {
+void NLOptSolver::VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* loopData) {
 
 	// Retrieve the loop data for this call with a c-style cast
 	Loop_data* d = (Loop_data*)loopData;
@@ -93,7 +94,7 @@ void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const doub
 }
 
 // Execute a VPP-like analysis
-void Optimizer::run(int TWV, int TWA) {
+void NLOptSolver::run(int TWV, int TWA) {
 
 	std::cout<<"    "<<pWind_->getTWV(TWV)<<"    "<<toDeg(pWind_->getTWA(TWA))<<std::endl;
 
@@ -101,7 +102,7 @@ void Optimizer::run(int TWV, int TWA) {
 	Loop_data loopData={TWV,TWA};
 
 	// Reset the iteration counter
-	optIterations=0;
+	optIterations_=0;
 
 	// Note that the Number of constraints is determined by tol.size!!
 	std::vector<double> tol(2);
@@ -176,7 +177,7 @@ void Optimizer::run(int TWV, int TWA) {
 		throw VPPException(HERE,"nlopt unknown exception catched!\n");
 	}
 
-	printf("found maximum after %d evaluations\n", optIterations);
+	printf("found maximum after %d evaluations\n", optIterations_);
 	printf("      at f(%g,%g,%g,%g)\n",
 			xp_(0),xp_(1),xp_(2),xp_(3) );
 

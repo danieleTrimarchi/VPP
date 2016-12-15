@@ -9,15 +9,14 @@
 #include <nlopt.hpp>
 #include "VPPJacobian.h"
 #include "VPPGradient.h"
-#include "Optimizer.h"
 #include "SemiAnalyticalOptimizer.h"
 #include "VPPSolver.h"
 #include "mathUtils.h"
 #include "VPPResultIO.h"
 #include "IpIpoptApplication.hpp"
+
+#include "VPPSolverFactoryBase.h"
 #include "hs071_nlp.h"
-#include "VPP_nlp.h"
-#include "VPPSolverFactory.h"
 
 namespace Test {
 
@@ -1057,7 +1056,7 @@ void TVPPTest::vppPointTest() {
 	// -- Testing the Optimizer -- ///////////////////////////////////////////
 
 	// Instantiate an optimizer
-	Optim::Optimizer solver(pVppItems);
+	Optim::NLOptSolverFactory solver(pVppItems);
 
 	// Loop on the first 5 wind VELOCITIES.
 	// Five is of course arbitrary
@@ -1072,7 +1071,7 @@ void TVPPTest::vppPointTest() {
 		}
 	}
 
-	Eigen::VectorXd res( solver.getResult(1,aTW) );
+	Eigen::VectorXd res( solver.get()->getResult(1,aTW) );
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.768225405853146, res(0), 1.e-6);
@@ -1083,7 +1082,7 @@ void TVPPTest::vppPointTest() {
 	// ---
 
 	// Set new velocity/angle
-	res= solver.getResult(5,aTW);
+	res= solver.get()->getResult(5,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50491935839427, res(0), 1.e-6);
@@ -1094,7 +1093,7 @@ void TVPPTest::vppPointTest() {
 	// -- Testing the SAOASolver -- ///////////////////////////////////////////
 
 	// Now repeat the exercise with the SAOA
-	SAOA::SemiAnalyticalOptimizer saSolver(pVppItems);
+	Optim::SAOASolverFactory saSolver(pVppItems);
 
 	// Loop on the first 5 wind VELOCITIES.
 	// Five is of course arbitrary
@@ -1111,7 +1110,7 @@ void TVPPTest::vppPointTest() {
 		}
 	}
 
-	res= saSolver.getResult(1,aTW);
+	res= saSolver.get()->getResult(1,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.772150233486004, res(0), 1.e-6);
@@ -1121,7 +1120,7 @@ void TVPPTest::vppPointTest() {
 
 	// ----
 
-	res= saSolver.getResult(5,aTW);
+	res= saSolver.get()->getResult(5,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50172398494916, res(0), 1.e-6);
@@ -1132,7 +1131,7 @@ void TVPPTest::vppPointTest() {
 	// -- Testing the VPPSolver -- ///////////////////////////////////////////
 
 	// Now repeat the exercise with the vppSolver
-	VPPSolve::VPPSolver vppSolver(pVppItems);
+	Optim::SolverFactory vppSolver(pVppItems);
 
 	// Loop on the first 5 wind VELOCITIES.
 	// Five is of course arbitrary
@@ -1147,7 +1146,7 @@ void TVPPTest::vppPointTest() {
 		}
 	}
 
-	res= vppSolver.getResult(0,aTW);
+	res= vppSolver.get()->getResult(0,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.579097914238764, res(0), 1.e-6);
@@ -1157,7 +1156,7 @@ void TVPPTest::vppPointTest() {
 
 	// ---
 
-	res= vppSolver.getResult(5,aTW);
+	res= vppSolver.get()->getResult(5,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50085133750873, res(0), 1.e-6);
@@ -1198,7 +1197,7 @@ void TVPPTest::ipOptFullRunTest() {
 	// Instantiate the items
 	pVppItems.reset( new VPPItemFactory(&parser,pSails) );
 
-	IppOptSolverFactory solverFactory(pVppItems);
+	Optim::IppOptSolverFactory solverFactory(pVppItems);
 
 	// Loop on the wind ANGLES and VELOCITIES
 	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)

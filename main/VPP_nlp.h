@@ -16,6 +16,11 @@ using namespace Ipopt;
 #include "VPPSolverBase.h"
 #include "NRSolver.h"
 
+namespace Optim {
+
+// forward declaration
+class IppOptSolverFactory;
+
 /// VPP application for solving the optimization problem with IPOPT
 ///  The class is directly inspired by hs071_nlp, which implements a
 ///  C++ example of problem 71 of the Hock-Schittkowski test suite.
@@ -37,9 +42,6 @@ using namespace Ipopt;
 class VPP_NLP : public TNLP, public VPPSolverBase {
 
 	public:
-
-		/// Default constructor
-		VPP_NLP(boost::shared_ptr<VPPItemFactory>);
 
 		/// Default destructor
 		virtual ~VPP_NLP();
@@ -113,6 +115,14 @@ class VPP_NLP : public TNLP, public VPPSolverBase {
 
 	private:
 
+		/// This class is to be instantiated using a NLOptSolverFactory.
+		/// The friendship allows the factory to call the private constructor
+		friend class IppOptSolverFactory;
+
+		/// Private constructor - the class can only be instantiated using
+		/// a VPPSolverFactory
+		VPP_NLP(boost::shared_ptr<VPPItemFactory>);
+
 		///@name Methods to block default compiler methods.
 		/// The compiler automatically generates the following three methods.
 		///  Since the default compiler implementation is generally not what
@@ -134,10 +144,7 @@ class VPP_NLP : public TNLP, public VPPSolverBase {
 		/// Wind angle and velocity indexes. Set with setWind(size_t, size_t)
 		static size_t twa_, twv_;
 
-		/// Declare a static const initial guess state vector
-		static Eigen::VectorXd xp0_;
-
 };
-
+}
 
 #endif

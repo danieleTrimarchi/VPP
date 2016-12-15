@@ -6,7 +6,10 @@
 
 using namespace std;
 
-namespace SAOA {
+namespace Optim {
+
+// forward declaration
+class SAOASolverFactory;
 
 /// This class implements the SAOA (Semi-Analytical Optimization Approach)
 /// which is used to improve the performance of the underlying optimizer NLOpt.
@@ -20,9 +23,6 @@ class SemiAnalyticalOptimizer : public VPPSolverBase {
 
 	public:
 
-		/// Constructor
-		SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactory>);
-
 		/// Destructor
 		~SemiAnalyticalOptimizer();
 
@@ -32,10 +32,15 @@ class SemiAnalyticalOptimizer : public VPPSolverBase {
 		/// Execute a VPP-like analysis - implements the pure virtual method
 		virtual void run(int TWV, int TWA);
 
-		/// Declare the macro to allow for fixed size vector support
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
 	private:
+
+		/// This class is to be instantiated using a NLOptSolverFactory.
+		/// The friendship allows the factory to call the private constructor
+		friend class SAOASolverFactory;
+
+		/// Private constructor - the class can only be instantiated using
+		/// a VPPSolverFactory
+		SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactory>);
 
 		/// Boat velocity objective function
 		static double VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data);
@@ -53,6 +58,8 @@ class SemiAnalyticalOptimizer : public VPPSolverBase {
 
 		/// max iters allowed for the SemiAnalyticalOptimizer
 		static size_t maxIters_;
+
+		static int optIterations_;
 
 };
 };// namespace SemiAnalyticalOptimizer

@@ -15,22 +15,15 @@ using namespace Eigen;
 #include "VariableFileParser.h"
 #include "SailSet.h"
 #include "VPPItem.h"
-#include "VPPSolver.h"
-#include "Optimizer.h"
-#include "SemiAnalyticalOptimizer.h"
-#include "NRSolver.h"
 #include "Regression.h"
 #include "Interpolator.h"
 #include "VPPException.h"
 #include "mathUtils.h"
 #include "Version.h"
 #include "VPPResultIO.h"
-#include "VPPSolverFactory.h"
+#include "VPPSolverFactoryBase.h"
 
-using namespace VPPSolve;
 using namespace Optim;
-using namespace SAOA;
-
 
 /// Reload the variable file and update the items accordingly
 void load(VariableFileParser& parser,
@@ -69,7 +62,7 @@ void run(VariableFileParser& parser, VPPSolverBase* pSolver){
 }
 
 /// Run the solver/Optimizer
-void run(VariableFileParser& parser, VPPSolverFactory* solverFactory ){
+void run(VariableFileParser& parser, VPPSolverFactoryBase* solverFactory ){
 
 	// Loop on the wind ANGLES and VELOCITIES
 	for(int aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
@@ -115,9 +108,9 @@ int main(int argc, char** argv) {
 		// Instantiate a solver. This can be an optimizer (with opt vars)
 		// or a simple solver that will keep fixed the values of the optimization
 		// vars
-		//VPPSolver solver(pVppItems);
-		//Optimizer solver(pVppItems);
-		// SemiAnalyticalOptimizer solver(pVppItems);
+		// SolverFactory solver(pVppItems);
+		// NLOptSolverFactory solver(pVppItems);
+		// SAOASolverFactory solver(pVppItems);
 		IppOptSolverFactory solverFactory(pVppItems);
 
 		// ---

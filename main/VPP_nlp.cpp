@@ -19,9 +19,10 @@
 using namespace Ipopt;
 using namespace Eigen;
 
+namespace Optim {
+
 // Declare and init static members
 size_t VPP_NLP::twa_=0, VPP_NLP::twv_=0;
-Eigen::VectorXd VPP_NLP::xp0_((Eigen::VectorXd(4) << .5, 0., 0., 1.).finished());
 
 //////////////
 
@@ -159,8 +160,9 @@ bool VPP_NLP::get_starting_point(int n, bool init_x, double* x,
 	// Call the parent class method to make a guess of the solution
 	resetInitialGuess(twv_, twa_);
 
-	// Do not use the NR solve to make the guess more realistic
-	// it is not clear to me why, though...
+	// Do NOT use the NR solve to make the guess more realistic
+	// For some reason, attemtping to use the solver leads Newton
+	// to divergence... It is not clear to me why, though...
 	// solveInitialGuess(twv_, twa_);
 
 	// Copy the current state vector to the c-style ipOpt buffer
@@ -342,3 +344,4 @@ void VPP_NLP::finalize_solution(SolverReturn status,
 
 }
 
+}

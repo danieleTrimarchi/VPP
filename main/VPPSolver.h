@@ -5,7 +5,10 @@
 
 using namespace std;
 
-namespace VPPSolve {
+namespace Optim {
+
+// forward declaration
+class SolverFactory;
 
 /// VPP solver, wrapper around the NRSolver used to solve
 /// the VPP problem without optimization variables. The
@@ -13,9 +16,6 @@ namespace VPPSolve {
 class VPPSolver : public VPPSolverBase {
 
 	public:
-
-		/// Constructor
-		VPPSolver(boost::shared_ptr<VPPItemFactory>);
 
 		/// Destructor
 		virtual ~VPPSolver();
@@ -27,10 +27,15 @@ class VPPSolver : public VPPSolverBase {
 		/// in the abstract base class
 		virtual void run(int TWV, int TWA);
 
-		/// Declare the macro to allow for fixed size vector support
-		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
 	private:
+
+		/// This class is to be instantiated using a NLOptSolverFactory.
+		/// The friendship allows the factory to call the private constructor
+		friend class SolverFactory;
+
+		/// Private constructor - the class can only be instantiated using
+		/// a VPPSolverFactory
+		VPPSolver(boost::shared_ptr<VPPItemFactory>);
 
 		/// Set the initial guess for the state variable vector
 		virtual void resetInitialGuess(int TWV, int TWA);

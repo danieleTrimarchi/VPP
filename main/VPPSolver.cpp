@@ -8,7 +8,7 @@
 
 using namespace mathUtils;
 
-namespace VPPSolve {
+namespace Optim {
 
 //// VPPSolver class  //////////////////////////////////////////////
 
@@ -37,46 +37,12 @@ void VPPSolver::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 // Set the initial guess for the state variable vector
 void VPPSolver::resetInitialGuess(int TWV, int TWA) {
 
-	// In it to something small to start the evals at each velocity
-	if(TWV==0) {
+	// Call the parent class that will guess a solution for us...
+	VPPSolverBase::resetInitialGuess(TWV,TWA);
 
-		xp_(0)= 1.0;  	// V_0
-		xp_(1)= 0.1;		// PHI_0
-		xp_(2)= fixedB_;		// b_0
-		xp_(3)= fixedF_;		// f_0
-
-	}
-
-	else if( TWV>1 ) {
-
-		// For twv> 1 we can linearly predict the result of the state vector
-		Extrapolator extrapolator(
-				pResults_->get(TWV-2,TWA).getTWV(),
-				pResults_->get(TWV-2,TWA).getX(),
-				pResults_->get(TWV-1,TWA).getTWV(),
-				pResults_->get(TWV-1,TWA).getX()
-		);
-
-		// Extrapolate the state vector for the current wind
-		// velocity. Note that the items have not been init yet
-		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-
-		// Do extrapolate ONLY if the velocity is increasing
-		// This is beneficial to convergence
-		if(xp(0)>xp_(0))
-			xp_=xp;
-
-		// Make sure the initial guess does not exceeds the bounds
-		for(size_t i=0; i<subPbSize_; i++) {
-			if(xp_[i]<lowerBounds_[i])
-				xp_[i]=lowerBounds_[i];
-			if(xp_[i]>upperBounds_[i])
-				xp_[i]=upperBounds_[i];
-		}
-
-		xp_[2]= fixedB_;
-		xp_[3]= fixedF_;
-	}
+	// Make sure the values of the constrained values is correct
+	xp_[2]= fixedB_;
+	xp_[3]= fixedF_;
 
 	std::cout<<"-->> VPPSolver first guess: "<<xp_.transpose()<<std::endl;
 
