@@ -82,16 +82,6 @@ void VPPSolver::resetInitialGuess(int TWV, int TWA) {
 
 }
 
-// Ask the NRVPPSolver to solve a sub-problem without the optimization variables
-// this makes the initial guess an equilibrated solution
-void VPPSolver::solveInitialGuess(int TWV, int TWA) {
-
-	// Get
-	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
-
-}
-
-
 // Execute a VPP-like analysis
 void VPPSolver::run(int TWV, int TWA) {
 

@@ -111,42 +111,6 @@ class VPP_NLP : public TNLP, public VPPSolverBase {
 		/// Set twv and twa for this run
 		void run(int twv, int twa);
 
-		/// Make a printout of the results for this run
-		/// TODO dtrimarchi : shift this to a mother class
-		void printResults();
-
-		/// Make a printout of the results for this run
-		void plotXY(size_t iWa);
-
-		/// Add this method for compatibility with the NR solver.
-		/// TODO dtrimarchi: this could go to a common parent class
-		void plotJacobian();
-
-		/// Plot the jacobian vector component (sanity check)
-		/// TODO dtrimarchi: this could go to a common parent class
-		void plotGradient();
-
-		/// Make a printout of the results for this run
-		void plotPolars();
-
-		/// Reset the optimizer when reloading the initial data
-		void reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory);
-
-		/// Read results from file and places them in the current results
-		void importResults();
-
-		/// Save the current results to file
-		void saveResults();
-
-		/// Return a ptr to the results.
-		ResultContainer* getResults();
-
-		/// Make a printout of the result bounds for this run
-		void printResultBounds();
-
-		/// Returns the dimensionality of this problem (the size of the state vector)
-		size_t getDimension() const;
-
 	private:
 
 		///@name Methods to block default compiler methods.
@@ -163,20 +127,6 @@ class VPP_NLP : public TNLP, public VPPSolverBase {
 
 		/// Copy constructor
 		VPP_NLP(const VPP_NLP&);
-
-		/// Assignment operator
-		VPP_NLP& operator=(const VPP_NLP&);
-
-		/// Recode this VPPSolverBase method here. To be removed when refactoring VPP_NLP
-		/// as a child of VPPSolverBase
-		/// Returns the index of the previous velocity-wise (twv) result that is marked as
-		/// converged (discard==false). It starts from 'current', so it can be used recursively
-		size_t getPreviousConverged(size_t idx, size_t TWA);
-
-		/// Ask the NRSolver to solve a sub-problem without the optimization variables
-		/// this makes the initial guess an equilibrated solution
-		/// For the VPP_nlp, make nothing to start with
-		virtual void solveInitialGuess(int TWV, int TWA);
 
 		/// Number of equality constraints: dF=0, dM=0
 		const size_t nEqualityConstraints_; // --> v, phi

@@ -21,6 +21,9 @@ class VPPSolverBase {
 		/// Destructor
 		virtual ~VPPSolverBase();
 
+		/// Reset the optimizer when reloading the initial data
+		virtual void reset(boost::shared_ptr<VPPItemFactory>);
+
 		/// Pure virtual used to execute a VPP-like analysis
 		virtual void run(int TWV, int TWA) =0;
 
@@ -48,6 +51,15 @@ class VPPSolverBase {
 		/// Ask the underlying NRSolver to plot its Jacobian
 		void plotJacobian();
 
+		/// Plot the jacobian vector component (sanity check)
+		void plotGradient();
+
+		/// Returns the dimensionality of this problem (the size of the state vector)
+		size_t getDimension() const;
+
+		/// Return a ptr to the results.
+		ResultContainer* getResults();
+
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -55,9 +67,6 @@ class VPPSolverBase {
 
 		/// Protected constructor
 		VPPSolverBase(boost::shared_ptr<VPPItemFactory>);
-
-		/// Reset the optimizer when reloading the initial data
-		virtual void reset(boost::shared_ptr<VPPItemFactory>);
 
 		/// Set the initial guess for the state variable vector
 		virtual void resetInitialGuess(int TWV, int TWA);
@@ -68,7 +77,7 @@ class VPPSolverBase {
 
 		/// Ask the NRSolver to solve a sub-problem without the optimization variables
 		/// this makes the initial guess an equilibrated solution
-		virtual void solveInitialGuess(int TWV, int TWA) =0;
+		virtual void solveInitialGuess(int TWV, int TWA);
 
 		/// Disallow default constructor
 		VPPSolverBase();

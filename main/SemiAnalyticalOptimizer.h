@@ -40,10 +40,6 @@ class SemiAnalyticalOptimizer : public VPPSolverBase {
 		/// Boat velocity objective function
 		static double VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data);
 
-		/// Ask the NRSolver to solve a sub-problem without the optimization variables
-		/// this makes the initial guess an equilibrated solution
-		void solveInitialGuess(int TWV, int TWA);
-
 		// Struct used to drive twv and twa into the update methods of the VPPItems
 		typedef struct {
 				int twv_, twa_;

@@ -59,27 +59,6 @@ void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 }
 
-// Ask the NRSolver to solve a sub-problem without the optimization variables
-// this makes the initial guess an equilibrated solution
-void Optimizer::solveInitialGuess(int TWV, int TWA) {
-
-	// Get
-	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
-
-	// Make sure the initial guess does not exceeds the bounds
-	for(size_t i=0; i<subPbSize_; i++) {
-		if(xp_[i]<lowerBounds_[i]){
-			std::cout<<"WARNING: Modifying lower out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
-			xp_[i]=lowerBounds_[i];
-		}
-		if(xp_[i]>upperBounds_[i]){
-			std::cout<<"WARNING: Modifying upper out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
-			xp_[i]=upperBounds_[i];
-		}
-	}
-
-}
-
 // Set the objective function for tutorial g13
 double Optimizer::VPP_speed(unsigned n, const double* x, double *grad, void *my_func_data) {
 

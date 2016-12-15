@@ -114,17 +114,6 @@ double SemiAnalyticalOptimizer::VPP_speed(unsigned n, const double* x, double *g
 
 }
 
-// Ask the NRSolver to solve a sub-problem without the optimization variables
-// this makes the initial guess an equilibrated solution
-void SemiAnalyticalOptimizer::solveInitialGuess(int TWV, int TWA) {
-
-	std::cout<<"-->> SemiAnalyticalOptimizer solve first guess: "<<xp_.transpose()<<std::endl;
-
-	// Get
-	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
-
-}
-
 // Execute a VPP-like analysis
 void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 

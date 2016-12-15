@@ -35,10 +35,6 @@ class VPPSolver : public VPPSolverBase {
 		/// Set the initial guess for the state variable vector
 		virtual void resetInitialGuess(int TWV, int TWA);
 
-		/// Ask the NRSolver to solve a sub-problem without the optimization variables
-		/// this makes the initial guess an equilibrated solution
-		virtual void solveInitialGuess(int TWV, int TWA);
-
 		double fixedB_, fixedF_;
 
 };

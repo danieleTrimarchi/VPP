@@ -21,7 +21,7 @@ VPPSolverFactory::~VPPSolverFactory() {
 // Ctor
 IppOptSolverFactory::IppOptSolverFactory(boost::shared_ptr<VPPItemFactory> pVppItems) :
 		VPPSolverFactory(pVppItems),
-		pSolver_( new VPP_NLP(pVppItems)),
+		pSolver_(new VPP_NLP(pVppItems)),
 		pApp_(IpoptApplicationFactory()) {
 
 	pApp_->Options()->SetNumericValue("tol", 1e-3);
@@ -34,8 +34,8 @@ IppOptSolverFactory::IppOptSolverFactory(boost::shared_ptr<VPPItemFactory> pVppI
 	pApp_->Options()->SetStringValue("nlp_scaling_method", "user-scaling");
 
 	// Set ipOpt verbosity
-	pApp_->Options()->SetIntegerValue("print_level",5);
-	pApp_->Options()->SetIntegerValue("file_print_level", 5);
+	pApp_->Options()->SetIntegerValue("print_level",0);
+	pApp_->Options()->SetIntegerValue("file_print_level", 0);
 
 	if (pApp_->Initialize() != Solve_Succeeded)
 		throw VPPException(HERE,"Error during initialization of ipOpt!");

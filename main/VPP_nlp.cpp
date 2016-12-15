@@ -159,6 +159,10 @@ bool VPP_NLP::get_starting_point(int n, bool init_x, double* x,
 	// Call the parent class method to make a guess of the solution
 	resetInitialGuess(twv_, twa_);
 
+	// Do not use the NR solve to make the guess more realistic
+	// it is not clear to me why, though...
+	// solveInitialGuess(twv_, twa_);
+
 	// Copy the current state vector to the c-style ipOpt buffer
 	// not sure if this is required or if I could get out of this
 	// with the map
@@ -166,30 +170,6 @@ bool VPP_NLP::get_starting_point(int n, bool init_x, double* x,
 		x[i]=xp_(i);
 
 	return true;
-}
-
-// Recode this VPPSolverBase method here. To be removed when refactoring VPP_NLP
-// as a child of VPPSolverBase
-// Returns the index of the previous velocity-wise (twv) result that is marked as
-// converged (discard==false). It starts from 'current', so it can be used recursively
-size_t VPP_NLP::getPreviousConverged(size_t idx, size_t TWA) {
-
-	while(idx){
-		idx--;
-		if(!pResults_->get(idx,TWA).discard())
-			return idx;
-	}
-
-	throw NoPreviousConvergedException(HERE,"No previous converged index found");
-}
-
-// Ask the NRSolver to solve a sub-problem without the optimization variables
-// this makes the initial guess an equilibrated solution
-// For the VPP_nlp, make nothing to start with
-void VPP_NLP::solveInitialGuess(int TWV, int TWA) {
-
-	// Make nothing for the moment
-
 }
 
 // Returns the value of the objective function. This is the equivalent of VPP_Speed
@@ -207,15 +187,6 @@ bool VPP_NLP::eval_f(int n, const double* x, bool new_x, double& obj_value) {
 void VPP_NLP::run(int twv, int twa) {
 	twa_= twa;
 	twv_= twv;
-}
-
-// Make a printout of the results for this run
-void VPP_NLP::printResults() {
-
-	std::cout<<"==== VPP_NLP RESULTS PRINTOUT ==================="<<std::endl;
-	pResults_->print();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
-
 }
 
 // Return the gradient of the objective function grad_{x} f(x)
@@ -369,113 +340,5 @@ void VPP_NLP::finalize_solution(SolverReturn status,
 //		std::cout << g[i] << "  ";
 //	std::cout<<"\n";
 
-}
-
-// Make a printout of the results for this run
-void VPP_NLP::plotXY(size_t iWa) {
-
-	if( iWa>=pResults_->windAngleSize() ){
-		std::cout<<"User requested a wrong index! \n";
-		return;
-	}
-
-	// Ask the plotter manager to produce the plots given the
-	// results. The plotter manager prepares the results (makes
-	// sure to manage only valid results) and instantiates the
-	// plotter to prepare the XY plot
-	VPPPlotSet vppPlotSet(pResults_.get());
-	vppPlotSet.plotXY(iWa);
-
-}
-
-// Add this method for compatibility with the NR solver.
-// TODO dtrimarchi: this could go to a common parent class
-void VPP_NLP::plotJacobian() {
-	nrSolver_->plotJacobian();
-}
-
-void VPP_NLP::plotGradient() {
-
-	// Define a linearization point
-	IOUtils io(pVppItemsContainer_->getWind());
-	Eigen::VectorXd xp;
-	io.askUserStateVector(xp);
-
-	// Instantiate a Gradient
-	VPPGradient G(xp,pVppItemsContainer_.get());
-
-	// ask the user which awv, awa
-	// For which TWV, TWA shall we plot the aero forces/moments?
-	size_t twv=0, twa=0;
-	io.askUserWindIndexes(twv, twa);
-
-	// call jacobian.testPlot
-	G.testPlot(twv, twa);
-
-}
-
-// Make a printout of the results for this run
-void VPP_NLP::plotPolars() {
-
-	// Instantiate a VPPPlotSet and sub-contract the plot
-	VPPPlotSet plotSet(pResults_.get());
-	plotSet.plotPolars();
-
-}
-
-// Reset the optimizer when reloading the initial data
-void VPP_NLP::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
-
-	// Init the STATIC member vppItemsContainer
-	pVppItemsContainer_= VPPItemFactory;
-
-	// Set the parser
-	pParser_= pVppItemsContainer_->getParser();
-
-	// Also get a reference to the WindItem that has computed the
-	// real wind velocity/angle for the current run
-	pWind_=pVppItemsContainer_->getWind();
-
-	// Init the ResultContainer that will be filled while running the results
-	pResults_.reset(new ResultContainer(pWind_));
-
-}
-
-// Read results from file and places them in the current results
-void VPP_NLP::importResults() {
-
-	std::cout<<"==== VPP_NLP RESULTS IMPORT... ==================="<<std::endl;
-	VPPResultIO reader(pResults_.get());
-	reader.read();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
-
-}
-
-// Make a printout of the result bounds for this run
-void VPP_NLP::printResultBounds() {
-
-	std::cout<<"==== VPP_NLP RESULT BOUNDS PRINTOUT ==================="<<std::endl;
-	pResults_->printBounds();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
-
-}
-
-// Returns the dimensionality of this problem (the size of the state vector)
-size_t VPP_NLP::getDimension() const {
-	return dimension_;
-}
-
-// Save the current results to file
-void VPP_NLP::saveResults() {
-
-	std::cout<<"==== VPP_NLP RESULTS SAVING... ==================="<<std::endl;
-	VPPResultIO writer(pResults_.get());
-	writer.write();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
-
-}
-
-ResultContainer* VPP_NLP::getResults() {
-	return pResults_.get();
 }
 

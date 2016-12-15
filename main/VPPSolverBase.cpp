@@ -15,9 +15,9 @@ Eigen::VectorXd VPPSolverBase::xp0_((Eigen::VectorXd(4) << .5, 0., 0., 1.).finis
 
 // Constructor
 VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-																		dimension_(xp0_.size()),
-																		subPbSize_(2),
-																		tol_(1.e-4) {
+																				dimension_(xp0_.size()),
+																				subPbSize_(2),
+																				tol_(1.e-4) {
 
 	// Init the STATIC member vppItemsContainer
 	pVppItemsContainer_= VPPItemFactory;
@@ -61,11 +61,11 @@ VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 
 // Disallowed default constructor
 VPPSolverBase::VPPSolverBase():
-				dimension_(xp0_.size()),
-				subPbSize_(2),
-				tol_(1.e-3),
-				pParser_(0),
-				pWind_(0){
+						dimension_(xp0_.size()),
+						subPbSize_(2),
+						tol_(1.e-3),
+						pParser_(0),
+						pWind_(0){
 }
 
 // Destructor
@@ -117,21 +117,28 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 
 		// IF twv==1 and twa==0, just take the solution of twv-1, 0
 		// if this is acceptable. Otherwise restart from x0
-		if(TWA==0)
+		if(TWA==0){
 			if(!pResults_->get(TWV-1,TWA).discard())
 				xp_= *(pResults_->get(TWV-1,TWA).getX());
 			else
 				xp_= xp0_;
-
+		}
 		// twv_==1 and twa_ > 0. Do as for twv_==0 : use the previous converged solution
-		else
+		else {
 
+			// If we have a result at the same speed and the previous angle, this should be the closest
+			// guess
 			if(!pResults_->get(TWV,TWA-1).discard())// In this case we have a solution at a previous angle we can use
-				// to set the guess
 				xp_ = *(pResults_->get(TWV,TWA-1).getX());
+
+			// ...otherwise, use the previous solution for the same angle
+			else if(!pResults_->get(TWV-1,TWA).discard())// In this case we have a solution at a previous angle we can use
+				xp_ = *(pResults_->get(TWV-1,TWA).getX());
+
+			// ... If we have really nothing, just init with the first guess
 			else
 				xp_= xp0_;
-
+		}
 		///////////////////
 	}
 	else if( TWV>1 ) {
@@ -189,6 +196,27 @@ size_t VPPSolverBase::getPreviousConverged(size_t idx, size_t TWA) {
 	}
 
 	throw NoPreviousConvergedException(HERE,"No previous converged index found");
+}
+
+// Ask the NRSolver to solve a sub-problem without the optimization variables
+// this makes the initial guess an equilibrated solution
+void VPPSolverBase::solveInitialGuess(int TWV, int TWA) {
+
+	// Get
+	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
+
+	// Make sure the initial guess does not exceeds the bounds
+	for(size_t i=0; i<subPbSize_; i++) {
+		if(xp_[i]<lowerBounds_[i]){
+			std::cout<<"WARNING: Modifying initial guess for x["<<i<<"]  "<<xp_[i]<<" to "<<lowerBounds_[i]<<std::endl;
+			xp_[i]=lowerBounds_[i];
+		}
+		if(xp_[i]>upperBounds_[i]){
+			std::cout<<"WARNING: Modifying initial guess for x["<<i<<"]  "<<xp_[i]<<" to "<<upperBounds_[i]<<std::endl;
+			xp_[i]=upperBounds_[i];
+		}
+	}
+
 }
 
 // Returns the state vector for a given wind configuration
@@ -266,6 +294,36 @@ void VPPSolverBase::plotXY(size_t iWa) {
 void VPPSolverBase::plotJacobian() {
 	nrSolver_->plotJacobian();
 }
+
+void VPPSolverBase::plotGradient() {
+
+	// Define a linearization point
+	IOUtils io(pVppItemsContainer_->getWind());
+	Eigen::VectorXd xp;
+	io.askUserStateVector(xp);
+
+	// Instantiate a Gradient
+	VPPGradient G(xp,pVppItemsContainer_.get());
+
+	// ask the user which awv, awa
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	size_t twv=0, twa=0;
+	io.askUserWindIndexes(twv, twa);
+
+	// call jacobian.testPlot
+	G.testPlot(twv, twa);
+
+}
+
+// Returns the dimensionality of this problem (the size of the state vector)
+size_t VPPSolverBase::getDimension() const {
+	return dimension_;
+}
+
+ResultContainer* VPPSolverBase::getResults() {
+	return pResults_.get();
+}
+
 
 
 
