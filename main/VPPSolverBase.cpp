@@ -10,45 +10,62 @@ using namespace mathUtils;
 
 //// VPPSolverBase class  //////////////////////////////////////////////
 // Init static member
-boost::shared_ptr<VPPItemFactory> VPPSolverBase::vppItemsContainer_;
+boost::shared_ptr<VPPItemFactory> VPPSolverBase::pVppItemsContainer_;
 Eigen::VectorXd VPPSolverBase::xp0_((Eigen::VectorXd(4) << .5, 0., 0., 1.).finished());
 
 // Constructor
 VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
-																dimension_(4),
-																subPbSize_(2),
-																tol_(1.e-4) {
-
-	// Instantiate a NRSolver that will be used to feed the VPPSolverBase with
-	// an equilibrated first guess solution. The solver will solve a subproblem
-	// without optimization variables
-	nrSolver_.reset( new NRSolver(VPPItemFactory.get(),dimension_,subPbSize_) );
+																				dimension_(xp0_.size()),
+																				subPbSize_(2),
+																				tol_(1.e-4) {
 
 	// Init the STATIC member vppItemsContainer
-	vppItemsContainer_= VPPItemFactory;
+	pVppItemsContainer_= VPPItemFactory;
 
 	// Set the parser
-	pParser_= vppItemsContainer_->getParser();
+	pParser_= pVppItemsContainer_->getParser();
 
 	// Resize the vector with the initial guess/VPPSolverBase results
 	xp_.resize(dimension_);
 
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run
-	pWind_= vppItemsContainer_->getWind();
+	pWind_= pVppItemsContainer_->getWind();
 
 	// Init the ResultContainer that will be filled while running the results
 	pResults_.reset(new ResultContainer(pWind_));
+
+	// Instantiate a NRSolver that will be used to feed the VPPSolverBase with
+	// an equilibrated first guess solution. The solver will solve a subproblem
+	// without optimization variables
+	nrSolver_.reset( new NRSolver(VPPItemFactory.get(),dimension_,subPbSize_) );
+
+	// Instantiate a VPPGradient that will be used to compute the gradient
+	// of the objective function : the vector [ du/du du/dPhi du/db du/df ]
+	pGradient_.reset(new VPPGradient(xp0_,pVppItemsContainer_.get()) );
+
+	// Resize the bound containers
+	lowerBounds_.resize(dimension_);
+	upperBounds_.resize(dimension_);
+
+	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
+	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
+	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
+	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
+	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
+	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
+	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
+	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
 
 }
 
 // Disallowed default constructor
 VPPSolverBase::VPPSolverBase():
-		dimension_(4),
-		subPbSize_(2),
-		tol_(1.e-3),
-		pParser_(0),
-		pWind_(0){
+						dimension_(xp0_.size()),
+						subPbSize_(2),
+						tol_(1.e-3),
+						pParser_(0),
+						pWind_(0){
 }
 
 // Destructor
@@ -56,17 +73,18 @@ VPPSolverBase::~VPPSolverBase() {
 	// make nothing
 }
 
+// Reset the optimizer when reloading the initial data
 void VPPSolverBase::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Init the STATIC member vppItemsContainer
-	vppItemsContainer_= VPPItemFactory;
+	pVppItemsContainer_= VPPItemFactory;
 
 	// Set the parser
-	pParser_= vppItemsContainer_->getParser();
+	pParser_= pVppItemsContainer_->getParser();
 
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run
-	pWind_=vppItemsContainer_->getWind();
+	pWind_=pVppItemsContainer_->getWind();
 
 	// Init the ResultContainer that will be filled while running the results
 	pResults_.reset(new ResultContainer(pWind_));
@@ -93,7 +111,36 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 				xp_= xp0_;
 
 	}
+	else if( TWV==1 ) {
 
+		///////////////////
+
+		// IF twv==1 and twa==0, just take the solution of twv-1, 0
+		// if this is acceptable. Otherwise restart from x0
+		if(TWA==0){
+			if(!pResults_->get(TWV-1,TWA).discard())
+				xp_= *(pResults_->get(TWV-1,TWA).getX());
+			else
+				xp_= xp0_;
+		}
+		// twv_==1 and twa_ > 0. Do as for twv_==0 : use the previous converged solution
+		else {
+
+			// If we have a result at the same speed and the previous angle, this should be the closest
+			// guess
+			if(!pResults_->get(TWV,TWA-1).discard())// In this case we have a solution at a previous angle we can use
+				xp_ = *(pResults_->get(TWV,TWA-1).getX());
+
+			// ...otherwise, use the previous solution for the same angle
+			else if(!pResults_->get(TWV-1,TWA).discard())// In this case we have a solution at a previous angle we can use
+				xp_ = *(pResults_->get(TWV-1,TWA).getX());
+
+			// ... If we have really nothing, just init with the first guess
+			else
+				xp_= xp0_;
+		}
+		///////////////////
+	}
 	else if( TWV>1 ) {
 
 		// For twv> 1 we can linearly predict the result of the state vector
@@ -124,12 +171,12 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 		// Make sure the initial guess does not exceeds the bounds
 		for(size_t i=0; i<lowerBounds_.size(); i++) {
 			if(xp_[i]<lowerBounds_[i]){
-				std::cout<<"Resetting the lower bounds to "<<lowerBounds_[i]<<std::endl;
+				std::cout<<"Resetting xp_["<<i<<"]= "<< xp_[i]<<" to the lower bound "<<lowerBounds_[i]<<std::endl;
 				xp_[i]=lowerBounds_[i];
 			}
 			if(xp_[i]>upperBounds_[i]){
+				std::cout<<"Resetting xp_["<<i<<"]= "<< xp_[i]<<" to the upper bound "<<upperBounds_[i]<<std::endl;
 				xp_[i]=upperBounds_[i];
-				std::cout<<"Resetting the upper bounds to "<<upperBounds_[i]<<std::endl;
 			}
 		}
 	}
@@ -149,6 +196,27 @@ size_t VPPSolverBase::getPreviousConverged(size_t idx, size_t TWA) {
 	}
 
 	throw NoPreviousConvergedException(HERE,"No previous converged index found");
+}
+
+// Ask the NRSolver to solve a sub-problem without the optimization variables
+// this makes the initial guess an equilibrated solution
+void VPPSolverBase::solveInitialGuess(int TWV, int TWA) {
+
+	// Get
+	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
+
+	// Make sure the initial guess does not exceeds the bounds
+	for(size_t i=0; i<subPbSize_; i++) {
+		if(xp_[i]<lowerBounds_[i]){
+			std::cout<<"WARNING: Modifying initial guess for x["<<i<<"]  "<<xp_[i]<<" to "<<lowerBounds_[i]<<std::endl;
+			xp_[i]=lowerBounds_[i];
+		}
+		if(xp_[i]>upperBounds_[i]){
+			std::cout<<"WARNING: Modifying initial guess for x["<<i<<"]  "<<xp_[i]<<" to "<<upperBounds_[i]<<std::endl;
+			xp_[i]=upperBounds_[i];
+		}
+	}
+
 }
 
 // Returns the state vector for a given wind configuration
@@ -187,8 +255,6 @@ void VPPSolverBase::importResults() {
 
 }
 
-
-
 // Make a printout of the result bounds for this run
 void VPPSolverBase::printResultBounds() {
 
@@ -198,7 +264,7 @@ void VPPSolverBase::printResultBounds() {
 
 }
 
-/// Make a printout of the results for this run
+// Make a printout of the results for this run
 void VPPSolverBase::plotPolars() {
 
 	// Instantiate a VPPPlotSet and sub-contract the plot
@@ -207,7 +273,7 @@ void VPPSolverBase::plotPolars() {
 
 }
 
-/// Make a printout of the results for this run
+// Make a printout of the results for this run
 void VPPSolverBase::plotXY(size_t iWa) {
 
 	if( iWa>=pResults_->windAngleSize() ){
@@ -219,16 +285,45 @@ void VPPSolverBase::plotXY(size_t iWa) {
 	// results. The plotter manager prepares the results (makes
 	// sure to manage only valid results) and instantiates the
 	// plotter to prepare the XY plot
-		VPPPlotSet vppPlotSet(pResults_.get());
-		vppPlotSet.plotXY(iWa);
+	VPPPlotSet vppPlotSet(pResults_.get());
+	vppPlotSet.plotXY(iWa);
 
 }
 
 // Add this method for compatibility with the NR solver.
-// TODO dtrimarchi: this could go to a common parent class
 void VPPSolverBase::plotJacobian() {
 	nrSolver_->plotJacobian();
 }
+
+void VPPSolverBase::plotGradient() {
+
+	// Define a linearization point
+	IOUtils io(pVppItemsContainer_->getWind());
+	Eigen::VectorXd xp;
+	io.askUserStateVector(xp);
+
+	// Instantiate a Gradient
+	VPPGradient G(xp,pVppItemsContainer_.get());
+
+	// ask the user which awv, awa
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	size_t twv=0, twa=0;
+	io.askUserWindIndexes(twv, twa);
+
+	// call jacobian.testPlot
+	G.testPlot(twv, twa);
+
+}
+
+// Returns the dimensionality of this problem (the size of the state vector)
+size_t VPPSolverBase::getDimension() const {
+	return dimension_;
+}
+
+ResultContainer* VPPSolverBase::getResults() {
+	return pResults_.get();
+}
+
 
 
 

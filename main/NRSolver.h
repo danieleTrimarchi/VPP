@@ -29,6 +29,12 @@ class NRSolver {
 		/// Reset the NRSolver when reloading the initial data
 		void reset(VPPItemFactory*);
 
+		/// This is similar to a reset, but it is used to change the subPbSize only.
+		/// Used - for example - when computing the derivatives of the objective function
+		/// in VPP_NLP::computederivative. In that case, the subPbSize is one for du/dphi
+		/// but 2 for the other derivatives
+		void setSubPbSize(size_t subPbSize);
+
 		/// Run the solver
 		void run(int TWV, int TWA);
 
@@ -58,13 +64,13 @@ class NRSolver {
 		/// points and for given awv, awa
 		void plotJacobian();
 
+		/// Print the result to screen and save it to the result container
+		void printAndSave(int twv, int twa);
+
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	private:
-
-		/// Set the initial guess for the state variable vector
-		void resetInitialGuess(int twv, int twa);
 
 		// Struct used to drive twv and twa into the update methods of the VPPItems
 		typedef struct {

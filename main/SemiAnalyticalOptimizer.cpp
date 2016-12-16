@@ -9,11 +9,11 @@
 
 using namespace mathUtils;
 
-namespace SAOA {
+namespace Optim {
 
 // Init static member
 size_t SemiAnalyticalOptimizer::maxIters_;
-int optIterations=0;
+int SemiAnalyticalOptimizer::optIterations_=0;
 
 //// SemiAnalyticalOptimizer class  //////////////////////////////////////////////
 
@@ -34,20 +34,13 @@ SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactor
 	// when varying the optimization variables crew, flat.
 	opt_.reset( new nlopt::opt(nlopt::LD_MMA,saPbSize_) );
 
-	// Set the and apply the lower and the upper bounds
-	// -> make sure the bounds are larger than the initial
-	// 		guess!
-	lowerBounds_.resize(saPbSize_);
-	upperBounds_.resize(saPbSize_);
-
-	lowerBounds_[0] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[0] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[1] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[1] = pParser_->get("F_MAX"); ;	// upper FLAT
+	// Generate bound vectors for the SA problem
+	std::vector<double> lowerSAbounds(lowerBounds_.begin()+saPbSize_, lowerBounds_.end());
+	std::vector<double> upperSAbounds(upperBounds_.begin()+saPbSize_, upperBounds_.end());
 
 	// Set the bounds for the constraints
-	opt_->set_lower_bounds(lowerBounds_);
-	opt_->set_upper_bounds(upperBounds_);
+	opt_->set_lower_bounds(lowerSAbounds);
+	opt_->set_upper_bounds(upperSAbounds);
 
 	// Set the absolute tolerance on the state variables
 	//	opt_->set_xtol_abs(tol_);
@@ -73,28 +66,13 @@ void SemiAnalyticalOptimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFac
 	// Decorator for the mother class method reset
 	VPPSolverBase::reset(VPPItemFactory);
 
-	// Set the bounds - here I make the choice to ONLY set the bounds
-	// for the optim variables.Not sure if this is a winning strategy
-	// as the phi often happens to be negative in the end. todo dtrimarchi
-	lowerBounds_[0] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[0] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[1] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[1] = pParser_->get("F_MAX"); ;	// upper FLAT
+	// Generate bound vectors for the SA problem
+	std::vector<double> lowerSAbounds(lowerBounds_.begin()+saPbSize_, lowerBounds_.end());
+	std::vector<double> upperSAbounds(upperBounds_.begin()+saPbSize_, upperBounds_.end());
 
 	// Set the bounds for the constraints
-	opt_->set_lower_bounds(lowerBounds_);
-	opt_->set_upper_bounds(upperBounds_);
-
-}
-
-// Ask the NRSolver to solve a sub-problem without the optimization variables
-// this makes the initial guess an equilibrated solution
-void SemiAnalyticalOptimizer::solveInitialGuess(int TWV, int TWA) {
-
-	std::cout<<"-->> SemiAnalyticalOptimizer solve first guess: "<<xp_.transpose()<<std::endl;
-
-	// Get
-	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
+	opt_->set_lower_bounds(lowerSAbounds);
+	opt_->set_upper_bounds(upperSAbounds);
 
 }
 
@@ -110,7 +88,7 @@ double SemiAnalyticalOptimizer::VPP_speed(unsigned n, const double* x, double *g
 	regression_coeffs* c = (regression_coeffs *) my_func_data;
     
 	// Increment the number of iterations for each call of the objective function
-	++optIterations;
+	++optIterations_;
 
 	// Fill the coordinate vector: x^2, xy, y^2, x, y, 1;
 	// --> 	Note that in this case x <- x[2] ; y <- x[3]
@@ -173,12 +151,12 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		for(size_t iFlat=0; iFlat<nFlat; iFlat++){
 
 			// Set the value of Flat in the state vector
-			xp_(3)= lowerBounds_[1] + double(iFlat) / (nFlat-1) * (upperBounds_[1]-lowerBounds_[1]);
+			xp_(3)= lowerBounds_[saPbSize_+1] + double(iFlat) / (nFlat-1) * (upperBounds_[saPbSize_+1]-lowerBounds_[saPbSize_+1]);
 
 			for(size_t iCrew=0; iCrew<nCrew; iCrew++){
 
 				// Set the value of b in the state vector
-				xp_(2)= lowerBounds_[0] + double(iCrew) / (nCrew-1) * (upperBounds_[0]-lowerBounds_[0]);
+				xp_(2)= lowerBounds_[saPbSize_] + double(iCrew) / (nCrew-1) * (upperBounds_[saPbSize_]-lowerBounds_[saPbSize_]);
 
 				// Store the coordinates of this point in the optimization space
 				x(iCrew,iFlat)= xp_(2);
@@ -210,7 +188,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		// ====== Set NLOPT ============================================
 
 		// Reset the number of iterations
-		optIterations = 0;
+		optIterations_ = 0;
 
 		try{
 
@@ -246,7 +224,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 			// is meant to be still a meaningful result
 		}
 
-		printf("found maximum after %d evaluations\n", optIterations);
+		printf("found maximum after %d evaluations\n", optIterations_);
 		printf("      at f(%g,%g,%g,%g)\n",
 				xp_(0),xp_(1),xp_(2),xp_(3) );
 
@@ -255,7 +233,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 		solveInitialGuess(TWV, TWA);
 
 		// Get and print the final residuals
-		Eigen::VectorXd residuals= vppItemsContainer_->getResiduals();
+		Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals();
 		printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
 
 		// Push the result to the result container
@@ -289,7 +267,7 @@ void SemiAnalyticalOptimizer::run(int TWV, int TWA) {
 	}
 }
 
-} // end namespace SAOA
+} // end namespace Optim
 
 
 

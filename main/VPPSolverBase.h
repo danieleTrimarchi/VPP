@@ -9,6 +9,7 @@
 #include "VPPItemFactory.h"
 #include "Results.h"
 #include "NRSolver.h"
+#include "VPPGradient.h"
 
 using namespace std;
 
@@ -20,6 +21,9 @@ class VPPSolverBase {
 		/// Destructor
 		virtual ~VPPSolverBase();
 
+		/// Reset the optimizer when reloading the initial data
+		virtual void reset(boost::shared_ptr<VPPItemFactory>);
+
 		/// Pure virtual used to execute a VPP-like analysis
 		virtual void run(int TWV, int TWA) =0;
 
@@ -27,19 +31,15 @@ class VPPSolverBase {
 		const Eigen::VectorXd getResult(int TWV, int TWA);
 
 		/// Make a printout of the results for this run
-		/// TODO dtrimarchi : shift this to a mother class
 		void printResults();
 
 		/// Save the current results to file
-		/// TODO dtrimarchi : shift this to a mother class
 		void saveResults();
 
 		/// Read results from file and places them in the current results
-		/// TODO dtrimarchi : shift this to a mother class
 		void importResults();
 
 		/// Make a printout of the result bounds for this run
-		/// TODO dtrimarchi : shift this to a mother class
 		void printResultBounds();
 
 		/// Plot the polar plots for the state variables
@@ -51,6 +51,15 @@ class VPPSolverBase {
 		/// Ask the underlying NRSolver to plot its Jacobian
 		void plotJacobian();
 
+		/// Plot the jacobian vector component (sanity check)
+		void plotGradient();
+
+		/// Returns the dimensionality of this problem (the size of the state vector)
+		size_t getDimension() const;
+
+		/// Return a ptr to the results.
+		ResultContainer* getResults();
+
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -58,9 +67,6 @@ class VPPSolverBase {
 
 		/// Protected constructor
 		VPPSolverBase(boost::shared_ptr<VPPItemFactory>);
-
-		/// Reset the optimizer when reloading the initial data
-		virtual void reset(boost::shared_ptr<VPPItemFactory>);
 
 		/// Set the initial guess for the state variable vector
 		virtual void resetInitialGuess(int TWV, int TWA);
@@ -71,7 +77,10 @@ class VPPSolverBase {
 
 		/// Ask the NRSolver to solve a sub-problem without the optimization variables
 		/// this makes the initial guess an equilibrated solution
-		virtual void solveInitialGuess(int TWV, int TWA) =0;
+		virtual void solveInitialGuess(int TWV, int TWA);
+
+		/// Disallow default constructor
+		VPPSolverBase();
 
 		/// Size of the problem this Optimizer is handling
 		size_t dimension_; // --> v, phi, crew, flat
@@ -83,12 +92,15 @@ class VPPSolverBase {
 		/// initial guess to be handed to the optimizer
 		boost::shared_ptr<NRSolver> nrSolver_;
 
+		/// VPPGradient used to compute the gradient by finite differences
+		boost::shared_ptr<VPPGradient> pGradient_;
+
 		/// lower and upper bounds for the state variables
 		std::vector<double> lowerBounds_,upperBounds_;
 
 		/// Ptr to the VPPItemFactory that contains all of the ingredients
 		/// required to compute the optimization constraints
-		static boost::shared_ptr<VPPItemFactory> vppItemsContainer_;
+		static boost::shared_ptr<VPPItemFactory> pVppItemsContainer_;
 
 		/// Ptr to the variableFileParser
 		VariableFileParser* pParser_;
@@ -106,9 +118,6 @@ class VPPSolverBase {
 		double tol_;
 
 	private:
-
-		/// Disallow default constructor
-		VPPSolverBase();
 
 		/// Declare a static const initial guess state vector
 		static Eigen::VectorXd xp0_;

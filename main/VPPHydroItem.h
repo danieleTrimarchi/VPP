@@ -255,7 +255,7 @@ class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot the Frictional Resistance due to heel vs Fn curve
-		void plot();
+		void plot_deltaWettedArea_heel();
 
 		/// Plot the Frictional Resistance due to heel vs Fn curve for a range of heeling angles
 		void plot(WindItem* pWind);

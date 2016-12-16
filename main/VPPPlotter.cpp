@@ -60,7 +60,7 @@ void VPPPlotterBase::resetRanges(ArrayXd& x, ArrayXd& y) {
 	}
 }
 
-void VPPPlotterBase::resetRanges(MatrixXd& x, MatrixXd& y, bool axisEqual) {
+void VPPPlotterBase::resetRanges(MatrixXd& x, MatrixXd& y, bool axisEqual/*=false*/) {
 
 	// Set the ranges for the first array
 	if(x.minCoeff()<minX_)
@@ -426,6 +426,7 @@ void VPPPlotter::append(string curveLabel, ArrayXd& xs, ArrayXd& ys) {
 	// place the labels in the center of the curve
 	// introduce a shift of one for each new curve
 	size_t pos= xs.size() / 2 + 2 * ( xs_.size() - 1 );
+
 	idx_.push_back(pos);
 
 	// Set the ranges
@@ -515,6 +516,13 @@ void VPPVectorPlotter::plot(
 	cgrid2.nx = x.rows();
 	cgrid2.ny = x.cols();
 
+	// Set the ranges and the bounding box
+	resetRanges(x,y);
+	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
+
+	// Compute the autoscale factor: dx / n
+	double autoScale = fabs(maxX_ - minX_) / x.size();
+
 	// scale each du, dv vector according to its norm to obtain 1-normed vectors
 	for ( int i = 0; i < x.rows(); i++ )
 		for ( int j = 0; j < x.cols(); j++ ) {
@@ -523,8 +531,8 @@ void VPPVectorPlotter::plot(
 			double norm = std::sqrt( du(i,j)*du(i,j) + dv(i,j)*dv(i,j));
 			if(norm>0){
 				// scale the u-v component according to the scale
-				du(i,j) *= scale/norm;
-        dv(i,j) *= scale/norm;
+				du(i,j) *= scale * autoScale / norm;
+        dv(i,j) *= scale * autoScale / norm;
 			}
 
 		}
@@ -542,10 +550,6 @@ void VPPVectorPlotter::plot(
 			u[i][j]         = du(i,j);
 			v[i][j]         = dv(i,j);
 		}
-
-	// Set the ranges and the bounding box
-	resetRanges(x,y);
-	plenv( minX_, maxX_, minY_, maxY_, 0, 0 );
 
 	// Set the plot labels
 	pllab(xLabel.c_str(),yLabel.c_str(),title.c_str());

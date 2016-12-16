@@ -1,4 +1,5 @@
-#include "Optimizer.h"
+#include "NLOptSolver.h"
+
 #include "VPPException.h"
 #include "Interpolator.h"
 #include <fstream>
@@ -11,29 +12,14 @@ using namespace mathUtils;
 namespace Optim {
 
 // Init static member
-size_t Optimizer::maxIters_;
-int optIterations=0;
+size_t NLOptSolver::maxIters_;
+int NLOptSolver::optIterations_;
 
 //// Optimizer class  //////////////////////////////////////////////
 
 // Constructor
-Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
+NLOptSolver::NLOptSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 								VPPSolverBase(VPPItemFactory){
-
-	// Set the and apply the lower and the upper bounds
-	// -> make sure the bounds are larger than the initial
-	// 		guess!
-	lowerBounds_.resize(dimension_);
-	upperBounds_.resize(dimension_);
-
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
-	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
 
 	// Instantiate a NLOpobject and set the COBYLA algorithm for
 	// nonlinearly-constrained local optimization
@@ -62,57 +48,23 @@ Optimizer::Optimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 }
 
 // Destructor
-Optimizer::~Optimizer() {
+NLOptSolver::~NLOptSolver() {
 	// make nothing
 }
 
 // Reset the Optimizer when reloading the initial data
-void Optimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
+void NLOptSolver::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Decorator for the mother class method reset
 	VPPSolverBase::reset(VPPItemFactory);
 
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
-	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
-
-	// Set the bounds for the constraints
-	opt_->set_lower_bounds(lowerBounds_);
-	opt_->set_upper_bounds(upperBounds_);
-
-}
-
-// Ask the NRSolver to solve a sub-problem without the optimization variables
-// this makes the initial guess an equilibrated solution
-void Optimizer::solveInitialGuess(int TWV, int TWA) {
-
-	// Get
-	xp_.block(0,0,2,1)= nrSolver_->run(TWV,TWA,xp_).block(0,0,2,1);
-
-	// Make sure the initial guess does not exceeds the bounds
-	for(size_t i=0; i<subPbSize_; i++) {
-		if(xp_[i]<lowerBounds_[i]){
-			std::cout<<"WARNING: Modifying lower out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
-			xp_[i]=lowerBounds_[i];
-		}
-		if(xp_[i]>upperBounds_[i]){
-			std::cout<<"WARNING: Modifying upper out-of-bounds initial guess for x["<<i<<"]"<<std::endl;
-			xp_[i]=upperBounds_[i];
-		}
-	}
-
 }
 
 // Set the objective function for tutorial g13
-double Optimizer::VPP_speed(unsigned n, const double* x, double *grad, void *my_func_data) {
+double NLOptSolver::VPP_speed(unsigned n, const double* x, double *grad, void *my_func_data) {
 
 	// Increment the number of iterations for each call of the objective function
-	++optIterations;
+	++optIterations_;
 
 	if(grad)
 		throw VPPException(HERE,"VPP_speed can only be used for derivative-free algorithms!");
@@ -125,7 +77,7 @@ double Optimizer::VPP_speed(unsigned n, const double* x, double *grad, void *my_
 }
 
 // Set the constraint function for benchmark g13:
-void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* loopData) {
+void NLOptSolver::VPPconstraint(unsigned m, double *result, unsigned n, const double* x, double* grad, void* loopData) {
 
 	// Retrieve the loop data for this call with a c-style cast
 	Loop_data* d = (Loop_data*)loopData;
@@ -134,15 +86,15 @@ void Optimizer::VPPconstraint(unsigned m, double *result, unsigned n, const doub
 	int twa= d-> twa_;
 
 	// Now call update on the VPPItem container
-	vppItemsContainer_->update(twv,twa,x);
+	pVppItemsContainer_->update(twv,twa,x);
 
 	// And compute the residuals for force and moment
-	vppItemsContainer_->getResiduals(result[0],result[1]);
+	pVppItemsContainer_->getResiduals(result[0],result[1]);
 
 }
 
 // Execute a VPP-like analysis
-void Optimizer::run(int TWV, int TWA) {
+void NLOptSolver::run(int TWV, int TWA) {
 
 	std::cout<<"    "<<pWind_->getTWV(TWV)<<"    "<<toDeg(pWind_->getTWA(TWA))<<std::endl;
 
@@ -150,7 +102,7 @@ void Optimizer::run(int TWV, int TWA) {
 	Loop_data loopData={TWV,TWA};
 
 	// Reset the iteration counter
-	optIterations=0;
+	optIterations_=0;
 
 	// Note that the Number of constraints is determined by tol.size!!
 	std::vector<double> tol(2);
@@ -225,11 +177,11 @@ void Optimizer::run(int TWV, int TWA) {
 		throw VPPException(HERE,"nlopt unknown exception catched!\n");
 	}
 
-	printf("found maximum after %d evaluations\n", optIterations);
+	printf("found maximum after %d evaluations\n", optIterations_);
 	printf("      at f(%g,%g,%g,%g)\n",
 			xp_(0),xp_(1),xp_(2),xp_(3) );
 
-	residuals= vppItemsContainer_->getResiduals();
+	residuals= pVppItemsContainer_->getResiduals();
 	printf("      residuals: dF= %g, dM= %g\n\n",residuals(0),residuals(1) );
 
 	// Refine the solution from the optimizer with NR -> this is meant to fix the residuals

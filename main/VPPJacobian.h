@@ -1,16 +1,6 @@
 #ifndef VPPJACOBIAN_H
 #define VPPJACOBIAN_H
 
-// Compute the Jacobian matrix:
-//
-// J = | dF /du dF /dPhi  dF/db  dF/df|	|du	 | 	 |dF |    |0|
-//	   | dM /du dM /dPhi  dM/db  dM/df|	|dPhi| = |dM | -> |0|
-//	   | dC1/du dC1/dPhi dC1/db dC1/df|	|db	 |	 |dC1|	  |0|
-//	   | dC2/du dC2/dPhi dC2/db dC2/df|	|df	 |	 |dC2|    |0|
-//
-// where the derivatives in the Jacobian matrix are computed by
-// centered finite differences:
-
 #include <Eigen/Core>
 #include <Eigen/Dense>
 using namespace Eigen;
@@ -20,17 +10,25 @@ using namespace Eigen;
 
 /// Compute the Jacobian matrix:
 ///
-/// J = | dF /du dF /dPhi |	|du	 | 	 |dF |    |0|
-///	    | dM /du dM /dPhi |	|dPhi| = |dM | -> |0|
+/// J = | dF/du dF/dPhi |	|du	 | 	 |dF |    |0|
+///	    | dM/du dM/dPhi |	|dPhi| = |dM | -> |0|
 ///
 /// where the derivatives in the Jacobian matrix are computed by
 /// centered finite differences
+/// It is possible to compute a non-diagonal Jacobian used to feed ipOpt
+///
+/// J = | dF/du dF/dPhi dF/db dF/df |
+///	    | dM/du dM/dPhi dM/db dM/df |
+///
 class VPPJacobian : public Eigen::MatrixXd {
 
 	public:
 
 		/// Constructor
 		VPPJacobian(VectorXd& x,VPPItemFactory* pVppItemsContainer, size_t subProblemSize);
+
+		/// Constructor for non square Jacobian
+		VPPJacobian(VectorXd& x,VPPItemFactory* pVppItemsContainer, size_t subProblemSize, size_t nVars);
 
 		/// Compute this Jacobian
 		void run(int twv, int twa);
@@ -58,6 +56,9 @@ class VPPJacobian : public Eigen::MatrixXd {
 		/// Size of the subproblem we aim to solve with the help of this NR
 		/// the variables of the subProblem are the firsts in the state vector
 		size_t subPbSize_;
+
+		/// Size of the complete optimization problem : u, phi, b, f.
+		size_t size_;
 };
 
 /// Class used to plot the Jacobian derivatives for a step that

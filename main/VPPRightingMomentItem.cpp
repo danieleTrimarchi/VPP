@@ -15,7 +15,6 @@ RightingMomentItem::RightingMomentItem(VariableFileParser* pParser, boost::share
 
 	// MMVBLCRW is the mass of the movable crew
 	m20_= pParser_->get("MMVBLCRW") * Physic::g;
-
 }
 
 // Destructor

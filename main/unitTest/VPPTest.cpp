@@ -8,11 +8,15 @@
 #include "NRSolver.h"
 #include <nlopt.hpp>
 #include "VPPJacobian.h"
-#include "Optimizer.h"
+#include "VPPGradient.h"
 #include "SemiAnalyticalOptimizer.h"
 #include "VPPSolver.h"
 #include "mathUtils.h"
 #include "VPPResultIO.h"
+#include "IpIpoptApplication.hpp"
+
+#include "VPPSolverFactoryBase.h"
+#include "hs071_nlp.h"
 
 namespace Test {
 
@@ -478,6 +482,52 @@ void TVPPTest::jacobianTest() {
 
 }
 
+// Test the computation of the Gradient vector
+void TVPPTest::gradientTest() {
+
+	std::cout<<"=== Testing the computation of the Gradient vector === \n"<<std::endl;
+
+	// Instantiate a parser with the variables
+	VariableFileParser parser("variableFile_test.txt");
+
+	// Declare a ptr with the sail configuration
+	// This is based on the variables that have been read in
+	boost::shared_ptr<SailSet> pSails;
+
+	// Declare a container for all the items that
+	// constitute the VPP components (Wind, Resistance, RightingMoment...)
+	boost::shared_ptr<VPPItemFactory> pVppItems;
+
+	// Parse the variables file
+	parser.parse();
+
+	// Instantiate the sailset
+	pSails.reset( SailSet::SailSetFactory(parser) );
+
+	// Instantiate the items
+	pVppItems.reset( new VPPItemFactory(&parser,pSails) );
+
+	// Define a state vector: v, phi, crew, flat
+	Eigen::VectorXd x(4);
+	x << 2, 0.4, 2, .9;
+
+	// Instantiate a VPPGradient
+	VPPGradient G( x,pVppItems.get() );
+
+	// Compute this Gradient
+	G.run(3,6);
+
+	//	std::cout.precision(15);
+	//	for(int i=0; i<G.rows(); i++)
+	//		printf("%d --  %8.12f\n",i,G(i));
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0,                 G(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.289633162320,      G(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.000798352062702179,G(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.396399324138959,   G(3), 1.e-6);
+
+}
+
 // Test the Newton-Raphson algorithm
 void TVPPTest::newtonRaphsonTest() {
 
@@ -515,8 +565,8 @@ void TVPPTest::newtonRaphsonTest() {
 	x.block(0,0,subPbsize,1) = solver.run(4,2,x).block(0,0,subPbsize,1);
 
 	// compare the solution with a given refererence
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.07141666232877, x(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0126204456341185, x(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.06918411855051,   x(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0125926166566537, x(1), 1.e-6);
 	CPPUNIT_ASSERT_EQUAL( 9, static_cast<int>(solver.getNumIters()));
 }
 
@@ -906,6 +956,71 @@ void TVPPTest::runISRESTest_g06(){
 
 }
 
+/// Test ipOpt -- from example HS071_NLP
+void TVPPTest::ipOptTest() {
+
+	// Create a new instance of the nlp problem
+	SmartPtr<HS071_NLP> mynlp = new HS071_NLP();
+
+	// Create a new instance of IpoptApplication
+	//  (use a SmartPtr, not raw)
+	// We are using the factory, since this allows us to compile this
+	// example with an Ipopt Windows DLL
+	SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
+	app->RethrowNonIpoptException(true);
+
+	// Change some options
+	// Note: The following choices are only examples, they might not be
+	//       suitable for your optimization problem.
+	app->Options()->SetNumericValue("tol", 1e-7);
+	app->Options()->SetStringValue("mu_strategy", "adaptive");
+	app->Options()->SetStringValue("output_file", "ipopt.out");
+
+	// Do not request the hessian matrix
+	app->Options()->SetStringValue("hessian_approximation", "limited-memory");
+
+	// Leave ipOpt silent
+	app->Options()->SetNumericValue("print_level",0);
+	app->Options()->SetNumericValue("file_print_level", 12);
+
+	// The following overwrites the default name (ipopt.opt) of the
+	// options file
+	app->Options()->SetStringValue("option_file_name", "hs071.opt");
+
+	// Initialize the IpoptApplication and process the options
+	ApplicationReturnStatus status;
+	status = app->Initialize();
+	if (status != Solve_Succeeded)
+		CPPUNIT_FAIL("Error during initialization of ipOpt!");
+
+	// Ask Ipopt to solve the problem
+	status = app->OptimizeTNLP(mynlp);
+
+	if (status == Solve_Succeeded) {
+		std::cout << std::endl << std::endl << "*** The problem solved!" << std::endl;
+	}
+	else
+		CPPUNIT_FAIL("ipOpt failed to find the solution!");
+
+	// Get the value of the state vector and of the objective (minimized) function
+	//  std::cout<<"-- ipOpt Res in autotests -- "<<std::endl;
+	//  std::cout<<"Solution = "<< mynlp->getSolution() <<std::endl;
+	//  std::cout<<"Residuals = "<< mynlp->getConstraints()<<std::endl;
+	//  std::cout<<"minimized function = "<< mynlp->getObjectiveValue() <<std::endl;
+	//  std::cout<<"-----------------------------"<<std::endl;
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( mynlp->getSolution()(0), 1, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( mynlp->getSolution()(1), 4.743, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( mynlp->getSolution()(2), 3.82115, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( mynlp->getSolution()(3), 1.37940829321546, 1.e-6);
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( mynlp->getConstraints()(0), 25, 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( mynlp->getConstraints()(1), 40, 1.e-6);
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( mynlp->getObjectiveValue(), 17.0140171402241, 1.e-6);
+
+}
+
 // Test a run on a complete computation point : initial guess, NR and solution with NLOpt
 void TVPPTest::vppPointTest() {
 
@@ -941,7 +1056,7 @@ void TVPPTest::vppPointTest() {
 	// -- Testing the Optimizer -- ///////////////////////////////////////////
 
 	// Instantiate an optimizer
-	Optim::Optimizer solver(pVppItems);
+	Optim::NLOptSolverFactory solver(pVppItems);
 
 	// Loop on the first 5 wind VELOCITIES.
 	// Five is of course arbitrary
@@ -956,29 +1071,29 @@ void TVPPTest::vppPointTest() {
 		}
 	}
 
-	Eigen::VectorXd res( solver.getResult(1,aTW) );
+	Eigen::VectorXd res( solver.get()->getResult(1,aTW) );
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.770433161272144, res(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.00891823551917864, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.31172986853623e-05, res(2), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.97880739967609, res(3), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.768225405853146, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.00889402776729276, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 3.57434654742646e-06, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.978180395530717, res(3), 1.e-6);
 
 	// ---
 
 	// Set new velocity/angle
-	res= solver.getResult(5,aTW);
+	res= solver.get()->getResult(5,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50913137230025, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50491935839427, res(0), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.641721899201751, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.6402602204902, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1, res(3), 1.e-6);
 
 	// -- Testing the SAOASolver -- ///////////////////////////////////////////
 
 	// Now repeat the exercise with the SAOA
-	SAOA::SemiAnalyticalOptimizer saSolver(pVppItems);
+	Optim::SAOASolverFactory saSolver(pVppItems);
 
 	// Loop on the first 5 wind VELOCITIES.
 	// Five is of course arbitrary
@@ -995,29 +1110,28 @@ void TVPPTest::vppPointTest() {
 		}
 	}
 
-	res= saSolver.getResult(1,aTW);
+	res= saSolver.get()->getResult(1,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.774293133613769, res(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.00792863138184042, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0193559384776055, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.772150233486004, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.00843341309907809, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0110665537937012, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 	// ----
 
-	res= saSolver.getResult(5,aTW);
+	res= saSolver.get()->getResult(5,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.52324759186468, res(0), 1.e-6);
-	// this is a non acceptable value!
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.148017118825571, res(1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 3, res(2), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50172398494916, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0325185520083958, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.123832714063094, res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 	// -- Testing the VPPSolver -- ///////////////////////////////////////////
 
 	// Now repeat the exercise with the vppSolver
-	VPPSolve::VPPSolver vppSolver(pVppItems);
+	Optim::SolverFactory vppSolver(pVppItems);
 
 	// Loop on the first 5 wind VELOCITIES.
 	// Five is of course arbitrary
@@ -1032,24 +1146,105 @@ void TVPPTest::vppPointTest() {
 		}
 	}
 
-	res= vppSolver.getResult(0,aTW);
+	res= vppSolver.get()->getResult(0,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.581032579334975, res(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.00470332603349499, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.579097914238764, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.00469213389863513, res(1), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
 	// ---
 
-	res= vppSolver.getResult(5,aTW);
+	res= vppSolver.get()->getResult(5,aTW);
 	//std::cout<<"RESULT: \n"<<res<<std::endl;
 
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50278674876735, res(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0403408480941486, res(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.50085133750873, res(0), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0402998751229445, res(1), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., res(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., res(3), 1.e-6);
 
+}
+
+
+// Make a full run, and compare the full results with a baseline
+void TVPPTest::ipOptFullRunTest() {
+
+
+	// Set the precision for cout in order to visualize results that can be used
+	// to reset the baselines
+	std::cout.precision(15);
+
+	std::cout<<"=== Testing a full run of IPOPT in the VPP usage === \n"<<std::endl;
+
+	// Instantiate a parser with the variables
+	VariableFileParser parser("variableFile_ipOptFullTest.txt");
+
+	// Declare a ptr with the sail configuration
+	// This is based on the variables that have been read in
+	boost::shared_ptr<SailSet> pSails;
+
+	// Declare a container for all the items that
+	// constitute the VPP components (Wind, Resistance, RightingMoment...)
+	boost::shared_ptr<VPPItemFactory> pVppItems;
+
+	// Parse the variables file
+	parser.parse();
+
+	// Instantiate the sailset
+	pSails.reset( SailSet::SailSetFactory(parser) );
+
+	// Instantiate the items
+	pVppItems.reset( new VPPItemFactory(&parser,pSails) );
+
+	Optim::IppOptSolverFactory solverFactory(pVppItems);
+
+	// Loop on the wind ANGLES and VELOCITIES
+	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
+		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++){
+
+			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
+
+			try{
+
+				// Run the optimizer for the current wind speed/angle
+				solverFactory.run(vTW,aTW);
+
+			}
+			catch(...){
+				//do nothing and keep going
+			}
+		}
+
+	// Save the results (useful for debugging)
+	VPPResultIO writer(solverFactory.get()->getResults());
+	writer.write("vppRunTest_curResults.vpp");
+
+	// Now import some baseline results
+	ResultContainer baselineResults(pVppItems->getWind());
+
+	// Read the results from file and push them back to the baselineResults container
+	VPPResultIO reader(&baselineResults);
+	reader.read("vppRunTest_baseline.vpp");
+
+	// Get a ptr to the current results
+	ResultContainer* pCurrentResults= solverFactory.get()->getResults();
+
+	// Compare the size of the results with the baseline
+	CPPUNIT_ASSERT_EQUAL( baselineResults.windVelocitySize(), pCurrentResults->windVelocitySize() );
+	CPPUNIT_ASSERT_EQUAL( baselineResults.windAngleSize(), pCurrentResults->windAngleSize() );
+
+	// Now compare each result using CPPUnit comparators
+	for(size_t iWv=0; iWv<baselineResults.windVelocitySize(); iWv++)
+		for(size_t iWa=0; iWa<baselineResults.windAngleSize(); iWa++) {
+
+			for(size_t iCmp=0; iCmp<solverFactory.get()->getDimension(); iCmp++)
+				CPPUNIT_ASSERT_DOUBLES_EQUAL(
+						baselineResults.get(iWv,iWa).getX()->coeffRef(iCmp),
+						pCurrentResults->get(iWv,iWa).getX()->coeffRef(iCmp),
+						1.e-6
+				);
+		}
 }
 
 

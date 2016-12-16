@@ -15,7 +15,7 @@ NRSolver::NRSolver(VPPItemFactory* pVPPItemFactory,
 		size_t dimension, size_t subPbSize ):
 dimension_(dimension),
 subPbSize_(subPbSize),
-tol_(1.e-8),
+tol_(1.e-6),
 maxIters_(100),
 it_(0){
 
@@ -79,43 +79,12 @@ void NRSolver::reset(VPPItemFactory* pVPPItemFactory) {
 	it_=0;
 }
 
-// Set the initial guess for the state variable vector
-void NRSolver::resetInitialGuess(int TWV, int TWA) {
-
-//	// In it to something small to start the evals at each velocity
-//	if(TWV==0) {
-//
-//		//     V_0   PHI_0 b_0   f_0
-//		xp_ << 0.01, mathUtils::toRad(0.01), 0, 0;
-//
-//	}
-//
-//	else if( TWV>1 ) {
-//
-//		// For twv> 1 we can linearly predict the result of the state vector
-//		Extrapolator extrapolator(
-//				pResults_->get(TWV-2,TWA).getTWV(),
-//				pResults_->get(TWV-2,TWA).getX(),
-//				pResults_->get(TWV-1,TWA).getTWV(),
-//				pResults_->get(TWV-1,TWA).getX()
-//		);
-//
-//		// Extrapolate the state vector for the current wind
-//		// velocity. Note that the items have not been init yet
-//		Eigen::VectorXd xp= extrapolator.get( pWind_->getTWV(TWV) );
-//
-//		// Do extrapolate ONLY if the velocity is increasing
-//		// This is beneficial to convergence
-//		if(xp(0)>xp_(0))
-//			xp_=xp;
-//
-//		std::cout<<"-->>Extrapolated first guess: "<<xp_.transpose()<<std::endl;
-//	}
-
-	// Cleanup the solution from values too small
-	for(size_t i=0; i<xp_.size(); i++)
-		if(fabs(xp_(i)) < 1.e-10) xp_(i)=0.;
-
+// This is similar to a reset, but it is used to change the subPbSize only.
+// Used - for example - when computing the derivatives of the objective function
+// in VPP_NLP::computederivative. In that case, the subPbSize is one for du/dphi
+// but 2 for the other derivatives
+void NRSolver::setSubPbSize(size_t subPbSize) {
+	subPbSize_= subPbSize;
 }
 
 // The caller is the Optimizer, that resolves a larger problem with
@@ -131,14 +100,19 @@ Eigen::VectorXd NRSolver::run(int twv, int twa, Eigen::VectorXd& xp ) {
 	// now run std
 	run(twv, twa);
 
+	// Print the result to screen and save it to the result container
+	printAndSave(twv, twa);
+
 	return xp_;
 
 }
 
 void NRSolver::run(int twv, int twa) {
 
+	std::cout.precision(15);
+
 	// std::cout<<"    "<<pWind_->getTWV(twv)<<"    "<<toDeg( pWind_->getTWA(twa) )<<std::endl;
-	//std::cout<<"\n Entering NR with first guess: "<<xp_.transpose()<<std::endl;
+	// std::cout<<"\n Entering NR with first guess: "<<xp_.transpose()<<std::endl;
 
 	try{
 		// Launch the optimization; negative retVal implies failure
@@ -158,22 +132,16 @@ void NRSolver::run(int twv, int twa) {
 			// throw if the solution was not found within the max number of iterations
 			if(it_==maxIters_){
 
-				// Erase the first 20 vals with the last val to improve the view
-				for(size_t i=0; i<50; i++) {
-					velocityResiduals[i]=velocityResiduals[velocityResiduals.size()-1];
-					PhiResiduals[i]=PhiResiduals[PhiResiduals.size()-1];
-				}
+				// Plot the velocity residuals and throw
+				VPPPlotter vResPlot;
+				vResPlot.plot(velocityResiduals,"V_residuals");
 
-//				// Plot the velocity residuals and throw
-//				VPPPlotter vResPlot;
-//				vResPlot.plot(velocityResiduals,"V_residuals");
-//
-//				// Plot the angular residuals and throw
-//				VPPPlotter phiResPlot;
-//				phiResPlot.plot(PhiResiduals,"PHI_residuals");
-//
-//				// Also plot some Jacobian diagnostics
-//				J.testPlot(twv,twa);
+				// Plot the angular residuals and throw
+				VPPPlotter phiResPlot;
+				phiResPlot.plot(PhiResiduals,"PHI_residuals");
+
+				// Also plot some Jacobian diagnostics
+				J.testPlot(twv,twa);
 
 				std::cout<<"\n\nWARNING: NR-Solver could not converge. Please press a key to continue"<<std::endl;
 				string s;
@@ -189,8 +157,8 @@ void NRSolver::run(int twv, int twa) {
 			// Build a state vector with the size of the outer vector
 
 			// Compute the residuals vector - here only the part relative to the subproblem
-			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_).block(0,0,subPbSize_,1);
-			//std::cout<<"NR it: "<<it_<<", residuals= "<<residuals.block(0,0,2,1).transpose()<<"   \n";
+			Eigen::VectorXd residuals= pVppItemsContainer_->getResiduals(twv,twa,xp_);
+			//std::cout<<"NR it: "<<it_<<", residuals= "<<residuals.transpose()<<"   \n";
 
 			if(it_>1) {
 				velocityResiduals.push_back( residuals(0) );
@@ -198,29 +166,25 @@ void NRSolver::run(int twv, int twa) {
 			}
 
 			//  break if converged. TODO dtrimarchi: this condition is way too simple!
-			if( residuals.norm()<1e-5 )
+			if( residuals.block(0,0,subPbSize_,1).norm()<1e-5 && it_>0 )
 				break;
 
 			// Compute the Jacobian matrix
 			J.run(twv,twa);
-//			std::cout<<"J= \n"<<J<<std::endl;
+			//std::cout<<"  in NRSolver: J= \n"<<J<<std::endl;
 
 			// Right before computing the solution, store the relevant data to the JacobianChecker
 			//JCheck.push_back(J,xp_,residuals);
 
 			// A * x = residuals --  J * deltas = residuals
 			// where deltas are also equal to f(x_i) / f'(x_i)
-			VectorXd deltas = J.colPivHouseholderQr().solve(residuals);
+			VectorXd deltas = J.colPivHouseholderQr().solve(residuals.block(0,0,subPbSize_,1));
 
 			// compute the new state vector
 			//  x_(i+1) = x_i - f(x_i) / f'(x_i)
 			xp_.block(0,0,subPbSize_,1) -= deltas;
 
-			// Cleanup the values that are too small
-			for(size_t i=0; i<xp_.size(); i++)
-				if(fabs(xp_(i)) < 1.e-10) xp_(i)=0.;
-
-			//std::cout<<" - xp_= "<<xp_.transpose()<<std::endl;
+			//std::cout<<"  In NRSolver: xp_= "<<xp_.transpose()<<std::endl;
 
 		}
 
@@ -244,22 +208,26 @@ void NRSolver::run(int twv, int twa) {
 	catch (...) {
 		throw VPPException(HERE,"Unknown exception catched!\n");
 	}
+}
+
+// Print the result to screen and save it to the result container
+void NRSolver::printAndSave(int twv, int twa) {
 
 	// Get the residuals
 	Eigen::VectorXd res= pVppItemsContainer_->getResiduals();
 
 	// Print the solution
 	//printf("\n found solution after %d iterations\n     at f(", it);
-	printf("NR solver solution for iTwv= %i iTwa=%i : ", twv,twa);
-	for(size_t i=0; i<xp_.size(); i++)
-		printf("%g  ",xp_(i));
-	printf("\n");
-
-	// Print the residuals
-	printf("     residuals: ");
-	for(size_t i=0; i<res.size(); i++)
-		printf("%g  ",res(i));
-	printf("\n\n");
+//	printf("NR solver solution for iTwv= %i iTwa=%i : ", twv,twa);
+//	for(size_t i=0; i<xp_.size(); i++)
+//		printf("%g  ",xp_(i));
+//	printf("\n");
+//
+//	// Print the residuals
+//	printf("     residuals: ");
+//	for(size_t i=0; i<res.size(); i++)
+//		printf("%g  ",res(i));
+//	printf("\n\n");
 
 	// Push the result to the result container. Hide from plotting if
 	// out-of-bounds

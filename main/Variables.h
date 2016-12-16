@@ -32,6 +32,7 @@ class Variable {
 		bool operator==(const Variable& rhs) const;
 
 		/// Self cast operator, returns the underlying value
+		/// See https://msdn.microsoft.com/en-us/library/wwywka61.aspx
 		operator double() const;
 
 		/// Overload operator << to printout variable name and value

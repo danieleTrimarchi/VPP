@@ -15,20 +15,15 @@ using namespace Eigen;
 #include "VariableFileParser.h"
 #include "SailSet.h"
 #include "VPPItem.h"
-#include "VPPSolver.h"
-#include "Optimizer.h"
-#include "SemiAnalyticalOptimizer.h"
-#include "NRSolver.h"
 #include "Regression.h"
 #include "Interpolator.h"
 #include "VPPException.h"
 #include "mathUtils.h"
 #include "Version.h"
 #include "VPPResultIO.h"
+#include "VPPSolverFactoryBase.h"
 
-using namespace VPPSolve;
 using namespace Optim;
-using namespace SAOA;
 
 /// Reload the variable file and update the items accordingly
 void load(VariableFileParser& parser,
@@ -66,10 +61,31 @@ void run(VariableFileParser& parser, VPPSolverBase* pSolver){
 		}
 }
 
+/// Run the solver/Optimizer
+void run(VariableFileParser& parser, VPPSolverFactoryBase* solverFactory ){
+
+	// Loop on the wind ANGLES and VELOCITIES
+	for(int aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
+		for(int vTW=0; vTW<parser.get("N_TWV"); vTW++){
+
+			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
+
+			try{
+
+				// Run the optimizer for the current wind speed/angle
+				solverFactory->run(vTW,aTW);
+
+			}
+			catch(...){
+				//do nothing and keep going
+			}
+		}
+}
+
 // MAIN
 int main(int argc, char** argv) {
 
-	try{
+		try{
 
 		printf("\n=======================\n");
 		printf("===  V++ PROGRAM  =====\n");
@@ -92,9 +108,12 @@ int main(int argc, char** argv) {
 		// Instantiate a solver. This can be an optimizer (with opt vars)
 		// or a simple solver that will keep fixed the values of the optimization
 		// vars
-		//VPPSolver solver(pVppItems);
-		Optimizer solver(pVppItems);
-		// SemiAnalyticalOptimizer solver(pVppItems);
+		// SolverFactory solverFactory(pVppItems);
+		NLOptSolverFactory solverFactory(pVppItems);
+		// SAOASolverFactory solverFactory(pVppItems);
+		// IppOptSolverFactory solverFactory(pVppItems);
+
+		// ---
 
 		std::cout<<"Please enter a command or type -help-\n";
 
@@ -116,17 +135,17 @@ int main(int argc, char** argv) {
 			else if(s == string("convertVelocityToFn")) {
 				IOUtils io(pVppItems->getWind());
 				std::cout<<"Fn= "<<
-				pVppItems->getFrictionalResistanceItem()->convertToFn(
-						io.askUserDouble("Please enter the value of the velocity...")
-				)<<std::endl;
+						pVppItems->getFrictionalResistanceItem()->convertToFn(
+								io.askUserDouble("Please enter the value of the velocity...")
+						)<<std::endl;
 			}
 
 			else if(s == string("convertFnToVelocity")) {
 				IOUtils io(pVppItems->getWind());
 				std::cout<<"Velocity= "<<
-				pVppItems->getFrictionalResistanceItem()->convertToVelocity(
-						io.askUserDouble("Please enter the value of the Fn...")
-				)<<std::endl;
+						pVppItems->getFrictionalResistanceItem()->convertToVelocity(
+								io.askUserDouble("Please enter the value of the Fn...")
+						)<<std::endl;
 			}
 
 			//---
@@ -146,7 +165,15 @@ int main(int argc, char** argv) {
 				pVppItems->getAeroForcesItem()->plot();
 
 			else if( s == string("plotJacobian"))
-				solver.plotJacobian();
+				solverFactory.get()->plotJacobian();
+
+			else if( s == string("plotGradient"))
+				solverFactory.get()->plotGradient();
+
+			//---
+
+			else if( s == string("plot_deltaWettedArea_heel"))
+				pVppItems->plot_deltaWettedArea_heel();
 
 			//---
 
@@ -189,38 +216,38 @@ int main(int argc, char** argv) {
 			//---
 
 			else if( s == string("plotPolars"))
-				solver.plotPolars();
+				solverFactory.get()->plotPolars();
 
 			else if( s == string("plotXY")) {
 				std::cout<<"Please enter the index of the wind angle: \n";
 				int idx;
 				cin >> idx;
-				solver.plotXY(idx);
+				solverFactory.get()->plotXY(idx);
 			}
 
 			//---
 
 			else if(s == string("reload") ){
 				load(parser,pSails,pVppItems);
-				solver.reset(pVppItems);
+				solverFactory.get()->reset(pVppItems);
 			}
 
 			else if(s == string("run") )
-				run(parser,&solver);
+				run(parser,&solverFactory);
 
 			else if(s == string("import") )
-				solver.importResults();
+				solverFactory.get()->importResults();
 
 			//---
 
 			else if( s == string("print"))
-				solver.printResults();
+				solverFactory.get()->printResults();
 
 			else if( s == string("save"))
-				solver.saveResults();
+				solverFactory.get()->saveResults();
 
 			else if( s == string("bounds"))
-				solver.printResultBounds();
+				solverFactory.get()->printResultBounds();
 
 			else if (s == "buildInfo" ){
 				std::cout<<"-------------------------"<<std::endl;
@@ -247,6 +274,9 @@ int main(int argc, char** argv) {
 				std::cout<<" \n";
 				std::cout<<"   plotSailForceMoment         : plot the drive force and the heeling moment for fixed wind/heel ranges\n";
 				std::cout<<"   plotJacobian                : plot the Jacobian derivative components for fixed wind/heel ranges\n";
+				std::cout<<"   plotGradient                : plot the Gradient derivative components for fixed wind/heel ranges\n";
+				std::cout<<" \n";
+				std::cout<<"   plot_deltaWettedArea_heel   : plot the change in wetted area due to the heel (DSYHS99 p116) \n";
 				std::cout<<" \n";
 				std::cout<<"   plotTotalResistance         : plot the Total Resistance for a fixed range\n";
 				std::cout<<"   plotResidRes                : plot the Residuary Resistance for a fixed range\n";
