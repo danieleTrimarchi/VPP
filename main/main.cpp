@@ -108,10 +108,10 @@ int main(int argc, char** argv) {
 		// Instantiate a solver. This can be an optimizer (with opt vars)
 		// or a simple solver that will keep fixed the values of the optimization
 		// vars
-		// SolverFactory solver(pVppItems);
-		// NLOptSolverFactory solver(pVppItems);
-		// SAOASolverFactory solver(pVppItems);
-		IppOptSolverFactory solverFactory(pVppItems);
+		// SolverFactory solverFactory(pVppItems);
+		NLOptSolverFactory solverFactory(pVppItems);
+		// SAOASolverFactory solverFactory(pVppItems);
+		// IppOptSolverFactory solverFactory(pVppItems);
 
 		// ---
 
