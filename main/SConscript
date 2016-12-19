@@ -103,5 +103,5 @@ env.Program('VPP', Glob('*.cpp'),
 
 
 # And now proceed to the subFolders
-SConscript('''unitTest/SConscript'''.split())
+SConscript('''ui/SConscript unitTest/SConscript'''.split())
 

@@ -1,7 +1,3 @@
-- Is it possible to compute analytical derivatives instead of numerical derivatives by finite differences? Presumably yes, I only need to write the code and check! 
-
-- logForCxx : drive the output with env vars
-
 - add a scons target: scons makeTest : ask Stephane about execution path
 	Hp : the code could simply search the files in a target path defined 
 	in the sconscript. See what MEMSp does.

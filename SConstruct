@@ -1,5 +1,29 @@
+import os
+
 # Define a common build environment
 common_env = Environment()
+
+# ------------------------------------------------------------------------------------
+
+# Detect Qt version
+qtdir = '/Users/dtrimarchi/third_party/qt/5.7'
+
+# Clone Qt environment
+qtEnv = common_env.Clone()
+
+# Set QT5DIR and PKG_CONFIG_PATH
+qtEnv['ENV']['PKG_CONFIG_PATH'] = os.path.join(qtdir, '/Users/dtrimarchi/third_party/qt/5.7/clang_64/lib/pkgconfig')
+
+qtEnv['QT5DIR'] = qtdir
+# Add qt5 tool
+qtEnv.Tool("qt5")
+
+#...further customization of qt env
+
+# Export environments
+Export('common_env qtEnv')
+# ------------------------------------------------------------------------------------
+
 
 # Our release build is derived from the common build environment...
 release_env = common_env.Clone()
@@ -8,7 +32,7 @@ release_env = common_env.Clone()
 release_env.Append(CPPDEFINES=['RELEASE'])
 
 # ... and release builds end up in the "build/release" dir
-release_env.VariantDir('build/release', 'main', duplicate=0)
+release_env.VariantDir('build/release', 'image', duplicate=0)
 
 # Define the location of the third_party
 #release_env.Append(third_party_dir=['/Users/dtrimarchi/third_party'])
@@ -28,3 +52,6 @@ release_env.VariantDir('build/release', 'main', duplicate=0)
 mode = 'release'
 env = release_env
 env.SConscript('build/%s/SConscript' % mode,{'env': env})
+
+
+

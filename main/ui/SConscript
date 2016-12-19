@@ -1,0 +1,53 @@
+import os
+# -----------------------------------------------------------------------------------------------
+# Qt integration 
+
+# Get the Qt5 environment
+# Import('qtEnv')
+
+# ------------------------------------------------------------------------------------
+
+# Define a common build environment
+env = Environment()
+
+# Detect Qt version
+QTDIR = '/Users/dtrimarchi/third_party/Qt/5.7'
+
+# Clone Qt environment
+qtEnv = env.Clone()
+
+
+# Set QT5DIR and PKG_CONFIG_PATH
+qtEnv['ENV']['PKG_CONFIG_PATH'] = os.path.join(QTDIR,'/Users/dtrimarchi/third_party/Qt/5.7/clang_64/lib/pkgconfig')
+
+qtEnv['ENV']['PATH'] += ':/opt/local/bin'
+print qtEnv['ENV']
+
+qtEnv['QT5DIR'] = QTDIR
+# Add qt5 tool
+qtEnv.Tool("qt5")
+
+Export('env qtEnv')
+
+# ------------------------------------------------------------------------------------
+
+
+# Patch it
+#qtEnv.Append(CCFLAGS=['-m32']) # or whatever
+
+qtEnv.EnableQt5Modules([
+                    'QtCore'
+                    ])
+#                       'QtGui',
+#                       'QtCore',
+#                       'QtNetwork',
+
+
+# Add your CCFLAGS and CPPPATHs to env here...
+
+qtEnv.Append(CXXFLAGS ='-Wc++11-extensions')
+
+#env.Program('qtTest', Glob('*.cpp')+Glob('*.qrc'))
+env.Program('qtTest', Glob('*.cpp'))
+
+
