@@ -24,7 +24,7 @@ namespace Test {
 void TVPPTest::variableParseTest() {
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("variableFile_test.txt");
+	VariableFileParser parser("testFiles/variableFile_test.txt");
 
 	// Parse the variables file
 	parser.parse();
@@ -121,7 +121,7 @@ void TVPPTest::itemComponentTest() {
 	boost::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("variableFile_test.txt");
+	VariableFileParser parser("testFiles/variableFile_test.txt");
 
 	// Parse the variables file
 	parser.parse();
@@ -440,7 +440,7 @@ void TVPPTest::jacobianTest() {
 	std::cout<<"=== Testing the computation of the Jacobian matrix === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("variableFile_test.txt");
+	VariableFileParser parser("testFiles/variableFile_test.txt");
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -488,7 +488,7 @@ void TVPPTest::gradientTest() {
 	std::cout<<"=== Testing the computation of the Gradient vector === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("variableFile_test.txt");
+	VariableFileParser parser("testFiles/variableFile_test.txt");
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -534,7 +534,7 @@ void TVPPTest::newtonRaphsonTest() {
 	std::cout<<"=== Testing the Newton-Raphson algorithm === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("variableFile_test.txt");
+	VariableFileParser parser("testFiles/variableFile_test.txt");
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -1031,7 +1031,7 @@ void TVPPTest::vppPointTest() {
 	std::cout<<"=== Testing one point computed by the vpp === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("variableFile_test.txt");
+	VariableFileParser parser("testFiles/variableFile_test.txt");
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -1178,7 +1178,7 @@ void TVPPTest::ipOptFullRunTest() {
 	std::cout<<"=== Testing a full run of IPOPT in the VPP usage === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("variableFile_ipOptFullTest.txt");
+	VariableFileParser parser("testFiles/variableFile_ipOptFullTest.txt");
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -1218,14 +1218,14 @@ void TVPPTest::ipOptFullRunTest() {
 
 	// Save the results (useful for debugging)
 	VPPResultIO writer(solverFactory.get()->getResults());
-	writer.write("vppRunTest_curResults.vpp");
+	writer.write("testFiles/vppRunTest_curResults.vpp");
 
 	// Now import some baseline results
 	ResultContainer baselineResults(pVppItems->getWind());
 
 	// Read the results from file and push them back to the baselineResults container
 	VPPResultIO reader(&baselineResults);
-	reader.read("vppRunTest_baseline.vpp");
+	reader.read("testFiles/vppRunTest_baseline.vpp");
 
 	// Get a ptr to the current results
 	ResultContainer* pCurrentResults= solverFactory.get()->getResults();
@@ -1283,7 +1283,7 @@ void TVPPTest::vppResultIOTest() {
 	std::cout<<"=== Testing VPP Results IO === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("variableFile_small_test.txt");
+	VariableFileParser parser("testFiles/variableFile_small_test.txt");
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -1322,7 +1322,7 @@ void TVPPTest::vppResultIOTest() {
 
 	// Write the results to a file named testResult.vpp
 	VPPResultIO writer(&resWriteContainer);
-	writer.write("testResult.vpp");
+	writer.write("testFiles/testResult.vpp");
 
 	// Instantiate a new result container to push the results the writer has
 	// written to file
@@ -1330,7 +1330,7 @@ void TVPPTest::vppResultIOTest() {
 
 	// Read the results from file and push them back to a new ResultContainer
 	VPPResultIO reader(&resReadContainer);
-	reader.read("testResult.vpp");
+	reader.read("testFiles/testResult.vpp");
 
 	// Compare the results with the baseline
 	CPPUNIT_ASSERT(resReadContainer.get(0,0) == resWriteContainer.get(0,0));
