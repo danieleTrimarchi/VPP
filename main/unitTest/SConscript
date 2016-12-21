@@ -56,16 +56,17 @@ env = DefaultEnvironment()
 #env.Append(CCFLAGS= '-g')
 #env.Append(CPPFLAGS ='-Wc++11-extensions')
 
-#warning: use of enumeration in a nested name specifier is a
+# Warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]
 
+
+env.Append(CPPPATH=['../','../exceptions', THIRD_PARTY_INCS])
 
 env.Program('unitTest', Glob('*.cpp')+
 		[
 		"../Interpolator.o",
 		"../NRSolver.o",
 		"../VPPSolverBase.o",
-		"../Optimizer.o",
 		"../SemiAnalyticalOptimizer.o",
 		"../VPP_nlp.o",
 		"../VPPSolver.o",
@@ -73,7 +74,7 @@ env.Program('unitTest', Glob('*.cpp')+
 		"../Results.o", 
 		"../SailSet.o",
 		"../VPPAeroItem.o",
-		"../VPPException.o",
+		"../exceptions/VPPException.o",
 		"../VPPHydroItem.o",
 		"../VPPItem.o",
 		"../VPPItemFactory.o",
@@ -91,7 +92,6 @@ env.Program('unitTest', Glob('*.cpp')+
 		"../VPPSolverFactoryBase.o",
 		"../NLOptSolver.o"
 		],
-		CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,
 		LIBPATH=THIRD_PARTY_LIBPATH
 	)

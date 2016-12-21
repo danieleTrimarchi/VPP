@@ -6,9 +6,9 @@
 #include <fstream>
 #include <math.h>
 
+#include "IOUtils.h"
 #include "VPPItemFactory.h"
 #include "Results.h"
-#include "IOUtils.h"
 #include "VPPPlotter.h"
 
 using namespace std;

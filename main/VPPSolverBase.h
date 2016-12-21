@@ -1,5 +1,5 @@
-#ifndef VPP_VPPSolverBase_H
-#define VPP_VPPSolverBase_H
+#ifndef VPP_SolverBase_H
+#define VPP_SolverBase_H
 
 #include <stdio.h>
 #include <iostream>
