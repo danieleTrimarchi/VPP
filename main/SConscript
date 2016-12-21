@@ -19,9 +19,8 @@ THIRD_PARTY_INCS=[
 			'/opt/local/include/plplot',
 			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/Ipopt/src/Interfaces',
 			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/include',
-			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/include/coin'
-		]
-
+			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/include/coin',
+			]
 
 
 THIRD_PARTY_LIBS=[
@@ -47,7 +46,7 @@ THIRD_PARTY_LIBPATH=[
 			'/Users/dtrimarchi/third_party/nlopt-2.4.2/libs',
 			'/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A',
 			'/opt/local/lib', # macPorts and lnopt lib path
-			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib'	
+			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib'
 			]
 
 # Do some work to produce the version info
@@ -94,13 +93,17 @@ env.Append(LINKFLAGS ='-framework Accelerate -lm -ldl')
 #warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]
 
+
+env.Append(CPPPATH=['exceptions', THIRD_PARTY_INCS])
+
 # Build
-env.Program('VPP', Glob('*.cpp'),
-		CPPPATH = THIRD_PARTY_INCS,
+env.Program('VPP', [ '#main/exceptions/VPPException.cpp' , Glob('*.cpp')],
+		#CPPPATH = THIRD_PARTY_INCS,
 		LIBS=THIRD_PARTY_LIBS,
 		LIBPATH=THIRD_PARTY_LIBPATH
 	)
 
+Repository('main/exceptions')
 
 # And now proceed to the subFolders
 SConscript('''unitTest/SConscript'''.split())
