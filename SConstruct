@@ -8,8 +8,7 @@ release_env = common_env.Clone()
 release_env.Append(CPPDEFINES=['RELEASE'])
 
 # ... and release builds end up in the "build/release" dir
-#release_env.VariantDir('build/release', 'main', duplicate=0)
-release_env.VariantDir('build/release', 'main')
+release_env.VariantDir('build/release', 'main', duplicate=0)
 
 # Define the location of the third_party
 #release_env.Append(third_party_dir=['/Users/dtrimarchi/third_party'])
