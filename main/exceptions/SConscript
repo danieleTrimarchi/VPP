@@ -1,10 +1,7 @@
-
+# Import the environement
 Import('env')
 
-# This won't work because we are building another exe,
-# not concurring to build the previous exe
-# env.Program('VPP', Glob('*.cpp') )
-
+# Produce and return the objects to be used to link the main program
 obj = env.Object( Glob('*.cpp') )
 Return('obj')
 

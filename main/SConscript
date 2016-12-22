@@ -93,17 +93,25 @@ env.Append(LINKFLAGS ='-framework Accelerate -lm -ldl')
 #warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]
 
-env.Append(CPPPATH=['exceptions', THIRD_PARTY_INCS])
+# List the subFolders
+subFolders= ['exceptions'] 
+
+# First loop, build the subfolder include path
+subFolderPath= []
+for subdir in subFolders :
+	subFolderPath.append(subdir)
+	
+env.Append( CPPPATH=[ subFolderPath, THIRD_PARTY_INCS] )
 
 #Export the environement 
 Export('env')
 
 # Build sub-folders
 objs = []
-for subdir in ['exceptions'] :
+for subdir in subFolders :
 	o = SConscript('%s/SConscript' % subdir)
 	objs.append(o)
-        
+
 # Build - this is like in scons man14.3, but VPPException.o remains in the 
 # source build instead of being sent over to the build dir. Why? 
 env.Program('VPP', Glob('*.cpp') + objs,
