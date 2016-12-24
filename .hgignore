@@ -20,6 +20,6 @@ EclipseWorkSpace/*
 */gvpp/*
 *.gcx
 *docs/*
-main/Version.cpp
+main/versioning/Version.cpp
 DerivedData/*
 *.xcsettings

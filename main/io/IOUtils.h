@@ -4,17 +4,17 @@
  *  Created on: Jun 21, 2016
  *      Author: dtrimarchi
  */
+#ifndef IOUTILS_H_
+#define IOUTILS_H_
 
 #include <stdio.h>
 #include <iostream>
 #include "VPPException.h"
 #include "Warning.h"
 #include "mathUtils.h"
+#include "core/VPPAeroItem.h"
 
 using namespace std;
-
-#ifndef IOUTILS_H_
-#define IOUTILS_H_
 
 class IOUtils {
 

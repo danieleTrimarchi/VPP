@@ -6,9 +6,9 @@
 #include <fstream>
 #include <math.h>
 
+#include "IOUtils.h"
 #include "VPPItemFactory.h"
 #include "Results.h"
-#include "IOUtils.h"
 #include "VPPPlotter.h"
 
 using namespace std;
@@ -60,7 +60,7 @@ class NRSolver {
 		/// for plotting...
 		void plotXY( size_t index );
 
-		/// Plot the Jacobian derivatives on a fixed interval of linearisation
+		/// Plot the Jacobian derivatives on a fixed interval of linearization
 		/// points and for given awv, awa
 		void plotJacobian();
 

@@ -1,5 +1,5 @@
-#ifndef VPP_OPTIMIZER_H
-#define VPP_OPTIMIZER_H
+#ifndef NLOPTSOLVER_H
+#define NLOPTSOLVER_H
 
 #include "nlopt.hpp"
 #include "VPPSolverBase.h"
