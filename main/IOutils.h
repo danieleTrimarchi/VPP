@@ -12,7 +12,7 @@
 #include "VPPException.h"
 #include "Warning.h"
 #include "mathUtils.h"
-#include "VPPAeroItem.h"
+#include "core/VPPAeroItem.h"
 
 using namespace std;
 

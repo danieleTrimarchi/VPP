@@ -1,56 +1,12 @@
 #Remember the macports command:  port contents packageName
-
-THIRD_PARTY_INCS=[
-			'/Users/dtrimarchi/third_party/eigen-3.2.7',
-			'/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Include',
-			'/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config',
-			'/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Include',
-			'/Users/dtrimarchi/third_party/boost_1_60_0',
-			'/Users/dtrimarchi/third_party/nlopt-2.4.2/api',
-			'/opt/local/include',												# macPorts and nlopt include path
-			'/opt/local/share/plplot5.11.1/examples/c++',							#include path for plplot example
-			'/opt/local/include/plplot',
-			'/Users/dtrimarchi/third_party/cppunit-1.13.2/build/include',
-			'/Users/dtrimarchi/VPP/main',
-			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/Ipopt/src/Interfaces',
-			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/include',
-			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/include/coin'
-		]
-
-
-
-THIRD_PARTY_LIBS=[
-			'amd',
-			'cholmod',
-			'suitesparseconfig',
-			'colamd',
-			'umfpack',
-			'plplotcxx',  #libs required by plplot
-			'plplot',
-			'nlopt',
-			'BLAS',
-			'cppunit',
-			'ipopt'
-		]
 			
-					
-THIRD_PARTY_LIBPATH=[
-			'/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Lib',
-			'/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib',
-			'/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config',
-			'/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib',
-			'/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib',
-			'/Users/dtrimarchi/third_party/nlopt-2.4.2/libs',
-			'/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A',
-			'/opt/local/lib', # macPorts and lnopt lib path
-			'/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib',
-			'/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib'	
-		]
+# Import and clone the environement
+Import('testEnv')
+localEnv=testEnv.Clone()
 
-
-#This must be a way to define the path where the executable searches for the dyLib, but for the moment it does not seems to work
-env = DefaultEnvironment()
-
+# Get from the env the list of all objects used to 
+# make the VPP
+allObjects= localEnv['objList']
 
 #Compile Debug mode
 #env.Append(CCFLAGS= '-g')
@@ -59,43 +15,38 @@ env = DefaultEnvironment()
 # Warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]
 
+# ------- Add the third_parties -----------------
+# Path for the globally installed libs
+localEnv.getGlobalLibPath()
+# ...EIGEN...
+localEnv.getEigenIncludePath()
+# ...PlPlot...
+localEnv.getPlPlotIncludePath()
+localEnv.getPlPlotLib()
+# ...NlOpt...
+localEnv.getNlOptIncludePath()
+localEnv.getNLOptLibPath()
+localEnv.getNLOptLib()
+# ...IpOpt...
+localEnv.getIpOptIncludePath()
+localEnv.getIpOptLibPath()
+localEnv.getIpOptLib()
+# ...Boost...
+localEnv.getBoostIncludePath()
+# ...UMFPack...
+localEnv.getUMFPackIncludePath()
+localEnv.getUMFPackLibPath()
+localEnv.getUMFPackLib()
+# ...CppUnit...
+localEnv.getCppUnitIncludePath()
+localEnv.getCppUnitLibPath()
+localEnv.getCppUnitLib()
+# ----------------------------------------------
 
-env.Append(CPPPATH=['../','../exceptions', THIRD_PARTY_INCS])
 
-
-autotestsProgram= env.Program('unitTest', Glob('*.cpp')+
-		[
-		"../Interpolator.o",
-		"../NRSolver.o",
-		"../VPPSolverBase.o",
-		"../SemiAnalyticalOptimizer.o",
-		"../VPP_nlp.o",
-		"../VPPSolver.o",
-		"../Regression.o",
-		"../Results.o", 
-		"../SailSet.o",
-		"../VPPAeroItem.o",
-		"../exceptions/VPPException.o",
-		"../VPPHydroItem.o",
-		"../VPPItem.o",
-		"../VPPItemFactory.o",
-		"../VPPJacobian.o",
-		"../VPPGradient.o",
-		"../VPPPlotter.o",
-		"../VPPRightingMomentItem.o",
-		"../VariableFileParser.o",
-		"../Variables.o",
-		"../Warning.o",
-		"../mathUtils.o",
-		"../VPPPlotSet.o",
-		"../VPPResultIO.o",
-		"../hs071_nlp.o",
-		"../VPPSolverFactoryBase.o",
-		"../NLOptSolver.o"
-		],
-		LIBS=THIRD_PARTY_LIBS,
-		LIBPATH=THIRD_PARTY_LIBPATH
-	)
+autotestsProgram= localEnv.Program('unitTest', Glob('*.cpp')+
+							allObjects
+								)
 
 # Add a target 'runTest' that will ensure that it's built before running the test suite
 test_alias = Alias('runTest', [autotestsProgram], autotestsProgram[0].path)

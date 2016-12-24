@@ -1,5 +1,5 @@
 # Build subfolders
-Import('env')
+Import('releaseEnv')
 
 for subdir in ['main']:
-    env.SConscript('%s/SConscript' % subdir, {'env': env})
+    env.SConscript('%s/SConscript' % subdir, {'releaseEnv': releaseEnv})
