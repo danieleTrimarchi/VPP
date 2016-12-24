@@ -7,9 +7,6 @@ localEnv = env.Clone()
 # Get the CPPPATH of the external world
 cppPath= localEnv['CPPPATH']
 
-# Get the include for Eigen
-localEnv.getEigenIncludePath()
-
 # Produce and return the objects to be used to link the main program
 obj = localEnv.Object( Glob('*.cpp'), 
                        CPPPATH=cppPath 
