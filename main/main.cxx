@@ -42,26 +42,6 @@ void load(VariableFileParser& parser,
 }
 
 /// Run the solver/Optimizer
-void run(VariableFileParser& parser, VPPSolverBase* pSolver){
-
-	// Loop on the wind ANGLES and VELOCITIES
-	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
-		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++){
-
-			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
-
-			try{
-				// Run the optimizer for the current wind speed/angle
-				pSolver->run(vTW,aTW);
-			}
-			catch(...){
-				//do nothing and keep going
-			}
-
-		}
-}
-
-/// Run the solver/Optimizer
 void run(VariableFileParser& parser, VPPSolverFactoryBase* solverFactory ){
 
 	// Loop on the wind ANGLES and VELOCITIES
