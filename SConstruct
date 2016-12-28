@@ -1,3 +1,5 @@
+import os 
+
 # Define a common build environment
 common_env = Environment()
 
@@ -136,6 +138,45 @@ def getCppUnitLibPath(self) :
     self.Append( LIBPATH=[third_party_root+"cppunit-1.13.2/build/lib" ] ) 
 
 releaseEnv.AddMethod(getCppUnitLibPath, 'getCppUnitLibPath')
+
+#--
+
+qtdir='/usr/local/Cellar/qt5/5.7.0'
+
+def setEnvForQt(self) :
+    self.Append( QT5DIR = qtdir )
+    
+    if 'PKG_CONFIG_PATH' in self['ENV'] :
+        self['ENV']['PKG_CONFIG_PATH'] += [ os.path.join(qtdir,'lib/pkgconfig') ]
+    else:
+        self['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(qtdir,'lib/pkgconfig') ]
+
+    if 'PATH' in self['ENV'] :
+        self['ENV']['PATH'] += ':/opt/local/bin:/usr/local/Cellar/qt5/5.7.0/bin'
+    else :
+        self['ENV']['PATH'] = ':/opt/local/bin:/usr/local/Cellar/qt5/5.7.0/bin'
+
+    self.Append( CXXFLAGS =  ['-std=c++11'] )
+    self.Tool('qt5') 
+    self.EnableQt5Modules([
+                           'QtGui',
+                           'QtCore',
+                           'QtNetwork',
+                           'QtWidgets',
+                           'QtCharts'
+                           ])
+
+releaseEnv.AddMethod(setEnvForQt, 'setEnvForQt')
+
+def getQtIncludePath(self) : 
+    self.Append( CPPPATH=[ os.path.join(qtdir,'include/QtWidgets' ) ] ) 
+
+releaseEnv.AddMethod(getQtIncludePath, 'getQtIncludePath')
+
+def getQtLibPath(self) : 
+    self.Append( LIBPATH=[ os.path.join(qtdir,'lib')  ] ) 
+
+releaseEnv.AddMethod(getQtLibPath, 'getQtLibPath')
 
 # ---------------------------------------------------------------
 

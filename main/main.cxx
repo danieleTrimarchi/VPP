@@ -22,6 +22,7 @@ using namespace Eigen;
 #include "Version.h"
 #include "VPPResultIO.h"
 #include "VPPSolverFactoryBase.h"
+#include "QtPlot.h"
 
 using namespace Optim;
 
@@ -65,7 +66,12 @@ void run(VariableFileParser& parser, VPPSolverFactoryBase* solverFactory ){
 // MAIN
 int main(int argc, char** argv) {
 
-		try{
+	try{
+
+		printf("\nQt test in main...\n");
+		QtPlot testPlot(argc,argv);
+		return (0);
+
 
 		printf("\n=======================\n");
 		printf("===  V++ PROGRAM  =====\n");

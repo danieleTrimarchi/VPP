@@ -28,6 +28,7 @@ subFolders= ['exceptions',
 			 'io',
 			 'solvers', 
 			 'plotting',
+			 'qtPlotting',
 			 'results',
 			 'utils',
 			 'versioning' ] 
@@ -65,6 +66,10 @@ localEnv.getBoostIncludePath()
 localEnv.getUMFPackIncludePath()
 localEnv.getUMFPackLibPath()
 localEnv.getUMFPackLib()
+# ...Qt...
+localEnv.getQtIncludePath()
+localEnv.getQtLibPath()
+localEnv.setEnvForQt()
 # -----------------------------------------------
 
 # List the objects required to build the program

@@ -1,16 +1,10 @@
-- Is it possible to compute analytical derivatives instead of numerical derivatives by finite differences? Presumably yes, I only need to write the code and check! 
+- Olivier: why I cannot track the Qt5 scons integration files in /Users/dtrimarchi/VPP/site_scons/site_tools/qt5???
 
-- logForCxx : drive the output with env vars
-
-- add a scons target: scons makeTest : ask Stephane about execution path
-	Hp : the code could simply search the files in a target path defined 
-	in the sconscript. See what MEMSp does.
-  	
 - build Qt integration. Allow for 2/3d dynamic plotting (scale, move, zoom). 
 	in that phase think how to refactor the code in order to provide a flexible
 	and well structured plotting utility. Perhaps using visitor?
 
-- group resistanceItem plot(wind) -> at least part of this will be adressed with the previous item (Qt) 
+- Is it possible to compute analytical derivatives instead of numerical derivatives by finite differences? Presumably yes, I only need to write the code and check! 
 
 - New definitions of the resistance with new version of the DYSHS
 
