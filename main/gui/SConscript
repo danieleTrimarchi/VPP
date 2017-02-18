@@ -1,0 +1,18 @@
+Import('qtEnv')
+
+# Get the environement 
+localEnv = qtEnv.Clone()
+
+#Compile Debug mode
+#env.Append(CCFLAGS= '-g')
+#env.Append(CPPFLAGS ='-Wc++11-extensions')
+localEnv.Append(LINKFLAGS ='-framework Accelerate -lm -ldl')
+
+qtTest= localEnv.Program('qtTest', Glob('*.cpp') + Glob('*.qrc') )
+
+print "\n\n===========\n"
+print "installing qtTest to : ", localEnv['dest_bin'] 
+print "\n===========\n\n"
+
+localEnv.Install(localEnv['dest_bin'], qtTest)
+

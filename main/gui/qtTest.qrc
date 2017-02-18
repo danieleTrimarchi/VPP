@@ -1,0 +1,15 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>icons/run.png</file>
+    <file>icons/plot3d.png</file>
+    <file>icons/plotPolars.png</file>
+    <file>icons/plotXY.png</file>
+    <file>icons/sailCoeffs.png</file>
+    <file>icons/importBoatData.png</file>
+    <file>icons/variable.png</file>
+    <file>icons/variable_root.png</file>
+    <file>icons/tabularResults.png</file>
+    <file>icons/saveResults.png</file>
+    <file>icons/importResults.png</file>
+</qresource>
+</RCC>

@@ -1,0 +1,14 @@
+--- mainwindow.h
++++ mainwindow.h
+@@ -102,7 +102,10 @@
+ 	void run();
+ 
+ 	/// Save the VPP results to file
+-	void saveResults();
++	bool saveResults();
++
++	// if save was successiful, return true, otherwise false
++	bool saveFile(const QString &fileName);
+ 
+ 	/// Import the VPP results from file to the current session
+ 	void importResults();

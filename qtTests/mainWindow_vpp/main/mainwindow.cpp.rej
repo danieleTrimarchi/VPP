@@ -1,0 +1,108 @@
+--- mainwindow.cpp
++++ mainwindow.cpp
+@@ -163,10 +163,24 @@
+ 	pVppActionMenu_->addAction(tabResAction);
+ 	pToolBar_->addAction(tabResAction);
+ 
+-	pVppActionMenu_->addAction(tr("&Save results..."),this, &MainWindow::saveResults);
+ 	pVppActionMenu_->addSeparator();
+-	pVppActionMenu_->addAction(tr("&Import results..."), this, &MainWindow::importResults);
++
++	// Create a 'Save Results'action and associate an icon
++    const QIcon saveResultsIcon = QIcon::fromTheme("save Results", QIcon(":/icons/saveResults.png"));
++    QAction* saveResultsAction = new QAction(saveResultsIcon, tr("&Save Results"), this);
++    saveResultsAction->setStatusTip(tr("Save results"));
++    connect(saveResultsAction, &QAction::triggered, this, &MainWindow::saveResults);
++	pVppActionMenu_->addAction(saveResultsAction);
++
++	// Create a 'Save Results'action and associate an icon
++    const QIcon importResultsIcon = QIcon::fromTheme("import Results", QIcon(":/icons/importResults.png"));
++    QAction* importResultsAction = new QAction(importResultsIcon, tr("&Import Results"), this);
++    importResultsAction->setStatusTip(tr("Import results"));
++    connect(importResultsAction, &QAction::triggered, this, &MainWindow::importResults);
++	pVppActionMenu_->addAction(importResultsAction);
++
+ 	pVppActionMenu_->addSeparator();
++
+ 	pVppActionMenu_->addAction(tr("&Quit"), this, &QWidget::close);
+ 
+ 	// ---
+@@ -205,6 +219,11 @@
+ 
+ 	// ---
+ 
++	pToolBar_->addAction(saveResultsAction);
++	pToolBar_->addAction(importResultsAction);
++
++	// ---
++
+ 	pPreferencesMenu_ = menuBar()->addMenu(tr("&VPP Settings"));
+ 	pPreferencesMenu_->addAction(tr("&Select formulations"), this, &MainWindow::plotSailCoeffs);
+ 	pPreferencesMenu_->addSeparator();
+@@ -272,10 +291,12 @@
+ }
+ 
+ void MainWindow::import() {
+-	// todo dtrimarchi
+-	// File selection dialog!!!
+-	// Import the data contained in variableFile.txt using a variableFileParser
+-	// Populate a variable item tree
++
++	QString fileName = QFileDialog::getOpenFileName(this);
++    if (!fileName.isEmpty())
++        //loadFile(fileName);
++    	pLogWidget_->append("Opening the vpp input file... ");
++
+ }
+ 
+ void MainWindow::run() {
+@@ -292,17 +313,42 @@
+ 
+ }
+ 
+-void MainWindow::saveResults() {
+-	// todo dtrimarchi
+-	// Save the results to a file
++bool MainWindow::saveResults() {
++
+ 	pLogWidget_->append("Saving the analyis results... ");
+-
++    QFileDialog dialog(this);
++    dialog.setWindowModality(Qt::WindowModal);
++    dialog.setAcceptMode(QFileDialog::AcceptSave);
++    if (dialog.exec() != QDialog::Accepted)
++        return false;
++    return saveFile(dialog.selectedFiles().first());
+ }
+ 
++bool MainWindow::saveFile(const QString &fileName) {
++
++	pLogWidget_->append("Saving the VPP results to file");
++
++	// if save was successiful, return true, otherwise false
++//    QFile file(fileName);
++//    if (!file.open(QFile::WriteOnly | QFile::Text)) {
++//        QMessageBox::warning(this, tr("Application"),
++//                             tr("Cannot write file %1:\n%2.")
++//                             .arg(QDir::toNativeSeparators(fileName),
++//                                  file.errorString()));
++//        return false;
++//    }
++
++	return true;
++}
++
++// Import VPP results from file
+ void MainWindow::importResults() {
+-	// todo dtrimarchi
+-	// Import the results from file
+-	pLogWidget_->append("Importing the analyis results...");
++
++	QString fileName = QFileDialog::getOpenFileName(this);
++    if (!fileName.isEmpty())
++        //loadFile(fileName);
++    	pLogWidget_->append("Importing the analyis results...");
++
+ }
+ 
+ // Add a table widget with the results
