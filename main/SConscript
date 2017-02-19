@@ -65,6 +65,9 @@ localEnv.getBoostIncludePath()
 localEnv.getUMFPackIncludePath()
 localEnv.getUMFPackLibPath()
 localEnv.getUMFPackLib()
+#...Qt...
+localEnv.getQt(localEnv)
+
 # -----------------------------------------------
 
 # List the objects required to build the program

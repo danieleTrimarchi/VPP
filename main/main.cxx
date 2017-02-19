@@ -23,6 +23,8 @@ using namespace Eigen;
 #include "VPPResultIO.h"
 #include "VPPSolverFactoryBase.h"
 
+#include <QApplication>
+
 using namespace Optim;
 
 /// Reload the variable file and update the items accordingly

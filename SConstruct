@@ -1,3 +1,5 @@
+import os 
+
 # Define a common build environment
 common_env = Environment()
 
@@ -16,6 +18,8 @@ releaseEnv.VariantDir( releaseEnv['variant_dir'], 'main', duplicate=0)
 # ---------------------------------------------------------------
 # Define the location of the third_parties
 third_party_root='/Users/dtrimarchi/third_party/'
+#Qt lives in its own universe...
+qtdir='/usr/local/Cellar/qt5/5.7.0'
 
 def getGlobalIncludePath(self) : 
     self.Append( CPPPATH=["/opt/local/include" ] ) 
@@ -29,7 +33,7 @@ def getGlobalLibPath(self) :
 
 releaseEnv.AddMethod(getGlobalLibPath, 'getGlobalLibPath')
 
-#-- 
+#--
 
 def getEigenIncludePath(self) : 
     self.Append( CPPPATH=[third_party_root+'eigen-3.2.7'] ) 
@@ -136,6 +140,33 @@ def getCppUnitLibPath(self) :
     self.Append( LIBPATH=[third_party_root+"cppunit-1.13.2/build/lib" ] ) 
 
 releaseEnv.AddMethod(getCppUnitLibPath, 'getCppUnitLibPath')
+
+#--
+
+def getQt(self,qtEnv):
+
+    qtEnv['QT5DIR']=qtdir
+    qtEnv['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(qtdir,'lib/pkgconfig') ]
+    qtEnv['ENV']['PATH'] += ':/opt/local/bin:/usr/local/Cellar/qt5/5.7.0/bin'
+
+    # This is for http://stackoverflow.com/questions/37897209/qt-requires-c11-support-make-error
+    qtEnv['CXXFLAGS'] +=  ['-std=c++11']
+
+    qtEnv.Tool('qt5')
+
+    qtEnv.EnableQt5Modules([
+                      'QtGui',
+                      'QtCore',
+                      'QtNetwork',
+                      'QtWidgets'
+                      ])
+
+    self.Append( CPPPATH=['/usr/local/Cellar/qt5/5.7.0/include/QtWidgets'] ) 
+    #self.Append( LIBS=[''] )
+    self.Append( LIBPATH=[ os.path.join(qtdir,'lib') ] )     
+
+ 
+releaseEnv.AddMethod(getQt, 'getQt')
 
 # ---------------------------------------------------------------
 
