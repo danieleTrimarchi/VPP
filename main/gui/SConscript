@@ -1,18 +1,16 @@
-Import('qtEnv')
+# Import the environement
+Import('env')
 
-# Get the environement 
-localEnv = qtEnv.Clone()
+# Clone the external environment
+localEnv = env.Clone()
 
-#Compile Debug mode
-#env.Append(CCFLAGS= '-g')
-#env.Append(CPPFLAGS ='-Wc++11-extensions')
-localEnv.Append(LINKFLAGS ='-framework Accelerate -lm -ldl')
+# Get the CPPPATH of the external world
+cppPath= localEnv['CPPPATH']
 
-qtTest= localEnv.Program('qtTest', Glob('*.cpp') + Glob('*.qrc') )
+# Produce and return the objects to be used to link the main program
+obj = localEnv.Object( Glob('*.cpp')  + Glob('*.qrc'), 
+                       CPPPATH=cppPath 
+                       )
+Return('obj')
 
-print "\n\n===========\n"
-print "installing qtTest to : ", localEnv['dest_bin'] 
-print "\n===========\n\n"
-
-localEnv.Install(localEnv['dest_bin'], qtTest)
 

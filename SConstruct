@@ -1,4 +1,6 @@
 import os 
+from shutil import copyfile
+from shutil import copytree
 
 # Define a common build environment
 common_env = Environment()
@@ -20,6 +22,43 @@ releaseEnv.VariantDir( releaseEnv['variant_dir'], 'main', duplicate=0)
 third_party_root='/Users/dtrimarchi/third_party/'
 #Qt lives in its own universe...
 qtdir='/usr/local/Cellar/qt5/5.7.0'
+
+#----------------------------------------------------------------
+# Define a the folder structure, where the executable will be installed
+def makeAppFolderStructure(self):
+    
+    # Create (if required) the folder structure : 
+    # qtTest.app/
+    #    Contents/
+    #        info.pList
+    #        MacOS/
+    #            qtTest.exe
+    #        Resources/
+    #            qtTest.icns
+    appDirContents= "qtTest.app/Contents"
+    if not os.path.exists(appDirContents):
+        os.makedirs(appDirContents)
+        copyfile("gui/Info.pList", appDirContents+"/Info.pList")
+    if not os.path.exists(appDirContents+"/Resources"):
+        os.makedirs(appDirContents+"/Resources")
+        copyfile("Icons/qtTest.icns", appDirContents+"/Resources/qtTest.icns")
+
+    self.Append( dest_bin= os.path.join( self['root_dir'], appDirContents, "MacOS") )
+
+releaseEnv.AddMethod(makeAppFolderStructure, 'makeAppFolderStructure')
+
+#----------------------------------------------------------------
+
+# Also copy the input file 'variableFile.txt' to the build folder
+def copyInputFileToFolderStructure(self):
+    
+    srcFile= str(File('variableFile.txt').srcnode())
+    destFile=  localEnv['root_dir'] + '/' + localEnv['variant_dir'] +'/variableFile.txt'
+    copyfile(srcFile,destFile)
+
+releaseEnv.AddMethod(copyInputFileToFolderStructure, 'copyInputFileToFolderStructure')
+
+#----------------------------------------------------------------
 
 def getGlobalIncludePath(self) : 
     self.Append( CPPPATH=["/opt/local/include" ] ) 
@@ -145,27 +184,37 @@ releaseEnv.AddMethod(getCppUnitLibPath, 'getCppUnitLibPath')
 
 def getQt(self,qtEnv):
 
-    qtEnv['QT5DIR']=qtdir
+    self.Append( QT5DIR = qtdir ) 
+    
     qtEnv['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(qtdir,'lib/pkgconfig') ]
     qtEnv['ENV']['PATH'] += ':/opt/local/bin:/usr/local/Cellar/qt5/5.7.0/bin'
 
     # This is for http://stackoverflow.com/questions/37897209/qt-requires-c11-support-make-error
-    qtEnv['CXXFLAGS'] +=  ['-std=c++11']
+    self.Append( CXXFLAGS =  ['-std=c++11'] )
 
-    qtEnv.Tool('qt5')
+    self.Tool('qt5')
 
-    qtEnv.EnableQt5Modules([
+    self.EnableQt5Modules([
                       'QtGui',
                       'QtCore',
                       'QtNetwork',
-                      'QtWidgets'
+                      'QtWidgets',
+                      'QtCharts',
+                      'QtDataVisualization'
                       ])
 
     self.Append( CPPPATH=['/usr/local/Cellar/qt5/5.7.0/include/QtWidgets'] ) 
-    #self.Append( LIBS=[''] )
+    self.Append( LIBS=[] )
     self.Append( LIBPATH=[ os.path.join(qtdir,'lib') ] )     
 
- 
+    #Compile Debug mode
+    #env.Append(CCFLAGS= '-g')
+    #env.Append(CPPFLAGS ='-Wc++11-extensions')
+    self.Append(LINKFLAGS ='-framework Accelerate -lm -ldl')
+    #Compile Release
+    self.Append(CPPDEFINES=['RELEASE'])
+
+
 releaseEnv.AddMethod(getQt, 'getQt')
 
 # ---------------------------------------------------------------
