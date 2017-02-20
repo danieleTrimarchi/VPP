@@ -2,6 +2,7 @@
 import subprocess
 from shutil import copyfile
 import sys
+import os
 
 if 'makeDocs' in COMMAND_LINE_TARGETS:
 	print 'Generating doxygen documentation...'
@@ -45,13 +46,8 @@ for subdir in subFolders :
 # Add the subfolder path to the CPPPATH of the localEnv
 localEnv.Append( CPPPATH=myCppPath )
 
-# Send the build to a convenient apple-style bundle folder structure 
-print "FOLDER STRUCTURE TO BE RESTORED!!"
-#localEnv.makeAppFolderStructure()
-
 # Copy the test input file (variableFile.txt) to the build folder
-print "INPUT FILE COPY TO BE RESTORED!!"
-#localEnv.copyInputFileToFolderStructure
+localEnv.copyInputFileToFolderStructure
 
 # ------- Add the third_parties -----------------
 # Path for the globally installed libs
@@ -76,8 +72,8 @@ localEnv.getUMFPackIncludePath()
 localEnv.getUMFPackLibPath()
 localEnv.getUMFPackLib()
 #...Qt...
-localEnv.getQt(localEnv)
-
+localEnv.getQtPKGConfig(localEnv)
+localEnv.getQt()
 # -----------------------------------------------
 
 # List the objects required to build the program
@@ -89,17 +85,17 @@ for subdir in subFolders :
 	allObj.append(o)
 
 # Build local objects 
-allObj.append( localEnv.Object( Glob('*.cpp') + Glob('*.cc') ) )
-
-print "LocalEnv= ", localEnv['LIBPATH']
+#allObj.append( localEnv.Object( Glob('*.cpp') ) )
 
 # Build - this is like in scons man14.3, but VPPException.o remains in the 
 # source build instead of being sent over to the build dir. Why? 
 vppExe= localEnv.Program('VPP', ['main.cxx'] + allObj )
 
 # The VPP program is to be installed in the app folder structure, at least for MAC
-print "INSTALL TO BE RESTORED!"
-#localEnv.Install(localEnv['dest_bin'], vppExe)
+localEnv.Install( localEnv.getAppInstallDir(), vppExe )
+
+# Send the build to a convenient apple-style bundle folder structure 
+localEnv.makeAppFolderStructure()
 
 # Append the list of the objects to the env, in order for the 
 # auto-test to find them

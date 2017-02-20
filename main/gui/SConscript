@@ -4,13 +4,8 @@ Import('env')
 # Clone the external environment
 localEnv = env.Clone()
 
-# Get the CPPPATH of the external world
-cppPath= localEnv['CPPPATH']
-
 # Produce and return the objects to be used to link the main program
-obj = localEnv.Object( Glob('*.cpp')  + Glob('*.qrc'), 
-                       CPPPATH=cppPath 
-                       )
+obj = localEnv.Object( Glob('*.cpp')  + Glob('*.qrc') )
 Return('obj')
 
 

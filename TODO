@@ -1,4 +1,7 @@
+- Ask Stephane about the multiple environment warning 
+
 - Is it possible to compute analytical derivatives instead of numerical derivatives by finite differences? Presumably yes, I only need to write the code and check! 
+Well, this is painful because we do not have the expressions for the 
 
 - logForCxx : drive the output with env vars
 
