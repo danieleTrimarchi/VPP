@@ -1,5 +1,6 @@
 #include "VariablesDockWidget.h"
 #include <QHeaderView>
+#include "VariableFileParser.h"
 
 VariablesDockWidget::VariablesDockWidget( QMainWindow* parent/*=Q_NULLPTR*/, Qt::WindowFlags flags/*=0*/) :
 	QDockWidget(parent, flags) {
@@ -26,6 +27,11 @@ VariablesDockWidget::~VariablesDockWidget() {
 
 }
 
+// Returns the underlying item model
+VariableTreeModel* VariablesDockWidget::getModel() {
+	return pTreeModel_.get();
+}
+
 // Get the toggle view action to be added to the menubar
 QAction* VariablesDockWidget::getMenuToggleViewAction() {
 
@@ -38,6 +44,7 @@ QAction* VariablesDockWidget::getMenuToggleViewAction() {
 	return pToggleViewAction;
 
 }
+
 
 
 

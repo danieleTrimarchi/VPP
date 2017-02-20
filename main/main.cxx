@@ -28,22 +28,6 @@ using namespace Eigen;
 
 using namespace Optim;
 
-/// Reload the variable file and update the items accordingly
-void load(VariableFileParser& parser,
-		boost::shared_ptr<SailSet>& pSailSet,
-		boost::shared_ptr<VPPItemFactory>& pVppItems){
-
-	// Parse the variables file
-	parser.parse();
-
-	// Instantiate the sailset
-	pSailSet.reset( SailSet::SailSetFactory(parser) );
-
-	// Instantiate the items
-	pVppItems.reset( new VPPItemFactory(&parser,pSailSet) );
-
-}
-
 /// Run the solver/Optimizer
 void run(VariableFileParser& parser, VPPSolverFactoryBase* solverFactory ){
 
@@ -72,35 +56,33 @@ int main(int argc, char** argv) {
 	// as the icons
 	Q_INIT_RESOURCE(VPP);
 
-	// Instantiate a Qt application that will be executed at the end of main
-    QApplication app(argc, argv);
+	try {
 
-    MainWindow mainWin;
-    mainWin.resize(800, 600);
-    mainWin.show();
-    return app.exec();
+		// Instantiate a Qt application that will be executed at the end of main
+		QApplication app(argc, argv);
+
+		// Instantiate the MainWindow of the VPP application
+		MainWindow mainWin;
+		mainWin.resize(800, 600);
+		mainWin.show();
+
+		// Execute the application
+		return app.exec();
+
+	} catch(std::exception& e) {
+		std::cout<<"\n-----------------------------------------"<<std::endl;
+		std::cout<<" Exception caught in Main:  "<<std::endl;
+		std::cout<<" --> "<<e.what()<<std::endl;
+		std::cout<<" The program is terminated. "<<std::endl;
+		std::cout<<"-----------------------------------------\n"<<std::endl;
+	}	catch(...) {
+		cout << "Unknown Exception occurred\n";
+	}
+
 
 }
 
-//		try{
-//
-//		printf("\n=======================\n");
-//		printf("===  V++ PROGRAM  =====\n");
-//		printf("=======================\n");
-//
-//		// Instantiate a parser with the variables
-//		VariableFileParser parser("variableFile.txt");
-//
-//		// Declare a ptr with the sail configuration
-//		// This is based on the variables that have been read in
-//		boost::shared_ptr<SailSet> pSails;
-//
-//		// Declare a container for all the items that
-//		// constitute the VPP components (Wind, Resistance, RightingMoment...)
-//		boost::shared_ptr<VPPItemFactory> pVppItems;
-//
-//		// Load variables and items
-//		load(parser,pSails,pVppItems);
+
 //
 //		// Instantiate a solver. This can be an optimizer (with opt vars)
 //		// or a simple solver that will keep fixed the values of the optimization
@@ -313,16 +295,3 @@ int main(int argc, char** argv) {
 //			std::cout<<"\nPlease enter a command or type -help-\n";
 //		}
 //
-//	} catch(std::exception& e) {
-//		std::cout<<"\n-----------------------------------------"<<std::endl;
-//		std::cout<<" Exception caught in Main:  "<<std::endl;
-//		std::cout<<" --> "<<e.what()<<std::endl;
-//		std::cout<<" The program is terminated. "<<std::endl;
-//		std::cout<<"-----------------------------------------\n"<<std::endl;
-//	}	catch(...) {
-//		cout << "Unknown Exception occurred\n";
-//	}
-//
-//	return (0);
-//
-//}

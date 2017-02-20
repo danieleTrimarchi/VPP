@@ -1,53 +1,3 @@
-/****************************************************************************
-**
-** Copyright (C) 2016 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the examples of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** BSD License Usage
-** Alternatively, you may use this file under the terms of the BSD license
-** as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of The Qt Company Ltd nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
-
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
 
@@ -57,34 +7,57 @@
 
 class VariableTreeItemBase;
 
-class VariableTreeModel : public QAbstractItemModel
-{
-    Q_OBJECT
+/// This class describes the item model for the variable tree
+/// The class directly derives from the Qt example
+class VariableTreeModel : public QAbstractItemModel {
 
-public:
+		Q_OBJECT
 
-	/// Ctor
-	explicit VariableTreeModel(QObject *parent = 0);
+	public:
 
-	/// Virtual Dtor
-	virtual ~VariableTreeModel();
+		/// Ctor
+		explicit VariableTreeModel(QObject *parent = 0);
 
-    QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
-    Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
-    QVariant headerData(int section, Qt::Orientation orientation,
-                        int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
-    QModelIndex index(int row, int column,
-                      const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-    QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
-    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+		/// Virtual Dtor
+		virtual ~VariableTreeModel();
 
-private:
+		/// Called by Qt, this method returns the data to visualize or some
+		/// display options
+		QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
 
-    /// Actually generate the item tree
-    void setupModelData();
+		/// Called by Qt, returns specific flags
+		Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
 
-    VariableTreeItemBase *rootItem_;
+		/// Called by Qt, returns the header
+		QVariant headerData(
+				int section, Qt::Orientation orientation,
+				int role = Qt::DisplayRole
+				) const Q_DECL_OVERRIDE;
+
+		/// Returns an index given row and col
+		QModelIndex index(
+				int row, int column,
+				const QModelIndex &parent = QModelIndex()
+				) const Q_DECL_OVERRIDE;
+
+		/// Get my parent
+		QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
+
+		/// How many rows?
+		int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+
+		/// How many cols?
+		int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+
+		/// Append a variable item to the tree
+		void append( QList<QVariant>& columnData );
+
+	private:
+
+		/// Actually generate the item tree
+		void setup();
+
+		VariableTreeItemBase *rootItem_;
 };
 
 #endif // TREEMODEL_H

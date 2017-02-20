@@ -66,7 +66,7 @@ VariableTreeModel::VariableTreeModel(QObject *parent)
 	QList<QVariant> rootData;
 	rootData <<  "Name" << "Value";
 	rootItem_ = new VariableTreeItem(rootData);
-	setupModelData();
+	setup();
 
 }
 
@@ -173,32 +173,20 @@ int VariableTreeModel::rowCount(const QModelIndex &parent) const
 	return parentItem->childCount();
 }
 
-void VariableTreeModel::setupModelData() {
-
-	// Instantiate an item list and assign the root as
-	// the first item of the list
-	QList<VariableTreeItemBase*> parents;
-	parents << rootItem_;
+void VariableTreeModel::setup() {
 
 	// Append variables to the tree
 	QList<QVariant> columnData;
 	columnData << "Variables"<<" ";
 
 	// Place the fake root under the real root
-	parents.last()->appendChild(new VariableTreeFakeRoot(columnData, parents.last()));
+	rootItem_->appendChild(new VariableTreeFakeRoot(columnData, rootItem_));
 
-	columnData.clear();
-	columnData << "A" << "8.57";
+}
 
-	parents.last()->child(0)->appendChild(new VariableTreeItem(columnData, parents.last()->child(0)));
+// Append a variable item to the tree
+void VariableTreeModel::append( QList<QVariant>& columnData ) {
 
-	columnData.clear();
-	columnData << "B" << "3.43";
-	parents.last()->child(0)->appendChild(new VariableTreeItem(columnData, parents.last()->child(0)));
-
-	columnData.clear();
-	columnData << "T" << "0.43";
-	parents.last()->child(0)->appendChild(new VariableTreeItem(columnData, parents.last()->child(0)));
-
+	rootItem_->child(0)->appendChild(new VariableTreeItem(columnData, rootItem_->child(0)));
 
 }

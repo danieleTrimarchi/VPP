@@ -13,6 +13,8 @@ QT_FORWARD_DECLARE_CLASS(QAction)
 QT_FORWARD_DECLARE_CLASS(QActionGroup)
 QT_FORWARD_DECLARE_CLASS(QMenu)
 
+class VariableFileParser;
+
 class VariablesDockWidget : public QDockWidget {
 
     Q_OBJECT
@@ -25,6 +27,12 @@ public:
 
 	/// virtual Dtor
 	virtual ~VariablesDockWidget();
+
+	/// Populate the item tree with the variables read by the variableFileParser
+	void populate(VariableFileParser*);
+
+	/// Returns the underlying item model
+	VariableTreeModel* getModel();
 
 	/// Get the toggle view action to be added to the menubar
 	QAction* getMenuToggleViewAction();

@@ -80,17 +80,18 @@
 #include "VariableTreeModel.h"
 #include <QScreen>
 #include "StateVectorDialog.h"
+#include "VPPItemFactory.h"
 
 Q_DECLARE_METATYPE(VppTabDockWidget::DockWidgetFeatures)
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags):
 QMainWindow(parent, flags),
-  pXYPlotWidget_(0),
-  pLogWidget_(0),
-  pMultiPlotWidget_(0),
-  pVariablesWidget_(0),
-  p3dPlotWidget_(0),
-  windowLabel_("VPP") {
+pXYPlotWidget_(0),
+pLogWidget_(0),
+pMultiPlotWidget_(0),
+pVariablesWidget_(0),
+p3dPlotWidget_(0),
+windowLabel_("VPP") {
 
 	// Set the name and the title of the app
 	setObjectName(windowLabel_);
@@ -101,7 +102,9 @@ QMainWindow(parent, flags),
 	setCentralWidget(pLogWidget_.get());
 
 	pLogWidget_->setReadOnly(true);
-	pLogWidget_->append("VPP Program");
+	pLogWidget_->append("=======================");
+	pLogWidget_->append("===  V++ PROGRAM  =====");
+	pLogWidget_->append("=======================");
 
 	// --
 
@@ -112,7 +115,7 @@ QMainWindow(parent, flags),
 	pVariablesWidget_.reset( new VariablesDockWidget() );
 
 	// Add the variable view to the right of the app window
-    addDockWidget(Qt::RightDockWidgetArea, pVariablesWidget_.get());
+	addDockWidget(Qt::RightDockWidgetArea, pVariablesWidget_.get());
 
 	// Add the menubar item for the variable widget
 	pWidgetMenu_->addAction(pVariablesWidget_->getMenuToggleViewAction());
@@ -140,43 +143,43 @@ void MainWindow::setupMenuBar() {
 	pVppActionMenu_ = menuBar()->addMenu(tr("&VPP Actions"));
 
 	// Create 'Import boat description' action and associate an icon
-    const QIcon importBoatIcon = QIcon::fromTheme("Import boat description", QIcon(":/icons/importBoatData.png"));
-    QAction* importBoatAction = new QAction(importBoatIcon, tr("&Import boat description..."), this);
-    importBoatAction->setStatusTip(tr("Import boat description"));
-    connect(importBoatAction, &QAction::triggered, this, &MainWindow::import);
+	const QIcon importBoatIcon = QIcon::fromTheme("Import boat description", QIcon(":/icons/importBoatData.png"));
+	QAction* importBoatAction = new QAction(importBoatIcon, tr("&Import boat description..."), this);
+	importBoatAction->setStatusTip(tr("Import boat description"));
+	connect(importBoatAction, &QAction::triggered, this, &MainWindow::import);
 	pVppActionMenu_->addAction(importBoatAction);
 	pToolBar_->addAction(importBoatAction);
 
 	// Create 'run' action and associate an icon
-    const QIcon newIcon = QIcon::fromTheme("Run", QIcon(":/icons/run.png"));
-    QAction* runAction = new QAction(newIcon, tr("&Run"), this);
-    runAction->setStatusTip(tr("Run the VPP analysis"));
-    connect(runAction, &QAction::triggered, this, &MainWindow::run);
+	const QIcon newIcon = QIcon::fromTheme("Run", QIcon(":/icons/run.png"));
+	QAction* runAction = new QAction(newIcon, tr("&Run"), this);
+	runAction->setStatusTip(tr("Run the VPP analysis"));
+	connect(runAction, &QAction::triggered, this, &MainWindow::run);
 	pVppActionMenu_->addAction(runAction);
 	pToolBar_->addAction(runAction);
 
 	// Create 'tabular' action and associate an icon
-    const QIcon tabResIcon = QIcon::fromTheme("Result table", QIcon(":/icons/tabularResults.png"));
-    QAction* tabResAction = new QAction(tabResIcon, tr("&Result table"), this);
-    tabResAction->setStatusTip(tr("Show the result table"));
-    connect(tabResAction, &QAction::triggered, this, &MainWindow::tableResults);
+	const QIcon tabResIcon = QIcon::fromTheme("Result table", QIcon(":/icons/tabularResults.png"));
+	QAction* tabResAction = new QAction(tabResIcon, tr("&Result table"), this);
+	tabResAction->setStatusTip(tr("Show the result table"));
+	connect(tabResAction, &QAction::triggered, this, &MainWindow::tableResults);
 	pVppActionMenu_->addAction(tabResAction);
 	pToolBar_->addAction(tabResAction);
 
 	pVppActionMenu_->addSeparator();
 
 	// Create a 'Save Results'action and associate an icon
-    const QIcon saveResultsIcon = QIcon::fromTheme("save Results", QIcon(":/icons/saveResults.png"));
-    QAction* saveResultsAction = new QAction(saveResultsIcon, tr("&Save Results"), this);
-    saveResultsAction->setStatusTip(tr("Save results"));
-    connect(saveResultsAction, &QAction::triggered, this, &MainWindow::saveResults);
+	const QIcon saveResultsIcon = QIcon::fromTheme("save Results", QIcon(":/icons/saveResults.png"));
+	QAction* saveResultsAction = new QAction(saveResultsIcon, tr("&Save Results"), this);
+	saveResultsAction->setStatusTip(tr("Save results"));
+	connect(saveResultsAction, &QAction::triggered, this, &MainWindow::saveResults);
 	pVppActionMenu_->addAction(saveResultsAction);
 
 	// Create a 'Save Results'action and associate an icon
-    const QIcon importResultsIcon = QIcon::fromTheme("import Results", QIcon(":/icons/importResults.png"));
-    QAction* importResultsAction = new QAction(importResultsIcon, tr("&Import Results"), this);
-    importResultsAction->setStatusTip(tr("Import results"));
-    connect(importResultsAction, &QAction::triggered, this, &MainWindow::importResults);
+	const QIcon importResultsIcon = QIcon::fromTheme("import Results", QIcon(":/icons/importResults.png"));
+	QAction* importResultsAction = new QAction(importResultsIcon, tr("&Import Results"), this);
+	importResultsAction->setStatusTip(tr("Import results"));
+	connect(importResultsAction, &QAction::triggered, this, &MainWindow::importResults);
 	pVppActionMenu_->addAction(importResultsAction);
 
 	pVppActionMenu_->addSeparator();
@@ -189,20 +192,20 @@ void MainWindow::setupMenuBar() {
 
 
 	// Create an action and associate an icon
-    const QIcon plotPolarsIcon = QIcon::fromTheme("Plot polars", QIcon(":/icons/plotPolars.png"));
-    QAction* plotPolarsAction = new QAction(plotPolarsIcon, tr("&Polars"), this);
-    plotPolarsAction->setStatusTip(tr("Plot polars"));
-    connect(plotPolarsAction, &QAction::triggered, this, &MainWindow::plotPolars);
-    pPlotMenu_->addAction(plotPolarsAction);
+	const QIcon plotPolarsIcon = QIcon::fromTheme("Plot polars", QIcon(":/icons/plotPolars.png"));
+	QAction* plotPolarsAction = new QAction(plotPolarsIcon, tr("&Polars"), this);
+	plotPolarsAction->setStatusTip(tr("Plot polars"));
+	connect(plotPolarsAction, &QAction::triggered, this, &MainWindow::plotPolars);
+	pPlotMenu_->addAction(plotPolarsAction);
 	pToolBar_->addAction(plotPolarsAction);
 
 	pPlotMenu_->addSeparator();
 
-    const QIcon plotSailCoeffsIcon = QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png"));
-    QAction* plotSailCoeffsAction = new QAction(plotSailCoeffsIcon, tr("&Sail Coeffs"), this);
-    plotSailCoeffsAction->setStatusTip(tr("Plot Sail Coeffs"));
-    connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
-    pPlotMenu_->addAction(plotSailCoeffsAction);
+	const QIcon plotSailCoeffsIcon = QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png"));
+	QAction* plotSailCoeffsAction = new QAction(plotSailCoeffsIcon, tr("&Sail Coeffs"), this);
+	plotSailCoeffsAction->setStatusTip(tr("Plot Sail Coeffs"));
+	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
+	pPlotMenu_->addAction(plotSailCoeffsAction);
 	pToolBar_->addAction(plotSailCoeffsAction);
 
 	pPlotMenu_->addSeparator();
@@ -210,11 +213,11 @@ void MainWindow::setupMenuBar() {
 	pPlotMenu_->addAction(tr("&multiPlot"), this, &MainWindow::multiPlot);
 	pPlotMenu_->addSeparator();
 
-    const QIcon plot3dIcon = QIcon::fromTheme("Plot 3d", QIcon(":/icons/plot3d.png"));
-    QAction* plot3dAction = new QAction(plot3dIcon, tr("&3d Plot"), this);
-    plot3dAction->setStatusTip(tr("Plot 3d"));
-    connect(plot3dAction, &QAction::triggered, this, &MainWindow::threedPlot);
-    pPlotMenu_->addAction(plot3dAction);
+	const QIcon plot3dIcon = QIcon::fromTheme("Plot 3d", QIcon(":/icons/plot3d.png"));
+	QAction* plot3dAction = new QAction(plot3dIcon, tr("&3d Plot"), this);
+	plot3dAction->setStatusTip(tr("Plot 3d"));
+	connect(plot3dAction, &QAction::triggered, this, &MainWindow::threedPlot);
+	pPlotMenu_->addAction(plot3dAction);
 	pToolBar_->addAction(plot3dAction);
 
 	// ---
@@ -259,16 +262,16 @@ void MainWindow::tabDockWidget(VppTabDockWidget* pWidget) {
 // the sync of the tabbedWidgets_ vector
 void MainWindow::updateTabbedWidgetsVector(const VppTabDockWidget* deleteWidget) {
 
-    if(!deleteWidget)
-        return;
-    
+	if(!deleteWidget)
+		return;
+
 	pLogWidget_->append("Sync tabbedWidget Vector on plot deletion...");
 
 	for(std::vector<VppTabDockWidget*>::iterator it=tabbedWidgets_.begin(); it!=tabbedWidgets_.end(); it++){
-        if(*it==deleteWidget){
+		if(*it==deleteWidget){
 			tabbedWidgets_.erase(it);
-            return;
-        }
+			return;
+		}
 	}
 }
 
@@ -292,16 +295,45 @@ void MainWindow::appendToLog(const QString &text) {
 
 void MainWindow::import() {
 
-	QString caption;
-	QString dir;
+	try {
 
-	// Launch a file selector
-	QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
-			tr("VPP Input File(*.vppIn);; All Files (*.*)"));
+		QString caption;
+		QString dir;
 
-    if (!fileName.isEmpty())
-        //loadFile(fileName);
-    	pLogWidget_->append("Opening the vpp input file... ");
+		// Launch a file selector
+		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
+				tr("VPP Input File(*.vppIn);; All Files (*.*)"));
+
+		if (!fileName.isEmpty()) {
+
+			pLogWidget_->append(QString("Opening the vpp input file... ") + fileName );
+
+			// Instantiate a variableFileParser (and clear any previous one)
+			pVariableFileParser_.reset( new VariableFileParser(fileName.toStdString()) );
+
+			// Parse the variables file
+			pVariableFileParser_->parse();
+
+			// Populate the variable item tree accordingly
+			pVariableFileParser_->populate( pVariablesWidget_->getModel() );
+
+			// Instantiate the sailset
+			pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
+
+			// Instantiate the items
+			pVppItems.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
+
+		}
+
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
+
 
 }
 
@@ -322,14 +354,14 @@ void MainWindow::run() {
 bool MainWindow::saveResults() {
 
 	pLogWidget_->append("Saving the analyis results... ");
-    QFileDialog dialog(this);
-    dialog.setWindowModality(Qt::WindowModal);
-    dialog.setAcceptMode(QFileDialog::AcceptSave);
-    dialog.setNameFilter(tr("VPP Result File(*.vpp)"));
-    dialog.setDefaultSuffix(".vpp");
-    if (dialog.exec() != QDialog::Accepted)
-        return false;
-    return saveFile(dialog.selectedFiles().first());
+	QFileDialog dialog(this);
+	dialog.setWindowModality(Qt::WindowModal);
+	dialog.setAcceptMode(QFileDialog::AcceptSave);
+	dialog.setNameFilter(tr("VPP Result File(*.vpp)"));
+	dialog.setDefaultSuffix(".vpp");
+	if (dialog.exec() != QDialog::Accepted)
+		return false;
+	return saveFile(dialog.selectedFiles().first());
 }
 
 bool MainWindow::saveFile(const QString &fileName) {
@@ -337,14 +369,14 @@ bool MainWindow::saveFile(const QString &fileName) {
 	pLogWidget_->append("Saving the VPP results to file");
 
 	// if save was successiful, return true, otherwise false
-//    QFile file(fileName);
-//    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-//        QMessageBox::warning(this, tr("Application"),
-//                             tr("Cannot write file %1:\n%2.")
-//                             .arg(QDir::toNativeSeparators(fileName),
-//                                  file.errorString()));
-//        return false;
-//    }
+	//    QFile file(fileName);
+	//    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+	//        QMessageBox::warning(this, tr("Application"),
+	//                             tr("Cannot write file %1:\n%2.")
+	//                             .arg(QDir::toNativeSeparators(fileName),
+	//                                  file.errorString()));
+	//        return false;
+	//    }
 
 	return true;
 }
@@ -358,9 +390,9 @@ void MainWindow::importResults() {
 	QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
 			tr("VPP Result File(*.vpp);; All Files (*.*)"));
 
-    if (!fileName.isEmpty())
-        //loadFile(fileName);
-    	pLogWidget_->append("Importing the analyis results...");
+	if (!fileName.isEmpty())
+		//loadFile(fileName);
+		pLogWidget_->append("Importing the analyis results...");
 
 }
 
@@ -402,15 +434,15 @@ void MainWindow::plotSailCoeffs() {
 	pLogWidget_->append("Plotting Sail coeffs...");
 
 	// Ask the user for filling a state vector
-    StateVectorDialog dialog(this);
-    if (dialog.exec() == QDialog::Rejected)
-        return;
+	StateVectorDialog dialog(this);
+	if (dialog.exec() == QDialog::Rejected)
+		return;
 
-    // For the moment, just stick the values to the log
-    pLogWidget_->append( "Got v=" + QString::number(dialog.getV()) );
-    pLogWidget_->append( "Got Phi=" + dialog.getPhi() );
-    pLogWidget_->append( "Got Crew=" + dialog.getCrew() );
-    pLogWidget_->append( "Got Flat=" + dialog.getFlat() );
+	// For the moment, just stick the values to the log
+	pLogWidget_->append( "Got v=" + QString::number(dialog.getV()) );
+	pLogWidget_->append( "Got Phi=" + dialog.getPhi() );
+	pLogWidget_->append( "Got Crew=" + dialog.getCrew() );
+	pLogWidget_->append( "Got Flat=" + dialog.getFlat() );
 
 	// Add a XY plot
 	pXYPlotWidget_.reset( new XYChartWidget(this) );
@@ -446,8 +478,8 @@ void MainWindow::threedPlot() {
 
 	pLogWidget_->append("Adding a 3d plot window...");
 
-    // This widget is to be assigned to a dockable widget
-    p3dPlotWidget_.reset(new ThreeDPlotWidget(this) );
+	// This widget is to be assigned to a dockable widget
+	p3dPlotWidget_.reset(new ThreeDPlotWidget(this) );
 
 	// Add the 3d plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, p3dPlotWidget_.get());
@@ -475,14 +507,14 @@ void MainWindow::actionTriggered(QAction *action) {
 void MainWindow::setupToolBar()
 {
 #ifdef Q_OS_OSX
-    setUnifiedTitleAndToolBarOnMac(true);
+	setUnifiedTitleAndToolBarOnMac(true);
 #endif
 
-    // Instantiate the toolbar
-    pToolBar_= addToolBar(tr("File"));
+	// Instantiate the toolbar
+	pToolBar_= addToolBar(tr("File"));
 
-    // Set the size of the icons in the toolbar
-    QSize iconSize(20,20);
+	// Set the size of the icons in the toolbar
+	QSize iconSize(20,20);
 	pToolBar_->setIconSize(iconSize);
 
 }

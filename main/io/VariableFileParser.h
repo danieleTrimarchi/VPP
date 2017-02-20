@@ -11,6 +11,9 @@
 
 using namespace std;
 
+/// Forward declarations
+class VariableTreeModel;
+
 /// File parser able to store the variables read
 /// into a file to a container set
 class VariableFileParser {
@@ -30,7 +33,7 @@ class VariableFileParser {
 		/// prompted into the file. Otherwise throws
 		void check();
 
-		/// Get the value of a variable
+		/// Get the value of a variable by name
 		double get(std::string);
 
 		/// Get the variables contained in the parser
@@ -38,6 +41,13 @@ class VariableFileParser {
 
 		/// Printout the list of all variables we have collected
 		void printVariables();
+
+		/// Get the number of variables that have been read in
+		size_t getNumVars();
+
+		/// Populate the tree model that will be used to
+		/// visualize the variables in the UI
+		void populate(VariableTreeModel* pTreeModel);
 
 	private:
 

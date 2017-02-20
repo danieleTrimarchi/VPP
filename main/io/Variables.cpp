@@ -78,3 +78,19 @@ void VarSet::print() {
 		std::cout<< it->varName_ << ":  "<< it->val_ <<std::endl;
 	}
 }
+
+// Populate the tree model that will be used to
+// visualize the variables in the UI
+void VarSet::populate(VariableTreeModel* pTreeModel) {
+
+	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it){
+
+		QList<QVariant> data;
+		data << it->varName_.c_str() << it->val_;
+
+		pTreeModel->append( data );
+	}
+
+}
+
+
