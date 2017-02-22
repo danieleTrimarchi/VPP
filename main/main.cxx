@@ -99,18 +99,6 @@ int main(int argc, char** argv) {
 //		string s;
 //		while(cin >> s){
 //
-//			// Exit the program on demand
-//			if(s==string("exit") || s==string("q") || s==string("Q") )
-//				break;
-//
-//			// Parse other options
-//			if(s == string("printVars") ){
-//				parser.printVariables();
-//				pSails->printVariables();
-//			}
-//
-//			//---
-//
 //			else if(s == string("convertVelocityToFn")) {
 //				IOUtils io(pVppItems->getWind());
 //				std::cout<<"Fn= "<<

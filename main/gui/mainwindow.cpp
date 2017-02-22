@@ -314,17 +314,20 @@ void MainWindow::import() {
 			// Parse the variables file
 			pVariableFileParser_->parse();
 
-			// Populate the variable item tree accordingly
-			pVariableFileParser_->populate( pVariablesWidget_->getModel() );
-
-			// Expand the items in the variable tree view, in order to see all the variables
-			pVariablesWidget_->getView()->expandAll();
-
 			// Instantiate the sailset
 			pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
 
 			// Instantiate the items
-			pVppItems.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
+			pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
+
+			// Populate the variable item tree accordingly
+			pVariableFileParser_->populate( pVariablesWidget_->getModel() );
+
+			// SailSet also contains several variables. Append them to the bottom
+			pSails_->populate( pVariablesWidget_->getModel() );
+
+			// Expand the items in the variable tree view, in order to see all the variables
+			pVariablesWidget_->getView()->expandAll();
 
 		}
 
@@ -436,19 +439,10 @@ void MainWindow::plotSailCoeffs() {
 
 	pLogWidget_->append("Plotting Sail coeffs...");
 
-	// Ask the user for filling a state vector
-	StateVectorDialog dialog(this);
-	if (dialog.exec() == QDialog::Rejected)
-		return;
-
-	// For the moment, just stick the values to the log
-	pLogWidget_->append( "Got v=" + QString::number(dialog.getV()) );
-	pLogWidget_->append( "Got Phi=" + dialog.getPhi() );
-	pLogWidget_->append( "Got Crew=" + dialog.getCrew() );
-	pLogWidget_->append( "Got Flat=" + dialog.getFlat() );
+	pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients();
 
 	// Add a XY plot
-	pXYPlotWidget_.reset( new XYChartWidget(this) );
+	pXYPlotWidget_.reset( new VPPXYChartWidget(this) );
 
 	// Add the xy plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_.get());
@@ -462,6 +456,17 @@ void MainWindow::plotSailCoeffs() {
 void MainWindow::multiPlot() {
 
 	pLogWidget_->append("Adding a multiPlot...");
+
+	// Ask the user for filling a state vector
+	StateVectorDialog dialog(this);
+	if (dialog.exec() == QDialog::Rejected)
+		return;
+
+	// For the moment, just stick the values to the log
+	pLogWidget_->append( "Got v=" + QString::number(dialog.getV()) );
+	pLogWidget_->append( "Got Phi=" + dialog.getPhi() );
+	pLogWidget_->append( "Got Crew=" + dialog.getCrew() );
+	pLogWidget_->append( "Got Flat=" + dialog.getFlat() );
 
 	pMultiPlotWidget_.reset(new MultiplePlotWidget(this) );
 

@@ -1,4 +1,5 @@
-#include "XYChart.h"
+#include "VPPXYChart.h"
+
 #include <QtCharts/QLegend>
 #include <QtCharts/QLegendMarker>
 #include <QtWidgets/QGraphicsGridLayout>
@@ -6,7 +7,7 @@
 #include <QtCore/QDebug>
 
 // Explicit Constructor
-XYChart::XYChart(
+VPPXYChart::VPPXYChart(
 		QGraphicsItem* parent /*=Q_NULLPTR*/,
 		Qt::WindowFlags wFlags/*=Qt::WindowFlags()*/) :
 		QChart(parent,wFlags) {
@@ -21,7 +22,7 @@ XYChart::XYChart(
     connectMarkers();
 
     // Set the title and show legend
-    setTitle("Legendmarker example (click on legend)");
+    setTitle("XY Chart");
     legend()->setVisible(true);
     legend()->setAlignment(Qt::AlignBottom);
 
@@ -32,11 +33,11 @@ XYChart::XYChart(
 }
 
 // Dtor
-XYChart::~XYChart() {
+VPPXYChart::~VPPXYChart() {
 
 }
 
-void XYChart::addSeries() {
+void VPPXYChart::addSeries() {
 
     QLineSeries* series = new QLineSeries();
     series_.append(series);
@@ -59,7 +60,7 @@ void XYChart::addSeries() {
     }
 }
 
-void XYChart::connectMarkers()
+void VPPXYChart::connectMarkers()
 {
     // Connect all markers to handler
     foreach (QLegendMarker* marker, legend()->markers()) {
@@ -70,7 +71,7 @@ void XYChart::connectMarkers()
 }
 
 
-void XYChart::disconnectMarkers()
+void VPPXYChart::disconnectMarkers()
 {
     foreach (QLegendMarker* marker, legend()->markers()) {
         QObject::disconnect(marker, SIGNAL(marker->clicked()), this, SLOT(handleMarkerClicked()));
@@ -78,7 +79,7 @@ void XYChart::disconnectMarkers()
 }
 
 
-void XYChart::handleMarkerClicked()
+void VPPXYChart::handleMarkerClicked()
 {
     QLegendMarker* marker = qobject_cast<QLegendMarker*> (sender());
     Q_ASSERT(marker);
@@ -130,7 +131,7 @@ void XYChart::handleMarkerClicked()
     }
 }
 
-void XYChart::removeSeries()
+void VPPXYChart::removeSeries()
 {
     // Remove last series from chart
     if (series_.count() > 0) {

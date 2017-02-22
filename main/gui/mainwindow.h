@@ -13,10 +13,10 @@
 #include "PolarPlotWidget.h"
 #include "MultiplePlotWidget.h"
 #include "ThreeDPlotWidget.h"
-#include "XYChartWidget.h"
 #include "VppTableDockWidget.h"
 #include "VariableFileParser.h"
 #include "SailSet.h"
+#include "VPPXYChartWidget.h"
 
 class ToolBar;
 class VPPItemFactory;
@@ -151,7 +151,7 @@ private:
 
 	/// Declare a container for all the items that
 	/// constitute the VPP components (Wind, Resistance, RightingMoment...)
-	boost::shared_ptr<VPPItemFactory> pVppItems;
+	boost::shared_ptr<VPPItemFactory> pVppItems_;
 
 };
 

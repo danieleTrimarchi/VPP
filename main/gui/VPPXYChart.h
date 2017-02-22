@@ -7,17 +7,17 @@
 
 QT_CHARTS_USE_NAMESPACE
 
-class XYChart : public QChart {
+class VPPXYChart : public QChart {
 
 	Q_OBJECT
 
 public :
 
 	/// Explicit Constructor
-	explicit XYChart(QGraphicsItem* parent= Q_NULLPTR, Qt::WindowFlags wFlags= Qt::WindowFlags());
+	explicit VPPXYChart(QGraphicsItem* parent= Q_NULLPTR, Qt::WindowFlags wFlags= Qt::WindowFlags());
 
 	/// Dtor
-	~XYChart();
+	~VPPXYChart();
 
 public slots:
 
