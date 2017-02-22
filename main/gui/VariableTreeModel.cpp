@@ -125,9 +125,8 @@ QVariant VariableTreeModel::headerData(int section, Qt::Orientation orientation,
 	return QVariant();
 }
 
-QModelIndex VariableTreeModel::index(int row, int column, const QModelIndex &parent)
-const
-{
+QModelIndex VariableTreeModel::index(int row, int column, const QModelIndex &parent) const {
+
 	if (!hasIndex(row, column, parent))
 		return QModelIndex();
 
@@ -187,6 +186,18 @@ void VariableTreeModel::setup() {
 // Append a variable item to the tree
 void VariableTreeModel::append( QList<QVariant>& columnData ) {
 
+	// Get the index of the fake root item
+	QModelIndex fakeRootItemIndex= index(1,0);
+
+	size_t nchildren = rootItem_->child(0)->childCount();
+
+	// Call this method to append ONE row under the fake root.
+	// The method emits the rowsAboutToBeInserted() signal that allows
+	// for a smooth connection with the view
+	beginInsertRows(fakeRootItemIndex, nchildren, nchildren);
+
 	rootItem_->child(0)->appendChild(new VariableTreeItem(columnData, rootItem_->child(0)));
+
+	endInsertRows();
 
 }

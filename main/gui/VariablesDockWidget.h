@@ -34,6 +34,9 @@ public:
 	/// Returns the underlying item model
 	VariableTreeModel* getModel();
 
+	/// Returns the view of the item model
+	QTreeView* getView();
+
 	/// Get the toggle view action to be added to the menubar
 	QAction* getMenuToggleViewAction();
 

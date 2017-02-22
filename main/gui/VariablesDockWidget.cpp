@@ -11,6 +11,9 @@ VariablesDockWidget::VariablesDockWidget( QMainWindow* parent/*=Q_NULLPTR*/, Qt:
     // Build the tree model and the TreeView this dock widget contains
 	pTreeModel_.reset( new VariableTreeModel );
 	pTreeView_.reset( new QTreeView );
+
+	pTreeView_->expandAll();
+
 	pTreeView_->setModel(pTreeModel_.get());
 	pTreeView_->setWindowTitle(QObject::tr("Simple Tree Model"));
 	// Add this to make sure the string contained in the tree are visible
@@ -32,6 +35,11 @@ VariableTreeModel* VariablesDockWidget::getModel() {
 	return pTreeModel_.get();
 }
 
+// Returns the view of the item model
+QTreeView* VariablesDockWidget::getView() {
+	return pTreeView_.get();
+}
+
 // Get the toggle view action to be added to the menubar
 QAction* VariablesDockWidget::getMenuToggleViewAction() {
 
@@ -44,7 +52,5 @@ QAction* VariablesDockWidget::getMenuToggleViewAction() {
 	return pToggleViewAction;
 
 }
-
-
 
 

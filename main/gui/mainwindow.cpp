@@ -317,6 +317,9 @@ void MainWindow::import() {
 			// Populate the variable item tree accordingly
 			pVariableFileParser_->populate( pVariablesWidget_->getModel() );
 
+			// Expand the items in the variable tree view, in order to see all the variables
+			pVariablesWidget_->getView()->expandAll();
+
 			// Instantiate the sailset
 			pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
 
