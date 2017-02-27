@@ -199,3 +199,4 @@ SailCoefficientItem* MainJibAndSpiSailSet::sailCoefficientItemFactory(WindItem* 
 	return new MainJibAndSpiCoefficientItem(pWind);
 }
 
+

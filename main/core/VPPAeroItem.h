@@ -8,6 +8,11 @@
 
 using namespace Physic;
 
+/// Forward declarations
+class MultiplePlotWidget;
+class VppTabDockWidget;
+class VPPXYChart;
+
 class WindItem : public VPPItem {
 
 	public:
@@ -115,7 +120,13 @@ class SailCoefficientItem : public VPPItem {
 
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
+		/// Use PLPlot
 		virtual void plotInterpolatedCoefficients() const=0;
+
+		/// Plot the spline-interpolated curves based on the Larsson's
+		/// sail coefficients. The range is set 0-180deg
+		/// Fill a multiple plot
+		virtual void plotInterpolatedCoefficients( MultiplePlotWidget* ) const =0;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
@@ -202,6 +213,11 @@ class MainOnlySailCoefficientItem : public SailCoefficientItem {
 		/// sail coefficients. The range is set 0-180deg
 		virtual void plotInterpolatedCoefficients() const;
 
+		/// Plot the spline-interpolated curves based on the Larsson's
+		/// sail coefficients. The range is set 0-180deg
+		/// Fill a multiple plot
+		virtual void plotInterpolatedCoefficients( MultiplePlotWidget* ) const;
+
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
@@ -242,6 +258,11 @@ class MainAndJibCoefficientItem : public SailCoefficientItem {
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
 		virtual void plotInterpolatedCoefficients() const;
+
+		/// Plot the spline-interpolated curves based on the Larsson's
+		/// sail coefficients. The range is set 0-180deg
+		/// Fill a multiple plot
+		virtual void plotInterpolatedCoefficients( MultiplePlotWidget* ) const;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
@@ -284,6 +305,11 @@ class MainAndSpiCoefficientItem : public SailCoefficientItem {
 		/// sail coefficients. The range is set 0-180deg
 		virtual void plotInterpolatedCoefficients() const;
 
+		/// Plot the spline-interpolated curves based on the Larsson's
+		/// sail coefficients. The range is set 0-180deg
+		/// Fill a multiple plot
+		virtual void plotInterpolatedCoefficients( MultiplePlotWidget* ) const;
+
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
@@ -324,6 +350,11 @@ class MainJibAndSpiCoefficientItem : public SailCoefficientItem {
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
 		virtual void plotInterpolatedCoefficients() const;
+
+		/// Plot the spline-interpolated curves based on the Larsson's
+		/// sail coefficients. The range is set 0-180deg
+		/// Fill a multiple plot
+		virtual void plotInterpolatedCoefficients( MultiplePlotWidget* ) const;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.

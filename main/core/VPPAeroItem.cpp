@@ -3,6 +3,9 @@
 #include "IOUtils.h"
 #include "VPPException.h"
 #include "mathUtils.h"
+#include "multiplePlotWidget.h"
+#include "VppTabDockWidget.h"
+#include "VPPXYChart.h"
 
 using namespace mathUtils;
 
@@ -282,24 +285,24 @@ WindItem* SailCoefficientItem::getWindItem() const {
 void SailCoefficientItem::computeForMain() {
 
 	// Interpolate the values of the sail coefficients for the MainSail
-	allCl_(0) = interpClVec_[0]->interpolate(awa_);
-	allCd_(0) = interpCdVec_[0]->interpolate(awa_);
+	allCl_(activeSail::mainSail) = interpClVec_[activeSail::mainSail]->interpolate(awa_);
+	allCd_(activeSail::mainSail) = interpCdVec_[activeSail::mainSail]->interpolate(awa_);
 
 }
 
 void SailCoefficientItem::computeForJib() {
 
 	// Interpolate the values of the sail coefficients for the Jib
-	allCl_(1) = interpClVec_[1]->interpolate(awa_);
-	allCd_(1) = interpCdVec_[1]->interpolate(awa_);
+	allCl_(activeSail::jib)  = interpClVec_[activeSail::jib]->interpolate(awa_);
+	allCd_(activeSail::jib)  = interpCdVec_[activeSail::jib]->interpolate(awa_);
 
 }
 
 void SailCoefficientItem::computeForSpi() {
 
 	// Interpolate the values of the sail coefficients for the Spi
-	allCl_(1) = interpClVec_[2]->interpolate(awa_);
-	allCd_(2) = interpCdVec_[2]->interpolate(awa_);
+	allCl_(activeSail::jib)  = interpClVec_[activeSail::spi]->interpolate(awa_);
+	allCd_(activeSail::spi) = interpCdVec_[activeSail::spi]->interpolate(awa_);
 
 }
 
@@ -360,8 +363,8 @@ void MainOnlySailCoefficientItem::update(int vTW, int aTW) {
 	SailCoefficientItem::update(vTW,aTW);
 
 	// In this case the lift/drag coeffs are just what was computed for main
-	cl_ = allCl_(0);
-	cdp_ = allCd_(0);
+	cl_ = allCl_(activeSail::mainSail) ;
+	cdp_ = allCd_(activeSail::mainSail) ;
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
@@ -375,22 +378,44 @@ void MainOnlySailCoefficientItem::printWhoAmI() {
 
 void MainOnlySailCoefficientItem::plotInterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
 
+}
+
+// Plot the spline-interpolated curves based on the Larsson's
+// sail coefficients. The range is set 0-180deg
+// Fill a multiple plot
+void MainOnlySailCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* multiPlotWidget ) const {
+
+	// -> Instantiate a XYPlotWidget for cl. Set title and axis title
+	VPPXYChart clPlot("Interpolated CL for MAIN","AWA [rad]","[-]");
+
+	// Ask the interpolator for vectors
+	interpClVec_[activeSail::mainSail]->plot(clPlot,0,toRad(180),50);
+
+	multiPlotWidget->addChart(clPlot,0,0);
+
+	//---
+
+	// -> same for cd
+	//VPPXYChart cdPlot("Interpolated CD for MAIN","AWA [rad]","[-]");
+
+	// -> push the charts to the multiplot
+	//interpCdVec_[activeSail::mainSail] -> plot(0,toRad(180),50,cdPlot);
 }
 
 void MainOnlySailCoefficientItem::plot_D_InterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
 
 }
 
 void MainOnlySailCoefficientItem::plot_D2_InterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
 
 }
 
@@ -428,8 +453,8 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 	boost::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
-	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") ) /  ps->get("AN");
-	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") ) /  ps->get("AN");
+	cl_ = ( allCl_(activeSail::mainSail)  * ps->get("AM") + allCl_(activeSail::jib)  *  ps->get("AJ") ) /  ps->get("AN");
+	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get("AM") + allCd_(activeSail::jib)  *  ps->get("AJ") ) /  ps->get("AN");
 
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
@@ -446,28 +471,35 @@ void MainAndJibCoefficientItem::printWhoAmI() {
 
 void MainAndJibCoefficientItem::plotInterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
-	interpClVec_[1] -> plot(0,toRad(180),50,"Interpolated CL for JIB","AWA [rad]","[-]");
-	interpCdVec_[1] -> plot(0,toRad(180),50,"Interpolated CD for JIB","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib] -> plot(0,toRad(180),50,"Interpolated CL for JIB","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib] -> plot(0,toRad(180),50,"Interpolated CD for JIB","AWA [rad]","[-]");
+
+}
+
+// Plot the spline-interpolated curves based on the Larsson's
+// sail coefficients. The range is set 0-180deg
+// Fill a multiple plot
+void MainAndJibCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* mutliPlotWidget ) const {
 
 }
 
 void MainAndJibCoefficientItem::plot_D_InterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
 
 }
 
 void MainAndJibCoefficientItem::plot_D2_InterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
 
 }
 
@@ -505,8 +537,8 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 	boost::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
-	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
-	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
+	cl_ = ( allCl_(activeSail::mainSail)  * ps->get("AM") + allCl_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
+	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get("AM") + allCd_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
@@ -522,28 +554,35 @@ void MainAndSpiCoefficientItem::printWhoAmI() {
 
 void MainAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
-	interpClVec_[2] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
-	interpCdVec_[2] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
+
+}
+
+// Plot the spline-interpolated curves based on the Larsson's
+// sail coefficients. The range is set 0-180deg
+// Fill a multiple plot
+void MainAndSpiCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* multiPlotWidget ) const {
 
 }
 
 void MainAndSpiCoefficientItem::plot_D_InterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
 
 }
 
 void MainAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
 
 }
 
@@ -582,8 +621,8 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 	boost::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
-	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
-	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
+	cl_ = ( allCl_(activeSail::mainSail)  * ps->get("AM") + allCl_(activeSail::jib)  *  ps->get("AJ") + allCl_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
+	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get("AM") + allCd_(activeSail::jib)  *  ps->get("AJ") + allCd_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
@@ -599,34 +638,41 @@ void MainJibAndSpiCoefficientItem::printWhoAmI() {
 
 void MainJibAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
-	interpClVec_[1] -> plot(0,toRad(180),50,"Interpolated CL for JIB","AWA [rad]","[-]");
-	interpCdVec_[1] -> plot(0,toRad(180),50,"Interpolated CD for JIB","AWA [rad]","[-]");
-	interpClVec_[2] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
-	interpCdVec_[2] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib] -> plot(0,toRad(180),50,"Interpolated CL for JIB","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib] -> plot(0,toRad(180),50,"Interpolated CD for JIB","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
+
+}
+
+// Plot the spline-interpolated curves based on the Larsson's
+// sail coefficients. The range is set 0-180deg
+// Fill a multiple plot
+void MainJibAndSpiCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* multiPlotWidget ) const {
 
 }
 
 void MainJibAndSpiCoefficientItem::plot_D_InterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
 
 }
 
 void MainJibAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients() const {
 
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
 
 }
 

@@ -398,7 +398,7 @@ void MainWindow::importResults() {
 
 	if (!fileName.isEmpty())
 		//loadFile(fileName);
-		pLogWidget_->append("Importing the analyis results...");
+		pLogWidget_->append("Importing the analysis results...");
 
 }
 
@@ -439,15 +439,30 @@ void MainWindow::plotSailCoeffs() {
 
 	pLogWidget_->append("Plotting Sail coeffs...");
 
+	// Leave the call to plPlot to check the consistency of my plot
 	pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients();
 
-	// Add a XY plot
-	pXYPlotWidget_.reset( new VPPXYChartWidget(this) );
+//	// Add a XY plot
+//	pXYPlotWidget_.reset( new VPPXYChartWidget(this) );
+//
+//	// Add the xy plot view to the left of the app window
+//	addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_.get());
+//
+//	tabDockWidget(pXYPlotWidget_.get());
+
+	//-------------------
+
+	// Instantiate an empty multiple plot widget
+	pMultiPlotWidget_.reset(new MultiplePlotWidget(this) );
+
+	// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
+	pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients( pMultiPlotWidget_.get() );
 
 	// Add the xy plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_.get());
 
-	tabDockWidget(pXYPlotWidget_.get());
+	tabDockWidget(pMultiPlotWidget_.get());
+
 
 
 }

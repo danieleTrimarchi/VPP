@@ -6,12 +6,18 @@
 
 using namespace std;
 
-enum sailConfig {
-	mainOnly=1,
-	mainAndJib=3,
-	mainAndSpi=5,
-	mainJibAndSpi=7,
-};
+	enum sailConfig {
+		mainOnly=1,
+		mainAndJib=3,
+		mainAndSpi=5,
+		mainJibAndSpi=7
+	};
+
+	enum activeSail {
+		mainSail=0,
+		jib=1,
+		spi=2
+	};
 
 /// forward declarations
 class WindItem;

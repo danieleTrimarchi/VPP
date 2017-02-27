@@ -126,7 +126,7 @@ private:
 	boost::shared_ptr<VppTabDockWidget> pXYPlotWidget_;
 
 	/// Multi-plot widget
-	boost::shared_ptr<VppTabDockWidget> pMultiPlotWidget_;
+	boost::shared_ptr<MultiplePlotWidget> pMultiPlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<VppTabDockWidget> p3dPlotWidget_;

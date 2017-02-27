@@ -16,13 +16,20 @@ public :
 	/// Explicit Constructor
 	explicit VPPXYChart(QGraphicsItem* parent= Q_NULLPTR, Qt::WindowFlags wFlags= Qt::WindowFlags());
 
+	/// Explicit Constructor
+	explicit VPPXYChart(QString title, QString xAxisLabel, QString yAxisLabel,
+			QGraphicsItem* parent= Q_NULLPTR, Qt::WindowFlags wFlags= Qt::WindowFlags());
+
 	/// Dtor
 	~VPPXYChart();
 
-public slots:
+	public slots:
 
 	/// Add a default test series
 	void addSeries();
+
+	/// Add a given series to the plot
+	void addSeries(QAbstractSeries *series);
 
 	/// Remove a curve from the plot
 	void removeSeries();

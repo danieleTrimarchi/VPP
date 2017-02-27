@@ -62,12 +62,19 @@ public:
 	/// Dtor
 	virtual ~MultiplePlotWidget();
 
+	/// Add a chart in a given position
+	void addChart(QChart&, size_t px, size_t py);
+
 public slots:
 
 	/// What to do when one of the plots is clicked?
 	void toggleFullScreen(const MultiplePlotChartComponent*);
 
 private:
+
+	/// Connect all the charts in the multiplot to the toggleFullScreen
+	/// signal that is used to expand one chart to full screen
+	void connectFullScreenSignals();
 
 	/// List with all the plots that will be visualized
 	QList<MultiplePlotChartComponent*> chartList_;

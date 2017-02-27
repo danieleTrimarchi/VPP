@@ -2,6 +2,7 @@
 
 #include <QtCharts/QLegend>
 #include <QtCharts/QLegendMarker>
+#include <QtCharts/QValueAxis>
 #include <QtWidgets/QGraphicsGridLayout>
 #include <QtCore/QtMath>
 #include <QtCore/QDebug>
@@ -32,6 +33,32 @@ VPPXYChart::VPPXYChart(
 
 }
 
+// Explicit Constructor
+VPPXYChart::VPPXYChart(
+		QString title, QString xAxisLabel, QString yAxisLabel,
+		QGraphicsItem* parent /*=Q_NULLPTR*/,
+		Qt::WindowFlags wFlags/*=Qt::WindowFlags()*/) :
+		QChart(parent,wFlags) {
+
+  // Set the title and show legend
+  setTitle(title);
+
+  QValueAxis xAxis, yAxis;
+  xAxis.setTitleText(xAxisLabel);
+  yAxis.setTitleText(yAxisLabel);
+
+  setAxisX(&xAxis);
+  setAxisY(&yAxis);
+
+  legend()->setVisible(true);
+  legend()->setAlignment(Qt::AlignBottom);
+
+  // Attempt maximizing the plotting area
+  layout()->setContentsMargins(0,0,0,0);
+  setBackgroundRoundness(0);
+
+}
+
 // Dtor
 VPPXYChart::~VPPXYChart() {
 
@@ -59,6 +86,14 @@ void VPPXYChart::addSeries() {
         createDefaultAxes();
     }
 }
+
+// Add a given series to the plot
+void VPPXYChart::addSeries(QAbstractSeries *series) {
+
+	// Decorator
+	QChart::addSeries(series);
+}
+
 
 void VPPXYChart::connectMarkers()
 {

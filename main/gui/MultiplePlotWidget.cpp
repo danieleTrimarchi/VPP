@@ -29,40 +29,39 @@ MultiplePlotWidget::MultiplePlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, Qt::Wi
 	pGridLayout_->setHorizontalSpacing(0);
 	pGridLayout_->setVerticalSpacing(0);
 
-	// Instantiate a ptr to temporarily store the adress of a chart to be assigned
-	// to the grid layout, but also to be assigned to the chartList_. We iterate on
-	// the chart list to define the actions used to expand one chart on double click.
-	MultiplePlotChartComponent* pChart;
+	setLayout(pGridLayout_);
 
-	pChart = new MultiplePlotChartComponent( new VPPXYChart );
+  // Set a minimum size for this widget
+  QScreen* pScreen= QGuiApplication::primaryScreen();
+  setMinimumSize(QSize(pScreen->size().width()/ 3, pScreen->size().height() / 3));
+
+}
+
+// Connect all the charts in the multiplot to the toggleFullScreen
+// signal that is used to expand one chart to full screen
+void MultiplePlotWidget::connectFullScreenSignals() {
+
+	// Connect the widget to the function that handles the widget visibility in the layout
+	foreach (MultiplePlotChartComponent* chart, chartList_) {
+		QObject::disconnect(chart, SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
+		QObject::connect(chart, SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
+	}
+
+}
+
+// Add a chart in a given position
+void MultiplePlotWidget::addChart(QChart& chart, size_t px, size_t py) {
+
+	MultiplePlotChartComponent* pChart = new MultiplePlotChartComponent( &chart );
 	pGridLayout_->addWidget(pChart, 0, 0);
 	chartList_ << pChart;
 
-	pChart = new MultiplePlotChartComponent( new VppPolarChart );
-	pGridLayout_->addWidget(pChart, 0, 1);
-	chartList_ << pChart;
-
-	pChart = new MultiplePlotChartComponent( new VppPolarChart );
-	pGridLayout_->addWidget(pChart, 1, 0);
-	chartList_ << pChart;
-
-	pChart = new MultiplePlotChartComponent( new VPPXYChart );
-	pGridLayout_->addWidget(pChart, 1, 1);
-	chartList_ << pChart;
-
-	setLayout(pGridLayout_);
-
-	// Connect the widget to the function that handles the widget visibility in the layout
-	foreach (MultiplePlotChartComponent* view, chartList_) {
-		QObject::disconnect(view, SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
-		QObject::connect(view, SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
-	}
-
-    // Set a minimum size for this widget
-    QScreen* pScreen= QGuiApplication::primaryScreen();
-	setMinimumSize(QSize(pScreen->size().width()/ 3, pScreen->size().height() / 3));
+	// Connect the charts in the multiple plot in order to being able to
+	// magnify one chart on double click
+	connectFullScreenSignals();
 
 }
+
 
 // What to do when one of the plots is clicked?
 void MultiplePlotWidget::toggleFullScreen(const MultiplePlotChartComponent* pClickedView) {

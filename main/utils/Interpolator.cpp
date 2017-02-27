@@ -2,6 +2,8 @@
 #include <math.h>
 #include "VPPException.h"
 #include "VPPPlotter.h"
+#include "VPPXYChart.h"
+#include <QtCharts/QChart>
 
 // Constructor
 Interpolator::Interpolator() {
@@ -228,6 +230,10 @@ SplineInterpolator::~SplineInterpolator() {
 
 }
 
+// How many points are used to build this spline?
+size_t SplineInterpolator::getNumPoints() const {
+	return X_.size();
+}
 
 double SplineInterpolator::interpolate(double val) {
 
@@ -263,6 +269,50 @@ void SplineInterpolator::plot(double minVal,double maxVal,int nVals,
 	// Ask the plotter to plot the curves
 	plotter.plot(x0,y0,x,y,title,xLabel,yLabel);
 
+}
+
+// Plot the spline and its underlying source points.
+// Hand the points to a Qt XY plot
+void SplineInterpolator::plot(VPPXYChart& chart, double minVal,double maxVal,int nVals) {
+
+	// Instantiate a data series for the data to plot
+  QLineSeries* series = new QLineSeries();
+
+  // Is this required? Perhaps not, as I am setting the title of the plot
+  //series->setName(QString("line " + QString::number(series_.count())));
+
+	double dx= (maxVal-minVal)/(nVals);
+
+  // Make some data
+  QList<QPointF> splineData;
+  for (int i = 0; i < nVals+1; i++) {
+      qreal x = minVal + i*dx;
+      splineData.append(QPointF(x, s_(x) ));
+  }
+
+  series->append(splineData);
+
+  // Get the points the spline has been built with
+  std::vector<double> x0(s_.get_points(0));
+	std::vector<double> y0(s_.get_points(1));
+
+	// Limit the values to the ranges specified for this plot
+	for(size_t i=0; i<x0.size(); i++)
+		if(x0[i]<minVal || x0[i]>maxVal){
+			x0.erase(x0.begin()+i);
+			y0.erase(y0.begin()+i);
+			i--;
+		}
+
+	// Copy the values to a Qt-style container
+  QList<QPointF> pointData;
+  for (int i = 0; i < x0.size() ; i++) {
+  	pointData.append( QPointF(x0[i], y0[i]) );
+  }
+
+  series->append(pointData);
+
+  chart.addSeries(series);
 }
 
 // Plot the spline and its underlying source points

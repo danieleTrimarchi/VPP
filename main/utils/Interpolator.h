@@ -9,6 +9,9 @@
 
 #include "VPPPlotter.h"
 
+/// Forward declarations
+class VPPXYChart;
+
 class Interpolator {
 
 	public:
@@ -53,12 +56,19 @@ class SplineInterpolator {
 		/// Destructor
 		virtual ~SplineInterpolator();
 
+		/// How many points are used to build this spline?
+		size_t getNumPoints() const;
+
 		/// Interpolate the function X-Y using the underlying spline for the value val
 		double interpolate(double);
 
 		/// Plot the spline and its underlying source points
 		void plot(double minVal,double maxVal,int nVals,
 				string title, string xLabel="x", string yLabel="y");
+
+		/// Plot the spline and its underlying source points.
+		/// Hand the points to a Qt XY plot
+		void plot(VPPXYChart& chart, double minVal,double maxVal,int nVals);
 
 		/// Plot the first derivative of the spline
 		void plotD1(double minVal,double maxVal,int nVals,
