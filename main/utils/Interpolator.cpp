@@ -276,10 +276,7 @@ void SplineInterpolator::plot(double minVal,double maxVal,int nVals,
 void SplineInterpolator::plot(VPPXYChart& chart, double minVal,double maxVal,int nVals) {
 
 	// Instantiate a data series for the data to plot
-  QLineSeries* series = new QLineSeries();
-
-  // Is this required? Perhaps not, as I am setting the title of the plot
-  //series->setName(QString("line " + QString::number(series_.count())));
+  QLineSeries* splineSeries = new QLineSeries();
 
 	double dx= (maxVal-minVal)/(nVals);
 
@@ -290,7 +287,17 @@ void SplineInterpolator::plot(VPPXYChart& chart, double minVal,double maxVal,int
       splineData.append(QPointF(x, s_(x) ));
   }
 
-  series->append(splineData);
+  // Add the data to the series
+  splineSeries->append(splineData);
+
+  // Add the series to the chart
+  chart.addSeries(splineSeries);
+  splineSeries->setName(QString("Interpolated data"));
+
+  // -- Pass to the points
+
+  // Instantiate a data series for the data to plot
+  QLineSeries* pointSeries = new QLineSeries();
 
   // Get the points the spline has been built with
   std::vector<double> x0(s_.get_points(0));
@@ -310,9 +317,15 @@ void SplineInterpolator::plot(VPPXYChart& chart, double minVal,double maxVal,int
   	pointData.append( QPointF(x0[i], y0[i]) );
   }
 
-  series->append(pointData);
+  // Add the data to the series
+  pointSeries->append(pointData);
 
-  chart.addSeries(series);
+  // Add the series to the chart
+  chart.addSeries(pointSeries);
+  pointSeries->setName(QString("Point data"));
+
+  // Allow switching on/off the splineSeries on marker click
+  chart.connectMarkers();
 }
 
 // Plot the spline and its underlying source points

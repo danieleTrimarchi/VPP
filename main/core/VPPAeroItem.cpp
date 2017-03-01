@@ -478,10 +478,47 @@ void MainAndJibCoefficientItem::plotInterpolatedCoefficients() const {
 
 }
 
-// Plot the spline-interpolated curves based on the Larsson's
-// sail coefficients. The range is set 0-180deg
-// Fill a multiple plot
-void MainAndJibCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* mutliPlotWidget ) const {
+// Plot the spline-interpolated curves based on the Larsson's sail coefficients.
+// The range is set 0-180deg
+void MainAndJibCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* multiPlotWidget ) const {
+
+	// -> Instantiate a XYPlotWidget for cl. Set title and axis title
+	VPPXYChart* pClMainPlot = new VPPXYChart("Interpolated CL for MAIN","AWA [rad]","[-]");
+
+	// Ask the interpolator for vectors
+	interpClVec_[activeSail::mainSail]->plot(*pClMainPlot,0,toRad(180),50);
+
+	multiPlotWidget->addChart(*pClMainPlot,0,0);
+
+	// --
+
+	// -> Instantiate a XYPlotWidget for cl. Set title and axis title
+	VPPXYChart* pClJibPlot= new VPPXYChart("Interpolated CL for JIB","AWA [rad]","[-]");
+
+	// Ask the interpolator for vectors
+	interpClVec_[activeSail::jib]->plot(*pClJibPlot,0,toRad(180),50);
+
+	multiPlotWidget->addChart(*pClJibPlot,1,0);
+
+	// --
+
+	// -> Instantiate a XYPlotWidget for cl. Set title and axis title
+	VPPXYChart* pCdMainPlot= new VPPXYChart("Interpolated CD for MAIN","AWA [rad]","[-]");
+
+	// Ask the interpolator for vectors
+	interpCdVec_[activeSail::mainSail]->plot(*pCdMainPlot,0,toRad(180),50);
+
+	multiPlotWidget->addChart(*pCdMainPlot,0,1);
+
+	// --
+
+	// -> Instantiate a XYPlotWidget for cl. Set title and axis title
+	VPPXYChart* pCdJibPlot= new VPPXYChart("Interpolated CD for JIB","AWA [rad]","[-]");
+
+	// Ask the interpolator for vectors
+	interpCdVec_[activeSail::jib]->plot(*pCdJibPlot,0,toRad(180),50);
+
+	multiPlotWidget->addChart(*pCdJibPlot,1,1);
 
 }
 

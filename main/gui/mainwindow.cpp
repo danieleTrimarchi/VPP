@@ -178,7 +178,7 @@ void MainWindow::setupMenuBar() {
 	// Create a 'Save Results'action and associate an icon
 	const QIcon importResultsIcon = QIcon::fromTheme("import Results", QIcon(":/icons/importResults.png"));
 	QAction* importResultsAction = new QAction(importResultsIcon, tr("&Import Results"), this);
-	importResultsAction->setStatusTip(tr("Import results"));
+	importResultsAction->setStatusTip(tr("Import previous results"));
 	connect(importResultsAction, &QAction::triggered, this, &MainWindow::importResults);
 	pVppActionMenu_->addAction(importResultsAction);
 
@@ -437,33 +437,31 @@ void MainWindow::plotPolars() {
 // Plot the velocity polars
 void MainWindow::plotSailCoeffs() {
 
+	// If the boat description has not been imported we do not have the
+	// vppItems nor the coefficients to be plotted!
+	if(!pVppItems_){
+		QMessageBox msgBox;
+		msgBox.setText("Please import a boat description first!");
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+		return;
+	}
+
 	pLogWidget_->append("Plotting Sail coeffs...");
 
 	// Leave the call to plPlot to check the consistency of my plot
 	pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients();
 
-//	// Add a XY plot
-//	pXYPlotWidget_.reset( new VPPXYChartWidget(this) );
-//
-//	// Add the xy plot view to the left of the app window
-//	addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_.get());
-//
-//	tabDockWidget(pXYPlotWidget_.get());
-
-	//-------------------
-
 	// Instantiate an empty multiple plot widget
-	pMultiPlotWidget_.reset(new MultiplePlotWidget(this) );
+	pMultiPlotWidget_.reset( new MultiplePlotWidget(this) );
 
 	// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
 	pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients( pMultiPlotWidget_.get() );
 
 	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_.get());
+	addDockWidget(Qt::TopDockWidgetArea, pMultiPlotWidget_.get() );
 
 	tabDockWidget(pMultiPlotWidget_.get());
-
-
 
 }
 

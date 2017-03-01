@@ -37,6 +37,19 @@ MultiplePlotWidget::MultiplePlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, Qt::Wi
 
 }
 
+// Add a chart in a given position
+void MultiplePlotWidget::addChart(QChart& chart, size_t px, size_t py) {
+
+	MultiplePlotChartComponent* pChart = new MultiplePlotChartComponent( &chart );
+	pGridLayout_->addWidget(pChart, px, py);
+	chartList_ << pChart;
+
+	// Connect the charts in the multiple plot in order to being able to
+	// magnify one chart on double click
+	connectFullScreenSignals();
+
+}
+
 // Connect all the charts in the multiplot to the toggleFullScreen
 // signal that is used to expand one chart to full screen
 void MultiplePlotWidget::connectFullScreenSignals() {
@@ -46,19 +59,6 @@ void MultiplePlotWidget::connectFullScreenSignals() {
 		QObject::disconnect(chart, SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
 		QObject::connect(chart, SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
 	}
-
-}
-
-// Add a chart in a given position
-void MultiplePlotWidget::addChart(QChart& chart, size_t px, size_t py) {
-
-	MultiplePlotChartComponent* pChart = new MultiplePlotChartComponent( &chart );
-	pGridLayout_->addWidget(pChart, 0, 0);
-	chartList_ << pChart;
-
-	// Connect the charts in the multiple plot in order to being able to
-	// magnify one chart on double click
-	connectFullScreenSignals();
 
 }
 

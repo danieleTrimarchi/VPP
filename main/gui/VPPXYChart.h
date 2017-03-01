@@ -29,7 +29,7 @@ public :
 	void addSeries();
 
 	/// Add a given series to the plot
-	void addSeries(QAbstractSeries *series);
+	void addSeries(QLineSeries *series);
 
 	/// Remove a curve from the plot
 	void removeSeries();

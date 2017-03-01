@@ -88,10 +88,18 @@ void VPPXYChart::addSeries() {
 }
 
 // Add a given series to the plot
-void VPPXYChart::addSeries(QAbstractSeries *series) {
+void VPPXYChart::addSeries(QLineSeries *series) {
 
-	// Decorator
-	QChart::addSeries(series);
+	series_.append(series);
+
+  series->setName(QString("line " + QString::number(series_.count())));
+
+  QChart::addSeries(series);
+
+  if (series_.count() == 1) {
+      createDefaultAxes();
+  }
+
 }
 
 
