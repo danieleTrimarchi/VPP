@@ -32,7 +32,7 @@ subFolders= ['gui',
 			 'plotting',
 			 'results',
 			 'utils',
-			 'versioning',
+			 'versioning'
 			 ] 
 
 curDirAbsPath= Dir('.').srcnode().abspath
