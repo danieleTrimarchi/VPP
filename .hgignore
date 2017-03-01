@@ -23,6 +23,5 @@ EclipseWorkSpace/*
 main/versioning/Version.cpp
 DerivedData/*
 *.xcsettings
-main/VPP.xcodeproj/*
 xCodeBuild/*
 main/.qmake.stash
