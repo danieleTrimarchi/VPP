@@ -76,6 +76,9 @@ public slots:
 	/// Plot the sail coefficients
 	void plotSailCoeffs();
 
+	/// Temp method used to test QCustomPlot in the current env
+	void testQCustomPlot();
+
 	/// Add a multiPlot widget
 	void multiPlot();
 

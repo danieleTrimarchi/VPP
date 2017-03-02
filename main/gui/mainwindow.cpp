@@ -204,7 +204,8 @@ void MainWindow::setupMenuBar() {
 	const QIcon plotSailCoeffsIcon = QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png"));
 	QAction* plotSailCoeffsAction = new QAction(plotSailCoeffsIcon, tr("&Sail Coeffs"), this);
 	plotSailCoeffsAction->setStatusTip(tr("Plot Sail Coeffs"));
-	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
+	//connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
+	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::testQCustomPlot);
 	pPlotMenu_->addAction(plotSailCoeffsAction);
 	pToolBar_->addAction(plotSailCoeffsAction);
 
@@ -462,6 +463,42 @@ void MainWindow::plotSailCoeffs() {
 	addDockWidget(Qt::TopDockWidgetArea, pMultiPlotWidget_.get() );
 
 	tabDockWidget(pMultiPlotWidget_.get());
+
+}
+
+#include "qcustomplot.h"
+
+// Temp method used to test QCustomPlot in the current env
+void MainWindow::testQCustomPlot() {
+
+	// Instantiate a QCustomPlot, which is a widget
+	QCustomPlot* customPlot;
+	QString demoName = "Quadratic Demo";
+  // generate some data:
+  QVector<double> x(101), y(101); // initialize with entries 0..100
+  for (int i=0; i<101; ++i)
+  {
+    x[i] = i/50.0 - 1; // x goes from -1 to 1
+    y[i] = x[i]*x[i];  // let's plot a quadratic function
+  }
+  // create graph and assign data to it:
+  customPlot->addGraph();
+  customPlot->graph(0)->setData(x, y);
+  // give the axes some labels:
+  customPlot->xAxis->setLabel("x");
+  customPlot->yAxis->setLabel("y");
+  // set axes ranges, so we see all data:
+  customPlot->xAxis->setRange(-1, 1);
+  customPlot->yAxis->setRange(0, 1);
+
+  // Now add the widget to some dockWidget
+  pXYPlotWidget_->setWidget(customPlot);
+
+  // Make sure the plot is up to date
+  customPlot->replot();
+
+  // Tabify the dockwidget
+	tabDockWidget(pXYPlotWidget_.get());
 
 }
 

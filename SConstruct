@@ -232,7 +232,8 @@ def getQt(self):
                       'QtNetwork',
                       'QtWidgets',
                       'QtCharts',
-                      'QtDataVisualization'
+                      'QtDataVisualization', 
+                      'QtPrintSupport'
                       ])
 
     self.Append( CPPPATH=['/usr/local/Cellar/qt5/5.7.0/include/QtWidgets'] ) 
@@ -245,9 +246,8 @@ def getQt(self):
     #Compile Release
     #self.Append(CPPDEFINES=['RELEASE'])
 
-
 releaseEnv.AddMethod(getQt, 'getQt')
-
+    
 # ---------------------------------------------------------------
 
 # We define our debug build environment in a similar fashion...

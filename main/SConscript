@@ -24,7 +24,8 @@ localEnv.Append(LINKFLAGS ='-framework Accelerate -lm -ldl')
 #      C++11 extension [-Wc++11-extensions]
 
 # List the subFolders
-subFolders= ['gui',
+subFolders= ['qcustomplot', # the presence of this folder is assured by copyQCustomPlotFiles
+			 'gui',
 			 'exceptions', 
 			 'core', 
 			 'io',

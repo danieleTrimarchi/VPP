@@ -169,6 +169,7 @@ VPP.xcodeproj/project.pbxproj: VPP.pro /usr/local/Cellar/qt5/5.7.0/mkspecs/macx-
 		VPP.pro \
 		gui/VPP.qrc \
 		/usr/local/Cellar/qt5/5.7.0/lib/QtCharts.framework/QtCharts.prl \
+		/usr/local/Cellar/qt5/5.7.0/lib/QtPrintSupport.framework/QtPrintSupport.prl \
 		/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/QtWidgets.prl \
 		/usr/local/Cellar/qt5/5.7.0/lib/QtDataVisualization.framework/QtDataVisualization.prl \
 		/usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework/QtGui.prl \
@@ -335,6 +336,7 @@ VPP.xcodeproj/project.pbxproj: VPP.pro /usr/local/Cellar/qt5/5.7.0/mkspecs/macx-
 VPP.pro:
 gui/VPP.qrc:
 /usr/local/Cellar/qt5/5.7.0/lib/QtCharts.framework/QtCharts.prl:
+/usr/local/Cellar/qt5/5.7.0/lib/QtPrintSupport.framework/QtPrintSupport.prl:
 /usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/QtWidgets.prl:
 /usr/local/Cellar/qt5/5.7.0/lib/QtDataVisualization.framework/QtDataVisualization.prl:
 /usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework/QtGui.prl:

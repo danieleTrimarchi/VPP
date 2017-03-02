@@ -26,9 +26,9 @@
 # 
 #-------------------------------------------------
 
-QT       += core gui network widgets datavisualization charts
+QT       += core gui network widgets datavisualization charts printsupport
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += core gui network widgets datavisualization charts
+greaterThan(QT_MAJOR_VERSION, 4): QT += core gui network widgets datavisualization charts printsupport
 
 TARGET = VPP
 TEMPLATE = app
@@ -89,6 +89,7 @@ LIBS +=	-lipopt \
 RESOURCES     = gui/VPP.qrc
 
 SOURCES += main.cxx \
+	qcustomplot/*.cpp \
 	gui/*.cpp \
 	exceptions/*.cpp \ 
 	core/*.cpp \
@@ -100,7 +101,8 @@ SOURCES += main.cxx \
 	versioning/*.cpp 
 
 
-HEADERS  +=	gui/*.h \
+HEADERS +=	qcustomplot/*.h \
+		gui/*.h \
 		exceptions/*.h \ 
 		core/*.h \
 		io/*.h \
