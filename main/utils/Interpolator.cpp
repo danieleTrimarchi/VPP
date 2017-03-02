@@ -324,6 +324,12 @@ void SplineInterpolator::plot(VPPXYChart& chart, double minVal,double maxVal,int
   chart.addSeries(pointSeries);
   pointSeries->setName(QString("Point data"));
 
+  // This line must be plotted with a thin dotted line
+  QPen pen;
+  pen.setStyle( Qt::DotLine );
+  pen.setWidth(1.);
+  pointSeries->setPen( pen );
+
   // Allow switching on/off the splineSeries on marker click
   chart.connectMarkers();
 }

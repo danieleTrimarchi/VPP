@@ -176,9 +176,9 @@ void MainWindow::setupMenuBar() {
 	pVppActionMenu_->addAction(saveResultsAction);
 
 	// Create a 'Save Results'action and associate an icon
-	const QIcon importResultsIcon = QIcon::fromTheme("import Results", QIcon(":/icons/importResults.png"));
-	QAction* importResultsAction = new QAction(importResultsIcon, tr("&Import Results"), this);
-	importResultsAction->setStatusTip(tr("Import previous results"));
+	const QIcon importResultsIcon = QIcon::fromTheme("Import Previous Results", QIcon(":/icons/importResults.png"));
+	QAction* importResultsAction = new QAction(importResultsIcon, tr("&Import Previous Results"), this);
+	importResultsAction->setStatusTip(tr("Import Previous Results"));
 	connect(importResultsAction, &QAction::triggered, this, &MainWindow::importResults);
 	pVppActionMenu_->addAction(importResultsAction);
 
