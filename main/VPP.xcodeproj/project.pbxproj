@@ -5,1112 +5,2560 @@
 	};
 	objectVersion = 46;
 	objects = {
-
-/* Begin PBXAggregateTarget section */
-		332CE8FADCDB06BBA6D8A1F2 /* Qt Preprocess */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 6CC3B5D2136C7CD6A5CF5A59 /* Build configuration list for PBXNativeTarget "VPP" */;
-			buildPhases = (
-				5E618435888B9D49F8540165 /* Qt Qmake */,
-				7EF0942E79C014DCEC8976BC /* Qt Preprocessors */,
-			);
-			dependencies = (
-			);
-			name = "Qt Preprocess";
-			productName = "Qt Preprocess";
-		};
-/* End PBXAggregateTarget section */
-
-/* Begin PBXBuildFile section */
-		070BFD2D4E138BEFBF3D8F20 /* PolarPlotWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 286F18449D1D28A3B8962491 /* PolarPlotWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		09EB5284DBB1E0D5B8F28B66 /* VPPGradient.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = BAF794D6CF41C1FFCB702EA4 /* VPPGradient.cpp */; settings = {ATTRIBUTES = (); }; };
-		0AF1216A2CF223D59C37CBF1 /* VPPItem.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 08633239B56170FDC87D7DCA /* VPPItem.cpp */; settings = {ATTRIBUTES = (); }; };
-		0D6D6B08CF3AB37DD5709931 /* hs071_nlp.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 4DF4B8DD980746ED6742BA2B /* hs071_nlp.cpp */; settings = {ATTRIBUTES = (); }; };
-		1004F68AB671CF8D4E9ED3AF /* VPPSolverFactoryBase.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = F7CA810330F1608DEF44C0A6 /* VPPSolverFactoryBase.cpp */; settings = {ATTRIBUTES = (); }; };
-		15E3284226ED033B1D82614B /* StateVectorDialog.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 657800E3B4935A0005288B08 /* StateVectorDialog.cpp */; settings = {ATTRIBUTES = (); }; };
-		192B5378B8D36922593B3F7A /* qcustomplot.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 87198ABFDBD68BF5DF9D9CB0 /* qcustomplot.cpp */; settings = {ATTRIBUTES = (); }; };
-		1CE2E9AA78F4B9DFC24F4505 /* mathUtils.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = AE7119D191887546E530ACEE /* mathUtils.cpp */; settings = {ATTRIBUTES = (); }; };
-		25F72F3CD1EE305F577F6BCB /* VppTabDockWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 04306F199F9FBC54052772BC /* VppTabDockWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		287A821D050F1F28A6BBC99A /* amd in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = C17C2BC59FFDD28F2AD11206 /* amd */; };
-		2DE1F6FBB19204E064E31091 /* moc_VppTableDockWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 7E8A58ABAA7DF29505984473 /* moc_VppTableDockWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		446FA5B61F047CD6FE1AA646 /* QtCharts.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = F165D8A70734D22F69C0ABDE /* QtCharts.framework */; };
-		4487B595710D5FCF44118B04 /* VPPJacobian.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 6AABFBEA326278C3C07B2F37 /* VPPJacobian.cpp */; settings = {ATTRIBUTES = (); }; };
-		451FA4931D7FB5CDC52624ED /* moc_qcustomplot.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 5277607BDA8F3D6E3DFC9836 /* moc_qcustomplot.cpp */; settings = {ATTRIBUTES = (); }; };
-		4918102183872DD3BE80D0CE /* SparseSolver.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 5E9ADBA5FA226EE6B6F544AD /* SparseSolver.cpp */; settings = {ATTRIBUTES = (); }; };
-		4C468452E932C245687E07F7 /* Warning.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 50C636CE99AC122BDF63EE2F /* Warning.cpp */; settings = {ATTRIBUTES = (); }; };
-		563F298A96AF779B9D37D515 /* VariableFileParser.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 14F0F1B53E3D1B3DD1127F97 /* VariableFileParser.cpp */; settings = {ATTRIBUTES = (); }; };
-		576A3B2ED207388499383478 /* moc_LogDockWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 957FA62CD8BE6760B9D0CC66 /* moc_LogDockWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		5D0F5727C28892E1AA58F715 /* moc_LogWindow.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 11C28DC9374A7F569B14337D /* moc_LogWindow.cpp */; settings = {ATTRIBUTES = (); }; };
-		631E984421ACA6621D9A7434 /* qrc_VPP.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 3AEDC5E81BCA26FFBFF81676 /* qrc_VPP.cpp */; settings = {ATTRIBUTES = (); }; };
-		678241618B2798A4073714F6 /* moc_VppTabDockWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 11129B21777CADB90E065E97 /* moc_VppTabDockWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		6DE6EE811139C08213BDB9F6 /* moc_VppPolarChart.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 70D2952ABA64DED7B184EA05 /* moc_VppPolarChart.cpp */; settings = {ATTRIBUTES = (); }; };
-		6F7FA431D6160814D9DF713C /* VPPException.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 6A2E562CC29CA78C1E436F8A /* VPPException.cpp */; settings = {ATTRIBUTES = (); }; };
-		7136621E4573A9C8F9EB65F5 /* VPP_nlp.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 990162E35477F44C288C8B06 /* VPP_nlp.cpp */; settings = {ATTRIBUTES = (); }; };
-		7188E82353A23C080AF917CF /* VPPSolver.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 8D78003B13DFD45AD2E7C80D /* VPPSolver.cpp */; settings = {ATTRIBUTES = (); }; };
-		73A2E6D7430E9F2D9E796997 /* SemiAnalyticalOptimizer.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = A417EA288D6516B2EB9422FF /* SemiAnalyticalOptimizer.cpp */; settings = {ATTRIBUTES = (); }; };
-		73A37DAC21B7AA56C878B364 /* VppChartView.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = C98EA01C80996DFA59D73E5B /* VppChartView.cpp */; settings = {ATTRIBUTES = (); }; };
-		73B98F530B17BEEAC4F19437 /* SurfaceGraph.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = B7CC520C1E0517BD80ECF99D /* SurfaceGraph.cpp */; settings = {ATTRIBUTES = (); }; };
-		76BF210E30E2B44EE5131EFE /* SailSet.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 3BBABCBDC3078246057C06F9 /* SailSet.cpp */; settings = {ATTRIBUTES = (); }; };
-		77F684B83BBE8A14FC796FAB /* VPPResultIO.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = CE048B65E5616394B4055ADF /* VPPResultIO.cpp */; settings = {ATTRIBUTES = (); }; };
-		7B61C92B0D756FD9703B0C41 /* QtGui.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = CD829298CA2038092A51A0F6 /* QtGui.framework */; };
-		80CE99F22CE7157743D70AF3 /* MultiplePlotWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 770CF1D7E9512BBABB17E86F /* MultiplePlotWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		82F07F0A2DA26B65C850F56A /* LogWindow.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 5159B92706FEF3FB1A7CDA89 /* LogWindow.cpp */; settings = {ATTRIBUTES = (); }; };
-		86750C960826ACB1F9962DAB /* umfpack in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = B8791C3CD81994A6F94D6F46 /* umfpack */; };
-		8771A8C96E9C391044035D99 /* OpenGL.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = D4B32C2222F82AC56BADEB21 /* OpenGL.framework */; };
-		8B18BB4DAB3D225D54AF6D82 /* VariablesDockWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 668C7DA1D2FAA0394557BD96 /* VariablesDockWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		8D267F2E4776F0ECA2F49DC8 /* IOKit.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = A1A67BEAA744704B29168D39 /* IOKit.framework */; };
-		91097B4EF09BE74A8F66660E /* moc_VariablesDockWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 8028902D78BDF02F77D3C385 /* moc_VariablesDockWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		922626466ED4A202C4DC09F2 /* colamd in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = BEEA8D5BDFFEC9EAB00157BC /* colamd */; };
-		941A92EC3C78D3813C3FBED1 /* NLOptSolver.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 334F895D0E8CC9F40B9EE7F0 /* NLOptSolver.cpp */; settings = {ATTRIBUTES = (); }; };
-		97CC4A587B63565F574D7541 /* QtNetwork.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 94C9EC0B3C28D1C32480365D /* QtNetwork.framework */; };
-		98D524C61C980871B2998339 /* moc_VPPXYChart.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = C725EF5DCD399139FA7F47F0 /* moc_VPPXYChart.cpp */; settings = {ATTRIBUTES = (); }; };
-		9A43EB1698980269F17584C3 /* VppTableModel.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 63D3C8AD76023A0EC3D918BF /* VppTableModel.cpp */; settings = {ATTRIBUTES = (); }; };
-		A05C9607EC348CC420D566AF /* moc_MultiplePlotWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = F4BF2B3A27F0FADB8475238A /* moc_MultiplePlotWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		A1A58D2C7E3E938937176FE8 /* Version.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = DE48BB7F44534385EE02F99A /* Version.cpp */; settings = {ATTRIBUTES = (); }; };
-		A243F769B1ABDD203363B6BE /* nlopt in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 49F3A6E2244BF8E9BBB9BC64 /* nlopt */; };
-		A5A82EE01AAEAE7E1D416FAE /* moc_ThreeDPlotWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 45D80CD2C6D2669A90B6856B /* moc_ThreeDPlotWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		A75154068A2E317B0B7AEDB3 /* ipopt in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = D8D01A26CF40C165370FBD9F /* ipopt */; };
-		A87F38E3E92FDA12F864426F /* VPPAeroItem.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = CDBAD5D339DCC96FB0E7D52B /* VPPAeroItem.cpp */; settings = {ATTRIBUTES = (); }; };
-		A8CEC54E30C5CFE667D0E391 /* QtPrintSupport.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 362C73AD0C717E77FFCEB1AF /* QtPrintSupport.framework */; };
-		A8EC760318DCA70D1513B347 /* moc_MainWindow.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = C0CD01CAE2CD1D7D1E1C0830 /* moc_MainWindow.cpp */; settings = {ATTRIBUTES = (); }; };
-		A99B2AA0F9CBBDD12BA126A4 /* DiskArbitration.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 2B774D8E4178765CE52EAAF5 /* DiskArbitration.framework */; };
-		A9DEA3E3F995D621A9930E8A /* VPPSolverBase.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 0814EC7E585F9D34C9F0F738 /* VPPSolverBase.cpp */; settings = {ATTRIBUTES = (); }; };
-		AE19E77BD182C321CEBC0FFC /* NRSolver.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 328F19C36AD9594EB96E23F3 /* NRSolver.cpp */; settings = {ATTRIBUTES = (); }; };
-		AF7C04DC403CFB3620FA220D /* VPPHydroItem.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 50F291407EE8C164E64DDBA4 /* VPPHydroItem.cpp */; settings = {ATTRIBUTES = (); }; };
-		B1DFCD9F8C53448F00E8568F /* MainWindow.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 7E53A029758EC767BB05329D /* MainWindow.cpp */; settings = {ATTRIBUTES = (); }; };
-		B1FD449BA9A24D8FBFD6B918 /* QtWidgets.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 17DDAFE5E52515581D095F18 /* QtWidgets.framework */; };
-		B2F54A3ECA917A378DACF112 /* suitesparseconfig in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 21D6994D0E44278C59ACEDAF /* suitesparseconfig */; };
-		B69261DD6648DBDE33C96052 /* QtDataVisualization.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = D7823A3E9B20D79AFE462B4E /* QtDataVisualization.framework */; };
-		B890D9B5705D4DC8F0C7EB1A /* Variables.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 3DC9612A351B632B01DBEBF1 /* Variables.cpp */; settings = {ATTRIBUTES = (); }; };
-		BC851D63CD7161177A68434E /* VppPolarChart.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 7B7C3CB1FE7F49D765F66163 /* VppPolarChart.cpp */; settings = {ATTRIBUTES = (); }; };
-		BCCC585FB7B24E50F9E3A25E /* moc_StateVectorDialog.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 49C16E4CF089E5E2187FC99E /* moc_StateVectorDialog.cpp */; settings = {ATTRIBUTES = (); }; };
-		BDA3A34FC779764B195418E3 /* moc_VariableTreeModel.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 724FC7CC13416231B8122B3E /* moc_VariableTreeModel.cpp */; settings = {ATTRIBUTES = (); }; };
-		C01856DB5B5A05D31BA49B13 /* ThreeDPlotWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = A9B8BFB4C943A486717F4880 /* ThreeDPlotWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		C02D0B2E7586129C2CD91C5D /* main.cxx in Compile Sources */ = {isa = PBXBuildFile; fileRef = C0118192E64AB332BF49D4F9 /* main.cxx */; settings = {ATTRIBUTES = (); }; };
-		C061B6738020E9ECD9BE7524 /* BLAS in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 7344457A54A5CAF44D131165 /* BLAS */; };
-		C1A9685BAF4A2A46C96A25EF /* LogDockWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 1B14A761DA72B7FF2DA85767 /* LogDockWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		C24CCBD40DCD736316FA1AAD /* VPPPlotter.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 3F7F0A85AF34FDD32EA67ED8 /* VPPPlotter.cpp */; settings = {ATTRIBUTES = (); }; };
-		C51BF6D53A6AE483D77F53DC /* VPPXYChartWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 1B821E593CFFCA5EA9B5D8EE /* VPPXYChartWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		C55232B542E8EF16099FC937 /* moc_MultiplePlotChartComponent.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 3F6C04A5AF5B7937D7BA4446 /* moc_MultiplePlotChartComponent.cpp */; settings = {ATTRIBUTES = (); }; };
-		C73D452C12FA2017C654644A /* VPPRightingMomentItem.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 9BE7C3F5D8F7F773484471CA /* VPPRightingMomentItem.cpp */; settings = {ATTRIBUTES = (); }; };
-		C779D8A839F2A9A97C2442AA /* Interpolator.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E15242A623D8DE6D37EB4668 /* Interpolator.cpp */; settings = {ATTRIBUTES = (); }; };
-		C8091D0019724BF7E52C8248 /* VppTableDockWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = B58E96A6686474993FE0BEEF /* VppTableDockWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		C8816B2D293A3060C9D303EF /* moc_PolarPlotWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = DA264DCD041D00721E18D595 /* moc_PolarPlotWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		CAF7C7E200F4428E18E6BE5B /* VariableTreeModel.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 0B249122FD48B4BB598011C7 /* VariableTreeModel.cpp */; settings = {ATTRIBUTES = (); }; };
-		CB956AE2FFDCABAC41252052 /* VariableTreeItem.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 0CC4A3A9AB21683A3C9A623D /* VariableTreeItem.cpp */; settings = {ATTRIBUTES = (); }; };
-		CE5094404CC9DC7237269F84 /* Results.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 273504F601EB6D79CE7C44EE /* Results.cpp */; settings = {ATTRIBUTES = (); }; };
-		CF8F22955BC8B616831F807F /* moc_VPPXYChartWidget.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = B1ED9D94B2C3E6DC8E30541C /* moc_VPPXYChartWidget.cpp */; settings = {ATTRIBUTES = (); }; };
-		D7F9FA241A1FA3A4F4B55242 /* plplotcxx in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = F40D60FEC996A1BD0A3DBC73 /* plplotcxx */; };
-		DAB42D4DFE73E08E20897E9F /* MultiplePlotChartComponent.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 9100D39368F7FCF1989E96C6 /* MultiplePlotChartComponent.cpp */; settings = {ATTRIBUTES = (); }; };
-		E17D8E61846603133AFFFB97 /* VPPPlotSet.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 92D1527A66BE98BF7CCD7D0B /* VPPPlotSet.cpp */; settings = {ATTRIBUTES = (); }; };
-		E45E51A644D5FC9F942ECE55 /* AGL.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 8D9815BDB5BD9F90D2BC05C5 /* AGL.framework */; };
-		E5D27870C9067A6E81D7D52B /* moc_SurfaceGraph.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = E510FC43028A784148AD8613 /* moc_SurfaceGraph.cpp */; settings = {ATTRIBUTES = (); }; };
-		E8CEE9A2D81662520C72B099 /* QtCore.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 820A25BF0A1A2242F14E2A0A /* QtCore.framework */; };
-		EB69D9407AE73D89E0305731 /* cholmod in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = C06D5D7F1758EDF3EDEF3A0C /* cholmod */; };
-		EE8F3A39D925DC1F0E562B4D /* VPPItemFactory.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 78B96511369C28EAB708CC30 /* VPPItemFactory.cpp */; settings = {ATTRIBUTES = (); }; };
-		EE99A568D5161783748B5041 /* moc_VppTableModel.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 12C685494E636CC52F4E8324 /* moc_VppTableModel.cpp */; settings = {ATTRIBUTES = (); }; };
-		F50E931CEB8EB4FB0F8F0053 /* Solver.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 295E978F4230FE419A282AA3 /* Solver.cpp */; settings = {ATTRIBUTES = (); }; };
-		F69025EF8F008544B24D5334 /* moc_VppChartView.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = C8455A02554D8C88A3E1A8C0 /* moc_VppChartView.cpp */; settings = {ATTRIBUTES = (); }; };
-		F9F28EA589CD8C482252BC9E /* VPPXYChart.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 8EE57C82F10D13C838A233AB /* VPPXYChart.cpp */; settings = {ATTRIBUTES = (); }; };
-		FA468679B146CF8620B85B06 /* Regression.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 2F1DB019ECEF0633081681AC /* Regression.cpp */; settings = {ATTRIBUTES = (); }; };
-		FE0E127F1A005003755655A1 /* plplot in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = D1B7D5650E50D1736E530780 /* plplot */; };
-/* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		B3DCBEA51E68937300CA7C46 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6DB9C3763D02B1415CD9D565 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 332CE8FADCDB06BBA6D8A1F2;
-			remoteInfo = "Qt Preprocess";
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXFileReference section */
-		02D40B796BEA315707373816 /* IOUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IOUtils.h; path = /Users/dtrimarchi/VPP/main/io/IOUtils.h; sourceTree = "<absolute>"; };
-		04306F199F9FBC54052772BC /* VppTabDockWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VppTabDockWidget.cpp; path = /Users/dtrimarchi/VPP/main/gui/VppTabDockWidget.cpp; sourceTree = "<absolute>"; };
-		0814EC7E585F9D34C9F0F738 /* VPPSolverBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPSolverBase.cpp; path = /Users/dtrimarchi/VPP/main/solvers/VPPSolverBase.cpp; sourceTree = "<absolute>"; };
-		08633239B56170FDC87D7DCA /* VPPItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPItem.cpp; path = /Users/dtrimarchi/VPP/main/core/VPPItem.cpp; sourceTree = "<absolute>"; };
-		099A3CE321D86B34E46E6ACB /* Physics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Physics.h; path = /Users/dtrimarchi/VPP/main/utils/Physics.h; sourceTree = "<absolute>"; };
-		0B249122FD48B4BB598011C7 /* VariableTreeModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VariableTreeModel.cpp; path = /Users/dtrimarchi/VPP/main/gui/VariableTreeModel.cpp; sourceTree = "<absolute>"; };
-		0CC4A3A9AB21683A3C9A623D /* VariableTreeItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VariableTreeItem.cpp; path = /Users/dtrimarchi/VPP/main/gui/VariableTreeItem.cpp; sourceTree = "<absolute>"; };
-		0D17C3B0FEB323CB6CB7B583 /* SparseSolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SparseSolver.h; path = /Users/dtrimarchi/VPP/main/solvers/SparseSolver.h; sourceTree = "<absolute>"; };
-		0E28EB96A992EBFA9906A982 /* VPPResultIO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPResultIO.h; path = /Users/dtrimarchi/VPP/main/io/VPPResultIO.h; sourceTree = "<absolute>"; };
-		0E7C40F049E3D1F22165965D /* Variables.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Variables.h; path = /Users/dtrimarchi/VPP/main/io/Variables.h; sourceTree = "<absolute>"; };
-		0EE095B71C0C524A61855563 /* Interpolator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Interpolator.h; path = /Users/dtrimarchi/VPP/main/utils/Interpolator.h; sourceTree = "<absolute>"; };
-		11129B21777CADB90E065E97 /* moc_VppTabDockWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_VppTabDockWidget.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_VppTabDockWidget.cpp; sourceTree = "<absolute>"; };
-		11C28DC9374A7F569B14337D /* moc_LogWindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_LogWindow.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_LogWindow.cpp; sourceTree = "<absolute>"; };
-		12C685494E636CC52F4E8324 /* moc_VppTableModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_VppTableModel.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_VppTableModel.cpp; sourceTree = "<absolute>"; };
-		14F0F1B53E3D1B3DD1127F97 /* VariableFileParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VariableFileParser.cpp; path = /Users/dtrimarchi/VPP/main/io/VariableFileParser.cpp; sourceTree = "<absolute>"; };
-		1765054731E59F892A0F9DBE /* NRSolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NRSolver.h; path = /Users/dtrimarchi/VPP/main/solvers/NRSolver.h; sourceTree = "<absolute>"; };
-		17DDAFE5E52515581D095F18 /* QtWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtWidgets.framework; path = /usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework; sourceTree = "<absolute>"; };
-		1ABC9A06BCEBC1827E32FE53 /* VPPXYChartWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPXYChartWidget.h; path = /Users/dtrimarchi/VPP/main/gui/VPPXYChartWidget.h; sourceTree = "<absolute>"; };
-		1B14A761DA72B7FF2DA85767 /* LogDockWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LogDockWidget.cpp; path = /Users/dtrimarchi/VPP/main/gui/LogDockWidget.cpp; sourceTree = "<absolute>"; };
-		1B821E593CFFCA5EA9B5D8EE /* VPPXYChartWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPXYChartWidget.cpp; path = /Users/dtrimarchi/VPP/main/gui/VPPXYChartWidget.cpp; sourceTree = "<absolute>"; };
-		1CF6764FEB0045428A1337B4 /* VppTableModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VppTableModel.h; path = /Users/dtrimarchi/VPP/main/gui/VppTableModel.h; sourceTree = "<absolute>"; };
-		21D6994D0E44278C59ACEDAF /* suitesparseconfig */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = suitesparseconfig; path = /opt/local/lib/libsuitesparseconfig.dylib; sourceTree = "<absolute>"; };
-		273504F601EB6D79CE7C44EE /* Results.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Results.cpp; path = /Users/dtrimarchi/VPP/main/results/Results.cpp; sourceTree = "<absolute>"; };
-		286F18449D1D28A3B8962491 /* PolarPlotWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PolarPlotWidget.cpp; path = /Users/dtrimarchi/VPP/main/gui/PolarPlotWidget.cpp; sourceTree = "<absolute>"; };
-		295E978F4230FE419A282AA3 /* Solver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Solver.cpp; path = /Users/dtrimarchi/VPP/main/solvers/Solver.cpp; sourceTree = "<absolute>"; };
-		2B774D8E4178765CE52EAAF5 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = /System/Library/Frameworks/DiskArbitration.framework; sourceTree = "<absolute>"; };
-		2D0EA83236085394BB65CCF5 /* VPP.qrc */ = {isa = PBXFileReference; lastKnownFileType = text; name = VPP.qrc; path = /Users/dtrimarchi/VPP/main/gui/VPP.qrc; sourceTree = "<absolute>"; };
-		2D676EF791E0DD1DF651B5E7 /* ThreeDPlotWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ThreeDPlotWidget.h; path = /Users/dtrimarchi/VPP/main/gui/ThreeDPlotWidget.h; sourceTree = "<absolute>"; };
-		2F1DB019ECEF0633081681AC /* Regression.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Regression.cpp; path = /Users/dtrimarchi/VPP/main/utils/Regression.cpp; sourceTree = "<absolute>"; };
-		32208B5652ED65FBE537FBF9 /* VariableTreeModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VariableTreeModel.h; path = /Users/dtrimarchi/VPP/main/gui/VariableTreeModel.h; sourceTree = "<absolute>"; };
-		328F19C36AD9594EB96E23F3 /* NRSolver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = NRSolver.cpp; path = /Users/dtrimarchi/VPP/main/solvers/NRSolver.cpp; sourceTree = "<absolute>"; };
-		334F895D0E8CC9F40B9EE7F0 /* NLOptSolver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = NLOptSolver.cpp; path = /Users/dtrimarchi/VPP/main/solvers/NLOptSolver.cpp; sourceTree = "<absolute>"; };
-		360FDE91977FE1D108EFAE76 /* VariableFileParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VariableFileParser.h; path = /Users/dtrimarchi/VPP/main/io/VariableFileParser.h; sourceTree = "<absolute>"; };
-		362C73AD0C717E77FFCEB1AF /* QtPrintSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtPrintSupport.framework; path = /usr/local/Cellar/qt5/5.7.0/lib/QtPrintSupport.framework; sourceTree = "<absolute>"; };
-		36A61D690E2BAA7EB22A1601 /* VPPException.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPException.h; path = /Users/dtrimarchi/VPP/main/exceptions/VPPException.h; sourceTree = "<absolute>"; };
-		3AEDC5E81BCA26FFBFF81676 /* qrc_VPP.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = qrc_VPP.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/qrc_VPP.cpp; sourceTree = "<absolute>"; };
-		3BBABCBDC3078246057C06F9 /* SailSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SailSet.cpp; path = /Users/dtrimarchi/VPP/main/core/SailSet.cpp; sourceTree = "<absolute>"; };
-		3DC9612A351B632B01DBEBF1 /* Variables.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Variables.cpp; path = /Users/dtrimarchi/VPP/main/io/Variables.cpp; sourceTree = "<absolute>"; };
-		3F6C04A5AF5B7937D7BA4446 /* moc_MultiplePlotChartComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_MultiplePlotChartComponent.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_MultiplePlotChartComponent.cpp; sourceTree = "<absolute>"; };
-		3F7F0A85AF34FDD32EA67ED8 /* VPPPlotter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPPlotter.cpp; path = /Users/dtrimarchi/VPP/main/plotting/VPPPlotter.cpp; sourceTree = "<absolute>"; };
-		40A6D07C89D6CC1BD877F197 /* SurfaceGraph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SurfaceGraph.h; path = /Users/dtrimarchi/VPP/main/gui/SurfaceGraph.h; sourceTree = "<absolute>"; };
-		417BFC1CED8D7A865CCBE4C6 /* mathUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mathUtils.h; path = /Users/dtrimarchi/VPP/main/utils/mathUtils.h; sourceTree = "<absolute>"; };
-		45715217136F269224EB9BB6 /* MainWindow.ui */ = {isa = PBXFileReference; lastKnownFileType = text; name = MainWindow.ui; path = /Users/dtrimarchi/VPP/main/gui/MainWindow.ui; sourceTree = "<absolute>"; };
-		45D80CD2C6D2669A90B6856B /* moc_ThreeDPlotWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_ThreeDPlotWidget.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_ThreeDPlotWidget.cpp; sourceTree = "<absolute>"; };
-		486B9F86DD15A307EBDB3BAA /* VPPGradient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPGradient.h; path = /Users/dtrimarchi/VPP/main/solvers/VPPGradient.h; sourceTree = "<absolute>"; };
-		49C16E4CF089E5E2187FC99E /* moc_StateVectorDialog.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_StateVectorDialog.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_StateVectorDialog.cpp; sourceTree = "<absolute>"; };
-		49F3A6E2244BF8E9BBB9BC64 /* nlopt */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = nlopt; path = "/Users/dtrimarchi/third_party/nlopt-2.4.2/libs/libnlopt.a"; sourceTree = "<absolute>"; };
-		4DF4B8DD980746ED6742BA2B /* hs071_nlp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = hs071_nlp.cpp; path = /Users/dtrimarchi/VPP/main/solvers/hs071_nlp.cpp; sourceTree = "<absolute>"; };
-		50C636CE99AC122BDF63EE2F /* Warning.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Warning.cpp; path = /Users/dtrimarchi/VPP/main/exceptions/Warning.cpp; sourceTree = "<absolute>"; };
-		50F291407EE8C164E64DDBA4 /* VPPHydroItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPHydroItem.cpp; path = /Users/dtrimarchi/VPP/main/core/VPPHydroItem.cpp; sourceTree = "<absolute>"; };
-		5159B92706FEF3FB1A7CDA89 /* LogWindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LogWindow.cpp; path = /Users/dtrimarchi/VPP/main/gui/LogWindow.cpp; sourceTree = "<absolute>"; };
-		517A9064D3C0E8C3E03052D4 /* MainWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MainWindow.h; path = /Users/dtrimarchi/VPP/main/gui/MainWindow.h; sourceTree = "<absolute>"; };
-		5277607BDA8F3D6E3DFC9836 /* moc_qcustomplot.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_qcustomplot.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_qcustomplot.cpp; sourceTree = "<absolute>"; };
-		53B36FFBB9B36D83D4E0D337 /* hs071_nlp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = hs071_nlp.h; path = /Users/dtrimarchi/VPP/main/solvers/hs071_nlp.h; sourceTree = "<absolute>"; };
-		55981D7B28A86332D463FB84 /* Warning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Warning.h; path = /Users/dtrimarchi/VPP/main/exceptions/Warning.h; sourceTree = "<absolute>"; };
-		5C3623BB45BFA81E78273675 /* NLOptSolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NLOptSolver.h; path = /Users/dtrimarchi/VPP/main/solvers/NLOptSolver.h; sourceTree = "<absolute>"; };
-		5DE3EBCD3768A0E19EC7559E /* VppChartView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VppChartView.h; path = /Users/dtrimarchi/VPP/main/gui/VppChartView.h; sourceTree = "<absolute>"; };
-		5E9ADBA5FA226EE6B6F544AD /* SparseSolver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SparseSolver.cpp; path = /Users/dtrimarchi/VPP/main/solvers/SparseSolver.cpp; sourceTree = "<absolute>"; };
-		60041408373D40A638D734C8 /* Solver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Solver.h; path = /Users/dtrimarchi/VPP/main/solvers/Solver.h; sourceTree = "<absolute>"; };
-		6326D1D9F7D79D5A3D9076F3 /* VppPolarChart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VppPolarChart.h; path = /Users/dtrimarchi/VPP/main/gui/VppPolarChart.h; sourceTree = "<absolute>"; };
-		637F3EC1A5353BF4F81B4AA8 /* VPPItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPItem.h; path = /Users/dtrimarchi/VPP/main/core/VPPItem.h; sourceTree = "<absolute>"; };
-		63D3C8AD76023A0EC3D918BF /* VppTableModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VppTableModel.cpp; path = /Users/dtrimarchi/VPP/main/gui/VppTableModel.cpp; sourceTree = "<absolute>"; };
-		649E095303DA241CCD6CC4C7 /* SemiAnalyticalOptimizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SemiAnalyticalOptimizer.h; path = /Users/dtrimarchi/VPP/main/solvers/SemiAnalyticalOptimizer.h; sourceTree = "<absolute>"; };
-		657800E3B4935A0005288B08 /* StateVectorDialog.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StateVectorDialog.cpp; path = /Users/dtrimarchi/VPP/main/gui/StateVectorDialog.cpp; sourceTree = "<absolute>"; };
-		668C7DA1D2FAA0394557BD96 /* VariablesDockWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VariablesDockWidget.cpp; path = /Users/dtrimarchi/VPP/main/gui/VariablesDockWidget.cpp; sourceTree = "<absolute>"; };
-		6A2E562CC29CA78C1E436F8A /* VPPException.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPException.cpp; path = /Users/dtrimarchi/VPP/main/exceptions/VPPException.cpp; sourceTree = "<absolute>"; };
-		6A9F253E2B86D27595B9A55F /* MultiplePlotChartComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MultiplePlotChartComponent.h; path = /Users/dtrimarchi/VPP/main/gui/MultiplePlotChartComponent.h; sourceTree = "<absolute>"; };
-		6AABFBEA326278C3C07B2F37 /* VPPJacobian.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPJacobian.cpp; path = /Users/dtrimarchi/VPP/main/solvers/VPPJacobian.cpp; sourceTree = "<absolute>"; };
-		6B2131CE1178639BAFF11652 /* VPPPlotter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPPlotter.h; path = /Users/dtrimarchi/VPP/main/plotting/VPPPlotter.h; sourceTree = "<absolute>"; };
-		70D2952ABA64DED7B184EA05 /* moc_VppPolarChart.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_VppPolarChart.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_VppPolarChart.cpp; sourceTree = "<absolute>"; };
-		715ADE45838457CEBD96F8E2 /* Results.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Results.h; path = /Users/dtrimarchi/VPP/main/results/Results.h; sourceTree = "<absolute>"; };
-		7201A81A333777FDF4EC1978 /* VPPRightingMomentItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPRightingMomentItem.h; path = /Users/dtrimarchi/VPP/main/core/VPPRightingMomentItem.h; sourceTree = "<absolute>"; };
-		724FC7CC13416231B8122B3E /* moc_VariableTreeModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_VariableTreeModel.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_VariableTreeModel.cpp; sourceTree = "<absolute>"; };
-		7344457A54A5CAF44D131165 /* BLAS */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = BLAS; path = /System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib; sourceTree = "<absolute>"; };
-		770CF1D7E9512BBABB17E86F /* MultiplePlotWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MultiplePlotWidget.cpp; path = /Users/dtrimarchi/VPP/main/gui/MultiplePlotWidget.cpp; sourceTree = "<absolute>"; };
-		78B96511369C28EAB708CC30 /* VPPItemFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPItemFactory.cpp; path = /Users/dtrimarchi/VPP/main/core/VPPItemFactory.cpp; sourceTree = "<absolute>"; };
-		7B741AB7185A33C2329CEA4E /* PolarPlotWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PolarPlotWidget.h; path = /Users/dtrimarchi/VPP/main/gui/PolarPlotWidget.h; sourceTree = "<absolute>"; };
-		7B7C3CB1FE7F49D765F66163 /* VppPolarChart.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VppPolarChart.cpp; path = /Users/dtrimarchi/VPP/main/gui/VppPolarChart.cpp; sourceTree = "<absolute>"; };
-		7E53A029758EC767BB05329D /* MainWindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MainWindow.cpp; path = /Users/dtrimarchi/VPP/main/gui/MainWindow.cpp; sourceTree = "<absolute>"; };
-		7E8A58ABAA7DF29505984473 /* moc_VppTableDockWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_VppTableDockWidget.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_VppTableDockWidget.cpp; sourceTree = "<absolute>"; };
-		8028902D78BDF02F77D3C385 /* moc_VariablesDockWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_VariablesDockWidget.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_VariablesDockWidget.cpp; sourceTree = "<absolute>"; };
-		81BB54BE6EEA07C0BD98F16E /* Spline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Spline.h; path = /Users/dtrimarchi/VPP/main/utils/Spline.h; sourceTree = "<absolute>"; };
-		820A25BF0A1A2242F14E2A0A /* QtCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtCore.framework; path = /usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework; sourceTree = "<absolute>"; };
-		825E3E5A82036C9644DB21DC /* VPPPlotSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPPlotSet.h; path = /Users/dtrimarchi/VPP/main/plotting/VPPPlotSet.h; sourceTree = "<absolute>"; };
-		87198ABFDBD68BF5DF9D9CB0 /* qcustomplot.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = qcustomplot.cpp; path = /Users/dtrimarchi/VPP/main/qcustomplot/qcustomplot.cpp; sourceTree = "<absolute>"; };
-		897E9503B922BF640BCB5A11 /* VPPAeroItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPAeroItem.h; path = /Users/dtrimarchi/VPP/main/core/VPPAeroItem.h; sourceTree = "<absolute>"; };
-		8D78003B13DFD45AD2E7C80D /* VPPSolver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPSolver.cpp; path = /Users/dtrimarchi/VPP/main/solvers/VPPSolver.cpp; sourceTree = "<absolute>"; };
-		8D9815BDB5BD9F90D2BC05C5 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
-		8EE57C82F10D13C838A233AB /* VPPXYChart.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPXYChart.cpp; path = /Users/dtrimarchi/VPP/main/gui/VPPXYChart.cpp; sourceTree = "<absolute>"; };
-		9100D39368F7FCF1989E96C6 /* MultiplePlotChartComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MultiplePlotChartComponent.cpp; path = /Users/dtrimarchi/VPP/main/gui/MultiplePlotChartComponent.cpp; sourceTree = "<absolute>"; };
-		919B23699572E79F1879F394 /* VariablesDockWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VariablesDockWidget.h; path = /Users/dtrimarchi/VPP/main/gui/VariablesDockWidget.h; sourceTree = "<absolute>"; };
-		92D1527A66BE98BF7CCD7D0B /* VPPPlotSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPPlotSet.cpp; path = /Users/dtrimarchi/VPP/main/plotting/VPPPlotSet.cpp; sourceTree = "<absolute>"; };
-		94C9EC0B3C28D1C32480365D /* QtNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtNetwork.framework; path = /usr/local/Cellar/qt5/5.7.0/lib/QtNetwork.framework; sourceTree = "<absolute>"; };
-		957FA62CD8BE6760B9D0CC66 /* moc_LogDockWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_LogDockWidget.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_LogDockWidget.cpp; sourceTree = "<absolute>"; };
-		98A0CBC858C911D76F94DD56 /* LogDockWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LogDockWidget.h; path = /Users/dtrimarchi/VPP/main/gui/LogDockWidget.h; sourceTree = "<absolute>"; };
-		990162E35477F44C288C8B06 /* VPP_nlp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPP_nlp.cpp; path = /Users/dtrimarchi/VPP/main/solvers/VPP_nlp.cpp; sourceTree = "<absolute>"; };
-		9BE7C3F5D8F7F773484471CA /* VPPRightingMomentItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPRightingMomentItem.cpp; path = /Users/dtrimarchi/VPP/main/core/VPPRightingMomentItem.cpp; sourceTree = "<absolute>"; };
-		A1A67BEAA744704B29168D39 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
-		A417EA288D6516B2EB9422FF /* SemiAnalyticalOptimizer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SemiAnalyticalOptimizer.cpp; path = /Users/dtrimarchi/VPP/main/solvers/SemiAnalyticalOptimizer.cpp; sourceTree = "<absolute>"; };
-		A4871DB649F525274F7CE816 /* VPP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VPP.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A6F6E728E46B65019D0ACCB5 /* VppTableDockWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VppTableDockWidget.h; path = /Users/dtrimarchi/VPP/main/gui/VppTableDockWidget.h; sourceTree = "<absolute>"; };
-		A86A66E0DA7DA38C50B9A1EA /* StateVectorDialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StateVectorDialog.h; path = /Users/dtrimarchi/VPP/main/gui/StateVectorDialog.h; sourceTree = "<absolute>"; };
-		A9B8BFB4C943A486717F4880 /* ThreeDPlotWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ThreeDPlotWidget.cpp; path = /Users/dtrimarchi/VPP/main/gui/ThreeDPlotWidget.cpp; sourceTree = "<absolute>"; };
-		AE7119D191887546E530ACEE /* mathUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = mathUtils.cpp; path = /Users/dtrimarchi/VPP/main/utils/mathUtils.cpp; sourceTree = "<absolute>"; };
-		AE948FE2118181B06FB4E1A5 /* VPPSolverFactoryBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPSolverFactoryBase.h; path = /Users/dtrimarchi/VPP/main/solvers/VPPSolverFactoryBase.h; sourceTree = "<absolute>"; };
-		B1ED9D94B2C3E6DC8E30541C /* moc_VPPXYChartWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_VPPXYChartWidget.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_VPPXYChartWidget.cpp; sourceTree = "<absolute>"; };
-		B31732F74C571393AA61B7F4 /* VPPItemFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPItemFactory.h; path = /Users/dtrimarchi/VPP/main/core/VPPItemFactory.h; sourceTree = "<absolute>"; };
-		B4953B0EB6F36A6FA6A1DBF5 /* VppTabDockWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VppTabDockWidget.h; path = /Users/dtrimarchi/VPP/main/gui/VppTabDockWidget.h; sourceTree = "<absolute>"; };
-		B58E96A6686474993FE0BEEF /* VppTableDockWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VppTableDockWidget.cpp; path = /Users/dtrimarchi/VPP/main/gui/VppTableDockWidget.cpp; sourceTree = "<absolute>"; };
-		B5EC9EB139569BA916A13EED /* .qmake.stash */ = {isa = PBXFileReference; lastKnownFileType = text; name = .qmake.stash; path = /Users/dtrimarchi/VPP/main/.qmake.stash; sourceTree = "<absolute>"; };
-		B6FCC2C1C641FCD59013F555 /* VPPXYChart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPXYChart.h; path = /Users/dtrimarchi/VPP/main/gui/VPPXYChart.h; sourceTree = "<absolute>"; };
-		B7CC520C1E0517BD80ECF99D /* SurfaceGraph.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SurfaceGraph.cpp; path = /Users/dtrimarchi/VPP/main/gui/SurfaceGraph.cpp; sourceTree = "<absolute>"; };
-		B8791C3CD81994A6F94D6F46 /* umfpack */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = umfpack; path = /opt/local/lib/libumfpack.dylib; sourceTree = "<absolute>"; };
-		BAF794D6CF41C1FFCB702EA4 /* VPPGradient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPGradient.cpp; path = /Users/dtrimarchi/VPP/main/solvers/VPPGradient.cpp; sourceTree = "<absolute>"; };
-		BB4137C046C8334D89C456D7 /* Regression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Regression.h; path = /Users/dtrimarchi/VPP/main/utils/Regression.h; sourceTree = "<absolute>"; };
-		BEEA8D5BDFFEC9EAB00157BC /* colamd */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = colamd; path = /opt/local/lib/libcolamd.dylib; sourceTree = "<absolute>"; };
-		C0118192E64AB332BF49D4F9 /* main.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cxx; path = /Users/dtrimarchi/VPP/main/main.cxx; sourceTree = "<absolute>"; };
-		C06D5D7F1758EDF3EDEF3A0C /* cholmod */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = cholmod; path = /opt/local/lib/libcholmod.dylib; sourceTree = "<absolute>"; };
-		C0CD01CAE2CD1D7D1E1C0830 /* moc_MainWindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_MainWindow.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_MainWindow.cpp; sourceTree = "<absolute>"; };
-		C17C2BC59FFDD28F2AD11206 /* amd */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = amd; path = /opt/local/lib/libamd.dylib; sourceTree = "<absolute>"; };
-		C282B03F2A1C80C08F88125C /* VPPSolverBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPSolverBase.h; path = /Users/dtrimarchi/VPP/main/solvers/VPPSolverBase.h; sourceTree = "<absolute>"; };
-		C725EF5DCD399139FA7F47F0 /* moc_VPPXYChart.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_VPPXYChart.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_VPPXYChart.cpp; sourceTree = "<absolute>"; };
-		C8455A02554D8C88A3E1A8C0 /* moc_VppChartView.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_VppChartView.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_VppChartView.cpp; sourceTree = "<absolute>"; };
-		C8F15FEFBD536106F6CB3C68 /* MultiplePlotWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MultiplePlotWidget.h; path = /Users/dtrimarchi/VPP/main/gui/MultiplePlotWidget.h; sourceTree = "<absolute>"; };
-		C98EA01C80996DFA59D73E5B /* VppChartView.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VppChartView.cpp; path = /Users/dtrimarchi/VPP/main/gui/VppChartView.cpp; sourceTree = "<absolute>"; };
-		CD829298CA2038092A51A0F6 /* QtGui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtGui.framework; path = /usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework; sourceTree = "<absolute>"; };
-		CDBAD5D339DCC96FB0E7D52B /* VPPAeroItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPAeroItem.cpp; path = /Users/dtrimarchi/VPP/main/core/VPPAeroItem.cpp; sourceTree = "<absolute>"; };
-		CE048B65E5616394B4055ADF /* VPPResultIO.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPResultIO.cpp; path = /Users/dtrimarchi/VPP/main/io/VPPResultIO.cpp; sourceTree = "<absolute>"; };
-		CF6F622C02C313C643098A45 /* VPPHydroItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPHydroItem.h; path = /Users/dtrimarchi/VPP/main/core/VPPHydroItem.h; sourceTree = "<absolute>"; };
-		D1B7D5650E50D1736E530780 /* plplot */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = plplot; path = /opt/local/lib/libplplot.dylib; sourceTree = "<absolute>"; };
-		D4B32C2222F82AC56BADEB21 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
-		D7823A3E9B20D79AFE462B4E /* QtDataVisualization.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtDataVisualization.framework; path = /usr/local/Cellar/qt5/5.7.0/lib/QtDataVisualization.framework; sourceTree = "<absolute>"; };
-		D8D01A26CF40C165370FBD9F /* ipopt */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = ipopt; path = "/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib/libipopt.dylib"; sourceTree = "<absolute>"; };
-		DA264DCD041D00721E18D595 /* moc_PolarPlotWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_PolarPlotWidget.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_PolarPlotWidget.cpp; sourceTree = "<absolute>"; };
-		DE48BB7F44534385EE02F99A /* Version.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Version.cpp; path = /Users/dtrimarchi/VPP/main/versioning/Version.cpp; sourceTree = "<absolute>"; };
-		DE69B24FEAFDCC73E3D9E233 /* ui_MainWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ui_MainWindow.h; path = /Users/dtrimarchi/VPP/xCodeBuild/ui_MainWindow.h; sourceTree = "<absolute>"; };
-		E15242A623D8DE6D37EB4668 /* Interpolator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Interpolator.cpp; path = /Users/dtrimarchi/VPP/main/utils/Interpolator.cpp; sourceTree = "<absolute>"; };
-		E510FC43028A784148AD8613 /* moc_SurfaceGraph.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_SurfaceGraph.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_SurfaceGraph.cpp; sourceTree = "<absolute>"; };
-		E8A6C92521BCAA3EC3F007D3 /* LogWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LogWindow.h; path = /Users/dtrimarchi/VPP/main/gui/LogWindow.h; sourceTree = "<absolute>"; };
-		EB12D8EFE6ECEB7DA313DACD /* VPPJacobian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPJacobian.h; path = /Users/dtrimarchi/VPP/main/solvers/VPPJacobian.h; sourceTree = "<absolute>"; };
-		EE0D28AA551D28807CB453B9 /* qcustomplot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = qcustomplot.h; path = /Users/dtrimarchi/VPP/main/qcustomplot/qcustomplot.h; sourceTree = "<absolute>"; };
-		EFD12AAFC95E0908CF447A30 /* VPP_nlp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPP_nlp.h; path = /Users/dtrimarchi/VPP/main/solvers/VPP_nlp.h; sourceTree = "<absolute>"; };
-		F165D8A70734D22F69C0ABDE /* QtCharts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtCharts.framework; path = /usr/local/Cellar/qt5/5.7.0/lib/QtCharts.framework; sourceTree = "<absolute>"; };
-		F18099C6D01AAFBC24629E80 /* VariableTreeItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VariableTreeItem.h; path = /Users/dtrimarchi/VPP/main/gui/VariableTreeItem.h; sourceTree = "<absolute>"; };
-		F40D60FEC996A1BD0A3DBC73 /* plplotcxx */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = plplotcxx; path = /opt/local/lib/libplplotcxx.dylib; sourceTree = "<absolute>"; };
-		F4BF2B3A27F0FADB8475238A /* moc_MultiplePlotWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_MultiplePlotWidget.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_MultiplePlotWidget.cpp; sourceTree = "<absolute>"; };
-		F7859A6A462BF2F26D2744E6 /* VPP.pro */ = {isa = PBXFileReference; lastKnownFileType = text; name = VPP.pro; path = /Users/dtrimarchi/VPP/main/VPP.pro; sourceTree = "<absolute>"; };
-		F7CA810330F1608DEF44C0A6 /* VPPSolverFactoryBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VPPSolverFactoryBase.cpp; path = /Users/dtrimarchi/VPP/main/solvers/VPPSolverFactoryBase.cpp; sourceTree = "<absolute>"; };
-		FAF4E0AAD18C582188D4263C /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = /Users/dtrimarchi/VPP/main/versioning/Version.h; sourceTree = "<absolute>"; };
-		FB199F35953135E9DAC6494C /* VPPSolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPSolver.h; path = /Users/dtrimarchi/VPP/main/solvers/VPPSolver.h; sourceTree = "<absolute>"; };
-		FEB8B068D3411585B3148FD7 /* SailSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SailSet.h; path = /Users/dtrimarchi/VPP/main/core/SailSet.h; sourceTree = "<absolute>"; };
-/* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		D1C883685E82D5676953459A /* Link Binary With Libraries */ = {
-			isa = PBXFrameworksBuildPhase;
+		5E618435888B9D49F8540165 = {
 			buildActionMask = 2147483647;
 			files = (
-				A75154068A2E317B0B7AEDB3 /* ipopt in Link Binary With Libraries */,
-				86750C960826ACB1F9962DAB /* umfpack in Link Binary With Libraries */,
-				C061B6738020E9ECD9BE7524 /* BLAS in Link Binary With Libraries */,
-				287A821D050F1F28A6BBC99A /* amd in Link Binary With Libraries */,
-				922626466ED4A202C4DC09F2 /* colamd in Link Binary With Libraries */,
-				EB69D9407AE73D89E0305731 /* cholmod in Link Binary With Libraries */,
-				B2F54A3ECA917A378DACF112 /* suitesparseconfig in Link Binary With Libraries */,
-				A243F769B1ABDD203363B6BE /* nlopt in Link Binary With Libraries */,
-				FE0E127F1A005003755655A1 /* plplot in Link Binary With Libraries */,
-				D7F9FA241A1FA3A4F4B55242 /* plplotcxx in Link Binary With Libraries */,
-				446FA5B61F047CD6FE1AA646 /* QtCharts.framework in Link Binary With Libraries */,
-				B1FD449BA9A24D8FBFD6B918 /* QtWidgets.framework in Link Binary With Libraries */,
-				7B61C92B0D756FD9703B0C41 /* QtGui.framework in Link Binary With Libraries */,
-				E8CEE9A2D81662520C72B099 /* QtCore.framework in Link Binary With Libraries */,
-				A99B2AA0F9CBBDD12BA126A4 /* DiskArbitration.framework in Link Binary With Libraries */,
-				8D267F2E4776F0ECA2F49DC8 /* IOKit.framework in Link Binary With Libraries */,
-				A8CEC54E30C5CFE667D0E391 /* QtPrintSupport.framework in Link Binary With Libraries */,
-				B69261DD6648DBDE33C96052 /* QtDataVisualization.framework in Link Binary With Libraries */,
-				97CC4A587B63565F574D7541 /* QtNetwork.framework in Link Binary With Libraries */,
-				8771A8C96E9C391044035D99 /* OpenGL.framework in Link Binary With Libraries */,
-				E45E51A644D5FC9F942ECE55 /* AGL.framework in Link Binary With Libraries */,
-			);
-			name = "Link Binary With Libraries";
+				);
+			isa = PBXShellScriptBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
+			name = "Qt Qmake";
+			shellPath = "/bin/sh";
+			shellScript = "make -C /Users/dtrimarchi/VPP/main/ -f VPP.xcodeproj/qt_makeqmake.mak";
+			showEnvVarsInLog = "0";
 		};
-/* End PBXFrameworksBuildPhase section */
-
-/* Begin PBXGroup section */
-		0DC814FDE9068863A758C728 /* plotting */ = {
+		C0118192E64AB332BF49D4F9 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/main.cxx";
+			name = "main.cxx";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		C02D0B2E7586129C2CD91C5D = {
+			fileRef = "C0118192E64AB332BF49D4F9";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		87198ABFDBD68BF5DF9D9CB0 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/qcustomplot/qcustomplot.cpp";
+			name = "qcustomplot.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		192B5378B8D36922593B3F7A = {
+			fileRef = "87198ABFDBD68BF5DF9D9CB0";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		1B14A761DA72B7FF2DA85767 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/LogDockWidget.cpp";
+			name = "LogDockWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		C1A9685BAF4A2A46C96A25EF = {
+			fileRef = "1B14A761DA72B7FF2DA85767";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		5159B92706FEF3FB1A7CDA89 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/LogWindow.cpp";
+			name = "LogWindow.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		82F07F0A2DA26B65C850F56A = {
+			fileRef = "5159B92706FEF3FB1A7CDA89";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		7E53A029758EC767BB05329D = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/MainWindow.cpp";
+			name = "MainWindow.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		B1DFCD9F8C53448F00E8568F = {
+			fileRef = "7E53A029758EC767BB05329D";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		9100D39368F7FCF1989E96C6 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/MultiplePlotChartComponent.cpp";
+			name = "MultiplePlotChartComponent.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		DAB42D4DFE73E08E20897E9F = {
+			fileRef = "9100D39368F7FCF1989E96C6";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		770CF1D7E9512BBABB17E86F = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/MultiplePlotWidget.cpp";
+			name = "MultiplePlotWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		80CE99F22CE7157743D70AF3 = {
+			fileRef = "770CF1D7E9512BBABB17E86F";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		286F18449D1D28A3B8962491 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/PolarPlotWidget.cpp";
+			name = "PolarPlotWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		070BFD2D4E138BEFBF3D8F20 = {
+			fileRef = "286F18449D1D28A3B8962491";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		657800E3B4935A0005288B08 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/StateVectorDialog.cpp";
+			name = "StateVectorDialog.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		15E3284226ED033B1D82614B = {
+			fileRef = "657800E3B4935A0005288B08";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		B7CC520C1E0517BD80ECF99D = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/SurfaceGraph.cpp";
+			name = "SurfaceGraph.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		73B98F530B17BEEAC4F19437 = {
+			fileRef = "B7CC520C1E0517BD80ECF99D";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		A9B8BFB4C943A486717F4880 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/ThreeDPlotWidget.cpp";
+			name = "ThreeDPlotWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		C01856DB5B5A05D31BA49B13 = {
+			fileRef = "A9B8BFB4C943A486717F4880";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		668C7DA1D2FAA0394557BD96 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VariablesDockWidget.cpp";
+			name = "VariablesDockWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		8B18BB4DAB3D225D54AF6D82 = {
+			fileRef = "668C7DA1D2FAA0394557BD96";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		0CC4A3A9AB21683A3C9A623D = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VariableTreeItem.cpp";
+			name = "VariableTreeItem.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		CB956AE2FFDCABAC41252052 = {
+			fileRef = "0CC4A3A9AB21683A3C9A623D";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		0B249122FD48B4BB598011C7 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VariableTreeModel.cpp";
+			name = "VariableTreeModel.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		CAF7C7E200F4428E18E6BE5B = {
+			fileRef = "0B249122FD48B4BB598011C7";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		C98EA01C80996DFA59D73E5B = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppChartView.cpp";
+			name = "VppChartView.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		73A37DAC21B7AA56C878B364 = {
+			fileRef = "C98EA01C80996DFA59D73E5B";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		7B7C3CB1FE7F49D765F66163 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppPolarChart.cpp";
+			name = "VppPolarChart.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		BC851D63CD7161177A68434E = {
+			fileRef = "7B7C3CB1FE7F49D765F66163";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		04306F199F9FBC54052772BC = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppTabDockWidget.cpp";
+			name = "VppTabDockWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		25F72F3CD1EE305F577F6BCB = {
+			fileRef = "04306F199F9FBC54052772BC";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		B58E96A6686474993FE0BEEF = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppTableDockWidget.cpp";
+			name = "VppTableDockWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		C8091D0019724BF7E52C8248 = {
+			fileRef = "B58E96A6686474993FE0BEEF";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		63D3C8AD76023A0EC3D918BF = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppTableModel.cpp";
+			name = "VppTableModel.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		9A43EB1698980269F17584C3 = {
+			fileRef = "63D3C8AD76023A0EC3D918BF";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		8EE57C82F10D13C838A233AB = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VPPXYChart.cpp";
+			name = "VPPXYChart.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		F9F28EA589CD8C482252BC9E = {
+			fileRef = "8EE57C82F10D13C838A233AB";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		1B821E593CFFCA5EA9B5D8EE = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VPPXYChartWidget.cpp";
+			name = "VPPXYChartWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		C51BF6D53A6AE483D77F53DC = {
+			fileRef = "1B821E593CFFCA5EA9B5D8EE";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		6A2E562CC29CA78C1E436F8A = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/exceptions/VPPException.cpp";
+			name = "VPPException.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		6F7FA431D6160814D9DF713C = {
+			fileRef = "6A2E562CC29CA78C1E436F8A";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		50C636CE99AC122BDF63EE2F = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/exceptions/Warning.cpp";
+			name = "Warning.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		4C468452E932C245687E07F7 = {
+			fileRef = "50C636CE99AC122BDF63EE2F";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		3BBABCBDC3078246057C06F9 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/SailSet.cpp";
+			name = "SailSet.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		76BF210E30E2B44EE5131EFE = {
+			fileRef = "3BBABCBDC3078246057C06F9";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		CDBAD5D339DCC96FB0E7D52B = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/VPPAeroItem.cpp";
+			name = "VPPAeroItem.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		A87F38E3E92FDA12F864426F = {
+			fileRef = "CDBAD5D339DCC96FB0E7D52B";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		50F291407EE8C164E64DDBA4 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/VPPHydroItem.cpp";
+			name = "VPPHydroItem.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		AF7C04DC403CFB3620FA220D = {
+			fileRef = "50F291407EE8C164E64DDBA4";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		08633239B56170FDC87D7DCA = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/VPPItem.cpp";
+			name = "VPPItem.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		0AF1216A2CF223D59C37CBF1 = {
+			fileRef = "08633239B56170FDC87D7DCA";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		78B96511369C28EAB708CC30 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/VPPItemFactory.cpp";
+			name = "VPPItemFactory.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		EE8F3A39D925DC1F0E562B4D = {
+			fileRef = "78B96511369C28EAB708CC30";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		9BE7C3F5D8F7F773484471CA = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/VPPRightingMomentItem.cpp";
+			name = "VPPRightingMomentItem.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		C73D452C12FA2017C654644A = {
+			fileRef = "9BE7C3F5D8F7F773484471CA";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		14F0F1B53E3D1B3DD1127F97 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/io/VariableFileParser.cpp";
+			name = "VariableFileParser.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		563F298A96AF779B9D37D515 = {
+			fileRef = "14F0F1B53E3D1B3DD1127F97";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		3DC9612A351B632B01DBEBF1 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/io/Variables.cpp";
+			name = "Variables.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		B890D9B5705D4DC8F0C7EB1A = {
+			fileRef = "3DC9612A351B632B01DBEBF1";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		CE048B65E5616394B4055ADF = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/io/VPPResultIO.cpp";
+			name = "VPPResultIO.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		77F684B83BBE8A14FC796FAB = {
+			fileRef = "CE048B65E5616394B4055ADF";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		4DF4B8DD980746ED6742BA2B = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/hs071_nlp.cpp";
+			name = "hs071_nlp.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		0D6D6B08CF3AB37DD5709931 = {
+			fileRef = "4DF4B8DD980746ED6742BA2B";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		334F895D0E8CC9F40B9EE7F0 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/NLOptSolver.cpp";
+			name = "NLOptSolver.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		941A92EC3C78D3813C3FBED1 = {
+			fileRef = "334F895D0E8CC9F40B9EE7F0";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		328F19C36AD9594EB96E23F3 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/NRSolver.cpp";
+			name = "NRSolver.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		AE19E77BD182C321CEBC0FFC = {
+			fileRef = "328F19C36AD9594EB96E23F3";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		A417EA288D6516B2EB9422FF = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/SemiAnalyticalOptimizer.cpp";
+			name = "SemiAnalyticalOptimizer.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		73A2E6D7430E9F2D9E796997 = {
+			fileRef = "A417EA288D6516B2EB9422FF";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		295E978F4230FE419A282AA3 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/Solver.cpp";
+			name = "Solver.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		F50E931CEB8EB4FB0F8F0053 = {
+			fileRef = "295E978F4230FE419A282AA3";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		5E9ADBA5FA226EE6B6F544AD = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/SparseSolver.cpp";
+			name = "SparseSolver.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		4918102183872DD3BE80D0CE = {
+			fileRef = "5E9ADBA5FA226EE6B6F544AD";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		990162E35477F44C288C8B06 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPP_nlp.cpp";
+			name = "VPP_nlp.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		7136621E4573A9C8F9EB65F5 = {
+			fileRef = "990162E35477F44C288C8B06";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		BAF794D6CF41C1FFCB702EA4 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPPGradient.cpp";
+			name = "VPPGradient.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		09EB5284DBB1E0D5B8F28B66 = {
+			fileRef = "BAF794D6CF41C1FFCB702EA4";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		6AABFBEA326278C3C07B2F37 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPPJacobian.cpp";
+			name = "VPPJacobian.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		4487B595710D5FCF44118B04 = {
+			fileRef = "6AABFBEA326278C3C07B2F37";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		8D78003B13DFD45AD2E7C80D = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPPSolver.cpp";
+			name = "VPPSolver.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		7188E82353A23C080AF917CF = {
+			fileRef = "8D78003B13DFD45AD2E7C80D";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		0814EC7E585F9D34C9F0F738 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPPSolverBase.cpp";
+			name = "VPPSolverBase.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		A9DEA3E3F995D621A9930E8A = {
+			fileRef = "0814EC7E585F9D34C9F0F738";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		F7CA810330F1608DEF44C0A6 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPPSolverFactoryBase.cpp";
+			name = "VPPSolverFactoryBase.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		1004F68AB671CF8D4E9ED3AF = {
+			fileRef = "F7CA810330F1608DEF44C0A6";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		92D1527A66BE98BF7CCD7D0B = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/plotting/VPPPlotSet.cpp";
+			name = "VPPPlotSet.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		E17D8E61846603133AFFFB97 = {
+			fileRef = "92D1527A66BE98BF7CCD7D0B";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		3F7F0A85AF34FDD32EA67ED8 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/plotting/VPPPlotter.cpp";
+			name = "VPPPlotter.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		C24CCBD40DCD736316FA1AAD = {
+			fileRef = "3F7F0A85AF34FDD32EA67ED8";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		273504F601EB6D79CE7C44EE = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/results/Results.cpp";
+			name = "Results.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		CE5094404CC9DC7237269F84 = {
+			fileRef = "273504F601EB6D79CE7C44EE";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		E15242A623D8DE6D37EB4668 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/utils/Interpolator.cpp";
+			name = "Interpolator.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		C779D8A839F2A9A97C2442AA = {
+			fileRef = "E15242A623D8DE6D37EB4668";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		AE7119D191887546E530ACEE = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/utils/mathUtils.cpp";
+			name = "mathUtils.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		1CE2E9AA78F4B9DFC24F4505 = {
+			fileRef = "AE7119D191887546E530ACEE";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		2F1DB019ECEF0633081681AC = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/utils/Regression.cpp";
+			name = "Regression.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		FA468679B146CF8620B85B06 = {
+			fileRef = "2F1DB019ECEF0633081681AC";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		DE48BB7F44534385EE02F99A = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/versioning/Version.cpp";
+			name = "Version.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		A1A58D2C7E3E938937176FE8 = {
+			fileRef = "DE48BB7F44534385EE02F99A";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		3AEDC5E81BCA26FFBFF81676 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/qrc_VPP.cpp";
+			name = "qrc_VPP.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		631E984421ACA6621D9A7434 = {
+			fileRef = "3AEDC5E81BCA26FFBFF81676";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		5277607BDA8F3D6E3DFC9836 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_qcustomplot.cpp";
+			name = "moc_qcustomplot.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		451FA4931D7FB5CDC52624ED = {
+			fileRef = "5277607BDA8F3D6E3DFC9836";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		957FA62CD8BE6760B9D0CC66 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_LogDockWidget.cpp";
+			name = "moc_LogDockWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		576A3B2ED207388499383478 = {
+			fileRef = "957FA62CD8BE6760B9D0CC66";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		11C28DC9374A7F569B14337D = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_LogWindow.cpp";
+			name = "moc_LogWindow.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		5D0F5727C28892E1AA58F715 = {
+			fileRef = "11C28DC9374A7F569B14337D";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		C0CD01CAE2CD1D7D1E1C0830 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_MainWindow.cpp";
+			name = "moc_MainWindow.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		A8EC760318DCA70D1513B347 = {
+			fileRef = "C0CD01CAE2CD1D7D1E1C0830";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		3F6C04A5AF5B7937D7BA4446 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_MultiplePlotChartComponent.cpp";
+			name = "moc_MultiplePlotChartComponent.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		C55232B542E8EF16099FC937 = {
+			fileRef = "3F6C04A5AF5B7937D7BA4446";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		F4BF2B3A27F0FADB8475238A = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_MultiplePlotWidget.cpp";
+			name = "moc_MultiplePlotWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		A05C9607EC348CC420D566AF = {
+			fileRef = "F4BF2B3A27F0FADB8475238A";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		DA264DCD041D00721E18D595 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_PolarPlotWidget.cpp";
+			name = "moc_PolarPlotWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		C8816B2D293A3060C9D303EF = {
+			fileRef = "DA264DCD041D00721E18D595";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		49C16E4CF089E5E2187FC99E = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_StateVectorDialog.cpp";
+			name = "moc_StateVectorDialog.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		BCCC585FB7B24E50F9E3A25E = {
+			fileRef = "49C16E4CF089E5E2187FC99E";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		E510FC43028A784148AD8613 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_SurfaceGraph.cpp";
+			name = "moc_SurfaceGraph.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		E5D27870C9067A6E81D7D52B = {
+			fileRef = "E510FC43028A784148AD8613";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		45D80CD2C6D2669A90B6856B = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_ThreeDPlotWidget.cpp";
+			name = "moc_ThreeDPlotWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		A5A82EE01AAEAE7E1D416FAE = {
+			fileRef = "45D80CD2C6D2669A90B6856B";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		8028902D78BDF02F77D3C385 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VariablesDockWidget.cpp";
+			name = "moc_VariablesDockWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		91097B4EF09BE74A8F66660E = {
+			fileRef = "8028902D78BDF02F77D3C385";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		724FC7CC13416231B8122B3E = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VariableTreeModel.cpp";
+			name = "moc_VariableTreeModel.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		BDA3A34FC779764B195418E3 = {
+			fileRef = "724FC7CC13416231B8122B3E";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		C8455A02554D8C88A3E1A8C0 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VppChartView.cpp";
+			name = "moc_VppChartView.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		F69025EF8F008544B24D5334 = {
+			fileRef = "C8455A02554D8C88A3E1A8C0";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		70D2952ABA64DED7B184EA05 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VppPolarChart.cpp";
+			name = "moc_VppPolarChart.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		6DE6EE811139C08213BDB9F6 = {
+			fileRef = "70D2952ABA64DED7B184EA05";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		11129B21777CADB90E065E97 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VppTabDockWidget.cpp";
+			name = "moc_VppTabDockWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		678241618B2798A4073714F6 = {
+			fileRef = "11129B21777CADB90E065E97";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		7E8A58ABAA7DF29505984473 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VppTableDockWidget.cpp";
+			name = "moc_VppTableDockWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		2DE1F6FBB19204E064E31091 = {
+			fileRef = "7E8A58ABAA7DF29505984473";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		12C685494E636CC52F4E8324 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VppTableModel.cpp";
+			name = "moc_VppTableModel.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		EE99A568D5161783748B5041 = {
+			fileRef = "12C685494E636CC52F4E8324";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		C725EF5DCD399139FA7F47F0 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VPPXYChart.cpp";
+			name = "moc_VPPXYChart.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		98D524C61C980871B2998339 = {
+			fileRef = "C725EF5DCD399139FA7F47F0";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		B1ED9D94B2C3E6DC8E30541C = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VPPXYChartWidget.cpp";
+			name = "moc_VPPXYChartWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		CF8F22955BC8B616831F807F = {
+			fileRef = "B1ED9D94B2C3E6DC8E30541C";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		DE69B24FEAFDCC73E3D9E233 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/ui_MainWindow.h";
+			name = "ui_MainWindow.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		EE0D28AA551D28807CB453B9 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/qcustomplot/qcustomplot.h";
+			name = "qcustomplot.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		98A0CBC858C911D76F94DD56 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/LogDockWidget.h";
+			name = "LogDockWidget.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		E8A6C92521BCAA3EC3F007D3 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/LogWindow.h";
+			name = "LogWindow.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		517A9064D3C0E8C3E03052D4 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/MainWindow.h";
+			name = "MainWindow.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		6A9F253E2B86D27595B9A55F = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/MultiplePlotChartComponent.h";
+			name = "MultiplePlotChartComponent.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		C8F15FEFBD536106F6CB3C68 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/MultiplePlotWidget.h";
+			name = "MultiplePlotWidget.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		7B741AB7185A33C2329CEA4E = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/PolarPlotWidget.h";
+			name = "PolarPlotWidget.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		A86A66E0DA7DA38C50B9A1EA = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/StateVectorDialog.h";
+			name = "StateVectorDialog.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		40A6D07C89D6CC1BD877F197 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/SurfaceGraph.h";
+			name = "SurfaceGraph.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		2D676EF791E0DD1DF651B5E7 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/ThreeDPlotWidget.h";
+			name = "ThreeDPlotWidget.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		919B23699572E79F1879F394 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VariablesDockWidget.h";
+			name = "VariablesDockWidget.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		F18099C6D01AAFBC24629E80 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VariableTreeItem.h";
+			name = "VariableTreeItem.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		32208B5652ED65FBE537FBF9 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VariableTreeModel.h";
+			name = "VariableTreeModel.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		5DE3EBCD3768A0E19EC7559E = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppChartView.h";
+			name = "VppChartView.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		6326D1D9F7D79D5A3D9076F3 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppPolarChart.h";
+			name = "VppPolarChart.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		B4953B0EB6F36A6FA6A1DBF5 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppTabDockWidget.h";
+			name = "VppTabDockWidget.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		A6F6E728E46B65019D0ACCB5 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppTableDockWidget.h";
+			name = "VppTableDockWidget.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		1CF6764FEB0045428A1337B4 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppTableModel.h";
+			name = "VppTableModel.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		B6FCC2C1C641FCD59013F555 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VPPXYChart.h";
+			name = "VPPXYChart.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		1ABC9A06BCEBC1827E32FE53 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VPPXYChartWidget.h";
+			name = "VPPXYChartWidget.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		36A61D690E2BAA7EB22A1601 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/exceptions/VPPException.h";
+			name = "VPPException.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		55981D7B28A86332D463FB84 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/exceptions/Warning.h";
+			name = "Warning.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		FEB8B068D3411585B3148FD7 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/SailSet.h";
+			name = "SailSet.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		897E9503B922BF640BCB5A11 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/VPPAeroItem.h";
+			name = "VPPAeroItem.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		CF6F622C02C313C643098A45 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/VPPHydroItem.h";
+			name = "VPPHydroItem.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		637F3EC1A5353BF4F81B4AA8 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/VPPItem.h";
+			name = "VPPItem.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		B31732F74C571393AA61B7F4 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/VPPItemFactory.h";
+			name = "VPPItemFactory.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		7201A81A333777FDF4EC1978 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/core/VPPRightingMomentItem.h";
+			name = "VPPRightingMomentItem.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		02D40B796BEA315707373816 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/io/IOUtils.h";
+			name = "IOUtils.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		360FDE91977FE1D108EFAE76 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/io/VariableFileParser.h";
+			name = "VariableFileParser.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		0E7C40F049E3D1F22165965D = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/io/Variables.h";
+			name = "Variables.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		0E28EB96A992EBFA9906A982 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/io/VPPResultIO.h";
+			name = "VPPResultIO.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		53B36FFBB9B36D83D4E0D337 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/hs071_nlp.h";
+			name = "hs071_nlp.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		5C3623BB45BFA81E78273675 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/NLOptSolver.h";
+			name = "NLOptSolver.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		1765054731E59F892A0F9DBE = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/NRSolver.h";
+			name = "NRSolver.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		649E095303DA241CCD6CC4C7 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/SemiAnalyticalOptimizer.h";
+			name = "SemiAnalyticalOptimizer.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		60041408373D40A638D734C8 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/Solver.h";
+			name = "Solver.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		0D17C3B0FEB323CB6CB7B583 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/SparseSolver.h";
+			name = "SparseSolver.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		EFD12AAFC95E0908CF447A30 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPP_nlp.h";
+			name = "VPP_nlp.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		486B9F86DD15A307EBDB3BAA = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPPGradient.h";
+			name = "VPPGradient.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		EB12D8EFE6ECEB7DA313DACD = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPPJacobian.h";
+			name = "VPPJacobian.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		FB199F35953135E9DAC6494C = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPPSolver.h";
+			name = "VPPSolver.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		C282B03F2A1C80C08F88125C = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPPSolverBase.h";
+			name = "VPPSolverBase.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		AE948FE2118181B06FB4E1A5 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/solvers/VPPSolverFactoryBase.h";
+			name = "VPPSolverFactoryBase.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		825E3E5A82036C9644DB21DC = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/plotting/VPPPlotSet.h";
+			name = "VPPPlotSet.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		6B2131CE1178639BAFF11652 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/plotting/VPPPlotter.h";
+			name = "VPPPlotter.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		715ADE45838457CEBD96F8E2 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/results/Results.h";
+			name = "Results.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		0EE095B71C0C524A61855563 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/utils/Interpolator.h";
+			name = "Interpolator.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		417BFC1CED8D7A865CCBE4C6 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/utils/mathUtils.h";
+			name = "mathUtils.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		099A3CE321D86B34E46E6ACB = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/utils/Physics.h";
+			name = "Physics.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		BB4137C046C8334D89C456D7 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/utils/Regression.h";
+			name = "Regression.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		81BB54BE6EEA07C0BD98F16E = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/utils/Spline.h";
+			name = "Spline.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		FAF4E0AAD18C582188D4263C = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/versioning/Version.h";
+			name = "Version.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		F7859A6A462BF2F26D2744E6 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/VPP.pro";
+			name = "VPP.pro";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "text";
+		};
+		B5EC9EB139569BA916A13EED = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/.qmake.stash";
+			name = ".qmake.stash";
+			sourceTree = "<absolute>";
+		};
+		2D0EA83236085394BB65CCF5 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VPP.qrc";
+			name = "VPP.qrc";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "text";
+		};
+		2D0EA83236085394BB65CCF5 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VPP.qrc";
+			name = "VPP.qrc";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "text";
+		};
+		1B6164503647C1A2F0467B07 = {
+			fileRef = "2D0EA83236085394BB65CCF5";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		45715217136F269224EB9BB6 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/MainWindow.ui";
+			name = "MainWindow.ui";
+			sourceTree = "<absolute>";
+		};
+		E0D6184CAD00D802F6D29CB5 = {
+			fileRef = "45715217136F269224EB9BB6";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		25B08E2869634E9BCBA333A2 = {
 			isa = PBXGroup;
 			children = (
-				92D1527A66BE98BF7CCD7D0B /* VPPPlotSet.cpp */,
-				3F7F0A85AF34FDD32EA67ED8 /* VPPPlotter.cpp */,
-				825E3E5A82036C9644DB21DC /* VPPPlotSet.h */,
-				6B2131CE1178639BAFF11652 /* VPPPlotter.h */,
-			);
-			name = plotting;
-			sourceTree = "<group>";
-		};
-		12E908B8A1C3C07C115504F5 /* Sources [uic] */ = {
-			isa = PBXGroup;
-			children = (
-				19DFF2ACC8C6AB118DF564D6 /* gui */,
-			);
-			name = "Sources [uic]";
-			sourceTree = "<group>";
-		};
-		19DFF2ACC8C6AB118DF564D6 /* gui */ = {
-			isa = PBXGroup;
-			children = (
-				45715217136F269224EB9BB6 /* MainWindow.ui */,
-			);
-			name = gui;
-			sourceTree = "<group>";
-		};
-		1ED5EC6DAD903C11284F3BED /* io */ = {
-			isa = PBXGroup;
-			children = (
-				14F0F1B53E3D1B3DD1127F97 /* VariableFileParser.cpp */,
-				3DC9612A351B632B01DBEBF1 /* Variables.cpp */,
-				CE048B65E5616394B4055ADF /* VPPResultIO.cpp */,
-				02D40B796BEA315707373816 /* IOUtils.h */,
-				360FDE91977FE1D108EFAE76 /* VariableFileParser.h */,
-				0E7C40F049E3D1F22165965D /* Variables.h */,
-				0E28EB96A992EBFA9906A982 /* VPPResultIO.h */,
-			);
-			name = io;
-			sourceTree = "<group>";
-		};
-		25B08E2869634E9BCBA333A2 /* Generated Sources */ = {
-			isa = PBXGroup;
-			children = (
-				3AEDC5E81BCA26FFBFF81676 /* qrc_VPP.cpp */,
-				5277607BDA8F3D6E3DFC9836 /* moc_qcustomplot.cpp */,
-				957FA62CD8BE6760B9D0CC66 /* moc_LogDockWidget.cpp */,
-				11C28DC9374A7F569B14337D /* moc_LogWindow.cpp */,
-				C0CD01CAE2CD1D7D1E1C0830 /* moc_MainWindow.cpp */,
-				3F6C04A5AF5B7937D7BA4446 /* moc_MultiplePlotChartComponent.cpp */,
-				F4BF2B3A27F0FADB8475238A /* moc_MultiplePlotWidget.cpp */,
-				DA264DCD041D00721E18D595 /* moc_PolarPlotWidget.cpp */,
-				49C16E4CF089E5E2187FC99E /* moc_StateVectorDialog.cpp */,
-				E510FC43028A784148AD8613 /* moc_SurfaceGraph.cpp */,
-				45D80CD2C6D2669A90B6856B /* moc_ThreeDPlotWidget.cpp */,
-				8028902D78BDF02F77D3C385 /* moc_VariablesDockWidget.cpp */,
-				724FC7CC13416231B8122B3E /* moc_VariableTreeModel.cpp */,
-				C8455A02554D8C88A3E1A8C0 /* moc_VppChartView.cpp */,
-				70D2952ABA64DED7B184EA05 /* moc_VppPolarChart.cpp */,
-				11129B21777CADB90E065E97 /* moc_VppTabDockWidget.cpp */,
-				7E8A58ABAA7DF29505984473 /* moc_VppTableDockWidget.cpp */,
-				12C685494E636CC52F4E8324 /* moc_VppTableModel.cpp */,
-				C725EF5DCD399139FA7F47F0 /* moc_VPPXYChart.cpp */,
-				B1ED9D94B2C3E6DC8E30541C /* moc_VPPXYChartWidget.cpp */,
-				DE69B24FEAFDCC73E3D9E233 /* ui_MainWindow.h */,
-			);
+				"3AEDC5E81BCA26FFBFF81676",
+				"5277607BDA8F3D6E3DFC9836",
+				"957FA62CD8BE6760B9D0CC66",
+				"11C28DC9374A7F569B14337D",
+				"C0CD01CAE2CD1D7D1E1C0830",
+				"3F6C04A5AF5B7937D7BA4446",
+				"F4BF2B3A27F0FADB8475238A",
+				"DA264DCD041D00721E18D595",
+				"49C16E4CF089E5E2187FC99E",
+				"E510FC43028A784148AD8613",
+				"45D80CD2C6D2669A90B6856B",
+				"8028902D78BDF02F77D3C385",
+				"724FC7CC13416231B8122B3E",
+				"C8455A02554D8C88A3E1A8C0",
+				"70D2952ABA64DED7B184EA05",
+				"11129B21777CADB90E065E97",
+				"7E8A58ABAA7DF29505984473",
+				"12C685494E636CC52F4E8324",
+				"C725EF5DCD399139FA7F47F0",
+				"B1ED9D94B2C3E6DC8E30541C",
+				"DE69B24FEAFDCC73E3D9E233");
 			name = "Generated Sources";
 			sourceTree = "<group>";
 		};
-		2EB56BE3C2D93CDAB0C52E67 /* Sources */ = {
+		DB6FA10816FB80BA0AA5E2F7 = {
 			isa = PBXGroup;
 			children = (
-				C0118192E64AB332BF49D4F9 /* main.cxx */,
-				5ECA7B35ED9E41D2A3490A30 /* qcustomplot */,
-				C76D9EF5064E96CDBBDAB65E /* gui */,
-				A8828195B5B105DF3EF0A6F3 /* exceptions */,
-				945D7270578AF32CDC99FDFE /* core */,
-				1ED5EC6DAD903C11284F3BED /* io */,
-				9EFAFB7ADC304C4F994AF22C /* solvers */,
-				0DC814FDE9068863A758C728 /* plotting */,
-				75A93590F0E4928BE718B607 /* results */,
-				E003E8E901249ACE6A5EA19A /* utils */,
-				66F851D7A73FAB2F625EDCE4 /* versioning */,
-			);
-			name = Sources;
+				"2D0EA83236085394BB65CCF5");
+			name = "gui";
 			sourceTree = "<group>";
 		};
-		5ECA7B35ED9E41D2A3490A30 /* qcustomplot */ = {
+		19DFF2ACC8C6AB118DF564D6 = {
 			isa = PBXGroup;
 			children = (
-				87198ABFDBD68BF5DF9D9CB0 /* qcustomplot.cpp */,
-				EE0D28AA551D28807CB453B9 /* qcustomplot.h */,
-			);
-			name = qcustomplot;
+				"45715217136F269224EB9BB6");
+			name = "gui";
 			sourceTree = "<group>";
 		};
-		66F851D7A73FAB2F625EDCE4 /* versioning */ = {
+		945D7270578AF32CDC99FDFE = {
 			isa = PBXGroup;
 			children = (
-				DE48BB7F44534385EE02F99A /* Version.cpp */,
-				FAF4E0AAD18C582188D4263C /* Version.h */,
-			);
-			name = versioning;
+				"3BBABCBDC3078246057C06F9",
+				"CDBAD5D339DCC96FB0E7D52B",
+				"50F291407EE8C164E64DDBA4",
+				"08633239B56170FDC87D7DCA",
+				"78B96511369C28EAB708CC30",
+				"9BE7C3F5D8F7F773484471CA",
+				"FEB8B068D3411585B3148FD7",
+				"897E9503B922BF640BCB5A11",
+				"CF6F622C02C313C643098A45",
+				"637F3EC1A5353BF4F81B4AA8",
+				"B31732F74C571393AA61B7F4",
+				"7201A81A333777FDF4EC1978");
+			name = "core";
 			sourceTree = "<group>";
 		};
-		74B182DB50CB5611B5C1C297 /* Supporting Files */ = {
+		A8828195B5B105DF3EF0A6F3 = {
 			isa = PBXGroup;
 			children = (
-				F7859A6A462BF2F26D2744E6 /* VPP.pro */,
-				B5EC9EB139569BA916A13EED /* .qmake.stash */,
-				836B2D70B8BEA418FF9E8049 /* gui */,
-			);
+				"6A2E562CC29CA78C1E436F8A",
+				"50C636CE99AC122BDF63EE2F",
+				"36A61D690E2BAA7EB22A1601",
+				"55981D7B28A86332D463FB84");
+			name = "exceptions";
+			sourceTree = "<group>";
+		};
+		C76D9EF5064E96CDBBDAB65E = {
+			isa = PBXGroup;
+			children = (
+				"1B14A761DA72B7FF2DA85767",
+				"5159B92706FEF3FB1A7CDA89",
+				"7E53A029758EC767BB05329D",
+				"9100D39368F7FCF1989E96C6",
+				"770CF1D7E9512BBABB17E86F",
+				"286F18449D1D28A3B8962491",
+				"657800E3B4935A0005288B08",
+				"B7CC520C1E0517BD80ECF99D",
+				"A9B8BFB4C943A486717F4880",
+				"668C7DA1D2FAA0394557BD96",
+				"0CC4A3A9AB21683A3C9A623D",
+				"0B249122FD48B4BB598011C7",
+				"C98EA01C80996DFA59D73E5B",
+				"7B7C3CB1FE7F49D765F66163",
+				"04306F199F9FBC54052772BC",
+				"B58E96A6686474993FE0BEEF",
+				"63D3C8AD76023A0EC3D918BF",
+				"8EE57C82F10D13C838A233AB",
+				"1B821E593CFFCA5EA9B5D8EE",
+				"98A0CBC858C911D76F94DD56",
+				"E8A6C92521BCAA3EC3F007D3",
+				"517A9064D3C0E8C3E03052D4",
+				"6A9F253E2B86D27595B9A55F",
+				"C8F15FEFBD536106F6CB3C68",
+				"7B741AB7185A33C2329CEA4E",
+				"A86A66E0DA7DA38C50B9A1EA",
+				"40A6D07C89D6CC1BD877F197",
+				"2D676EF791E0DD1DF651B5E7",
+				"919B23699572E79F1879F394",
+				"F18099C6D01AAFBC24629E80",
+				"32208B5652ED65FBE537FBF9",
+				"5DE3EBCD3768A0E19EC7559E",
+				"6326D1D9F7D79D5A3D9076F3",
+				"B4953B0EB6F36A6FA6A1DBF5",
+				"A6F6E728E46B65019D0ACCB5",
+				"1CF6764FEB0045428A1337B4",
+				"B6FCC2C1C641FCD59013F555",
+				"1ABC9A06BCEBC1827E32FE53");
+			name = "gui";
+			sourceTree = "<group>";
+		};
+		1ED5EC6DAD903C11284F3BED = {
+			isa = PBXGroup;
+			children = (
+				"14F0F1B53E3D1B3DD1127F97",
+				"3DC9612A351B632B01DBEBF1",
+				"CE048B65E5616394B4055ADF",
+				"02D40B796BEA315707373816",
+				"360FDE91977FE1D108EFAE76",
+				"0E7C40F049E3D1F22165965D",
+				"0E28EB96A992EBFA9906A982");
+			name = "io";
+			sourceTree = "<group>";
+		};
+		0DC814FDE9068863A758C728 = {
+			isa = PBXGroup;
+			children = (
+				"92D1527A66BE98BF7CCD7D0B",
+				"3F7F0A85AF34FDD32EA67ED8",
+				"825E3E5A82036C9644DB21DC",
+				"6B2131CE1178639BAFF11652");
+			name = "plotting";
+			sourceTree = "<group>";
+		};
+		5ECA7B35ED9E41D2A3490A30 = {
+			isa = PBXGroup;
+			children = (
+				"87198ABFDBD68BF5DF9D9CB0",
+				"EE0D28AA551D28807CB453B9");
+			name = "qcustomplot";
+			sourceTree = "<group>";
+		};
+		75A93590F0E4928BE718B607 = {
+			isa = PBXGroup;
+			children = (
+				"273504F601EB6D79CE7C44EE",
+				"715ADE45838457CEBD96F8E2");
+			name = "results";
+			sourceTree = "<group>";
+		};
+		9EFAFB7ADC304C4F994AF22C = {
+			isa = PBXGroup;
+			children = (
+				"4DF4B8DD980746ED6742BA2B",
+				"334F895D0E8CC9F40B9EE7F0",
+				"328F19C36AD9594EB96E23F3",
+				"A417EA288D6516B2EB9422FF",
+				"295E978F4230FE419A282AA3",
+				"5E9ADBA5FA226EE6B6F544AD",
+				"990162E35477F44C288C8B06",
+				"BAF794D6CF41C1FFCB702EA4",
+				"6AABFBEA326278C3C07B2F37",
+				"8D78003B13DFD45AD2E7C80D",
+				"0814EC7E585F9D34C9F0F738",
+				"F7CA810330F1608DEF44C0A6",
+				"53B36FFBB9B36D83D4E0D337",
+				"5C3623BB45BFA81E78273675",
+				"1765054731E59F892A0F9DBE",
+				"649E095303DA241CCD6CC4C7",
+				"60041408373D40A638D734C8",
+				"0D17C3B0FEB323CB6CB7B583",
+				"EFD12AAFC95E0908CF447A30",
+				"486B9F86DD15A307EBDB3BAA",
+				"EB12D8EFE6ECEB7DA313DACD",
+				"FB199F35953135E9DAC6494C",
+				"C282B03F2A1C80C08F88125C",
+				"AE948FE2118181B06FB4E1A5");
+			name = "solvers";
+			sourceTree = "<group>";
+		};
+		E003E8E901249ACE6A5EA19A = {
+			isa = PBXGroup;
+			children = (
+				"E15242A623D8DE6D37EB4668",
+				"AE7119D191887546E530ACEE",
+				"2F1DB019ECEF0633081681AC",
+				"0EE095B71C0C524A61855563",
+				"417BFC1CED8D7A865CCBE4C6",
+				"099A3CE321D86B34E46E6ACB",
+				"BB4137C046C8334D89C456D7",
+				"81BB54BE6EEA07C0BD98F16E");
+			name = "utils";
+			sourceTree = "<group>";
+		};
+		66F851D7A73FAB2F625EDCE4 = {
+			isa = PBXGroup;
+			children = (
+				"DE48BB7F44534385EE02F99A",
+				"FAF4E0AAD18C582188D4263C");
+			name = "versioning";
+			sourceTree = "<group>";
+		};
+		836B2D70B8BEA418FF9E8049 = {
+			isa = PBXGroup;
+			children = (
+				"2D0EA83236085394BB65CCF5");
+			name = "gui";
+			sourceTree = "<group>";
+		};
+		87DF60DE337FB58864343E39 = {
+			isa = PBXGroup;
+			children = (
+				"DB6FA10816FB80BA0AA5E2F7");
+			name = "Resources";
+			sourceTree = "<group>";
+		};
+		2EB56BE3C2D93CDAB0C52E67 = {
+			isa = PBXGroup;
+			children = (
+				"C0118192E64AB332BF49D4F9",
+				"5ECA7B35ED9E41D2A3490A30",
+				"C76D9EF5064E96CDBBDAB65E",
+				"A8828195B5B105DF3EF0A6F3",
+				"945D7270578AF32CDC99FDFE",
+				"1ED5EC6DAD903C11284F3BED",
+				"9EFAFB7ADC304C4F994AF22C",
+				"0DC814FDE9068863A758C728",
+				"75A93590F0E4928BE718B607",
+				"E003E8E901249ACE6A5EA19A",
+				"66F851D7A73FAB2F625EDCE4");
+			name = "Sources";
+			sourceTree = "<group>";
+		};
+		12E908B8A1C3C07C115504F5 = {
+			isa = PBXGroup;
+			children = (
+				"19DFF2ACC8C6AB118DF564D6");
+			name = "Sources [uic]";
+			sourceTree = "<group>";
+		};
+		74B182DB50CB5611B5C1C297 = {
+			isa = PBXGroup;
+			children = (
+				"F7859A6A462BF2F26D2744E6",
+				"B5EC9EB139569BA916A13EED",
+				"836B2D70B8BEA418FF9E8049");
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		75A93590F0E4928BE718B607 /* results */ = {
-			isa = PBXGroup;
-			children = (
-				273504F601EB6D79CE7C44EE /* Results.cpp */,
-				715ADE45838457CEBD96F8E2 /* Results.h */,
-			);
-			name = results;
-			sourceTree = "<group>";
+		7EF0942E79C014DCEC8976BC = {
+			buildActionMask = 2147483647;
+			files = (
+				);
+			isa = PBXShellScriptBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Qt Preprocessors";
+			shellPath = "/bin/sh";
+			shellScript = "make -C /Users/dtrimarchi/VPP/main/ -f VPP.xcodeproj/qt_preprocess.mak";
+			showEnvVarsInLog = "0";
 		};
-		836B2D70B8BEA418FF9E8049 /* gui */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = gui;
-			sourceTree = "<group>";
+		F7E50F631C51CD5B5DC0BC43 = {
+			buildActionMask = 2147483647;
+			files = (
+				"C02D0B2E7586129C2CD91C5D",
+				"192B5378B8D36922593B3F7A",
+				"C1A9685BAF4A2A46C96A25EF",
+				"82F07F0A2DA26B65C850F56A",
+				"B1DFCD9F8C53448F00E8568F",
+				"DAB42D4DFE73E08E20897E9F",
+				"80CE99F22CE7157743D70AF3",
+				"070BFD2D4E138BEFBF3D8F20",
+				"15E3284226ED033B1D82614B",
+				"73B98F530B17BEEAC4F19437",
+				"C01856DB5B5A05D31BA49B13",
+				"8B18BB4DAB3D225D54AF6D82",
+				"CB956AE2FFDCABAC41252052",
+				"CAF7C7E200F4428E18E6BE5B",
+				"73A37DAC21B7AA56C878B364",
+				"BC851D63CD7161177A68434E",
+				"25F72F3CD1EE305F577F6BCB",
+				"C8091D0019724BF7E52C8248",
+				"9A43EB1698980269F17584C3",
+				"F9F28EA589CD8C482252BC9E",
+				"C51BF6D53A6AE483D77F53DC",
+				"6F7FA431D6160814D9DF713C",
+				"4C468452E932C245687E07F7",
+				"76BF210E30E2B44EE5131EFE",
+				"A87F38E3E92FDA12F864426F",
+				"AF7C04DC403CFB3620FA220D",
+				"0AF1216A2CF223D59C37CBF1",
+				"EE8F3A39D925DC1F0E562B4D",
+				"C73D452C12FA2017C654644A",
+				"563F298A96AF779B9D37D515",
+				"B890D9B5705D4DC8F0C7EB1A",
+				"77F684B83BBE8A14FC796FAB",
+				"0D6D6B08CF3AB37DD5709931",
+				"941A92EC3C78D3813C3FBED1",
+				"AE19E77BD182C321CEBC0FFC",
+				"73A2E6D7430E9F2D9E796997",
+				"F50E931CEB8EB4FB0F8F0053",
+				"4918102183872DD3BE80D0CE",
+				"7136621E4573A9C8F9EB65F5",
+				"09EB5284DBB1E0D5B8F28B66",
+				"4487B595710D5FCF44118B04",
+				"7188E82353A23C080AF917CF",
+				"A9DEA3E3F995D621A9930E8A",
+				"1004F68AB671CF8D4E9ED3AF",
+				"E17D8E61846603133AFFFB97",
+				"C24CCBD40DCD736316FA1AAD",
+				"CE5094404CC9DC7237269F84",
+				"C779D8A839F2A9A97C2442AA",
+				"1CE2E9AA78F4B9DFC24F4505",
+				"FA468679B146CF8620B85B06",
+				"A1A58D2C7E3E938937176FE8",
+				"631E984421ACA6621D9A7434",
+				"451FA4931D7FB5CDC52624ED",
+				"576A3B2ED207388499383478",
+				"5D0F5727C28892E1AA58F715",
+				"A8EC760318DCA70D1513B347",
+				"C55232B542E8EF16099FC937",
+				"A05C9607EC348CC420D566AF",
+				"C8816B2D293A3060C9D303EF",
+				"BCCC585FB7B24E50F9E3A25E",
+				"E5D27870C9067A6E81D7D52B",
+				"A5A82EE01AAEAE7E1D416FAE",
+				"91097B4EF09BE74A8F66660E",
+				"BDA3A34FC779764B195418E3",
+				"F69025EF8F008544B24D5334",
+				"6DE6EE811139C08213BDB9F6",
+				"678241618B2798A4073714F6",
+				"2DE1F6FBB19204E064E31091",
+				"EE99A568D5161783748B5041",
+				"98D524C61C980871B2998339",
+				"CF8F22955BC8B616831F807F");
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Compile Sources";
 		};
-		87DF60DE337FB58864343E39 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				DB6FA10816FB80BA0AA5E2F7 /* gui */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
+		D8D01A26CF40C165370FBD9F = {
+			isa = PBXFileReference;
+			name = "ipopt";
+			path = "/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib/libipopt.dylib";
+			refType = 0;
+			sourceTree = "<absolute>";
 		};
-		945D7270578AF32CDC99FDFE /* core */ = {
-			isa = PBXGroup;
-			children = (
-				3BBABCBDC3078246057C06F9 /* SailSet.cpp */,
-				CDBAD5D339DCC96FB0E7D52B /* VPPAeroItem.cpp */,
-				50F291407EE8C164E64DDBA4 /* VPPHydroItem.cpp */,
-				08633239B56170FDC87D7DCA /* VPPItem.cpp */,
-				78B96511369C28EAB708CC30 /* VPPItemFactory.cpp */,
-				9BE7C3F5D8F7F773484471CA /* VPPRightingMomentItem.cpp */,
-				FEB8B068D3411585B3148FD7 /* SailSet.h */,
-				897E9503B922BF640BCB5A11 /* VPPAeroItem.h */,
-				CF6F622C02C313C643098A45 /* VPPHydroItem.h */,
-				637F3EC1A5353BF4F81B4AA8 /* VPPItem.h */,
-				B31732F74C571393AA61B7F4 /* VPPItemFactory.h */,
-				7201A81A333777FDF4EC1978 /* VPPRightingMomentItem.h */,
-			);
-			name = core;
-			sourceTree = "<group>";
-		};
-		9EFAFB7ADC304C4F994AF22C /* solvers */ = {
-			isa = PBXGroup;
-			children = (
-				4DF4B8DD980746ED6742BA2B /* hs071_nlp.cpp */,
-				334F895D0E8CC9F40B9EE7F0 /* NLOptSolver.cpp */,
-				328F19C36AD9594EB96E23F3 /* NRSolver.cpp */,
-				A417EA288D6516B2EB9422FF /* SemiAnalyticalOptimizer.cpp */,
-				295E978F4230FE419A282AA3 /* Solver.cpp */,
-				5E9ADBA5FA226EE6B6F544AD /* SparseSolver.cpp */,
-				990162E35477F44C288C8B06 /* VPP_nlp.cpp */,
-				BAF794D6CF41C1FFCB702EA4 /* VPPGradient.cpp */,
-				6AABFBEA326278C3C07B2F37 /* VPPJacobian.cpp */,
-				8D78003B13DFD45AD2E7C80D /* VPPSolver.cpp */,
-				0814EC7E585F9D34C9F0F738 /* VPPSolverBase.cpp */,
-				F7CA810330F1608DEF44C0A6 /* VPPSolverFactoryBase.cpp */,
-				53B36FFBB9B36D83D4E0D337 /* hs071_nlp.h */,
-				5C3623BB45BFA81E78273675 /* NLOptSolver.h */,
-				1765054731E59F892A0F9DBE /* NRSolver.h */,
-				649E095303DA241CCD6CC4C7 /* SemiAnalyticalOptimizer.h */,
-				60041408373D40A638D734C8 /* Solver.h */,
-				0D17C3B0FEB323CB6CB7B583 /* SparseSolver.h */,
-				EFD12AAFC95E0908CF447A30 /* VPP_nlp.h */,
-				486B9F86DD15A307EBDB3BAA /* VPPGradient.h */,
-				EB12D8EFE6ECEB7DA313DACD /* VPPJacobian.h */,
-				FB199F35953135E9DAC6494C /* VPPSolver.h */,
-				C282B03F2A1C80C08F88125C /* VPPSolverBase.h */,
-				AE948FE2118181B06FB4E1A5 /* VPPSolverFactoryBase.h */,
-			);
-			name = solvers;
-			sourceTree = "<group>";
-		};
-		A8828195B5B105DF3EF0A6F3 /* exceptions */ = {
-			isa = PBXGroup;
-			children = (
-				6A2E562CC29CA78C1E436F8A /* VPPException.cpp */,
-				50C636CE99AC122BDF63EE2F /* Warning.cpp */,
-				36A61D690E2BAA7EB22A1601 /* VPPException.h */,
-				55981D7B28A86332D463FB84 /* Warning.h */,
-			);
-			name = exceptions;
-			sourceTree = "<group>";
-		};
-		AF39DD055C3EF8226FBE929D /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				D8D01A26CF40C165370FBD9F /* ipopt */,
-				B8791C3CD81994A6F94D6F46 /* umfpack */,
-				7344457A54A5CAF44D131165 /* BLAS */,
-				C17C2BC59FFDD28F2AD11206 /* amd */,
-				BEEA8D5BDFFEC9EAB00157BC /* colamd */,
-				C06D5D7F1758EDF3EDEF3A0C /* cholmod */,
-				21D6994D0E44278C59ACEDAF /* suitesparseconfig */,
-				49F3A6E2244BF8E9BBB9BC64 /* nlopt */,
-				D1B7D5650E50D1736E530780 /* plplot */,
-				F40D60FEC996A1BD0A3DBC73 /* plplotcxx */,
-				F165D8A70734D22F69C0ABDE /* QtCharts.framework */,
-				17DDAFE5E52515581D095F18 /* QtWidgets.framework */,
-				CD829298CA2038092A51A0F6 /* QtGui.framework */,
-				820A25BF0A1A2242F14E2A0A /* QtCore.framework */,
-				2B774D8E4178765CE52EAAF5 /* DiskArbitration.framework */,
-				A1A67BEAA744704B29168D39 /* IOKit.framework */,
-				362C73AD0C717E77FFCEB1AF /* QtPrintSupport.framework */,
-				D7823A3E9B20D79AFE462B4E /* QtDataVisualization.framework */,
-				94C9EC0B3C28D1C32480365D /* QtNetwork.framework */,
-				D4B32C2222F82AC56BADEB21 /* OpenGL.framework */,
-				8D9815BDB5BD9F90D2BC05C5 /* AGL.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		C76D9EF5064E96CDBBDAB65E /* gui */ = {
-			isa = PBXGroup;
-			children = (
-				1B14A761DA72B7FF2DA85767 /* LogDockWidget.cpp */,
-				5159B92706FEF3FB1A7CDA89 /* LogWindow.cpp */,
-				7E53A029758EC767BB05329D /* MainWindow.cpp */,
-				9100D39368F7FCF1989E96C6 /* MultiplePlotChartComponent.cpp */,
-				770CF1D7E9512BBABB17E86F /* MultiplePlotWidget.cpp */,
-				286F18449D1D28A3B8962491 /* PolarPlotWidget.cpp */,
-				657800E3B4935A0005288B08 /* StateVectorDialog.cpp */,
-				B7CC520C1E0517BD80ECF99D /* SurfaceGraph.cpp */,
-				A9B8BFB4C943A486717F4880 /* ThreeDPlotWidget.cpp */,
-				668C7DA1D2FAA0394557BD96 /* VariablesDockWidget.cpp */,
-				0CC4A3A9AB21683A3C9A623D /* VariableTreeItem.cpp */,
-				0B249122FD48B4BB598011C7 /* VariableTreeModel.cpp */,
-				C98EA01C80996DFA59D73E5B /* VppChartView.cpp */,
-				7B7C3CB1FE7F49D765F66163 /* VppPolarChart.cpp */,
-				04306F199F9FBC54052772BC /* VppTabDockWidget.cpp */,
-				B58E96A6686474993FE0BEEF /* VppTableDockWidget.cpp */,
-				63D3C8AD76023A0EC3D918BF /* VppTableModel.cpp */,
-				8EE57C82F10D13C838A233AB /* VPPXYChart.cpp */,
-				1B821E593CFFCA5EA9B5D8EE /* VPPXYChartWidget.cpp */,
-				98A0CBC858C911D76F94DD56 /* LogDockWidget.h */,
-				E8A6C92521BCAA3EC3F007D3 /* LogWindow.h */,
-				517A9064D3C0E8C3E03052D4 /* MainWindow.h */,
-				6A9F253E2B86D27595B9A55F /* MultiplePlotChartComponent.h */,
-				C8F15FEFBD536106F6CB3C68 /* MultiplePlotWidget.h */,
-				7B741AB7185A33C2329CEA4E /* PolarPlotWidget.h */,
-				A86A66E0DA7DA38C50B9A1EA /* StateVectorDialog.h */,
-				40A6D07C89D6CC1BD877F197 /* SurfaceGraph.h */,
-				2D676EF791E0DD1DF651B5E7 /* ThreeDPlotWidget.h */,
-				919B23699572E79F1879F394 /* VariablesDockWidget.h */,
-				F18099C6D01AAFBC24629E80 /* VariableTreeItem.h */,
-				32208B5652ED65FBE537FBF9 /* VariableTreeModel.h */,
-				5DE3EBCD3768A0E19EC7559E /* VppChartView.h */,
-				6326D1D9F7D79D5A3D9076F3 /* VppPolarChart.h */,
-				B4953B0EB6F36A6FA6A1DBF5 /* VppTabDockWidget.h */,
-				A6F6E728E46B65019D0ACCB5 /* VppTableDockWidget.h */,
-				1CF6764FEB0045428A1337B4 /* VppTableModel.h */,
-				B6FCC2C1C641FCD59013F555 /* VPPXYChart.h */,
-				1ABC9A06BCEBC1827E32FE53 /* VPPXYChartWidget.h */,
-			);
-			name = gui;
-			sourceTree = "<group>";
-		};
-		DB6FA10816FB80BA0AA5E2F7 /* gui */ = {
-			isa = PBXGroup;
-			children = (
-				2D0EA83236085394BB65CCF5 /* VPP.qrc */,
-			);
-			name = gui;
-			sourceTree = "<group>";
-		};
-		E003E8E901249ACE6A5EA19A /* utils */ = {
-			isa = PBXGroup;
-			children = (
-				E15242A623D8DE6D37EB4668 /* Interpolator.cpp */,
-				AE7119D191887546E530ACEE /* mathUtils.cpp */,
-				2F1DB019ECEF0633081681AC /* Regression.cpp */,
-				0EE095B71C0C524A61855563 /* Interpolator.h */,
-				417BFC1CED8D7A865CCBE4C6 /* mathUtils.h */,
-				099A3CE321D86B34E46E6ACB /* Physics.h */,
-				BB4137C046C8334D89C456D7 /* Regression.h */,
-				81BB54BE6EEA07C0BD98F16E /* Spline.h */,
-			);
-			name = utils;
-			sourceTree = "<group>";
-		};
-		E8C543AB96796ECAA2E65C57 /* VPP */ = {
-			isa = PBXGroup;
-			children = (
-				2EB56BE3C2D93CDAB0C52E67 /* Sources */,
-				25B08E2869634E9BCBA333A2 /* Generated Sources */,
-				74B182DB50CB5611B5C1C297 /* Supporting Files */,
-				87DF60DE337FB58864343E39 /* Resources */,
-				12E908B8A1C3C07C115504F5 /* Sources [uic] */,
-				AF39DD055C3EF8226FBE929D /* Frameworks */,
-				FE0A091FDBFB3E9C31B7A1BD /* Products */,
-			);
-			name = VPP;
-			sourceTree = "<group>";
-		};
-		FE0A091FDBFB3E9C31B7A1BD /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A4871DB649F525274F7CE816 /* VPP.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-/* End PBXGroup section */
-
-/* Begin PBXNativeTarget section */
-		4EFFC2F4A158FBCB63BDA8A3 /* VPP */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6CC3B5D2136C7CD6A5CF5A59 /* Build configuration list for PBXNativeTarget "VPP" */;
-			buildPhases = (
-				F7E50F631C51CD5B5DC0BC43 /* Compile Sources */,
-				D1C883685E82D5676953459A /* Link Binary With Libraries */,
-				9C316F444A62BF296E3E1F25 /* Project Copy */,
-				30414803F31797EB689AE508 /* Copy Bundle Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0C53387CC07629BAE719CDA0 /* PBXTargetDependency */,
-			);
-			name = VPP;
-			productInstallPath = ../xCodeBuild/;
-			productName = VPP;
-			productReference = A4871DB649F525274F7CE816 /* VPP.app */;
-			productType = "com.apple.product-type.application";
-		};
-/* End PBXNativeTarget section */
-
-/* Begin PBXProject section */
-		6DB9C3763D02B1415CD9D565 /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
+		A75154068A2E317B0B7AEDB3 = {
+			fileRef = "D8D01A26CF40C165370FBD9F";
+			isa = PBXBuildFile;
+			settings = {
 			};
-			buildConfigurationList = DAC4C1AA5EDEA1C85E9CA5E6 /* Build configuration list for PBXProject "VPP" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+		};
+		B8791C3CD81994A6F94D6F46 = {
+			isa = PBXFileReference;
+			name = "umfpack";
+			path = "/opt/local/lib/libumfpack.dylib";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		86750C960826ACB1F9962DAB = {
+			fileRef = "B8791C3CD81994A6F94D6F46";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7344457A54A5CAF44D131165 = {
+			isa = PBXFileReference;
+			name = "BLAS";
+			path = "/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		C061B6738020E9ECD9BE7524 = {
+			fileRef = "7344457A54A5CAF44D131165";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		C17C2BC59FFDD28F2AD11206 = {
+			isa = PBXFileReference;
+			name = "amd";
+			path = "/opt/local/lib/libamd.dylib";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		287A821D050F1F28A6BBC99A = {
+			fileRef = "C17C2BC59FFDD28F2AD11206";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEEA8D5BDFFEC9EAB00157BC = {
+			isa = PBXFileReference;
+			name = "colamd";
+			path = "/opt/local/lib/libcolamd.dylib";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		922626466ED4A202C4DC09F2 = {
+			fileRef = "BEEA8D5BDFFEC9EAB00157BC";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		C06D5D7F1758EDF3EDEF3A0C = {
+			isa = PBXFileReference;
+			name = "cholmod";
+			path = "/opt/local/lib/libcholmod.dylib";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		EB69D9407AE73D89E0305731 = {
+			fileRef = "C06D5D7F1758EDF3EDEF3A0C";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		21D6994D0E44278C59ACEDAF = {
+			isa = PBXFileReference;
+			name = "suitesparseconfig";
+			path = "/opt/local/lib/libsuitesparseconfig.dylib";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		B2F54A3ECA917A378DACF112 = {
+			fileRef = "21D6994D0E44278C59ACEDAF";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		49F3A6E2244BF8E9BBB9BC64 = {
+			isa = PBXFileReference;
+			name = "nlopt";
+			path = "/Users/dtrimarchi/third_party/nlopt-2.4.2/libs/libnlopt.a";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		A243F769B1ABDD203363B6BE = {
+			fileRef = "49F3A6E2244BF8E9BBB9BC64";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D1B7D5650E50D1736E530780 = {
+			isa = PBXFileReference;
+			name = "plplot";
+			path = "/opt/local/lib/libplplot.dylib";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		FE0E127F1A005003755655A1 = {
+			fileRef = "D1B7D5650E50D1736E530780";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F40D60FEC996A1BD0A3DBC73 = {
+			isa = PBXFileReference;
+			name = "plplotcxx";
+			path = "/opt/local/lib/libplplotcxx.dylib";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		D7F9FA241A1FA3A4F4B55242 = {
+			fileRef = "F40D60FEC996A1BD0A3DBC73";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F165D8A70734D22F69C0ABDE = {
+			isa = PBXFileReference;
+			name = "QtCharts.framework";
+			path = "/usr/local/Cellar/qt5/5.7.0/lib/QtCharts.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+			lastKnownFileType = "wrapper.framework";
+		};
+		446FA5B61F047CD6FE1AA646 = {
+			fileRef = "F165D8A70734D22F69C0ABDE";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		17DDAFE5E52515581D095F18 = {
+			isa = PBXFileReference;
+			name = "QtWidgets.framework";
+			path = "/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+			lastKnownFileType = "wrapper.framework";
+		};
+		B1FD449BA9A24D8FBFD6B918 = {
+			fileRef = "17DDAFE5E52515581D095F18";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		CD829298CA2038092A51A0F6 = {
+			isa = PBXFileReference;
+			name = "QtGui.framework";
+			path = "/usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+			lastKnownFileType = "wrapper.framework";
+		};
+		7B61C92B0D756FD9703B0C41 = {
+			fileRef = "CD829298CA2038092A51A0F6";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		820A25BF0A1A2242F14E2A0A = {
+			isa = PBXFileReference;
+			name = "QtCore.framework";
+			path = "/usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+			lastKnownFileType = "wrapper.framework";
+		};
+		E8CEE9A2D81662520C72B099 = {
+			fileRef = "820A25BF0A1A2242F14E2A0A";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2B774D8E4178765CE52EAAF5 = {
+			isa = PBXFileReference;
+			name = "DiskArbitration.framework";
+			path = "/System/Library/Frameworks/DiskArbitration.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+			lastKnownFileType = "wrapper.framework";
+		};
+		A99B2AA0F9CBBDD12BA126A4 = {
+			fileRef = "2B774D8E4178765CE52EAAF5";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		A1A67BEAA744704B29168D39 = {
+			isa = PBXFileReference;
+			name = "IOKit.framework";
+			path = "/System/Library/Frameworks/IOKit.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+			lastKnownFileType = "wrapper.framework";
+		};
+		8D267F2E4776F0ECA2F49DC8 = {
+			fileRef = "A1A67BEAA744704B29168D39";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		362C73AD0C717E77FFCEB1AF = {
+			isa = PBXFileReference;
+			name = "QtPrintSupport.framework";
+			path = "/usr/local/Cellar/qt5/5.7.0/lib/QtPrintSupport.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+			lastKnownFileType = "wrapper.framework";
+		};
+		A8CEC54E30C5CFE667D0E391 = {
+			fileRef = "362C73AD0C717E77FFCEB1AF";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D7823A3E9B20D79AFE462B4E = {
+			isa = PBXFileReference;
+			name = "QtDataVisualization.framework";
+			path = "/usr/local/Cellar/qt5/5.7.0/lib/QtDataVisualization.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+			lastKnownFileType = "wrapper.framework";
+		};
+		B69261DD6648DBDE33C96052 = {
+			fileRef = "D7823A3E9B20D79AFE462B4E";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		94C9EC0B3C28D1C32480365D = {
+			isa = PBXFileReference;
+			name = "QtNetwork.framework";
+			path = "/usr/local/Cellar/qt5/5.7.0/lib/QtNetwork.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+			lastKnownFileType = "wrapper.framework";
+		};
+		97CC4A587B63565F574D7541 = {
+			fileRef = "94C9EC0B3C28D1C32480365D";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D4B32C2222F82AC56BADEB21 = {
+			isa = PBXFileReference;
+			name = "OpenGL.framework";
+			path = "/System/Library/Frameworks/OpenGL.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+			lastKnownFileType = "wrapper.framework";
+		};
+		8771A8C96E9C391044035D99 = {
+			fileRef = "D4B32C2222F82AC56BADEB21";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8D9815BDB5BD9F90D2BC05C5 = {
+			isa = PBXFileReference;
+			name = "AGL.framework";
+			path = "/System/Library/Frameworks/AGL.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+			lastKnownFileType = "wrapper.framework";
+		};
+		E45E51A644D5FC9F942ECE55 = {
+			fileRef = "8D9815BDB5BD9F90D2BC05C5";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AF39DD055C3EF8226FBE929D = {
+			children = (
+				"D8D01A26CF40C165370FBD9F",
+				"B8791C3CD81994A6F94D6F46",
+				"7344457A54A5CAF44D131165",
+				"C17C2BC59FFDD28F2AD11206",
+				"BEEA8D5BDFFEC9EAB00157BC",
+				"C06D5D7F1758EDF3EDEF3A0C",
+				"21D6994D0E44278C59ACEDAF",
+				"49F3A6E2244BF8E9BBB9BC64",
+				"D1B7D5650E50D1736E530780",
+				"F40D60FEC996A1BD0A3DBC73",
+				"F165D8A70734D22F69C0ABDE",
+				"17DDAFE5E52515581D095F18",
+				"CD829298CA2038092A51A0F6",
+				"820A25BF0A1A2242F14E2A0A",
+				"2B774D8E4178765CE52EAAF5",
+				"A1A67BEAA744704B29168D39",
+				"362C73AD0C717E77FFCEB1AF",
+				"D7823A3E9B20D79AFE462B4E",
+				"94C9EC0B3C28D1C32480365D",
+				"D4B32C2222F82AC56BADEB21",
+				"8D9815BDB5BD9F90D2BC05C5");
+			isa = PBXGroup;
+			name = "Frameworks";
+			sourceTree = "<group>";
+		};
+		D1C883685E82D5676953459A = {
+			buildActionMask = 2147483647;
+			files = (
+				"A75154068A2E317B0B7AEDB3",
+				"86750C960826ACB1F9962DAB",
+				"C061B6738020E9ECD9BE7524",
+				"287A821D050F1F28A6BBC99A",
+				"922626466ED4A202C4DC09F2",
+				"EB69D9407AE73D89E0305731",
+				"B2F54A3ECA917A378DACF112",
+				"A243F769B1ABDD203363B6BE",
+				"FE0E127F1A005003755655A1",
+				"D7F9FA241A1FA3A4F4B55242",
+				"446FA5B61F047CD6FE1AA646",
+				"B1FD449BA9A24D8FBFD6B918",
+				"7B61C92B0D756FD9703B0C41",
+				"E8CEE9A2D81662520C72B099",
+				"A99B2AA0F9CBBDD12BA126A4",
+				"8D267F2E4776F0ECA2F49DC8",
+				"A8CEC54E30C5CFE667D0E391",
+				"B69261DD6648DBDE33C96052",
+				"97CC4A587B63565F574D7541",
+				"8771A8C96E9C391044035D99",
+				"E45E51A644D5FC9F942ECE55");
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Link Binary With Libraries";
+		};
+		9C316F444A62BF296E3E1F25 = {
+			isa = PBXShellScriptBuildPhase;
+			name = "Project Copy";
+			buildActionMask = 2147483647;
+			files = (
+				);
+			inputPaths = (
+				);
+			outputPaths = (
+				);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/bin/sh";
+			shellScript = "cp -r $BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME /Users/dtrimarchi/VPP/xCodeBuild";
+			showEnvVarsInLog = "0";
+		};
+		30414803F31797EB689AE508 = {
+			buildActionMask = 2147483647;
+			files = (
+				);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Copy Bundle Resources";
+		};
+		A4871DB649F525274F7CE816 = {
+			isa = PBXFileReference;
+			includeInIndex = 0;
+			explicitFileType = "wrapper.application";
+			path = "VPP.app";
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FE0A091FDBFB3E9C31B7A1BD = {
+			children = (
+				"A4871DB649F525274F7CE816");
+			isa = PBXGroup;
+			name = "Products";
+			sourceTree = "<group>";
+		};
+		E8C543AB96796ECAA2E65C57 = {
+			children = (
+				"2EB56BE3C2D93CDAB0C52E67",
+				"25B08E2869634E9BCBA333A2",
+				"74B182DB50CB5611B5C1C297",
+				"87DF60DE337FB58864343E39",
+				"12E908B8A1C3C07C115504F5",
+				"AF39DD055C3EF8226FBE929D",
+				"FE0A091FDBFB3E9C31B7A1BD");
+			isa = PBXGroup;
+			name = "VPP";
+			sourceTree = "<group>";
+		};
+		332CE8FADCDB06BBA6D8A1F2 = {
+			buildPhases = (
+				"5E618435888B9D49F8540165",
+				"7EF0942E79C014DCEC8976BC");
+			dependencies = (
+				);
+			buildConfigurationList = 6CC3B5D2136C7CD6A5CF5A59;
+			isa = PBXAggregateTarget;
+			buildRules = (
+);
+			productName = "Qt Preprocess";
+			name = "Qt Preprocess";
+		};
+		0C53387CC07629BAE719CDA0 = {
+			isa = PBXTargetDependency;
+			target = "332CE8FADCDB06BBA6D8A1F2";
+		};
+		4EFFC2F4A158FBCB63BDA8A3 = {
+			buildPhases = (
+				"F7E50F631C51CD5B5DC0BC43",
+				"D1C883685E82D5676953459A",
+				"9C316F444A62BF296E3E1F25",
+				"30414803F31797EB689AE508");
+			dependencies = (
+				"0C53387CC07629BAE719CDA0");
+			productReference = "A4871DB649F525274F7CE816";
+			buildConfigurationList = 6CC3B5D2136C7CD6A5CF5A59;
+			isa = PBXNativeTarget;
+			buildRules = (
+);
+			productType = "com.apple.product-type.application";
+			name = "VPP";
+			productName = "VPP";
+			productInstallPath = "../xCodeBuild/";
+		};
+		3AA6C32AC930069E80220CF1 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = "NO";
+				ENABLE_BITCODE = "NO";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+				GCC_OPTIMIZATION_LEVEL = "0";
+				PRODUCT_NAME = "VPP";
+				QT_LIBRARY_SUFFIX = "";
+				SDKROOT = "macosx";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				CC = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang";
+				LDPLUSPLUS = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++";
+				INFOPLIST_FILE = "Info.plist";
+				SYMROOT = "/Users/dtrimarchi/VPP/main/";
+				INSTALL_DIR = "/Users/dtrimarchi/VPP/main//../xCodeBuild/";
+				DYLIB_CURRENT_VERSION = "1.0.0";
+				DYLIB_COMPATIBILITY_VERSION = "1.0";
+				MACOSX_DEPLOYMENT_TARGET = "10.8";
+				HEADER_SEARCH_PATHS = (
+					".",
+					"/opt/local/include",
+					"../../third_party/eigen-3.2.7",
+					"../../third_party/SuiteSparse-4.5.2/UMFPACK/Include",
+					"../../third_party/SuiteSparse-4.5.2/SuiteSparse_config",
+					"../../third_party/SuiteSparse-4.5.2/AMD/Include",
+					"../../third_party/boost_1_60_0",
+					"../../third_party/nlopt-2.4.2/api",
+					"../../third_party/Ipopt-3.12.6/Ipopt/src/Interfaces",
+					"../../third_party/Ipopt-3.12.6/include/coin",
+					"/Users/dtrimarchi/third_party/opt/local/share/plplot5.11.1/examples/c++",
+					"/Users/dtrimarchi/third_party/opt/local/include/plplot",
+					"../../third_party/cppunit-1.13.2/build/include",
+					"/opt/local/share/plplot5.11.1/examples/c++",
+					"/opt/local/include/plplot",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtCharts.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtPrintSupport.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtDataVisualization.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtNetwork.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework/Headers",
+					"../xCodeBuild",
+					"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers",
+					"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers",
+					"../xCodeBuild",
+					"/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang");
+				LIBRARY_SEARCH_PATHS = (
+					"/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
+					"/opt/local/lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
+					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
+					"/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
+					"/usr/local/Cellar/qt5/5.7.0/lib",
+					"/System/Library/Frameworks/");
+				FRAMEWORK_SEARCH_PATHS = (
+					"/usr/local/Cellar/qt5/5.7.0/lib",
+					"/usr/local/Cellar/qt5/5.7.0/lib");
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-fPIC",
+					"-DQT_DEPRECATED_WARNINGS",
+					"-DQT_NO_DEBUG",
+					"-DQT_CHARTS_LIB",
+					"-DQT_PRINTSUPPORT_LIB",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_DATAVISUALIZATION_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_NETWORK_LIB",
+					"-DQT_CORE_LIB");
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-stdlib=libc++",
+					"-O2",
+					"-std=gnu++11",
+					"-Wall",
+					"-W",
+					"-fPIC",
+					"-DQT_DEPRECATED_WARNINGS",
+					"-DQT_NO_DEBUG",
+					"-DQT_CHARTS_LIB",
+					"-DQT_PRINTSUPPORT_LIB",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_DATAVISUALIZATION_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_NETWORK_LIB",
+					"-DQT_CORE_LIB");
+				OTHER_LDFLAGS = (
+						"-headerpad_max_install_names",
+						"-stdlib=libc++",
+						"-L/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
+						"-L/opt/local/lib",
+						"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib",
+						"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
+						"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Lib",
+						"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib",
+						"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib",
+						"-L/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
+						"-L/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
+						"-L/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
+						"-F/usr/local/Cellar/qt5/5.7.0/lib");
+				ARCHS = "x86_64";
+				OBJROOT = "../xCodeBuild/";
+			};
+			name = "Debug";
+		};
+		77418F46922677BB04ED38DD = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = "NO";
+				ENABLE_BITCODE = "NO";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+				GCC_OPTIMIZATION_LEVEL = "0";
+				PRODUCT_NAME = "VPP";
+				QT_LIBRARY_SUFFIX = "";
+				SDKROOT = "macosx";
+				PRODUCT_NAME = "VPP";
+			};
+			name = "Debug";
+		};
+		339EE1B2CC4FC24589A0EA95 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = "YES";
+				ENABLE_BITCODE = "NO";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "NO";
+				PRODUCT_NAME = "VPP";
+				QT_LIBRARY_SUFFIX = "";
+				SDKROOT = "macosx";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				CC = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang";
+				LDPLUSPLUS = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++";
+				INFOPLIST_FILE = "Info.plist";
+				SYMROOT = "/Users/dtrimarchi/VPP/main/";
+				INSTALL_DIR = "/Users/dtrimarchi/VPP/main//../xCodeBuild/";
+				DYLIB_CURRENT_VERSION = "1.0.0";
+				DYLIB_COMPATIBILITY_VERSION = "1.0";
+				MACOSX_DEPLOYMENT_TARGET = "10.8";
+				HEADER_SEARCH_PATHS = (
+					".",
+					"/opt/local/include",
+					"../../third_party/eigen-3.2.7",
+					"../../third_party/SuiteSparse-4.5.2/UMFPACK/Include",
+					"../../third_party/SuiteSparse-4.5.2/SuiteSparse_config",
+					"../../third_party/SuiteSparse-4.5.2/AMD/Include",
+					"../../third_party/boost_1_60_0",
+					"../../third_party/nlopt-2.4.2/api",
+					"../../third_party/Ipopt-3.12.6/Ipopt/src/Interfaces",
+					"../../third_party/Ipopt-3.12.6/include/coin",
+					"/Users/dtrimarchi/third_party/opt/local/share/plplot5.11.1/examples/c++",
+					"/Users/dtrimarchi/third_party/opt/local/include/plplot",
+					"../../third_party/cppunit-1.13.2/build/include",
+					"/opt/local/share/plplot5.11.1/examples/c++",
+					"/opt/local/include/plplot",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtCharts.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtPrintSupport.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtDataVisualization.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtNetwork.framework/Headers",
+					"/usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework/Headers",
+					"../xCodeBuild",
+					"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers",
+					"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers",
+					"../xCodeBuild",
+					"/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang");
+				LIBRARY_SEARCH_PATHS = (
+					"/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
+					"/opt/local/lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib",
+					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib",
+					"/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
+					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
+					"/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
+					"/usr/local/Cellar/qt5/5.7.0/lib",
+					"/System/Library/Frameworks/");
+				FRAMEWORK_SEARCH_PATHS = (
+					"/usr/local/Cellar/qt5/5.7.0/lib",
+					"/usr/local/Cellar/qt5/5.7.0/lib");
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-fPIC",
+					"-DQT_DEPRECATED_WARNINGS",
+					"-DQT_NO_DEBUG",
+					"-DQT_CHARTS_LIB",
+					"-DQT_PRINTSUPPORT_LIB",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_DATAVISUALIZATION_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_NETWORK_LIB",
+					"-DQT_CORE_LIB");
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-stdlib=libc++",
+					"-O2",
+					"-std=gnu++11",
+					"-Wall",
+					"-W",
+					"-fPIC",
+					"-DQT_DEPRECATED_WARNINGS",
+					"-DQT_NO_DEBUG",
+					"-DQT_CHARTS_LIB",
+					"-DQT_PRINTSUPPORT_LIB",
+					"-DQT_WIDGETS_LIB",
+					"-DQT_DATAVISUALIZATION_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_NETWORK_LIB",
+					"-DQT_CORE_LIB");
+				OTHER_LDFLAGS = (
+						"-headerpad_max_install_names",
+						"-stdlib=libc++",
+						"-L/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
+						"-L/opt/local/lib",
+						"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib",
+						"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
+						"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Lib",
+						"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib",
+						"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib",
+						"-L/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
+						"-L/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
+						"-L/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
+						"-F/usr/local/Cellar/qt5/5.7.0/lib");
+				ARCHS = "x86_64";
+				OBJROOT = "../xCodeBuild/";
+			};
+			name = "Release";
+		};
+		6666AA5E688052234F6758D8 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = "YES";
+				ENABLE_BITCODE = "NO";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "NO";
+				PRODUCT_NAME = "VPP";
+				QT_LIBRARY_SUFFIX = "";
+				SDKROOT = "macosx";
+				PRODUCT_NAME = "VPP";
+			};
+			name = "Release";
+		};
+		DAC4C1AA5EDEA1C85E9CA5E6 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				"3AA6C32AC930069E80220CF1",
+				"339EE1B2CC4FC24589A0EA95");
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release";
+		};
+		6CC3B5D2136C7CD6A5CF5A59 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				"77418F46922677BB04ED38DD",
+				"6666AA5E688052234F6758D8");
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release";
+		};
+		6DB9C3763D02B1415CD9D565 = {
 			hasScannedForEncodings = 1;
-			knownRegions = (
-				en,
-			);
-			mainGroup = E8C543AB96796ECAA2E65C57 /* VPP */;
-			productRefGroup = FE0A091FDBFB3E9C31B7A1BD /* Products */;
+			compatibilityVersion = "Xcode 3.2";
+			isa = PBXProject;
+			mainGroup = "E8C543AB96796ECAA2E65C57";
+			productRefGroup = "FE0A091FDBFB3E9C31B7A1BD";
+			buildConfigurationList = "DAC4C1AA5EDEA1C85E9CA5E6";
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4EFFC2F4A158FBCB63BDA8A3 /* VPP */,
-				332CE8FADCDB06BBA6D8A1F2 /* Qt Preprocess */,
-			);
-		};
-/* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		30414803F31797EB689AE508 /* Copy Bundle Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			name = "Copy Bundle Resources";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		5E618435888B9D49F8540165 /* Qt Qmake */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			name = "Qt Qmake";
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "make -C /Users/dtrimarchi/VPP/main/ -f VPP.xcodeproj/qt_makeqmake.mak";
-			showEnvVarsInLog = 0;
-		};
-		7EF0942E79C014DCEC8976BC /* Qt Preprocessors */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			name = "Qt Preprocessors";
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "make -C /Users/dtrimarchi/VPP/main/ -f VPP.xcodeproj/qt_preprocess.mak";
-			showEnvVarsInLog = 0;
-		};
-		9C316F444A62BF296E3E1F25 /* Project Copy */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Project Copy";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cp -r $BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME /Users/dtrimarchi/VPP/xCodeBuild";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		F7E50F631C51CD5B5DC0BC43 /* Compile Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C02D0B2E7586129C2CD91C5D /* main.cxx in Compile Sources */,
-				192B5378B8D36922593B3F7A /* qcustomplot.cpp in Compile Sources */,
-				C1A9685BAF4A2A46C96A25EF /* LogDockWidget.cpp in Compile Sources */,
-				82F07F0A2DA26B65C850F56A /* LogWindow.cpp in Compile Sources */,
-				B1DFCD9F8C53448F00E8568F /* MainWindow.cpp in Compile Sources */,
-				DAB42D4DFE73E08E20897E9F /* MultiplePlotChartComponent.cpp in Compile Sources */,
-				80CE99F22CE7157743D70AF3 /* MultiplePlotWidget.cpp in Compile Sources */,
-				070BFD2D4E138BEFBF3D8F20 /* PolarPlotWidget.cpp in Compile Sources */,
-				15E3284226ED033B1D82614B /* StateVectorDialog.cpp in Compile Sources */,
-				73B98F530B17BEEAC4F19437 /* SurfaceGraph.cpp in Compile Sources */,
-				C01856DB5B5A05D31BA49B13 /* ThreeDPlotWidget.cpp in Compile Sources */,
-				8B18BB4DAB3D225D54AF6D82 /* VariablesDockWidget.cpp in Compile Sources */,
-				CB956AE2FFDCABAC41252052 /* VariableTreeItem.cpp in Compile Sources */,
-				CAF7C7E200F4428E18E6BE5B /* VariableTreeModel.cpp in Compile Sources */,
-				73A37DAC21B7AA56C878B364 /* VppChartView.cpp in Compile Sources */,
-				BC851D63CD7161177A68434E /* VppPolarChart.cpp in Compile Sources */,
-				25F72F3CD1EE305F577F6BCB /* VppTabDockWidget.cpp in Compile Sources */,
-				C8091D0019724BF7E52C8248 /* VppTableDockWidget.cpp in Compile Sources */,
-				9A43EB1698980269F17584C3 /* VppTableModel.cpp in Compile Sources */,
-				F9F28EA589CD8C482252BC9E /* VPPXYChart.cpp in Compile Sources */,
-				C51BF6D53A6AE483D77F53DC /* VPPXYChartWidget.cpp in Compile Sources */,
-				6F7FA431D6160814D9DF713C /* VPPException.cpp in Compile Sources */,
-				4C468452E932C245687E07F7 /* Warning.cpp in Compile Sources */,
-				76BF210E30E2B44EE5131EFE /* SailSet.cpp in Compile Sources */,
-				A87F38E3E92FDA12F864426F /* VPPAeroItem.cpp in Compile Sources */,
-				AF7C04DC403CFB3620FA220D /* VPPHydroItem.cpp in Compile Sources */,
-				0AF1216A2CF223D59C37CBF1 /* VPPItem.cpp in Compile Sources */,
-				EE8F3A39D925DC1F0E562B4D /* VPPItemFactory.cpp in Compile Sources */,
-				C73D452C12FA2017C654644A /* VPPRightingMomentItem.cpp in Compile Sources */,
-				563F298A96AF779B9D37D515 /* VariableFileParser.cpp in Compile Sources */,
-				B890D9B5705D4DC8F0C7EB1A /* Variables.cpp in Compile Sources */,
-				77F684B83BBE8A14FC796FAB /* VPPResultIO.cpp in Compile Sources */,
-				0D6D6B08CF3AB37DD5709931 /* hs071_nlp.cpp in Compile Sources */,
-				941A92EC3C78D3813C3FBED1 /* NLOptSolver.cpp in Compile Sources */,
-				AE19E77BD182C321CEBC0FFC /* NRSolver.cpp in Compile Sources */,
-				73A2E6D7430E9F2D9E796997 /* SemiAnalyticalOptimizer.cpp in Compile Sources */,
-				F50E931CEB8EB4FB0F8F0053 /* Solver.cpp in Compile Sources */,
-				4918102183872DD3BE80D0CE /* SparseSolver.cpp in Compile Sources */,
-				7136621E4573A9C8F9EB65F5 /* VPP_nlp.cpp in Compile Sources */,
-				09EB5284DBB1E0D5B8F28B66 /* VPPGradient.cpp in Compile Sources */,
-				4487B595710D5FCF44118B04 /* VPPJacobian.cpp in Compile Sources */,
-				7188E82353A23C080AF917CF /* VPPSolver.cpp in Compile Sources */,
-				A9DEA3E3F995D621A9930E8A /* VPPSolverBase.cpp in Compile Sources */,
-				1004F68AB671CF8D4E9ED3AF /* VPPSolverFactoryBase.cpp in Compile Sources */,
-				E17D8E61846603133AFFFB97 /* VPPPlotSet.cpp in Compile Sources */,
-				C24CCBD40DCD736316FA1AAD /* VPPPlotter.cpp in Compile Sources */,
-				CE5094404CC9DC7237269F84 /* Results.cpp in Compile Sources */,
-				C779D8A839F2A9A97C2442AA /* Interpolator.cpp in Compile Sources */,
-				1CE2E9AA78F4B9DFC24F4505 /* mathUtils.cpp in Compile Sources */,
-				FA468679B146CF8620B85B06 /* Regression.cpp in Compile Sources */,
-				A1A58D2C7E3E938937176FE8 /* Version.cpp in Compile Sources */,
-				631E984421ACA6621D9A7434 /* qrc_VPP.cpp in Compile Sources */,
-				451FA4931D7FB5CDC52624ED /* moc_qcustomplot.cpp in Compile Sources */,
-				576A3B2ED207388499383478 /* moc_LogDockWidget.cpp in Compile Sources */,
-				5D0F5727C28892E1AA58F715 /* moc_LogWindow.cpp in Compile Sources */,
-				A8EC760318DCA70D1513B347 /* moc_MainWindow.cpp in Compile Sources */,
-				C55232B542E8EF16099FC937 /* moc_MultiplePlotChartComponent.cpp in Compile Sources */,
-				A05C9607EC348CC420D566AF /* moc_MultiplePlotWidget.cpp in Compile Sources */,
-				C8816B2D293A3060C9D303EF /* moc_PolarPlotWidget.cpp in Compile Sources */,
-				BCCC585FB7B24E50F9E3A25E /* moc_StateVectorDialog.cpp in Compile Sources */,
-				E5D27870C9067A6E81D7D52B /* moc_SurfaceGraph.cpp in Compile Sources */,
-				A5A82EE01AAEAE7E1D416FAE /* moc_ThreeDPlotWidget.cpp in Compile Sources */,
-				91097B4EF09BE74A8F66660E /* moc_VariablesDockWidget.cpp in Compile Sources */,
-				BDA3A34FC779764B195418E3 /* moc_VariableTreeModel.cpp in Compile Sources */,
-				F69025EF8F008544B24D5334 /* moc_VppChartView.cpp in Compile Sources */,
-				6DE6EE811139C08213BDB9F6 /* moc_VppPolarChart.cpp in Compile Sources */,
-				678241618B2798A4073714F6 /* moc_VppTabDockWidget.cpp in Compile Sources */,
-				2DE1F6FBB19204E064E31091 /* moc_VppTableDockWidget.cpp in Compile Sources */,
-				EE99A568D5161783748B5041 /* moc_VppTableModel.cpp in Compile Sources */,
-				98D524C61C980871B2998339 /* moc_VPPXYChart.cpp in Compile Sources */,
-				CF8F22955BC8B616831F807F /* moc_VPPXYChartWidget.cpp in Compile Sources */,
-			);
-			name = "Compile Sources";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		0C53387CC07629BAE719CDA0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 332CE8FADCDB06BBA6D8A1F2 /* Qt Preprocess */;
-			targetProxy = B3DCBEA51E68937300CA7C46 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
-/* Begin XCBuildConfiguration section */
-		339EE1B2CC4FC24589A0EA95 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = x86_64;
-				CC = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang;
-				COPY_PHASE_STRIP = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1.0;
-				DYLIB_CURRENT_VERSION = 1.0.0;
-				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					/usr/local/Cellar/qt5/5.7.0/lib,
-					/usr/local/Cellar/qt5/5.7.0/lib,
-				);
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = (
-					.,
-					/opt/local/include,
-					"../../third_party/eigen-3.2.7",
-					"../../third_party/SuiteSparse-4.5.2/UMFPACK/Include",
-					"../../third_party/SuiteSparse-4.5.2/SuiteSparse_config",
-					"../../third_party/SuiteSparse-4.5.2/AMD/Include",
-					../../third_party/boost_1_60_0,
-					"../../third_party/nlopt-2.4.2/api",
-					"../../third_party/Ipopt-3.12.6/Ipopt/src/Interfaces",
-					"../../third_party/Ipopt-3.12.6/include/coin",
-					"/Users/dtrimarchi/third_party/opt/local/share/plplot5.11.1/examples/c++",
-					/Users/dtrimarchi/third_party/opt/local/include/plplot,
-					"../../third_party/cppunit-1.13.2/build/include",
-					"/opt/local/share/plplot5.11.1/examples/c++",
-					/opt/local/include/plplot,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtCharts.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtPrintSupport.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtDataVisualization.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtNetwork.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework/Headers,
-					../xCodeBuild,
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers,
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers,
-					../xCodeBuild,
-					"/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang",
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_DIR = "/Users/dtrimarchi/VPP/main//../xCodeBuild/";
-				LDPLUSPLUS = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++";
-				LIBRARY_SEARCH_PATHS = (
-					/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A,
-					/opt/local/lib,
-					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib",
-					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
-					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Lib",
-					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib",
-					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib",
-					"/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
-					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
-					"/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
-					/usr/local/Cellar/qt5/5.7.0/lib,
-					/System/Library/Frameworks/,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				OBJROOT = ../xCodeBuild/;
-				OTHER_CFLAGS = (
-					"-pipe",
-					"-O2",
-					"-Wall",
-					"-W",
-					"-fPIC",
-					"-DQT_DEPRECATED_WARNINGS",
-					"-DQT_NO_DEBUG",
-					"-DQT_CHARTS_LIB",
-					"-DQT_PRINTSUPPORT_LIB",
-					"-DQT_WIDGETS_LIB",
-					"-DQT_DATAVISUALIZATION_LIB",
-					"-DQT_GUI_LIB",
-					"-DQT_NETWORK_LIB",
-					"-DQT_CORE_LIB",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"-pipe",
-					"-stdlib=libc++",
-					"-O2",
-					"-std=gnu++11",
-					"-Wall",
-					"-W",
-					"-fPIC",
-					"-DQT_DEPRECATED_WARNINGS",
-					"-DQT_NO_DEBUG",
-					"-DQT_CHARTS_LIB",
-					"-DQT_PRINTSUPPORT_LIB",
-					"-DQT_WIDGETS_LIB",
-					"-DQT_DATAVISUALIZATION_LIB",
-					"-DQT_GUI_LIB",
-					"-DQT_NETWORK_LIB",
-					"-DQT_CORE_LIB",
-				);
-				OTHER_LDFLAGS = (
-					"-headerpad_max_install_names",
-					"-stdlib=libc++",
-					"-L/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
-					"-L/opt/local/lib",
-					"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib",
-					"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
-					"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Lib",
-					"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib",
-					"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib",
-					"-L/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
-					"-L/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
-					"-L/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
-					"-F/usr/local/Cellar/qt5/5.7.0/lib",
-				);
-				PRODUCT_NAME = VPP;
-				QT_LIBRARY_SUFFIX = "";
-				SDKROOT = macosx;
-				SYMROOT = /Users/dtrimarchi/VPP/main/;
+				"4EFFC2F4A158FBCB63BDA8A3",
+				"332CE8FADCDB06BBA6D8A1F2");
+			attributes = {
+				TargetAttributes = {
+				};
 			};
-			name = Release;
 		};
-		3AA6C32AC930069E80220CF1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = x86_64;
-				CC = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1.0;
-				DYLIB_CURRENT_VERSION = 1.0.0;
-				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					/usr/local/Cellar/qt5/5.7.0/lib,
-					/usr/local/Cellar/qt5/5.7.0/lib,
-				);
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = (
-					.,
-					/opt/local/include,
-					"../../third_party/eigen-3.2.7",
-					"../../third_party/SuiteSparse-4.5.2/UMFPACK/Include",
-					"../../third_party/SuiteSparse-4.5.2/SuiteSparse_config",
-					"../../third_party/SuiteSparse-4.5.2/AMD/Include",
-					../../third_party/boost_1_60_0,
-					"../../third_party/nlopt-2.4.2/api",
-					"../../third_party/Ipopt-3.12.6/Ipopt/src/Interfaces",
-					"../../third_party/Ipopt-3.12.6/include/coin",
-					"/Users/dtrimarchi/third_party/opt/local/share/plplot5.11.1/examples/c++",
-					/Users/dtrimarchi/third_party/opt/local/include/plplot,
-					"../../third_party/cppunit-1.13.2/build/include",
-					"/opt/local/share/plplot5.11.1/examples/c++",
-					/opt/local/include/plplot,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtCharts.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtPrintSupport.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtDataVisualization.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtNetwork.framework/Headers,
-					/usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework/Headers,
-					../xCodeBuild,
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers,
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers,
-					../xCodeBuild,
-					"/usr/local/Cellar/qt5/5.7.0/mkspecs/macx-clang",
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_DIR = "/Users/dtrimarchi/VPP/main//../xCodeBuild/";
-				LDPLUSPLUS = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++";
-				LIBRARY_SEARCH_PATHS = (
-					/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A,
-					/opt/local/lib,
-					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib",
-					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
-					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Lib",
-					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib",
-					"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib",
-					"/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
-					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
-					"/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
-					/usr/local/Cellar/qt5/5.7.0/lib,
-					/System/Library/Frameworks/,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				OBJROOT = ../xCodeBuild/;
-				OTHER_CFLAGS = (
-					"-pipe",
-					"-O2",
-					"-Wall",
-					"-W",
-					"-fPIC",
-					"-DQT_DEPRECATED_WARNINGS",
-					"-DQT_NO_DEBUG",
-					"-DQT_CHARTS_LIB",
-					"-DQT_PRINTSUPPORT_LIB",
-					"-DQT_WIDGETS_LIB",
-					"-DQT_DATAVISUALIZATION_LIB",
-					"-DQT_GUI_LIB",
-					"-DQT_NETWORK_LIB",
-					"-DQT_CORE_LIB",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"-pipe",
-					"-stdlib=libc++",
-					"-O2",
-					"-std=gnu++11",
-					"-Wall",
-					"-W",
-					"-fPIC",
-					"-DQT_DEPRECATED_WARNINGS",
-					"-DQT_NO_DEBUG",
-					"-DQT_CHARTS_LIB",
-					"-DQT_PRINTSUPPORT_LIB",
-					"-DQT_WIDGETS_LIB",
-					"-DQT_DATAVISUALIZATION_LIB",
-					"-DQT_GUI_LIB",
-					"-DQT_NETWORK_LIB",
-					"-DQT_CORE_LIB",
-				);
-				OTHER_LDFLAGS = (
-					"-headerpad_max_install_names",
-					"-stdlib=libc++",
-					"-L/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
-					"-L/opt/local/lib",
-					"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib",
-					"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config",
-					"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Lib",
-					"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib",
-					"-L/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib",
-					"-L/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
-					"-L/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
-					"-L/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
-					"-F/usr/local/Cellar/qt5/5.7.0/lib",
-				);
-				PRODUCT_NAME = VPP;
-				QT_LIBRARY_SUFFIX = "";
-				SDKROOT = macosx;
-				SYMROOT = /Users/dtrimarchi/VPP/main/;
-			};
-			name = Debug;
-		};
-		6666AA5E688052234F6758D8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CONFIGURATION_BUILD_DIR = ../xCodeBuild/;
-				CONFIGURATION_TEMP_DIR = ../xCodeBuild/;
-				COPY_PHASE_STRIP = YES;
-				ENABLE_BITCODE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PRODUCT_NAME = VPP;
-				QT_LIBRARY_SUFFIX = "";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		77418F46922677BB04ED38DD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CONFIGURATION_BUILD_DIR = ../xCodeBuild/;
-				CONFIGURATION_TEMP_DIR = ../xCodeBuild/;
-				COPY_PHASE_STRIP = NO;
-				ENABLE_BITCODE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = VPP;
-				QT_LIBRARY_SUFFIX = "";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-/* End XCBuildConfiguration section */
-
-/* Begin XCConfigurationList section */
-		6CC3B5D2136C7CD6A5CF5A59 /* Build configuration list for PBXNativeTarget "VPP" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				77418F46922677BB04ED38DD /* Debug */,
-				6666AA5E688052234F6758D8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DAC4C1AA5EDEA1C85E9CA5E6 /* Build configuration list for PBXProject "VPP" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3AA6C32AC930069E80220CF1 /* Debug */,
-				339EE1B2CC4FC24589A0EA95 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-/* End XCConfigurationList section */
 	};
-	rootObject = 6DB9C3763D02B1415CD9D565 /* Project object */;
+	rootObject = "6DB9C3763D02B1415CD9D565";
 }
