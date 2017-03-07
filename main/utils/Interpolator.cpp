@@ -3,6 +3,8 @@
 #include "VPPException.h"
 #include "VPPPlotter.h"
 #include "VPPXYChart.h"
+#include "VppXYCustomPlotWidget.h"
+
 #include <QtCharts/QChart>
 
 // Constructor
@@ -144,7 +146,9 @@ void Interpolator::test() {
 ////////////////////////////////////////////////////////////////////////////////////
 
 // Default constructor (test)
-SplineInterpolator::SplineInterpolator() {
+SplineInterpolator::SplineInterpolator() :
+		max_Ycp_Value_(-1E20),
+		min_Ycp_Value_(1E20) {
 
 	//	std::vector<double> X(5), Y(5);
 	//	X[0]=0.1; X[1]=0.4; X[2]=1.2; X[3]=1.8; X[4]=2.0;
@@ -187,24 +191,17 @@ SplineInterpolator::SplineInterpolator(Eigen::ArrayXd& X0,Eigen::ArrayXd& Y0) {
 	X_.resize(X0.size());
 	Y_.resize(Y0.size());
 
-	// Copy the values
+	// Copy the values. Todo dtrimarchi : the copy can be avoided simply using
+	// Eigen utils such as Maps!
 	for(size_t i=0; i<X0.size(); i++){
 		X_[i]=X0(i);
 		Y_[i]=Y0(i);
 	}
 
-	// Generate the underlying spline
-	generate();
-
-}
-
-SplineInterpolator::SplineInterpolator(std::vector<double>& x, std::vector<double>& y) {
-
-	if(x.size() != y.size())
-		throw VPPException(HERE,"In SplineInterpolator: Size mismatch");
-
-	X_=x;
-	Y_=y;
+	// Store the max and min values of the Y_ vector
+	ArrayXd::Index maxRow, maxCol;
+	max_Ycp_Value_ = Y0.maxCoeff(&maxRow, &maxCol);
+	min_Ycp_Value_=  Y0.minCoeff(&maxRow, &maxCol);;
 
 	// Generate the underlying spline
 	generate();
@@ -233,6 +230,16 @@ SplineInterpolator::~SplineInterpolator() {
 // How many points are used to build this spline?
 size_t SplineInterpolator::getNumPoints() const {
 	return X_.size();
+}
+
+// Returns the max y-value of the underlying control points
+double SplineInterpolator::getMax_Ycp_Value() const {
+	return max_Ycp_Value_;
+}
+
+// Returns the min y-value of the underlying control points
+double SplineInterpolator::getMin_Ycp_Value() const {
+	return min_Ycp_Value_;
 }
 
 double SplineInterpolator::interpolate(double val) {
@@ -332,6 +339,40 @@ void SplineInterpolator::plot(VPPXYChart& chart, double minVal,double maxVal,int
 
   // Allow switching on/off the splineSeries on marker click
   chart.connectMarkers();
+}
+
+// Plot the spline and its underlying source points.
+// Hand the points to a QCustomPlot
+void SplineInterpolator::plot(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals) {
+
+	double dx= (maxVal-minVal)/(nVals);
+
+  // Copy the data to the current plotting container
+  QVector<double> x(nVals), y(nVals);
+  for (int i = 0; i < nVals+1; i++) {
+    x[i] = minVal + i*dx;
+    y[i] = s_(x[i]);
+  }
+
+  // create graph and assign data to it:
+  plot->addGraph();
+  plot->graph(0)->setData(x, y);
+  plot->setBounds(minVal, maxVal, min_Ycp_Value_, max_Ycp_Value_);
+
+  // Also add the point data - mark them with blue crosses
+  // Fill the data for graph 1, that contains the originating data
+  QVector<double> xp(getNumPoints()), yp(getNumPoints());
+  for (int i = 0; i < getNumPoints(); i++) {
+  	xp[i]= X_[i];
+  	yp[i]= Y_[i];
+  }
+
+  plot->addGraph();
+  plot->graph(1)->setPen(QPen(Qt::blue));
+  plot->graph(1)->setLineStyle(QCPGraph::lsNone);
+  plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
+  plot->graph(1)->setData(xp, yp);
+
 }
 
 // Plot the spline and its underlying source points

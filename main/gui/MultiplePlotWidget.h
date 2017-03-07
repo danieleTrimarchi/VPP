@@ -50,6 +50,7 @@ typedef QList<DataList> DataTable;
 
 // forward declarations
 class MultiplePlotChartComponent;
+class QCustomPlot;
 
 class MultiplePlotWidget : public VppTabDockWidget {
     Q_OBJECT
@@ -65,6 +66,9 @@ public:
 	/// Add a chart in a given position
 	void addChart(QChart&, size_t px, size_t py);
 
+	/// Add a chart in a given position
+	void addChart(QCustomPlot*, size_t px, size_t py);
+
 public slots:
 
 	/// What to do when one of the plots is clicked?
@@ -76,8 +80,11 @@ private:
 	/// signal that is used to expand one chart to full screen
 	void connectFullScreenSignals();
 
-	/// List with all the plots that will be visualized
+	/// List with all the QChart-style plots that will be visualized
 	QList<MultiplePlotChartComponent*> chartList_;
+
+	/// List with all the qCustomPlot-style plots that will be visualized
+	QList<QCustomPlot*> customPlotList_;
 
 	/// Grid layout of the multiple plot. Raw ptr, the ownership is taken by the widget
 	QGridLayout* pGridLayout_;

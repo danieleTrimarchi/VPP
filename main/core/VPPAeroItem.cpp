@@ -6,6 +6,7 @@
 #include "multiplePlotWidget.h"
 #include "VppTabDockWidget.h"
 #include "VPPXYChart.h"
+#include "VppXYCustomPlotWidget.h"
 
 using namespace mathUtils;
 
@@ -482,43 +483,39 @@ void MainAndJibCoefficientItem::plotInterpolatedCoefficients() const {
 // The range is set 0-180deg
 void MainAndJibCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* multiPlotWidget ) const {
 
-	// -> Instantiate a XYPlotWidget for cl. Set title and axis title
-	VPPXYChart* pClMainPlot = new VPPXYChart("Interpolated CL for MAIN","AWA [rad]","[-]");
+	// -> Instantiate a VppXYCustomPlotWidget for cl of Main. Set title and axis title
+	VppXYCustomPlotWidget* pClMainPlot = new VppXYCustomPlotWidget("Interpolated CL for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plot(pClMainPlot,0,toRad(180),50);
 
-	// Ask the interpolator for vectors
-	interpClVec_[activeSail::mainSail]->plot(*pClMainPlot,0,toRad(180),50);
-
-	multiPlotWidget->addChart(*pClMainPlot,0,0);
-
-	// --
-
-	// -> Instantiate a XYPlotWidget for cl. Set title and axis title
-	VPPXYChart* pClJibPlot= new VPPXYChart("Interpolated CL for JIB","AWA [rad]","[-]");
-
-	// Ask the interpolator for vectors
-	interpClVec_[activeSail::jib]->plot(*pClJibPlot,0,toRad(180),50);
-
-	multiPlotWidget->addChart(*pClJibPlot,1,0);
+	// Add it to the multiplot widget
+	multiPlotWidget->addChart(pClMainPlot,0,0);
 
 	// --
 
-	// -> Instantiate a XYPlotWidget for cl. Set title and axis title
-	VPPXYChart* pCdMainPlot= new VPPXYChart("Interpolated CD for MAIN","AWA [rad]","[-]");
+	// -> Instantiate a VppXYCustomPlotWidget for cl of Jib. Set title and axis title
+	VppXYCustomPlotWidget* pClJibPlot = new VppXYCustomPlotWidget("Interpolated CL for JIB","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib]->plot(pClJibPlot,0,toRad(180),50);
 
-	// Ask the interpolator for vectors
-	interpCdVec_[activeSail::mainSail]->plot(*pCdMainPlot,0,toRad(180),50);
-
-	multiPlotWidget->addChart(*pCdMainPlot,0,1);
+	// Add it to the multiplot widget
+	multiPlotWidget->addChart(pClJibPlot,1,0);
 
 	// --
 
-	// -> Instantiate a XYPlotWidget for cl. Set title and axis title
-	VPPXYChart* pCdJibPlot= new VPPXYChart("Interpolated CD for JIB","AWA [rad]","[-]");
+	// -> Instantiate a VppXYCustomPlotWidget for cd of Main. Set title and axis title
+	VppXYCustomPlotWidget* pCdMainPlot = new VppXYCustomPlotWidget("Interpolated CD for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plot(pCdMainPlot,0,toRad(180),50);
 
-	// Ask the interpolator for vectors
-	interpCdVec_[activeSail::jib]->plot(*pCdJibPlot,0,toRad(180),50);
+	// Add it to the multiplot widget
+	multiPlotWidget->addChart(pClMainPlot,0,1);
 
-	multiPlotWidget->addChart(*pCdJibPlot,1,1);
+	// --
+
+	// -> Instantiate a VppXYCustomPlotWidget for cd of Jib. Set title and axis title
+	VppXYCustomPlotWidget* pCdJibPlot = new VppXYCustomPlotWidget("Interpolated CD for Jib","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib]->plot(pCdJibPlot,0,toRad(180),50);
+
+	// Add it to the multiplot widget
+	multiPlotWidget->addChart(pCdJibPlot,1,1);
 
 }
 

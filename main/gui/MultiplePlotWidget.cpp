@@ -8,6 +8,7 @@
 #include "MultiplePlotChartComponent.h"
 #include "VppPolarChart.h"
 #include "VPPXYChart.h"
+#include "qcustomplot.h"
 
 MultiplePlotWidget::MultiplePlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, Qt::WindowFlags flags/*=0*/) :
 	VppTabDockWidget(parent, flags) {
@@ -50,6 +51,19 @@ void MultiplePlotWidget::addChart(QChart& chart, size_t px, size_t py) {
 
 }
 
+// Add a chart in a given position
+void MultiplePlotWidget::addChart(QCustomPlot* chart, size_t px, size_t py) {
+
+	// Add the widget to the multiple plot
+	pGridLayout_->addWidget(chart, px, py);
+	customPlotList_ << chart;
+
+	// Connect the charts in the multiple plot in order to being able to
+	// magnify one chart on double click
+	connectFullScreenSignals();
+
+}
+
 // Connect all the charts in the multiplot to the toggleFullScreen
 // signal that is used to expand one chart to full screen
 void MultiplePlotWidget::connectFullScreenSignals() {
@@ -58,6 +72,12 @@ void MultiplePlotWidget::connectFullScreenSignals() {
 	foreach (MultiplePlotChartComponent* chart, chartList_) {
 		QObject::disconnect(chart, SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
 		QObject::connect(chart, SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
+	}
+
+	// Connect the widget to the function that handles the widget visibility in the layout
+	foreach (QCustomPlot* chart, customPlotList_) {
+		QObject::disconnect(chart, SIGNAL(requestFullScreen(const QCustomPlot*)), this, SLOT(toggleFullScreen(const QCustomPlot*)));
+		QObject::connect(chart, SIGNAL(requestFullScreen(const QCustomPlot*)), this, SLOT(toggleFullScreen(const QCustomPlot*)));
 	}
 
 }
