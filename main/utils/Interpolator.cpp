@@ -355,9 +355,7 @@ void SplineInterpolator::plot(VppXYCustomPlotWidget* plot, double minVal,double 
   }
 
   // create graph and assign data to it:
-  plot->addGraph();
-  plot->graph(0)->setData(x, y);
-  plot->setBounds(minVal, maxVal, min_Ycp_Value_, max_Ycp_Value_);
+  plot->addData(x, y);
 
   // Also add the point data - mark them with blue crosses
   // Fill the data for graph 1, that contains the originating data
@@ -367,11 +365,16 @@ void SplineInterpolator::plot(VppXYCustomPlotWidget* plot, double minVal,double 
   	yp[i]= Y_[i];
   }
 
-  plot->addGraph();
-  plot->graph(1)->setPen(QPen(Qt::blue));
-  plot->graph(1)->setLineStyle(QCPGraph::lsNone);
-  plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
-  plot->graph(1)->setData(xp, yp);
+  // Add the data to the plot
+  plot->addData(xp, yp);
+
+  // Set the last curve style to be no curve but only red cross markers
+  plot->graph()->setPen(QPen(Qt::red));
+  plot->graph()->setLineStyle(QCPGraph::lsNone);
+  plot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
+
+  // Set the plot bounds in a reasonable way
+  plot->setBounds(minVal,maxVal);
 
 }
 

@@ -207,6 +207,7 @@ void MainWindow::setupMenuBar() {
 	QAction* plotSailCoeffsAction = new QAction(plotSailCoeffsIcon, tr("&Sail Coeffs"), this);
 	plotSailCoeffsAction->setStatusTip(tr("Plot Sail Coeffs"));
 	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
+//	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::testQCustomPlot);
 	pPlotMenu_->addAction(plotSailCoeffsAction);
 	pToolBar_->addAction(plotSailCoeffsAction);
 

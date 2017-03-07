@@ -5,17 +5,26 @@ VppXYCustomPlotWidget::VppXYCustomPlotWidget(
 		QWidget* parent/*=Q_NULLPTR*/) :
 		QCustomPlot(parent) {
 
-	// Set the title of this widget
+	// Set the title of this widget. This won't be shown in
+	// the context of a multiplePlotWidget though.
 	setObjectName(title);
 	setWindowTitle(title);
+
+  // add the text label at the top:
+  QCPItemText *textLabel = new QCPItemText(this);
+  textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+  textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+  textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+  textLabel->setText(title);
+  textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+  textLabel->setPen(QPen(Qt::black)); // show black border around text
 
 	// Set the axis labels
 	xAxis->setLabel(xAxisLabel);
 	yAxis->setLabel(yAxisLabel);
 
-	// Set a minimum size for this widget
-	//QScreen* pScreen= QGuiApplication::primaryScreen();
-	//setMinimumSize(QSize(pScreen->size().width()/ 3, pScreen->size().height() / 3));
+	// Allow for dragging and zooming the plot
+  setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
 
 }
 
@@ -35,10 +44,33 @@ void VppXYCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y) {
 }
 
 // Set the bounds for this plot
-void VppXYCustomPlotWidget::setBounds(double minX, double maxX, double minY, double maxY ) {
+void VppXYCustomPlotWidget::setBounds(double min, double max) {
 
-	xAxis->setRange(minX,maxX);
-  yAxis->setRange(minY,maxY);
+	// Set the min and max of the x-axis as requested
+	xAxis->setRange(min,max);
+
+	// For the y-vals, let's search the right values
+
+	// Set min and max values
+	double minY= 1e+20, maxY= -1E+20;
+
+	// Loop on the graphs
+	for(int iGraph=0; iGraph<graphCount(); iGraph++){
+
+		// get the i-th graph
+	  QVector<QCPGraphData>::iterator it;
+		for(	it=graph(iGraph)->data()->begin(); it != graph(iGraph)->data()->end(); it++ ){
+	  	if (it->value > maxY )
+	  		maxY = it->value;
+	  	if (it->value < minY )
+	  		minY = it->value;
+		}
+	}
+
+	//xAxis->setRange(minX,maxX);
+  // Increment the bounds of 10%
+  double delta= 0.05 * fabs( maxY-minY );
+	yAxis->setRange(minY-delta,maxY+delta);
 
 }
 

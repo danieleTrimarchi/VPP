@@ -22,7 +22,7 @@ public:
 	void addData(QVector<double>& x, QVector<double>& y);
 
 	/// Set the bounds for this plot
-	void setBounds(double minX, double maxX, double minY, double maxY );
+	void setBounds(double min, double max);
 
 Q_SIGNALS:
 

@@ -484,7 +484,7 @@ void MainAndJibCoefficientItem::plotInterpolatedCoefficients() const {
 void MainAndJibCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* multiPlotWidget ) const {
 
 	// -> Instantiate a VppXYCustomPlotWidget for cl of Main. Set title and axis title
-	VppXYCustomPlotWidget* pClMainPlot = new VppXYCustomPlotWidget("Interpolated CL for MAIN","AWA [rad]","[-]");
+	VppXYCustomPlotWidget* pClMainPlot = new VppXYCustomPlotWidget("CL for MAIN","AWA [rad]","[-]");
 	interpClVec_[activeSail::mainSail]->plot(pClMainPlot,0,toRad(180),50);
 
 	// Add it to the multiplot widget
@@ -493,7 +493,7 @@ void MainAndJibCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget
 	// --
 
 	// -> Instantiate a VppXYCustomPlotWidget for cl of Jib. Set title and axis title
-	VppXYCustomPlotWidget* pClJibPlot = new VppXYCustomPlotWidget("Interpolated CL for JIB","AWA [rad]","[-]");
+	VppXYCustomPlotWidget* pClJibPlot = new VppXYCustomPlotWidget("CL for JIB","AWA [rad]","[-]");
 	interpClVec_[activeSail::jib]->plot(pClJibPlot,0,toRad(180),50);
 
 	// Add it to the multiplot widget
@@ -502,7 +502,7 @@ void MainAndJibCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget
 	// --
 
 	// -> Instantiate a VppXYCustomPlotWidget for cd of Main. Set title and axis title
-	VppXYCustomPlotWidget* pCdMainPlot = new VppXYCustomPlotWidget("Interpolated CD for MAIN","AWA [rad]","[-]");
+	VppXYCustomPlotWidget* pCdMainPlot = new VppXYCustomPlotWidget("CD for MAIN","AWA [rad]","[-]");
 	interpCdVec_[activeSail::mainSail]->plot(pCdMainPlot,0,toRad(180),50);
 
 	// Add it to the multiplot widget
@@ -511,7 +511,7 @@ void MainAndJibCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget
 	// --
 
 	// -> Instantiate a VppXYCustomPlotWidget for cd of Jib. Set title and axis title
-	VppXYCustomPlotWidget* pCdJibPlot = new VppXYCustomPlotWidget("Interpolated CD for Jib","AWA [rad]","[-]");
+	VppXYCustomPlotWidget* pCdJibPlot = new VppXYCustomPlotWidget("CD for Jib","AWA [rad]","[-]");
 	interpCdVec_[activeSail::jib]->plot(pCdJibPlot,0,toRad(180),50);
 
 	// Add it to the multiplot widget
