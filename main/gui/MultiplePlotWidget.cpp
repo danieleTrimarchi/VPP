@@ -8,7 +8,7 @@
 #include "MultiplePlotChartComponent.h"
 #include "VppPolarChart.h"
 #include "VPPXYChart.h"
-#include "qcustomplot.h"
+#include "VppXYCustomPlotWidget.h"
 
 MultiplePlotWidget::MultiplePlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, Qt::WindowFlags flags/*=0*/) :
 	VppTabDockWidget(parent, flags) {
@@ -52,7 +52,7 @@ void MultiplePlotWidget::addChart(QChart& chart, size_t px, size_t py) {
 }
 
 // Add a chart in a given position
-void MultiplePlotWidget::addChart(QCustomPlot* chart, size_t px, size_t py) {
+void MultiplePlotWidget::addChart(VppXYCustomPlotWidget* chart, size_t px, size_t py) {
 
 	// Add the widget to the multiple plot
 	pGridLayout_->addWidget(chart, px, py);
@@ -75,9 +75,9 @@ void MultiplePlotWidget::connectFullScreenSignals() {
 	}
 
 	// Connect the widget to the function that handles the widget visibility in the layout
-	foreach (QCustomPlot* chart, customPlotList_) {
-		QObject::disconnect(chart, SIGNAL(requestFullScreen(const QCustomPlot*)), this, SLOT(toggleFullScreen(const QCustomPlot*)));
-		QObject::connect(chart, SIGNAL(requestFullScreen(const QCustomPlot*)), this, SLOT(toggleFullScreen(const QCustomPlot*)));
+	foreach (VppXYCustomPlotWidget* chart, customPlotList_) {
+		QObject::disconnect(chart, SIGNAL(requestFullScreen(const VppXYCustomPlotWidget*)), this, SLOT(toggleFullScreen(const VppXYCustomPlotWidget*)));
+		QObject::connect(chart, SIGNAL(requestFullScreen(const VppXYCustomPlotWidget*)), this, SLOT(toggleFullScreen(const VppXYCustomPlotWidget*)));
 	}
 
 }
@@ -93,6 +93,19 @@ void MultiplePlotWidget::toggleFullScreen(const MultiplePlotChartComponent* pCli
 		if(view!=pClickedView)
 			view->setVisible( !view->isVisible() );
 	}
+}
+
+// What to do when one of the plots is clicked?
+void MultiplePlotWidget::toggleFullScreen(const VppXYCustomPlotWidget* pClickedView) {
+
+	// Loop on the list of chart view and reverse the visibility of all,
+	// except the one that was clicked
+	foreach (VppXYCustomPlotWidget* pChart, customPlotList_) {
+
+		if(pChart!=pClickedView)
+			pChart->setVisible( !pChart->isVisible() );
+	}
+
 }
 
 // Dtor
