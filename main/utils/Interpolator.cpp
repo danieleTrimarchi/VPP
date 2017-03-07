@@ -348,7 +348,7 @@ void SplineInterpolator::plot(VppXYCustomPlotWidget* plot, double minVal,double 
 	double dx= (maxVal-minVal)/(nVals);
 
   // Copy the data to the current plotting container
-  QVector<double> x(nVals), y(nVals);
+  QVector<double> x(nVals+1), y(nVals+1);
   for (int i = 0; i < nVals+1; i++) {
     x[i] = minVal + i*dx;
     y[i] = s_(x[i]);

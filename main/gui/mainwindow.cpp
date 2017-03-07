@@ -452,7 +452,7 @@ void MainWindow::plotSailCoeffs() {
 	pLogWidget_->append("Plotting Sail coeffs...");
 
 	// Leave the call to plPlot to check the consistency of my plot
-	pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients();
+	//pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients();
 
 	// Instantiate an empty multiple plot widget
 	pMultiPlotWidget_.reset( new MultiplePlotWidget(this) );

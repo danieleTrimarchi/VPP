@@ -14,8 +14,8 @@ VppXYCustomPlotWidget::VppXYCustomPlotWidget(
 	yAxis->setLabel(yAxisLabel);
 
 	// Set a minimum size for this widget
-	QScreen* pScreen= QGuiApplication::primaryScreen();
-	setMinimumSize(QSize(pScreen->size().width()/ 3, pScreen->size().height() / 3));
+	//QScreen* pScreen= QGuiApplication::primaryScreen();
+	//setMinimumSize(QSize(pScreen->size().width()/ 3, pScreen->size().height() / 3));
 
 }
 

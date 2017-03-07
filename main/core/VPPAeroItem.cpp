@@ -506,7 +506,7 @@ void MainAndJibCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget
 	interpCdVec_[activeSail::mainSail]->plot(pCdMainPlot,0,toRad(180),50);
 
 	// Add it to the multiplot widget
-	multiPlotWidget->addChart(pClMainPlot,0,1);
+	multiPlotWidget->addChart(pCdMainPlot,0,1);
 
 	// --
 

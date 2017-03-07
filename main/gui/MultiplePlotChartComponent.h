@@ -3,12 +3,11 @@
 
 #include <QtCharts/QChartView>
 
+QT_CHARTS_USE_NAMESPACE
+
 /// Class that overrides the QChartView in order to define
 /// the signals required to hide the plots of a multiplePlotWidget
 /// on double click
-
-QT_CHARTS_USE_NAMESPACE
-
 class MultiplePlotChartComponent : public QChartView {
 
 	Q_OBJECT
