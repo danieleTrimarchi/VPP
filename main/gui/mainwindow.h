@@ -76,6 +76,12 @@ public slots:
 	/// Plot the sail coefficients
 	void plotSailCoeffs();
 
+	/// Plot the sail coefficients derivatives
+	void plot_d_SailCoeffs();
+
+	/// Plot the sail coefficients second derivatives
+	void plot_d2_SailCoeffs();
+
 	/// Temp method used to test QCustomPlot in the current env
 	void testQCustomPlot();
 
@@ -130,6 +136,9 @@ private:
 
 	/// Multi-plot widget
 	boost::shared_ptr<MultiplePlotWidget> pMultiPlotWidget_;
+
+	/// Multi-plot widget used to plot sail coeffs
+	boost::shared_ptr<MultiplePlotWidget> pSailCoeffPlotWidget_, p_d_SailCoeffPlotWidget_, p_d2_SailCoeffPlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<VppTabDockWidget> p3dPlotWidget_;

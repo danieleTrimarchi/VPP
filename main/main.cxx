@@ -98,6 +98,8 @@ int main(int argc, char** argv) {
 //		string s;
 //		while(cin >> s){
 //
+// ALLOW FOR I/O of QUANTITIES IN THE PREFERRED UNIT...
+// todo dtrimarchi
 //			else if(s == string("convertVelocityToFn")) {
 //				IOUtils io(pVppItems->getWind());
 //				std::cout<<"Fn= "<<
@@ -106,6 +108,8 @@ int main(int argc, char** argv) {
 //						)<<std::endl;
 //			}
 //
+// ALLOW FOR I/O of QUANTITIES IN THE PREFERRED UNIT...
+// todo dtrimarchi
 //			else if(s == string("convertFnToVelocity")) {
 //				IOUtils io(pVppItems->getWind());
 //				std::cout<<"Velocity= "<<
@@ -115,9 +119,6 @@ int main(int argc, char** argv) {
 //			}
 //
 //			//---
-//
-//			else if( s == string("plotSailCoeffs"))
-//				pVppItems->getSailCoefficientItem()->plotInterpolatedCoefficients();
 //
 //			else if( s == string("plot_D_SailCoeffs"))
 //				pVppItems->getSailCoefficientItem()->plot_D_InterpolatedCoefficients();

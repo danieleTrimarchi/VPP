@@ -1,54 +1,3 @@
-/****************************************************************************
- **
- ** Copyright (C) 2016 The Qt Company Ltd.
- ** Contact: https://www.qt.io/licensing/
- **
- ** This file is part of the demonstration applications of the Qt Toolkit.
- **
- ** $QT_BEGIN_LICENSE:BSD$
- ** Commercial License Usage
- ** Licensees holding valid commercial Qt licenses may use this file in
- ** accordance with the commercial license agreement provided with the
- ** Software or, alternatively, in accordance with the terms contained in
- ** a written agreement between you and The Qt Company. For licensing terms
- ** and conditions see https://www.qt.io/terms-conditions. For further
- ** information use the contact form at https://www.qt.io/contact-us.
- **
- ** BSD License Usage
- ** Alternatively, you may use this file under the terms of the BSD license
- ** as follows:
- **
- ** "Redistribution and use in source and binary forms, with or without
- ** modification, are permitted provided that the following conditions are
- ** met:
- **   * Redistributions of source code must retain the above copyright
- **     notice, this list of conditions and the following disclaimer.
- **   * Redistributions in binary form must reproduce the above copyright
- **     notice, this list of conditions and the following disclaimer in
- **     the documentation and/or other materials provided with the
- **     distribution.
- **   * Neither the name of The Qt Company Ltd nor the names of its
- **     contributors may be used to endorse or promote products derived
- **     from this software without specific prior written permission.
- **
- **
- ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- ** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
- **
- ** $QT_END_LICENSE$
- **
- ****************************************************************************/
-
-
 #include "MainWindow.h"
 
 #include <stdio.h>
@@ -81,7 +30,6 @@
 #include <QScreen>
 #include "StateVectorDialog.h"
 #include "VPPItemFactory.h"
-
 #include "VppCustomPlotWidget.h"
 
 Q_DECLARE_METATYPE(VppTabDockWidget::DockWidgetFeatures)
@@ -91,6 +39,9 @@ QMainWindow(parent, flags),
 pXYPlotWidget_(0),
 pLogWidget_(0),
 pMultiPlotWidget_(0),
+pSailCoeffPlotWidget_(0),
+p_d_SailCoeffPlotWidget_(0),
+p_d2_SailCoeffPlotWidget_(0),
 pVariablesWidget_(0),
 p3dPlotWidget_(0),
 windowLabel_("VPP") {
@@ -203,13 +154,39 @@ void MainWindow::setupMenuBar() {
 
 	pPlotMenu_->addSeparator();
 
+	// Add a menu in the toolbar. This is used to group plot coeffs, and their derivatives
+	QMenu* pSailCoeffsMenu = new QMenu("Plot Sail Coeffs", this);
+
+	// Get an icon for the menu
 	const QIcon plotSailCoeffsIcon = QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png"));
+	const QIcon plot_d_SailCoeffsIcon = QIcon::fromTheme("Plot Sail Coeffs Derivatives", QIcon(":/icons/d_sailCoeffs.png"));
+	const QIcon plot_d2_SailCoeffsIcon = QIcon::fromTheme("Plot Sail Coeffs Second Derivatives", QIcon(":/icons/d2_sailCoeffs.png"));
+
+	// Set the icon for the menu
+	pSailCoeffsMenu->setIcon( plotSailCoeffsIcon );
+
+	// First action of the menu : plot sail coeffs
 	QAction* plotSailCoeffsAction = new QAction(plotSailCoeffsIcon, tr("&Sail Coeffs"), this);
 	plotSailCoeffsAction->setStatusTip(tr("Plot Sail Coeffs"));
+	pSailCoeffsMenu->addAction(plotSailCoeffsAction);
 	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
-//	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::testQCustomPlot);
+
+	// Second action of the menu : plot sail coeffs derivatives
+	QAction* plot_d_SailCoeffsAction = new QAction(plot_d_SailCoeffsIcon, tr("&d(Sail Coeffs)"), this);
+	plot_d_SailCoeffsAction->setStatusTip(tr("Plot d(Sail Coeffs)"));
+	pSailCoeffsMenu->addAction(plot_d_SailCoeffsAction);
+	connect(plot_d_SailCoeffsAction, &QAction::triggered, this, &MainWindow::plot_d_SailCoeffs);
+
+	// Third action of the menu : plot sail coeffs second derivatives
+	QAction* plot_d2_SailCoeffsAction = new QAction(plot_d2_SailCoeffsIcon, tr("&d2(Sail Coeffs)"), this);
+	plot_d2_SailCoeffsAction->setStatusTip(tr("Plot d2(Sail Coeffs)"));
+	pSailCoeffsMenu->addAction(plot_d2_SailCoeffsAction);
+	connect(plot_d2_SailCoeffsAction, &QAction::triggered, this, &MainWindow::plot_d2_SailCoeffs);
+
+	pToolBar_->addAction(pSailCoeffsMenu->menuAction());
 	pPlotMenu_->addAction(plotSailCoeffsAction);
-	pToolBar_->addAction(plotSailCoeffsAction);
+	pPlotMenu_->addAction(plot_d_SailCoeffsAction);
+	pPlotMenu_->addAction(plot_d2_SailCoeffsAction);
 
 	pPlotMenu_->addSeparator();
 
@@ -452,23 +429,76 @@ void MainWindow::plotSailCoeffs() {
 
 	pLogWidget_->append("Plotting Sail coeffs...");
 
-	// Leave the call to plPlot to check the consistency of my plot
-	//pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients();
-
 	// Instantiate an empty multiple plot widget
-	pMultiPlotWidget_.reset( new MultiplePlotWidget(this) );
+	pSailCoeffPlotWidget_.reset( new MultiplePlotWidget(this) );
 
 	// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
-	pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients( pMultiPlotWidget_.get() );
+	pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients( pSailCoeffPlotWidget_.get() );
 
 	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pMultiPlotWidget_.get() );
+	addDockWidget(Qt::TopDockWidgetArea, pSailCoeffPlotWidget_.get() );
 
-	tabDockWidget(pMultiPlotWidget_.get());
+	tabDockWidget(pSailCoeffPlotWidget_.get());
 
 }
 
+// Plot the sail coefficients derivatives
+void MainWindow::plot_d_SailCoeffs() {
+
+	// If the boat description has not been imported we do not have the
+	// vppItems nor the coefficients to be plotted!
+	if(!pVppItems_){
+		QMessageBox msgBox;
+		msgBox.setText("Please import a boat description first!");
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+		return;
+	}
+
+	pLogWidget_->append("Plotting Sail coeffs Derivatives...");
+
+	// Instantiate an empty multiple plot widget
+	p_d_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this) );
+
+	// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
+	pVppItems_->getSailCoefficientItem()->plot_D_InterpolatedCoefficients( p_d_SailCoeffPlotWidget_.get() );
+
+	// Add the xy plot view to the left of the app window
+	addDockWidget(Qt::TopDockWidgetArea, p_d_SailCoeffPlotWidget_.get() );
+
+	tabDockWidget(p_d_SailCoeffPlotWidget_.get());
+}
+
+// Plot the sail coefficients second derivatives
+void MainWindow::plot_d2_SailCoeffs() {
+
+	// If the boat description has not been imported we do not have the
+	// vppItems nor the coefficients to be plotted!
+	if(!pVppItems_){
+		QMessageBox msgBox;
+		msgBox.setText("Please import a boat description first!");
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+		return;
+	}
+
+	pLogWidget_->append("Plotting Second Derivatives of the Sail coeffs...");
+
+	// Instantiate an empty multiple plot widget
+	p_d2_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this) );
+
+	// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
+	pVppItems_->getSailCoefficientItem()->plot_D2_InterpolatedCoefficients( p_d2_SailCoeffPlotWidget_.get() );
+
+	// Add the xy plot view to the left of the app window
+	addDockWidget(Qt::TopDockWidgetArea, p_d2_SailCoeffPlotWidget_.get() );
+
+	tabDockWidget(p_d2_SailCoeffPlotWidget_.get());
+}
+
+
 // Temp method used to test QCustomPlot in the current env
+// This method shall be removed at some point todo dtrimarchi
 void MainWindow::testQCustomPlot() {
 
 	// Init the widget that will be containing this plot

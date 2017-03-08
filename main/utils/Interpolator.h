@@ -10,7 +10,6 @@
 #include "VPPPlotter.h"
 
 /// Forward declarations
-class VPPXYChart;
 class VppXYCustomPlotWidget;
 
 class Interpolator {
@@ -57,22 +56,12 @@ class SplineInterpolator {
 		/// How many points are used to build this spline?
 		size_t getNumPoints() const;
 
-		/// Returns the max y-value of the underlying control points
-		double getMax_Ycp_Value() const;
-
-		/// Returns the min y-value of the underlying control points
-		double getMin_Ycp_Value() const;
-
 		/// Interpolate the function X-Y using the underlying spline for the value val
 		double interpolate(double);
 
 		/// Plot the spline and its underlying source points
 		void plot(double minVal,double maxVal,int nVals,
 				string title, string xLabel="x", string yLabel="y");
-
-		/// Plot the spline and its underlying source points.
-		/// Hand the points to a Qt XY plot
-		void plot(VPPXYChart& chart, double minVal,double maxVal,int nVals);
 
 		/// Plot the spline and its underlying source points.
 		/// Hand the points to a QCustomPlot
@@ -82,9 +71,15 @@ class SplineInterpolator {
 		void plotD1(double minVal,double maxVal,int nVals,
 				string title, string xLabel="x", string yLabel="y");
 
+		/// Plot the first derivative of the spline and its underlying source points
+		void plotD1(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals );
+
 		/// Plot the second derivative of the spline
 		void plotD2(double minVal,double maxVal,int nVals,
 				string title, string xLabel="x", string yLabel="y");
+
+		/// Plot the second derivative of the spline and its underlying source points
+		void plotD2(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals );
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -99,10 +94,6 @@ class SplineInterpolator {
 
 		// Underlying value vectors
 		std::vector<double> X_, Y_;
-
-		// Max and min values of the generator points. To be used
-		// for example to define the bounds of a plot
-		double max_Ycp_Value_ , min_Ycp_Value_;
 
 };
 

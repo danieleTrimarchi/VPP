@@ -2,10 +2,7 @@
 #include <math.h>
 #include "VPPException.h"
 #include "VPPPlotter.h"
-#include "VPPXYChart.h"
 #include "VppXYCustomPlotWidget.h"
-
-#include <QtCharts/QChart>
 
 // Constructor
 Interpolator::Interpolator() {
@@ -146,9 +143,7 @@ void Interpolator::test() {
 ////////////////////////////////////////////////////////////////////////////////////
 
 // Default constructor (test)
-SplineInterpolator::SplineInterpolator() :
-		max_Ycp_Value_(-1E20),
-		min_Ycp_Value_(1E20) {
+SplineInterpolator::SplineInterpolator() {
 
 	//	std::vector<double> X(5), Y(5);
 	//	X[0]=0.1; X[1]=0.4; X[2]=1.2; X[3]=1.8; X[4]=2.0;
@@ -198,11 +193,6 @@ SplineInterpolator::SplineInterpolator(Eigen::ArrayXd& X0,Eigen::ArrayXd& Y0) {
 		Y_[i]=Y0(i);
 	}
 
-	// Store the max and min values of the Y_ vector
-	ArrayXd::Index maxRow, maxCol;
-	max_Ycp_Value_ = Y0.maxCoeff(&maxRow, &maxCol);
-	min_Ycp_Value_=  Y0.minCoeff(&maxRow, &maxCol);;
-
 	// Generate the underlying spline
 	generate();
 
@@ -230,16 +220,6 @@ SplineInterpolator::~SplineInterpolator() {
 // How many points are used to build this spline?
 size_t SplineInterpolator::getNumPoints() const {
 	return X_.size();
-}
-
-// Returns the max y-value of the underlying control points
-double SplineInterpolator::getMax_Ycp_Value() const {
-	return max_Ycp_Value_;
-}
-
-// Returns the min y-value of the underlying control points
-double SplineInterpolator::getMin_Ycp_Value() const {
-	return min_Ycp_Value_;
 }
 
 double SplineInterpolator::interpolate(double val) {
@@ -276,69 +256,6 @@ void SplineInterpolator::plot(double minVal,double maxVal,int nVals,
 	// Ask the plotter to plot the curves
 	plotter.plot(x0,y0,x,y,title,xLabel,yLabel);
 
-}
-
-// Plot the spline and its underlying source points.
-// Hand the points to a Qt XY plot
-void SplineInterpolator::plot(VPPXYChart& chart, double minVal,double maxVal,int nVals) {
-
-	// Instantiate a data series for the data to plot
-  QLineSeries* splineSeries = new QLineSeries();
-
-	double dx= (maxVal-minVal)/(nVals);
-
-  // Make some data
-  QList<QPointF> splineData;
-  for (int i = 0; i < nVals+1; i++) {
-      qreal x = minVal + i*dx;
-      splineData.append(QPointF(x, s_(x) ));
-  }
-
-  // Add the data to the series
-  splineSeries->append(splineData);
-
-  // Add the series to the chart
-  chart.addSeries(splineSeries);
-  splineSeries->setName(QString("Interpolated data"));
-
-  // -- Pass to the points
-
-  // Instantiate a data series for the data to plot
-  QLineSeries* pointSeries = new QLineSeries();
-
-  // Get the points the spline has been built with
-  std::vector<double> x0(s_.get_points(0));
-	std::vector<double> y0(s_.get_points(1));
-
-	// Limit the values to the ranges specified for this plot
-	for(size_t i=0; i<x0.size(); i++)
-		if(x0[i]<minVal || x0[i]>maxVal){
-			x0.erase(x0.begin()+i);
-			y0.erase(y0.begin()+i);
-			i--;
-		}
-
-	// Copy the values to a Qt-style container
-  QList<QPointF> pointData;
-  for (int i = 0; i < x0.size() ; i++) {
-  	pointData.append( QPointF(x0[i], y0[i]) );
-  }
-
-  // Add the data to the series
-  pointSeries->append(pointData);
-
-  // Add the series to the chart
-  chart.addSeries(pointSeries);
-  pointSeries->setName(QString("Point data"));
-
-  // This line must be plotted with a thin dotted line
-  QPen pen;
-  pen.setStyle( Qt::DotLine );
-  pen.setWidth(1.);
-  pointSeries->setPen( pen );
-
-  // Allow switching on/off the splineSeries on marker click
-  chart.connectMarkers();
 }
 
 // Plot the spline and its underlying source points.
@@ -404,6 +321,34 @@ void SplineInterpolator::plotD1(double minVal,double maxVal,int nVals,
 
 }
 
+// Plot the first derivative of the spline
+void SplineInterpolator::plotD1(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals ) {
+
+	double dx= (maxVal-minVal)/(nVals);
+
+	// Generate the n.points for the current plot
+	std::vector<double> x(nVals+1), y(nVals+1);
+	for(size_t i=0; i<nVals+1; i++){
+		x[i] = minVal + i*dx;
+		y[i] = s_(x[i]);
+	}
+
+	// now compute the first derivative of this curve
+	QVector<double> x1(nVals), y1(nVals);
+	for(size_t i=0; i<nVals; i++){
+		x1[i] = (x[i]+x[i+1])/2;
+		y1[i] = (y[i+1]-y[i])/(x[i+1]-x[i]);
+	}
+
+  // create graph and assign data to it:
+  plot->addData(x1, y1);
+  plot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+
+  // Set the plot bounds in a reasonable way
+  plot->setBounds(minVal,maxVal);
+
+}
+
 // Plot the spline and its underlying source points
 void SplineInterpolator::plotD2(double minVal,double maxVal,int nVals,
 		string title, string xLabel, string yLabel) {
@@ -417,15 +362,13 @@ void SplineInterpolator::plotD2(double minVal,double maxVal,int nVals,
 		y[i] = s_(x[i]);
 	}
 
-	// now compute the second derivative of this curve
+	// Compute the second derivative of this curve
 	std::vector<double> x2(nVals-1), y2(nVals-1);
-	for(size_t i=0; i<nVals-1; i++){
-		x2[i] = (x[i+2]+2*x[i+1]+x[i])/4;
-		y2[i] = 2*(
-								y[i+2]*(x[i+1]-x[i]) +
-								y[i+1]*(x[i]-2*x[i+1]-x[i+2]) +
-								y[i]  *(x[i+1]-x[i+2])
-							) / ( x[i+2]-x[i] );
+	for(size_t i=1; i<nVals; i++){
+		double dx = x[i] - x[i-1] ;
+		size_t k = i-1;
+		x2[k] = x[i];
+		y2[k] = ( y[i+1] - 2 * y[i] + y[i-1] ) / (dx * dx) ;
 	}
 
 	// Instantiate a plotter and plot the data
@@ -433,6 +376,36 @@ void SplineInterpolator::plotD2(double minVal,double maxVal,int nVals,
 	plotter.plot(x2,y2,title,xLabel,yLabel);
 
 }
+
+// Plot the second derivative spline
+void SplineInterpolator::plotD2(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals ) {
+
+	std::vector<double> x(nVals+1), y(nVals+1);
+	double dx= (maxVal-minVal)/(nVals);
+
+	// Generate the n.points for the current plot
+	for(size_t i=0; i<nVals+1; i++){
+		x[i] = minVal + i*dx;
+		y[i] = s_(x[i]);
+	}
+
+	// Compute the second derivative of this curve
+	QVector<double> x2(nVals-1), y2(nVals-1);
+	for(size_t i=1; i<nVals; i++){
+		double dx = x[i] - x[i-1] ;
+		size_t k = i-1;
+		x2[k] = x[i];
+		y2[k] = ( y[i+1] - 2 * y[i] + y[i-1] ) / (dx * dx) ;
+	}
+
+  // create graph and assign data to it:
+  plot->addData(x2, y2);
+
+  // Set the plot bounds in a reasonable way
+  plot->setBounds(minVal,maxVal);
+
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 
 // Constructor
