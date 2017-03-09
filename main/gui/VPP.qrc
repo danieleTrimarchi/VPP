@@ -13,5 +13,6 @@
     <file>icons/tabularResults.png</file>
     <file>icons/saveResults.png</file>
     <file>icons/importResults.png</file>
+    <file>icons/sailForceMoment.png</file>
 </qresource>
 </RCC>

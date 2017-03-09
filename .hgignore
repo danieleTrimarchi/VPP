@@ -25,3 +25,5 @@ DerivedData/*
 *.xcsettings
 xCodeBuild/*
 main/.qmake.stash
+*.mak
+*project.pbxproj
