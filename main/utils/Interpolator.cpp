@@ -333,7 +333,7 @@ void SplineInterpolator::plotD1(VppXYCustomPlotWidget* plot, double minVal,doubl
 		y[i] = s_(x[i]);
 	}
 
-	// now compute the first derivative of this curve
+	// now compute the first derivative of this curve.
 	QVector<double> x1(nVals), y1(nVals);
 	for(size_t i=0; i<nVals; i++){
 		x1[i] = (x[i]+x[i+1])/2;
@@ -380,26 +380,27 @@ void SplineInterpolator::plotD2(double minVal,double maxVal,int nVals,
 // Plot the second derivative spline
 void SplineInterpolator::plotD2(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals ) {
 
-	std::vector<double> x(nVals+1), y(nVals+1);
 	double dx= (maxVal-minVal)/(nVals);
 
 	// Generate the n.points for the current plot
+	QVector<double> x(nVals+1), y(nVals+1);
 	for(size_t i=0; i<nVals+1; i++){
 		x[i] = minVal + i*dx;
 		y[i] = s_(x[i]);
 	}
 
+	x.pop_front();
+	x.pop_back();
+
 	// Compute the second derivative of this curve
 	QVector<double> x2(nVals-1), y2(nVals-1);
 	for(size_t i=1; i<nVals; i++){
-		double dx = x[i] - x[i-1] ;
-		size_t k = i-1;
-		x2[k] = x[i];
-		y2[k] = ( y[i+1] - 2 * y[i] + y[i-1] ) / (dx * dx) ;
+		y2[i-1] = ( y[i+1] - 2 * y[i] + y[i-1] ) / (dx * dx) ;
 	}
 
   // create graph and assign data to it:
-  plot->addData(x2, y2);
+  plot->addData(x, y2);
+  plot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
 
   // Set the plot bounds in a reasonable way
   plot->setBounds(minVal,maxVal);

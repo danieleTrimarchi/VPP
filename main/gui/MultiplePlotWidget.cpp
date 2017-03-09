@@ -10,11 +10,11 @@
 #include "VPPXYChart.h"
 #include "VppXYCustomPlotWidget.h"
 
-MultiplePlotWidget::MultiplePlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, Qt::WindowFlags flags/*=0*/) :
-	VppTabDockWidget(parent, flags) {
+MultiplePlotWidget::MultiplePlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, QString title /*=0*/) :
+	VppTabDockWidget(parent) {
 
-	setObjectName("MultiplePlotView");
-	setWindowTitle("MultiplePlotView");
+	setObjectName(title);
+	setWindowTitle(title);
 
 	// Create an empty widget that will hold the multiplot
 	QWidget* widget = new QWidget;

@@ -430,7 +430,7 @@ void MainWindow::plotSailCoeffs() {
 	pLogWidget_->append("Plotting Sail coeffs...");
 
 	// Instantiate an empty multiple plot widget
-	pSailCoeffPlotWidget_.reset( new MultiplePlotWidget(this) );
+	pSailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Coeffs") );
 
 	// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
 	pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients( pSailCoeffPlotWidget_.get() );
@@ -458,7 +458,7 @@ void MainWindow::plot_d_SailCoeffs() {
 	pLogWidget_->append("Plotting Sail coeffs Derivatives...");
 
 	// Instantiate an empty multiple plot widget
-	p_d_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this) );
+	p_d_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"d(Sail Coeffs)") );
 
 	// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
 	pVppItems_->getSailCoefficientItem()->plot_D_InterpolatedCoefficients( p_d_SailCoeffPlotWidget_.get() );
@@ -485,7 +485,7 @@ void MainWindow::plot_d2_SailCoeffs() {
 	pLogWidget_->append("Plotting Second Derivatives of the Sail coeffs...");
 
 	// Instantiate an empty multiple plot widget
-	p_d2_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this) );
+	p_d2_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"d2(Sail Coeffs)") );
 
 	// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
 	pVppItems_->getSailCoefficientItem()->plot_D2_InterpolatedCoefficients( p_d2_SailCoeffPlotWidget_.get() );

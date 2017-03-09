@@ -58,7 +58,7 @@ class MultiplePlotWidget : public VppTabDockWidget {
 public:
 
 	/// Explicit Constructor
-	explicit MultiplePlotWidget(QMainWindow* parent= Q_NULLPTR, Qt::WindowFlags flags =0);
+	explicit MultiplePlotWidget(QMainWindow* parent= Q_NULLPTR, QString title="");
 
 	/// Dtor
 	virtual ~MultiplePlotWidget();
