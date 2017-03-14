@@ -1157,7 +1157,7 @@ void AeroForcesItem::plot(MultiplePlotWidget* multiPlotWidget ) {
 	VppXYCustomPlotWidget* pLiftPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","Lift [N]");
 	for(size_t i=0; i<fN.size(); i++)
 		pLiftPlot->addData(fN[i],Lift[i],curveLabels[i]);
-	pLiftPlot->setBounds(fNmin,fNmax);
+	pLiftPlot->rescaleAxes();
 	multiPlotWidget->addChart(pLiftPlot,0,0);
 //
 //	//--

@@ -291,7 +291,7 @@ void SplineInterpolator::plot(VppXYCustomPlotWidget* plot, double minVal,double 
   plot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
 
   // Set the plot bounds in a reasonable way
-  plot->setBounds(minVal,maxVal);
+  plot->rescaleAxes();
 
 }
 
@@ -345,7 +345,7 @@ void SplineInterpolator::plotD1(VppXYCustomPlotWidget* plot, double minVal,doubl
   plot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
 
   // Set the plot bounds in a reasonable way
-  plot->setBounds(minVal,maxVal);
+  plot->rescaleAxes();
 
 }
 
@@ -403,7 +403,7 @@ void SplineInterpolator::plotD2(VppXYCustomPlotWidget* plot, double minVal,doubl
   plot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
 
   // Set the plot bounds in a reasonable way
-  plot->setBounds(minVal,maxVal);
+  plot->rescaleAxes();
 
 }
 

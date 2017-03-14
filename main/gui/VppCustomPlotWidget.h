@@ -27,7 +27,7 @@ private:
 	/// (the selected curve increases thickness and decorations)
   void setupSimpleDemo(QString& demoName);
 
-  /// Demo cross points and error bars
+  /// Demo cross points and error bars - legend is shown
   void setupSincScatterDemo(QString& demoName);
 
   /// Demo different markers types and colours. Xcl-style plot.

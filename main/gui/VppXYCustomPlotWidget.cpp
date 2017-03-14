@@ -23,8 +23,8 @@ VppXYCustomPlotWidget::VppXYCustomPlotWidget(
 	xAxis->setLabel(xAxisLabel);
 	yAxis->setLabel(yAxisLabel);
 
-	// Allow for dragging and zooming the plot
-  setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+	// Allow for dragging and zooming the plot and selecting the curves
+  setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
 
 }
 
@@ -43,37 +43,6 @@ void VppXYCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y,  QSt
 
   // Set the name of these data.
   graph()->setName(dataLabel);
-}
-
-// Set the bounds for this plot
-void VppXYCustomPlotWidget::setBounds(double min, double max) {
-
-	// Set the min and max of the x-axis as requested
-	xAxis->setRange(min,max);
-
-	// For the y-vals, let's search the right values
-
-	// Set min and max values
-	double minY= 1e+20, maxY= -1E+20;
-
-	// Loop on the graphs
-	for(int iGraph=0; iGraph<graphCount(); iGraph++){
-
-		// get the i-th graph
-	  QVector<QCPGraphData>::iterator it;
-		for(	it=graph(iGraph)->data()->begin(); it != graph(iGraph)->data()->end(); it++ ){
-	  	if (it->value > maxY )
-	  		maxY = it->value;
-	  	if (it->value < minY )
-	  		minY = it->value;
-		}
-	}
-
-	//xAxis->setRange(minX,maxX);
-  // Increment the bounds of 10%
-  double delta= 0.05 * fabs( maxY-minY );
-	yAxis->setRange(minY-delta,maxY+delta);
-
 }
 
 // Override the parent class method called on double click

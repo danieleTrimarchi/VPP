@@ -10,7 +10,7 @@ VppCustomPlotWidget::VppCustomPlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, Qt::
     setObjectName("VPPCustomPlotView");
     QString demoName;
 
-    setupSimpleItemDemo(demoName);
+    setupSimpleDemo(demoName);
 
     setWindowTitle("QCustomPlot: " + demoName);
 
@@ -94,7 +94,7 @@ void VppCustomPlotWidget::setupSimpleDemo(QString& demoName) {
   pCustomPlot->graph(1)->rescaleAxes(true);
   // Note: we could have also just called customPlot->rescaleAxes(); instead
   // Allow user to drag axis ranges with mouse, zoom with mouse wheel and select graphs by clicking:
-  pCustomPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+  pCustomPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables | QCP::iSelectAxes);
 
 }
 

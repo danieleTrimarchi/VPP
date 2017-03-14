@@ -45,7 +45,7 @@ p_d2_SailCoeffPlotWidget_(0),
 pForceMomentsPlotWidget_(0),
 pVariablesWidget_(0),
 p3dPlotWidget_(0),
-windowLabel_("VPP") {
+windowLabel_("V++") {
 
 	// Set the name and the title of the app
 	setObjectName(windowLabel_);
@@ -57,7 +57,7 @@ windowLabel_("VPP") {
 
 	pLogWidget_->setReadOnly(true);
 	pLogWidget_->append("=======================");
-	pLogWidget_->append("===  V++ PROGRAM  =====");
+	pLogWidget_->append("===  V++ PROGRAM  =======");
 	pLogWidget_->append("=======================");
 
 	// --
@@ -164,7 +164,8 @@ void MainWindow::setupMenuBar() {
 	QAction* plotSailCoeffsAction = new QAction(plotSailCoeffsIcon, tr("&Sail Coeffs"), this);
 	plotSailCoeffsAction->setStatusTip(tr("Plot Sail Coeffs"));
 	pSailCoeffsMenu->addAction(plotSailCoeffsAction);
-	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
+	//connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
+	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::testQCustomPlot);
 
 	// Second action of the menu : plot sail coeffs derivatives
 	QAction* plot_d_SailCoeffsAction = new QAction(plot_d_SailCoeffsIcon, tr("&d(Sail Coeffs)"), this);
