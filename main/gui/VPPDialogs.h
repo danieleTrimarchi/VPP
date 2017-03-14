@@ -32,4 +32,25 @@ private:
 
 };
 
+
+class WindIndicesDialog : public QDialog {
+
+	Q_OBJECT
+
+public:
+
+	/// Explicit Ctor
+	explicit WindIndicesDialog(const int ntwv, const int ntwa, QWidget *parent = Q_NULLPTR);
+
+	/// Returns the index of the TWV prompted by the user
+	int getTWV() const;
+
+	/// Returns the index of the TWA prompted by the user
+	int getTWA() const;
+
+private:
+
+	QLineEdit* pTWV_Edit_, *pTWA_Edit_;
+
+};
 #endif

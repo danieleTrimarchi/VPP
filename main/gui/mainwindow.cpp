@@ -28,9 +28,9 @@
 #include <QtCore>
 #include "VariableTreeModel.h"
 #include <QScreen>
-#include "StateVectorDialog.h"
 #include "VPPItemFactory.h"
 #include "VppCustomPlotWidget.h"
+#include "VPPDialogs.h"
 
 Q_DECLARE_METATYPE(VppTabDockWidget::DockWidgetFeatures)
 
@@ -42,6 +42,7 @@ pMultiPlotWidget_(0),
 pSailCoeffPlotWidget_(0),
 p_d_SailCoeffPlotWidget_(0),
 p_d2_SailCoeffPlotWidget_(0),
+pForceMomentsPlotWidget_(0),
 pVariablesWidget_(0),
 p3dPlotWidget_(0),
 windowLabel_("VPP") {
@@ -141,18 +142,12 @@ void MainWindow::setupMenuBar() {
 
 	// ---
 
-	pPlotMenu_ = menuBar()->addMenu(tr("&Plot"));
-
-
 	// Create an action and associate an icon
 	const QIcon plotPolarsIcon = QIcon::fromTheme("Plot polars", QIcon(":/icons/plotPolars.png"));
 	QAction* plotPolarsAction = new QAction(plotPolarsIcon, tr("&Polars"), this);
 	plotPolarsAction->setStatusTip(tr("Plot polars"));
 	connect(plotPolarsAction, &QAction::triggered, this, &MainWindow::plotPolars);
-	pPlotMenu_->addAction(plotPolarsAction);
 	pToolBar_->addAction(plotPolarsAction);
-
-	pPlotMenu_->addSeparator();
 
 	// Add a menu in the toolbar. This is used to group plot coeffs, and their derivatives
 	QMenu* pSailCoeffsMenu = new QMenu("Plot Sail Coeffs", this);
@@ -182,22 +177,19 @@ void MainWindow::setupMenuBar() {
 	plot_d2_SailCoeffsAction->setStatusTip(tr("Plot d2(Sail Coeffs)"));
 	pSailCoeffsMenu->addAction(plot_d2_SailCoeffsAction);
 	connect(plot_d2_SailCoeffsAction, &QAction::triggered, this, &MainWindow::plot_d2_SailCoeffs);
-
 	pToolBar_->addAction(pSailCoeffsMenu->menuAction());
-	pPlotMenu_->addAction(plotSailCoeffsAction);
-	pPlotMenu_->addAction(plot_d_SailCoeffsAction);
-	pPlotMenu_->addAction(plot_d2_SailCoeffsAction);
 
-	pPlotMenu_->addSeparator();
 
-	pPlotMenu_->addAction(tr("&multiPlot"), this, &MainWindow::multiPlot);
-	pPlotMenu_->addSeparator();
+	const QIcon plotSailForceMomentIcon = QIcon::fromTheme("Plot Sail Force/Moments", QIcon(":/icons/sailForceMoment.png"));
+	QAction* plotSailForceMomentAction = new QAction(plotSailForceMomentIcon, tr("&Plot Sail Force/Moments"), this);
+	plotSailForceMomentAction->setStatusTip(tr("Plot Sail Force/Moments"));
+	connect(plotSailForceMomentAction, &QAction::triggered, this, &MainWindow::plotSailForceMoments);
+	pToolBar_->addAction(plotSailForceMomentAction);
 
 	const QIcon plot3dIcon = QIcon::fromTheme("Plot 3d", QIcon(":/icons/plot3d.png"));
 	QAction* plot3dAction = new QAction(plot3dIcon, tr("&3d Plot"), this);
 	plot3dAction->setStatusTip(tr("Plot 3d"));
 	connect(plot3dAction, &QAction::triggered, this, &MainWindow::threedPlot);
-	pPlotMenu_->addAction(plot3dAction);
 	pToolBar_->addAction(plot3dAction);
 
 	// ---
@@ -398,6 +390,23 @@ void MainWindow::tableResults() {
 
 }
 
+// Make sure a boat description has been imported. Otherwise
+// warns the user with an error-like widget
+bool MainWindow::hasBoatDescription() {
+
+ 	// If the boat description has not been imported we do not have the
+ 	// vppItems nor the coefficients to be plotted!
+	if(!pVppItems_){
+		QMessageBox msgBox;
+		msgBox.setText("Please import a boat description first!");
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+		return false;
+	}
+	return true;
+}
+
+
 // Plot the velocity polars
 void MainWindow::plotPolars() {
 
@@ -419,13 +428,10 @@ void MainWindow::plotSailCoeffs() {
 
 	// If the boat description has not been imported we do not have the
 	// vppItems nor the coefficients to be plotted!
-	if(!pVppItems_){
-		QMessageBox msgBox;
-		msgBox.setText("Please import a boat description first!");
-		msgBox.setIcon(QMessageBox::Critical);
-		msgBox.exec();
+	// If the boat description has not been imported we do not have the
+	// vppItems nor the coefficients to be plotted!
+	if(!hasBoatDescription())
 		return;
-	}
 
 	pLogWidget_->append("Plotting Sail coeffs...");
 
@@ -447,13 +453,8 @@ void MainWindow::plot_d_SailCoeffs() {
 
 	// If the boat description has not been imported we do not have the
 	// vppItems nor the coefficients to be plotted!
-	if(!pVppItems_){
-		QMessageBox msgBox;
-		msgBox.setText("Please import a boat description first!");
-		msgBox.setIcon(QMessageBox::Critical);
-		msgBox.exec();
+	if(!hasBoatDescription())
 		return;
-	}
 
 	pLogWidget_->append("Plotting Sail coeffs Derivatives...");
 
@@ -474,13 +475,10 @@ void MainWindow::plot_d2_SailCoeffs() {
 
 	// If the boat description has not been imported we do not have the
 	// vppItems nor the coefficients to be plotted!
-	if(!pVppItems_){
-		QMessageBox msgBox;
-		msgBox.setText("Please import a boat description first!");
-		msgBox.setIcon(QMessageBox::Critical);
-		msgBox.exec();
+	// If the boat description has not been imported we do not have the
+	// vppItems nor the coefficients to be plotted!
+	if(!hasBoatDescription())
 		return;
-	}
 
 	pLogWidget_->append("Plotting Second Derivatives of the Sail coeffs...");
 
@@ -496,6 +494,28 @@ void MainWindow::plot_d2_SailCoeffs() {
 	tabDockWidget(p_d2_SailCoeffPlotWidget_.get());
 }
 
+// Plot sail forces and moments
+void MainWindow::plotSailForceMoments() {
+
+	if(!hasBoatDescription())
+		return;
+
+	pLogWidget_->append("Plotting Sail Forces/Moments...");
+
+	// Instantiate an empty multiple plot widget
+	pForceMomentsPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Force/Moments") );
+
+	pVppItems_->getAeroForcesItem()->plot();
+
+	pVppItems_->getAeroForcesItem()->plot(pForceMomentsPlotWidget_.get());
+
+	// Add the xy plot view to the left of the app window
+	addDockWidget(Qt::TopDockWidgetArea, pForceMomentsPlotWidget_.get() );
+
+	// Tab the widget with the others
+	tabDockWidget(pForceMomentsPlotWidget_.get());
+
+}
 
 // Temp method used to test QCustomPlot in the current env
 // This method shall be removed at some point todo dtrimarchi

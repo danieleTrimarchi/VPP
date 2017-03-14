@@ -7,6 +7,7 @@
 #include "VppTabDockWidget.h"
 #include "VPPXYChart.h"
 #include "VppXYCustomPlotWidget.h"
+#include "VPPDialogs.h"
 
 using namespace mathUtils;
 
@@ -1046,6 +1047,167 @@ void AeroForcesItem::plot() {
 	for(size_t i=0; i<v.size(); i++)
 		mPlotter.append(curveLabels[i],v[i],mHeel[i]);
 	mPlotter.plot("Fn [-]","mHeel [N*m]","plot heeling moment vs boat speed");
+
+	// Restore the current solution
+	V_  = xbuf(0);
+	PHI_= xbuf(1);
+	b_  = xbuf(2);
+	f_  = xbuf(3);
+
+}
+
+// plot the aeroForces for a fixed range
+void AeroForcesItem::plot(MultiplePlotWidget* multiPlotWidget ) {
+
+	// Number of points of the plots
+	size_t nVelocities=60;
+
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	WindIndicesDialog dg(pWindItem_->getWVSize(),pWindItem_->getWASize());
+	if (dg.exec() == QDialog::Rejected)
+		return;
+
+	// Buffer the current solution
+	Eigen::VectorXd xbuf(4);
+	xbuf << V_,PHI_,b_,f_;
+
+	// Now fix the value of b_ and f_
+	b_= 0.01;
+	f_= 0.99;
+
+	// Declare containers for the velocity and angle-wise data
+	std::vector<QVector<double> > fN, Lift, Drag, fDrive, fSide, mHeel;
+	std::vector<QString> curveLabels;
+
+	double fNmin, fNmax;
+
+	// Loop on heel angles : from 0 to 90 deg in steps of 15 deg
+	for(int hAngle=-20; hAngle<90; hAngle+=15){
+
+		// Convert the heeling angle into radians
+		PHI_= toRad(hAngle);
+		// vectors with the current boat velocity, the drive force
+		// and heeling moment values
+		QVector<double> x_fN, lift, drag, f_v, fs_v, m_v;
+		x_fN.resize(nVelocities);
+		lift.resize(nVelocities);
+		drag.resize(nVelocities);
+		f_v.resize(nVelocities);
+		fs_v.resize(nVelocities);
+		m_v.resize(nVelocities);
+
+		// loop on the boat velocity, from 0.1 to 5m/s in step on 1 m/s
+		for(size_t iTwv=0; iTwv<nVelocities; iTwv++ ) {
+
+			// Set the value for the state variable boat velocity
+			// Linearly from -1 to 1 m/s
+			V_ = -1 + double(iTwv) / (nVelocities-1) * 2;
+
+			// Declare a state vector to give the windItem
+			VectorXd stateVector(4);
+			stateVector << V_,PHI_,b_,f_;
+
+			// Update the wind. For the moment fix the apparent wind velocity and angle
+			// to the first values contained in the variableFiles.
+			pWindItem_->updateSolution(dg.getTWV(), dg.getTWA(), stateVector);
+
+			// Update the sail coefficients for the current wind
+			pSailCoeffs_->updateSolution(dg.getTWV(), dg.getTWA(), stateVector);
+
+			// Update 'this': compute sail forces
+			update(dg.getTWV(), dg.getTWA());
+
+			// Store velocity-wise data:
+			x_fN[iTwv]= V_ / sqrt( Physic::g * pParser_->get("LWL") );	// Fn...
+
+			if(iTwv==0)
+				fNmin=x_fN[iTwv];
+			if(iTwv==nVelocities-1)
+				fNmax=x_fN[iTwv];
+
+			lift[iTwv] = getLift(); // lift...
+			drag[iTwv] = getDrag(); // drag...
+			f_v[iTwv]= getFDrive(); // fDrive...
+			fs_v[iTwv]= getFSide(); // fSide_...
+			m_v[iTwv]= getMHeel();  // mHeel...
+
+		}
+
+		// Append the velocity-wise curve for each heel angle
+		fN.push_back(x_fN);
+		Lift.push_back(lift);
+		Drag.push_back(drag);
+		fDrive.push_back(f_v);
+		fSide.push_back(fs_v);
+		mHeel.push_back(m_v);
+
+		char msg[256];
+		sprintf(msg,"%dº",hAngle);
+		curveLabels.push_back(msg);
+
+	}
+
+	char msg[256];
+	sprintf(msg,"plot Sail Lift vs boat speed - "
+			"twv=%2.2f [m/s], twa=%2.2fº",
+			pWindItem_->getTWV(dg.getTWV()),
+			mathUtils::toDeg(pWindItem_->getTWA(dg.getTWA())) );
+
+	// Instantiate a plotter and plot Lift
+	VppXYCustomPlotWidget* pLiftPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","Lift [N]");
+	for(size_t i=0; i<fN.size(); i++)
+		pLiftPlot->addData(fN[i],Lift[i],curveLabels[i]);
+	pLiftPlot->setBounds(fNmin,fNmax);
+	multiPlotWidget->addChart(pLiftPlot,0,0);
+//
+//	//--
+//
+//	sprintf(msg,"plot Sail Drag vs boat speed - "
+//			"twv=%2.2f [m/s], twa=%2.2fº",
+//			pWindItem_->getTWV(twv),
+//			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
+//
+//	// Instantiate a plotter and plot Drag
+//	VppXYCustomPlotWidget* pDragPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","Drag [N]");
+//	for(size_t i=0; i<fN.size(); i++)
+//		pDragPlot->addData(fN[i],Drag[i],curveLabels[i]);
+//	multiPlotWidget->addChart(pDragPlot,0,1);
+//
+//	//--
+//
+//	sprintf(msg,"plot drive force vs boat speed - "
+//			"twv=%2.2f [m/s], twa=%2.2fº",
+//			pWindItem_->getTWV(twv),
+//			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
+//
+//	// Instantiate a plotter and plot Driving Force
+//	VppXYCustomPlotWidget* pDriveFPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","FDrive [N]");
+//	for(size_t i=0; i<fN.size(); i++)
+//		pDriveFPlot->addData(fN[i],fDrive[i],curveLabels[i]);
+//	multiPlotWidget->addChart(pDriveFPlot,1,0);
+//
+//	//--
+//
+//	sprintf(msg,"plot side force vs boat speed - "
+//			"twv=%2.2f [m/s], twa=%2.2fº",
+//			pWindItem_->getTWV(twv),
+//			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
+//
+//	// Instantiate a plotter and plot Driving Force
+//	VppXYCustomPlotWidget* pSideFPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","FSide [N]");
+//	for(size_t i=0; i<fN.size(); i++)
+//		pDriveFPlot->addData(fN[i],fSide[i],curveLabels[i]);
+//	pDriveFPlot->setBounds(0,2);
+//	multiPlotWidget->addChart(pDriveFPlot,1,1);
+//
+//	//--
+//
+//	// Instantiate a plotter and plot Driving Force
+//	VppXYCustomPlotWidget* pMPlot = new VppXYCustomPlotWidget("plot heeling moment vs boat speed","Fn [-]","mHeel [N*m]");
+//
+//	for(size_t i=0; i<fN.size(); i++)
+//		pMPlot->addData(fN[i],mHeel[i],curveLabels[i]);
+//	multiPlotWidget->addChart(pDriveFPlot,2,1);
 
 	// Restore the current solution
 	V_  = xbuf(0);

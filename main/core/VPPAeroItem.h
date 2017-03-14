@@ -399,6 +399,10 @@ class AeroForcesItem : public VPPItem {
 		/// plot the aeroForces for a fixed range
 		void plot();
 
+		/// plot the aeroForces for a fixed range. Fill a multiplePlotWidget
+		/// with this plot
+		void plot(MultiplePlotWidget*);
+
 		/// Print the class name -> in this case AeroForcesItem
 		virtual void printWhoAmI();
 

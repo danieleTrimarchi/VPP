@@ -82,6 +82,9 @@ public slots:
 	/// Plot the sail coefficients second derivatives
 	void plot_d2_SailCoeffs();
 
+	/// Plot sail forces and moments
+	void plotSailForceMoments();
+
 	/// Temp method used to test QCustomPlot in the current env
 	void testQCustomPlot();
 
@@ -112,13 +115,16 @@ private:
 	// as a slot from the delete of the QDockWidget right before the destruction
 	void removeWidgetFromVector(VppTabDockWidget* pWidget);
 
+	/// Make sure a boat description has been imported. Otherwise
+	/// warns the user with an error-like widget
+	bool hasBoatDescription();
+
 	/// Log widget - This must be declared at the very beginning as we want to
 	/// make sure it is the last item to be removed on destruction
 	boost::shared_ptr<QTextEdit> pLogWidget_;
 
 	/// Menus available to the menu bar
 	QMenu* pVppActionMenu_;
-	QMenu* pPlotMenu_;
 	QMenu* pPreferencesMenu_;
 	boost::shared_ptr<QMenu> pWidgetMenu_;
 
@@ -138,7 +144,8 @@ private:
 	boost::shared_ptr<MultiplePlotWidget> pMultiPlotWidget_;
 
 	/// Multi-plot widget used to plot sail coeffs
-	boost::shared_ptr<MultiplePlotWidget> pSailCoeffPlotWidget_, p_d_SailCoeffPlotWidget_, p_d2_SailCoeffPlotWidget_;
+	boost::shared_ptr<MultiplePlotWidget> pSailCoeffPlotWidget_, p_d_SailCoeffPlotWidget_,
+																				p_d2_SailCoeffPlotWidget_, pForceMomentsPlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<VppTabDockWidget> p3dPlotWidget_;

@@ -33,7 +33,7 @@ VppXYCustomPlotWidget::~VppXYCustomPlotWidget() {
 }
 
 // Add some data to the plot
-void VppXYCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y) {
+void VppXYCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y,  QString dataLabel/*=""*/) {
 
 	// Add one graph to the plot widget -- not sure if this should not go to the constructor..??
 	addGraph();
@@ -41,6 +41,8 @@ void VppXYCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y) {
 	// Add the data to the very last graph, that we get with graph()
   graph()->setData(x, y);
 
+  // Set the name of these data.
+  graph()->setName(dataLabel);
 }
 
 // Set the bounds for this plot

@@ -19,7 +19,7 @@ public:
 	~VppXYCustomPlotWidget();
 
 	/// Add some data to the plot
-	void addData(QVector<double>& x, QVector<double>& y);
+	void addData(QVector<double>& x, QVector<double>& y, QString dataLabel="");
 
 	/// Set the bounds for this plot
 	void setBounds(double min, double max);
