@@ -29,6 +29,10 @@ VppXYCustomPlotWidget::VppXYCustomPlotWidget(
   // Connect slot that ties some axis selections together (especially opposite axes):
   connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
 
+  // connect slots that takes care that when an axis is selected, only that direction can be dragged and zoomed:
+  connect(this, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
+  connect(this, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
+
 }
 
 // Dtor
@@ -84,3 +88,28 @@ void VppXYCustomPlotWidget::selectionChanged() {
     yAxis->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
   }
 }
+
+// If an axis is selected, only allow the direction of that axis to be dragged
+// If no axis is selected, both directions may be dragged
+void VppXYCustomPlotWidget::mousePress() {
+
+  if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+    axisRect()->setRangeDrag(xAxis->orientation());
+  else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
+    axisRect()->setRangeDrag(yAxis->orientation());
+  else
+    axisRect()->setRangeDrag(Qt::Horizontal|Qt::Vertical);
+}
+
+// if an axis is selected, only allow the direction of that axis to be zoomed
+// If no axis is selected, both directions may be zoomed
+void VppXYCustomPlotWidget::mouseWheel() {
+
+  if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+    axisRect()->setRangeZoom(xAxis->orientation());
+  else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
+    axisRect()->setRangeZoom(yAxis->orientation());
+  else
+    axisRect()->setRangeZoom(Qt::Horizontal|Qt::Vertical);
+}
+
