@@ -10,28 +10,42 @@ VppXYCustomPlotWidget::VppXYCustomPlotWidget(
 	setObjectName(title);
 	setWindowTitle(title);
 
-  // add the text label at the top:
-  QCPItemText *textLabel = new QCPItemText(this);
-  textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
-  textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
-  textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
-  textLabel->setText(title);
-  textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
-  textLabel->setPen(QPen(Qt::black)); // show black border around text
+	// add the text label at the top:
+	QCPItemText *textLabel = new QCPItemText(this);
+	textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+	textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+	textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+	textLabel->setText(title);
+	textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+	textLabel->setPen(QPen(Qt::black)); // show black border around text
 
 	// Set the axis labels
 	xAxis->setLabel(xAxisLabel);
 	yAxis->setLabel(yAxisLabel);
 
+	// Show the legend
+	legend->setVisible(true);
+	QFont legendFont = font();
+	legendFont.setPointSize(7);
+	legend->setFont(legendFont);
+	legend->setSelectedFont(legendFont);
+	legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
+
 	// Allow for dragging and zooming the plot and selecting the curves
-  setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables | QCP::iSelectAxes );
+	setInteractions(
+			QCP::iRangeDrag |
+			QCP::iRangeZoom |
+			QCP::iSelectPlottables |
+			QCP::iSelectLegend |
+			QCP::iSelectAxes
+	);
 
-  // Connect slot that ties some axis selections together (especially opposite axes):
-  connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
+	// Connect slot that ties some axis selections together (especially opposite axes):
+	connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
 
-  // connect slots that takes care that when an axis is selected, only that direction can be dragged and zoomed:
-  connect(this, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
-  connect(this, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
+	// connect slots that takes care that when an axis is selected, only that direction can be dragged and zoomed:
+	connect(this, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
+	connect(this, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
 
 }
 
@@ -46,10 +60,20 @@ void VppXYCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y,  QSt
 	addGraph();
 
 	// Add the data to the very last graph, that we get with graph()
-  graph()->setData(x, y);
+	graph()->setData(x, y);
 
-  // Set the name of these data.
-  graph()->setName(dataLabel);
+	// Set the name of these data.
+	graph()->setName(dataLabel);
+
+	// Set a random line-style, and pen
+	//graph()->setLineStyle((QCPGraph::LineStyle)(rand()%5+1)); commented to keep only continuous lines
+	if (rand()%100 > 50)
+		graph()->setScatterStyle(QCPScatterStyle((QCPScatterStyle::ScatterShape)(rand()%14+1)));
+	QPen graphPen;
+	graphPen.setColor(QColor(rand()%245+10, rand()%245+10, rand()%245+10));
+	//graphPen.setWidthF(rand()/(double)RAND_MAX*2+1); commented to keep lines thin
+	graph()->setPen(graphPen);
+
 }
 
 // Override the parent class method called on double click
@@ -60,6 +84,80 @@ void VppXYCustomPlotWidget::mouseDoubleClickEvent(QMouseEvent* pMouseEvent) {
 
 	// This method decorates the parent method
 	QCustomPlot::mouseDoubleClickEvent(pMouseEvent);
+}
+
+// Overrides the key actions
+void VppXYCustomPlotWidget::keyPressEvent(QKeyEvent *event) {
+
+	switch (event->key()) {
+		//  case Qt::Key_Plus:
+		//      chart()->zoomIn();
+		//      break;
+		//  case Qt::Key_Minus:
+		//      chart()->zoomOut();
+		//      break;
+		//  case Qt::Key_Left:
+		//      chart()->scroll(-1.0, 0);
+		//      break;
+		//  case Qt::Key_Right:
+		//      chart()->scroll(1.0, 0);
+		//      break;
+		case Qt::Key_Up:
+			changeGraphSelection(Qt::Key_Up);
+			break;
+		case Qt::Key_Down:
+			changeGraphSelection(Qt::Key_Down);
+			break;
+			//    case Qt::Key_Space:
+			//        switchChartType();
+			//        break;
+		default:
+			QWidget::keyPressEvent(event);
+			break;
+	}
+}
+
+void VppXYCustomPlotWidget::changeGraphSelection(int key){
+
+	// Loop on the graphs and search which one is selected
+	for (int i=0; i<graphCount(); ++i) {
+
+		// Get a ptr to the i-th graph curve
+		QCPGraph* pGraph = graph(i);
+		// Get a ptr to the legend item related to this graph curve
+		QCPPlottableLegendItem* item = legend->itemWithPlottable(pGraph);
+
+		// If the curve OR the legend item have been selected, highlight them both
+		if (item->selected() || pGraph->selected()) {
+
+			// Deselect the current legend item
+			item->setSelected(false);
+			pGraph->setSelection(QCPDataSelection());
+
+			// todo dtrimarchi :
+			// 2_ make sure the value of k loops and does not go out of bounds!
+			int k=0;
+			if(key==Qt::Key_Up)
+				i==0 ? k=graphCount()-1 : k=i-1;
+
+			else if(key==Qt::Key_Down)
+				i==graphCount()-1 ? k=0 : k=i+1;
+
+			// Get the
+			QCPGraph* pGraphToSelect = graph(k);
+			QCPPlottableLegendItem* itemToSelect = legend->itemWithPlottable(pGraphToSelect);
+
+			itemToSelect->setSelected(true);
+			pGraphToSelect->setSelection(QCPDataSelection(pGraphToSelect->data()->dataRange()));
+
+			// Refresh the plot and visualize the new selection
+			replot();
+            
+			// Break, otherwise we keep looping and selecting items
+			break;
+
+		}
+	}
 }
 
 // Normally, axis base line, axis tick labels and axis labels are selectable separately, but we want
@@ -74,42 +172,63 @@ void VppXYCustomPlotWidget::mouseDoubleClickEvent(QMouseEvent* pMouseEvent) {
 // or on its legend item.
 void VppXYCustomPlotWidget::selectionChanged() {
 
-  // make top and bottom axes be selected synchronously, and handle axis and tick labels as one selectable object:
-  if (xAxis->selectedParts().testFlag(QCPAxis::spAxis) || xAxis->selectedParts().testFlag(QCPAxis::spTickLabels) ||
-     xAxis2->selectedParts().testFlag(QCPAxis::spAxis) || xAxis2->selectedParts().testFlag(QCPAxis::spTickLabels)) {
-    xAxis2->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
-    xAxis->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
-  }
+	// make top and bottom axes be selected synchronously, and handle axis and tick labels as one selectable object:
+	if (xAxis->selectedParts().testFlag(QCPAxis::spAxis) || xAxis->selectedParts().testFlag(QCPAxis::spTickLabels) ||
+			xAxis2->selectedParts().testFlag(QCPAxis::spAxis) || xAxis2->selectedParts().testFlag(QCPAxis::spTickLabels)) {
+		xAxis2->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+		xAxis->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+	}
 
-  // make left and right axes be selected synchronously, and handle axis and tick labels as one selectable object:
-  if (yAxis->selectedParts().testFlag(QCPAxis::spAxis) || yAxis->selectedParts().testFlag(QCPAxis::spTickLabels) ||
-      yAxis2->selectedParts().testFlag(QCPAxis::spAxis) || yAxis2->selectedParts().testFlag(QCPAxis::spTickLabels)) {
-    yAxis2->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
-    yAxis->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
-  }
+	// make left and right axes be selected synchronously, and handle axis and tick labels as one selectable object:
+	if (yAxis->selectedParts().testFlag(QCPAxis::spAxis) || yAxis->selectedParts().testFlag(QCPAxis::spTickLabels) ||
+			yAxis2->selectedParts().testFlag(QCPAxis::spAxis) || yAxis2->selectedParts().testFlag(QCPAxis::spTickLabels)) {
+		yAxis2->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+		yAxis->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+	}
+
+	// Synchronize selection of graphs with selection of corresponding legend items:
+	for (int i=0; i<graphCount(); ++i) {
+
+		// Get a ptr to the i-th graph curve
+		QCPGraph* pGraph = graph(i);
+		// Get a ptr to the legend item related to this graph curve
+		QCPPlottableLegendItem* item = legend->itemWithPlottable(pGraph);
+
+		// If the curve OR the legend item have been selected, highlight them both
+		if (item->selected() || pGraph->selected()) {
+			item->setSelected(true);
+			pGraph->setSelection(QCPDataSelection(pGraph->data()->dataRange()));
+		}
+		//    else {
+		//    	item->setSelected(false);
+		//    	pGraph->setSelection(QCPDataSelection());
+		//    }
+
+	}
+
 }
 
 // If an axis is selected, only allow the direction of that axis to be dragged
 // If no axis is selected, both directions may be dragged
 void VppXYCustomPlotWidget::mousePress() {
 
-  if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
-    axisRect()->setRangeDrag(xAxis->orientation());
-  else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
-    axisRect()->setRangeDrag(yAxis->orientation());
-  else
-    axisRect()->setRangeDrag(Qt::Horizontal|Qt::Vertical);
+	if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+		axisRect()->setRangeDrag(xAxis->orientation());
+	else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
+		axisRect()->setRangeDrag(yAxis->orientation());
+	else
+		axisRect()->setRangeDrag(Qt::Horizontal|Qt::Vertical);
 }
 
 // if an axis is selected, only allow the direction of that axis to be zoomed
 // If no axis is selected, both directions may be zoomed
 void VppXYCustomPlotWidget::mouseWheel() {
 
-  if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
-    axisRect()->setRangeZoom(xAxis->orientation());
-  else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
-    axisRect()->setRangeZoom(yAxis->orientation());
-  else
-    axisRect()->setRangeZoom(Qt::Horizontal|Qt::Vertical);
+	if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+		axisRect()->setRangeZoom(xAxis->orientation());
+	else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
+		axisRect()->setRangeZoom(yAxis->orientation());
+	else
+		axisRect()->setRangeZoom(Qt::Horizontal|Qt::Vertical);
 }
 

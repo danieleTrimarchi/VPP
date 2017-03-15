@@ -30,6 +30,9 @@ protected :
 	/// Override the parent class method called on double click
 	virtual void mouseDoubleClickEvent(QMouseEvent*);
 
+  /// Overrides the key actions
+  virtual void keyPressEvent(QKeyEvent *event);
+
 private slots:
 
 	/// Normally, axis base line, axis tick labels and axis labels are selectable separately, but we want
@@ -51,6 +54,9 @@ private slots:
 	/// if an axis is selected, only allow the direction of that axis to be zoomed
 	/// If no axis is selected, both directions may be zoomed
 	void mouseWheel();
+
+	/// Change selection using arrow keys up or down. Called by keyPressEvent
+	void changeGraphSelection(int key);
 
 
 };
