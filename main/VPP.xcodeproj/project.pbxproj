@@ -76,15 +76,15 @@
 					);
 			};
 		};
-		7E53A029758EC767BB05329D = {
+		C7A809130814324AFA05498B = {
 			isa = PBXFileReference;
-			path = "/Users/dtrimarchi/VPP/main/gui/MainWindow.cpp";
-			name = "MainWindow.cpp";
+			path = "/Users/dtrimarchi/VPP/main/gui/mainwindow.cpp";
+			name = "mainwindow.cpp";
 			sourceTree = "<absolute>";
 			lastKnownFileType = "sourcecode.cpp.cpp";
 		};
-		B1DFCD9F8C53448F00E8568F = {
-			fileRef = "7E53A029758EC767BB05329D";
+		D179BE50C5077559FB33416E = {
+			fileRef = "C7A809130814324AFA05498B";
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
@@ -130,21 +130,6 @@
 		};
 		070BFD2D4E138BEFBF3D8F20 = {
 			fileRef = "286F18449D1D28A3B8962491";
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					);
-			};
-		};
-		657800E3B4935A0005288B08 = {
-			isa = PBXFileReference;
-			path = "/Users/dtrimarchi/VPP/main/gui/StateVectorDialog.cpp";
-			name = "StateVectorDialog.cpp";
-			sourceTree = "<absolute>";
-			lastKnownFileType = "sourcecode.cpp.cpp";
-		};
-		15E3284226ED033B1D82614B = {
-			fileRef = "657800E3B4935A0005288B08";
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
@@ -250,6 +235,21 @@
 		};
 		419F20CC6446BFF9F789320B = {
 			fileRef = "D36BE713696FA75C2279DBB8";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		7CA7A59B07FF427AECCCA6E1 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VPPDialogs.cpp";
+			name = "VPPDialogs.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		80146F910962893AE662D44F = {
+			fileRef = "7CA7A59B07FF427AECCCA6E1";
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
@@ -871,15 +871,15 @@
 					);
 			};
 		};
-		C0CD01CAE2CD1D7D1E1C0830 = {
+		ED5D70265070E103EDD22BCF = {
 			isa = PBXFileReference;
-			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_MainWindow.cpp";
-			name = "moc_MainWindow.cpp";
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_mainwindow.cpp";
+			name = "moc_mainwindow.cpp";
 			sourceTree = "<absolute>";
 			lastKnownFileType = "sourcecode.cpp.cpp";
 		};
-		A8EC760318DCA70D1513B347 = {
-			fileRef = "C0CD01CAE2CD1D7D1E1C0830";
+		27E44F89257E980B292E8632 = {
+			fileRef = "ED5D70265070E103EDD22BCF";
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
@@ -925,21 +925,6 @@
 		};
 		C8816B2D293A3060C9D303EF = {
 			fileRef = "DA264DCD041D00721E18D595";
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					);
-			};
-		};
-		49C16E4CF089E5E2187FC99E = {
-			isa = PBXFileReference;
-			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_StateVectorDialog.cpp";
-			name = "moc_StateVectorDialog.cpp";
-			sourceTree = "<absolute>";
-			lastKnownFileType = "sourcecode.cpp.cpp";
-		};
-		BCCC585FB7B24E50F9E3A25E = {
-			fileRef = "49C16E4CF089E5E2187FC99E";
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
@@ -1030,6 +1015,21 @@
 		};
 		3DA078F6B6DD6D6317429A3D = {
 			fileRef = "BE0D5F71C24F6C8382475063";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		38306A80D2BC14226BE311AC = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VPPDialogs.cpp";
+			name = "moc_VPPDialogs.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		F53E43FB85FF07FE354023DF = {
+			fileRef = "38306A80D2BC14226BE311AC";
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
@@ -1169,10 +1169,10 @@
 			sourceTree = "<absolute>";
 			lastKnownFileType = "sourcecode.c.h";
 		};
-		517A9064D3C0E8C3E03052D4 = {
+		F24C3797008438F3784CEA5D = {
 			isa = PBXFileReference;
-			path = "/Users/dtrimarchi/VPP/main/gui/MainWindow.h";
-			name = "MainWindow.h";
+			path = "/Users/dtrimarchi/VPP/main/gui/mainwindow.h";
+			name = "mainwindow.h";
 			sourceTree = "<absolute>";
 			lastKnownFileType = "sourcecode.c.h";
 		};
@@ -1194,13 +1194,6 @@
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/main/gui/PolarPlotWidget.h";
 			name = "PolarPlotWidget.h";
-			sourceTree = "<absolute>";
-			lastKnownFileType = "sourcecode.c.h";
-		};
-		A86A66E0DA7DA38C50B9A1EA = {
-			isa = PBXFileReference;
-			path = "/Users/dtrimarchi/VPP/main/gui/StateVectorDialog.h";
-			name = "StateVectorDialog.h";
 			sourceTree = "<absolute>";
 			lastKnownFileType = "sourcecode.c.h";
 		};
@@ -1250,6 +1243,13 @@
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/main/gui/VppCustomPlotWidget.h";
 			name = "VppCustomPlotWidget.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		C5768F2D40ACF36A54889766 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VPPDialogs.h";
+			name = "VPPDialogs.h";
 			sourceTree = "<absolute>";
 			lastKnownFileType = "sourcecode.c.h";
 		};
@@ -1589,17 +1589,17 @@
 				"5277607BDA8F3D6E3DFC9836",
 				"957FA62CD8BE6760B9D0CC66",
 				"11C28DC9374A7F569B14337D",
-				"C0CD01CAE2CD1D7D1E1C0830",
+				"ED5D70265070E103EDD22BCF",
 				"3F6C04A5AF5B7937D7BA4446",
 				"F4BF2B3A27F0FADB8475238A",
 				"DA264DCD041D00721E18D595",
-				"49C16E4CF089E5E2187FC99E",
 				"E510FC43028A784148AD8613",
 				"45D80CD2C6D2669A90B6856B",
 				"8028902D78BDF02F77D3C385",
 				"724FC7CC13416231B8122B3E",
 				"C8455A02554D8C88A3E1A8C0",
 				"BE0D5F71C24F6C8382475063",
+				"38306A80D2BC14226BE311AC",
 				"70D2952ABA64DED7B184EA05",
 				"11129B21777CADB90E065E97",
 				"7E8A58ABAA7DF29505984473",
@@ -1658,11 +1658,10 @@
 			children = (
 				"1B14A761DA72B7FF2DA85767",
 				"5159B92706FEF3FB1A7CDA89",
-				"7E53A029758EC767BB05329D",
+				"C7A809130814324AFA05498B",
 				"9100D39368F7FCF1989E96C6",
 				"770CF1D7E9512BBABB17E86F",
 				"286F18449D1D28A3B8962491",
-				"657800E3B4935A0005288B08",
 				"B7CC520C1E0517BD80ECF99D",
 				"A9B8BFB4C943A486717F4880",
 				"668C7DA1D2FAA0394557BD96",
@@ -1670,6 +1669,7 @@
 				"0B249122FD48B4BB598011C7",
 				"C98EA01C80996DFA59D73E5B",
 				"D36BE713696FA75C2279DBB8",
+				"7CA7A59B07FF427AECCCA6E1",
 				"7B7C3CB1FE7F49D765F66163",
 				"04306F199F9FBC54052772BC",
 				"B58E96A6686474993FE0BEEF",
@@ -1679,11 +1679,10 @@
 				"5E04E90202FFBB0CF7C19C50",
 				"98A0CBC858C911D76F94DD56",
 				"E8A6C92521BCAA3EC3F007D3",
-				"517A9064D3C0E8C3E03052D4",
+				"F24C3797008438F3784CEA5D",
 				"6A9F253E2B86D27595B9A55F",
 				"C8F15FEFBD536106F6CB3C68",
 				"7B741AB7185A33C2329CEA4E",
-				"A86A66E0DA7DA38C50B9A1EA",
 				"40A6D07C89D6CC1BD877F197",
 				"2D676EF791E0DD1DF651B5E7",
 				"919B23699572E79F1879F394",
@@ -1691,6 +1690,7 @@
 				"32208B5652ED65FBE537FBF9",
 				"5DE3EBCD3768A0E19EC7559E",
 				"BA9CFC210F81F1AE53B62F84",
+				"C5768F2D40ACF36A54889766",
 				"6326D1D9F7D79D5A3D9076F3",
 				"B4953B0EB6F36A6FA6A1DBF5",
 				"A6F6E728E46B65019D0ACCB5",
@@ -1857,11 +1857,10 @@
 				"192B5378B8D36922593B3F7A",
 				"C1A9685BAF4A2A46C96A25EF",
 				"82F07F0A2DA26B65C850F56A",
-				"B1DFCD9F8C53448F00E8568F",
+				"D179BE50C5077559FB33416E",
 				"DAB42D4DFE73E08E20897E9F",
 				"80CE99F22CE7157743D70AF3",
 				"070BFD2D4E138BEFBF3D8F20",
-				"15E3284226ED033B1D82614B",
 				"73B98F530B17BEEAC4F19437",
 				"C01856DB5B5A05D31BA49B13",
 				"8B18BB4DAB3D225D54AF6D82",
@@ -1869,6 +1868,7 @@
 				"CAF7C7E200F4428E18E6BE5B",
 				"73A37DAC21B7AA56C878B364",
 				"419F20CC6446BFF9F789320B",
+				"80146F910962893AE662D44F",
 				"BC851D63CD7161177A68434E",
 				"25F72F3CD1EE305F577F6BCB",
 				"C8091D0019724BF7E52C8248",
@@ -1910,17 +1910,17 @@
 				"451FA4931D7FB5CDC52624ED",
 				"576A3B2ED207388499383478",
 				"5D0F5727C28892E1AA58F715",
-				"A8EC760318DCA70D1513B347",
+				"27E44F89257E980B292E8632",
 				"C55232B542E8EF16099FC937",
 				"A05C9607EC348CC420D566AF",
 				"C8816B2D293A3060C9D303EF",
-				"BCCC585FB7B24E50F9E3A25E",
 				"E5D27870C9067A6E81D7D52B",
 				"A5A82EE01AAEAE7E1D416FAE",
 				"91097B4EF09BE74A8F66660E",
 				"BDA3A34FC779764B195418E3",
 				"F69025EF8F008544B24D5334",
 				"3DA078F6B6DD6D6317429A3D",
+				"F53E43FB85FF07FE354023DF",
 				"6DE6EE811139C08213BDB9F6",
 				"678241618B2798A4073714F6",
 				"2DE1F6FBB19204E064E31091",

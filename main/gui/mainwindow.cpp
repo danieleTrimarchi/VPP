@@ -506,7 +506,7 @@ void MainWindow::plotSailForceMoments() {
 	// Instantiate an empty multiple plot widget
 	pForceMomentsPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Force/Moments") );
 
-	pVppItems_->getAeroForcesItem()->plot();
+	//pVppItems_->getAeroForcesItem()->plot();
 
 	pVppItems_->getAeroForcesItem()->plot(pForceMomentsPlotWidget_.get());
 

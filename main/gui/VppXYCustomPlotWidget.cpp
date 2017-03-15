@@ -24,7 +24,10 @@ VppXYCustomPlotWidget::VppXYCustomPlotWidget(
 	yAxis->setLabel(yAxisLabel);
 
 	// Allow for dragging and zooming the plot and selecting the curves
-  setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+  setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables | QCP::iSelectAxes );
+
+  // Connect slot that ties some axis selections together (especially opposite axes):
+  connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
 
 }
 
@@ -55,3 +58,29 @@ void VppXYCustomPlotWidget::mouseDoubleClickEvent(QMouseEvent* pMouseEvent) {
 	QCustomPlot::mouseDoubleClickEvent(pMouseEvent);
 }
 
+// Normally, axis base line, axis tick labels and axis labels are selectable separately, but we want
+// the user only to be able to select the axis as a whole, so we tie the selected states of the tick labels
+// and the axis base line together. However, the axis label shall be selectable individually.
+//
+// The selection state of the left and right axes shall be synchronized as well as the state of the
+// bottom and top axes.
+//
+// Further, we want to synchronize the selection of the graphs with the selection state of the respective
+// legend item belonging to that graph. So the user can select a graph by either clicking on the graph itself
+// or on its legend item.
+void VppXYCustomPlotWidget::selectionChanged() {
+
+  // make top and bottom axes be selected synchronously, and handle axis and tick labels as one selectable object:
+  if (xAxis->selectedParts().testFlag(QCPAxis::spAxis) || xAxis->selectedParts().testFlag(QCPAxis::spTickLabels) ||
+     xAxis2->selectedParts().testFlag(QCPAxis::spAxis) || xAxis2->selectedParts().testFlag(QCPAxis::spTickLabels)) {
+    xAxis2->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+    xAxis->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+  }
+
+  // make left and right axes be selected synchronously, and handle axis and tick labels as one selectable object:
+  if (yAxis->selectedParts().testFlag(QCPAxis::spAxis) || yAxis->selectedParts().testFlag(QCPAxis::spTickLabels) ||
+      yAxis2->selectedParts().testFlag(QCPAxis::spAxis) || yAxis2->selectedParts().testFlag(QCPAxis::spTickLabels)) {
+    yAxis2->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+    yAxis->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+  }
+}
