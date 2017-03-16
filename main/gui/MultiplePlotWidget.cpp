@@ -43,7 +43,7 @@ void MultiplePlotWidget::addChart(QChart& chart, size_t px, size_t py) {
 
 	MultiplePlotChartComponent* pChart = new MultiplePlotChartComponent( &chart );
 	pGridLayout_->addWidget(pChart, px, py);
-	chartList_ << pChart;
+	chartList_ << boost::shared_ptr<MultiplePlotChartComponent>(pChart);
 
 	// Connect the charts in the multiple plot in order to being able to
 	// magnify one chart on double click
@@ -69,9 +69,9 @@ void MultiplePlotWidget::addChart(VppXYCustomPlotWidget* chart, size_t px, size_
 void MultiplePlotWidget::connectFullScreenSignals() {
 
 	// Connect the widget to the function that handles the widget visibility in the layout
-	foreach (MultiplePlotChartComponent* chart, chartList_) {
-		QObject::disconnect(chart, SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
-		QObject::connect(chart, SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
+	foreach (boost::shared_ptr<MultiplePlotChartComponent> pChart, chartList_) {
+		QObject::disconnect(pChart.get(), SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
+		QObject::connect(pChart.get(), SIGNAL(requestFullScreen(const MultiplePlotChartComponent*)), this, SLOT(toggleFullScreen(const MultiplePlotChartComponent*)));
 	}
 
 	// Connect the widget to the function that handles the widget visibility in the layout
@@ -79,7 +79,6 @@ void MultiplePlotWidget::connectFullScreenSignals() {
 		QObject::disconnect(pChart.get(), SIGNAL(requestFullScreen(const VppXYCustomPlotWidget*)), this, SLOT(toggleFullScreen(const VppXYCustomPlotWidget*)));
 		QObject::connect(pChart.get(), SIGNAL(requestFullScreen(const VppXYCustomPlotWidget*)), this, SLOT(toggleFullScreen(const VppXYCustomPlotWidget*)));
 	}
-
 }
 
 
@@ -88,10 +87,10 @@ void MultiplePlotWidget::toggleFullScreen(const MultiplePlotChartComponent* pCli
 
 	// Loop on the list of chart view and reverse the visibility of all,
 	// except the one that was clicked
-	foreach (MultiplePlotChartComponent* view, chartList_) {
+	foreach (boost::shared_ptr<MultiplePlotChartComponent> pView, chartList_) {
 
-		if(view!=pClickedView)
-			view->setVisible( !view->isVisible() );
+		if(pView.get()!=pClickedView)
+			pView->setVisible( !pView->isVisible() );
 	}
 }
 

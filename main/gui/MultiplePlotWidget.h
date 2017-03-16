@@ -84,7 +84,7 @@ private:
 	void connectFullScreenSignals();
 
 	/// List with all the QChart-style plots that will be visualized
-	QList<MultiplePlotChartComponent*> chartList_;
+	QList<boost::shared_ptr<MultiplePlotChartComponent> > chartList_;
 
 	/// List with all the qCustomPlot-style plots that will be visualized
 	QList<boost::shared_ptr<VppXYCustomPlotWidget> > customPlotList_;
