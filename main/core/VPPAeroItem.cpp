@@ -1153,26 +1153,29 @@ void AeroForcesItem::plot(MultiplePlotWidget* multiPlotWidget ) {
 			pWindItem_->getTWV(dg.getTWV()),
 			mathUtils::toDeg(pWindItem_->getTWA(dg.getTWA())) );
 
-	// Instantiate a plotter and plot Lift
-	VppXYCustomPlotWidget* pLiftPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","Lift [N]");
+	// Instantiate a plotter and plot Lift. We new with a raw ptr, then the
+	// ownership will be assigned to the multiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pLiftPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Lift [N]");
 	for(size_t i=0; i<fN.size(); i++)
 		pLiftPlot->addData(fN[i],Lift[i],curveLabels[i]);
 	pLiftPlot->rescaleAxes();
 	multiPlotWidget->addChart(pLiftPlot,0,0);
-//
-//	//--
-//
-//	sprintf(msg,"plot Sail Drag vs boat speed - "
-//			"twv=%2.2f [m/s], twa=%2.2fº",
-//			pWindItem_->getTWV(twv),
-//			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-//
-//	// Instantiate a plotter and plot Drag
-//	VppXYCustomPlotWidget* pDragPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","Drag [N]");
-//	for(size_t i=0; i<fN.size(); i++)
-//		pDragPlot->addData(fN[i],Drag[i],curveLabels[i]);
-//	multiPlotWidget->addChart(pDragPlot,0,1);
-//
+
+	//--
+
+	sprintf(msg,"plot Sail Drag vs boat speed - "
+			"twv=%2.2f [m/s], twa=%2.2fº",
+			pWindItem_->getTWV(dg.getTWV()),
+			mathUtils::toDeg(pWindItem_->getTWA(dg.getTWA())) );
+
+	// Instantiate a plotter and plot Drag. We new with a raw ptr, then the
+	// ownership will be assigned to the multiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pDragPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Drag [N]");
+	for(size_t i=0; i<fN.size(); i++)
+		pDragPlot->addData(fN[i],Drag[i],curveLabels[i]);
+	pDragPlot->rescaleAxes();
+	multiPlotWidget->addChart(pDragPlot,0,1);
+
 //	//--
 //
 //	sprintf(msg,"plot drive force vs boat speed - "

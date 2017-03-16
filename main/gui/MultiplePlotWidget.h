@@ -87,7 +87,7 @@ private:
 	QList<MultiplePlotChartComponent*> chartList_;
 
 	/// List with all the qCustomPlot-style plots that will be visualized
-	QList<VppXYCustomPlotWidget*> customPlotList_;
+	QList<boost::shared_ptr<VppXYCustomPlotWidget> > customPlotList_;
 
 	/// Grid layout of the multiple plot. Raw ptr, the ownership is taken by the widget
 	QGridLayout* pGridLayout_;

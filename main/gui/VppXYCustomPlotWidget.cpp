@@ -191,6 +191,7 @@ void VppXYCustomPlotWidget::selectionChanged() {
 
 		// Get a ptr to the i-th graph curve
 		QCPGraph* pGraph = graph(i);
+
 		// Get a ptr to the legend item related to this graph curve
 		QCPPlottableLegendItem* item = legend->itemWithPlottable(pGraph);
 
@@ -199,13 +200,7 @@ void VppXYCustomPlotWidget::selectionChanged() {
 			item->setSelected(true);
 			pGraph->setSelection(QCPDataSelection(pGraph->data()->dataRange()));
 		}
-		//    else {
-		//    	item->setSelected(false);
-		//    	pGraph->setSelection(QCPDataSelection());
-		//    }
-
 	}
-
 }
 
 // If an axis is selected, only allow the direction of that axis to be dragged

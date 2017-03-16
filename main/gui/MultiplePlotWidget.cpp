@@ -56,7 +56,7 @@ void MultiplePlotWidget::addChart(VppXYCustomPlotWidget* chart, size_t px, size_
 
 	// Add the widget to the multiple plot
 	pGridLayout_->addWidget(chart, px, py);
-	customPlotList_ << chart;
+	customPlotList_ << boost::shared_ptr<VppXYCustomPlotWidget>(chart);
 
 	// Connect the charts in the multiple plot in order to being able to
 	// magnify one chart on double click
@@ -75,9 +75,9 @@ void MultiplePlotWidget::connectFullScreenSignals() {
 	}
 
 	// Connect the widget to the function that handles the widget visibility in the layout
-	foreach (VppXYCustomPlotWidget* chart, customPlotList_) {
-		QObject::disconnect(chart, SIGNAL(requestFullScreen(const VppXYCustomPlotWidget*)), this, SLOT(toggleFullScreen(const VppXYCustomPlotWidget*)));
-		QObject::connect(chart, SIGNAL(requestFullScreen(const VppXYCustomPlotWidget*)), this, SLOT(toggleFullScreen(const VppXYCustomPlotWidget*)));
+	foreach (boost::shared_ptr<VppXYCustomPlotWidget> pChart, customPlotList_) {
+		QObject::disconnect(pChart.get(), SIGNAL(requestFullScreen(const VppXYCustomPlotWidget*)), this, SLOT(toggleFullScreen(const VppXYCustomPlotWidget*)));
+		QObject::connect(pChart.get(), SIGNAL(requestFullScreen(const VppXYCustomPlotWidget*)), this, SLOT(toggleFullScreen(const VppXYCustomPlotWidget*)));
 	}
 
 }
@@ -100,9 +100,9 @@ void MultiplePlotWidget::toggleFullScreen(const VppXYCustomPlotWidget* pClickedV
 
 	// Loop on the list of chart view and reverse the visibility of all,
 	// except the one that was clicked
-	foreach (VppXYCustomPlotWidget* pChart, customPlotList_) {
+	foreach (boost::shared_ptr<VppXYCustomPlotWidget> pChart, customPlotList_) {
 
-		if(pChart!=pClickedView)
+		if(pChart.get()!=pClickedView)
 			pChart->setVisible( !pChart->isVisible() );
 	}
 
