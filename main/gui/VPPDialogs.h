@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QLineEdit>
+#include "boost/shared_ptr.hpp"
 
 class StateVectorDialog : public QDialog {
 
@@ -28,7 +29,7 @@ public:
 
 private:
 
-    QLineEdit* pV_Edit_, *pPhi_Edit_, *pCrew_Edit_, *pFlat_Edit_;
+    boost::shared_ptr<QLineEdit> pV_Edit_, pPhi_Edit_, pCrew_Edit_, pFlat_Edit_;
 
 };
 
@@ -50,7 +51,7 @@ public:
 
 private:
 
-	QLineEdit* pTWV_Edit_, *pTWA_Edit_;
+	boost::shared_ptr<QLineEdit> pTWV_Edit_, pTWA_Edit_;
 
 };
 #endif

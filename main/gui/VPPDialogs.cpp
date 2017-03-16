@@ -20,34 +20,34 @@ StateVectorDialog::StateVectorDialog(QWidget *parent)
     localSettings.setNumberOptions(QLocale::RejectGroupSeparator | QLocale::OmitGroupSeparator);
 
     // Set all the line edit with double validators
-    QDoubleValidator* velocityValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pV_Edit_ );
+    QDoubleValidator* velocityValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pV_Edit_.get() );
     velocityValueValidator->setLocale(localSettings);
     pV_Edit_->setValidator(velocityValueValidator);
 
-    QDoubleValidator* phiValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pPhi_Edit_ );
+    QDoubleValidator* phiValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pPhi_Edit_.get() );
     phiValueValidator->setLocale(localSettings);
     pPhi_Edit_->setValidator(phiValueValidator);
 
-    QDoubleValidator* crewValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pCrew_Edit_ );
+    QDoubleValidator* crewValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pCrew_Edit_.get() );
     crewValueValidator->setLocale(localSettings);
     pCrew_Edit_->setValidator(crewValueValidator);
 
-    QDoubleValidator* flatValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pFlat_Edit_ );
+    QDoubleValidator* flatValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pFlat_Edit_.get() );
     flatValueValidator->setLocale(localSettings);
     pFlat_Edit_->setValidator(flatValueValidator);
 
     size_t vPos=0;
     layout->addWidget(new QLabel(tr("V [m/s]:")), vPos, 0);
-    layout->addWidget(pV_Edit_, vPos++, 1);
+    layout->addWidget(pV_Edit_.get(), vPos++, 1);
 
     layout->addWidget(new QLabel(tr("Phi [rad]:")), vPos, 0);
-    layout->addWidget(pPhi_Edit_, vPos++, 1);
+    layout->addWidget(pPhi_Edit_.get(), vPos++, 1);
 
     layout->addWidget(new QLabel(tr("Crew [m]:")), vPos, 0);
-    layout->addWidget(pCrew_Edit_, vPos++, 1);
+    layout->addWidget(pCrew_Edit_.get(), vPos++, 1);
 
     layout->addWidget(new QLabel(tr("Flat [-]:")), vPos, 0);
-    layout->addWidget(pFlat_Edit_, vPos++, 1);
+    layout->addWidget(pFlat_Edit_.get(), vPos++, 1);
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
@@ -88,20 +88,20 @@ WindIndicesDialog::WindIndicesDialog(const int ntwv, const int ntwa,QWidget* par
     localSettings.setNumberOptions(QLocale::RejectGroupSeparator | QLocale::OmitGroupSeparator);
 
     // Set all the line edit with double validators
-    QIntValidator* twvValueValidator= new QIntValidator(0, ntwv, pTWV_Edit_);
+    QIntValidator* twvValueValidator= new QIntValidator(0, ntwv, pTWV_Edit_.get() );
     twvValueValidator->setLocale(localSettings);
     pTWV_Edit_->setValidator(twvValueValidator);
 
-    QIntValidator* twaValueValidator= new QIntValidator(0, ntwa, pTWA_Edit_ );
+    QIntValidator* twaValueValidator= new QIntValidator(0, ntwa, pTWA_Edit_.get() );
     twaValueValidator->setLocale(localSettings);
     pTWA_Edit_->setValidator(twaValueValidator);
 
     size_t vPos=0;
     layout->addWidget(new QLabel(tr("TWV:")), vPos, 0);
-    layout->addWidget(pTWV_Edit_, vPos++, 1);
+    layout->addWidget(pTWV_Edit_.get(), vPos++, 1);
 
     layout->addWidget(new QLabel(tr("TWA:")), vPos, 0);
-    layout->addWidget(pTWA_Edit_, vPos++, 1);
+    layout->addWidget(pTWA_Edit_.get(), vPos++, 1);
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
