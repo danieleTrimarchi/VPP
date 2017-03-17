@@ -16,5 +16,6 @@
     <file>icons/sailForceMoment.png</file>
     <file>icons/resistanceComponent.png</file>
     <file>icons/totResistance.png</file>
+    <file>icons/frictionalResistance.png</file>
 </qresource>
 </RCC>

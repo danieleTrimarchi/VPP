@@ -908,13 +908,13 @@ void FrictionalResistanceItem::printWhoAmI() {
 }
 
 // Plot the viscous resistance of the keel for a fixed range Fn=0-1
-void FrictionalResistanceItem::plot() {
+void FrictionalResistanceItem::plot(MultiplePlotWidget* multiPlotWidget) {
 
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
 
-	int nVals=10;
-	std::vector<double> x(nVals), y(nVals);
+	int nVals=20;
+	QVector<double> fN(nVals), y(nVals);
 
 	for(size_t i=0; i<nVals; i++) {
 
@@ -925,14 +925,16 @@ void FrictionalResistanceItem::plot() {
 		update(0,0);
 
 		// Fill the vectors to be plot
-		x[i]= fN_;
+		fN[i]= fN_;
 		y[i]= res_;
 
 	}
 
 	// Instantiate a plotter and plot the curves
-	VPPPlotter plotter;
-	plotter.plot(x,y,"Frictional Resistance","Fn [-]","Resistance [N]");
+	VppXYCustomPlotWidget* pFrictionalResPlot= new VppXYCustomPlotWidget("Frictional Resistance","Fn [-]","Total Resistance [N]");
+	pFrictionalResPlot->addData(fN,y,"Frict Res");
+	pFrictionalResPlot->rescaleAxes();
+	multiPlotWidget->addChart(pFrictionalResPlot,0,0);
 
 	// Restore the initial buffered values
 	V_= bufferV;

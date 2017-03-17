@@ -11,7 +11,7 @@
 #include "VppXYCustomPlotWidget.h"
 
 MultiplePlotWidget::MultiplePlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, QString title /*=0*/) :
-	VppTabDockWidget(parent) {
+VppTabDockWidget(parent) {
 
 	setObjectName(title);
 	setWindowTitle(title);
@@ -32,9 +32,9 @@ MultiplePlotWidget::MultiplePlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, QStrin
 
 	setLayout(pGridLayout_);
 
-  // Set a minimum size for this widget
-  QScreen* pScreen= QGuiApplication::primaryScreen();
-  setMinimumSize(QSize(pScreen->size().width()/ 2, pScreen->size().height() / 2));
+	// Set a minimum size for this widget
+	QScreen* pScreen= QGuiApplication::primaryScreen();
+	setMinimumSize(QSize(pScreen->size().width()/ 2, pScreen->size().height() / 2));
 
 }
 

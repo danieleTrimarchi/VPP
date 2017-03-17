@@ -241,6 +241,18 @@ void MainWindow::setupMenuBar() {
 	pResistanceMenu->addAction(plotTotResAction);
 	connect(plotTotResAction, &QAction::triggered, this, &MainWindow::plotTotalResistance);
 
+	// Plot Frictional Resistance
+	actionVector_.push_back( boost::shared_ptr<QAction>(
+			new QAction(
+					QIcon::fromTheme("Plot Frictional Resistance", QIcon(":/icons/frictionalResistance.png")),
+					tr("&Frictional Resistance"), this)
+			) );
+	QAction* plotFrictResAction = actionVector_.back().get();
+	plotFrictResAction->setStatusTip(tr("Plot Frictional Resistance"));
+	pResistanceMenu->addAction(plotFrictResAction);
+	connect(plotFrictResAction, &QAction::triggered, this, &MainWindow::plotFrictionalResistance);
+
+
 	// --
 
 	actionVector_.push_back( boost::shared_ptr<QAction>(
@@ -585,8 +597,6 @@ void MainWindow::plotTotalResistance() {
 
 	pLogWidget_->append("Plotting Total Resistance...");
 
-	//pVppItems_->plotTotalResistance();
-
 	// Instantiate an empty multiple plot widget
 	pTotResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Total Resistance") );
 
@@ -598,6 +608,28 @@ void MainWindow::plotTotalResistance() {
 
 	// Tab the widget with the others
 	tabDockWidget(pTotResistancePlotWidget_.get());
+
+}
+
+// Plot the Frictional resistance
+void MainWindow::plotFrictionalResistance() {
+
+	if(!hasBoatDescription())
+		return;
+
+	pLogWidget_->append("Plotting Frictional Resistance...");
+
+	// Instantiate an empty multiple plot widget
+	pFricitionalResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Frictional Resistance") );
+
+	// Ask the frictional resistance item to plot itself
+	pVppItems_->getFrictionalResistanceItem()->plot(pFricitionalResistancePlotWidget_.get());
+
+	// Add the xy plot view to the left of the app window
+	addDockWidget(Qt::TopDockWidgetArea, pFricitionalResistancePlotWidget_.get() );
+
+	// Tab the widget with the others
+	tabDockWidget(pFricitionalResistancePlotWidget_.get());
 
 }
 

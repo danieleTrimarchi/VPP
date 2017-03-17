@@ -3,8 +3,10 @@
 
 #include "VPPItem.h"
 #include "VPPAeroItem.h"
-
 #include "mathUtils.h"
+#include "VppXYCustomPlotWidget.h"
+#include "MultiplePlotWidget.h"
+
 using namespace mathUtils;
 
 // TODO dtrimarchi : we are not considering the resistance
@@ -225,7 +227,7 @@ class FrictionalResistanceItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot the frictional resistance for a fixed range (Fn=0-0.7)
-		void plot();
+		void plot(MultiplePlotWidget*);
 
 	private:
 

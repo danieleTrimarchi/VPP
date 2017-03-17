@@ -89,6 +89,9 @@ public slots:
 	/// Plot the total resistance
 	void plotTotalResistance();
 
+	// Plot the Frictional resistance
+	void plotFrictionalResistance();
+
 	/// Temp method used to test QCustomPlot in the current env
 	void testQCustomPlot();
 
@@ -142,7 +145,7 @@ private:
 	/// Multi-plot widget used to plot sail coeffs
 	boost::shared_ptr<MultiplePlotWidget> pSailCoeffPlotWidget_, p_d_SailCoeffPlotWidget_,
 																				p_d2_SailCoeffPlotWidget_, pForceMomentsPlotWidget_,
-																				pTotResistancePlotWidget_;
+																				pTotResistancePlotWidget_, pFricitionalResistancePlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<VppTabDockWidget> p3dPlotWidget_;
