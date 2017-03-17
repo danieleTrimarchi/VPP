@@ -1148,8 +1148,7 @@ void AeroForcesItem::plot(MultiplePlotWidget* multiPlotWidget ) {
 	}
 
 	char msg[256];
-	sprintf(msg,"plot Sail Lift vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2fº",
+	sprintf(msg,"Sail Lift vs speed - twv=%2.2f [m/s], twa=%2.2fº",
 			pWindItem_->getTWV(dg.getTWV()),
 			mathUtils::toDeg(pWindItem_->getTWA(dg.getTWA())) );
 
@@ -1163,8 +1162,7 @@ void AeroForcesItem::plot(MultiplePlotWidget* multiPlotWidget ) {
 
 	//--
 
-	sprintf(msg,"plot Sail Drag vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2fº",
+	sprintf(msg,"Sail Drag vs speed - twv=%2.2f [m/s], twa=%2.2fº",
 			pWindItem_->getTWV(dg.getTWV()),
 			mathUtils::toDeg(pWindItem_->getTWA(dg.getTWA())) );
 
@@ -1176,34 +1174,33 @@ void AeroForcesItem::plot(MultiplePlotWidget* multiPlotWidget ) {
 	pDragPlot->rescaleAxes();
 	multiPlotWidget->addChart(pDragPlot,0,1);
 
-//	//--
-//
-//	sprintf(msg,"plot drive force vs boat speed - "
-//			"twv=%2.2f [m/s], twa=%2.2fº",
-//			pWindItem_->getTWV(twv),
-//			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-//
-//	// Instantiate a plotter and plot Driving Force
-//	VppXYCustomPlotWidget* pDriveFPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","FDrive [N]");
-//	for(size_t i=0; i<fN.size(); i++)
-//		pDriveFPlot->addData(fN[i],fDrive[i],curveLabels[i]);
-//	multiPlotWidget->addChart(pDriveFPlot,1,0);
-//
-//	//--
-//
-//	sprintf(msg,"plot side force vs boat speed - "
-//			"twv=%2.2f [m/s], twa=%2.2fº",
-//			pWindItem_->getTWV(twv),
-//			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-//
-//	// Instantiate a plotter and plot Driving Force
-//	VppXYCustomPlotWidget* pSideFPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","FSide [N]");
-//	for(size_t i=0; i<fN.size(); i++)
-//		pDriveFPlot->addData(fN[i],fSide[i],curveLabels[i]);
-//	pDriveFPlot->setBounds(0,2);
-//	multiPlotWidget->addChart(pDriveFPlot,1,1);
-//
-//	//--
+	//--
+
+	sprintf(msg,"Drive force vs speed - twv=%2.2f [m/s], twa=%2.2fº",
+			pWindItem_->getTWV(dg.getTWV()),
+			mathUtils::toDeg(pWindItem_->getTWA(dg.getTWA())) );
+
+	// Instantiate a plotter and plot Driving Force
+	VppXYCustomPlotWidget* pDriveFPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","FDrive [N]");
+	for(size_t i=0; i<fN.size(); i++)
+		pDriveFPlot->addData(fN[i],fDrive[i],curveLabels[i]);
+	pDriveFPlot->rescaleAxes();
+	multiPlotWidget->addChart(pDriveFPlot,1,0);
+
+	//--
+
+	sprintf(msg,"Side force vs speed - twv=%2.2f [m/s], twa=%2.2fº",
+			pWindItem_->getTWV(dg.getTWV()),
+			mathUtils::toDeg(pWindItem_->getTWA(dg.getTWA())) );
+
+	// Instantiate a plotter and plot Driving Force
+	VppXYCustomPlotWidget* pSideFPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","FSide [N]");
+	for(size_t i=0; i<fN.size(); i++)
+		pSideFPlot->addData(fN[i],fSide[i],curveLabels[i]);
+	pSideFPlot->rescaleAxes();
+	multiPlotWidget->addChart(pSideFPlot,1,1);
+
+	//--
 //
 //	// Instantiate a plotter and plot Driving Force
 //	VppXYCustomPlotWidget* pMPlot = new VppXYCustomPlotWidget("plot heeling moment vs boat speed","Fn [-]","mHeel [N*m]");

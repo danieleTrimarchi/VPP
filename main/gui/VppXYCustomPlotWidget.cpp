@@ -30,6 +30,7 @@ VppXYCustomPlotWidget::VppXYCustomPlotWidget(
 	legend->setFont(legendFont);
 	legend->setSelectedFont(legendFont);
 	legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
+	legend->setIconSize(15,5);
 
 	// Allow for dragging and zooming the plot and selecting the curves
 	setInteractions(
