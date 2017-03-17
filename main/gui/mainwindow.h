@@ -86,11 +86,11 @@ public slots:
 	/// Plot sail forces and moments
 	void plotSailForceMoments();
 
+	/// Plot the total resistance
+	void plotTotalResistance();
+
 	/// Temp method used to test QCustomPlot in the current env
 	void testQCustomPlot();
-
-	/// Add a multiPlot widget
-	void multiPlot();
 
 	/// Add a 3dPlot widget
 	void threedPlot();
@@ -139,12 +139,10 @@ private:
 	/// XY Plot widget
 	boost::shared_ptr<VppTabDockWidget> pXYPlotWidget_;
 
-	/// Multi-plot widget
-	boost::shared_ptr<MultiplePlotWidget> pMultiPlotWidget_;
-
 	/// Multi-plot widget used to plot sail coeffs
 	boost::shared_ptr<MultiplePlotWidget> pSailCoeffPlotWidget_, p_d_SailCoeffPlotWidget_,
-																				p_d2_SailCoeffPlotWidget_, pForceMomentsPlotWidget_;
+																				p_d2_SailCoeffPlotWidget_, pForceMomentsPlotWidget_,
+																				pTotResistancePlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<VppTabDockWidget> p3dPlotWidget_;

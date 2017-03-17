@@ -396,9 +396,6 @@ class AeroForcesItem : public VPPItem {
 		/// Get a ptr to the sailCoeffs Item - const variety
 		const SailCoefficientItem* getSailCoeffItem() const;
 
-		/// plot the aeroForces for a fixed range
-		void plot();
-
 		/// plot the aeroForces for a fixed range. Fill a multiplePlotWidget
 		/// with this plot
 		void plot(MultiplePlotWidget*);

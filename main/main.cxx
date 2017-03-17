@@ -133,9 +133,6 @@ int main(int argc, char** argv) {
 //
 //			//---
 //
-//			else if(s == string("plotTotalResistance") )
-//				pVppItems->plotTotalResistance();
-//
 //			else if(s == string("plotFrictionalRes") )
 //				pVppItems->getFrictionalResistanceItem()->plot();
 //

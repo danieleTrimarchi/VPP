@@ -96,7 +96,7 @@ class VPPItemFactory {
 		void plot_deltaWettedArea_heel();
 
 		/// Plot the total resistance over a fixed range Fn=0-1
-		void plotTotalResistance();
+		void plotTotalResistance(MultiplePlotWidget* multiPlotWidget);
 
 		/// Make a 3d plot of the optimization variables v, phi when varying the two opt
 		/// parameters flat and crew

@@ -4,54 +4,88 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QLineEdit>
+#include <QGridLayout>
 #include "boost/shared_ptr.hpp"
+#include <Eigen/Core>
 
 class StateVectorDialog : public QDialog {
 
-	Q_OBJECT
+		Q_OBJECT
 
-public:
+	public:
 
-	/// Explicit Ctor
-	explicit StateVectorDialog(QWidget *parent = Q_NULLPTR);
+		/// Returns the value of V entered by the user
+		double getV() const;
 
-	/// Returns the value of V entered by the user
-    double getV() const;
+		/// Returns the value of Phi entered by the user
+		double getPhi() const;
 
-	/// Returns the value of Phi entered by the user
-    QString getPhi() const;
+		/// Returns the value of Crew entered by the user
+		double getCrew() const;
 
-	/// Returns the value of Crew entered by the user
-    QString getCrew() const;
+		/// Returns the value of Flat entered by the user
+		double getFlat() const;
 
-	/// Returns the value of Flat entered by the user
-    QString getFlat() const;
+		/// Return the state vector under the form of a VectorXd
+		Eigen::VectorXd getStateVector() const;
 
-private:
+	protected:
 
-    boost::shared_ptr<QLineEdit> pV_Edit_, pPhi_Edit_, pCrew_Edit_, pFlat_Edit_;
+		/// Explicit protected Ctor
+		explicit StateVectorDialog(QWidget *parent = Q_NULLPTR);
+
+		boost::shared_ptr<QLineEdit> pV_Edit_, pPhi_Edit_, pCrew_Edit_, pFlat_Edit_;
+
+		boost::shared_ptr<QGridLayout> pGridLayout_;
+};
+
+//---------------------------------------------------------------
+
+class FullStateVectorDialog : public StateVectorDialog {
+
+		Q_OBJECT
+
+	public:
+
+		/// Explicit Ctor
+		explicit FullStateVectorDialog(QWidget *parent = Q_NULLPTR);
 
 };
+
+//---------------------------------------------------------------
+
+class OptimVarsStateVectorDialog : public StateVectorDialog {
+
+		Q_OBJECT
+
+	public:
+
+		/// Explicit Ctor
+		explicit OptimVarsStateVectorDialog(QWidget *parent = Q_NULLPTR);
+
+};
+
+//=========================================================================
 
 
 class WindIndicesDialog : public QDialog {
 
-	Q_OBJECT
+		Q_OBJECT
 
-public:
+	public:
 
-	/// Explicit Ctor
-	explicit WindIndicesDialog(const int ntwv, const int ntwa, QWidget *parent = Q_NULLPTR);
+		/// Explicit Ctor
+		explicit WindIndicesDialog(const int ntwv, const int ntwa, QWidget *parent = Q_NULLPTR);
 
-	/// Returns the index of the TWV prompted by the user
-	int getTWV() const;
+		/// Returns the index of the TWV prompted by the user
+		int getTWV() const;
 
-	/// Returns the index of the TWA prompted by the user
-	int getTWA() const;
+		/// Returns the index of the TWA prompted by the user
+		int getTWA() const;
 
-private:
+	private:
 
-	boost::shared_ptr<QLineEdit> pTWV_Edit_, pTWA_Edit_;
+		boost::shared_ptr<QLineEdit> pTWV_Edit_, pTWA_Edit_;
 
 };
 #endif

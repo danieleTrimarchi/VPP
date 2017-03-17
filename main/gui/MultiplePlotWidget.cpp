@@ -34,7 +34,7 @@ MultiplePlotWidget::MultiplePlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, QStrin
 
   // Set a minimum size for this widget
   QScreen* pScreen= QGuiApplication::primaryScreen();
-  setMinimumSize(QSize(pScreen->size().width()/ 3, pScreen->size().height() / 3));
+  setMinimumSize(QSize(pScreen->size().width()/ 2, pScreen->size().height() / 2));
 
 }
 

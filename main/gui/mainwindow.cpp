@@ -38,7 +38,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags):
 QMainWindow(parent, flags),
 pXYPlotWidget_(0),
 pLogWidget_(0),
-pMultiPlotWidget_(0),
 pSailCoeffPlotWidget_(0),
 p_d_SailCoeffPlotWidget_(0),
 p_d2_SailCoeffPlotWidget_(0),
@@ -174,10 +173,12 @@ void MainWindow::setupMenuBar() {
 	pToolBar_->addAction(plotPolarsAction);
 
 	// Add a menu in the toolbar. This is used to group plot coeffs, and their derivatives
+	// ==== WARNING !!! ===================================================================
+	// Try to define this guy as a class member and see the app crashing on construction...
+	// This ONLY happens for the optimized build. Will building profile in xCode help?
 	QMenu* pSailCoeffsMenu = new QMenu("Plot Sail Related Quantities", this);
-
-	// Set the icon for the menu
 	pSailCoeffsMenu->setIcon( QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png")) );
+	pToolBar_->addAction(pSailCoeffsMenu->menuAction());
 
 	// Plot sail coeffs
 	actionVector_.push_back( boost::shared_ptr<QAction>(
@@ -223,7 +224,22 @@ void MainWindow::setupMenuBar() {
 	pSailCoeffsMenu->addAction(plotSailForceMomentAction);
 	connect(plotSailForceMomentAction, &QAction::triggered, this, &MainWindow::plotSailForceMoments);
 
-	pToolBar_->addAction(pSailCoeffsMenu->menuAction());
+	// --
+
+	QMenu* pResistanceMenu = new QMenu("Plot Resistance", this);
+	pResistanceMenu->setIcon( QIcon::fromTheme("Plot Resistance", QIcon(":/icons/resistanceComponent.png")) );
+	pToolBar_->addAction(pResistanceMenu->menuAction());
+
+	// Plot total Resistance
+	actionVector_.push_back( boost::shared_ptr<QAction>(
+			new QAction(
+					QIcon::fromTheme("Plot Total Resistance", QIcon(":/icons/totResistance.png")),
+					tr("&Total Resistance"), this)
+			) );
+	QAction* plotTotResAction = actionVector_.back().get();
+	plotTotResAction->setStatusTip(tr("Plot Total Resistance"));
+	pResistanceMenu->addAction(plotTotResAction);
+	connect(plotTotResAction, &QAction::triggered, this, &MainWindow::plotTotalResistance);
 
 	// --
 
@@ -547,11 +563,10 @@ void MainWindow::plotSailForceMoments() {
 
 	pLogWidget_->append("Plotting Sail Forces/Moments...");
 
-	// Instantiate an empty multiple plot widget
+	// Instantiate an multiple plot widget for the force and moments plot
 	pForceMomentsPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Force/Moments") );
 
-	//pVppItems_->getAeroForcesItem()->plot();
-
+	// Ask the forces/moments to plot themself
 	pVppItems_->getAeroForcesItem()->plot(pForceMomentsPlotWidget_.get());
 
 	// Add the xy plot view to the left of the app window
@@ -559,6 +574,30 @@ void MainWindow::plotSailForceMoments() {
 
 	// Tab the widget with the others
 	tabDockWidget(pForceMomentsPlotWidget_.get());
+
+}
+
+// Plot the total resistance
+void MainWindow::plotTotalResistance() {
+
+	if(!hasBoatDescription())
+		return;
+
+	pLogWidget_->append("Plotting Total Resistance...");
+
+	//pVppItems_->plotTotalResistance();
+
+	// Instantiate an empty multiple plot widget
+	pTotResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Total Resistance") );
+
+	// Ask the forces/moments to plot themself
+	pVppItems_->plotTotalResistance(pTotResistancePlotWidget_.get());
+
+	// Add the xy plot view to the left of the app window
+	addDockWidget(Qt::TopDockWidgetArea, pTotResistancePlotWidget_.get() );
+
+	// Tab the widget with the others
+	tabDockWidget(pTotResistancePlotWidget_.get());
 
 }
 
@@ -574,35 +613,6 @@ void MainWindow::testQCustomPlot() {
 
 	// Tabify the dockwidget
 	tabDockWidget(pXYPlotWidget_.get());
-
-}
-
-// Plot the velocity polars
-void MainWindow::multiPlot() {
-
-	pLogWidget_->append("Adding a multiPlot...");
-
-	// Ask the user for filling a state vector
-	StateVectorDialog dialog(this);
-	if (dialog.exec() == QDialog::Rejected)
-		return;
-
-	// For the moment, just stick the values to the log
-	pLogWidget_->append( "Got v=" + QString::number(dialog.getV()) );
-	pLogWidget_->append( "Got Phi=" + dialog.getPhi() );
-	pLogWidget_->append( "Got Crew=" + dialog.getCrew() );
-	pLogWidget_->append( "Got Flat=" + dialog.getFlat() );
-
-	pMultiPlotWidget_.reset(new MultiplePlotWidget(this) );
-
-	// Add the multi plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pMultiPlotWidget_.get());
-
-	// Tab the widget if other widgets have already been instantiated
-	// In the same area. Todo dtrimarchi : this is way too fragile
-	// It requires widgets instantiated on the topDockWidgetArea and
-	// I need to add the deleted signal to the slot removeWidgetFromVector
-	tabDockWidget(pMultiPlotWidget_.get());
 
 }
 

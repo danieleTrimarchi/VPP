@@ -1,4 +1,3 @@
-#include <QGridLayout>
 #include <QLabel>
 #include <QIntValidator>
 #include <QDoubleValidator>
@@ -13,7 +12,6 @@ StateVectorDialog::StateVectorDialog(QWidget *parent)
 
     setWindowTitle(tr("Enter the state vector"));
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    QGridLayout *layout = new QGridLayout(this);
 
     // Set local settings for the validators
     QLocale localSettings = QLocale::c();
@@ -36,40 +34,89 @@ StateVectorDialog::StateVectorDialog(QWidget *parent)
     flatValueValidator->setLocale(localSettings);
     pFlat_Edit_->setValidator(flatValueValidator);
 
-    size_t vPos=0;
-    layout->addWidget(new QLabel(tr("V [m/s]:")), vPos, 0);
-    layout->addWidget(pV_Edit_.get(), vPos++, 1);
-
-    layout->addWidget(new QLabel(tr("Phi [rad]:")), vPos, 0);
-    layout->addWidget(pPhi_Edit_.get(), vPos++, 1);
-
-    layout->addWidget(new QLabel(tr("Crew [m]:")), vPos, 0);
-    layout->addWidget(pCrew_Edit_.get(), vPos++, 1);
-
-    layout->addWidget(new QLabel(tr("Flat [-]:")), vPos, 0);
-    layout->addWidget(pFlat_Edit_.get(), vPos++, 1);
-
-    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-    layout->addWidget(buttonBox, vPos, 0, 1, 2);
 }
 
 double StateVectorDialog::getV() const {
 	return pV_Edit_->text().toDouble();
 }
 
-QString StateVectorDialog::getPhi() const {
-	return pPhi_Edit_->text();
+double StateVectorDialog::getPhi() const {
+	return pPhi_Edit_->text().toDouble();
 }
 
-QString StateVectorDialog::getCrew() const {
-	return pCrew_Edit_->text();
+double StateVectorDialog::getCrew() const {
+	return pCrew_Edit_->text().toDouble();
 }
 
-QString StateVectorDialog::getFlat() const {
-	return pFlat_Edit_->text();
+double StateVectorDialog::getFlat() const {
+	return pFlat_Edit_->text().toDouble();
 }
+
+// Return the state vector under the form of a VectorXd
+Eigen::VectorXd StateVectorDialog::getStateVector() const {
+
+	Eigen::VectorXd v(4);
+	v << getV(),
+			 getPhi(),
+			 getCrew(),
+			 getFlat();
+
+	return v;
+}
+
+//====================================================
+
+// Ctor
+FullStateVectorDialog::FullStateVectorDialog(QWidget* parent /*=Q_NULLPTR*/) :
+		StateVectorDialog(parent) {
+
+  size_t vPos=0;
+  pGridLayout_.reset( new QGridLayout(this) );
+
+  pGridLayout_->addWidget(new QLabel(tr("V [m/s]:")), vPos, 0);
+  pGridLayout_->addWidget(pV_Edit_.get(), vPos++, 1);
+
+  pGridLayout_->addWidget(new QLabel(tr("Phi [rad]:")), vPos, 0);
+  pGridLayout_->addWidget(pPhi_Edit_.get(), vPos++, 1);
+
+  pGridLayout_->addWidget(new QLabel(tr("Crew [m]:")), vPos, 0);
+  pGridLayout_->addWidget(pCrew_Edit_.get(), vPos++, 1);
+
+  pGridLayout_->addWidget(new QLabel(tr("Flat [-]:")), vPos, 0);
+  pGridLayout_->addWidget(pFlat_Edit_.get(), vPos++, 1);
+
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+  connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+  connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+  pGridLayout_->addWidget(buttonBox, vPos, 0, 1, 2);
+
+}
+
+//====================================================
+
+// Ctor
+OptimVarsStateVectorDialog::OptimVarsStateVectorDialog(QWidget* parent /*=Q_NULLPTR*/) :
+		StateVectorDialog(parent) {
+
+  size_t vPos=0;
+  pGridLayout_.reset( new QGridLayout(this) );
+
+  pV_Edit_->hide();
+  pPhi_Edit_->hide();
+
+  pGridLayout_->addWidget(new QLabel(tr("Crew [m]:")), vPos, 0);
+  pGridLayout_->addWidget(pCrew_Edit_.get(), vPos++, 1);
+
+  pGridLayout_->addWidget(new QLabel(tr("Flat [-]:")), vPos, 0);
+  pGridLayout_->addWidget(pFlat_Edit_.get(), vPos++, 1);
+
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+  connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+  connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+  pGridLayout_->addWidget(buttonBox, vPos, 0, 1, 2);
+
+}
+
 
 //====================================================
 

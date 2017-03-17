@@ -5,6 +5,9 @@
 
 #include "IOUtils.h"
 #include "NRSolver.h"
+#include "VPPDialogs.h"
+#include "VppXYCustomPlotWidget.h"
+#include "MultiplePlotWidget.h"
 
 // Constructor
 VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
@@ -276,19 +279,20 @@ void VPPItemFactory::plot_deltaWettedArea_heel(){
 }
 
 // Plot the total resistance over a fixed range Fn=0-1
-void VPPItemFactory::plotTotalResistance(){
+void VPPItemFactory::plotTotalResistance(MultiplePlotWidget* multiPlotWidget) {
 
-	// Ask the user for twv and twa
-	size_t twv=0, twa=0;
-	IOUtils io(pWind_.get());
-	io.askUserWindIndexes(twv, twa);
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	WindIndicesDialog wdg(
+			pAeroForcesItem_->getWindItem()->getWVSize(),
+			pAeroForcesItem_->getWindItem()->getWASize());
+	if (wdg.exec() == QDialog::Rejected)
+		return;
 
-	// Init the state vector
-	Eigen::VectorXd stateVector;
-	io.askUserStateVector(stateVector);
+	OptimVarsStateVectorDialog sdg;
+	if (sdg.exec() == QDialog::Rejected)
+		return;
 
-	// Ask a scaling factor (1 does nothing) to viz closer to the origin
-	double plotScaling= io.askUserDouble("please enter a plot scaling factor. default is 1");
+	Eigen::VectorXd stateVector= sdg.getStateVector();
 
 	// Define the number of velocities and angles
 	// ( the angles are incremented of 10!)
@@ -296,8 +300,8 @@ void VPPItemFactory::plotTotalResistance(){
 
 	// Instantiate containers for the curve labels, the
 	// Fn and the resistance
-	std::vector<string> curveLabels;
-	std::vector<ArrayXd> froudeNb, totRes;
+	std::vector<QString> curveLabels;
+	std::vector<QVector<double> > fN, totRes;
 
 	// Loop on the heel angles
 	for(int iAngle=0; iAngle<nAngles+1; iAngle+=20){
@@ -307,16 +311,16 @@ void VPPItemFactory::plotTotalResistance(){
 		//std::cout<<"PHI= "<<stateVector(1)<<std::endl;
 
 		// declare some tmp containers
-		vector<double> fn, res;
+		QVector<double> fn, res;
 
 		// Loop on the velocities
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			stateVector(0)= plotScaling * ( -0.1 + ( 1./nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			stateVector(0)= ( -0.1 + ( 1./nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
-			update(twv,twa,stateVector);
+			update(wdg.getTWV(),wdg.getTWA(),stateVector);
 
 			// Fill the vectors to be plot
 			fn.push_back( stateVector(0)/sqrt(Physic::g * pParser_->get("LWL") ) );
@@ -324,16 +328,8 @@ void VPPItemFactory::plotTotalResistance(){
 
 		}
 
-		// Now transform fn and res to ArrayXd and push_back to vector
-		ArrayXd tmpFn(fn.size());
-		ArrayXd tmpRes(fn.size());
-		for(size_t j=0; j<fn.size(); j++){
-			tmpFn(j)=fn[j];
-			tmpRes(j)=res[j];
-		}
-
-		froudeNb.push_back(tmpFn);
-		totRes.push_back(tmpRes);
+		fN.push_back(fn);
+		totRes.push_back(res);
 
 		char msg[256];
 		sprintf(msg,"%3.1fº", mathUtils::toDeg(stateVector(1)));
@@ -341,17 +337,19 @@ void VPPItemFactory::plotTotalResistance(){
 
 	}
 
-	// Instantiate a plotter and plot
-	VPPPlotter fPlotter;
-	for(size_t i=0; i<froudeNb.size(); i++)
-		fPlotter.append(curveLabels[i],froudeNb[i],totRes[i]);
-
 	char msg[256];
-	sprintf(msg,"plot TOTAL Resistance vs boat speed - "
+	sprintf(msg,"TOTAL Resistance vs boat speed for different heeling angles - "
 			"twv=%2.2f [m/s], twa=%2.2fº",
-			pAeroForcesItem_->getWindItem()->getTWV(twv),
-			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
-	fPlotter.plot("Fn [-]","Total Resistance [N]", msg);
+			pAeroForcesItem_->getWindItem()->getTWV(wdg.getTWV()),
+			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(wdg.getTWA())) );
+
+	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
+	// then the ownership will be assigned to the multiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pTotResPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Total Resistance [N]");
+	for(size_t i=0; i<fN.size(); i++)
+		pTotResPlot->addData(fN[i],totRes[i],curveLabels[i]);
+	pTotResPlot->rescaleAxes();
+	multiPlotWidget->addChart(pTotResPlot,0,0);
 
 }
 
