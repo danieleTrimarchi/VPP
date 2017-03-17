@@ -19,10 +19,6 @@ VppXYCustomPlotWidget::VppXYCustomPlotWidget(
 	textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
 	textLabel->setPen(QPen(Qt::black)); // show black border around text
 
-	// Set the axis labels
-	xAxis->setLabel(xAxisLabel);
-	yAxis->setLabel(yAxisLabel);
-
 	// Show the legend
 	legend->setVisible(true);
 	QFont legendFont = font();
@@ -31,6 +27,17 @@ VppXYCustomPlotWidget::VppXYCustomPlotWidget(
 	legend->setSelectedFont(legendFont);
 	legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
 	legend->setIconSize(15,5);
+
+
+	// Set the axis labels and the font
+	legendFont.setPointSize(9);
+	xAxis->setLabel(xAxisLabel);
+	yAxis->setLabel(yAxisLabel);
+	xAxis->setLabelFont(legendFont);
+	yAxis->setLabelFont(legendFont);
+
+	xAxis->setTickLabelFont(legendFont);
+	yAxis->setTickLabelFont(legendFont);
 
 	// Allow for dragging and zooming the plot and selecting the curves
 	setInteractions(

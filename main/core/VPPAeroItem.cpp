@@ -1201,13 +1201,20 @@ void AeroForcesItem::plot(MultiplePlotWidget* multiPlotWidget ) {
 	multiPlotWidget->addChart(pSideFPlot,1,1);
 
 	//--
-//
-//	// Instantiate a plotter and plot Driving Force
-//	VppXYCustomPlotWidget* pMPlot = new VppXYCustomPlotWidget("plot heeling moment vs boat speed","Fn [-]","mHeel [N*m]");
-//
+
+	// Instantiate a plotter and plot Driving Force
+	VppXYCustomPlotWidget* pMPlot = new VppXYCustomPlotWidget("Heeling moment vs boat speed","Fn [-]","mHeel [N*m]");
+	for(size_t i=0; i<fN.size(); i++)
+		pMPlot->addData(fN[i],mHeel[i],curveLabels[i]);
+	pMPlot->rescaleAxes();
+	multiPlotWidget->addChart(pMPlot,2,0);
+
+	// Instantiate a plotter and plot Driving Force
+//	VppXYCustomPlotWidget* pMPlot2 = new VppXYCustomPlotWidget("Heeling moment vs boat speed","Fn [-]","mHeel [N*m]");
 //	for(size_t i=0; i<fN.size(); i++)
-//		pMPlot->addData(fN[i],mHeel[i],curveLabels[i]);
-//	multiPlotWidget->addChart(pDriveFPlot,2,1);
+//		pMPlot2->addData(fN[i],mHeel[i],curveLabels[i]);
+//	pMPlot2->rescaleAxes();
+//	multiPlotWidget->addChart(pMPlot2,2,1);
 
 	// Restore the current solution
 	V_  = xbuf(0);
