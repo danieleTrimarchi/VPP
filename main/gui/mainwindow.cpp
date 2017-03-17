@@ -94,12 +94,13 @@ MainWindow::~MainWindow() {
 
 void MainWindow::setupMenuBar() {
 
-	pVppActionMenu_ = menuBar()->addMenu(tr("&VPP Actions"));
+	pVppActionMenu_.reset( menuBar()->addMenu(tr("&VPP Actions")) );
 
 	// Create 'Import boat description' action and associate an icon
-	const QIcon importBoatIcon = QIcon::fromTheme("Import boat description", QIcon(":/icons/importBoatData.png"));
 	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(importBoatIcon, tr("&Import boat description..."), this)
+			new QAction(
+					QIcon::fromTheme("Import boat description", QIcon(":/icons/importBoatData.png")),
+					tr("&Import boat description..."), this)
 	) );
 	QAction* importBoatAction= actionVector_.back().get();
 	importBoatAction->setStatusTip(tr("Import boat description"));
@@ -108,9 +109,10 @@ void MainWindow::setupMenuBar() {
 	pToolBar_->addAction(importBoatAction);
 
 	// Create 'run' action and associate an icon
-	const QIcon newIcon = QIcon::fromTheme("Run", QIcon(":/icons/run.png"));
 	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(newIcon, tr("&Run"), this)
+			new QAction(
+					QIcon::fromTheme("Run", QIcon(":/icons/run.png")),
+					tr("&Run"), this)
 	) );
 	QAction* runAction = actionVector_.back().get();
 	runAction->setStatusTip(tr("Run the VPP analysis"));
@@ -119,9 +121,10 @@ void MainWindow::setupMenuBar() {
 	pToolBar_->addAction(runAction);
 
 	// Create 'tabular' action and associate an icon
-	const QIcon tabResIcon = QIcon::fromTheme("Result table", QIcon(":/icons/tabularResults.png"));
 	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(tabResIcon, tr("&Result table"), this)
+			new QAction(
+					QIcon::fromTheme("Result table", QIcon(":/icons/tabularResults.png")),
+					tr("&Result table"), this)
 	) );
 	QAction* tabResAction = actionVector_.back().get();
 	tabResAction->setStatusTip(tr("Show the result table"));
@@ -132,9 +135,10 @@ void MainWindow::setupMenuBar() {
 	pVppActionMenu_->addSeparator();
 
 	// Create a 'Save Results'action and associate an icon
-	const QIcon saveResultsIcon = QIcon::fromTheme("save Results", QIcon(":/icons/saveResults.png"));
 	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(saveResultsIcon, tr("&Save Results"), this)
+			new QAction(
+					QIcon::fromTheme("save Results", QIcon(":/icons/saveResults.png")),
+					tr("&Save Results"), this)
 	) );
 	QAction* saveResultsAction = actionVector_.back().get();
 	saveResultsAction->setStatusTip(tr("Save results"));
@@ -142,9 +146,10 @@ void MainWindow::setupMenuBar() {
 	pVppActionMenu_->addAction(saveResultsAction);
 
 	// Create a 'Save Results'action and associate an icon
-	const QIcon importResultsIcon = QIcon::fromTheme("Import Previous Results", QIcon(":/icons/importResults.png"));
 	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(importResultsIcon, tr("&Import Previous Results"), this)
+			new QAction(
+					QIcon::fromTheme("Import Previous Results", QIcon(":/icons/importResults.png")),
+					tr("&Import Previous Results"), this)
 	) );
 	QAction* importResultsAction = actionVector_.back().get();
 	importResultsAction->setStatusTip(tr("Import Previous Results"));
@@ -158,9 +163,10 @@ void MainWindow::setupMenuBar() {
 	// ---
 
 	// Create an action and associate an icon
-	const QIcon plotPolarsIcon = QIcon::fromTheme("Plot polars", QIcon(":/icons/plotPolars.png"));
 	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(plotPolarsIcon, tr("&Polars"), this)
+			new QAction(
+					QIcon::fromTheme("Plot polars", QIcon(":/icons/plotPolars.png")),
+					tr("&Polars"), this)
 			) );
 	QAction* plotPolarsAction = actionVector_.back().get();
 	plotPolarsAction->setStatusTip(tr("Plot polars"));
@@ -170,15 +176,14 @@ void MainWindow::setupMenuBar() {
 	// Add a menu in the toolbar. This is used to group plot coeffs, and their derivatives
 	QMenu* pSailCoeffsMenu = new QMenu("Plot Sail Related Quantities", this);
 
-	// Get an icon for the menu
-	const QIcon plotSailCoeffsIcon = QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png"));
-
 	// Set the icon for the menu
-	pSailCoeffsMenu->setIcon( plotSailCoeffsIcon );
+	pSailCoeffsMenu->setIcon( QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png")) );
 
 	// Plot sail coeffs
 	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(plotSailCoeffsIcon, tr("&Sail Coeffs"), this)
+			new QAction(
+					QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png")),
+					tr("&Sail Coeffs"), this)
 			) );
 	QAction* plotSailCoeffsAction = actionVector_.back().get();
 	plotSailCoeffsAction->setStatusTip(tr("Plot Sail Coeffs"));
@@ -186,9 +191,10 @@ void MainWindow::setupMenuBar() {
 	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
 
 	// Plot sail coeffs derivatives
-	const QIcon plot_d_SailCoeffsIcon = QIcon::fromTheme("Plot Sail Coeffs Derivatives", QIcon(":/icons/d_sailCoeffs.png"));
 	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(plot_d_SailCoeffsIcon, tr("&d(Sail Coeffs)"), this)
+			new QAction(
+					QIcon::fromTheme("Plot Sail Coeffs Derivatives", QIcon(":/icons/d_sailCoeffs.png")),
+					tr("&d(Sail Coeffs)"), this)
 	) );
 	QAction* plot_d_SailCoeffsAction= actionVector_.back().get();
 	plot_d_SailCoeffsAction->setStatusTip(tr("Plot d(Sail Coeffs)"));
@@ -196,9 +202,10 @@ void MainWindow::setupMenuBar() {
 	connect(plot_d_SailCoeffsAction, &QAction::triggered, this, &MainWindow::plot_d_SailCoeffs);
 
 	// Plot sail coeffs second derivatives
-	const QIcon plot_d2_SailCoeffsIcon = QIcon::fromTheme("Plot Sail Coeffs Second Derivatives", QIcon(":/icons/d2_sailCoeffs.png"));
 	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(plot_d2_SailCoeffsIcon, tr("&d2(Sail Coeffs)"), this)
+			new QAction(
+					QIcon::fromTheme("Plot Sail Coeffs Second Derivatives", QIcon(":/icons/d2_sailCoeffs.png")),
+					tr("&d2(Sail Coeffs)"), this)
 			) );
 	QAction* plot_d2_SailCoeffsAction = actionVector_.back().get();
 	plot_d2_SailCoeffsAction->setStatusTip(tr("Plot d2(Sail Coeffs)"));
@@ -206,9 +213,10 @@ void MainWindow::setupMenuBar() {
 	connect(plot_d2_SailCoeffsAction, &QAction::triggered, this, &MainWindow::plot_d2_SailCoeffs);
 
 	// Plot sail force and moments
-	const QIcon plotSailForceMomentIcon = QIcon::fromTheme("Plot Sail Force/Moments", QIcon(":/icons/sailForceMoment.png"));
 	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(plotSailForceMomentIcon, tr("&Plot Sail Force/Moments"), this)
+			new QAction(
+					QIcon::fromTheme("Plot Sail Force/Moments", QIcon(":/icons/sailForceMoment.png")),
+					tr("&Plot Sail Force/Moments"), this)
 			) );
 	QAction* plotSailForceMomentAction = actionVector_.back().get();
 	plotSailForceMomentAction->setStatusTip(tr("Plot Sail Force/Moments"));
@@ -219,9 +227,10 @@ void MainWindow::setupMenuBar() {
 
 	// --
 
-	const QIcon plot3dIcon = QIcon::fromTheme("Plot 3d", QIcon(":/icons/plot3d.png"));
 	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(plot3dIcon, tr("&3d Plot"), this)
+			new QAction(
+					QIcon::fromTheme("Plot 3d", QIcon(":/icons/plot3d.png")),
+					tr("&3d Plot"), this)
 	) );
 	QAction* plot3dAction = actionVector_.back().get();
 	plot3dAction->setStatusTip(tr("Plot 3d"));
@@ -235,7 +244,7 @@ void MainWindow::setupMenuBar() {
 
 	// ---
 
-	pPreferencesMenu_ = menuBar()->addMenu(tr("&VPP Settings"));
+	pPreferencesMenu_.reset( menuBar()->addMenu(tr("&VPP Settings")) );
 	pPreferencesMenu_->addAction(tr("&Select formulations"), this, &MainWindow::plotSailCoeffs);
 	pPreferencesMenu_->addSeparator();
 	pPreferencesMenu_->addAction(tr("&VPP version"), this, &MainWindow::about);

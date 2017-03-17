@@ -125,9 +125,7 @@ private:
 	boost::shared_ptr<QTextEdit> pLogWidget_;
 
 	/// Menus available to the menu bar
-	QMenu* pVppActionMenu_;
-	QMenu* pPreferencesMenu_;
-	boost::shared_ptr<QMenu> pWidgetMenu_;
+	boost::shared_ptr<QMenu> pVppActionMenu_, pPreferencesMenu_, pWidgetMenu_;
 
 	/// Toolbar with some shortcuts to actions
 	QToolBar* pToolBar_;
