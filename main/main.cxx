@@ -120,9 +120,6 @@ int main(int argc, char** argv) {
 //
 //			//---
 //
-//			else if( s == string("plotSailForceMoment"))
-//				pVppItems->getAeroForcesItem()->plot();
-//
 //			else if( s == string("plotJacobian"))
 //				solverFactory.get()->plotJacobian();
 //

@@ -14,5 +14,7 @@
     <file>icons/saveResults.png</file>
     <file>icons/importResults.png</file>
     <file>icons/sailForceMoment.png</file>
+    <file>icons/resistanceComponent.png</file>
+    <file>icons/totResistance.png</file>
 </qresource>
 </RCC>

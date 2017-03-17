@@ -17,6 +17,7 @@
 #include "VariableFileParser.h"
 #include "SailSet.h"
 #include "VPPXYChartWidget.h"
+#include "boost/shared_ptr.hpp"
 
 class ToolBar;
 class VPPItemFactory;
@@ -156,6 +157,10 @@ private:
 	/// This action generates the menu that drives the presence of the Variable
 	/// tree widget or the Log widget
 	QAction* VariableAction_, *LogAction_;
+
+	/// Vector storing all of the actions. Used to assure that the actions are deleted
+	/// on destruction, thus preventing leaks
+	std::vector<boost::shared_ptr<QAction> > actionVector_;
 
 	std::vector<VppTabDockWidget*> tabbedWidgets_;
 
