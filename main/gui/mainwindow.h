@@ -95,6 +95,9 @@ public slots:
 	/// Plot the Induced resistance
 	void plotInducedResistance();
 
+	/// Plot the Residuary resistance
+	void plotResiduaryResistance();
+
 	/// Plot the Negative resistance
 	void plotNegativeResistance();
 
@@ -152,7 +155,8 @@ private:
 	boost::shared_ptr<MultiplePlotWidget> pSailCoeffPlotWidget_, p_d_SailCoeffPlotWidget_,
 																				p_d2_SailCoeffPlotWidget_, pForceMomentsPlotWidget_,
 																				pTotResistancePlotWidget_, pFricitionalResistancePlotWidget_,
-																				pInducedResistancePlotWidget_, pNegativeResistancePlotWidget_;
+																				pInducedResistancePlotWidget_, pResiduaryResistancePlotWidget_,
+																				pNegativeResistancePlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<VppTabDockWidget> p3dPlotWidget_;

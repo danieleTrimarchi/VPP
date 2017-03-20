@@ -462,20 +462,16 @@ void ResiduaryResistanceItem::printWhoAmI() {
 }
 
 // Plot the Residuary Resistance versus Fn curve
-void ResiduaryResistanceItem::plot(WindItem* pWind) {
-
-	// For which TWV, TWA shall we plot the aero forces/moments?
-	size_t twv=0, twa=0;
-	IOUtils io(pWind);
-	io.askUserWindIndexes(twv, twa);
+void ResiduaryResistanceItem::plot(MultiplePlotWidget* multiPlotWidget, size_t twv, size_t twa) {
 
 	ResistanceItem::update(twv,twa);
 
 	res_ = pInterpolator_->interpolate(fN_);
 
 	// Make a check plot for the residuary resistance
-	pInterpolator_->plot(0,.5,50,"Residuary Resistance","Fn [-]","Resistance [N]" );
-
+	VppXYCustomPlotWidget* pPlot = new VppXYCustomPlotWidget("Residuary Resistance Hull","Fn [-]","Resistance [N]");
+	pInterpolator_->plot(pPlot, 0,.6,50 );
+	multiPlotWidget->addChart(pPlot,0,0);
 
 }
 
@@ -712,10 +708,12 @@ void ResiduaryResistanceKeelItem::printWhoAmI() {
 }
 
 // Plot the Frictional Resistance due to heel versus Fn curve
-void ResiduaryResistanceKeelItem::plot() {
+void ResiduaryResistanceKeelItem::plot(MultiplePlotWidget* multiPlotWidget, size_t posx/*=0*/, size_t posy/*=0*/) {
 
 	// Make a check plot for the Residuary resistance of the keel
-	pInterpolator_->plot(0,.8,40,"Residuary Resistance Keel","Fn [-]","Resistance [N]" );
+	VppXYCustomPlotWidget* pPlot = new VppXYCustomPlotWidget("Residuary Resistance Keel","Fn [-]","Resistance [N]");
+	pInterpolator_->plot(pPlot, 0,.6,50 );
+	multiPlotWidget->addChart(pPlot,posx,posy);
 
 }
 

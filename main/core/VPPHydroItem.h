@@ -110,7 +110,7 @@ class ResiduaryResistanceItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot the Residuary Resistance vs Fn curve
-		void plot(WindItem* pWind);
+		void plot(MultiplePlotWidget*, size_t twv, size_t twa);
 
 	private:
 
@@ -168,7 +168,7 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot the Residuary Resistance of the Keel versus Fn curve
-		void plot();
+		void plot(MultiplePlotWidget*, size_t posx=0, size_t posy=0);
 
 	private:
 

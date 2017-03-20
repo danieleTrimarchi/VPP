@@ -133,11 +133,6 @@ int main(int argc, char** argv) {
 //
 //			//---
 //
-//			else if( s == string("plotResidRes"))
-//				pVppItems->getResiduaryResistanceItem()->plot(pVppItems->getWind());
-//			else if(s == string("plotResidRes_Keel") )
-//				pVppItems->getResiduaryResistanceKeelItem()->plot();
-//
 //
 //			else if(s == string("plotDelta_FrictRes_Heel") )
 //				pVppItems->getDelta_FrictionalResistance_HeelItem()->plot(pVppItems->getWind());
@@ -148,12 +143,7 @@ int main(int argc, char** argv) {
 //			else if(s == string("plotDelta_ResidResKeel_Heel") )
 //				pVppItems->getDelta_ResiduaryResistanceKeel_HeelItem()->plot(pVppItems->getWind());
 //
-//			else if(s == string("plotNegativeResistance") )
-//				pVppItems->getNegativeResistanceItem()->plot();
-//
 // --
-//
-//
 //
 //			else if( s == string("plotPolars"))
 //				solverFactory.get()->plotPolars();
