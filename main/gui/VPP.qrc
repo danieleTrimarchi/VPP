@@ -17,5 +17,6 @@
     <file>icons/resistanceComponent.png</file>
     <file>icons/totResistance.png</file>
     <file>icons/frictionalResistance.png</file>
+    <file>icons/inducedResistance.png</file>
 </qresource>
 </RCC>

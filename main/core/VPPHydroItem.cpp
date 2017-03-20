@@ -2,9 +2,9 @@
 
 #include "IOUtils.h"
 #include "VPPPlotter.h"
-
 #include "VPPException.h"
 #include "Warning.h"
+#include "VPPDialogs.h"
 
 // Constructor
 ResistanceItem::ResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
@@ -180,15 +180,22 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 
 
 // Plot the Induced Resistance curve
-void InducedResistanceItem::plot() {
+void InducedResistanceItem::plot(MultiplePlotWidget* multiPlotWidget) {
 
 	// For which TWV, TWA shall we plot the aero forces/moments?
-	size_t twv=0, twa=0;
-	IOUtils io(pAeroForcesItem_->getWindItem());
-	io.askUserWindIndexes(twv, twa);
+	WindIndicesDialog dg(
+			pAeroForcesItem_->getWindItem()->getWVSize(),
+			pAeroForcesItem_->getWindItem()->getWASize());
+	if (dg.exec() == QDialog::Rejected)
+		return;
 
-	double fnMin= io.askUserDouble("Please enter the min value of the Fn");
-	double fnMax= io.askUserDouble("Please enter the max value of the Fn");
+	// For which b, f shall we plot the induced resistance?
+	OptimVarsStateVectorDialog sdg;
+	if (sdg.exec() == QDialog::Rejected)
+		return;
+
+	b_=sdg.getCrew();
+	f_=sdg.getFlat();
 
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
@@ -199,11 +206,8 @@ void InducedResistanceItem::plot() {
 	// Define the number of velocities and angles (+=4!!)
 	size_t nVelocities=40, nAngles=20;
 
-	std::vector<string> curveLabels;
-	std::vector<ArrayXd> froudeNb, indRes;
-
-	// Set b and f
-	b_=0.0, f_=1;
+	std::vector<QString> curveLabels;
+	std::vector<QVector<double> > froudeNb, indRes;
 
 	// Loop on the heel angles
 	for(int i=0; i<nAngles; i+=5){
@@ -212,24 +216,24 @@ void InducedResistanceItem::plot() {
 		//std::cout<<"PHI= "<<PHI_<<std::endl;
 
 		// declare some tmp containers
-		vector<double> fn, res;
+		QVector<double> fn, res;
 
 		// Loop on the velocities
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			V_= ( fnMin + ( ( fnMax-fnMin ) / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			V_= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 			Eigen::VectorXd x(pbSize_);
 			x << V_, PHI_, b_, f_;
 
 			// Update the aeroForceItems
-			pAeroForcesItem_->getWindItem()->updateSolution(twv,twa,x);
-			pAeroForcesItem_->getSailCoeffItem()->updateSolution(twv,twa,x);
-			pAeroForcesItem_->updateSolution(twv,twa,x);
+			pAeroForcesItem_->getWindItem()->updateSolution(dg.getTWV(),dg.getTWA(),x);
+			pAeroForcesItem_->getSailCoeffItem()->updateSolution(dg.getTWV(),dg.getTWA(),x);
+			pAeroForcesItem_->updateSolution(dg.getTWV(),dg.getTWA(),x);
 
 			// Update the induced resistance Item
-			update(twv,twa);
+			update(dg.getTWV(),dg.getTWA());
 
 			// Fill the vectors to be plot
 			fn.push_back( fN_ );
@@ -237,16 +241,8 @@ void InducedResistanceItem::plot() {
 
 		}
 
-		// Now transform fn and res to ArrayXd and push_back to vector
-		ArrayXd tmpFn(fn.size());
-		ArrayXd tmpRes(fn.size());
-		for(size_t j=0; j<fn.size(); j++){
-			tmpFn(j)=fn[j];
-			tmpRes(j)=res[j];
-		}
-
-		froudeNb.push_back(tmpFn);
-		indRes.push_back(tmpRes);
+		froudeNb.push_back(fn);
+		indRes.push_back(res);
 
 		char msg[256];
 		sprintf(msg,"%3.1fº", toDeg(PHI_));
@@ -254,20 +250,23 @@ void InducedResistanceItem::plot() {
 
 	}
 
-	// Instantiate a plotter and plot
-	VPPPlotter fPlotter;
-	for(size_t i=0; i<froudeNb.size(); i++)
-		fPlotter.append(curveLabels[i],froudeNb[i],indRes[i]);
-
 	char msg[256];
-	sprintf(msg,"plot Induced Resistance vs boat speed - "
+	sprintf(msg,"Induced Resistance vs boat speed - "
 			"twv=%2.2f [m/s], twa=%2.2fº",
-			pAeroForcesItem_->getWindItem()->getTWV(twv),
-			toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
-	fPlotter.plot("Fn [-]","Induced Resistance [N]", msg);
+			pAeroForcesItem_->getWindItem()->getTWV(dg.getTWV()),
+			toDeg(pAeroForcesItem_->getWindItem()->getTWA(dg.getTWA())) );
+
+	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
+	// then the ownership will be assigned to the multiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Induced Resistance [N]");
+	for(size_t i=0; i<froudeNb.size(); i++)
+		pResPlot->addData(froudeNb[i],indRes[i],curveLabels[i]);
+	pResPlot->rescaleAxes();
+	multiPlotWidget->addChart(pResPlot,0,0);
+
 
 	/// ----- Verify the linearity Ri/Fh^2 -----------------------------------
-	std::vector<ArrayXd> sideForce2;
+	std::vector<QVector<double> > sideForce2;
 	indRes.clear();
 	curveLabels.clear();
 
@@ -278,7 +277,7 @@ void InducedResistanceItem::plot() {
 		PHI_= ( 1./nAngles * (i+1) ) * M_PI/4;
 
 		// Solution-buffer vectors
-		vector<double> fh2, ri;
+		QVector<double> fh2, ri;
 
 		// Loop on the velocities
 		for(size_t v=0; v<nVelocities-7; v++){
@@ -290,12 +289,12 @@ void InducedResistanceItem::plot() {
 			x << V_, PHI_, b_, f_;
 
 			// Update the aeroForceItems
-			pAeroForcesItem_->getWindItem()->updateSolution(twv,twa,x);
-			pAeroForcesItem_->getSailCoeffItem()->updateSolution(twv,twa,x);
-			pAeroForcesItem_->updateSolution(twv,twa,x);
+			pAeroForcesItem_->getWindItem()->updateSolution(dg.getTWV(),dg.getTWA(),x);
+			pAeroForcesItem_->getSailCoeffItem()->updateSolution(dg.getTWV(),dg.getTWA(),x);
+			pAeroForcesItem_->updateSolution(dg.getTWV(),dg.getTWA(),x);
 
 			// Update the induced resistance Item
-			update(twv,twa);
+			update(dg.getTWV(),dg.getTWA());
 
 			// Compute the heeling force
 			double fh= pAeroForcesItem_->getFSide() / cos(PHI_);
@@ -308,16 +307,8 @@ void InducedResistanceItem::plot() {
 
 		}
 
-		// Now transform fn and res to ArrayXd and push_back to vector
-		ArrayXd tmpFh(fh2.size());
-		ArrayXd tmpRes(ri.size());
-		for(size_t j=0; j<fh2.size(); j++){
-			tmpFh(j)=fh2[j];
-			tmpRes(j)=ri[j];
-		}
-
-		sideForce2.push_back(tmpFh);
-		indRes.push_back(tmpRes);
+		sideForce2.push_back(fh2);
+		indRes.push_back(ri);
 
 		char msg[256];
 		sprintf(msg,"%3.1f [º]", toDeg(PHI_));
@@ -325,17 +316,24 @@ void InducedResistanceItem::plot() {
 
 	}
 
-	// Instantiate a plotter and plot
-	VPPPlotter f2Plotter;
-	for(size_t i=0; i<sideForce2.size(); i++)
-		f2Plotter.append(curveLabels[i],sideForce2[i],indRes[i]);
+//	// Instantiate a plotter and plot
+//	VPPPlotter f2Plotter;
+//	for(size_t i=0; i<sideForce2.size(); i++)
+//		f2Plotter.append(curveLabels[i],sideForce2[i],indRes[i]);
 
 	char msg2[256];
-	sprintf(msg2,"plot Induced Resistance vs Fh^2 - "
+	sprintf(msg2,"Induced Resistance vs Fh^2 - "
 			"twv=%2.2f [m/s], twa=%2.2fº",
-			pAeroForcesItem_->getWindItem()->getTWV(twv),
-			toDeg(pAeroForcesItem_->getWindItem()->getTWA(twa)) );
-	f2Plotter.plot("Fh^2 [N^2]","Induced Resistance [N]", msg2);
+			pAeroForcesItem_->getWindItem()->getTWV(dg.getTWV()),
+			toDeg(pAeroForcesItem_->getWindItem()->getTWA(dg.getTWA())) );
+
+	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
+	// then the ownership will be assigned to the multiPlotWidget when adding the chart
+	pResPlot= new VppXYCustomPlotWidget(msg2,"Fh^2 [-]","Induced Resistance [N]");
+	for(size_t i=0; i<sideForce2.size(); i++)
+		pResPlot->addData(sideForce2[i],indRes[i],curveLabels[i]);
+	pResPlot->rescaleAxes();
+	multiPlotWidget->addChart(pResPlot,0,1);
 
 	// Restore the values of the variables
 	V_=bufferV;
@@ -931,7 +929,7 @@ void FrictionalResistanceItem::plot(MultiplePlotWidget* multiPlotWidget) {
 	}
 
 	// Instantiate a plotter and plot the curves
-	VppXYCustomPlotWidget* pFrictionalResPlot= new VppXYCustomPlotWidget("Frictional Resistance","Fn [-]","Total Resistance [N]");
+	VppXYCustomPlotWidget* pFrictionalResPlot= new VppXYCustomPlotWidget("Frictional Resistance Hull","Fn [-]","Total Resistance [N]");
 	pFrictionalResPlot->addData(fN,y,"Frict Res");
 	pFrictionalResPlot->rescaleAxes();
 	multiPlotWidget->addChart(pFrictionalResPlot,0,0);
@@ -1165,13 +1163,13 @@ void ViscousResistanceKeelItem::printWhoAmI() {
 }
 
 // Plot the viscous resistance of the keel for a fixed range Fn=0-0.7
-void ViscousResistanceKeelItem::plot() {
+void ViscousResistanceKeelItem::plot(MultiplePlotWidget* multiPlotWidget, size_t posx/*=0*/, size_t posy/*=0*/) {
 
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
 
 	int nVals=10;
-	std::vector<double> x(nVals), y(nVals);
+	QVector<double> x(nVals), y(nVals);
 
 	for(size_t i=0; i<nVals; i++) {
 
@@ -1187,9 +1185,12 @@ void ViscousResistanceKeelItem::plot() {
 
 	}
 
-	// Instantiate a plotter and plot the curves
-	VPPPlotter plotter;
-	plotter.plot(x,y,"Viscous Resistance of the Keel","Fn [-]","Resistance [N]");
+	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
+	// then the ownership will be assigned to the multiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget("Viscous Resistance Keel","Fn [-]","Resistance [N]");
+	pResPlot->addData(x,y,"Viscous Resistance Keel");
+	pResPlot->rescaleAxes();
+	multiPlotWidget->addChart(pResPlot,posx,posy);
 
 	// Restore the initial buffered values
 	V_= bufferV;
@@ -1241,13 +1242,13 @@ void ViscousResistanceRudderItem::printWhoAmI() {
 }
 
 // Plot the viscous resistance of the rudder for a fixed range (Fn=0-0.7)
-void ViscousResistanceRudderItem::plot() {
+void ViscousResistanceRudderItem::plot(MultiplePlotWidget* multiPlotWidget, size_t posx/*=0*/, size_t posy/*=0*/) {
 
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
 
 	int nVals=10;
-	std::vector<double> x(nVals), y(nVals);
+	QVector<double> x(nVals), y(nVals);
 
 	for(size_t i=0; i<nVals; i++) {
 
@@ -1258,14 +1259,17 @@ void ViscousResistanceRudderItem::plot() {
 		update(0,0);
 
 		// Fill the vectors to be plot
-		x[i]= fN_;
-		y[i]= res_;
+		x(i)= fN_;
+		y(i)= res_;
 
 	}
 
-	// Instantiate a plotter and plot the curves
-	VPPPlotter plotter;
-	plotter.plot(x,y,"Viscous Resistance of the Rudder","Fn [-]","Resistance [N]");
+	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
+	// then the ownership will be assigned to the multiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget("Viscous Resistance Rudder","Fn [-]","Resistance [N]");
+	pResPlot->addData(x,y,"Viscous Resistance Rudder");
+	pResPlot->rescaleAxes();
+	multiPlotWidget->addChart(pResPlot,posx,posy);
 
 	// Restore the initial buffered values
 	V_= bufferV;

@@ -89,8 +89,11 @@ public slots:
 	/// Plot the total resistance
 	void plotTotalResistance();
 
-	// Plot the Frictional resistance
+	/// Plot the Frictional resistance of the hull, the keel and the rudder
 	void plotFrictionalResistance();
+
+	/// Plot the Induced resistance
+	void plotInducedResistance();
 
 	/// Temp method used to test QCustomPlot in the current env
 	void testQCustomPlot();
@@ -145,7 +148,8 @@ private:
 	/// Multi-plot widget used to plot sail coeffs
 	boost::shared_ptr<MultiplePlotWidget> pSailCoeffPlotWidget_, p_d_SailCoeffPlotWidget_,
 																				p_d2_SailCoeffPlotWidget_, pForceMomentsPlotWidget_,
-																				pTotResistancePlotWidget_, pFricitionalResistancePlotWidget_;
+																				pTotResistancePlotWidget_, pFricitionalResistancePlotWidget_,
+																				pInducedResistancePlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<VppTabDockWidget> p3dPlotWidget_;

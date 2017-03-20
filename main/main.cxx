@@ -133,14 +133,8 @@ int main(int argc, char** argv) {
 //
 //			//---
 //
-//			else if(s == string("plotFrictionalRes") )
-//				pVppItems->getFrictionalResistanceItem()->plot();
-//
 //			else if( s == string("plotResidRes"))
 //				pVppItems->getResiduaryResistanceItem()->plot(pVppItems->getWind());
-//
-//			else if(s == string("plotInducedRes") )
-//				pVppItems->getInducedResistanceItem()->plot();
 //
 //			else if(s == string("plotDelta_FrictRes_Heel") )
 //				pVppItems->getDelta_FrictionalResistance_HeelItem()->plot(pVppItems->getWind());
@@ -151,11 +145,7 @@ int main(int argc, char** argv) {
 //			else if(s == string("plotDelta_ResidResKeel_Heel") )
 //				pVppItems->getDelta_ResiduaryResistanceKeel_HeelItem()->plot(pVppItems->getWind());
 //
-//			else if(s == string("plotFrictionalRes_Keel") )
-//				pVppItems->getViscousResistanceKeelItem()->plot(); //-> this does not plot
-//
-//			else if(s == string("plotFrictionalRes_Rudder") )
-//				pVppItems->getViscousResistanceRudderItem()->plot(); //-> this does not plot
+// --
 //
 //			else if(s == string("plotResidRes_Keel") )
 //				pVppItems->getResiduaryResistanceKeelItem()->plot();

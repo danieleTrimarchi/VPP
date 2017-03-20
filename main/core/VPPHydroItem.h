@@ -66,7 +66,7 @@ class InducedResistanceItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot the Induced Resistance curve
-		void plot();
+		void plot(MultiplePlotWidget*);
 
 		/// Plot the effective T
 		void plotTe(int twv, int twa);
@@ -291,7 +291,7 @@ class ViscousResistanceKeelItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot the viscous resistance of the keel for a fixed range (Fn=0-0.7)
-		void plot();
+		void plot(MultiplePlotWidget* multiPlotWidget, size_t posx=0, size_t posy=0);
 
 	private:
 
@@ -316,7 +316,7 @@ class ViscousResistanceRudderItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot the viscous resistance of the rudder for a fixed range (Fn=0-0.7)
-		void plot();
+		void plot(MultiplePlotWidget* multiPlotWidget, size_t posx=0, size_t posy=0);
 
 	private:
 

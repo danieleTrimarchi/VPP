@@ -252,6 +252,17 @@ void MainWindow::setupMenuBar() {
 	pResistanceMenu->addAction(plotFrictResAction);
 	connect(plotFrictResAction, &QAction::triggered, this, &MainWindow::plotFrictionalResistance);
 
+	// Plot Frictional Resistance
+	actionVector_.push_back( boost::shared_ptr<QAction>(
+			new QAction(
+					QIcon::fromTheme("Plot Induced Resistance", QIcon(":/icons/inducedResistance.png")),
+					tr("&Induced Resistance"), this)
+			) );
+	QAction* plotIndResAction = actionVector_.back().get();
+	plotIndResAction->setStatusTip(tr("Plot Induced Resistance"));
+	pResistanceMenu->addAction(plotIndResAction);
+	connect(plotIndResAction, &QAction::triggered, this, &MainWindow::plotInducedResistance);
+
 
 	// --
 
@@ -611,7 +622,7 @@ void MainWindow::plotTotalResistance() {
 
 }
 
-// Plot the Frictional resistance
+/// Plot the Frictional resistance of the hull, the keel and the rudder
 void MainWindow::plotFrictionalResistance() {
 
 	if(!hasBoatDescription())
@@ -624,12 +635,36 @@ void MainWindow::plotFrictionalResistance() {
 
 	// Ask the frictional resistance item to plot itself
 	pVppItems_->getFrictionalResistanceItem()->plot(pFricitionalResistancePlotWidget_.get());
+	pVppItems_->getViscousResistanceKeelItem()->plot(pFricitionalResistancePlotWidget_.get(),0,1);
+	pVppItems_->getViscousResistanceRudderItem()->plot(pFricitionalResistancePlotWidget_.get(),0,2);
 
 	// Add the xy plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, pFricitionalResistancePlotWidget_.get() );
 
 	// Tab the widget with the others
 	tabDockWidget(pFricitionalResistancePlotWidget_.get());
+
+}
+
+// Plot the Induced resistance
+void MainWindow::plotInducedResistance() {
+
+	if(!hasBoatDescription())
+		return;
+
+	pLogWidget_->append("Plotting Induced Resistance...");
+
+	// Instantiate an empty multiple plot widget
+	pInducedResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Induced Resistance") );
+
+	// Ask the frictional resistance item to plot itself
+	pVppItems_->getInducedResistanceItem()->plot(pInducedResistancePlotWidget_.get());
+
+	// Add the xy plot view to the left of the app window
+	addDockWidget(Qt::TopDockWidgetArea, pInducedResistancePlotWidget_.get() );
+
+	// Tab the widget with the others
+	tabDockWidget(pInducedResistancePlotWidget_.get());
 
 }
 
