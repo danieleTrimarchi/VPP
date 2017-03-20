@@ -342,7 +342,7 @@ class NegativeResistanceItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot the negative resistance for a fixed range (Fn=0-1)
-		void plot();
+		void plot(MultiplePlotWidget* multiPlotWidget);
 
 	private:
 

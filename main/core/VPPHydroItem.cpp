@@ -929,7 +929,7 @@ void FrictionalResistanceItem::plot(MultiplePlotWidget* multiPlotWidget) {
 	}
 
 	// Instantiate a plotter and plot the curves
-	VppXYCustomPlotWidget* pFrictionalResPlot= new VppXYCustomPlotWidget("Frictional Resistance Hull","Fn [-]","Total Resistance [N]");
+	VppXYCustomPlotWidget* pFrictionalResPlot= new VppXYCustomPlotWidget("Frictional Resistance Hull","Fn [-]","Resistance [N]");
 	pFrictionalResPlot->addData(fN,y,"Frict Res");
 	pFrictionalResPlot->rescaleAxes();
 	multiPlotWidget->addChart(pFrictionalResPlot,0,0);
@@ -1259,8 +1259,8 @@ void ViscousResistanceRudderItem::plot(MultiplePlotWidget* multiPlotWidget, size
 		update(0,0);
 
 		// Fill the vectors to be plot
-		x(i)= fN_;
-		y(i)= res_;
+		x[i]= fN_;
+		y[i]= res_;
 
 	}
 
@@ -1310,13 +1310,13 @@ void NegativeResistanceItem::printWhoAmI() {
 }
 
 // Plot the viscous resistance of the rudder for a fixed range (Fn=0-1)
-void NegativeResistanceItem::plot() {
+void NegativeResistanceItem::plot(MultiplePlotWidget* multiPlotWidget) {
 
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
 
 	int nVals=10;
-	std::vector<double> x(nVals), y(nVals);
+	QVector<double> x(nVals), y(nVals);
 
 	for(size_t i=0; i<nVals; i++) {
 
@@ -1333,8 +1333,10 @@ void NegativeResistanceItem::plot() {
 	}
 
 	// Instantiate a plotter and plot the curves
-	VPPPlotter plotter;
-	plotter.plot(x,y,"Negative Resistance","Fn [-]","Resistance [N]");
+	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget("Negative Resistance","Fn [-]","Resistance [N]");
+	pResPlot->addData(x,y,"Negative Resistance");
+	pResPlot->rescaleAxes();
+	multiPlotWidget->addChart(pResPlot,0,0);
 
 	// Restore the initial buffered values
 	V_= bufferV;

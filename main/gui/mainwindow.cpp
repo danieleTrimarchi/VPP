@@ -263,6 +263,16 @@ void MainWindow::setupMenuBar() {
 	pResistanceMenu->addAction(plotIndResAction);
 	connect(plotIndResAction, &QAction::triggered, this, &MainWindow::plotInducedResistance);
 
+	// Plot Negative Resistance
+	actionVector_.push_back( boost::shared_ptr<QAction>(
+			new QAction(
+					QIcon::fromTheme("Plot Negative Resistance", QIcon(":/icons/negativeResistance.png")),
+					tr("&Negative Resistance"), this)
+			) );
+	QAction* plotNegativeResAction = actionVector_.back().get();
+	plotNegativeResAction->setStatusTip(tr("Plot Negative Resistance"));
+	pResistanceMenu->addAction(plotNegativeResAction);
+	connect(plotNegativeResAction, &QAction::triggered, this, &MainWindow::plotNegativeResistance);
 
 	// --
 
@@ -665,6 +675,28 @@ void MainWindow::plotInducedResistance() {
 
 	// Tab the widget with the others
 	tabDockWidget(pInducedResistancePlotWidget_.get());
+
+}
+
+// Plot the Negative resistance
+void MainWindow::plotNegativeResistance() {
+
+	if(!hasBoatDescription())
+		return;
+
+	pLogWidget_->append("Plotting Negative Resistance...");
+
+	// Instantiate an empty multiple plot widget
+	pNegativeResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Negative Resistance") );
+
+	// Ask the frictional resistance item to plot itself
+	pVppItems_->getNegativeResistanceItem()->plot(pNegativeResistancePlotWidget_.get());
+
+	// Add the xy plot view to the left of the app window
+	addDockWidget(Qt::TopDockWidgetArea, pNegativeResistancePlotWidget_.get() );
+
+	// Tab the widget with the others
+	tabDockWidget(pNegativeResistancePlotWidget_.get());
 
 }
 
