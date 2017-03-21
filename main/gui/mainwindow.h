@@ -92,6 +92,9 @@ public slots:
 	/// Plot the Frictional resistance of the hull, the keel and the rudder
 	void plotFrictionalResistance();
 
+	/// Plot the delta Frictional resistance due to the heel of the hull
+	void plotDelta_FrictionalResistance_Heel();
+
 	/// Plot the Induced resistance
 	void plotInducedResistance();
 
@@ -156,6 +159,7 @@ private:
 																				p_d2_SailCoeffPlotWidget_, pForceMomentsPlotWidget_,
 																				pTotResistancePlotWidget_, pFricitionalResistancePlotWidget_,
 																				pInducedResistancePlotWidget_, pResiduaryResistancePlotWidget_,
+																				p_dFrictRes_HeelPlotWidget_,
 																				pNegativeResistancePlotWidget_;
 
 	/// Three dimensional plot widget

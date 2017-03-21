@@ -64,6 +64,16 @@ void MultiplePlotWidget::addChart(VppXYCustomPlotWidget* chart, size_t px, size_
 
 }
 
+// How many columns is this multiplePlotWidget made of?
+int MultiplePlotWidget::columnCount() const {
+	return pGridLayout_->columnCount();
+}
+
+// How many rows is this multiplePlotWidget made of?
+int MultiplePlotWidget::rowCount() const {
+	return pGridLayout_->rowCount();
+}
+
 // Connect all the charts in the multiplot to the toggleFullScreen
 // signal that is used to expand one chart to full screen
 void MultiplePlotWidget::connectFullScreenSignals() {

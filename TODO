@@ -1,3 +1,12 @@
+- Refactor the resistance items to plot with a unique interface: 
+  the resistance items know the wind (given @ construction) so they can 
+  direcly popup a dialog (WindIndicesDialog) if requested. 
+ 
+  the plotting interface is of the type
+	VppXYCustomPlotWidget* resitanceItem::plot()
+
+  all this is driven by mainWindow, which is also in charge of deciding the position of the charts in the multiplot
+
 - Ask Stephane about the multiple environment warning 
 
 - Is it possible to compute analytical derivatives instead of numerical derivatives by finite differences? Presumably yes, I only need to write the code and check! 
@@ -9,12 +18,6 @@ Well, this is painful because we do not have the expressions for the
 	Hp : the code could simply search the files in a target path defined 
 	in the sconscript. See what MEMSp does.
   	
-- build Qt integration. Allow for 2/3d dynamic plotting (scale, move, zoom). 
-	in that phase think how to refactor the code in order to provide a flexible
-	and well structured plotting utility. Perhaps using visitor?
-
-- group resistanceItem plot(wind) -> at least part of this will be adressed with the previous item (Qt) 
-
 - New definitions of the resistance with new version of the DYSHS
 
 - Excel integration to save directly the files in .xlsx format

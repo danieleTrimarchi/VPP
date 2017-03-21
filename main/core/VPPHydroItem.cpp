@@ -1038,30 +1038,24 @@ void Delta_FrictionalResistance_HeelItem::printWhoAmI() {
 }
 
 // Plot the Frictional Resistance due to heel versus Fn curve
-void Delta_FrictionalResistance_HeelItem::plot_deltaWettedArea_heel() {
+void Delta_FrictionalResistance_HeelItem::plot_deltaWettedArea_heel(MultiplePlotWidget* multiPlotWidget, size_t posx/*=0*/, size_t posy/*=0*/) {
 
-	// Plot the change in wetted surf due to heel
-	pInterpolator_->plot(0,mathUtils::toRad(20),20,"Change in wetted area due to HEEL","PHI [rad]","dS [m**2]" );
+	// Make a check plot for the Residuary resistance of the keel
+	VppXYCustomPlotWidget* pPlot = new VppXYCustomPlotWidget("Change in wetted area due to HEEL","PHI [rad]","dS [m**2]");
+	pInterpolator_->plot(pPlot, 0,0.6,20);
+	multiPlotWidget->addChart(pPlot,posx,posy);
 
 }
 
 // Plot the Frictional Resistance due to heel versus Fn curve
-void Delta_FrictionalResistance_HeelItem::plot(WindItem* pWind) {
-
-	// Ask the user for twv and twa
-	size_t twv=0, twa=0;
-	IOUtils io(pWind);
-	io.askUserWindIndexes(twv, twa);
-
-	double fnMin= io.askUserDouble("Please enter the min value of the Fn");
-	double fnMax= io.askUserDouble("Please enter the max value of the Fn");
+void Delta_FrictionalResistance_HeelItem::plot(MultiplePlotWidget* multiPlotWidget, WindItem* pWind, size_t twv, size_t twa) {
 
 	size_t nVelocities=40, maxAngleDeg=40;
 
 	// Instantiate containers for the curve labels, the
 	// Fn and the resistance
-	std::vector<string> curveLabels;
-	std::vector<ArrayXd> froudeNb, totRes;
+	std::vector<QString> curveLabels;
+	std::vector<QVector<double> > froudeNb, totRes;
 
 	// Loop on the heel angles
 	for(int iAngle=0; iAngle<maxAngleDeg+1; iAngle+=10){
@@ -1070,13 +1064,13 @@ void Delta_FrictionalResistance_HeelItem::plot(WindItem* pWind) {
 		PHI_ = mathUtils::toRad(iAngle-10);
 
 		// declare some tmp containers
-		vector<double> fn, res;
+		QVector<double> fn, res;
 
 		// Loop on the velocities
 		for(size_t v=0; v<nVelocities; v++){
 
-			// Set a fictitious velocity (Fn=-0.3-0.7)
-			V_= ( fnMin + ( ( fnMax-fnMin ) / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			// Set a fictitious velocity (Fn=-0.-0.7)
+			V_= ( ( .7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 			update(twv,twa);
 
@@ -1086,16 +1080,8 @@ void Delta_FrictionalResistance_HeelItem::plot(WindItem* pWind) {
 
 		}
 
-		// Now transform fn and res to ArrayXd and push_back to vector
-		ArrayXd tmpFn(fn.size());
-		ArrayXd tmpRes(fn.size());
-		for(size_t j=0; j<fn.size(); j++){
-			tmpFn(j)=fn[j];
-			tmpRes(j)=res[j];
-		}
-
-		froudeNb.push_back(tmpFn);
-		totRes.push_back(tmpRes);
+		froudeNb.push_back(fn);
+		totRes.push_back(res);
 
 		char msg[256];
 		sprintf(msg,"%3.1fº", mathUtils::toDeg(PHI_));
@@ -1103,17 +1089,19 @@ void Delta_FrictionalResistance_HeelItem::plot(WindItem* pWind) {
 
 	}
 
-	// Instantiate a plotter and plot
-	VPPPlotter fPlotter;
-	for(size_t i=0; i<froudeNb.size(); i++)
-		fPlotter.append(curveLabels[i],froudeNb[i],totRes[i]);
-
 	char msg[256];
 	sprintf(msg,"plot Delta Frictional Resistance due to Heel - "
 			"twv=%2.2f [m/s], twa=%2.2fº",
 			pWind->getTWV(twv),
 			mathUtils::toDeg(pWind->getTWA(twa)) );
-	fPlotter.plot("Fn [-]","dResistance [N]", msg);
+
+	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
+	// then the ownership will be assigned to the multiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Resistance [N]");
+	for(size_t i=0; i<froudeNb.size(); i++)
+		pResPlot->addData(froudeNb[i],totRes[i],curveLabels[i]);
+	pResPlot->rescaleAxes();
+	multiPlotWidget->addChart(pResPlot,multiPlotWidget->rowCount(),0);
 
 }
 
@@ -1183,7 +1171,7 @@ void ViscousResistanceKeelItem::plot(MultiplePlotWidget* multiPlotWidget, size_t
 
 	}
 
-	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
+	// Instantiate a VppXYCustomPlotWidget and plot the resistance. We new with a raw ptr,
 	// then the ownership will be assigned to the multiPlotWidget when adding the chart
 	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget("Viscous Resistance Keel","Fn [-]","Resistance [N]");
 	pResPlot->addData(x,y,"Viscous Resistance Keel");

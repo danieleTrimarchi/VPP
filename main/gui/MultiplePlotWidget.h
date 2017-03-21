@@ -69,6 +69,12 @@ public:
 	/// Add a chart in a given position
 	void addChart(VppXYCustomPlotWidget*, size_t px, size_t py);
 
+	/// How many columns is this multiplePlotWidget made of?
+	int columnCount() const;
+
+	/// How many rows is this multiplePlotWidget made of?
+	int rowCount() const;
+
 public slots:
 
 	/// What to do when one of the plots is clicked?

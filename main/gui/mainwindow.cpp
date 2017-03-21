@@ -252,7 +252,18 @@ void MainWindow::setupMenuBar() {
 	pResistanceMenu->addAction(plotFrictResAction);
 	connect(plotFrictResAction, &QAction::triggered, this, &MainWindow::plotFrictionalResistance);
 
-	// Plot Frictional Resistance
+	// Plot Delta Frictional Resistance due to Heel
+	actionVector_.push_back( boost::shared_ptr<QAction>(
+			new QAction(
+					QIcon::fromTheme("Plot Delta Frictional Resistance due to Heel", QIcon(":/icons/DeltaFrictRes_Heel.png")),
+					tr("&Delta Frict. Res. Heel"), this)
+			) );
+	QAction* plotDeltaFrictResHeelAction = actionVector_.back().get();
+	plotDeltaFrictResHeelAction->setStatusTip(tr("Plot Delta Frictional Resistance due to Heel"));
+	pResistanceMenu->addAction(plotDeltaFrictResHeelAction);
+	connect(plotDeltaFrictResHeelAction, &QAction::triggered, this, &MainWindow::plotDelta_FrictionalResistance_Heel);
+
+	// Plot Induced Resistance
 	actionVector_.push_back( boost::shared_ptr<QAction>(
 			new QAction(
 					QIcon::fromTheme("Plot Induced Resistance", QIcon(":/icons/inducedResistance.png")),
@@ -664,6 +675,37 @@ void MainWindow::plotFrictionalResistance() {
 
 	// Tab the widget with the others
 	tabDockWidget(pFricitionalResistancePlotWidget_.get());
+
+}
+
+// Plot the delta Frictional resistance due to the heel of the hull
+void MainWindow::plotDelta_FrictionalResistance_Heel() {
+
+	if(!hasBoatDescription())
+		return;
+
+	pLogWidget_->append("Plotting Delta Frictional Resistance due to Heel...");
+
+	// For which TWV, TWA shall we plot the residuary resistance?
+	WindIndicesDialog dg(
+			pVppItems_->getWind()->getWVSize(),
+			pVppItems_->getWind()->getWASize());
+	if (dg.exec() == QDialog::Rejected)
+		return;
+
+	// Instantiate an empty multiple plot widget
+	p_dFrictRes_HeelPlotWidget_.reset( new MultiplePlotWidget(this,"Delta Frictional Resistance due to Heel") );
+
+	// Plot the change of wetted area due to heel - see DSYHS99 p 116
+	pVppItems_->getDelta_FrictionalResistance_HeelItem()->plot_deltaWettedArea_heel(p_dFrictRes_HeelPlotWidget_.get());
+
+	// Ask the Delta Frictional Resistance due to Heel to plot itself
+	pVppItems_->getDelta_FrictionalResistance_HeelItem()->plot(p_dFrictRes_HeelPlotWidget_.get(), pVppItems_->getWind(), dg.getTWV(), dg.getTWA());
+	// Add the xy plot view to the left of the app window
+	addDockWidget(Qt::TopDockWidgetArea, p_dFrictRes_HeelPlotWidget_.get() );
+
+	// Tab the widget with the others
+	tabDockWidget(p_dFrictRes_HeelPlotWidget_.get());
 
 }
 

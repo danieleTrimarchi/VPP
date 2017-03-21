@@ -272,7 +272,7 @@ void SplineInterpolator::plot(VppXYCustomPlotWidget* plot, double minVal,double 
   }
 
   // create graph and assign data to it:
-  plot->addData(x, y);
+  plot->addData(x, y, "Interpolated");
 
   // Also add the point data - mark them with blue crosses
   // Fill the data for graph 1, that contains the originating data
@@ -283,7 +283,7 @@ void SplineInterpolator::plot(VppXYCustomPlotWidget* plot, double minVal,double 
   }
 
   // Add the data to the plot
-  plot->addData(xp, yp);
+  plot->addData(xp, yp,"Primitive data");
 
   // Set the last curve style to be no curve but only red cross markers
   plot->graph()->setPen(QPen(Qt::red));

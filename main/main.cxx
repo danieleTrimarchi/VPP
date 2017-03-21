@@ -128,18 +128,9 @@ int main(int argc, char** argv) {
 //
 //			//---
 //
-//			else if( s == string("plot_deltaWettedArea_heel"))
-//				pVppItems->plot_deltaWettedArea_heel();
-//
-//			//---
-//
-//
-//			else if(s == string("plotDelta_FrictRes_Heel") )
-//				pVppItems->getDelta_FrictionalResistance_HeelItem()->plot(pVppItems->getWind());
 //
 //			else if(s == string("plotDelta_ResidRes_Heel") )
 //				pVppItems->getDelta_ResiduaryResistance_HeelItem()->plot(pVppItems->getWind());
-//
 //			else if(s == string("plotDelta_ResidResKeel_Heel") )
 //				pVppItems->getDelta_ResiduaryResistanceKeel_HeelItem()->plot(pVppItems->getWind());
 //

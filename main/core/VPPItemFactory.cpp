@@ -271,13 +271,6 @@ Eigen::VectorXd VPPItemFactory::getResiduals() {
 
 }
 
-/// Plot the change of wetted area due to heel - see DSYHS99 p 116
-void VPPItemFactory::plot_deltaWettedArea_heel(){
-
-	pDelta_FrictionalResistance_HeelItem_->plot_deltaWettedArea_heel();
-
-}
-
 // Plot the total resistance over a fixed range Fn=0-1
 void VPPItemFactory::plotTotalResistance(MultiplePlotWidget* multiPlotWidget) {
 
