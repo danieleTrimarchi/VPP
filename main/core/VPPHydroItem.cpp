@@ -562,26 +562,21 @@ void Delta_ResiduaryResistance_HeelItem::printWhoAmI() {
 }
 
 // Plot the Residuary Resistance versus Fn curve
-void Delta_ResiduaryResistance_HeelItem::plot(WindItem* pWind) {
-
-	// Ask the user for twv and twa
-	size_t twv=0, twa=0;
-	IOUtils io(pWind);
-	io.askUserWindIndexes(twv, twa);
+void Delta_ResiduaryResistance_HeelItem::plot(MultiplePlotWidget* pMultiPlotWidget, WindItem* pWind,
+																							size_t twv, size_t twa,
+																							double crew, double flat,
+																							size_t posx, size_t posy ) {
 
 	// Init the state vector
-	b_= io.askUserDouble("Please enter the crew position");
-	f_= io.askUserDouble("Please enter the value of flat");
-
-	double fnMin= io.askUserDouble("Please enter the min value of the Fn");
-	double fnMax= io.askUserDouble("Please enter the max value of the Fn");
+	b_= crew;
+	f_= flat;
 
 	size_t nVelocities=40, maxAngleDeg=30;
 
 	// Instantiate containers for the curve labels, the
 	// Fn and the resistance
-	std::vector<string> curveLabels;
-	std::vector<ArrayXd> froudeNb, totRes;
+	std::vector<QString> curveLabels;
+	std::vector<QVector<double> > froudeNb, totRes;
 
 	// Loop on the heel angles
 	for(size_t iAngle=0; iAngle<maxAngleDeg+1; iAngle+=5){
@@ -590,13 +585,13 @@ void Delta_ResiduaryResistance_HeelItem::plot(WindItem* pWind) {
 		PHI_ = mathUtils::toRad(iAngle);
 
 		// declare some tmp containers
-		vector<double> fn, res;
+		QVector<double> fn, res;
 
 		// Loop on the velocities
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			V_= ( fnMin + ( ( fnMax-fnMin ) / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			V_= ( 0 + ( .6 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
 			update(twv,twa);
@@ -607,16 +602,8 @@ void Delta_ResiduaryResistance_HeelItem::plot(WindItem* pWind) {
 
 		}
 
-		// Now transform fn and res to ArrayXd and push_back to vector
-		ArrayXd tmpFn(fn.size());
-		ArrayXd tmpRes(fn.size());
-		for(size_t j=0; j<fn.size(); j++){
-			tmpFn(j)=fn[j];
-			tmpRes(j)=res[j];
-		}
-
-		froudeNb.push_back(tmpFn);
-		totRes.push_back(tmpRes);
+		froudeNb.push_back(fn);
+		totRes.push_back(res);
 
 		char msg[256];
 		sprintf(msg,"%3.1fº", mathUtils::toDeg(PHI_));
@@ -624,17 +611,19 @@ void Delta_ResiduaryResistance_HeelItem::plot(WindItem* pWind) {
 
 	}
 
-	// Instantiate a plotter and plot
-	VPPPlotter fPlotter;
-	for(size_t i=0; i<froudeNb.size(); i++)
-		fPlotter.append(curveLabels[i],froudeNb[i],totRes[i]);
-
 	char msg[256];
-	sprintf(msg,"plot Delta Residuary Resistance due to Heel - "
+	sprintf(msg,"Delta Residuary Resistance due to Heel - "
 			"twv=%2.2f [m/s], twa=%2.2fº",
 			pWind->getTWV(twv),
 			mathUtils::toDeg(pWind->getTWA(twa)) );
-	fPlotter.plot("Fn [-]","dResistance [N]", msg);
+
+	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
+	// then the ownership will be assigned to the multiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Resistance [N]");
+	for(size_t i=0; i<froudeNb.size(); i++)
+		pResPlot->addData(froudeNb[i],totRes[i],curveLabels[i]);
+	pResPlot->rescaleAxes();
+	pMultiPlotWidget->addChart(pResPlot,posx,posy);
 
 }
 
@@ -775,26 +764,21 @@ void Delta_ResiduaryResistanceKeel_HeelItem::printWhoAmI() {
 }
 
 // Plot
-void Delta_ResiduaryResistanceKeel_HeelItem::plot(WindItem* pWind) {
-
-	// Ask the user for twv and twa
-	size_t twv=0, twa=0;
-	IOUtils io(pWind);
-	io.askUserWindIndexes(twv, twa);
+void Delta_ResiduaryResistanceKeel_HeelItem::plot(MultiplePlotWidget* pMultiPlotWidget, WindItem* pWind,
+		size_t twv, size_t twa,
+		double crew, double flat,
+		size_t posx, size_t posy ) {
 
 	// Init the state vector
-	b_= io.askUserDouble("Please enter the crew position");
-	f_= io.askUserDouble("Please enter the value of flat");
-
-	double fnMin= io.askUserDouble("Please enter the min value of the Fn");
-	double fnMax= io.askUserDouble("Please enter the max value of the Fn");
+	b_= crew;
+	f_= flat;
 
 	size_t nVelocities=40, maxAngleDeg=30;
 
 	// Instantiate containers for the curve labels, the
 	// Fn and the resistance
-	std::vector<string> curveLabels;
-	std::vector<ArrayXd> froudeNb, totRes;
+	std::vector<QString> curveLabels;
+	std::vector<QVector<double> > froudeNb, totRes;
 
 	// Loop on the heel angles
 	for(size_t iAngle=0; iAngle<maxAngleDeg+1; iAngle+=5){
@@ -803,13 +787,13 @@ void Delta_ResiduaryResistanceKeel_HeelItem::plot(WindItem* pWind) {
 		PHI_ = mathUtils::toRad(iAngle);
 
 		// declare some tmp containers
-		vector<double> fn, res;
+		QVector<double> fn, res;
 
 		// Loop on the velocities
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			V_= ( fnMin + ( ( fnMax-fnMin ) / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			V_= ( ( 0.7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
 			update(twv,twa);
@@ -820,16 +804,8 @@ void Delta_ResiduaryResistanceKeel_HeelItem::plot(WindItem* pWind) {
 
 		}
 
-		// Now transform fn and res to ArrayXd and push_back to vector
-		ArrayXd tmpFn(fn.size());
-		ArrayXd tmpRes(fn.size());
-		for(size_t j=0; j<fn.size(); j++){
-			tmpFn(j)=fn[j];
-			tmpRes(j)=res[j];
-		}
-
-		froudeNb.push_back(tmpFn);
-		totRes.push_back(tmpRes);
+		froudeNb.push_back(fn);
+		totRes.push_back(res);
 
 		char msg[256];
 		sprintf(msg,"%3.1fº", mathUtils::toDeg(PHI_));
@@ -837,17 +813,19 @@ void Delta_ResiduaryResistanceKeel_HeelItem::plot(WindItem* pWind) {
 
 	}
 
-	// Instantiate a plotter and plot
-	VPPPlotter fPlotter;
-	for(size_t i=0; i<froudeNb.size(); i++)
-		fPlotter.append(curveLabels[i],froudeNb[i],totRes[i]);
-
 	char msg[256];
 	sprintf(msg,"plot Delta Residuary Resistance of the keel due to Heel - "
 			"twv=%2.2f [m/s], twa=%2.2fº",
 			pWind->getTWV(twv),
 			mathUtils::toDeg(pWind->getTWA(twa)) );
-	fPlotter.plot("Fn [-]","dResistance [N]", msg);
+
+	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
+	// then the ownership will be assigned to the multiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Resistance [N]");
+	for(size_t i=0; i<froudeNb.size(); i++)
+		pResPlot->addData(froudeNb[i],totRes[i],curveLabels[i]);
+	pResPlot->rescaleAxes();
+	pMultiPlotWidget->addChart(pResPlot,posx,posy);
 
 }
 

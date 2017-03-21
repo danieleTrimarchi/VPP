@@ -138,7 +138,10 @@ class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot the Residuary Resistance vs Fn curve
-		void plot(WindItem* pWind);
+		void plot(MultiplePlotWidget* pMultiPlotWidget, WindItem* pWind,
+							size_t twv, size_t twa,
+							double crew, double flat,
+							size_t posx, size_t posy );
 
 	private:
 
@@ -198,7 +201,10 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot
-		void plot(WindItem* pWind);
+		void plot(MultiplePlotWidget* pMultiPlotWidget, WindItem* pWind,
+							size_t twv, size_t twa,
+							double crew, double flat,
+							size_t posx, size_t posy );
 
 	private:
 

@@ -746,12 +746,28 @@ void MainWindow::plotResiduaryResistance() {
 	if (dg.exec() == QDialog::Rejected)
 		return;
 
+	OptimVarsStateVectorDialog vd;
+	if( vd.exec() == QDialog::Rejected )
+		return;
+
 	// Instantiate an empty multiple plot widget
 	pResiduaryResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Residuary Resistance") );
 
-	// Ask the Residuary resistance item to plot itself
+	// Ask the Residuary resistance items of hull and keel to plot itself
 	pVppItems_->getResiduaryResistanceItem()->plot(pResiduaryResistancePlotWidget_.get(), dg.getTWV(), dg.getTWA());
 	pVppItems_->getResiduaryResistanceKeelItem()->plot(pResiduaryResistancePlotWidget_.get(),0,1);
+
+	// --
+
+	// Ask the Residuary resistance items of hull and keel to plot itself
+	pVppItems_->getDelta_ResiduaryResistance_HeelItem()->plot(pResiduaryResistancePlotWidget_.get(), pVppItems_->getWind(),
+																														dg.getTWV(), dg.getTWA(),
+																														vd.getCrew(), vd.getFlat(),
+																														1, 0);
+	pVppItems_->getDelta_ResiduaryResistanceKeel_HeelItem()->plot(pResiduaryResistancePlotWidget_.get(), pVppItems_->getWind(),
+																																dg.getTWV(), dg.getTWA(),
+																																vd.getCrew(), vd.getFlat(),
+																																1, 1);
 
 	// Add the xy plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, pResiduaryResistancePlotWidget_.get() );
@@ -760,6 +776,8 @@ void MainWindow::plotResiduaryResistance() {
 	tabDockWidget(pResiduaryResistancePlotWidget_.get());
 
 }
+
+
 
 // Plot the Negative resistance
 void MainWindow::plotNegativeResistance() {

@@ -126,14 +126,6 @@ int main(int argc, char** argv) {
 //			else if( s == string("plotGradient"))
 //				solverFactory.get()->plotGradient();
 //
-//			//---
-//
-//
-//			else if(s == string("plotDelta_ResidRes_Heel") )
-//				pVppItems->getDelta_ResiduaryResistance_HeelItem()->plot(pVppItems->getWind());
-//			else if(s == string("plotDelta_ResidResKeel_Heel") )
-//				pVppItems->getDelta_ResiduaryResistanceKeel_HeelItem()->plot(pVppItems->getWind());
-//
 // --
 //
 //			else if( s == string("plotPolars"))
