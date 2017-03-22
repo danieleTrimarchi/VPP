@@ -7,6 +7,7 @@
 #include <QGridLayout>
 #include "boost/shared_ptr.hpp"
 #include <Eigen/Core>
+#include "VppAeroItem.h"
 
 class StateVectorDialog : public QDialog {
 
@@ -74,8 +75,8 @@ class WindIndicesDialog : public QDialog {
 
 	public:
 
-		/// Explicit Ctor
-		explicit WindIndicesDialog(const int ntwv, const int ntwa, QWidget *parent = Q_NULLPTR);
+		/// Explicit Ctor with a wind item
+		explicit WindIndicesDialog(WindItem*, QWidget *parent = Q_NULLPTR);
 
 		/// Returns the index of the TWV prompted by the user
 		int getTWV() const;
@@ -83,7 +84,13 @@ class WindIndicesDialog : public QDialog {
 		/// Returns the index of the TWA prompted by the user
 		int getTWA() const;
 
+		/// Return a ptr to the wind
+		WindItem* getWind() const;
+
 	private:
+
+		/// raw ptr to the wind
+		WindItem* pWind_;
 
 		boost::shared_ptr<QLineEdit> pTWV_Edit_, pTWA_Edit_;
 

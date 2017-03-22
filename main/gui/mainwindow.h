@@ -168,9 +168,8 @@ private:
 	/// Variable Widget
 	boost::shared_ptr<VariablesDockWidget> pVariablesWidget_;
 
-	/// This action generates the menu that drives the presence of the Variable
-	/// tree widget or the Log widget
-	QAction* VariableAction_, *LogAction_;
+	/// Menu with the actions to plot sail coeffs and resistance components
+	boost::shared_ptr<QMenu> pSailCoeffsMenu_;
 
 	/// Vector storing all of the actions. Used to assure that the actions are deleted
 	/// on destruction, thus preventing leaks

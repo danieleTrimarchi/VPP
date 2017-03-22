@@ -275,9 +275,7 @@ Eigen::VectorXd VPPItemFactory::getResiduals() {
 void VPPItemFactory::plotTotalResistance(MultiplePlotWidget* multiPlotWidget) {
 
 	// For which TWV, TWA shall we plot the aero forces/moments?
-	WindIndicesDialog wdg(
-			pAeroForcesItem_->getWindItem()->getWVSize(),
-			pAeroForcesItem_->getWindItem()->getWASize());
+	WindIndicesDialog wdg(pWind_.get());
 	if (wdg.exec() == QDialog::Rejected)
 		return;
 

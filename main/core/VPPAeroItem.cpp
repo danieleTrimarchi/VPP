@@ -920,7 +920,7 @@ void AeroForcesItem::plot(MultiplePlotWidget* multiPlotWidget ) {
 	size_t nVelocities=60;
 
 	// For which TWV, TWA shall we plot the aero forces/moments?
-	WindIndicesDialog dg(pWindItem_->getWVSize(),pWindItem_->getWASize());
+	WindIndicesDialog dg(pWindItem_);
 	if (dg.exec() == QDialog::Rejected)
 		return;
 

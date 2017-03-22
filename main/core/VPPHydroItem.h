@@ -9,6 +9,10 @@
 
 using namespace mathUtils;
 
+/// Forward declarations
+class WindIndicesDialog;
+class StateVectorDialog;
+
 // TODO dtrimarchi : we are not considering the resistance
 // contribution of the rudder. Add it!
 
@@ -30,6 +34,10 @@ class ResistanceItem : public VPPItem {
 
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
+
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0) =0;
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -65,8 +73,10 @@ class InducedResistanceItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
-		/// Plot the Induced Resistance curve
-		void plot(MultiplePlotWidget*);
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 		/// Plot the effective T
 		void plotTe(int twv, int twa);
@@ -109,8 +119,10 @@ class ResiduaryResistanceItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
-		/// Plot the Residuary Resistance vs Fn curve
-		void plot(MultiplePlotWidget*, size_t twv, size_t twa);
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -137,11 +149,10 @@ class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
-		/// Plot the Residuary Resistance vs Fn curve
-		void plot(MultiplePlotWidget* pMultiPlotWidget, WindItem* pWind,
-							size_t twv, size_t twa,
-							double crew, double flat,
-							size_t posx, size_t posy );
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -170,8 +181,10 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
-		/// Plot the Residuary Resistance of the Keel versus Fn curve
-		void plot(MultiplePlotWidget*, size_t posx=0, size_t posy=0);
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -200,11 +213,10 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
-		/// Plot
-		void plot(MultiplePlotWidget* pMultiPlotWidget, WindItem* pWind,
-							size_t twv, size_t twa,
-							double crew, double flat,
-							size_t posx, size_t posy );
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -232,8 +244,10 @@ class FrictionalResistanceItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
-		/// Plot the frictional resistance for a fixed range (Fn=0-0.7)
-		void plot(MultiplePlotWidget*);
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -263,10 +277,12 @@ class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
 		virtual void printWhoAmI();
 
 		/// Plot the Frictional Resistance due to heel vs Fn curve
-		void plot_deltaWettedArea_heel(MultiplePlotWidget* multiPlotWidget, size_t posx=0, size_t posy=0);
+		std::vector<VppXYCustomPlotWidget*> plot_deltaWettedArea_heel();
 
-		/// Plot the Frictional Resistance due to heel vs Fn curve for a range of heeling angles
-		void plot(MultiplePlotWidget*, WindItem*, size_t, size_t );
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -296,8 +312,10 @@ class ViscousResistanceKeelItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
-		/// Plot the viscous resistance of the keel for a fixed range (Fn=0-0.7)
-		void plot(MultiplePlotWidget* multiPlotWidget, size_t posx=0, size_t posy=0);
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -321,8 +339,10 @@ class ViscousResistanceRudderItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
-		/// Plot the viscous resistance of the rudder for a fixed range (Fn=0-0.7)
-		void plot(MultiplePlotWidget* multiPlotWidget, size_t posx=0, size_t posy=0);
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -347,8 +367,10 @@ class NegativeResistanceItem : public ResistanceItem {
 		/// Print the class name - implement the pure virtual of VPPItem
 		virtual void printWhoAmI();
 
-		/// Plot the negative resistance for a fixed range (Fn=0-1)
-		void plot(MultiplePlotWidget* multiPlotWidget);
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 

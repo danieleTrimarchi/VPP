@@ -166,7 +166,7 @@ void MainWindow::setupMenuBar() {
 			new QAction(
 					QIcon::fromTheme("Plot polars", QIcon(":/icons/plotPolars.png")),
 					tr("&Polars"), this)
-			) );
+	) );
 	QAction* plotPolarsAction = actionVector_.back().get();
 	plotPolarsAction->setStatusTip(tr("Plot polars"));
 	connect(plotPolarsAction, &QAction::triggered, this, &MainWindow::plotPolars);
@@ -176,19 +176,19 @@ void MainWindow::setupMenuBar() {
 	// ==== WARNING !!! ===================================================================
 	// Try to define this guy as a class member and see the app crashing on construction...
 	// This ONLY happens for the optimized build. Will building profile in xCode help?
-	QMenu* pSailCoeffsMenu = new QMenu("Plot Sail Related Quantities", this);
-	pSailCoeffsMenu->setIcon( QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png")) );
-	pToolBar_->addAction(pSailCoeffsMenu->menuAction());
+	pSailCoeffsMenu_.reset( new QMenu("Plot Sail Related Quantities", this) );
+	pSailCoeffsMenu_->setIcon( QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png")) );
+	pToolBar_->addAction(pSailCoeffsMenu_->menuAction());
 
 	// Plot sail coeffs
 	actionVector_.push_back( boost::shared_ptr<QAction>(
 			new QAction(
 					QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png")),
 					tr("&Sail Coeffs"), this)
-			) );
+	) );
 	QAction* plotSailCoeffsAction = actionVector_.back().get();
 	plotSailCoeffsAction->setStatusTip(tr("Plot Sail Coeffs"));
-	pSailCoeffsMenu->addAction(plotSailCoeffsAction);
+	pSailCoeffsMenu_->addAction(plotSailCoeffsAction);
 	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
 
 	// Plot sail coeffs derivatives
@@ -199,7 +199,7 @@ void MainWindow::setupMenuBar() {
 	) );
 	QAction* plot_d_SailCoeffsAction= actionVector_.back().get();
 	plot_d_SailCoeffsAction->setStatusTip(tr("Plot d(Sail Coeffs)"));
-	pSailCoeffsMenu->addAction(plot_d_SailCoeffsAction);
+	pSailCoeffsMenu_->addAction(plot_d_SailCoeffsAction);
 	connect(plot_d_SailCoeffsAction, &QAction::triggered, this, &MainWindow::plot_d_SailCoeffs);
 
 	// Plot sail coeffs second derivatives
@@ -207,10 +207,10 @@ void MainWindow::setupMenuBar() {
 			new QAction(
 					QIcon::fromTheme("Plot Sail Coeffs Second Derivatives", QIcon(":/icons/d2_sailCoeffs.png")),
 					tr("&d2(Sail Coeffs)"), this)
-			) );
+	) );
 	QAction* plot_d2_SailCoeffsAction = actionVector_.back().get();
 	plot_d2_SailCoeffsAction->setStatusTip(tr("Plot d2(Sail Coeffs)"));
-	pSailCoeffsMenu->addAction(plot_d2_SailCoeffsAction);
+	pSailCoeffsMenu_->addAction(plot_d2_SailCoeffsAction);
 	connect(plot_d2_SailCoeffsAction, &QAction::triggered, this, &MainWindow::plot_d2_SailCoeffs);
 
 	// Plot sail force and moments
@@ -218,10 +218,10 @@ void MainWindow::setupMenuBar() {
 			new QAction(
 					QIcon::fromTheme("Plot Sail Force/Moments", QIcon(":/icons/sailForceMoment.png")),
 					tr("&Plot Sail Force/Moments"), this)
-			) );
+	) );
 	QAction* plotSailForceMomentAction = actionVector_.back().get();
 	plotSailForceMomentAction->setStatusTip(tr("Plot Sail Force/Moments"));
-	pSailCoeffsMenu->addAction(plotSailForceMomentAction);
+	pSailCoeffsMenu_->addAction(plotSailForceMomentAction);
 	connect(plotSailForceMomentAction, &QAction::triggered, this, &MainWindow::plotSailForceMoments);
 
 	// --
@@ -235,7 +235,7 @@ void MainWindow::setupMenuBar() {
 			new QAction(
 					QIcon::fromTheme("Plot Total Resistance", QIcon(":/icons/totResistance.png")),
 					tr("&Total Resistance"), this)
-			) );
+	) );
 	QAction* plotTotResAction = actionVector_.back().get();
 	plotTotResAction->setStatusTip(tr("Plot Total Resistance"));
 	pResistanceMenu->addAction(plotTotResAction);
@@ -246,7 +246,7 @@ void MainWindow::setupMenuBar() {
 			new QAction(
 					QIcon::fromTheme("Plot Frictional Resistance", QIcon(":/icons/frictionalResistance.png")),
 					tr("&Frictional Resistance"), this)
-			) );
+	) );
 	QAction* plotFrictResAction = actionVector_.back().get();
 	plotFrictResAction->setStatusTip(tr("Plot Frictional Resistance"));
 	pResistanceMenu->addAction(plotFrictResAction);
@@ -257,7 +257,7 @@ void MainWindow::setupMenuBar() {
 			new QAction(
 					QIcon::fromTheme("Plot Delta Frictional Resistance due to Heel", QIcon(":/icons/DeltaFrictRes_Heel.png")),
 					tr("&Delta Frict. Res. Heel"), this)
-			) );
+	) );
 	QAction* plotDeltaFrictResHeelAction = actionVector_.back().get();
 	plotDeltaFrictResHeelAction->setStatusTip(tr("Plot Delta Frictional Resistance due to Heel"));
 	pResistanceMenu->addAction(plotDeltaFrictResHeelAction);
@@ -268,7 +268,7 @@ void MainWindow::setupMenuBar() {
 			new QAction(
 					QIcon::fromTheme("Plot Induced Resistance", QIcon(":/icons/inducedResistance.png")),
 					tr("&Induced Resistance"), this)
-			) );
+	) );
 	QAction* plotIndResAction = actionVector_.back().get();
 	plotIndResAction->setStatusTip(tr("Plot Induced Resistance"));
 	pResistanceMenu->addAction(plotIndResAction);
@@ -279,7 +279,7 @@ void MainWindow::setupMenuBar() {
 			new QAction(
 					QIcon::fromTheme("Plot Residuary Resistance", QIcon(":/icons/residuaryResistance.png")),
 					tr("&Residuary Resistance"), this)
-			) );
+	) );
 	QAction* plotResiduaryResAction = actionVector_.back().get();
 	plotResiduaryResAction->setStatusTip(tr("Plot Residuary Resistance"));
 	pResistanceMenu->addAction(plotResiduaryResAction);
@@ -290,7 +290,7 @@ void MainWindow::setupMenuBar() {
 			new QAction(
 					QIcon::fromTheme("Plot Negative Resistance", QIcon(":/icons/negativeResistance.png")),
 					tr("&Negative Resistance"), this)
-			) );
+	) );
 	QAction* plotNegativeResAction = actionVector_.back().get();
 	plotNegativeResAction->setStatusTip(tr("Plot Negative Resistance"));
 	pResistanceMenu->addAction(plotNegativeResAction);
@@ -665,10 +665,18 @@ void MainWindow::plotFrictionalResistance() {
 	// Instantiate an empty multiple plot widget
 	pFricitionalResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Frictional Resistance") );
 
-	// Ask the frictional resistance item to plot itself
-	pVppItems_->getFrictionalResistanceItem()->plot(pFricitionalResistancePlotWidget_.get());
-	pVppItems_->getViscousResistanceKeelItem()->plot(pFricitionalResistancePlotWidget_.get(),0,1);
-	pVppItems_->getViscousResistanceRudderItem()->plot(pFricitionalResistancePlotWidget_.get(),0,2);
+	// Add the plots generated by the items into the multiPlotWidget
+	pFricitionalResistancePlotWidget_->addChart(
+			pVppItems_->getFrictionalResistanceItem()->plot()[0],
+			0,0);
+
+	pFricitionalResistancePlotWidget_->addChart(
+			pVppItems_->getViscousResistanceKeelItem()->plot()[0],
+			0,1);
+
+	pFricitionalResistancePlotWidget_->addChart(
+			pVppItems_->getViscousResistanceRudderItem()->plot()[0],
+			0,2);
 
 	// Add the xy plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, pFricitionalResistancePlotWidget_.get() );
@@ -687,9 +695,7 @@ void MainWindow::plotDelta_FrictionalResistance_Heel() {
 	pLogWidget_->append("Plotting Delta Frictional Resistance due to Heel...");
 
 	// For which TWV, TWA shall we plot the residuary resistance?
-	WindIndicesDialog dg(
-			pVppItems_->getWind()->getWVSize(),
-			pVppItems_->getWind()->getWASize());
+	WindIndicesDialog dg(pVppItems_->getWind());
 	if (dg.exec() == QDialog::Rejected)
 		return;
 
@@ -697,10 +703,15 @@ void MainWindow::plotDelta_FrictionalResistance_Heel() {
 	p_dFrictRes_HeelPlotWidget_.reset( new MultiplePlotWidget(this,"Delta Frictional Resistance due to Heel") );
 
 	// Plot the change of wetted area due to heel - see DSYHS99 p 116
-	pVppItems_->getDelta_FrictionalResistance_HeelItem()->plot_deltaWettedArea_heel(p_dFrictRes_HeelPlotWidget_.get());
+	p_dFrictRes_HeelPlotWidget_->addChart(
+			pVppItems_->getDelta_FrictionalResistance_HeelItem()->plot_deltaWettedArea_heel()[0],
+			0,0);
 
-	// Ask the Delta Frictional Resistance due to Heel to plot itself
-	pVppItems_->getDelta_FrictionalResistance_HeelItem()->plot(p_dFrictRes_HeelPlotWidget_.get(), pVppItems_->getWind(), dg.getTWV(), dg.getTWA());
+	// Add the plot for the Delta Frictional Resistance due to Heel
+	p_dFrictRes_HeelPlotWidget_->addChart(
+			pVppItems_->getDelta_FrictionalResistance_HeelItem()->plot(&dg)[0],
+			1,0);
+
 	// Add the xy plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, p_dFrictRes_HeelPlotWidget_.get() );
 
@@ -715,13 +726,29 @@ void MainWindow::plotInducedResistance() {
 	if(!hasBoatDescription())
 		return;
 
+	// For which TWV, TWA shall we plot the residuary resistance?
+	WindIndicesDialog wd(pVppItems_->getWind());
+	if (wd.exec() == QDialog::Rejected)
+		return;
+
+	OptimVarsStateVectorDialog vd;
+	if( vd.exec() == QDialog::Rejected )
+		return;
+
 	pLogWidget_->append("Plotting Induced Resistance...");
 
 	// Instantiate an empty multiple plot widget
 	pInducedResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Induced Resistance") );
 
 	// Ask the frictional resistance item to plot itself
-	pVppItems_->getInducedResistanceItem()->plot(pInducedResistancePlotWidget_.get());
+	pInducedResistancePlotWidget_->addChart(
+			pVppItems_->getInducedResistanceItem()->plot(&wd,&vd)[0],
+			0,0);
+
+	// Ask the frictional resistance item to plot itself
+	pInducedResistancePlotWidget_->addChart(
+			pVppItems_->getInducedResistanceItem()->plot(&wd,&vd)[1],
+			0,1);
 
 	// Add the xy plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, pInducedResistancePlotWidget_.get() );
@@ -740,9 +767,7 @@ void MainWindow::plotResiduaryResistance() {
 	pLogWidget_->append("Plotting Residuary Resistance...");
 
 	// For which TWV, TWA shall we plot the residuary resistance?
-	WindIndicesDialog dg(
-			pVppItems_->getWind()->getWVSize(),
-			pVppItems_->getWind()->getWASize());
+	WindIndicesDialog dg(pVppItems_->getWind());
 	if (dg.exec() == QDialog::Rejected)
 		return;
 
@@ -754,20 +779,21 @@ void MainWindow::plotResiduaryResistance() {
 	pResiduaryResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Residuary Resistance") );
 
 	// Ask the Residuary resistance items of hull and keel to plot itself
-	pVppItems_->getResiduaryResistanceItem()->plot(pResiduaryResistancePlotWidget_.get(), dg.getTWV(), dg.getTWA());
-	pVppItems_->getResiduaryResistanceKeelItem()->plot(pResiduaryResistancePlotWidget_.get(),0,1);
+	pResiduaryResistancePlotWidget_->addChart(
+			pVppItems_->getResiduaryResistanceItem()->plot(&dg, &vd)[0],
+			0,0);
 
-	// --
+	pResiduaryResistancePlotWidget_->addChart(
+			pVppItems_->getResiduaryResistanceKeelItem()->plot(&dg, &vd)[0],
+			0,1);
 
-	// Ask the Residuary resistance items of hull and keel to plot itself
-	pVppItems_->getDelta_ResiduaryResistance_HeelItem()->plot(pResiduaryResistancePlotWidget_.get(), pVppItems_->getWind(),
-																														dg.getTWV(), dg.getTWA(),
-																														vd.getCrew(), vd.getFlat(),
-																														1, 0);
-	pVppItems_->getDelta_ResiduaryResistanceKeel_HeelItem()->plot(pResiduaryResistancePlotWidget_.get(), pVppItems_->getWind(),
-																																dg.getTWV(), dg.getTWA(),
-																																vd.getCrew(), vd.getFlat(),
-																																1, 1);
+	pResiduaryResistancePlotWidget_->addChart(
+			pVppItems_->getDelta_ResiduaryResistance_HeelItem()->plot(&dg, &vd)[0],
+			1,0);
+
+	pResiduaryResistancePlotWidget_->addChart(
+			pVppItems_->getDelta_ResiduaryResistanceKeel_HeelItem()->plot(&dg, &vd)[0],
+			1,1);
 
 	// Add the xy plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, pResiduaryResistancePlotWidget_.get() );
@@ -791,7 +817,9 @@ void MainWindow::plotNegativeResistance() {
 	pNegativeResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Negative Resistance") );
 
 	// Ask the frictional resistance item to plot itself
-	pVppItems_->getNegativeResistanceItem()->plot(pNegativeResistancePlotWidget_.get());
+	pNegativeResistancePlotWidget_->addChart(
+			pVppItems_->getNegativeResistanceItem()->plot()[0],
+			0,0);
 
 	// Add the xy plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, pNegativeResistancePlotWidget_.get() );
@@ -847,8 +875,8 @@ void MainWindow::actionTriggered(QAction *action) {
 	qDebug("action '%s' triggered", action->text().toLocal8Bit().data());
 }
 
-void MainWindow::setupToolBar()
-{
+void MainWindow::setupToolBar() {
+
 #ifdef Q_OS_OSX
 	setUnifiedTitleAndToolBarOnMac(true);
 #endif

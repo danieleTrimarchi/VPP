@@ -121,8 +121,9 @@ OptimVarsStateVectorDialog::OptimVarsStateVectorDialog(QWidget* parent /*=Q_NULL
 //====================================================
 
 
-WindIndicesDialog::WindIndicesDialog(const int ntwv, const int ntwa,QWidget* parent)
+WindIndicesDialog::WindIndicesDialog(WindItem* pWind, QWidget* parent)
     : QDialog(parent),
+			pWind_(pWind),
 			pTWV_Edit_(new QLineEdit(this)),
 			pTWA_Edit_(new QLineEdit(this))	{
 
@@ -135,11 +136,11 @@ WindIndicesDialog::WindIndicesDialog(const int ntwv, const int ntwa,QWidget* par
     localSettings.setNumberOptions(QLocale::RejectGroupSeparator | QLocale::OmitGroupSeparator);
 
     // Set all the line edit with double validators
-    QIntValidator* twvValueValidator= new QIntValidator(0, ntwv, pTWV_Edit_.get() );
+    QIntValidator* twvValueValidator= new QIntValidator(0, pWind->getWVSize(), pTWV_Edit_.get() );
     twvValueValidator->setLocale(localSettings);
     pTWV_Edit_->setValidator(twvValueValidator);
 
-    QIntValidator* twaValueValidator= new QIntValidator(0, ntwa, pTWA_Edit_.get() );
+    QIntValidator* twaValueValidator= new QIntValidator(0, pWind->getWASize(), pTWA_Edit_.get() );
     twaValueValidator->setLocale(localSettings);
     pTWA_Edit_->setValidator(twaValueValidator);
 
@@ -163,3 +164,10 @@ int WindIndicesDialog::getTWV() const {
 int WindIndicesDialog::getTWA() const {
 	return pTWA_Edit_->text().toInt();
 }
+
+// Return a ptr to the wind
+WindItem* WindIndicesDialog::getWind() const {
+	return pWind_;
+}
+
+
