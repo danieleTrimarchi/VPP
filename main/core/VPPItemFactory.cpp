@@ -272,18 +272,10 @@ Eigen::VectorXd VPPItemFactory::getResiduals() {
 }
 
 // Plot the total resistance over a fixed range Fn=0-1
-void VPPItemFactory::plotTotalResistance(MultiplePlotWidget* multiPlotWidget) {
+std::vector<VppXYCustomPlotWidget*> VPPItemFactory::plotTotalResistance(WindIndicesDialog* wd, StateVectorDialog* sd) {
 
-	// For which TWV, TWA shall we plot the aero forces/moments?
-	WindIndicesDialog wdg(pWind_.get());
-	if (wdg.exec() == QDialog::Rejected)
-		return;
 
-	OptimVarsStateVectorDialog sdg;
-	if (sdg.exec() == QDialog::Rejected)
-		return;
-
-	Eigen::VectorXd stateVector= sdg.getStateVector();
+	Eigen::VectorXd stateVector= sd->getStateVector();
 
 	// Define the number of velocities and angles
 	// ( the angles are incremented of 10!)
@@ -311,7 +303,7 @@ void VPPItemFactory::plotTotalResistance(MultiplePlotWidget* multiPlotWidget) {
 			stateVector(0)= ( -0.1 + ( 1./nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
-			update(wdg.getTWV(),wdg.getTWA(),stateVector);
+			update(wd->getTWV(),wd->getTWA(),stateVector);
 
 			// Fill the vectors to be plot
 			fn.push_back( stateVector(0)/sqrt(Physic::g * pParser_->get("LWL") ) );
@@ -331,8 +323,8 @@ void VPPItemFactory::plotTotalResistance(MultiplePlotWidget* multiPlotWidget) {
 	char msg[256];
 	sprintf(msg,"TOTAL Resistance vs boat speed for different heeling angles - "
 			"twv=%2.2f [m/s], twa=%2.2fº",
-			pAeroForcesItem_->getWindItem()->getTWV(wdg.getTWV()),
-			mathUtils::toDeg(pAeroForcesItem_->getWindItem()->getTWA(wdg.getTWA())) );
+			pAeroForcesItem_->getWindItem()->getTWV(wd->getTWV()),
+			mathUtils::toDeg(pWind_->getTWA(wd->getTWA())) );
 
 	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
 	// then the ownership will be assigned to the multiPlotWidget when adding the chart
@@ -340,8 +332,8 @@ void VPPItemFactory::plotTotalResistance(MultiplePlotWidget* multiPlotWidget) {
 	for(size_t i=0; i<fN.size(); i++)
 		pTotResPlot->addData(fN[i],totRes[i],curveLabels[i]);
 	pTotResPlot->rescaleAxes();
-	multiPlotWidget->addChart(pTotResPlot,0,0);
 
+	return std::vector<VppXYCustomPlotWidget*>(1,pTotResPlot);
 }
 
 // Make a 3d plot of the optimization variables v, phi when varying the two opt

@@ -173,9 +173,6 @@ void MainWindow::setupMenuBar() {
 	pToolBar_->addAction(plotPolarsAction);
 
 	// Add a menu in the toolbar. This is used to group plot coeffs, and their derivatives
-	// ==== WARNING !!! ===================================================================
-	// Try to define this guy as a class member and see the app crashing on construction...
-	// This ONLY happens for the optimized build. Will building profile in xCode help?
 	pSailCoeffsMenu_.reset( new QMenu("Plot Sail Related Quantities", this) );
 	pSailCoeffsMenu_->setIcon( QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png")) );
 	pToolBar_->addAction(pSailCoeffsMenu_->menuAction());
@@ -226,6 +223,9 @@ void MainWindow::setupMenuBar() {
 
 	// --
 
+	// ---------------------------------------
+	// --- WARNING : for some reason this cannot be defined as member shared ptr, the program crashes..?? ---
+	// ---------------------------------------
 	QMenu* pResistanceMenu = new QMenu("Plot Resistance", this);
 	pResistanceMenu->setIcon( QIcon::fromTheme("Plot Resistance", QIcon(":/icons/resistanceComponent.png")) );
 	pToolBar_->addAction(pResistanceMenu->menuAction());
@@ -640,11 +640,22 @@ void MainWindow::plotTotalResistance() {
 
 	pLogWidget_->append("Plotting Total Resistance...");
 
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	WindIndicesDialog wd(pVppItems_->getWind());
+	if (wd.exec() == QDialog::Rejected)
+		return;
+
+	OptimVarsStateVectorDialog sd;
+	if (sd.exec() == QDialog::Rejected)
+		return;
+
 	// Instantiate an empty multiple plot widget
 	pTotResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Total Resistance") );
 
 	// Ask the forces/moments to plot themself
-	pVppItems_->plotTotalResistance(pTotResistancePlotWidget_.get());
+	pTotResistancePlotWidget_->addChart(
+			pVppItems_->plotTotalResistance(&wd,&sd)[0],
+			0,0);
 
 	// Add the xy plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, pTotResistancePlotWidget_.get() );

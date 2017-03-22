@@ -93,7 +93,7 @@ class VPPItemFactory {
 		Eigen::VectorXd getResiduals();
 
 		/// Plot the total resistance over a fixed range Fn=0-1
-		void plotTotalResistance(MultiplePlotWidget* multiPlotWidget);
+		std::vector<VppXYCustomPlotWidget*> plotTotalResistance(WindIndicesDialog*, StateVectorDialog*);
 
 		/// Make a 3d plot of the optimization variables v, phi when varying the two opt
 		/// parameters flat and crew
