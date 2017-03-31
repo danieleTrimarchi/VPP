@@ -20,6 +20,9 @@ public:
 	/// the data to plot
 	SurfaceGraph* getSurfaceGraph();
 
+	/// Add a surface chart to this ThreeDPlotWidget
+	void addChart( QSurfaceDataArray* );
+
 private:
 
 	/// Underlying surfaceGraph, trough which we will

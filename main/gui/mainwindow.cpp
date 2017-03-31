@@ -875,8 +875,9 @@ void MainWindow::plotOptimizationSpace() {
 	// This widget is to be assigned to a dockable widget
 	p3dPlotWidget_.reset(new ThreeDPlotWidget(this) );
 
-	// externally plot - it should not change a thing
-	p3dPlotWidget_->getSurfaceGraph()->enableSqrtSinModel(true);
+	p3dPlotWidget_->addChart(
+			pVppItems_->plotOptimizationSpace(wd,sd)
+	);
 
 	// Add the 3d plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, p3dPlotWidget_.get());

@@ -395,3 +395,36 @@ void VPPItemFactory::plotOptimizationSpace() {
 
 }
 
+// Make a 3d plot of the optimization variables v, phi when varying the two opt
+// parameters flat and crew. Qt 3d surface plot
+QSurfaceDataArray* VPPItemFactory::plotOptimizationSpace(WindIndicesDialog&, OptimVarsStateVectorDialog&) {
+
+	const float sampleMin = -8.0f;
+  const float sampleMax =  8.0f;
+  const int sampleCountX = 50;
+  const int sampleCountZ = 50;
+
+  float stepX = (sampleMax - sampleMin) / float(sampleCountX - 1);
+  float stepZ = (sampleMax - sampleMin) / float(sampleCountZ - 1);
+
+  QSurfaceDataArray *dataArray = new QSurfaceDataArray;
+
+  dataArray->reserve(sampleCountZ);
+  for (int i = 0 ; i < sampleCountZ ; i++) {
+      QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountX);
+      // Keep values within range bounds, since just adding step can cause minor drift due
+      // to the rounding errors.
+      float z = qMin(sampleMax, (i * stepZ + sampleMin));
+      int index = 0;
+      for (int j = 0; j < sampleCountX; j++) {
+          float x = qMin(sampleMax, (j * stepX + sampleMin));
+          float R = qSqrt(z * z + x * x) + 0.01f;
+          float y = (qSin(R) / R + 0.24f) * 1.61f;
+          (*newRow)[index++].setPosition(QVector3D(x, y, z));
+      }
+      *dataArray << newRow;
+  }
+
+  return dataArray;
+}
+

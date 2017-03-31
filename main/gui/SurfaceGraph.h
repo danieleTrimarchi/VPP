@@ -45,7 +45,7 @@
       explicit SurfaceGraph(Q3DSurface *surface);
       ~SurfaceGraph();
 
-      void enableSqrtSinModel(bool enable);
+      void enableDataModel(bool enable);
 
       void toggleModeNone();
       void toggleModeItem();
@@ -64,6 +64,9 @@
       void adjustXMax(int max);
       void adjustZMin(int min);
       void adjustZMax(int max);
+
+      /// Accept data from the outer world
+      void fillData( QSurfaceDataArray* pData );
 
   public Q_SLOTS:
       void changeTheme(int theme);

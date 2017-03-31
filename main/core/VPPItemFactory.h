@@ -6,6 +6,9 @@
 #include "VPPAeroItem.h"
 #include "VPPHydroItem.h"
 #include "VPPRightingMomentItem.h"
+#include "VPPDialogs.h"
+#include <QtDataVisualization/QSurfaceDataProxy>
+using namespace QtDataVisualization;
 
 /// Factory class used to instantiate and own all
 /// of the VPPItems requested to compute the VPP run
@@ -98,6 +101,10 @@ class VPPItemFactory {
 		/// Make a 3d plot of the optimization variables v, phi when varying the two opt
 		/// parameters flat and crew
 		void plotOptimizationSpace();
+
+		/// Make a 3d plot of the optimization variables v, phi when varying the two opt
+		/// parameters flat and crew. Qt 3d surface plot
+		QSurfaceDataArray* plotOptimizationSpace(WindIndicesDialog&, OptimVarsStateVectorDialog&);
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
