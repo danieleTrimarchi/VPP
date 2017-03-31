@@ -305,7 +305,7 @@ void MainWindow::setupMenuBar() {
 	) );
 	QAction* plot3dAction = actionVector_.back().get();
 	plot3dAction->setStatusTip(tr("Plot 3d"));
-	connect(plot3dAction, &QAction::triggered, this, &MainWindow::threedPlot);
+	connect(plot3dAction, &QAction::triggered, this, &MainWindow::plotOptimizationSpace);
 	pToolBar_->addAction(plot3dAction);
 
 	// ---
@@ -856,12 +856,27 @@ void MainWindow::testQCustomPlot() {
 }
 
 // Add a 3dPlot widget
-void MainWindow::threedPlot() {
+void MainWindow::plotOptimizationSpace() {
 
-	pLogWidget_->append("Adding a 3d plot window...");
+	if(!hasBoatDescription())
+		return;
+
+	pLogWidget_->append("Plotting the optimization space...");
+
+	// For which TWV, TWA shall we plot the aero forces/moments?
+	WindIndicesDialog wd(pVppItems_->getWind());
+	if (wd.exec() == QDialog::Rejected)
+		return;
+
+	OptimVarsStateVectorDialog sd;
+	if (sd.exec() == QDialog::Rejected)
+		return;
 
 	// This widget is to be assigned to a dockable widget
 	p3dPlotWidget_.reset(new ThreeDPlotWidget(this) );
+
+	// externally plot - it should not change a thing
+	p3dPlotWidget_->getSurfaceGraph()->enableSqrtSinModel(true);
 
 	// Add the 3d plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, p3dPlotWidget_.get());

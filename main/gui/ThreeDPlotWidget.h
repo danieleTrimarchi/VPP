@@ -2,6 +2,7 @@
 #define THREEDPLOTWIDGET_H
 
 #include "VppTabDockWidget.h"
+#include "Surfacegraph.h"
 
 class ThreeDPlotWidget : public VppTabDockWidget {
 
@@ -15,7 +16,15 @@ public:
 	/// Dtor
 	virtual ~ThreeDPlotWidget();
 
+	/// Get the underlying surfaceGraph, trough which we will be adding
+	/// the data to plot
+	SurfaceGraph* getSurfaceGraph();
+
 private:
+
+	/// Underlying surfaceGraph, trough which we will
+	/// be adding the data to plot
+	SurfaceGraph* modifier_;
 
 	// Size of the font for the text of this plot
 	qreal fontSize_;

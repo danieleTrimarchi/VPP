@@ -12,7 +12,6 @@
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QPainter>
 #include <QtGui/QScreen>
-#include "surfacegraph.h"
 
 using namespace QtDataVisualization;
 
@@ -56,7 +55,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	//container->setFocusPolicy(Qt::StrongFocus);
 
 	// Create a widget and set its title
-	QWidget *widget = new QWidget;
+	QWidget* widget = new QWidget;
 	widget->setWindowTitle(QStringLiteral("Surface example"));
 
 	// Assign the widget to the current dockable widget
@@ -244,7 +243,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 
 	// Instantiate a surfaceGraph on top of the Q3DSurface. The surfaceGraph defines the
 	// actual surface to plot
-	SurfaceGraph* modifier = new SurfaceGraph(p3dSurface);
+	modifier_ = new SurfaceGraph(p3dSurface);
 
 	// Simply set the 3d surface
 //	// Connect the actions with relevant methods of the surfaceGraph
@@ -254,43 +253,47 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 //			modifier, &SurfaceGraph::enableSqrtSinModel);
 
 	QObject::connect(pModeNoSelection, &QRadioButton::toggled,
-			modifier, &SurfaceGraph::toggleModeNone);
+			modifier_, &SurfaceGraph::toggleModeNone);
 	QObject::connect(pModeItemSelection,  &QRadioButton::toggled,
-			modifier, &SurfaceGraph::toggleModeItem);
+			modifier_, &SurfaceGraph::toggleModeItem);
 	QObject::connect(pModeSliceRowSelection,  &QRadioButton::toggled,
-			modifier, &SurfaceGraph::toggleModeSliceRow);
+			modifier_, &SurfaceGraph::toggleModeSliceRow);
 	QObject::connect(pModeSliceColumnSelection,  &QRadioButton::toggled,
-			modifier, &SurfaceGraph::toggleModeSliceColumn);
+			modifier_, &SurfaceGraph::toggleModeSliceColumn);
 	QObject::connect(axisMinSliderX, &QSlider::valueChanged,
-			modifier, &SurfaceGraph::adjustXMin);
+			modifier_, &SurfaceGraph::adjustXMin);
 	QObject::connect(axisMaxSliderX, &QSlider::valueChanged,
-			modifier, &SurfaceGraph::adjustXMax);
+			modifier_, &SurfaceGraph::adjustXMax);
 	QObject::connect(axisMinSliderZ, &QSlider::valueChanged,
-			modifier, &SurfaceGraph::adjustZMin);
+			modifier_, &SurfaceGraph::adjustZMin);
 	QObject::connect(axisMaxSliderZ, &QSlider::valueChanged,
-			modifier, &SurfaceGraph::adjustZMax);
+			modifier_, &SurfaceGraph::adjustZMax);
 	QObject::connect(themeList, SIGNAL(currentIndexChanged(int)),
-			modifier, SLOT(changeTheme(int)));
+			modifier_, SLOT(changeTheme(int)));
 	QObject::connect(gradientBtoYPB, &QPushButton::pressed,
-			modifier, &SurfaceGraph::setBlackToYellowGradient);
+			modifier_, &SurfaceGraph::setBlackToYellowGradient);
 	QObject::connect(gradientGtoRPB, &QPushButton::pressed,
-			modifier, &SurfaceGraph::setGreenToRedGradient);
+			modifier_, &SurfaceGraph::setGreenToRedGradient);
 
-	modifier->setAxisMinSliderX(axisMinSliderX);
-	modifier->setAxisMaxSliderX(axisMaxSliderX);
-	modifier->setAxisMinSliderZ(axisMinSliderZ);
-	modifier->setAxisMaxSliderZ(axisMaxSliderZ);
+	modifier_->setAxisMinSliderX(axisMinSliderX);
+	modifier_->setAxisMaxSliderX(axisMaxSliderX);
+	modifier_->setAxisMinSliderZ(axisMinSliderZ);
+	modifier_->setAxisMaxSliderZ(axisMaxSliderZ);
 
 //	sqrtSinModelRB->setChecked(true);
 	pModeItemSelection->setChecked(true);
 	themeList->setCurrentIndex(2);
 
-    modifier->enableSqrtSinModel(true);
-
 }
-
 
 // Dtor
 ThreeDPlotWidget::~ThreeDPlotWidget() {
 
 }
+
+// Get the underlying surfaceGraph, trough which we will be adding
+// the data to plot
+SurfaceGraph* ThreeDPlotWidget::getSurfaceGraph() {
+	return modifier_;
+}
+

@@ -108,7 +108,7 @@ public slots:
 	void testQCustomPlot();
 
 	/// Add a 3dPlot widget
-	void threedPlot();
+	void plotOptimizationSpace();
 
 	/// print out the software info
 	void about();
@@ -163,7 +163,7 @@ private:
 																				pNegativeResistancePlotWidget_;
 
 	/// Three dimensional plot widget
-	boost::shared_ptr<VppTabDockWidget> p3dPlotWidget_;
+	boost::shared_ptr<ThreeDPlotWidget> p3dPlotWidget_;
 
 	/// Variable Widget
 	boost::shared_ptr<VariablesDockWidget> pVariablesWidget_;
