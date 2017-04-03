@@ -59,7 +59,7 @@ void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
 	int sampleCountX = data.get()->size();
 	int sampleCountZ = data.get()->at(0)->size();
 
-	m_axisMinSliderX->setMaximum( - 2);
+	m_axisMinSliderX->setMaximum( sampleCountX - 2);
 	m_axisMinSliderX->setValue(0);
 	m_axisMaxSliderX->setMaximum(sampleCountX - 1);
 	m_axisMaxSliderX->setValue(sampleCountX - 1);

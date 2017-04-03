@@ -495,6 +495,8 @@ ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog&, Op
 
   QSurfaceDataArray *dataArray = new QSurfaceDataArray;
 
+  double yMin=1E20, yMax=-1E20;
+
   dataArray->reserve(sampleCountZ);
   for (int i = 0 ; i < sampleCountZ ; i++) {
       QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountX);
@@ -507,6 +509,10 @@ ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog&, Op
           float R = qSqrt(z * z + x * x) + 0.01f;
           float y = (qSin(R) / R + 0.24f) * 1.61f;
           (*newRow)[index++].setPosition(QVector3D(x, y, z));
+
+          if(y<yMin) yMin = y;
+          if(y>yMax) yMax = y;
+
       }
       *dataArray << newRow;
   }
@@ -519,6 +525,8 @@ ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog&, Op
 
   tdc.setZrange(sampleMin,sampleMax);
   tdc.setDz(dz);
+
+  tdc.setYrange(yMin,yMax);
 
   return tdc;
 }
