@@ -17,11 +17,11 @@ using namespace QtDataVisualization;
 
 // Explicit Constructor
 ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFlags flags/*=0*/) :
-		VppTabDockWidget(parent, flags),
-			fontSize_(8){
+				VppTabDockWidget(parent, flags),
+				fontSize_(8){
 
-    setObjectName("3D plot");
-    setWindowTitle("3D plot");
+	setObjectName("3D plot");
+	setWindowTitle("3D plot");
 
 	// The Q3DSurface provides methods for rendering 3d surface plots
 	// it supports rotations and zooming
@@ -78,17 +78,17 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	QGroupBox* pSelectionModeGroupBox = new QGroupBox(QStringLiteral("Selection Mode"));
 
 	// Set the font
-    QFont font = pSelectionModeGroupBox->font();
-    font.setPointSizeF(fontSize_);
-    pSelectionModeGroupBox->setFont(font);
+	QFont font = pSelectionModeGroupBox->font();
+	font.setPointSizeF(fontSize_);
+	pSelectionModeGroupBox->setFont(font);
 
 	// Define radio button...
 	QRadioButton* pModeNoSelection = new QRadioButton(widget);
 	pModeNoSelection->setText(QStringLiteral("No selection"));
 	pModeNoSelection->setChecked(false);
 	font = pModeNoSelection->font();
-    font.setPointSizeF(fontSize_);
-    pModeNoSelection->setFont(font);
+	font.setPointSizeF(fontSize_);
+	pModeNoSelection->setFont(font);
 
 
 	// Define radio button...
@@ -96,16 +96,16 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	pModeItemSelection->setText(QStringLiteral("Item"));
 	pModeItemSelection->setChecked(false);
 	font = pModeItemSelection->font();
-    font.setPointSizeF(fontSize_);
-    pModeItemSelection->setFont(font);
+	font.setPointSizeF(fontSize_);
+	pModeItemSelection->setFont(font);
 
 	// Define radio button...
 	QRadioButton* pModeSliceRowSelection = new QRadioButton(widget);
 	pModeSliceRowSelection->setText(QStringLiteral("Row Slice"));
 	pModeSliceRowSelection->setChecked(false);
 	font = pModeSliceRowSelection->font();
-    font.setPointSizeF(fontSize_);
-    pModeSliceRowSelection->setFont(font);
+	font.setPointSizeF(fontSize_);
+	pModeSliceRowSelection->setFont(font);
 
 
 	// Define radio button...
@@ -113,8 +113,8 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	pModeSliceColumnSelection->setText(QStringLiteral("Column Slice"));
 	pModeSliceColumnSelection->setChecked(false);
 	font = pModeSliceColumnSelection->font();
-    font.setPointSizeF(fontSize_);
-    pModeSliceColumnSelection->setFont(font);
+	font.setPointSizeF(fontSize_);
+	pModeSliceColumnSelection->setFont(font);
 
 
 	// Define a vertical layout and assign to the radio button container
@@ -157,14 +157,14 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	themeList->addItem(QStringLiteral("Ebony"));
 	themeList->addItem(QStringLiteral("Isabelle"));
 	font = themeList->font();
-    font.setPointSizeF(fontSize_);
-    themeList->setFont(font);
+	font.setPointSizeF(fontSize_);
+	themeList->setFont(font);
 
 	// Finally define a container for the color-maps to be applied to the 3d surface
 	QGroupBox* colorGroupBox = new QGroupBox(QStringLiteral("Custom gradient"));
 	font = colorGroupBox->font();
-    font.setPointSizeF(fontSize_);
-    colorGroupBox->setFont(font);
+	font.setPointSizeF(fontSize_);
+	colorGroupBox->setFont(font);
 
 	// Define a color gradient and assign it to a button.
 	QLinearGradient grBtoY(0, 0, 1, 100);
@@ -212,8 +212,8 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 
 	QWidget* pColRangeWidget= new QLabel(QStringLiteral("Column range"));
 	font = pColRangeWidget->font();
-    font.setPointSizeF(fontSize_);
-    pColRangeWidget->setFont(font);
+	font.setPointSizeF(fontSize_);
+	pColRangeWidget->setFont(font);
 	vLayout->addWidget(pColRangeWidget);
 
 	vLayout->addWidget(axisMinSliderX);
@@ -221,8 +221,8 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 
 	QWidget* pRowRangeWidget= new QLabel(QStringLiteral("Row range"));
 	font = pRowRangeWidget->font();
-    font.setPointSizeF(fontSize_);
-    pRowRangeWidget->setFont(font);
+	font.setPointSizeF(fontSize_);
+	pRowRangeWidget->setFont(font);
 	vLayout->addWidget(pRowRangeWidget);
 
 	vLayout->addWidget(axisMinSliderZ);
@@ -230,8 +230,8 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 
 	QWidget* pThemeWidget= new QLabel(QStringLiteral("Theme"));
 	font = pThemeWidget->font();
-    font.setPointSizeF(fontSize_);
-    pThemeWidget->setFont(font);
+	font.setPointSizeF(fontSize_);
+	pThemeWidget->setFont(font);
 	vLayout->addWidget(pThemeWidget);
 
 	vLayout->addWidget(themeList);
@@ -246,11 +246,11 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	modifier_ = new SurfaceGraph(p3dSurface);
 
 	// Simply set the 3d surface
-//	// Connect the actions with relevant methods of the surfaceGraph
-//	QObject::connect(heightMapModelRB, &QRadioButton::toggled,
-//			modifier, &SurfaceGraph::enableHeightMapModel);
-//	QObject::connect(sqrtSinModelRB, &QRadioButton::toggled,
-//			modifier, &SurfaceGraph::enableSqrtSinModel);
+	//	// Connect the actions with relevant methods of the surfaceGraph
+	//	QObject::connect(heightMapModelRB, &QRadioButton::toggled,
+	//			modifier, &SurfaceGraph::enableHeightMapModel);
+	//	QObject::connect(sqrtSinModelRB, &QRadioButton::toggled,
+	//			modifier, &SurfaceGraph::enableSqrtSinModel);
 
 	QObject::connect(pModeNoSelection, &QRadioButton::toggled,
 			modifier_, &SurfaceGraph::toggleModeNone);
@@ -280,7 +280,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	modifier_->setAxisMinSliderZ(axisMinSliderZ);
 	modifier_->setAxisMaxSliderZ(axisMaxSliderZ);
 
-//	sqrtSinModelRB->setChecked(true);
+	//	sqrtSinModelRB->setChecked(true);
 	pModeItemSelection->setChecked(true);
 	themeList->setCurrentIndex(2);
 
