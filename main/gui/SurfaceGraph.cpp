@@ -1,32 +1,3 @@
-/****************************************************************************
- **
- ** Copyright (C) 2016 The Qt Company Ltd.
- ** Contact: https://www.qt.io/licensing/
- **
- ** This file is part of the Qt Data Visualization module of the Qt Toolkit.
- **
- ** $QT_BEGIN_LICENSE:GPL$
- ** Commercial License Usage
- ** Licensees holding valid commercial Qt licenses may use this file in
- ** accordance with the commercial license agreement provided with the
- ** Software or, alternatively, in accordance with the terms contained in
- ** a written agreement between you and The Qt Company. For licensing terms
- ** and conditions see https://www.qt.io/terms-conditions. For further
- ** information use the contact form at https://www.qt.io/contact-us.
- **
- ** GNU General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU
- ** General Public License version 3 or (at your option) any later version
- ** approved by the KDE Free Qt Foundation. The licenses are as published by
- ** the Free Software Foundation and appearing in the file LICENSE.GPL3
- ** included in the packaging of this file. Please review the following
- ** information to ensure the GNU General Public License requirements will
- ** be met: https://www.gnu.org/licenses/gpl-3.0.html.
- **
- ** $QT_END_LICENSE$
- **
- ****************************************************************************/
-
 #include "surfacegraph.h"
 
 #include <QtDataVisualization/QValue3DAxis>
@@ -36,16 +7,17 @@
 
 using namespace QtDataVisualization;
 
-const int sampleCountX = 50;
-const int sampleCountZ = 50;
-const int heightMapGridStepX = 6;
-const int heightMapGridStepZ = 6;
-const float sampleMin = -8.0f;
-const float sampleMax = 8.0f;
+SurfaceGraph::SurfaceGraph(Q3DSurface *surface):
+		m_graph(surface),
+		m_rangeMinX(0),
+		m_rangeMinZ(0),
+		m_stepX(0),
+		m_stepZ(0),
+		m_axisMinSliderX(0),
+		m_axisMaxSliderX(0),
+		m_axisMinSliderZ(0),
+		m_axisMaxSliderZ(0) {
 
-SurfaceGraph::SurfaceGraph(Q3DSurface *surface)
-: m_graph(surface)
-{
 	m_graph->setAxisX(new QValue3DAxis);
 	m_graph->setAxisY(new QValue3DAxis);
 	m_graph->setAxisZ(new QValue3DAxis);
@@ -59,41 +31,42 @@ SurfaceGraph::~SurfaceGraph()
 	delete m_graph;
 }
 
-void SurfaceGraph::fillData( QSurfaceDataArray* pData ) {
-	m_sqrtSinProxy->resetArray(pData);
-}
+void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
 
-void SurfaceGraph::enableDataModel(bool enable)
-{
-	if (enable) {
-		m_sqrtSinSeries->setDrawMode(QSurface3DSeries::DrawSurfaceAndWireframe);
-		m_sqrtSinSeries->setFlatShadingEnabled(true);
+	// Assign the data to the proxy
+	m_sqrtSinProxy->resetArray(data.get());
 
-		m_graph->axisX()->setLabelFormat("%.2f");
-		m_graph->axisZ()->setLabelFormat("%.2f");
-		m_graph->axisX()->setRange(sampleMin, sampleMax);
-		m_graph->axisY()->setRange(0.0f, 2.0f);
-		m_graph->axisZ()->setRange(sampleMin, sampleMax);
-		m_graph->axisX()->setLabelAutoRotation(30);
-		m_graph->axisY()->setLabelAutoRotation(90);
-		m_graph->axisZ()->setLabelAutoRotation(30);
+	m_sqrtSinSeries->setDrawMode(QSurface3DSeries::DrawSurfaceAndWireframe);
+	m_sqrtSinSeries->setFlatShadingEnabled(true);
 
-		m_graph->addSeries(m_sqrtSinSeries);
+	m_graph->axisX()->setLabelFormat("%.2f");
+	m_graph->axisZ()->setLabelFormat("%.2f");
+	m_graph->axisX()->setRange(data.getXRange()(0), data.getXRange()(1));
+	m_graph->axisZ()->setRange(data.getZRange()(0), data.getZRange()(1));
+	m_graph->axisY()->setRange(data.getYRange()(0), data.getYRange()(1));
+	m_graph->axisX()->setLabelAutoRotation(30);
+	m_graph->axisY()->setLabelAutoRotation(90);
+	m_graph->axisZ()->setLabelAutoRotation(30);
 
-		// Reset range sliders for Sqrt&Sin
-		m_rangeMinX = sampleMin;
-		m_rangeMinZ = sampleMin;
-		m_stepX = (sampleMax - sampleMin) / float(sampleCountX - 1);
-		m_stepZ = (sampleMax - sampleMin) / float(sampleCountZ - 1);
-		m_axisMinSliderX->setMaximum(sampleCountX - 2);
-		m_axisMinSliderX->setValue(0);
-		m_axisMaxSliderX->setMaximum(sampleCountX - 1);
-		m_axisMaxSliderX->setValue(sampleCountX - 1);
-		m_axisMinSliderZ->setMaximum(sampleCountZ - 2);
-		m_axisMinSliderZ->setValue(0);
-		m_axisMaxSliderZ->setMaximum(sampleCountZ - 1);
-		m_axisMaxSliderZ->setValue(sampleCountZ - 1);
-	}
+	m_graph->addSeries(m_sqrtSinSeries);
+
+	// Reset range sliders for Sqrt&Sin
+	m_rangeMinX = data.getXRange()(0);
+	m_rangeMinZ = data.getZRange()(0);
+	m_stepX = data.getDx();
+	m_stepZ = data.getDz();
+
+	int sampleCountX = data.get()->size();
+	int sampleCountZ = data.get()->at(0)->size();
+
+	m_axisMinSliderX->setMaximum( - 2);
+	m_axisMinSliderX->setValue(0);
+	m_axisMaxSliderX->setMaximum(sampleCountX - 1);
+	m_axisMaxSliderX->setValue(sampleCountX - 1);
+	m_axisMinSliderZ->setMaximum(sampleCountZ - 2);
+	m_axisMinSliderZ->setValue(0);
+	m_axisMaxSliderZ->setMaximum(sampleCountZ - 1);
+	m_axisMaxSliderZ->setValue(sampleCountZ - 1);
 }
 
 void SurfaceGraph::toggleModeNone() {

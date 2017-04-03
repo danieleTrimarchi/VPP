@@ -298,9 +298,8 @@ SurfaceGraph* ThreeDPlotWidget::getSurfaceGraph() {
 }
 
 // Add a surface chart to this ThreeDPlotWidget
-void ThreeDPlotWidget::addChart( QSurfaceDataArray* pData ) {
-	getSurfaceGraph()->fillData(pData);
-	getSurfaceGraph()->enableDataModel(true);
+void ThreeDPlotWidget::addChart( ThreeDDataContainer data ) {
+	getSurfaceGraph()->fillData(data);
 }
 
 

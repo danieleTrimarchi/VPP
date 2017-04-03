@@ -9,6 +9,92 @@
 #include "VppXYCustomPlotWidget.h"
 #include "MultiplePlotWidget.h"
 
+// Explicit Ctor
+ThreeDDataContainer::ThreeDDataContainer(QSurfaceDataArray* pSufDataArray) :
+	pSurfaceDataArray_(pSufDataArray),
+	xStep_(0),
+	zStep_(0) {
+}
+
+// Get the underlying QSurfaceDataArray*
+QSurfaceDataArray* ThreeDDataContainer::get() const {
+	return pSurfaceDataArray_;
+}
+
+// Get the xRange
+Eigen::Array2d ThreeDDataContainer::getXRange() const {
+	return xRange_;
+}
+
+// Get the yRange
+Eigen::Array2d ThreeDDataContainer::getYRange() const {
+	return yRange_;
+}
+
+// Get the zRange
+Eigen::Array2d ThreeDDataContainer::getZRange() const {
+	return zRange_;
+}
+
+// Set the x step
+double ThreeDDataContainer::getDx() const {
+	return xStep_;
+}
+
+// Set the z step
+double ThreeDDataContainer::getDz() const {
+	return zStep_;
+}
+
+// Set the xRange
+void ThreeDDataContainer::setXrange(double xMin, double xMax){
+	xRange_(0)= xMin;
+	xRange_(1)= xMax;
+}
+
+// Set the yRange
+void ThreeDDataContainer::setYrange(double yMin, double yMax){
+	yRange_(0)= yMin;
+	yRange_(1)= yMax;
+}
+
+// Set the zRange
+void ThreeDDataContainer::setZrange(double zMin, double zMax){
+	zRange_(0)= zMin;
+	zRange_(1)= zMax;
+}
+
+// Set the x step
+void ThreeDDataContainer::setDx(double dx) {
+	xStep_= dx;
+}
+
+// Set the y step
+void ThreeDDataContainer::setDz(double dz) {
+	zStep_= dz;
+}
+
+
+// Assignment operator
+ThreeDDataContainer& ThreeDDataContainer::operator=(const ThreeDDataContainer& rhs) {
+
+	// Assign the underlying data array
+	pSurfaceDataArray_= rhs.pSurfaceDataArray_;
+
+	// Assign the ranges
+	xRange_= rhs.xRange_;
+  zRange_= rhs.zRange_;
+	yRange_= rhs.yRange_;
+
+  // Assign the steps
+	xStep_= rhs.xStep_;
+	zStep_= rhs.zStep_;
+
+	return *this;
+}
+
+///////////////////////////////////////////////////
+
 // Constructor
 VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 pParser_(pParser),
@@ -397,15 +483,15 @@ void VPPItemFactory::plotOptimizationSpace() {
 
 // Make a 3d plot of the optimization variables v, phi when varying the two opt
 // parameters flat and crew. Qt 3d surface plot
-QSurfaceDataArray* VPPItemFactory::plotOptimizationSpace(WindIndicesDialog&, OptimVarsStateVectorDialog&) {
+ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog&, OptimVarsStateVectorDialog&) {
 
 	const float sampleMin = -8.0f;
   const float sampleMax =  8.0f;
   const int sampleCountX = 50;
   const int sampleCountZ = 50;
 
-  float stepX = (sampleMax - sampleMin) / float(sampleCountX - 1);
-  float stepZ = (sampleMax - sampleMin) / float(sampleCountZ - 1);
+  float dx = (sampleMax - sampleMin) / float(sampleCountX - 1);
+  float dz = (sampleMax - sampleMin) / float(sampleCountZ - 1);
 
   QSurfaceDataArray *dataArray = new QSurfaceDataArray;
 
@@ -414,10 +500,10 @@ QSurfaceDataArray* VPPItemFactory::plotOptimizationSpace(WindIndicesDialog&, Opt
       QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountX);
       // Keep values within range bounds, since just adding step can cause minor drift due
       // to the rounding errors.
-      float z = qMin(sampleMax, (i * stepZ + sampleMin));
+      float z = qMin(sampleMax, (i * dz + sampleMin));
       int index = 0;
       for (int j = 0; j < sampleCountX; j++) {
-          float x = qMin(sampleMax, (j * stepX + sampleMin));
+          float x = qMin(sampleMax, (j * dx + sampleMin));
           float R = qSqrt(z * z + x * x) + 0.01f;
           float y = (qSin(R) / R + 0.24f) * 1.61f;
           (*newRow)[index++].setPosition(QVector3D(x, y, z));
@@ -425,6 +511,15 @@ QSurfaceDataArray* VPPItemFactory::plotOptimizationSpace(WindIndicesDialog&, Opt
       *dataArray << newRow;
   }
 
-  return dataArray;
+  // Build a ThreeDDataContainer to wrap the data and the bounds
+  ThreeDDataContainer tdc(dataArray);
+
+  tdc.setXrange(sampleMin,sampleMax);
+  tdc.setDx(dx);
+
+  tdc.setZrange(sampleMin,sampleMax);
+  tdc.setDz(dz);
+
+  return tdc;
 }
 

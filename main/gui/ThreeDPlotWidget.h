@@ -21,7 +21,7 @@ public:
 	SurfaceGraph* getSurfaceGraph();
 
 	/// Add a surface chart to this ThreeDPlotWidget
-	void addChart( QSurfaceDataArray* );
+	void addChart( ThreeDDataContainer );
 
 private:
 

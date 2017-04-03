@@ -10,6 +10,66 @@
 #include <QtDataVisualization/QSurfaceDataProxy>
 using namespace QtDataVisualization;
 
+/// Utility class used to store all is required to
+/// finalize a 3d plot: QSurfaceDataArray*, ranges
+/// Use here the same convention as per the
+/// QSurfaceDataArray : independent vars are x,z,
+/// while y is the dependent one.
+class ThreeDDataContainer {
+
+	public:
+
+		/// Explicit Ctor
+		explicit ThreeDDataContainer(QSurfaceDataArray*);
+
+		/// Get the underlying QSurfaceDataArray*
+		QSurfaceDataArray* get() const;
+
+		/// Get the xRange
+		Eigen::Array2d getXRange() const;
+
+		/// Get the yRange
+		Eigen::Array2d getYRange() const;
+
+		/// Get the zRange
+		Eigen::Array2d getZRange() const;
+
+		/// Set the x step
+		double getDx() const;
+
+		/// Set the z step
+		double getDz() const;
+
+		/// Set the xRange
+		void setXrange(double xMin, double xMax);
+
+		/// Set the yRange
+		void setYrange(double yMin, double yMax);
+
+		/// Set the zRange
+		void setZrange(double zMin, double zMax);
+
+		/// Set the x step
+		void setDx(double dx);
+
+		/// Set the y step
+		void setDz(double dy);
+
+		/// Assignment operator
+		ThreeDDataContainer& operator=(const ThreeDDataContainer&);
+
+	private:
+
+		/// Underlying data
+		QSurfaceDataArray* pSurfaceDataArray_;
+
+		/// Ranges in the three directions
+		Eigen::Array2d xRange_, yRange_, zRange_;
+
+		/// Value of dx and dy
+		double xStep_, zStep_;
+};
+
 /// Factory class used to instantiate and own all
 /// of the VPPItems requested to compute the VPP run
 class VPPItemFactory {
@@ -104,7 +164,7 @@ class VPPItemFactory {
 
 		/// Make a 3d plot of the optimization variables v, phi when varying the two opt
 		/// parameters flat and crew. Qt 3d surface plot
-		QSurfaceDataArray* plotOptimizationSpace(WindIndicesDialog&, OptimVarsStateVectorDialog&);
+		ThreeDDataContainer plotOptimizationSpace(WindIndicesDialog&, OptimVarsStateVectorDialog&);
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
