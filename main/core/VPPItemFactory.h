@@ -164,7 +164,7 @@ class VPPItemFactory {
 
 		/// Make a 3d plot of the optimization variables v, phi when varying the two opt
 		/// parameters flat and crew. Qt 3d surface plot
-		ThreeDDataContainer plotOptimizationSpace(WindIndicesDialog&, OptimVarsStateVectorDialog&);
+		ThreeDDataContainer plotOptimizationSpace(WindIndicesDialog&, OptimVarsStateVectorDialog&, QTextEdit*);
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW

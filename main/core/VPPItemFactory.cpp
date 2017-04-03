@@ -483,51 +483,87 @@ void VPPItemFactory::plotOptimizationSpace() {
 
 // Make a 3d plot of the optimization variables v, phi when varying the two opt
 // parameters flat and crew. Qt 3d surface plot
-ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog&, OptimVarsStateVectorDialog&) {
+ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog& wd, OptimVarsStateVectorDialog& sd, QTextEdit* pText) {
 
-	const float sampleMin = -8.0f;
-  const float sampleMax =  8.0f;
-  const int sampleCountX = 50;
-  const int sampleCountZ = 50;
+	// Instantiate a NRSolver
+	NRSolver nrSolver(this, 4, 2);
 
-  float dx = (sampleMax - sampleMin) / float(sampleCountX - 1);
-  float dz = (sampleMax - sampleMin) / float(sampleCountZ - 1);
+	// Set the number of values for flat and crew -> x, y
+	size_t nFlat=15, nCrew=15;
 
-  QSurfaceDataArray *dataArray = new QSurfaceDataArray;
+	// Instantiate the result matrices : v and phi
+	Eigen::ArrayXd flat(nFlat), crew(nCrew);
+	Eigen::MatrixXd u(nCrew,nFlat);
+	Eigen::MatrixXd phi(nCrew,nFlat);
 
-  double yMin=1E20, yMax=-1E20;
+	Eigen::VectorXd x( sd.getStateVector() );
 
-  dataArray->reserve(sampleCountZ);
-  for (int i = 0 ; i < sampleCountZ ; i++) {
-      QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountX);
-      // Keep values within range bounds, since just adding step can cause minor drift due
-      // to the rounding errors.
-      float z = qMin(sampleMax, (i * dz + sampleMin));
-      int index = 0;
-      for (int j = 0; j < sampleCountX; j++) {
-          float x = qMin(sampleMax, (j * dx + sampleMin));
-          float R = qSqrt(z * z + x * x) + 0.01f;
-          float y = (qSin(R) / R + 0.24f) * 1.61f;
-          (*newRow)[index++].setPosition(QVector3D(x, y, z));
+	// Get the bounds for crew and flat
+	double dCrew= ( pParser_->get("B_MAX")-pParser_->get("B_MIN") ) / (nCrew-1);
+	double dFlat= ( pParser_->get("F_MAX")-pParser_->get("F_MIN") ) / (nFlat-1);
 
-          if(y<yMin) yMin = y;
-          if(y>yMax) yMax = y;
+  double uMin=1E20, uMax=-1E20;
 
-      }
-      *dataArray << newRow;
-  }
+	QSurfaceDataArray *dataArray = new QSurfaceDataArray;
+  dataArray->reserve(nFlat);
+
+	// Loop on nFlat
+	for(size_t iFlat=0; iFlat<nFlat; iFlat++){
+
+		// set this flat
+		flat(iFlat)= pParser_->get("F_MIN")  + dFlat * iFlat;
+
+    QSurfaceDataRow* newRow = new QSurfaceDataRow(nCrew);
+
+    int index = 0;
+
+		//	loop on nCrew
+		for(size_t iCrew=0; iCrew<nCrew; iCrew++){
+
+			// set this crew
+			crew(iCrew)= pParser_->get("B_MIN")  + dCrew * iCrew;
+
+			//			set flat, crew in the state vector
+			x(2) = crew(iCrew);
+			x(3) = flat(iFlat);
+
+			// 			run NRSolver -> v, phi
+			x.block(0,0,2,1)= nrSolver.run(wd.getTWV(),wd.getTWA(),x).block(0,0,2,1);
+
+			//			store v, phi in MatrixXds
+			u(iCrew,iFlat) = x(0);
+			phi(iCrew,iFlat) = x(1);
+
+			char msg[256];
+			sprintf(msg, "Adding point %f  %f  %f", x(2), x(0), x(3) );
+			pText->append(msg);
+
+      (*newRow)[index++].setPosition(QVector3D(x(2), x(0), x(3)));
+
+      // Todo : Ideally I would like to add another surface with the phis!
+      // (*newRow)[index++].setPosition(QVector3D(x(2), x(1), x(3)));
+
+      if(x(0)<uMin) uMin = x(0);
+      if(x(0)>uMax) uMax = x(0);
+
+		}
+
+		*dataArray << newRow;
+
+	}
 
   // Build a ThreeDDataContainer to wrap the data and the bounds
   ThreeDDataContainer tdc(dataArray);
 
-  tdc.setXrange(sampleMin,sampleMax);
-  tdc.setDx(dx);
+  tdc.setXrange(pParser_->get("B_MIN") ,
+  		pParser_->get("B_MIN")  + dCrew * (nCrew-1));
+  tdc.setDx(dCrew);
 
-  tdc.setZrange(sampleMin,sampleMax);
-  tdc.setDz(dz);
+  tdc.setZrange(pParser_->get("F_MIN") ,
+  		pParser_->get("F_MIN")  + dFlat * (nFlat-1));
+  tdc.setDz(dFlat);
 
-  tdc.setYrange(yMin,yMax);
+  tdc.setYrange(uMin,uMax);
 
   return tdc;
 }
-
