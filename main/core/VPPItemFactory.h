@@ -58,6 +58,9 @@ class ThreeDDataContainer {
 		/// Assignment operator
 		ThreeDDataContainer& operator=(const ThreeDDataContainer&);
 
+		/// Labels for the axes of the three-D plot
+		QString xAxisLabel_, yAxisLabel_, zAxisLabel_;
+
 	private:
 
 		/// Underlying data
@@ -68,6 +71,7 @@ class ThreeDDataContainer {
 
 		/// Value of dx and dy
 		double xStep_, zStep_;
+
 };
 
 /// Factory class used to instantiate and own all

@@ -42,6 +42,14 @@ void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
 	m_graph->axisX()->setLabelFormat("%.3f");
 	m_graph->axisY()->setLabelFormat("%.4f");
 	m_graph->axisZ()->setLabelFormat("%.3f");
+
+	m_graph->axisX()->setTitle(data.xAxisLabel_);
+	m_graph->axisX()->setTitleVisible(true);
+	m_graph->axisY()->setTitle(data.yAxisLabel_);
+	m_graph->axisY()->setTitleVisible(true);
+	m_graph->axisZ()->setTitle(data.zAxisLabel_);
+	m_graph->axisZ()->setTitleVisible(true);
+
 	m_graph->axisX()->setRange(data.getXRange()(0), data.getXRange()(1));
 	m_graph->axisZ()->setRange(data.getZRange()(0), data.getZRange()(1));
 	m_graph->axisY()->setRange(data.getYRange()(0), data.getYRange()(1));

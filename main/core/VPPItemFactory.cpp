@@ -90,6 +90,10 @@ ThreeDDataContainer& ThreeDDataContainer::operator=(const ThreeDDataContainer& r
 	xStep_= rhs.xStep_;
 	zStep_= rhs.zStep_;
 
+	xAxisLabel_= rhs.xAxisLabel_;
+	yAxisLabel_= rhs.yAxisLabel_;
+	zAxisLabel_= rhs.zAxisLabel_;
+
 	return *this;
 }
 
@@ -560,6 +564,10 @@ ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog& wd,
   tdc.setDz(dFlat);
 
   tdc.setYrange(uMin,uMax);
+
+  tdc.xAxisLabel_= QString("Crew [m]");
+  tdc.yAxisLabel_= QString("U [m/s]");
+  tdc.zAxisLabel_= QString("Flat [-]");
 
   return tdc;
 }
