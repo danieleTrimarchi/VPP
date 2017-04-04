@@ -512,8 +512,8 @@ vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDia
 	QSurfaceDataArray* uArray = new QSurfaceDataArray;
   uArray->reserve(nFlat);
 
-//	QSurfaceDataArray* phiArray = new QSurfaceDataArray;
-//  phiArray->reserve(nFlat);
+	QSurfaceDataArray* phiArray = new QSurfaceDataArray;
+  phiArray->reserve(nFlat);
 
 	// Loop on nFlat
 	for(int iFlat=0; iFlat<nFlat; iFlat++){
@@ -522,7 +522,7 @@ vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDia
 		flat(iFlat)= pParser_->get("F_MIN")  + dFlat * iFlat;
 
     QSurfaceDataRow* uRow = new QSurfaceDataRow(nCrew);
-   // QSurfaceDataRow* phiRow = new QSurfaceDataRow(nCrew);
+    QSurfaceDataRow* phiRow = new QSurfaceDataRow(nCrew);
 
     int index = 0;
 
@@ -543,8 +543,9 @@ vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDia
 			u(iCrew,iFlat) = x(0);
 			phi(iCrew,iFlat) = x(1);
 
-      (*uRow)[index++].setPosition(QVector3D(x(2), x(0), x(3)));
-      //(*phiRow)[index++].setPosition(QVector3D(x(2), x(1), x(3)));
+      (*uRow)[index].setPosition(QVector3D(x(2), x(0), x(3)));
+      (*phiRow)[index].setPosition(QVector3D(x(2), x(1), x(3)));
+      index++;
 
       if(x(0)<uMin) uMin = x(0);
       if(x(0)>uMax) uMax = x(0);
@@ -555,7 +556,7 @@ vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDia
 		}
 
 		*uArray << uRow;
-		//*phiArray << phiRow;
+		*phiArray << phiRow;
 
 	}
 
@@ -580,21 +581,21 @@ vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDia
 
   // --
 
-//	v.push_back( ThreeDDataContainer(phiArray) ) ;
-//
-//  v[1].setXrange(pParser_->get("B_MIN") ,
-//  		pParser_->get("B_MIN")  + dCrew * (nCrew-1));
-//  v[1].setDx(dCrew);
-//
-//  v[1].setZrange(pParser_->get("F_MIN") ,
-//  		pParser_->get("F_MIN")  + dFlat * (nFlat-1));
-//  v[1].setDz(dFlat);
-//
-//  v[1].setYrange(phiMin,phiMax);
-//
-//  v[1].xAxisLabel_= QString("Crew [m]");
-//  v[1].yAxisLabel_= QString("Phi [rad]");
-//  v[1].zAxisLabel_= QString("Flat [-]");
+	v.push_back( ThreeDDataContainer(phiArray) ) ;
+
+  v[1].setXrange(pParser_->get("B_MIN") ,
+  		pParser_->get("B_MIN")  + dCrew * (nCrew-1));
+  v[1].setDx(dCrew);
+
+  v[1].setZrange(pParser_->get("F_MIN") ,
+  		pParser_->get("F_MIN")  + dFlat * (nFlat-1));
+  v[1].setDz(dFlat);
+
+  v[1].setYrange(phiMin,phiMax);
+
+  v[1].xAxisLabel_= QString("Crew [m]");
+  v[1].yAxisLabel_= QString("Phi [rad]");
+  v[1].zAxisLabel_= QString("Flat [-]");
 
   return v;
 }
