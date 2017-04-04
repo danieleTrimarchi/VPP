@@ -298,8 +298,9 @@ SurfaceGraph* ThreeDPlotWidget::getSurfaceGraph() {
 }
 
 // Add a surface chart to this ThreeDPlotWidget
-void ThreeDPlotWidget::addChart( ThreeDDataContainer data ) {
-	getSurfaceGraph()->fillData(data);
+void ThreeDPlotWidget::addChart( vector<ThreeDDataContainer> vData ) {
+	for(size_t i=0; i<vData.size(); i++)
+		getSurfaceGraph()->fillData(vData[i]);
 }
 
 

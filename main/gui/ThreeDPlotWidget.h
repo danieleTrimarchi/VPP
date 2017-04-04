@@ -21,7 +21,7 @@ public:
 	SurfaceGraph* getSurfaceGraph();
 
 	/// Add a surface chart to this ThreeDPlotWidget
-	void addChart( ThreeDDataContainer );
+	void addChart( vector<ThreeDDataContainer> );
 
 private:
 

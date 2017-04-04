@@ -487,13 +487,13 @@ void VPPItemFactory::plotOptimizationSpace() {
 
 // Make a 3d plot of the optimization variables v, phi when varying the two opt
 // parameters flat and crew. Qt 3d surface plot
-ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog& wd, OptimVarsStateVectorDialog& sd) {
+vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDialog& wd, OptimVarsStateVectorDialog& sd) {
 
 	// Instantiate a NRSolver
 	NRSolver nrSolver(this, 4, 2);
 
 	// Set the number of values for flat and crew -> x, y
-	size_t nFlat=15, nCrew=15;
+	int nFlat=15, nCrew=15;
 
 	// Instantiate the result matrices : v and phi
 	Eigen::ArrayXd flat(nFlat), crew(nCrew);
@@ -506,23 +506,28 @@ ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog& wd,
 	double dCrew= ( pParser_->get("B_MAX")-pParser_->get("B_MIN") ) / (nCrew-1);
 	double dFlat= ( pParser_->get("F_MAX")-pParser_->get("F_MIN") ) / (nFlat-1);
 
-  double uMin=1E20, uMax=-1E20;
+  double uMin=1E20, uMax=-1E20,
+  		phiMin=1E20, phiMax=-1E20;
 
-	QSurfaceDataArray *dataArray = new QSurfaceDataArray;
-  dataArray->reserve(nFlat);
+	QSurfaceDataArray* uArray = new QSurfaceDataArray;
+  uArray->reserve(nFlat);
+
+//	QSurfaceDataArray* phiArray = new QSurfaceDataArray;
+//  phiArray->reserve(nFlat);
 
 	// Loop on nFlat
-	for(size_t iFlat=0; iFlat<nFlat; iFlat++){
+	for(int iFlat=0; iFlat<nFlat; iFlat++){
 
 		// set this flat
 		flat(iFlat)= pParser_->get("F_MIN")  + dFlat * iFlat;
 
-    QSurfaceDataRow* newRow = new QSurfaceDataRow(nCrew);
+    QSurfaceDataRow* uRow = new QSurfaceDataRow(nCrew);
+   // QSurfaceDataRow* phiRow = new QSurfaceDataRow(nCrew);
 
     int index = 0;
 
 		//	loop on nCrew
-		for(size_t iCrew=0; iCrew<nCrew; iCrew++){
+		for(int iCrew=0; iCrew<nCrew; iCrew++){
 
 			// set this crew
 			crew(iCrew)= pParser_->get("B_MIN")  + dCrew * iCrew;
@@ -538,36 +543,58 @@ ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog& wd,
 			u(iCrew,iFlat) = x(0);
 			phi(iCrew,iFlat) = x(1);
 
-      (*newRow)[index++].setPosition(QVector3D(x(2), x(0), x(3)));
-
-      // Todo : Ideally I would like to add another surface with the phis!
-      // (*newRow)[index++].setPosition(QVector3D(x(2), x(1), x(3)));
+      (*uRow)[index++].setPosition(QVector3D(x(2), x(0), x(3)));
+      //(*phiRow)[index++].setPosition(QVector3D(x(2), x(1), x(3)));
 
       if(x(0)<uMin) uMin = x(0);
       if(x(0)>uMax) uMax = x(0);
 
+      if(x(1)<phiMin) phiMin = x(1);
+      if(x(1)>phiMax) phiMax = x(1);
+
 		}
 
-		*dataArray << newRow;
+		*uArray << uRow;
+		//*phiArray << phiRow;
 
 	}
 
   // Build a ThreeDDataContainer to wrap the data and the bounds
-  ThreeDDataContainer tdc(dataArray);
+	vector<ThreeDDataContainer> v;
 
-  tdc.setXrange(pParser_->get("B_MIN") ,
+	v.push_back( ThreeDDataContainer(uArray) ) ;
+
+  v[0].setXrange(pParser_->get("B_MIN") ,
   		pParser_->get("B_MIN")  + dCrew * (nCrew-1));
-  tdc.setDx(dCrew);
+  v[0].setDx(dCrew);
 
-  tdc.setZrange(pParser_->get("F_MIN") ,
+  v[0].setZrange(pParser_->get("F_MIN") ,
   		pParser_->get("F_MIN")  + dFlat * (nFlat-1));
-  tdc.setDz(dFlat);
+  v[0].setDz(dFlat);
 
-  tdc.setYrange(uMin,uMax);
+  v[0].setYrange(uMin,uMax);
 
-  tdc.xAxisLabel_= QString("Crew [m]");
-  tdc.yAxisLabel_= QString("U [m/s]");
-  tdc.zAxisLabel_= QString("Flat [-]");
+  v[0].xAxisLabel_= QString("Crew [m]");
+  v[0].yAxisLabel_= QString("U [m/s]");
+  v[0].zAxisLabel_= QString("Flat [-]");
 
-  return tdc;
+  // --
+
+//	v.push_back( ThreeDDataContainer(phiArray) ) ;
+//
+//  v[1].setXrange(pParser_->get("B_MIN") ,
+//  		pParser_->get("B_MIN")  + dCrew * (nCrew-1));
+//  v[1].setDx(dCrew);
+//
+//  v[1].setZrange(pParser_->get("F_MIN") ,
+//  		pParser_->get("F_MIN")  + dFlat * (nFlat-1));
+//  v[1].setDz(dFlat);
+//
+//  v[1].setYrange(phiMin,phiMax);
+//
+//  v[1].xAxisLabel_= QString("Crew [m]");
+//  v[1].yAxisLabel_= QString("Phi [rad]");
+//  v[1].zAxisLabel_= QString("Flat [-]");
+
+  return v;
 }

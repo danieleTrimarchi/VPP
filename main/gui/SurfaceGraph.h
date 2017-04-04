@@ -45,8 +45,8 @@ class SurfaceGraph : public QObject {
 
 		private:
 		Q3DSurface *m_graph;
-		QSurfaceDataProxy *m_sqrtSinProxy;
-		QSurface3DSeries *m_sqrtSinSeries;
+		vector<QSurfaceDataProxy*> vDataProxy_;
+		vector<QSurface3DSeries*> vDataSeries_;
 
 		QSlider *m_axisMinSliderX;
 		QSlider *m_axisMaxSliderX;

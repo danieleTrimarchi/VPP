@@ -21,9 +21,6 @@ SurfaceGraph::SurfaceGraph(Q3DSurface *surface):
 	m_graph->setAxisX(new QValue3DAxis);
 	m_graph->setAxisY(new QValue3DAxis);
 	m_graph->setAxisZ(new QValue3DAxis);
-
-	m_sqrtSinProxy = new QSurfaceDataProxy();
-	m_sqrtSinSeries = new QSurface3DSeries(m_sqrtSinProxy);
 }
 
 SurfaceGraph::~SurfaceGraph()
@@ -33,11 +30,15 @@ SurfaceGraph::~SurfaceGraph()
 
 void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
 
-	// Assign the data to the proxy
-	m_sqrtSinProxy->resetArray(data.get());
+	// Make some space for these data
+	vDataProxy_.push_back( new QSurfaceDataProxy() );
+	vDataSeries_.push_back( new QSurface3DSeries(vDataProxy_.back()) );
 
-	m_sqrtSinSeries->setDrawMode(QSurface3DSeries::DrawSurfaceAndWireframe);
-	m_sqrtSinSeries->setFlatShadingEnabled(true);
+	// Assign the data to the proxy
+	vDataProxy_.back()->resetArray(data.get());
+
+	vDataSeries_.back()->setDrawMode(QSurface3DSeries::DrawSurfaceAndWireframe);
+	vDataSeries_.back()->setFlatShadingEnabled(true);
 
 	m_graph->axisX()->setLabelFormat("%.3f");
 	m_graph->axisY()->setLabelFormat("%.4f");
@@ -57,7 +58,7 @@ void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
 	m_graph->axisY()->setLabelAutoRotation(90);
 	m_graph->axisZ()->setLabelAutoRotation(30);
 
-	m_graph->addSeries(m_sqrtSinSeries);
+	m_graph->addSeries(vDataSeries_.back());
 
 	// Reset range sliders for Sqrt&Sin
 	m_rangeMinX = data.getXRange()(0);
