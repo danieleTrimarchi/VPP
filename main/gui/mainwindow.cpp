@@ -876,7 +876,7 @@ void MainWindow::plotOptimizationSpace() {
 	p3dPlotWidget_.reset(new ThreeDPlotWidget(this) );
 
 	p3dPlotWidget_->addChart(
-			pVppItems_->plotOptimizationSpace(wd,sd,pLogWidget_.get())
+			pVppItems_->plotOptimizationSpace(wd,sd)
 	);
 
 	// Add the 3d plot view to the left of the app window

@@ -483,7 +483,7 @@ void VPPItemFactory::plotOptimizationSpace() {
 
 // Make a 3d plot of the optimization variables v, phi when varying the two opt
 // parameters flat and crew. Qt 3d surface plot
-ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog& wd, OptimVarsStateVectorDialog& sd, QTextEdit* pText) {
+ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog& wd, OptimVarsStateVectorDialog& sd) {
 
 	// Instantiate a NRSolver
 	NRSolver nrSolver(this, 4, 2);
@@ -533,10 +533,6 @@ ThreeDDataContainer VPPItemFactory::plotOptimizationSpace(WindIndicesDialog& wd,
 			//			store v, phi in MatrixXds
 			u(iCrew,iFlat) = x(0);
 			phi(iCrew,iFlat) = x(1);
-
-			char msg[256];
-			sprintf(msg, "Adding point %f  %f  %f", x(2), x(0), x(3) );
-			pText->append(msg);
 
       (*newRow)[index++].setPosition(QVector3D(x(2), x(0), x(3)));
 

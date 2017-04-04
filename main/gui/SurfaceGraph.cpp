@@ -39,8 +39,9 @@ void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
 	m_sqrtSinSeries->setDrawMode(QSurface3DSeries::DrawSurfaceAndWireframe);
 	m_sqrtSinSeries->setFlatShadingEnabled(true);
 
-	m_graph->axisX()->setLabelFormat("%.2f");
-	m_graph->axisZ()->setLabelFormat("%.2f");
+	m_graph->axisX()->setLabelFormat("%.3f");
+	m_graph->axisY()->setLabelFormat("%.4f");
+	m_graph->axisZ()->setLabelFormat("%.3f");
 	m_graph->axisX()->setRange(data.getXRange()(0), data.getXRange()(1));
 	m_graph->axisZ()->setRange(data.getZRange()(0), data.getZRange()(1));
 	m_graph->axisY()->setRange(data.getYRange()(0), data.getYRange()(1));
