@@ -32,7 +32,7 @@ void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
 
 	// Make some space for these data
 	vDataProxy_.push_back( new QSurfaceDataProxy() );
-	vDataSeries_.push_back( new QSurface3DSeries(vDataProxy_.back()) );
+	vDataSeries_.push_back( new QSurface3DSeries(vDataProxy_.back()));
 
 	// Assign the data to the proxy
 	vDataProxy_.back()->resetArray(data.get());
@@ -141,16 +141,16 @@ void SurfaceGraph::adjustZMin(int min)
 
 void SurfaceGraph::adjustZMax(int max)
 {
-	float maxX = m_stepZ * float(max) + m_rangeMinZ;
+	float maxZ = m_stepZ * float(max) + m_rangeMinZ;
 
 	int min = m_axisMinSliderZ->value();
 	if (max <= min) {
 		min = max - 1;
 		m_axisMinSliderZ->setValue(min);
 	}
-	float minX = m_stepZ * min + m_rangeMinZ;
+	float minZ = m_stepZ * min + m_rangeMinZ;
 
-	setAxisZRange(minX, maxX);
+	setAxisZRange(minZ, maxZ);
 }
 
 void SurfaceGraph::setAxisXRange(float min, float max)
@@ -176,8 +176,10 @@ void SurfaceGraph::setBlackToYellowGradient()
 	gr.setColorAt(0.67, Qt::red);
 	gr.setColorAt(1.0, Qt::yellow);
 
-	m_graph->seriesList().at(0)->setBaseGradient(gr);
-	m_graph->seriesList().at(0)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
+	for(size_t i=0; i<m_graph->seriesList().size(); i++) {
+		m_graph->seriesList().at(i)->setBaseGradient(gr);
+		m_graph->seriesList().at(i)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
+	}
 }
 
 void SurfaceGraph::setGreenToRedGradient()
@@ -188,8 +190,10 @@ void SurfaceGraph::setGreenToRedGradient()
 	gr.setColorAt(0.8, Qt::red);
 	gr.setColorAt(1.0, Qt::darkRed);
 
-	m_graph->seriesList().at(0)->setBaseGradient(gr);
-	m_graph->seriesList().at(0)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
+	for(size_t i=0; i<m_graph->seriesList().size(); i++) {
+		m_graph->seriesList().at(i)->setBaseGradient(gr);
+		m_graph->seriesList().at(i)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
+	}
 }
 
 void SurfaceGraph::setAxisMinSliderX(QSlider *slider) {

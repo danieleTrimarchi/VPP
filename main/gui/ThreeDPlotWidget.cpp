@@ -55,14 +55,14 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	//container->setFocusPolicy(Qt::StrongFocus);
 
 	// Create a widget and set its title
-	QWidget* widget = new QWidget;
-	widget->setWindowTitle(QStringLiteral("Surface example"));
+	pWidget_ = new QWidget;
+	pWidget_->setWindowTitle(QStringLiteral("Surface example"));
 
 	// Assign the widget to the current dockable widget
-	setWidget(widget);
+	setWidget(pWidget_);
 
 	// Define a horizontal layout in the widget
-	QHBoxLayout *hLayout = new QHBoxLayout(widget);
+	QHBoxLayout *hLayout = new QHBoxLayout(pWidget_);
 	// Add the surface container (which is a widget) to the horizontal layout
 	hLayout->addWidget(container, 1);
 	// Define a vertical layout
@@ -73,17 +73,34 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	// Not sure what this does..?
 	//vLayout->setAlignment(Qt::AlignTop);
 
+
+	// Container for the radio buttons under the label of 'Model'. This
+	// GroupBox is populated with radio buttons when data are added to
+	// the 3d plot
+	QGroupBox *modelGroupBox = new QGroupBox(QStringLiteral("Model"));
+
+	// Set the font
+	QFont modelFont = modelGroupBox->font();
+	modelFont.setPointSizeF(fontSize_);
+	modelGroupBox->setFont(modelFont);
+
+	// Define a layout and assign to the radio button container
+	pModelVBox_ = new QVBoxLayout;
+	modelGroupBox->setLayout(pModelVBox_);
+
+	////////////////////////////////////
+
 	//--
 	// Container for the radio buttons under the label of 'Selection Mode'
 	QGroupBox* pSelectionModeGroupBox = new QGroupBox(QStringLiteral("Selection Mode"));
 
 	// Set the font
-	QFont font = pSelectionModeGroupBox->font();
+	QFont font=  pSelectionModeGroupBox->font();
 	font.setPointSizeF(fontSize_);
 	pSelectionModeGroupBox->setFont(font);
 
 	// Define radio button...
-	QRadioButton* pModeNoSelection = new QRadioButton(widget);
+	QRadioButton* pModeNoSelection = new QRadioButton(pWidget_);
 	pModeNoSelection->setText(QStringLiteral("No selection"));
 	pModeNoSelection->setChecked(false);
 	font = pModeNoSelection->font();
@@ -92,7 +109,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 
 
 	// Define radio button...
-	QRadioButton* pModeItemSelection = new QRadioButton(widget);
+	QRadioButton* pModeItemSelection = new QRadioButton(pWidget_);
 	pModeItemSelection->setText(QStringLiteral("Item"));
 	pModeItemSelection->setChecked(false);
 	font = pModeItemSelection->font();
@@ -100,7 +117,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	pModeItemSelection->setFont(font);
 
 	// Define radio button...
-	QRadioButton* pModeSliceRowSelection = new QRadioButton(widget);
+	QRadioButton* pModeSliceRowSelection = new QRadioButton(pWidget_);
 	pModeSliceRowSelection->setText(QStringLiteral("Row Slice"));
 	pModeSliceRowSelection->setChecked(false);
 	font = pModeSliceRowSelection->font();
@@ -109,7 +126,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 
 
 	// Define radio button...
-	QRadioButton* pModeSliceColumnSelection = new QRadioButton(widget);
+	QRadioButton* pModeSliceColumnSelection = new QRadioButton(pWidget_);
 	pModeSliceColumnSelection->setText(QStringLiteral("Column Slice"));
 	pModeSliceColumnSelection->setChecked(false);
 	font = pModeSliceColumnSelection->font();
@@ -129,25 +146,25 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	// --
 
 	// Define the sliders (used to hide part of the surface)
-	QSlider* axisMinSliderX = new QSlider(Qt::Horizontal, widget);
+	QSlider* axisMinSliderX = new QSlider(Qt::Horizontal, pWidget_);
 	axisMinSliderX->setMinimum(0);
 	axisMinSliderX->setTickInterval(1);
 	axisMinSliderX->setEnabled(true);
-	QSlider *axisMaxSliderX = new QSlider(Qt::Horizontal, widget);
+	QSlider *axisMaxSliderX = new QSlider(Qt::Horizontal, pWidget_);
 	axisMaxSliderX->setMinimum(1);
 	axisMaxSliderX->setTickInterval(1);
 	axisMaxSliderX->setEnabled(true);
-	QSlider *axisMinSliderZ = new QSlider(Qt::Horizontal, widget);
+	QSlider *axisMinSliderZ = new QSlider(Qt::Horizontal, pWidget_);
 	axisMinSliderZ->setMinimum(0);
 	axisMinSliderZ->setTickInterval(1);
 	axisMinSliderZ->setEnabled(true);
-	QSlider *axisMaxSliderZ = new QSlider(Qt::Horizontal, widget);
+	QSlider *axisMaxSliderZ = new QSlider(Qt::Horizontal, pWidget_);
 	axisMaxSliderZ->setMinimum(1);
 	axisMaxSliderZ->setTickInterval(1);
 	axisMaxSliderZ->setEnabled(true);
 
 	// Define a combo-box for the background theme
-	QComboBox* themeList = new QComboBox(widget);
+	QComboBox* themeList = new QComboBox(pWidget_);
 	themeList->addItem(QStringLiteral("Qt"));
 	themeList->addItem(QStringLiteral("Primary Colors"));
 	themeList->addItem(QStringLiteral("Digia"));
@@ -177,7 +194,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	pmp.setBrush(QBrush(grBtoY));
 	pmp.setPen(Qt::NoPen);
 	pmp.drawRect(0, 0, 12, 100);
-	QPushButton *gradientBtoYPB = new QPushButton(widget);
+	QPushButton *gradientBtoYPB = new QPushButton(pWidget_);
 	gradientBtoYPB->setIcon(QIcon(pm));
 	gradientBtoYPB->setIconSize(QSize(12, 100));
 
@@ -189,7 +206,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	grGtoR.setColorAt(0.0, Qt::darkRed);
 	pmp.setBrush(QBrush(grGtoR));
 	pmp.drawRect(0, 0, 12, 100);
-	QPushButton *gradientGtoRPB = new QPushButton(widget);
+	QPushButton *gradientGtoRPB = new QPushButton(pWidget_);
 	gradientGtoRPB->setIcon(QIcon(pm));
 	gradientGtoRPB->setIconSize(QSize(12, 100));
 
@@ -207,7 +224,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 
 	// Add all the containers to the global layout -> add the Model, Selection Mode,
 	// Sliders... to the vertical layout that will be used to populate the right widget
-	//vLayout->addWidget(modelGroupBox);
+	vLayout->addWidget(modelGroupBox);
 	vLayout->addWidget(pSelectionModeGroupBox);
 
 	QWidget* pColRangeWidget= new QLabel(QStringLiteral("Column range"));
@@ -237,13 +254,13 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	vLayout->addWidget(themeList);
 	vLayout->addWidget(colorGroupBox);
 
-	widget->show();
+	pWidget_->show();
 
 	//----------------------------------------------------------------------------------
 
 	// Instantiate a surfaceGraph on top of the Q3DSurface. The surfaceGraph defines the
 	// actual surface to plot
-	modifier_ = new SurfaceGraph(p3dSurface);
+	surfaceGraph_ = new SurfaceGraph(p3dSurface);
 
 	// Simply set the 3d surface
 	//	// Connect the actions with relevant methods of the surfaceGraph
@@ -253,34 +270,33 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	//			modifier, &SurfaceGraph::enableSqrtSinModel);
 
 	QObject::connect(pModeNoSelection, &QRadioButton::toggled,
-			modifier_, &SurfaceGraph::toggleModeNone);
+			surfaceGraph_, &SurfaceGraph::toggleModeNone);
 	QObject::connect(pModeItemSelection,  &QRadioButton::toggled,
-			modifier_, &SurfaceGraph::toggleModeItem);
+			surfaceGraph_, &SurfaceGraph::toggleModeItem);
 	QObject::connect(pModeSliceRowSelection,  &QRadioButton::toggled,
-			modifier_, &SurfaceGraph::toggleModeSliceRow);
+			surfaceGraph_, &SurfaceGraph::toggleModeSliceRow);
 	QObject::connect(pModeSliceColumnSelection,  &QRadioButton::toggled,
-			modifier_, &SurfaceGraph::toggleModeSliceColumn);
+			surfaceGraph_, &SurfaceGraph::toggleModeSliceColumn);
 	QObject::connect(axisMinSliderX, &QSlider::valueChanged,
-			modifier_, &SurfaceGraph::adjustXMin);
+			surfaceGraph_, &SurfaceGraph::adjustXMin);
 	QObject::connect(axisMaxSliderX, &QSlider::valueChanged,
-			modifier_, &SurfaceGraph::adjustXMax);
+			surfaceGraph_, &SurfaceGraph::adjustXMax);
 	QObject::connect(axisMinSliderZ, &QSlider::valueChanged,
-			modifier_, &SurfaceGraph::adjustZMin);
+			surfaceGraph_, &SurfaceGraph::adjustZMin);
 	QObject::connect(axisMaxSliderZ, &QSlider::valueChanged,
-			modifier_, &SurfaceGraph::adjustZMax);
+			surfaceGraph_, &SurfaceGraph::adjustZMax);
 	QObject::connect(themeList, SIGNAL(currentIndexChanged(int)),
-			modifier_, SLOT(changeTheme(int)));
+			surfaceGraph_, SLOT(changeTheme(int)));
 	QObject::connect(gradientBtoYPB, &QPushButton::pressed,
-			modifier_, &SurfaceGraph::setBlackToYellowGradient);
+			surfaceGraph_, &SurfaceGraph::setBlackToYellowGradient);
 	QObject::connect(gradientGtoRPB, &QPushButton::pressed,
-			modifier_, &SurfaceGraph::setGreenToRedGradient);
+			surfaceGraph_, &SurfaceGraph::setGreenToRedGradient);
 
-	modifier_->setAxisMinSliderX(axisMinSliderX);
-	modifier_->setAxisMaxSliderX(axisMaxSliderX);
-	modifier_->setAxisMinSliderZ(axisMinSliderZ);
-	modifier_->setAxisMaxSliderZ(axisMaxSliderZ);
+	surfaceGraph_->setAxisMinSliderX(axisMinSliderX);
+	surfaceGraph_->setAxisMaxSliderX(axisMaxSliderX);
+	surfaceGraph_->setAxisMinSliderZ(axisMinSliderZ);
+	surfaceGraph_->setAxisMaxSliderZ(axisMaxSliderZ);
 
-	//	sqrtSinModelRB->setChecked(true);
 	pModeItemSelection->setChecked(true);
 	themeList->setCurrentIndex(2);
 
@@ -291,16 +307,24 @@ ThreeDPlotWidget::~ThreeDPlotWidget() {
 
 }
 
-// Get the underlying surfaceGraph, trough which we will be adding
-// the data to plot
-SurfaceGraph* ThreeDPlotWidget::getSurfaceGraph() {
-	return modifier_;
-}
-
 // Add a surface chart to this ThreeDPlotWidget
 void ThreeDPlotWidget::addChart( vector<ThreeDDataContainer> vData ) {
-	for(size_t i=0; i<vData.size(); i++)
-		getSurfaceGraph()->fillData(vData[i]);
+
+	for(size_t i=0; i<vData.size(); i++){
+
+		// Add a radio button to the model layout for the user to be
+		// able to select runtime which surface to visualize among the
+		// available ones.
+		QRadioButton* pRadioButtom = new QRadioButton(pWidget_);
+		pRadioButtom->setText(vData[i].yAxisLabel_);
+		pRadioButtom->setChecked(i==0);
+		QFont font = pRadioButtom->font();
+		font.setPointSizeF(fontSize_);
+		pRadioButtom->setFont(font);
+		pModelVBox_->addWidget(pRadioButtom);
+
+		surfaceGraph_->fillData(vData[i]);
+	}
 }
 
 
