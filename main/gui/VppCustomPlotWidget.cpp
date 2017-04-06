@@ -10,7 +10,7 @@ VppCustomPlotWidget::VppCustomPlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, Qt::
     setObjectName("VPPCustomPlotView");
     QString demoName;
 
-    setupSimpleDemo(demoName);
+    setupSimpleItemDemo(demoName);
 
     setWindowTitle("QCustomPlot: " + demoName);
 

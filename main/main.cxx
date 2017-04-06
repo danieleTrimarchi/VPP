@@ -138,14 +138,7 @@ int main(int argc, char** argv) {
 //				solverFactory.get()->plotXY(idx);
 //			}
 //
-//
 // --
-//
-//
-//			else if(s == string("plotOptimizationSpace") )
-//				pVppItems->plotOptimizationSpace();
-//
-//			//---
 //
 //			else if(s == string("reload") ){
 //				load(parser,pSails,pVppItems);

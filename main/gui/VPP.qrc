@@ -20,6 +20,8 @@
     <file>icons/inducedResistance.png</file>
     <file>icons/residuaryResistance.png</file>
     <file>icons/negativeResistance.png</file>
+    <file>icons/plotJacobian.png</file>
+    <file>icons/plotGradient.png</file>
     <file>icons/DeltaFrictRes_Heel.png</file>
 </qresource>
 </RCC>
