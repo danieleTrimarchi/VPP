@@ -21,53 +21,59 @@ SurfaceGraph::SurfaceGraph(Q3DSurface *surface):
 	m_graph->setAxisX(new QValue3DAxis);
 	m_graph->setAxisY(new QValue3DAxis);
 	m_graph->setAxisZ(new QValue3DAxis);
-}
-
-SurfaceGraph::~SurfaceGraph()
-{
-	delete m_graph;
-}
-
-void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
-
-	// Make some space for these data
-	vDataProxy_.push_back( new QSurfaceDataProxy() );
-	vDataSeries_.push_back( new QSurface3DSeries(vDataProxy_.back()));
-
-	// Assign the data to the proxy
-	vDataProxy_.back()->resetArray(data.get());
-
-	vDataSeries_.back()->setDrawMode(QSurface3DSeries::DrawSurfaceAndWireframe);
-	vDataSeries_.back()->setFlatShadingEnabled(true);
 
 	m_graph->axisX()->setLabelFormat("%.3f");
 	m_graph->axisY()->setLabelFormat("%.4f");
 	m_graph->axisZ()->setLabelFormat("%.3f");
 
-	m_graph->axisX()->setTitle(data.xAxisLabel_);
 	m_graph->axisX()->setTitleVisible(true);
-	m_graph->axisY()->setTitle(data.yAxisLabel_);
 	m_graph->axisY()->setTitleVisible(true);
-	m_graph->axisZ()->setTitle(data.zAxisLabel_);
 	m_graph->axisZ()->setTitleVisible(true);
 
-	m_graph->axisX()->setRange(data.getXRange()(0), data.getXRange()(1));
-	m_graph->axisZ()->setRange(data.getZRange()(0), data.getZRange()(1));
-	m_graph->axisY()->setRange(data.getYRange()(0), data.getYRange()(1));
 	m_graph->axisX()->setLabelAutoRotation(30);
 	m_graph->axisY()->setLabelAutoRotation(90);
 	m_graph->axisZ()->setLabelAutoRotation(30);
 
-	m_graph->addSeries(vDataSeries_.back());
+}
 
-	// Reset range sliders for Sqrt&Sin
-	m_rangeMinX = data.getXRange()(0);
-	m_rangeMinZ = data.getZRange()(0);
-	m_stepX = data.getDx();
-	m_stepZ = data.getDz();
+SurfaceGraph::~SurfaceGraph() {
+	delete m_graph;
+}
 
-	int sampleCountX = data.get()->size();
-	int sampleCountZ = data.get()->at(0)->size();
+// Show the i-th data (and provide all operations requested
+// for the 3d plot to be consistent : labels, rescaling...
+void SurfaceGraph::show( int iDataSet ) {
+
+	if(iDataSet>=vDataSeries_.size())
+		return;
+
+	// Remove any previous series (if any) and plot the current series
+	// WARNING : can I remove a non-active series from mGraph?
+	for(size_t iSeries=0; iSeries<m_graph->seriesList().size(); iSeries++){
+		m_graph->removeSeries(vDataSeries_[iSeries]);
+	}
+
+	// Add the selected series to the 3d plot
+	m_graph->addSeries(vDataSeries_[iDataSet]);
+
+	ThreeDDataContainer* pData= &(vThreeDDataContainer_[iDataSet]);
+
+	m_graph->axisX()->setTitle(pData->xAxisLabel_);
+	m_graph->axisY()->setTitle(pData->yAxisLabel_);
+	m_graph->axisZ()->setTitle(pData->zAxisLabel_);
+
+	m_graph->axisX()->setRange(pData->getXRange()(0), pData->getXRange()(1));
+	m_graph->axisZ()->setRange(pData->getZRange()(0), pData->getZRange()(1));
+	m_graph->axisY()->setRange(pData->getYRange()(0), pData->getYRange()(1));
+
+	// Reset range sliders for this series
+	m_rangeMinX = pData->getXRange()(0);
+	m_rangeMinZ = pData->getZRange()(0);
+	m_stepX = pData->getDx();
+	m_stepZ = pData->getDz();
+
+	int sampleCountX = pData->get()->size();
+	int sampleCountZ = pData->get()->at(0)->size();
 
 	m_axisMinSliderX->setMaximum( sampleCountX - 2);
 	m_axisMinSliderX->setValue(0);
@@ -77,6 +83,22 @@ void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
 	m_axisMinSliderZ->setValue(0);
 	m_axisMaxSliderZ->setMaximum(sampleCountZ - 1);
 	m_axisMaxSliderZ->setValue(sampleCountZ - 1);
+
+}
+
+void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
+
+	// Make some space for these data
+	vDataProxy_.push_back( new QSurfaceDataProxy() );
+	vDataSeries_.push_back( new QSurface3DSeries(vDataProxy_.back()));
+	vThreeDDataContainer_.push_back(data);
+
+	// Assign the data to the proxy
+	vDataProxy_.back()->resetArray(data.get());
+
+	vDataSeries_.back()->setDrawMode(QSurface3DSeries::DrawSurfaceAndWireframe);
+	vDataSeries_.back()->setFlatShadingEnabled(true);
+
 }
 
 void SurfaceGraph::toggleModeNone() {

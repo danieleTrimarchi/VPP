@@ -26,13 +26,12 @@ private:
 	SurfaceGraph* surfaceGraph_;
 
 	/// Widget wrapped by the ThreeDPlotWidget, it is effectively the widget
-	/// contained in the 3d plot wiew
+	/// contained in the 3d plot view
 	QWidget* pWidget_;
 
-	/// Model choice vertical box, that encloses all radio buttons
-	/// for the user to choose which surface to visualize among the
-	/// available surfaces
-	QVBoxLayout* pModelVBox_;
+	/// Combo-box listing all of the surfaces that can be selected by the user.
+	/// The list is driven by the data that have been added to the plot
+	QComboBox* surfaceList_;
 
 	/// Size of the font for the text of this plot
 	qreal fontSize_;

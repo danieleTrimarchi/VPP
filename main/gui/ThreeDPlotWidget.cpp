@@ -84,9 +84,17 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	modelFont.setPointSizeF(fontSize_);
 	modelGroupBox->setFont(modelFont);
 
-	// Define a layout and assign to the radio button container
-	pModelVBox_ = new QVBoxLayout;
-	modelGroupBox->setLayout(pModelVBox_);
+	/// Model choice vertical box, that encloses the combo box
+	/// for the user to choose which surface to visualize among the
+	/// available surfaces
+	QVBoxLayout* pModelVBox= new QVBoxLayout;
+	modelGroupBox->setLayout(pModelVBox);
+
+	surfaceList_ = new QComboBox(pWidget_);
+	QFont font = surfaceList_->font();
+	font.setPointSizeF(fontSize_);
+	surfaceList_->setFont(font);
+	pModelVBox->addWidget(surfaceList_);
 
 	////////////////////////////////////
 
@@ -95,7 +103,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	QGroupBox* pSelectionModeGroupBox = new QGroupBox(QStringLiteral("Selection Mode"));
 
 	// Set the font
-	QFont font=  pSelectionModeGroupBox->font();
+	font=  pSelectionModeGroupBox->font();
 	font.setPointSizeF(fontSize_);
 	pSelectionModeGroupBox->setFont(font);
 
@@ -262,13 +270,6 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	// actual surface to plot
 	surfaceGraph_ = new SurfaceGraph(p3dSurface);
 
-	// Simply set the 3d surface
-	//	// Connect the actions with relevant methods of the surfaceGraph
-	//	QObject::connect(heightMapModelRB, &QRadioButton::toggled,
-	//			modifier, &SurfaceGraph::enableHeightMapModel);
-	//	QObject::connect(sqrtSinModelRB, &QRadioButton::toggled,
-	//			modifier, &SurfaceGraph::enableSqrtSinModel);
-
 	QObject::connect(pModeNoSelection, &QRadioButton::toggled,
 			surfaceGraph_, &SurfaceGraph::toggleModeNone);
 	QObject::connect(pModeItemSelection,  &QRadioButton::toggled,
@@ -285,12 +286,16 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 			surfaceGraph_, &SurfaceGraph::adjustZMin);
 	QObject::connect(axisMaxSliderZ, &QSlider::valueChanged,
 			surfaceGraph_, &SurfaceGraph::adjustZMax);
-	QObject::connect(themeList, SIGNAL(currentIndexChanged(int)),
-			surfaceGraph_, SLOT(changeTheme(int)));
+	QObject::connect(	themeList, 		SIGNAL(currentIndexChanged(int)),
+										surfaceGraph_,SLOT(changeTheme(int)));
 	QObject::connect(gradientBtoYPB, &QPushButton::pressed,
 			surfaceGraph_, &SurfaceGraph::setBlackToYellowGradient);
 	QObject::connect(gradientGtoRPB, &QPushButton::pressed,
 			surfaceGraph_, &SurfaceGraph::setGreenToRedGradient);
+	// Connect the choice of the surface to plot
+	QObject::connect(	surfaceList_,  SIGNAL(currentIndexChanged(int)),
+										surfaceGraph_, SLOT(show(int)) );
+
 
 	surfaceGraph_->setAxisMinSliderX(axisMinSliderX);
 	surfaceGraph_->setAxisMaxSliderX(axisMaxSliderX);
@@ -312,17 +317,10 @@ void ThreeDPlotWidget::addChart( vector<ThreeDDataContainer> vData ) {
 
 	for(size_t i=0; i<vData.size(); i++){
 
-		// Add a radio button to the model layout for the user to be
-		// able to select runtime which surface to visualize among the
-		// available ones.
-		QRadioButton* pRadioButtom = new QRadioButton(pWidget_);
-		pRadioButtom->setText(vData[i].yAxisLabel_);
-		pRadioButtom->setChecked(i==0);
-		QFont font = pRadioButtom->font();
-		font.setPointSizeF(fontSize_);
-		pRadioButtom->setFont(font);
-		pModelVBox_->addWidget(pRadioButtom);
+		// Add an entry to the list of plottable surfaces
+		surfaceList_->addItem(vData[i].yAxisLabel_);
 
+		// Add the surface point data to the plot
 		surfaceGraph_->fillData(vData[i]);
 	}
 }

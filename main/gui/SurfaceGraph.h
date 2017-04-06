@@ -16,7 +16,10 @@ class SurfaceGraph : public QObject {
 
 	public:
 
+		/// Explicit Ctor
 		explicit SurfaceGraph(Q3DSurface *surface);
+
+		/// Dtor
 		~SurfaceGraph();
 
 		void toggleModeNone();
@@ -41,12 +44,18 @@ class SurfaceGraph : public QObject {
 		void fillData( ThreeDDataContainer& data );
 
 		public Q_SLOTS:
+
 		void changeTheme(int theme);
+
+		/// Show the i-th data (and provide all operations requested
+		/// for the 3d plot to be consistent : labels, rescaling...
+		void show( int iDataSet );
 
 		private:
 		Q3DSurface *m_graph;
 		vector<QSurfaceDataProxy*> vDataProxy_;
 		vector<QSurface3DSeries*> vDataSeries_;
+		vector<ThreeDDataContainer> vThreeDDataContainer_;
 
 		QSlider *m_axisMinSliderX;
 		QSlider *m_axisMaxSliderX;
