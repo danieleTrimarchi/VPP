@@ -304,7 +304,6 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 
 	pModeItemSelection->setChecked(true);
 	themeList->setCurrentIndex(2);
-
 }
 
 // Dtor
@@ -322,7 +321,12 @@ void ThreeDPlotWidget::addChart( vector<ThreeDDataContainer> vData ) {
 
 		// Add the surface point data to the plot
 		surfaceGraph_->fillData(vData[i]);
+
 	}
+
+	// Visualize the very first surface available, to start with
+	surfaceGraph_->show(0);
+
 }
 
 
