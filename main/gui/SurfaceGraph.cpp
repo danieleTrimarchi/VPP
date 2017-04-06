@@ -50,7 +50,7 @@ void SurfaceGraph::show( int iDataSet ) {
 	// Remove any previous series (if any) and plot the current series
 	// WARNING : can I remove a non-active series from mGraph?
 	for(size_t iSeries=0; iSeries<m_graph->seriesList().size(); iSeries++){
-		m_graph->removeSeries(vDataSeries_[iSeries]);
+		m_graph->removeSeries(m_graph->seriesList().at(iSeries));
 	}
 
 	// Add the selected series to the 3d plot
