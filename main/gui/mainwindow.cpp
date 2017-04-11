@@ -31,6 +31,8 @@
 #include "VPPItemFactory.h"
 #include "VppCustomPlotWidget.h"
 #include "VPPDialogs.h"
+#include "VPPJacobian.h"
+#include "VPPGradient.h"
 
 Q_DECLARE_METATYPE(VppTabDockWidget::DockWidgetFeatures)
 
@@ -44,6 +46,7 @@ p_d2_SailCoeffPlotWidget_(0),
 pForceMomentsPlotWidget_(0),
 pVariablesWidget_(0),
 p3dPlotWidget_(0),
+pJacobianPlotWidget_(0),
 windowLabel_("V++") {
 
 	// Set the name and the title of the app
@@ -300,15 +303,41 @@ void MainWindow::setupMenuBar() {
 
 	actionVector_.push_back( boost::shared_ptr<QAction>(
 			new QAction(
-					QIcon::fromTheme("Plot 3d", QIcon(":/icons/plot3d.png")),
-					tr("&3d Plot"), this)
+					QIcon::fromTheme("Plot Optimization Space", QIcon(":/icons/plot3d.png")),
+					tr("&Plot Optimization Space"), this)
 	) );
 	QAction* plot3dAction = actionVector_.back().get();
-	plot3dAction->setStatusTip(tr("Plot 3d"));
+	plot3dAction->setStatusTip(tr("Plot Optimization Space"));
 	connect(plot3dAction, &QAction::triggered, this, &MainWindow::plotOptimizationSpace);
 	pToolBar_->addAction(plot3dAction);
 
-	// ---
+	// --
+
+	actionVector_.push_back( boost::shared_ptr<QAction>(
+			new QAction(
+					QIcon::fromTheme("Plot Gradient", QIcon(":/icons/plotGradient.png")),
+					tr("&Plot Graident"), this)
+	) );
+
+	QAction* plotGradientAction = actionVector_.back().get();
+	plotGradientAction->setStatusTip(tr("Plot Gradient"));
+	connect(plotGradientAction, &QAction::triggered, this, &MainWindow::plotGradient);
+	pToolBar_->addAction(plotGradientAction);
+
+	// --
+
+	actionVector_.push_back( boost::shared_ptr<QAction>(
+			new QAction(
+					QIcon::fromTheme("Plot Jacobian", QIcon(":/icons/plotJacobian.png")),
+					tr("&Plot Jacobian"), this)
+	) );
+
+	QAction* plotJacobianAction = actionVector_.back().get();
+	plotJacobianAction->setStatusTip(tr("Plot Jacobian"));
+	connect(plotJacobianAction, &QAction::triggered, this, &MainWindow::plotJacobian);
+	pToolBar_->addAction(plotJacobianAction);
+
+	// --
 
 	pToolBar_->addAction(saveResultsAction);
 	pToolBar_->addAction(importResultsAction);
@@ -887,6 +916,66 @@ void MainWindow::plotOptimizationSpace() {
 	// It requires widgets instantiated on the topDockWidgetArea and
 	// I need to add the deleted signal to the slot removeWidgetFromVector
 	tabDockWidget(p3dPlotWidget_.get());
+
+}
+
+// Plot the gradient of the solution
+// Grad(u) = | du/du du/dPhi  du/db  du/df  |
+void MainWindow::plotGradient() {
+
+}
+
+// Plot the Jacobian of the solution
+// J = | dF/du dF/dPhi |	|du	 |
+//	    | dM/du dM/dPhi |	|dPhi|
+void MainWindow::plotJacobian() {
+
+	if(!hasBoatDescription())
+		return;
+
+	// For which TWV, TWA shall we plot the Jacobian?
+	WindIndicesDialog wd(pVppItems_->getWind());
+	if (wd.exec() == QDialog::Rejected)
+		return;
+
+	// Ask the state vector (defines a linearization point)
+	FullStateVectorDialog sd;
+	if (sd.exec() == QDialog::Rejected)
+		return;
+
+	pLogWidget_->append("Plotting Jacobian...");
+
+	// Define the size of the sub-pb. Here we have 2 state
+	//  vars (subPbSize) and 2 optim vars
+	size_t subPbsize=2;
+
+	VectorXd x = sd.getStateVector();
+
+	// Instantiate a Jacobian
+	VPPJacobian J(x, pVppItems_.get(), subPbsize);
+
+	// Instantiate a widget container for this plot
+	pJacobianPlotWidget_.reset(new MultiplePlotWidget(this));
+
+	// Get all of the plots the Jacobian is up to draw
+	std::vector<VppXYCustomPlotWidget*> jPlotVector= J.plot(wd,sd);
+
+	// Send the plots to the widget and arrange them in 2xn ordering
+	size_t dx=0, dy=0;
+	for(size_t i=0; i<jPlotVector.size(); i++){
+		pJacobianPlotWidget_->addChart( J.plot(wd,sd)[0], dx++, dy );
+		if(dx==2){
+			dx=0;
+			dy++;
+		}
+	}
+
+	// Add the plot view to the top of the app window
+	addDockWidget(Qt::TopDockWidgetArea, pJacobianPlotWidget_.get());
+
+	// Tab the widget if other widgets have already been instantiated
+	// In the same area.
+	tabDockWidget(pJacobianPlotWidget_.get());
 
 }
 

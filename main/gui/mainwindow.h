@@ -110,6 +110,15 @@ public slots:
 	/// Add a 3dPlot widget
 	void plotOptimizationSpace();
 
+	/// Plot the gradient of the solution
+	/// Grad(u) = | du/du du/dPhi  du/db  du/df  |
+	void plotGradient();
+
+	/// Plot the Jacobian of the solution
+	/// J = | dF/du dF/dPhi |	|du	 |
+	///	    | dM/du dM/dPhi |	|dPhi|
+	void plotJacobian();
+
 	/// print out the software info
 	void about();
 
@@ -159,8 +168,8 @@ private:
 																				p_d2_SailCoeffPlotWidget_, pForceMomentsPlotWidget_,
 																				pTotResistancePlotWidget_, pFricitionalResistancePlotWidget_,
 																				pInducedResistancePlotWidget_, pResiduaryResistancePlotWidget_,
-																				p_dFrictRes_HeelPlotWidget_,
-																				pNegativeResistancePlotWidget_;
+																				p_dFrictRes_HeelPlotWidget_, pNegativeResistancePlotWidget_,
+																				pJacobianPlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<ThreeDPlotWidget> p3dPlotWidget_;
