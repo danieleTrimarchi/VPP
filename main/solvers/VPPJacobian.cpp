@@ -229,7 +229,11 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd, Ful
 	VppXYCustomPlotWidget* pFPlot= new VppXYCustomPlotWidget("dF/du Jacobian","Vboat [m/s]","F [N]");
 	pFPlot->addData(x,f,"f(u)");
 	pFPlot->rescaleAxes();
+
+	// Push the fPlot to the vector stack
 	retVector.push_back(pFPlot);
+
+	// --
 
 	VppXYCustomPlotWidget* pMPlot= new VppXYCustomPlotWidget("dM/du Jacobian","Vboat [m/s]","M [N]");
 	pMPlot->addData(x,M,"M(u)");
@@ -290,6 +294,7 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd, Ful
 	pMPhiPlot->rescaleAxes();
 	retVector.push_back(pMPhiPlot);
 
+	return retVector;
 }
 
 // Destructor

@@ -955,15 +955,15 @@ void MainWindow::plotJacobian() {
 	VPPJacobian J(x, pVppItems_.get(), subPbsize);
 
 	// Instantiate a widget container for this plot
-	pJacobianPlotWidget_.reset(new MultiplePlotWidget(this));
+	pJacobianPlotWidget_.reset(new MultiplePlotWidget(this,"VPP Jacobian"));
 
 	// Get all of the plots the Jacobian is up to draw
-	std::vector<VppXYCustomPlotWidget*> jPlotVector= J.plot(wd,sd);
+	std::vector<VppXYCustomPlotWidget*> jPlotVector( J.plot(wd,sd) );
 
 	// Send the plots to the widget and arrange them in 2xn ordering
 	size_t dx=0, dy=0;
 	for(size_t i=0; i<jPlotVector.size(); i++){
-		pJacobianPlotWidget_->addChart( J.plot(wd,sd)[0], dx++, dy );
+		pJacobianPlotWidget_->addChart( jPlotVector[i], dx++, dy );
 		if(dx==2){
 			dx=0;
 			dy++;

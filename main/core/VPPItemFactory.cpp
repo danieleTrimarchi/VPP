@@ -364,7 +364,6 @@ Eigen::VectorXd VPPItemFactory::getResiduals() {
 // Plot the total resistance over a fixed range Fn=0-1
 std::vector<VppXYCustomPlotWidget*> VPPItemFactory::plotTotalResistance(WindIndicesDialog* wd, StateVectorDialog* sd) {
 
-
 	Eigen::VectorXd stateVector= sd->getStateVector();
 
 	// Define the number of velocities and angles
