@@ -229,10 +229,9 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 	VppXYCustomPlotWidget* pFPlot= new VppXYCustomPlotWidget("dF/du Jacobian","Vboat [m/s]","F [N]");
 	pFPlot->addData(x,f,"f(u)");
 
-	// --
-	// compute autoScale dx, which is the half distance between two -x points
+	// compute autoScale dx, which is the distance between two -x points
 	// This is of course arbitrary
-	double autoScale= 0.5 * fabs( x.last()-x[0] ) / x.size();
+	double autoScale= fabs( x.last()-x[0] ) / x.size();
 
 	// Add the arrows now
 	for(size_t i=0; i<x.size();i++){
@@ -256,7 +255,6 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 
 		}
 	}
-	// --
 
 	pFPlot->rescaleAxes();
 	retVector.push_back(pFPlot);
@@ -265,6 +263,30 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 
 	VppXYCustomPlotWidget* pMPlot= new VppXYCustomPlotWidget("dM/du Jacobian","Vboat [m/s]","M [N]");
 	pMPlot->addData(x,M,"M(u)");
+
+	// Add the arrows now
+	for(size_t i=0; i<x.size();i++){
+
+		// Compute the scale for this vector. We want dx to be as long as a dx
+		// interval
+		double norm = std::sqrt( du_M[i]*du_M[i] + dM[i]*dM[i]);
+
+		if(norm>0){
+
+			// Compute the scaling for the vectors
+			double scale= autoScale / norm;
+
+			// Instantiate the quiver and set its style
+			QCPItemLine* arrow = new QCPItemLine(pMPlot);
+			arrow->setHead(QCPLineEnding::esLineArrow);
+
+			// Set the coordinates of the quiver
+			arrow->start->setCoords(x[i], M[i]);
+			arrow->end->setCoords(x[i]+du_M[i]*scale, M[i]+dM[i]*scale);
+
+		}
+	}
+
 	pMPlot->rescaleAxes();
 	retVector.push_back(pMPlot);
 
@@ -277,6 +299,8 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 	x.clear();
 	f.clear();
 	M.clear();
+	df.clear();
+	dM.clear();
 	du_f.clear();
 	du_M.clear();
 
@@ -312,13 +336,67 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 
 	}
 
+	// Update autoscale
+	autoScale= fabs( x.last()-x[0] ) / x.size();
+
 	VppXYCustomPlotWidget* pFPhiPlot= new VppXYCustomPlotWidget("dF/dPhi Jacobian","Phi boat [rad]","F [N]");
 	pFPhiPlot->addData(x,f,"f(Phi)");
+
+	// Add the arrows now
+	for(size_t i=0; i<x.size();i++){
+
+		// Compute the scale for this vector. We want dx to be as long as a dx
+		// interval
+		double norm = std::sqrt( du_f[i]*du_f[i] + df[i]*df[i]);
+
+		if(norm>0){
+
+			// Compute the scaling for the vectors
+			double scale= autoScale / norm;
+
+			// Instantiate the quiver and set its style
+			QCPItemLine* arrow = new QCPItemLine(pFPhiPlot);
+			arrow->setHead(QCPLineEnding::esLineArrow);
+
+			// Set the coordinates of the quiver
+			arrow->start->setCoords(x[i], f[i]);
+			arrow->end->setCoords(x[i]+du_f[i]*scale, f[i]+df[i]*scale);
+
+		}
+	}
+
 	pFPhiPlot->rescaleAxes();
 	retVector.push_back(pFPhiPlot);
 
+	// --
+
 	VppXYCustomPlotWidget* pMPhiPlot= new VppXYCustomPlotWidget("dM/dPhi Jacobian","Phi boat [rad]","M [N]");
 	pMPhiPlot->addData(x,M,"M(Phi)");
+
+
+	// Add the arrows now
+	for(size_t i=0; i<x.size();i++){
+
+		// Compute the scale for this vector. We want dx to be as long as a dx
+		// interval
+		double norm = std::sqrt( du_M[i]*du_M[i] + dM[i]*dM[i]);
+
+		if(norm>0){
+
+			// Compute the scaling for the vectors
+			double scale= autoScale / norm;
+
+			// Instantiate the quiver and set its style
+			QCPItemLine* arrow = new QCPItemLine(pMPhiPlot);
+			arrow->setHead(QCPLineEnding::esLineArrow);
+
+			// Set the coordinates of the quiver
+			arrow->start->setCoords(x[i], M[i]);
+			arrow->end->setCoords(x[i]+du_M[i]*scale, M[i]+dM[i]*scale);
+
+		}
+	}
+
 	pMPhiPlot->rescaleAxes();
 	retVector.push_back(pMPhiPlot);
 

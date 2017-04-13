@@ -954,6 +954,9 @@ void MainWindow::plotJacobian() {
 	// Instantiate a Jacobian
 	VPPJacobian J(x, pVppItems_.get(), subPbsize);
 
+	// Old style plot - test to be removed!
+	// J.testPlot(wd.getTWV(), wd.getTWA());
+
 	// Instantiate a widget container for this plot
 	pJacobianPlotWidget_.reset(new MultiplePlotWidget(this,"VPP Jacobian"));
 
