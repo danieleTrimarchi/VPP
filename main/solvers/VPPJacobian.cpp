@@ -68,112 +68,6 @@ void VPPJacobian::run(int twv, int twa) {
 
 }
 
-// Produces a test plot for a range of values of the state variables
-// in order to test for the coherence of the values that have been computed
-void VPPJacobian::testPlot(int twv, int twa) {
-
-	// How many values this test is made of. The analyzed velocity range varies
-	// from -n/2 to n/2
-	size_t n=50;
-
-	// Init the state vector at the value of the state vector at the beginning of
-	// the current iteration
-	x_=xp0_;
-
-	std::cout<<"\nReset the state vector to: "<<x_.transpose()<<std::endl;
-
-	// Instantiate the containers used to feed the plotter
-	// for the moment just one variable at the time...
-	Eigen::MatrixXd x(1,n),
-			f(1,n), du_f(1,n), df(1,n),
-			M(1,n), du_M(1,n), dM(1,n);
-
-	// plot the Jacobian components when varying the boat velocity x(0)
-	for(size_t i=0; i<n; i++){
-
-		// Vary the first state variable and record its value to the plotting
-		// buffer vector (half negative)
-		x_(0)=	0.1 * ( (i+1) - 0.5 * n );
-
-		x(0,i)= x_(0);
-
-		// Store the force value for this plot
-		Eigen::VectorXd residuals=pVppItemsContainer_->getResiduals(twv,twa,x_);
-		f(0,i)= residuals(0);
-		M(0,i)= residuals(1);
-
-		// Compute the Jacobian for this configuration
-		run(twv, twa);
-
-		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
-		// finite differences
-		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
-		if(x_(0)) eps *= std::fabs(x_(0));
-
-		du_f(0,i)= eps;
-		du_M(0,i)= eps;
-
-		// y-component of the jacobian derivative: dF/dx * dx
-		df(0,i)= coeffRef(0,0) * du_f(0,i);
-
-		// y-component of the jacobian derivative: dM/dx * dx
-		dM(0,i)= coeffRef(1,0) * du_M(0,i);
-
-	}
-
-	// Instantiate a vector plotter and produce the plot
-	VPPVectorPlotter dFdx;
-	dFdx.plot(x,f,du_f,df,50,"dF/du Jacobian test plot","Vboat [m/s]","F[N]");
-
-	// Instantiate a vector plotter and produce the plot
-	VPPVectorPlotter dMdx;
-	dMdx.plot(x,M,du_M,dM,500,"dM/du Jacobian test plot","Vboat [m/s]","M[N*m]");
-
-	// Reset the state vector to its initial state
-	x_=xp0_;
-
-	// plot the Jacobian components when varying Phi, say n is in deg
-	for(size_t i=0; i<n; i++){
-
-		// Vary the first state variable and record its value to the plotting
-		// buffer vector
-		x_(1) = mathUtils::toRad( (i + 1 ) * 0.1 ) - 0.5 * mathUtils::toRad( n * 0.1 );
-		x(0,i)= x_(1);
-
-		// Store the force value for this plot
-		Eigen::VectorXd residuals=pVppItemsContainer_->getResiduals(twv,twa,x_);
-		f(0,i)= residuals(0);
-		M(0,i)= residuals(1);
-
-		// Compute the Jacobian for this configuration
-		run(twv, twa);
-
-		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
-		// finite differences
-		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
-		if(x_(1)) eps *= std::fabs(x_(1));
-
-		du_f(0,i)= eps;
-		du_M(0,i)= eps;
-
-		// y-component of the jacobian derivative: dF/dx * dx
-		df(0,i)= coeffRef(0,1) * du_f(0,i);
-
-		// y-component of the jacobian derivative: dM/dx * dx
-		dM(0,i)= coeffRef(1,1) * du_M(0,i);
-
-	}
-
-	// Instantiate a vector plotter and produce the plot
-	VPPVectorPlotter dFdPhi;
-	dFdPhi.plot(x,f,du_f,df,5,"dF/dPhi Jacobian test plot","Phi [RAD]","F[N]");
-
-	// Instantiate a vector plotter and produce the plot
-	VPPVectorPlotter dMdPhi;
-	dMdPhi.plot(x,M,du_M,dM,50000,"dM/dPhi Jacobian test plot","Phi [RAD]","M[N*m]");
-
-}
-
 // Produces a plot for a range of values of the state variables
 // in order to test for the coherence of the values that have been computed
 std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
@@ -183,7 +77,7 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 
 	// How many values this test is made of. The analyzed velocity range varies
 	// from -n/2 to n/2
-	size_t nunVals=50;
+	size_t n=50;
 
 	// Init the state vector at the value of the state vector at the beginning of
 	// the current iteration
@@ -191,21 +85,21 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 
 	// Instantiate the containers used to feed the plotter
 	// for the moment just one variable at the time...
-	QVector<double> x, f, du_f, df, M, du_M, dM;
+	QVector<double> x(n), f(n), du_f(n), df(n), M(n), du_M(n), dM(n);
 
 	// plot the Jacobian components when varying the boat velocity x(0)
-	for(size_t i=0; i<nunVals; i++){
+	for(size_t i=0; i<n; i++){
 
 		// Vary the first state variable and record its value to the plotting
 		// buffer vector (half negative)
-		x_(0)=	0.1 * ( (i+1) - 0.5 * nunVals );
+		x_(0)=	0.1 * ( (i+1) - 0.5 * n );
 
-		x.push_back( x_(0) );
+		x[i]= x_(0);
 
 		// Store the force value for this plot
 		Eigen::VectorXd residuals=pVppItemsContainer_->getResiduals(wd.getTWV(),wd.getTWA(),x_);
-		f.push_back( residuals(0) );
-		M.push_back( residuals(1) );
+		f[i]= residuals(0);
+		M[i]= residuals(1);
 
 		// Compute the Jacobian for this configuration
 		run(wd.getTWV(),wd.getTWA());
@@ -215,14 +109,14 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
 		if(x_(0)) eps *= std::fabs(x_(0));
 
-		du_f.push_back( eps );
-		du_M.push_back( eps );
+		du_f[i]= eps;
+		du_M[i]= eps;
 
 		// y-component of the jacobian derivative: dF/dx * dx
-		df.push_back( coeffRef(0,0) * du_f[i] );
+		df[i]= coeffRef(0,0) * du_f[i];
 
 		// y-component of the jacobian derivative: dM/dx * dx
-		dM.push_back( coeffRef(1,0) * du_M[i] );
+		dM[i]= coeffRef(1,0) * du_M[i];
 
 	}
 
@@ -295,27 +189,18 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 	// Reset the state vector to its initial state
 	x_=xp0_;
 
-	// Reset the buffers
-	x.clear();
-	f.clear();
-	M.clear();
-	df.clear();
-	dM.clear();
-	du_f.clear();
-	du_M.clear();
-
 	// plot the Jacobian components when varying Phi, say n is in deg
-	for(size_t i=0; i<nunVals; i++){
+	for(size_t i=0; i<n; i++){
 
 		// Vary the first state variable and record its value to the plotting
 		// buffer vector
-		x_(1) = mathUtils::toRad( (i + 1 ) * 0.1 ) - 0.5 * mathUtils::toRad( nunVals * 0.1 );
-		x.push_back( x_(1) );
+		x_(1) = mathUtils::toRad( (i + 1 ) * 0.1 ) - 0.5 * mathUtils::toRad( n * 0.1 );
+		x[i]= x_(1);
 
 		// Store the force value for this plot
 		Eigen::VectorXd residuals=pVppItemsContainer_->getResiduals(wd.getTWV(),wd.getTWA(),x_);
-		f.push_back( residuals(0) );
-		M.push_back( residuals(1) );
+		f[i]= residuals(0);
+		M[i]= residuals(1);
 
 		// Compute the Jacobian for this configuration
 		run(wd.getTWV(),wd.getTWA());
@@ -325,14 +210,14 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
 		if(x_(1)) eps *= std::fabs(x_(1));
 
-		du_f.push_back( eps );
-		du_M.push_back( eps );
+		du_f[i]= eps;
+		du_M[i]= eps;
 
 		// y-component of the jacobian derivative: dF/dx * dx
-		df.push_back( coeffRef(0,1) * du_f[i] );
+		df[i]= coeffRef(0,1) * du_f[i];
 
 		// y-component of the jacobian derivative: dM/dx * dx
-		dM.push_back( coeffRef(1,1) * du_M[i] );
+		dM[i]= coeffRef(1,1) * du_M[i];
 
 	}
 

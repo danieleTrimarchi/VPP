@@ -290,31 +290,6 @@ void VPPSolverBase::plotXY(size_t iWa) {
 
 }
 
-// Add this method for compatibility with the NR solver.
-void VPPSolverBase::plotJacobian() {
-	nrSolver_->plotJacobian();
-}
-
-void VPPSolverBase::plotGradient() {
-
-	// Define a linearization point
-	IOUtils io(pVppItemsContainer_->getWind());
-	Eigen::VectorXd xp;
-	io.askUserStateVector(xp);
-
-	// Instantiate a Gradient
-	VPPGradient G(xp,pVppItemsContainer_.get());
-
-	// ask the user which awv, awa
-	// For which TWV, TWA shall we plot the aero forces/moments?
-	size_t twv=0, twa=0;
-	io.askUserWindIndexes(twv, twa);
-
-	// call jacobian.testPlot
-	G.testPlot(twv, twa);
-
-}
-
 // Returns the dimensionality of this problem (the size of the state vector)
 size_t VPPSolverBase::getDimension() const {
 	return dimension_;

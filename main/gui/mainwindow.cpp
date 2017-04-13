@@ -923,11 +923,53 @@ void MainWindow::plotOptimizationSpace() {
 // Grad(u) = | du/du du/dPhi  du/db  du/df  |
 void MainWindow::plotGradient() {
 
+	if(!hasBoatDescription())
+		return;
+
+	// For which TWV, TWA shall we plot the Jacobian?
+	WindIndicesDialog wd(pVppItems_->getWind());
+	if (wd.exec() == QDialog::Rejected)
+		return;
+
+	// Ask the state vector (defines a linearization point)
+	FullStateVectorDialog sd;
+	if (sd.exec() == QDialog::Rejected)
+		return;
+
+	pLogWidget_->append("Plotting Gradient...");
+
+	VectorXd x = sd.getStateVector();
+
+	// Instantiate a Gradient
+	VPPGradient G(x,pVppItems_.get());
+
+	pGradientPlotWidget_.reset(new MultiplePlotWidget(this,"VPP Gradient"));
+
+	// Get all of the plots the Gradient is up to draw
+	std::vector<VppXYCustomPlotWidget*> gPlotVector( G.plot(wd) );
+
+	// Send the plots to the widget and arrange them in 2xn ordering
+	size_t dx=0, dy=0;
+	for(size_t i=0; i<gPlotVector.size(); i++){
+		pGradientPlotWidget_->addChart( gPlotVector[i], dx++, dy );
+		if(dx==2){
+			dx=0;
+			dy++;
+		}
+	}
+
+	// Add the plot view to the top of the app window
+	addDockWidget(Qt::TopDockWidgetArea, pGradientPlotWidget_.get());
+
+	// Tab the widget if other widgets have already been instantiated
+	// In the same area.
+	tabDockWidget(pGradientPlotWidget_.get());
+
 }
 
 // Plot the Jacobian of the solution
 // J = | dF/du dF/dPhi |	|du	 |
-//	    | dM/du dM/dPhi |	|dPhi|
+//	   | dM/du dM/dPhi |	|dPhi|
 void MainWindow::plotJacobian() {
 
 	if(!hasBoatDescription())
@@ -953,9 +995,6 @@ void MainWindow::plotJacobian() {
 
 	// Instantiate a Jacobian
 	VPPJacobian J(x, pVppItems_.get(), subPbsize);
-
-	// Old style plot - test to be removed!
-	// J.testPlot(wd.getTWV(), wd.getTWA());
 
 	// Instantiate a widget container for this plot
 	pJacobianPlotWidget_.reset(new MultiplePlotWidget(this,"VPP Jacobian"));

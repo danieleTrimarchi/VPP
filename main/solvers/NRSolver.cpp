@@ -132,16 +132,18 @@ void NRSolver::run(int twv, int twa) {
 			// throw if the solution was not found within the max number of iterations
 			if(it_==maxIters_){
 
-				// Plot the velocity residuals and throw
-				VPPPlotter vResPlot;
-				vResPlot.plot(velocityResiduals,"V_residuals");
-
-				// Plot the angular residuals and throw
-				VPPPlotter phiResPlot;
-				phiResPlot.plot(PhiResiduals,"PHI_residuals");
-
-				// Also plot some Jacobian diagnostics
-				J.testPlot(twv,twa);
+// TODO dtrimarchi : shall we provide a way to automatically pop-up this plot on
+// divergence..?
+//				// Plot the velocity residuals and throw
+//				VPPPlotter vResPlot;
+//				vResPlot.plot(velocityResiduals,"V_residuals");
+//
+//				// Plot the angular residuals and throw
+//				VPPPlotter phiResPlot;
+//				phiResPlot.plot(PhiResiduals,"PHI_residuals");
+//
+//				// Also plot some Jacobian diagnostics
+//				J.testPlot(twv,twa);
 
 				std::cout<<"\n\nWARNING: NR-Solver could not converge. Please press a key to continue"<<std::endl;
 				string s;
@@ -373,28 +375,6 @@ void NRSolver::plotXY(size_t iWa) {
 	string t5=string("dF and dM Residuals")+string(title);
 	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
 			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
-
-}
-
-// Plot the Jacobian derivatives on a fixed interval of linearization
-// points and for given awv, awa
-void NRSolver::plotJacobian(){
-
-	// Define a linearization point
-	IOUtils io(pVppItemsContainer_->getWind());
-	Eigen::VectorXd xp;
-	io.askUserStateVector(xp);
-
-	// Instantiate a Jacobian
-	VPPJacobian J(xp,pVppItemsContainer_,subPbSize_);
-
-	// ask the user which awv, awa
-	// For which TWV, TWA shall we plot the aero forces/moments?
-	size_t twv=0, twa=0;
-	io.askUserWindIndexes(twv, twa);
-
-	// call jacobian.testPlot
-	J.testPlot(twv, twa);
 
 }
 

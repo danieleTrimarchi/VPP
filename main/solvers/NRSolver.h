@@ -60,10 +60,6 @@ class NRSolver {
 		/// for plotting...
 		void plotXY( size_t index );
 
-		/// Plot the Jacobian derivatives on a fixed interval of linearization
-		/// points and for given awv, awa
-		void plotJacobian();
-
 		/// Print the result to screen and save it to the result container
 		void printAndSave(int twv, int twa);
 

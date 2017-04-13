@@ -169,7 +169,7 @@ private:
 																				pTotResistancePlotWidget_, pFricitionalResistancePlotWidget_,
 																				pInducedResistancePlotWidget_, pResiduaryResistancePlotWidget_,
 																				p_dFrictRes_HeelPlotWidget_, pNegativeResistancePlotWidget_,
-																				pJacobianPlotWidget_;
+																				pJacobianPlotWidget_, pGradientPlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<ThreeDPlotWidget> p3dPlotWidget_;

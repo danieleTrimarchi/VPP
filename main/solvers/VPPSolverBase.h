@@ -48,12 +48,6 @@ class VPPSolverBase {
 		/// Plot the XY plots for the state variables
 		void plotXY( size_t index );
 
-		/// Ask the underlying NRSolver to plot its Jacobian
-		void plotJacobian();
-
-		/// Plot the jacobian vector component (sanity check)
-		void plotGradient();
-
 		/// Returns the dimensionality of this problem (the size of the state vector)
 		size_t getDimension() const;
 
