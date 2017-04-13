@@ -176,7 +176,7 @@ void VPPJacobian::testPlot(int twv, int twa) {
 
 // Produces a plot for a range of values of the state variables
 // in order to test for the coherence of the values that have been computed
-std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd, FullStateVectorDialog& sd) {
+std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 
 	// Instantiate a vector with the plot widgets to return
 	std::vector<VppXYCustomPlotWidget*> retVector;
@@ -228,9 +228,37 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd, Ful
 
 	VppXYCustomPlotWidget* pFPlot= new VppXYCustomPlotWidget("dF/du Jacobian","Vboat [m/s]","F [N]");
 	pFPlot->addData(x,f,"f(u)");
-	pFPlot->rescaleAxes();
 
-	// Push the fPlot to the vector stack
+	// --
+	// compute autoScale dx, which is the half distance between two -x points
+	// This is of course arbitrary
+	double autoScale= 0.5 * fabs( x.last()-x[0] ) / x.size();
+
+	// Add the arrows now
+	for(size_t i=0; i<x.size();i++){
+
+		// Compute the scale for this vector. We want dx to be as long as a dx
+		// interval
+		double norm = std::sqrt( du_f[i]*du_f[i] + df[i]*df[i]);
+
+		if(norm>0){
+
+			// Compute the scaling for the vectors
+			double scale= autoScale / norm;
+
+			// Instantiate the quiver and set its style
+			QCPItemLine* arrow = new QCPItemLine(pFPlot);
+			arrow->setHead(QCPLineEnding::esLineArrow);
+
+			// Set the coordinates of the quiver
+			arrow->start->setCoords(x[i], f[i]);
+			arrow->end->setCoords(x[i]+du_f[i]*scale, f[i]+df[i]*scale);
+
+		}
+	}
+	// --
+
+	pFPlot->rescaleAxes();
 	retVector.push_back(pFPlot);
 
 	// --

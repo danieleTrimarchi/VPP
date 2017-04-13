@@ -958,7 +958,7 @@ void MainWindow::plotJacobian() {
 	pJacobianPlotWidget_.reset(new MultiplePlotWidget(this,"VPP Jacobian"));
 
 	// Get all of the plots the Jacobian is up to draw
-	std::vector<VppXYCustomPlotWidget*> jPlotVector( J.plot(wd,sd) );
+	std::vector<VppXYCustomPlotWidget*> jPlotVector( J.plot(wd) );
 
 	// Send the plots to the widget and arrange them in 2xn ordering
 	size_t dx=0, dy=0;

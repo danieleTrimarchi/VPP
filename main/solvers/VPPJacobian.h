@@ -39,7 +39,7 @@ class VPPJacobian : public Eigen::MatrixXd {
 
 		/// Produces a plot for a range of values of the state variables
 		/// in order to test for the coherence of the values that have been computed
-		std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog&, FullStateVectorDialog&);
+		std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog&);
 
 		/// Destructor
 		~VPPJacobian();
