@@ -98,7 +98,7 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 	x_= xp0_;
 
 	// How many values this test is made of
-	size_t n=100;
+	size_t n=50;
 
 	// Instantiate the containers used to feed the plotter
 	// for the moment just one variable at the time...
@@ -141,38 +141,11 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 
 	}
 
-	//	// Instantiate a vector plotter and produce the plot
-	//	VPPVectorPlotter dudPhi;
-	//	dudPhi.plot(phi,u,dPhi,du_dPhi,2,"du/dPhi Gradient test plot","Phi [rad]","u [m/s]");
+	// Instantiate a vector plotter and produce the plot
 	VppXYCustomPlotWidget* dudPhiPlot= new VppXYCustomPlotWidget("du/dPhi Gradient","Phi [rad]","u [m/s]");
+
 	dudPhiPlot->addData(phi,u,"u(Phi)");
-
-	// compute autoScale dx, which is the distance between two -x points
-	// This is of course arbitrary
-	double autoScale= fabs( phi.last()-phi[0] ) / phi.size();
-
-	// Add the arrows now
-	for(size_t i=0; i<phi.size();i++){
-
-		// Compute the scale for this vector. We want dx to be as long as a dx
-		// interval
-		double norm = std::sqrt( dPhi[i]*dPhi[i] + du_dPhi[i]*du_dPhi[i]);
-
-		if(norm>0){
-
-			// Compute the scaling for the vectors
-			double scale= autoScale / norm;
-
-			// Instantiate the quiver and set its style
-			QCPItemLine* arrow = new QCPItemLine(dudPhiPlot);
-			arrow->setHead(QCPLineEnding::esLineArrow);
-
-			// Set the coordinates of the quiver
-			arrow->start->setCoords(phi[i], u[i]);
-			arrow->end->setCoords(phi[i]+dPhi[i]*scale, u[i]+du_dPhi[i]*scale);
-
-		}
-	}
+	dudPhiPlot->addQuivers(phi,u,dPhi,du_dPhi);
 
 	dudPhiPlot->rescaleAxes();
 	retVector.push_back(dudPhiPlot);
@@ -220,38 +193,10 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 
 	}
 
-
-	//VPPVectorPlotter dudb;
-	//dudb.plot(b,u,db,du_db,3,"du/db Gradient test plot","b [m]","u [m/s]");
 	VppXYCustomPlotWidget* dudbPlot= new VppXYCustomPlotWidget("du/db Gradient","b [m]","u [m/s]");
+
 	dudbPlot->addData(b,u,"u(b)");
-
-	// compute autoScale dx, which is the distance between two -x points
-	// This is of course arbitrary
-	autoScale= fabs( b.last()-b[0] ) / b.size();
-
-	// Add the arrows now
-	for(size_t i=0; i<phi.size();i++){
-
-		// Compute the scale for this vector. We want dx to be as long as a dx
-		// interval
-		double norm = std::sqrt( db[i]*db[i] + du_db[i]*du_db[i]);
-
-		if(norm>0){
-
-			// Compute the scaling for the vectors
-			double scale= autoScale / norm;
-
-			// Instantiate the quiver and set its style
-			QCPItemLine* arrow = new QCPItemLine(dudbPlot);
-			arrow->setHead(QCPLineEnding::esLineArrow);
-
-			// Set the coordinates of the quiver
-			arrow->start->setCoords(b[i], u[i]);
-			arrow->end->setCoords(b[i]+db[i]*scale, u[i]+du_db[i]*scale);
-
-		}
-	}
+	dudbPlot->addQuivers(b,u,db,du_db);
 
 	dudbPlot->rescaleAxes();
 	retVector.push_back(dudbPlot);
@@ -299,37 +244,10 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 
 	}
 
-	//	VPPVectorPlotter dudf;
-	//	dudf.plot(f,u,df,du_df,5,"du/df Gradient test plot","f [m]","u [m/s]");
 	VppXYCustomPlotWidget* dudfPlot= new VppXYCustomPlotWidget("du/df Gradient","f [-]","u [m/s]");
+
 	dudfPlot->addData(f,u,"u(f)");
-
-	// compute autoScale dx, which is the distance between two -x points
-	// This is of course arbitrary
-	autoScale= fabs( f.last()-f[0] ) / f.size();
-
-	// Add the arrows now
-	for(size_t i=0; i<f.size();i++){
-
-		// Compute the scale for this vector. We want dx to be as long as a dx
-		// interval
-		double norm = std::sqrt( df[i]*df[i] + du_df[i]*du_df[i]);
-
-		if(norm>0){
-
-			// Compute the scaling for the vectors
-			double scale= autoScale / norm;
-
-			// Instantiate the quiver and set its style
-			QCPItemLine* arrow = new QCPItemLine(dudfPlot);
-			arrow->setHead(QCPLineEnding::esLineArrow);
-
-			// Set the coordinates of the quiver
-			arrow->start->setCoords(f[i], u[i]);
-			arrow->end->setCoords(f[i]+df[i]*scale, u[i]+du_df[i]*scale);
-
-		}
-	}
+	dudfPlot->addQuivers(f,u,df, du_df);
 
 	dudfPlot->rescaleAxes();
 	retVector.push_back(dudfPlot);

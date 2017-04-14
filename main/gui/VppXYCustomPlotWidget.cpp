@@ -84,6 +84,22 @@ void VppXYCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y,  QSt
 
 }
 
+/// Add some quivers to the plots
+void VppXYCustomPlotWidget::addQuivers(QVector<double>& x, QVector<double>& y, QVector<double>& dx, QVector<double>& dy ) {
+
+	// Add the arrows now
+	for(size_t i=0; i<x.size();i++){
+
+			// Instantiate the quiver and set its style
+			QCPItemLine* arrow = new QCPItemLine(this);
+			arrow->setHead(QCPLineEnding::esLineArrow);
+
+			// Set the coordinates of the quiver
+			arrow->start->setCoords(x[i], y[i]);
+			arrow->end->setCoords(x[i]+dx[i], y[i]+dy[i]);
+	}
+}
+
 // Override the parent class method called on double click
 void VppXYCustomPlotWidget::mouseDoubleClickEvent(QMouseEvent* pMouseEvent) {
 
