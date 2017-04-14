@@ -118,14 +118,6 @@ int main(int argc, char** argv) {
 //						)<<std::endl;
 //			}
 //
-//			//---
-//
-//			else if( s == string("plotJacobian"))
-//				solverFactory.get()->plotJacobian();
-//
-//			else if( s == string("plotGradient"))
-//				solverFactory.get()->plotGradient();
-//
 // --
 //
 //			else if( s == string("plotPolars"))

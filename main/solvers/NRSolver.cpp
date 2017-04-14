@@ -123,9 +123,6 @@ void NRSolver::run(int twv, int twa) {
 		// instantiate a Jacobian
 		VPPJacobian J(xp_,pVppItemsContainer_,subPbSize_);
 
-		// Instantiate a JacobianChecker
-		// JacobianChecker JCheck;
-
 		// Newton loop
 		for( it_=0; it_<=maxIters_; it_++ ) {
 
@@ -175,9 +172,6 @@ void NRSolver::run(int twv, int twa) {
 			J.run(twv,twa);
 			//std::cout<<"  in NRSolver: J= \n"<<J<<std::endl;
 
-			// Right before computing the solution, store the relevant data to the JacobianChecker
-			//JCheck.push_back(J,xp_,residuals);
-
 			// A * x = residuals --  J * deltas = residuals
 			// where deltas are also equal to f(x_i) / f'(x_i)
 			VectorXd deltas = J.colPivHouseholderQr().solve(residuals.block(0,0,subPbSize_,1));
@@ -189,9 +183,6 @@ void NRSolver::run(int twv, int twa) {
 			//std::cout<<"  In NRSolver: xp_= "<<xp_.transpose()<<std::endl;
 
 		}
-
-		// And plot the JacobianChecker diagnostics
-		//JCheck.testPlot();
 
 //		string s;
 //		std::cout<<"Please press a key to continue"<<std::endl;
