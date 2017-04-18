@@ -26,29 +26,6 @@ using namespace Eigen;
 #include <QApplication>
 #include "MainWindow.h"
 
-using namespace Optim;
-
-/// Run the solver/Optimizer
-void run(VariableFileParser& parser, VPPSolverFactoryBase* solverFactory ){
-
-	// Loop on the wind ANGLES and VELOCITIES
-	for(int aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
-		for(int vTW=0; vTW<parser.get("N_TWV"); vTW++){
-
-			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
-
-			try{
-
-				// Run the optimizer for the current wind speed/angle
-				solverFactory->run(vTW,aTW);
-
-			}
-			catch(...){
-				//do nothing and keep going
-			}
-		}
-}
-
 // MAIN
 int main(int argc, char** argv) {
 
@@ -81,23 +58,6 @@ int main(int argc, char** argv) {
 
 }
 
-
-//
-//		// Instantiate a solver. This can be an optimizer (with opt vars)
-//		// or a simple solver that will keep fixed the values of the optimization
-//		// vars
-//		// SolverFactory solverFactory(pVppItems);
-//		NLOptSolverFactory solverFactory(pVppItems);
-//		// SAOASolverFactory solverFactory(pVppItems);
-//		// IppOptSolverFactory solverFactory(pVppItems);
-//
-//		// ---
-//
-//		std::cout<<"Please enter a command or type -help-\n";
-//
-//		string s;
-//		while(cin >> s){
-//
 // ALLOW FOR I/O of QUANTITIES IN THE PREFERRED UNIT...
 // todo dtrimarchi
 //			else if(s == string("convertVelocityToFn")) {
@@ -137,14 +97,12 @@ int main(int argc, char** argv) {
 //				solverFactory.get()->reset(pVppItems);
 //			}
 //
-//			else if(s == string("run") )
-//				run(parser,&solverFactory);
-//
 //			else if(s == string("import") )
 //				solverFactory.get()->importResults();
 //
 //			//---
 //
+// 			This is substituted by the spreadsheet view
 //			else if( s == string("print"))
 //				solverFactory.get()->printResults();
 //

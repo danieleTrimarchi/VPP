@@ -33,6 +33,8 @@
 #include "VPPDialogs.h"
 #include "VPPJacobian.h"
 #include "VPPGradient.h"
+#include "VPPSolverFactoryBase.h"
+#include "Version.h"
 
 Q_DECLARE_METATYPE(VppTabDockWidget::DockWidgetFeatures)
 
@@ -157,10 +159,6 @@ void MainWindow::setupMenuBar() {
 	importResultsAction->setStatusTip(tr("Import Previous Results"));
 	connect(importResultsAction, &QAction::triggered, this, &MainWindow::importResults);
 	pVppActionMenu_->addAction(importResultsAction);
-
-	pVppActionMenu_->addSeparator();
-
-	pVppActionMenu_->addAction(tr("&Quit"), this, &QWidget::close);
 
 	// ---
 
@@ -346,8 +344,10 @@ void MainWindow::setupMenuBar() {
 
 	pPreferencesMenu_.reset( menuBar()->addMenu(tr("&VPP Settings")) );
 	pPreferencesMenu_->addAction(tr("&Select formulations"), this, &MainWindow::plotSailCoeffs);
-	pPreferencesMenu_->addSeparator();
-	pPreferencesMenu_->addAction(tr("&VPP version"), this, &MainWindow::about);
+
+  pHelpMenu_.reset( menuBar()->addMenu(tr("&Help")) );
+  QAction *aboutAct = pHelpMenu_->addAction(tr("&About"), this, &MainWindow::about);
+  aboutAct->setStatusTip(tr("Show the application's About box"));
 
 }
 
@@ -461,6 +461,21 @@ void MainWindow::import() {
 }
 
 void MainWindow::run() {
+
+	// If the boat description has not been imported we do not have the
+	// vppItems nor the coefficients to be plotted!
+	// If the boat description has not been imported we do not have the
+	// vppItems nor the coefficients to be plotted!
+	if(!hasBoatDescription())
+		return;
+
+	// Instantiate a solver by default. This can be an optimizer (with opt vars)
+	// or a simple solver that will keep fixed the values of the optimization vars
+	//		// SolverFactory solverFactory(pVppItems);
+	Optim::NLOptSolverFactory solverFactory(pVppItems_);
+	//		// SAOASolverFactory solverFactory(pVppItems);
+	//		// IppOptSolverFactory solverFactory(pVppItems);
+
 	// todo dtrimarchi
 	// Verify that the variable tree is not empty
 	// run the VPP analysis
@@ -471,6 +486,24 @@ void MainWindow::run() {
 		sprintf(msg,"Analyzing wind velocity %zu", itwv);
 		pLogWidget_->append(msg);
 	}
+
+	// Loop on the wind ANGLES and VELOCITIES
+	for(int aTW=0; aTW<pVariableFileParser_->get("N_ALPHA_TW"); aTW++)
+		for(int vTW=0; vTW<pVariableFileParser_->get("N_TWV"); vTW++){
+
+			pLogWidget_->append("vTW=" + QString(vTW) + "  -  aTW=" + QString(aTW) );
+
+			try{
+
+				// Run the optimizer for the current wind speed/angle
+				solverFactory.run(vTW,aTW);
+
+			}
+			catch(...){
+				//do nothing and keep going
+			}
+		}
+
 
 }
 
@@ -558,7 +591,12 @@ void MainWindow::plotPolars() {
 	pLogWidget_->append("Plotting Polars...");
 
 	// Instantiate a graphic plotting window in the central widget
-	pPolarPlotWidget_.reset( new PolarPlotWidget(this) );
+	pPolarPlotWidget_.reset( new MultiplePlotWidget(this, "Polars") );
+
+//	// Get all of the polar plots we are up to draw
+//	std::vector<VppXYCustomPlotWidget*> polarPlotVector( solverFactory.get()->plotPolars() );
+
+
 	addDockWidget(Qt::TopDockWidgetArea, pPolarPlotWidget_.get());
 
 	// Tab the widget if other widgets have already been instantiated
@@ -1022,9 +1060,20 @@ void MainWindow::plotJacobian() {
 }
 
 void MainWindow::about() {
-	// todo dtrimarchi
-	// Printout info about the build
-	pLogWidget_->append("About VPP...");
+
+	QString text( "Branch: " );
+	text += currentBranch;
+	text += "\n";
+	text += "Revision number: ";
+	text += currentRevNumber;
+	text += "\n";
+	text += "Commit hash: ";
+	text += currentHash;
+	text += "\n";
+	text += "Build on: ";
+	text += buildDate;
+
+	QMessageBox::about(this, tr("About VPP"),text);
 
 }
 

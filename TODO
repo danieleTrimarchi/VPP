@@ -1,3 +1,5 @@
+- How to redirect output directly to the low window
+
 - Refactor the resistance items to plot with a unique interface: 
   the resistance items know the wind (given @ construction) so they can 
   direcly popup a dialog (WindIndicesDialog) if requested. 

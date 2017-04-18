@@ -149,16 +149,13 @@ private:
 	boost::shared_ptr<QTextEdit> pLogWidget_;
 
 	/// Menus available to the menu bar
-	boost::shared_ptr<QMenu> pVppActionMenu_, pPreferencesMenu_, pWidgetMenu_;
+	boost::shared_ptr<QMenu> pVppActionMenu_, pPreferencesMenu_, pWidgetMenu_, pHelpMenu_;
 
 	/// Toolbar with some shortcuts to actions
 	QToolBar* pToolBar_;
 
 	/// Widget that contains the tabular view of the results
 	boost::shared_ptr<VppTabDockWidget> pTableWidget_;
-
-	/// Widget that contains the variable tree or the log view
-	boost::shared_ptr<VppTabDockWidget> pPolarPlotWidget_;
 
 	/// XY Plot widget
 	boost::shared_ptr<VppTabDockWidget> pXYPlotWidget_;
@@ -169,7 +166,7 @@ private:
 																				pTotResistancePlotWidget_, pFricitionalResistancePlotWidget_,
 																				pInducedResistancePlotWidget_, pResiduaryResistancePlotWidget_,
 																				p_dFrictRes_HeelPlotWidget_, pNegativeResistancePlotWidget_,
-																				pJacobianPlotWidget_, pGradientPlotWidget_;
+																				pJacobianPlotWidget_, pGradientPlotWidget_, pPolarPlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<ThreeDPlotWidget> p3dPlotWidget_;
