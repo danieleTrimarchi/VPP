@@ -453,16 +453,7 @@ void MainWindow::import() {
 
 		}
 
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
-
-
+	}	catch(...) {}
 }
 
 void MainWindow::run() {
@@ -509,14 +500,7 @@ void MainWindow::run() {
 			}
 
 		// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 }
 
 bool MainWindow::saveResults() {
@@ -564,14 +548,7 @@ void MainWindow::importResults() {
 			std::cout<<"Importing the analysis results..."<<std::endl;
 
 		// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 }
 
 // Add a table widget with the results
@@ -591,14 +568,7 @@ void MainWindow::tableResults() {
 		tabDockWidget(pTableWidget_.get());
 
 		// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	} catch(...) {}
 }
 
 // Make sure a boat description has been imported. Otherwise
@@ -640,14 +610,7 @@ void MainWindow::plotPolars() {
 		tabDockWidget(pPolarPlotWidget_.get());
 
 		// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 }
 
 
@@ -676,14 +639,7 @@ void MainWindow::plotSailCoeffs() {
 		tabDockWidget(pSailCoeffPlotWidget_.get());
 
 		// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	} catch(...) {}
 }
 
 // Plot the sail coefficients derivatives
@@ -710,14 +666,7 @@ void MainWindow::plot_d_SailCoeffs() {
 		tabDockWidget(p_d_SailCoeffPlotWidget_.get());
 
 		// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 }
 
 // Plot the sail coefficients second derivatives
@@ -744,14 +693,7 @@ void MainWindow::plot_d2_SailCoeffs() {
 
 		tabDockWidget(p_d2_SailCoeffPlotWidget_.get());
 		// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 }
 
 // Plot sail forces and moments
@@ -776,14 +718,7 @@ void MainWindow::plotSailForceMoments() {
 		tabDockWidget(pForceMomentsPlotWidget_.get());
 
 		// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	} catch(...) {}
 }
 
 // Plot the total resistance
@@ -793,8 +728,6 @@ void MainWindow::plotTotalResistance() {
 
 		if(!hasBoatDescription())
 			return;
-
-		throw VPPException(HERE,"Stpp");
 
 		// For which TWV, TWA shall we plot the aero forces/moments?
 		WindIndicesDialog wd(pVppItems_->getWind());
@@ -820,14 +753,7 @@ void MainWindow::plotTotalResistance() {
 		tabDockWidget(pTotResistancePlotWidget_.get());
 
 		// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 
 }
 
@@ -864,14 +790,7 @@ void MainWindow::plotFrictionalResistance() {
 		tabDockWidget(pFricitionalResistancePlotWidget_.get());
 
 		// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 }
 
 // Plot the delta Frictional resistance due to the heel of the hull
@@ -908,14 +827,7 @@ void MainWindow::plotDelta_FrictionalResistance_Heel() {
 		tabDockWidget(p_dFrictRes_HeelPlotWidget_.get());
 
 		// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	} catch(...) {}
 }
 
 // Plot the Induced resistance
@@ -954,14 +866,7 @@ void MainWindow::plotInducedResistance() {
 		tabDockWidget(pInducedResistancePlotWidget_.get());
 
 	// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 }
 
 // Plot the Residuary resistance
@@ -1009,14 +914,7 @@ void MainWindow::plotResiduaryResistance() {
 		tabDockWidget(pResiduaryResistancePlotWidget_.get());
 
 	// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 
 }
 
@@ -1044,14 +942,7 @@ void MainWindow::plotNegativeResistance() {
 		tabDockWidget(pNegativeResistancePlotWidget_.get());
 
 	// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 }
 
 // Temp method used to test QCustomPlot in the current env
@@ -1069,14 +960,7 @@ void MainWindow::testQCustomPlot() {
 		tabDockWidget(pXYPlotWidget_.get());
 
 	// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 }
 
 // Add a 3dPlot widget
@@ -1115,14 +999,7 @@ void MainWindow::plotOptimizationSpace() {
 		tabDockWidget(p3dPlotWidget_.get());
 
 	// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	} catch(...) {}
 }
 
 // Plot the gradient of the solution
@@ -1173,14 +1050,7 @@ void MainWindow::plotGradient() {
 		tabDockWidget(pGradientPlotWidget_.get());
 
 	// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 }
 
 // Plot the Jacobian of the solution
@@ -1235,14 +1105,7 @@ void MainWindow::plotJacobian() {
 		tabDockWidget(pJacobianPlotWidget_.get());
 
 	// outer try-catch block
-	} catch(std::exception& e) {
-		pLogWidget_->append("\n-----------------------------------------");
-		pLogWidget_->append(" Exception caught in Main:  ");
-		pLogWidget_->append( e.what() );
-		pLogWidget_->append("\n-----------------------------------------");
-	}	catch(...) {
-		pLogWidget_->append("Unknown Exception occurred\n");
-	}
+	}	catch(...) {}
 }
 
 void MainWindow::about() {
