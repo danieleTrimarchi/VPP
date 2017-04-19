@@ -1,6 +1,7 @@
 #include "VPPException.h"
 #include <iostream>
 #include <sstream>
+#include <QMessageBox>
 
 // Constructor
 VPPException::VPPException(const char* inFile, int inLine, const char* inFunction, const char* message ){
@@ -10,6 +11,12 @@ VPPException::VPPException(const char* inFile, int inLine, const char* inFunctio
 	oss<<" Message: "<<message<<std::endl;
 	msg=oss.str();
 	std::cout<<msg<<std::endl;
+
+	QMessageBox msgBox;
+	msgBox.setText(QString(what()));
+	msgBox.setIcon(QMessageBox::Critical);
+	msgBox.exec();
+
 }
 
 // Destructor
@@ -31,6 +38,12 @@ NonConvergedException::NonConvergedException(const char* inFile, int inLine, con
 	oss<<" Message: "<<message<<std::endl;
 	msg=oss.str();
 	std::cout<<msg<<std::endl;
+
+	QMessageBox msgBox;
+	msgBox.setText(QString(what()));
+	msgBox.setIcon(QMessageBox::Critical);
+	msgBox.exec();
+
 }
 
 // Destructor
@@ -53,6 +66,12 @@ NoPreviousConvergedException::NoPreviousConvergedException(const char* inFile, i
 	oss<<" Message: "<<message<<std::endl;
 	msg=oss.str();
 	std::cout<<msg<<std::endl;
+
+	QMessageBox msgBox;
+	msgBox.setText(QString(what()));
+	msgBox.setIcon(QMessageBox::Critical);
+	msgBox.exec();
+
 }
 
 // Destructor

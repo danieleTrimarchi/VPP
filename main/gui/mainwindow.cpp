@@ -356,9 +356,9 @@ void MainWindow::setupMenuBar() {
 	pPreferencesMenu_.reset( menuBar()->addMenu(tr("&VPP Settings")) );
 	pPreferencesMenu_->addAction(tr("&Select formulations"), this, &MainWindow::plotSailCoeffs);
 
-  pHelpMenu_.reset( menuBar()->addMenu(tr("&Help")) );
-  QAction *aboutAct = pHelpMenu_->addAction(tr("&About"), this, &MainWindow::about);
-  aboutAct->setStatusTip(tr("Show the application's About box"));
+	pHelpMenu_.reset( menuBar()->addMenu(tr("&Help")) );
+	QAction *aboutAct = pHelpMenu_->addAction(tr("&About"), this, &MainWindow::about);
+	aboutAct->setStatusTip(tr("Show the application's About box"));
 
 }
 
@@ -467,47 +467,56 @@ void MainWindow::import() {
 
 void MainWindow::run() {
 
-	// If the boat description has not been imported we do not have the
-	// vppItems nor the coefficients to be plotted!
-	// If the boat description has not been imported we do not have the
-	// vppItems nor the coefficients to be plotted!
-	if(!hasBoatDescription())
-		return;
+	try {
+		// If the boat description has not been imported we do not have the
+		// vppItems nor the coefficients to be plotted!
+		// If the boat description has not been imported we do not have the
+		// vppItems nor the coefficients to be plotted!
+		if(!hasBoatDescription())
+			return;
 
-	// todo dtrimarchi : this should be selected by a switch in the UI!
-	// Instantiate a solver by default. This can be an optimizer (with opt vars)
-	// or a simple solver that will keep fixed the values of the optimization vars
-	//		// SolverFactory solverFactory(pVppItems);
-	Optim::NLOptSolverFactory solverFactory(pVppItems_);
-	//		// SAOASolverFactory solverFactory(pVppItems);
-	//		// IppOptSolverFactory solverFactory(pVppItems);
+		// todo dtrimarchi : this should be selected by a switch in the UI!
+		// Instantiate a solver by default. This can be an optimizer (with opt vars)
+		// or a simple solver that will keep fixed the values of the optimization vars
+		//		// SolverFactory solverFactory(pVppItems);
+		Optim::NLOptSolverFactory solverFactory(pVppItems_);
+		//		// SAOASolverFactory solverFactory(pVppItems);
+		//		// IppOptSolverFactory solverFactory(pVppItems);
 
-	std::cout<<"Running the VPP analysis... "<<std::endl;
+		std::cout<<"Running the VPP analysis... "<<std::endl;
 
-	for(size_t itwv=0; itwv<5; itwv++){
-		char msg[256];
-		sprintf(msg,"Analyzing wind velocity %zu", itwv);
-		pLogWidget_->append(msg);
-	}
-
-	// Loop on the wind ANGLES and VELOCITIES
-	for(int aTW=0; aTW<pVariableFileParser_->get("N_ALPHA_TW"); aTW++)
-		for(int vTW=0; vTW<pVariableFileParser_->get("N_TWV"); vTW++){
-
-			pLogWidget_->append("vTW=" + QString(vTW) + "  -  aTW=" + QString(aTW) );
-
-			try{
-
-				// Run the optimizer for the current wind speed/angle
-				solverFactory.run(vTW,aTW);
-
-			}
-			catch(...){
-				//do nothing and keep going
-			}
+		for(size_t itwv=0; itwv<5; itwv++){
+			char msg[256];
+			sprintf(msg,"Analyzing wind velocity %zu", itwv);
+			pLogWidget_->append(msg);
 		}
 
+		// Loop on the wind ANGLES and VELOCITIES
+		for(int aTW=0; aTW<pVariableFileParser_->get("N_ALPHA_TW"); aTW++)
+			for(int vTW=0; vTW<pVariableFileParser_->get("N_TWV"); vTW++){
 
+				pLogWidget_->append("vTW=" + QString(vTW) + "  -  aTW=" + QString(aTW) );
+
+				try{
+
+					// Run the optimizer for the current wind speed/angle
+					solverFactory.run(vTW,aTW);
+
+				}
+				catch(...){
+					//do nothing and keep going
+				}
+			}
+
+		// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 bool MainWindow::saveResults() {
@@ -543,32 +552,53 @@ bool MainWindow::saveFile(const QString &fileName) {
 // Import VPP results from file
 void MainWindow::importResults() {
 
-	QString caption;
-	QString dir;
+	try {
+		QString caption;
+		QString dir;
 
-	QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
-			tr("VPP Result File(*.vpp);; All Files (*.*)"));
+		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
+				tr("VPP Result File(*.vpp);; All Files (*.*)"));
 
-	if (!fileName.isEmpty())
-		//loadFile(fileName);
-		std::cout<<"Importing the analysis results..."<<std::endl;
+		if (!fileName.isEmpty())
+			//loadFile(fileName);
+			std::cout<<"Importing the analysis results..."<<std::endl;
 
+		// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Add a table widget with the results
 void MainWindow::tableResults() {
 
-	std::cout<<"Showing the results in tabular form..."<<std::endl;
+	try{
+		std::cout<<"Showing the results in tabular form..."<<std::endl;
 
-	pTableWidget_.reset( new VppTableDockWidget(this) );
-	addDockWidget(Qt::TopDockWidgetArea, pTableWidget_.get());
 
-	// Tab the widget if other widgets have already been instantiated
-	// In the same area. Todo dtrimarchi : this is way too fragile
-	// It requires widgets instantiated on the topDockWidgetArea and
-	// I need to add the deleted signal to the slot removeWidgetFromVector
-	tabDockWidget(pTableWidget_.get());
+		pTableWidget_.reset( new VppTableDockWidget(this) );
+		addDockWidget(Qt::TopDockWidgetArea, pTableWidget_.get());
 
+		// Tab the widget if other widgets have already been instantiated
+		// In the same area. Todo dtrimarchi : this is way too fragile
+		// It requires widgets instantiated on the topDockWidgetArea and
+		// I need to add the deleted signal to the slot removeWidgetFromVector
+		tabDockWidget(pTableWidget_.get());
+
+		// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Make sure a boat description has been imported. Otherwise
@@ -591,421 +621,566 @@ bool MainWindow::hasBoatDescription() {
 // Plot the velocity polars
 void MainWindow::plotPolars() {
 
-	std::cout<<"Plotting Polars..."<<std::endl;
+	try{
 
-	// Instantiate a graphic plotting window in the central widget
-	pPolarPlotWidget_.reset( new MultiplePlotWidget(this, "Polars") );
+		std::cout<<"Plotting Polars..."<<std::endl;
 
-//	// Get all of the polar plots we are up to draw
-//	std::vector<VppXYCustomPlotWidget*> polarPlotVector( solverFactory.get()->plotPolars() );
+		// Instantiate a graphic plotting window in the central widget
+		pPolarPlotWidget_.reset( new MultiplePlotWidget(this, "Polars") );
 
+		//	// Get all of the polar plots we are up to draw
+		//	std::vector<VppXYCustomPlotWidget*> polarPlotVector( solverFactory.get()->plotPolars() );
 
-	addDockWidget(Qt::TopDockWidgetArea, pPolarPlotWidget_.get());
+		addDockWidget(Qt::TopDockWidgetArea, pPolarPlotWidget_.get());
 
-	// Tab the widget if other widgets have already been instantiated
-	// In the same area. Todo dtrimarchi : this is way too fragile
-	// It requires widgets instantiated on the topDockWidgetArea and
-	// I need to add the deleted signal to the slot removeWidgetFromVector
-	tabDockWidget(pPolarPlotWidget_.get());
+		// Tab the widget if other widgets have already been instantiated
+		// In the same area. Todo dtrimarchi : this is way too fragile
+		// It requires widgets instantiated on the topDockWidgetArea and
+		// I need to add the deleted signal to the slot removeWidgetFromVector
+		tabDockWidget(pPolarPlotWidget_.get());
+
+		// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
+
 
 // Plot the velocity polars
 void MainWindow::plotSailCoeffs() {
 
-	// If the boat description has not been imported we do not have the
-	// vppItems nor the coefficients to be plotted!
-	// If the boat description has not been imported we do not have the
-	// vppItems nor the coefficients to be plotted!
-	if(!hasBoatDescription())
-		return;
+	try{
+		// If the boat description has not been imported we do not have the
+		// vppItems nor the coefficients to be plotted!
+		// If the boat description has not been imported we do not have the
+		// vppItems nor the coefficients to be plotted!
+		if(!hasBoatDescription())
+			return;
 
-	std::cout<<"Plotting Sail coeffs..."<<std::endl;
+		std::cout<<"Plotting Sail coeffs..."<<std::endl;
 
-	// Instantiate an empty multiple plot widget
-	pSailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Coeffs") );
+		// Instantiate an empty multiple plot widget
+		pSailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Coeffs") );
 
-	// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
-	pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients( pSailCoeffPlotWidget_.get() );
+		// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
+		pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients( pSailCoeffPlotWidget_.get() );
 
-	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pSailCoeffPlotWidget_.get() );
+		// Add the xy plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, pSailCoeffPlotWidget_.get() );
 
-	tabDockWidget(pSailCoeffPlotWidget_.get());
+		tabDockWidget(pSailCoeffPlotWidget_.get());
 
+		// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Plot the sail coefficients derivatives
 void MainWindow::plot_d_SailCoeffs() {
 
-	// If the boat description has not been imported we do not have the
-	// vppItems nor the coefficients to be plotted!
-	if(!hasBoatDescription())
-		return;
+	try{
 
-	std::cout<<"Plotting Sail coeffs Derivatives..."<<std::endl;
+		// If the boat description has not been imported we do not have the
+		// vppItems nor the coefficients to be plotted!
+		if(!hasBoatDescription())
+			return;
 
-	// Instantiate an empty multiple plot widget
-	p_d_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"d(Sail Coeffs)") );
+		std::cout<<"Plotting Sail coeffs Derivatives..."<<std::endl;
 
-	// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
-	pVppItems_->getSailCoefficientItem()->plot_D_InterpolatedCoefficients( p_d_SailCoeffPlotWidget_.get() );
+		// Instantiate an empty multiple plot widget
+		p_d_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"d(Sail Coeffs)") );
 
-	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, p_d_SailCoeffPlotWidget_.get() );
+		// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
+		pVppItems_->getSailCoefficientItem()->plot_D_InterpolatedCoefficients( p_d_SailCoeffPlotWidget_.get() );
 
-	tabDockWidget(p_d_SailCoeffPlotWidget_.get());
+		// Add the xy plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, p_d_SailCoeffPlotWidget_.get() );
+
+		tabDockWidget(p_d_SailCoeffPlotWidget_.get());
+
+		// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Plot the sail coefficients second derivatives
 void MainWindow::plot_d2_SailCoeffs() {
 
-	// If the boat description has not been imported we do not have the
-	// vppItems nor the coefficients to be plotted!
-	// If the boat description has not been imported we do not have the
-	// vppItems nor the coefficients to be plotted!
-	if(!hasBoatDescription())
-		return;
+	try{
+		// If the boat description has not been imported we do not have the
+		// vppItems nor the coefficients to be plotted!
+		// If the boat description has not been imported we do not have the
+		// vppItems nor the coefficients to be plotted!
+		if(!hasBoatDescription())
+			return;
 
-	std::cout<<"Plotting Second Derivatives of the Sail coeffs..."<<std::endl;
+		std::cout<<"Plotting Second Derivatives of the Sail coeffs..."<<std::endl;
 
-	// Instantiate an empty multiple plot widget
-	p_d2_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"d2(Sail Coeffs)") );
+		// Instantiate an empty multiple plot widget
+		p_d2_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"d2(Sail Coeffs)") );
 
-	// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
-	pVppItems_->getSailCoefficientItem()->plot_D2_InterpolatedCoefficients( p_d2_SailCoeffPlotWidget_.get() );
+		// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
+		pVppItems_->getSailCoefficientItem()->plot_D2_InterpolatedCoefficients( p_d2_SailCoeffPlotWidget_.get() );
 
-	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, p_d2_SailCoeffPlotWidget_.get() );
+		// Add the xy plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, p_d2_SailCoeffPlotWidget_.get() );
 
-	tabDockWidget(p_d2_SailCoeffPlotWidget_.get());
+		tabDockWidget(p_d2_SailCoeffPlotWidget_.get());
+		// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Plot sail forces and moments
 void MainWindow::plotSailForceMoments() {
 
-	if(!hasBoatDescription())
-		return;
+	try{
+		if(!hasBoatDescription())
+			return;
 
-	std::cout<<"Plotting Sail Forces/Moments..."<<std::endl;
+		std::cout<<"Plotting Sail Forces/Moments..."<<std::endl;
 
-	// Instantiate an multiple plot widget for the force and moments plot
-	pForceMomentsPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Force/Moments") );
+		// Instantiate an multiple plot widget for the force and moments plot
+		pForceMomentsPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Force/Moments") );
 
-	// Ask the forces/moments to plot themself
-	pVppItems_->getAeroForcesItem()->plot(pForceMomentsPlotWidget_.get());
+		// Ask the forces/moments to plot themself
+		pVppItems_->getAeroForcesItem()->plot(pForceMomentsPlotWidget_.get());
 
-	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pForceMomentsPlotWidget_.get() );
+		// Add the xy plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, pForceMomentsPlotWidget_.get() );
 
-	// Tab the widget with the others
-	tabDockWidget(pForceMomentsPlotWidget_.get());
+		// Tab the widget with the others
+		tabDockWidget(pForceMomentsPlotWidget_.get());
 
+		// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Plot the total resistance
 void MainWindow::plotTotalResistance() {
 
-	if(!hasBoatDescription())
-		return;
+	try {
 
-	std::cout<<"Plotting Total Resistance..."<<std::endl;
+		if(!hasBoatDescription())
+			return;
 
-	// For which TWV, TWA shall we plot the aero forces/moments?
-	WindIndicesDialog wd(pVppItems_->getWind());
-	if (wd.exec() == QDialog::Rejected)
-		return;
+		throw VPPException(HERE,"Stpp");
 
-	OptimVarsStateVectorDialog sd;
-	if (sd.exec() == QDialog::Rejected)
-		return;
+		// For which TWV, TWA shall we plot the aero forces/moments?
+		WindIndicesDialog wd(pVppItems_->getWind());
+		if (wd.exec() == QDialog::Rejected)
+			return;
 
-	// Instantiate an empty multiple plot widget
-	pTotResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Total Resistance") );
+		OptimVarsStateVectorDialog sd;
+		if (sd.exec() == QDialog::Rejected)
+			return;
 
-	// Ask the forces/moments to plot themself
-	pTotResistancePlotWidget_->addChart(
-			pVppItems_->plotTotalResistance(&wd,&sd)[0],
-			0,0);
+		// Instantiate an empty multiple plot widget
+		pTotResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Total Resistance") );
 
-	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pTotResistancePlotWidget_.get() );
+		// Ask the forces/moments to plot themself
+		pTotResistancePlotWidget_->addChart(
+				pVppItems_->plotTotalResistance(&wd,&sd)[0],
+				0,0);
 
-	// Tab the widget with the others
-	tabDockWidget(pTotResistancePlotWidget_.get());
+		// Add the xy plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, pTotResistancePlotWidget_.get() );
+
+		// Tab the widget with the others
+		tabDockWidget(pTotResistancePlotWidget_.get());
+
+		// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 
 }
 
 /// Plot the Frictional resistance of the hull, the keel and the rudder
 void MainWindow::plotFrictionalResistance() {
 
-	if(!hasBoatDescription())
-		return;
+	try{
 
-	std::cout<<"Plotting Frictional Resistance..."<<std::endl;
+		if(!hasBoatDescription())
+			return;
 
-	// Instantiate an empty multiple plot widget
-	pFricitionalResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Frictional Resistance") );
+		std::cout<<"Plotting Frictional Resistance..."<<std::endl;
 
-	// Add the plots generated by the items into the multiPlotWidget
-	pFricitionalResistancePlotWidget_->addChart(
-			pVppItems_->getFrictionalResistanceItem()->plot()[0],
-			0,0);
+		// Instantiate an empty multiple plot widget
+		pFricitionalResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Frictional Resistance") );
 
-	pFricitionalResistancePlotWidget_->addChart(
-			pVppItems_->getViscousResistanceKeelItem()->plot()[0],
-			0,1);
+		// Add the plots generated by the items into the multiPlotWidget
+		pFricitionalResistancePlotWidget_->addChart(
+				pVppItems_->getFrictionalResistanceItem()->plot()[0],
+				0,0);
 
-	pFricitionalResistancePlotWidget_->addChart(
-			pVppItems_->getViscousResistanceRudderItem()->plot()[0],
-			0,2);
+		pFricitionalResistancePlotWidget_->addChart(
+				pVppItems_->getViscousResistanceKeelItem()->plot()[0],
+				0,1);
 
-	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pFricitionalResistancePlotWidget_.get() );
+		pFricitionalResistancePlotWidget_->addChart(
+				pVppItems_->getViscousResistanceRudderItem()->plot()[0],
+				0,2);
 
-	// Tab the widget with the others
-	tabDockWidget(pFricitionalResistancePlotWidget_.get());
+		// Add the xy plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, pFricitionalResistancePlotWidget_.get() );
 
+		// Tab the widget with the others
+		tabDockWidget(pFricitionalResistancePlotWidget_.get());
+
+		// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Plot the delta Frictional resistance due to the heel of the hull
 void MainWindow::plotDelta_FrictionalResistance_Heel() {
 
-	if(!hasBoatDescription())
-		return;
+	try{
+		if(!hasBoatDescription())
+			return;
 
-	std::cout<<"Plotting Delta Frictional Resistance due to Heel..."<<std::endl;
+		std::cout<<"Plotting Delta Frictional Resistance due to Heel..."<<std::endl;
 
-	// For which TWV, TWA shall we plot the residuary resistance?
-	WindIndicesDialog dg(pVppItems_->getWind());
-	if (dg.exec() == QDialog::Rejected)
-		return;
+		// For which TWV, TWA shall we plot the residuary resistance?
+		WindIndicesDialog dg(pVppItems_->getWind());
+		if (dg.exec() == QDialog::Rejected)
+			return;
 
-	// Instantiate an empty multiple plot widget
-	p_dFrictRes_HeelPlotWidget_.reset( new MultiplePlotWidget(this,"Delta Frictional Resistance due to Heel") );
+		// Instantiate an empty multiple plot widget
+		p_dFrictRes_HeelPlotWidget_.reset( new MultiplePlotWidget(this,"Delta Frictional Resistance due to Heel") );
 
-	// Plot the change of wetted area due to heel - see DSYHS99 p 116
-	p_dFrictRes_HeelPlotWidget_->addChart(
-			pVppItems_->getDelta_FrictionalResistance_HeelItem()->plot_deltaWettedArea_heel()[0],
-			0,0);
+		// Plot the change of wetted area due to heel - see DSYHS99 p 116
+		p_dFrictRes_HeelPlotWidget_->addChart(
+				pVppItems_->getDelta_FrictionalResistance_HeelItem()->plot_deltaWettedArea_heel()[0],
+				0,0);
 
-	// Add the plot for the Delta Frictional Resistance due to Heel
-	p_dFrictRes_HeelPlotWidget_->addChart(
-			pVppItems_->getDelta_FrictionalResistance_HeelItem()->plot(&dg)[0],
-			1,0);
+		// Add the plot for the Delta Frictional Resistance due to Heel
+		p_dFrictRes_HeelPlotWidget_->addChart(
+				pVppItems_->getDelta_FrictionalResistance_HeelItem()->plot(&dg)[0],
+				1,0);
 
-	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, p_dFrictRes_HeelPlotWidget_.get() );
+		// Add the xy plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, p_dFrictRes_HeelPlotWidget_.get() );
 
-	// Tab the widget with the others
-	tabDockWidget(p_dFrictRes_HeelPlotWidget_.get());
+		// Tab the widget with the others
+		tabDockWidget(p_dFrictRes_HeelPlotWidget_.get());
 
+		// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Plot the Induced resistance
 void MainWindow::plotInducedResistance() {
 
-	if(!hasBoatDescription())
-		return;
+	try{
+		if(!hasBoatDescription())
+			return;
 
-	// For which TWV, TWA shall we plot the residuary resistance?
-	WindIndicesDialog wd(pVppItems_->getWind());
-	if (wd.exec() == QDialog::Rejected)
-		return;
+		// For which TWV, TWA shall we plot the residuary resistance?
+		WindIndicesDialog wd(pVppItems_->getWind());
+		if (wd.exec() == QDialog::Rejected)
+			return;
 
-	OptimVarsStateVectorDialog vd;
-	if( vd.exec() == QDialog::Rejected )
-		return;
+		OptimVarsStateVectorDialog vd;
+		if( vd.exec() == QDialog::Rejected )
+			return;
 
-	std::cout<<"Plotting Induced Resistance..."<<std::endl;
+		// Instantiate an empty multiple plot widget
+		pInducedResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Induced Resistance") );
 
-	// Instantiate an empty multiple plot widget
-	pInducedResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Induced Resistance") );
+		// Ask the frictional resistance item to plot itself
+		pInducedResistancePlotWidget_->addChart(
+				pVppItems_->getInducedResistanceItem()->plot(&wd,&vd)[0],
+				0,0);
 
-	// Ask the frictional resistance item to plot itself
-	pInducedResistancePlotWidget_->addChart(
-			pVppItems_->getInducedResistanceItem()->plot(&wd,&vd)[0],
-			0,0);
+		// Ask the frictional resistance item to plot itself
+		pInducedResistancePlotWidget_->addChart(
+				pVppItems_->getInducedResistanceItem()->plot(&wd,&vd)[1],
+				0,1);
 
-	// Ask the frictional resistance item to plot itself
-	pInducedResistancePlotWidget_->addChart(
-			pVppItems_->getInducedResistanceItem()->plot(&wd,&vd)[1],
-			0,1);
+		// Add the xy plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, pInducedResistancePlotWidget_.get() );
 
-	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pInducedResistancePlotWidget_.get() );
+		// Tab the widget with the others
+		tabDockWidget(pInducedResistancePlotWidget_.get());
 
-	// Tab the widget with the others
-	tabDockWidget(pInducedResistancePlotWidget_.get());
-
+	// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Plot the Residuary resistance
 void MainWindow::plotResiduaryResistance() {
 
-	if(!hasBoatDescription())
-		return;
+	try{
+		if(!hasBoatDescription())
+			return;
 
-	std::cout<<"Plotting Residuary Resistance..."<<std::endl;
+		std::cout<<"Plotting Residuary Resistance..."<<std::endl;
 
-	// For which TWV, TWA shall we plot the residuary resistance?
-	WindIndicesDialog dg(pVppItems_->getWind());
-	if (dg.exec() == QDialog::Rejected)
-		return;
+		// For which TWV, TWA shall we plot the residuary resistance?
+		WindIndicesDialog dg(pVppItems_->getWind());
+		if (dg.exec() == QDialog::Rejected)
+			return;
 
-	OptimVarsStateVectorDialog vd;
-	if( vd.exec() == QDialog::Rejected )
-		return;
+		OptimVarsStateVectorDialog vd;
+		if( vd.exec() == QDialog::Rejected )
+			return;
 
-	// Instantiate an empty multiple plot widget
-	pResiduaryResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Residuary Resistance") );
+		// Instantiate an empty multiple plot widget
+		pResiduaryResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Residuary Resistance") );
 
-	// Ask the Residuary resistance items of hull and keel to plot itself
-	pResiduaryResistancePlotWidget_->addChart(
-			pVppItems_->getResiduaryResistanceItem()->plot(&dg, &vd)[0],
-			0,0);
+		// Ask the Residuary resistance items of hull and keel to plot itself
+		pResiduaryResistancePlotWidget_->addChart(
+				pVppItems_->getResiduaryResistanceItem()->plot(&dg, &vd)[0],
+				0,0);
 
-	pResiduaryResistancePlotWidget_->addChart(
-			pVppItems_->getResiduaryResistanceKeelItem()->plot(&dg, &vd)[0],
-			0,1);
+		pResiduaryResistancePlotWidget_->addChart(
+				pVppItems_->getResiduaryResistanceKeelItem()->plot(&dg, &vd)[0],
+				0,1);
 
-	pResiduaryResistancePlotWidget_->addChart(
-			pVppItems_->getDelta_ResiduaryResistance_HeelItem()->plot(&dg, &vd)[0],
-			1,0);
+		pResiduaryResistancePlotWidget_->addChart(
+				pVppItems_->getDelta_ResiduaryResistance_HeelItem()->plot(&dg, &vd)[0],
+				1,0);
 
-	pResiduaryResistancePlotWidget_->addChart(
-			pVppItems_->getDelta_ResiduaryResistanceKeel_HeelItem()->plot(&dg, &vd)[0],
-			1,1);
+		pResiduaryResistancePlotWidget_->addChart(
+				pVppItems_->getDelta_ResiduaryResistanceKeel_HeelItem()->plot(&dg, &vd)[0],
+				1,1);
 
-	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pResiduaryResistancePlotWidget_.get() );
+		// Add the xy plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, pResiduaryResistancePlotWidget_.get() );
 
-	// Tab the widget with the others
-	tabDockWidget(pResiduaryResistancePlotWidget_.get());
+		// Tab the widget with the others
+		tabDockWidget(pResiduaryResistancePlotWidget_.get());
+
+	// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 
 }
-
-
 
 // Plot the Negative resistance
 void MainWindow::plotNegativeResistance() {
 
-	if(!hasBoatDescription())
-		return;
+	try{
+		if(!hasBoatDescription())
+			return;
 
-	std::cout<<"Plotting Negative Resistance..."<<std::endl;
+		std::cout<<"Plotting Negative Resistance..."<<std::endl;
 
-	// Instantiate an empty multiple plot widget
-	pNegativeResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Negative Resistance") );
+		// Instantiate an empty multiple plot widget
+		pNegativeResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Negative Resistance") );
 
-	// Ask the frictional resistance item to plot itself
-	pNegativeResistancePlotWidget_->addChart(
-			pVppItems_->getNegativeResistanceItem()->plot()[0],
-			0,0);
+		// Ask the frictional resistance item to plot itself
+		pNegativeResistancePlotWidget_->addChart(
+				pVppItems_->getNegativeResistanceItem()->plot()[0],
+				0,0);
 
-	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pNegativeResistancePlotWidget_.get() );
+		// Add the xy plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, pNegativeResistancePlotWidget_.get() );
 
-	// Tab the widget with the others
-	tabDockWidget(pNegativeResistancePlotWidget_.get());
+		// Tab the widget with the others
+		tabDockWidget(pNegativeResistancePlotWidget_.get());
 
+	// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Temp method used to test QCustomPlot in the current env
 // This method shall be removed at some point todo dtrimarchi
 void MainWindow::testQCustomPlot() {
 
-	// Init the widget that will be containing this plot
-	pXYPlotWidget_.reset( new VppCustomPlotWidget(this) );
+	try{
+		// Init the widget that will be containing this plot
+		pXYPlotWidget_.reset( new VppCustomPlotWidget(this) );
 
-	// Add the xy plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_.get() );
+		// Add the xy plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_.get() );
 
-	// Tabify the dockwidget
-	tabDockWidget(pXYPlotWidget_.get());
+		// Tabify the dockwidget
+		tabDockWidget(pXYPlotWidget_.get());
 
+	// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Add a 3dPlot widget
 void MainWindow::plotOptimizationSpace() {
 
-	if(!hasBoatDescription())
-		return;
+	try{
 
-	std::cout<<"Plotting the optimization space..."<<std::endl;
+		if(!hasBoatDescription())
+			return;
 
-	// For which TWV, TWA shall we plot the aero forces/moments?
-	WindIndicesDialog wd(pVppItems_->getWind());
-	if (wd.exec() == QDialog::Rejected)
-		return;
+		std::cout<<"Plotting the optimization space..."<<std::endl;
 
-	OptimVarsStateVectorDialog sd;
-	if (sd.exec() == QDialog::Rejected)
-		return;
+		// For which TWV, TWA shall we plot the aero forces/moments?
+		WindIndicesDialog wd(pVppItems_->getWind());
+		if (wd.exec() == QDialog::Rejected)
+			return;
 
-	// This widget is to be assigned to a dockable widget
-	p3dPlotWidget_.reset(new ThreeDPlotWidget(this) );
+		OptimVarsStateVectorDialog sd;
+		if (sd.exec() == QDialog::Rejected)
+			return;
 
-	p3dPlotWidget_->addChart(
-			pVppItems_->plotOptimizationSpace(wd,sd)
-	);
+		// This widget is to be assigned to a dockable widget
+		p3dPlotWidget_.reset(new ThreeDPlotWidget(this) );
 
-	// Add the 3d plot view to the left of the app window
-	addDockWidget(Qt::TopDockWidgetArea, p3dPlotWidget_.get());
+		p3dPlotWidget_->addChart(
+				pVppItems_->plotOptimizationSpace(wd,sd)
+		);
 
-	// Tab the widget if other widgets have already been instantiated
-	// In the same area. Todo dtrimarchi : this is way too fragile
-	// It requires widgets instantiated on the topDockWidgetArea and
-	// I need to add the deleted signal to the slot removeWidgetFromVector
-	tabDockWidget(p3dPlotWidget_.get());
+		// Add the 3d plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, p3dPlotWidget_.get());
 
+		// Tab the widget if other widgets have already been instantiated
+		// In the same area. Todo dtrimarchi : this is way too fragile
+		// It requires widgets instantiated on the topDockWidgetArea and
+		// I need to add the deleted signal to the slot removeWidgetFromVector
+		tabDockWidget(p3dPlotWidget_.get());
+
+	// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
+	}
 }
 
 // Plot the gradient of the solution
 // Grad(u) = | du/du du/dPhi  du/db  du/df  |
 void MainWindow::plotGradient() {
 
-	if(!hasBoatDescription())
-		return;
+	try{
+		if(!hasBoatDescription())
+			return;
 
-	// For which TWV, TWA shall we plot the Jacobian?
-	WindIndicesDialog wd(pVppItems_->getWind());
-	if (wd.exec() == QDialog::Rejected)
-		return;
+		// For which TWV, TWA shall we plot the Jacobian?
+		WindIndicesDialog wd(pVppItems_->getWind());
+		if (wd.exec() == QDialog::Rejected)
+			return;
 
-	// Ask the state vector (defines a linearization point)
-	FullStateVectorDialog sd;
-	if (sd.exec() == QDialog::Rejected)
-		return;
+		// Ask the state vector (defines a linearization point)
+		FullStateVectorDialog sd;
+		if (sd.exec() == QDialog::Rejected)
+			return;
 
-	std::cout<<"Plotting Gradient..."<<std::endl;
+		std::cout<<"Plotting Gradient..."<<std::endl;
 
-	VectorXd x = sd.getStateVector();
+		VectorXd x = sd.getStateVector();
 
-	// Instantiate a Gradient
-	VPPGradient G(x,pVppItems_.get());
+		// Instantiate a Gradient
+		VPPGradient G(x,pVppItems_.get());
 
-	pGradientPlotWidget_.reset(new MultiplePlotWidget(this,"VPP Gradient"));
+		pGradientPlotWidget_.reset(new MultiplePlotWidget(this,"VPP Gradient"));
 
-	// Get all of the plots the Gradient is up to draw
-	std::vector<VppXYCustomPlotWidget*> gPlotVector( G.plot(wd) );
+		// Get all of the plots the Gradient is up to draw
+		std::vector<VppXYCustomPlotWidget*> gPlotVector( G.plot(wd) );
 
-	// Send the plots to the widget and arrange them in 2xn ordering
-	size_t dx=0, dy=0;
-	for(size_t i=0; i<gPlotVector.size(); i++){
-		pGradientPlotWidget_->addChart( gPlotVector[i], dx++, dy );
-		if(dx==2){
-			dx=0;
-			dy++;
+		// Send the plots to the widget and arrange them in 2xn ordering
+		size_t dx=0, dy=0;
+		for(size_t i=0; i<gPlotVector.size(); i++){
+			pGradientPlotWidget_->addChart( gPlotVector[i], dx++, dy );
+			if(dx==2){
+				dx=0;
+				dy++;
+			}
 		}
+
+		// Add the plot view to the top of the app window
+		addDockWidget(Qt::TopDockWidgetArea, pGradientPlotWidget_.get());
+
+		// Tab the widget if other widgets have already been instantiated
+		// In the same area.
+		tabDockWidget(pGradientPlotWidget_.get());
+
+	// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
 	}
-
-	// Add the plot view to the top of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pGradientPlotWidget_.get());
-
-	// Tab the widget if other widgets have already been instantiated
-	// In the same area.
-	tabDockWidget(pGradientPlotWidget_.get());
-
 }
 
 // Plot the Jacobian of the solution
@@ -1013,53 +1188,61 @@ void MainWindow::plotGradient() {
 //	   | dM/du dM/dPhi |	|dPhi|
 void MainWindow::plotJacobian() {
 
-	if(!hasBoatDescription())
-		return;
+	try{
+		if(!hasBoatDescription())
+			return;
 
-	// For which TWV, TWA shall we plot the Jacobian?
-	WindIndicesDialog wd(pVppItems_->getWind());
-	if (wd.exec() == QDialog::Rejected)
-		return;
+		// For which TWV, TWA shall we plot the Jacobian?
+		WindIndicesDialog wd(pVppItems_->getWind());
+		if (wd.exec() == QDialog::Rejected)
+			return;
 
-	// Ask the state vector (defines a linearization point)
-	FullStateVectorDialog sd;
-	if (sd.exec() == QDialog::Rejected)
-		return;
+		// Ask the state vector (defines a linearization point)
+		FullStateVectorDialog sd;
+		if (sd.exec() == QDialog::Rejected)
+			return;
 
-	std::cout<<"Plotting Jacobian..."<<std::endl;
+		// Define the size of the sub-pb. Here we have 2 state
+		//  vars (subPbSize) and 2 optim vars
+		size_t subPbsize=2;
 
-	// Define the size of the sub-pb. Here we have 2 state
-	//  vars (subPbSize) and 2 optim vars
-	size_t subPbsize=2;
+		VectorXd x = sd.getStateVector();
 
-	VectorXd x = sd.getStateVector();
+		// Instantiate a Jacobian
+		VPPJacobian J(x, pVppItems_.get(), subPbsize);
 
-	// Instantiate a Jacobian
-	VPPJacobian J(x, pVppItems_.get(), subPbsize);
+		// Instantiate a widget container for this plot
+		pJacobianPlotWidget_.reset(new MultiplePlotWidget(this,"VPP Jacobian"));
 
-	// Instantiate a widget container for this plot
-	pJacobianPlotWidget_.reset(new MultiplePlotWidget(this,"VPP Jacobian"));
+		// Get all of the plots the Jacobian is up to draw
+		std::vector<VppXYCustomPlotWidget*> jPlotVector( J.plot(wd) );
 
-	// Get all of the plots the Jacobian is up to draw
-	std::vector<VppXYCustomPlotWidget*> jPlotVector( J.plot(wd) );
-
-	// Send the plots to the widget and arrange them in 2xn ordering
-	size_t dx=0, dy=0;
-	for(size_t i=0; i<jPlotVector.size(); i++){
-		pJacobianPlotWidget_->addChart( jPlotVector[i], dx++, dy );
-		if(dx==2){
-			dx=0;
-			dy++;
+		// Send the plots to the widget and arrange them in 2xn ordering
+		size_t dx=0, dy=0;
+		for(size_t i=0; i<jPlotVector.size(); i++){
+			pJacobianPlotWidget_->addChart( jPlotVector[i], dx++, dy );
+			if(dx==2){
+				dx=0;
+				dy++;
+			}
 		}
+
+		// Add the plot view to the top of the app window
+		addDockWidget(Qt::TopDockWidgetArea, pJacobianPlotWidget_.get());
+
+		// Tab the widget if other widgets have already been instantiated
+		// In the same area.
+		tabDockWidget(pJacobianPlotWidget_.get());
+
+	// outer try-catch block
+	} catch(std::exception& e) {
+		pLogWidget_->append("\n-----------------------------------------");
+		pLogWidget_->append(" Exception caught in Main:  ");
+		pLogWidget_->append( e.what() );
+		pLogWidget_->append("\n-----------------------------------------");
+	}	catch(...) {
+		pLogWidget_->append("Unknown Exception occurred\n");
 	}
-
-	// Add the plot view to the top of the app window
-	addDockWidget(Qt::TopDockWidgetArea, pJacobianPlotWidget_.get());
-
-	// Tab the widget if other widgets have already been instantiated
-	// In the same area.
-	tabDockWidget(pJacobianPlotWidget_.get());
-
 }
 
 void MainWindow::about() {
