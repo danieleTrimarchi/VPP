@@ -36,9 +36,6 @@ class VPPItem {
 		/// update method for the children in the vppItems_ vector
 		void updateSolution(int vTW, int aTW, Eigen::VectorXd& x);
 
-		/// Print the class name -> in this case VPPItem
-		virtual void printWhoAmI()=0;
-
 		/// Returns a ptr to the parser
 		VariableFileParser* getParser() const;
 

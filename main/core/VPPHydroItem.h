@@ -32,9 +32,6 @@ class ResistanceItem : public VPPItem {
 		/// Convert a Fn[-] to a velocity [m/s]
 		double convertToVelocity( double Fn );
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Each resistance component knows how to generate a widget
 		/// to visualize itself in a plot
 		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0) =0;
@@ -69,9 +66,6 @@ class InducedResistanceItem : public ResistanceItem {
 
 		/// Destructor
 		~InducedResistanceItem();
-
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
 
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget
@@ -116,9 +110,6 @@ class ResiduaryResistanceItem : public ResistanceItem {
 		/// Destructor
 		~ResiduaryResistanceItem();
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget
 		/// to visualize itself in a plot
@@ -145,9 +136,6 @@ class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 
 		/// Destructor
 		~Delta_ResiduaryResistance_HeelItem();
-
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
 
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget
@@ -178,9 +166,6 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 		/// Destructor
 		~ResiduaryResistanceKeelItem();
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget
 		/// to visualize itself in a plot
@@ -210,9 +195,6 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 		/// Destructor
 		~Delta_ResiduaryResistanceKeel_HeelItem();
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget
 		/// to visualize itself in a plot
@@ -240,9 +222,6 @@ class FrictionalResistanceItem : public ResistanceItem {
 
 		/// Destructor
 		~FrictionalResistanceItem();
-
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
 
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget
@@ -272,9 +251,6 @@ class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
 
 		/// Destructor
 		~Delta_FrictionalResistance_HeelItem();
-
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
 
 		/// Plot the Frictional Resistance due to heel vs Fn curve
 		std::vector<VppXYCustomPlotWidget*> plot_deltaWettedArea_heel();
@@ -309,9 +285,6 @@ class ViscousResistanceKeelItem : public ResistanceItem {
 		/// Destructor
 		~ViscousResistanceKeelItem();
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget
 		/// to visualize itself in a plot
@@ -335,9 +308,6 @@ class ViscousResistanceRudderItem : public ResistanceItem {
 
 		/// Destructor
 		~ViscousResistanceRudderItem();
-
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
 
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget
@@ -363,9 +333,6 @@ class NegativeResistanceItem : public ResistanceItem {
 
 		/// Destructor
 		~NegativeResistanceItem();
-
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
 
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget

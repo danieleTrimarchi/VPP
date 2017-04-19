@@ -52,9 +52,6 @@ class WindItem : public VPPItem {
 		/// Returns the apparent wind velocity vector norm for this step
 		const double getAWNorm() const;
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -133,9 +130,6 @@ class SailCoefficientItem : public VPPItem {
 		/// The range is set 0-180deg
 		virtual void plot_D2_InterpolatedCoefficients( MultiplePlotWidget* ) const=0;
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 	protected:
 
 		/// Update the item for the current step (wind velocity and angle),
@@ -201,9 +195,6 @@ class MainOnlySailCoefficientItem : public SailCoefficientItem {
 		/// Destructor
 		~MainOnlySailCoefficientItem();
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
 		/// Fill a multiple plot
@@ -242,9 +233,6 @@ class MainAndJibCoefficientItem : public SailCoefficientItem {
 
 		/// Destructor
 		~MainAndJibCoefficientItem();
-
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
 
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
@@ -285,9 +273,6 @@ class MainAndSpiCoefficientItem : public SailCoefficientItem {
 		/// Destructor
 		~MainAndSpiCoefficientItem();
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
 		/// Fill a multiple plot
@@ -326,9 +311,6 @@ class MainJibAndSpiCoefficientItem : public SailCoefficientItem {
 
 		/// Destructor
 		~MainJibAndSpiCoefficientItem();
-
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
 
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
@@ -399,9 +381,6 @@ class AeroForcesItem : public VPPItem {
 		/// plot the aeroForces for a fixed range. Fill a multiplePlotWidget
 		/// with this plot
 		void plot(MultiplePlotWidget*);
-
-		/// Print the class name -> in this case AeroForcesItem
-		virtual void printWhoAmI();
 
 	private:
 

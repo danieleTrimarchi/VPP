@@ -65,16 +65,6 @@ SailSet::~SailSet() {
 
 }
 
-
-/// Printout the list of all variables we have computed
-void SailSet::printVariables() {
-
-	std::cout<<"====== PRINTOUT SAILSET VARIABLES ================ "<<std::endl;
-	sailVariables_.print();
-	std::cout<<"==================================================\n"<<std::endl;
-
-}
-
 // Get the value of a variable
 double SailSet::get(std::string varName) {
 	return sailVariables_[varName];

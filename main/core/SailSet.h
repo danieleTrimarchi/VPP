@@ -42,9 +42,6 @@ class SailSet {
 		/// Destructor
 		virtual ~SailSet();
 
-		/// Printout the list of all variables we have computed
-		void printVariables();
-
 		/// Return the Id of this SailSet (this is the enum sailConfig)
 		virtual size_t getType()=0;
 

@@ -18,6 +18,7 @@
 #include "SailSet.h"
 #include "VPPXYChartWidget.h"
 #include "boost/shared_ptr.hpp"
+#include "DebugStream.h"
 
 class ToolBar;
 class VPPItemFactory;
@@ -44,9 +45,6 @@ public:
 
 	/// Virtual destructor
 	virtual ~MainWindow();
-
-	/// Append a string to the log
-	void appendToLog(const QString &text);
 
 	/// Create a toolbar with some actions
 	void setupToolBar();

@@ -90,10 +90,6 @@ void WindItem::update(int vTW, int aTW) {
 
 }
 
-void WindItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of WindItem "<<std::endl;
-}
-
 // Returns the true wind velocity for a given step
 const double WindItem::getTWV(size_t iV) const {
 	return vTwv_[iV];
@@ -319,13 +315,6 @@ const double SailCoefficientItem::getCd() const {
 	return cd_;
 }
 
-// Print the class name -> in this case SailCoefficientItem
-void SailCoefficientItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of SailCoefficientItem "<<std::endl;
-
-	printCoefficients();
-}
-
 /// PrintOut the coefficient matrices
 void SailCoefficientItem::printCoefficients() {
 
@@ -371,11 +360,6 @@ void MainOnlySailCoefficientItem::update(int vTW, int aTW) {
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
 
-}
-
-// Print the class name - implement the pure virtual of VPPItem
-void MainOnlySailCoefficientItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of MainOnlySailCoefficientItem "<<std::endl;
 }
 
 // Plot the spline-interpolated curves based on the Larsson's
@@ -491,11 +475,6 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
 
-}
-
-// Print the class name - implement the pure virtual of VPPItem
-void MainAndJibCoefficientItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of MainAndJibCoefficientItem "<<std::endl;
 }
 
 // Plot the spline-interpolated curves based on the Larsson's sail coefficients.
@@ -619,11 +598,6 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 
 }
 
-// Print the class name - implement the pure virtual of VPPItem
-void MainAndSpiCoefficientItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of MainAndSpiCoefficientItem "<<std::endl;
-}
-
 // Plot the spline-interpolated curves based on the Larsson's
 // sail coefficients. The range is set 0-180deg
 // Fill a multiple plot
@@ -743,11 +717,6 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
 
-}
-
-// Print the class name - implement the pure virtual of VPPItem
-void MainJibAndSpiCoefficientItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of MainJibAndSpiCoefficientItem "<<std::endl;
 }
 
 // Plot the spline-interpolated curves based on the Larsson's
@@ -1117,8 +1086,4 @@ SailCoefficientItem* AeroForcesItem::getSailCoeffItem() {
 // Get a ptr to the sailCoeffs Item - const variety
 const SailCoefficientItem* AeroForcesItem::getSailCoeffItem() const {
 	return pSailCoeffs_;
-}
-
-void AeroForcesItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of AeroForcesItem "<<std::endl;
 }

@@ -380,7 +380,7 @@ std::vector<VppXYCustomPlotWidget*> VPPItemFactory::plotTotalResistance(WindIndi
 
 		// Compute the value of PHI
 		stateVector(1) = mathUtils::toRad(iAngle-20);
-		//std::cout<<"PHI= "<<stateVector(1)<<std::endl;
+		std::cout<<"PHI= "<<stateVector(1)<<std::endl;
 
 		// declare some tmp containers
 		QVector<double> fn, res;

@@ -36,6 +36,11 @@
 #include "VPPSolverFactoryBase.h"
 #include "Version.h"
 
+// Stream used to redirect cout to the log window
+// This object is explicitely deleted in the destructor
+// of MainWindow
+boost::shared_ptr<QDebugStream> pQstream;
+
 Q_DECLARE_METATYPE(VppTabDockWidget::DockWidgetFeatures)
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags):
@@ -58,11 +63,15 @@ windowLabel_("V++") {
 	// The log widget is the central widget for this application
 	pLogWidget_.reset(new QTextEdit(this));
 	setCentralWidget(pLogWidget_.get());
-
 	pLogWidget_->setReadOnly(true);
-	pLogWidget_->append("=======================");
-	pLogWidget_->append("===  V++ PROGRAM  =======");
-	pLogWidget_->append("=======================");
+
+	// Tie cout to the log widget
+	//QDebugStream qout(std::cout, pLogWidget_.get());
+	pQstream.reset(new QDebugStream(std::cout, pLogWidget_.get()));
+
+	std::cout<<"======================="<<std::endl;
+	std::cout<<"===  V++ PROGRAM  ======="<<std::endl;
+	std::cout<<"======================="<<std::endl;
 
 	// --
 
@@ -94,6 +103,8 @@ windowLabel_("V++") {
 // Virtual destructor
 MainWindow::~MainWindow() {
 
+	// Make sure the cout stream redirection class is deleted
+	pQstream.reset();
 }
 
 void MainWindow::setupMenuBar() {
@@ -382,7 +393,7 @@ void MainWindow::updateTabbedWidgetsVector(const VppTabDockWidget* deleteWidget)
 	if(!deleteWidget)
 		return;
 
-	pLogWidget_->append("Sync tabbedWidget Vector on plot deletion...");
+	std::cout<<"Sync tabbedWidget Vector on plot deletion..."<<std::endl;
 
 	for(std::vector<VppTabDockWidget*>::iterator it=tabbedWidgets_.begin(); it!=tabbedWidgets_.end(); it++){
 		if(*it==deleteWidget){
@@ -404,12 +415,6 @@ void MainWindow::removeWidgetFromVector(VppTabDockWidget* pWidget) {
 	}
 }
 
-// Append a string to the log
-void MainWindow::appendToLog(const QString &text) {
-
-	pLogWidget_->append(text);
-}
-
 void MainWindow::import() {
 
 	try {
@@ -423,7 +428,7 @@ void MainWindow::import() {
 
 		if (!fileName.isEmpty()) {
 
-			pLogWidget_->append(QString("Opening the vpp input file... ") + fileName );
+			std::cout<<string("Opening the vpp input file... ") << fileName.toStdString() <<std::endl;
 
 			// Instantiate a variableFileParser (and clear any previous one)
 			pVariableFileParser_.reset( new VariableFileParser(fileName.toStdString()) );
@@ -469,6 +474,7 @@ void MainWindow::run() {
 	if(!hasBoatDescription())
 		return;
 
+	// todo dtrimarchi : this should be selected by a switch in the UI!
 	// Instantiate a solver by default. This can be an optimizer (with opt vars)
 	// or a simple solver that will keep fixed the values of the optimization vars
 	//		// SolverFactory solverFactory(pVppItems);
@@ -476,10 +482,7 @@ void MainWindow::run() {
 	//		// SAOASolverFactory solverFactory(pVppItems);
 	//		// IppOptSolverFactory solverFactory(pVppItems);
 
-	// todo dtrimarchi
-	// Verify that the variable tree is not empty
-	// run the VPP analysis
-	pLogWidget_->append("Running the VPP analysis... ");
+	std::cout<<"Running the VPP analysis... "<<std::endl;
 
 	for(size_t itwv=0; itwv<5; itwv++){
 		char msg[256];
@@ -509,7 +512,7 @@ void MainWindow::run() {
 
 bool MainWindow::saveResults() {
 
-	pLogWidget_->append("Saving the analyis results... ");
+	std::cout<<"Saving the analyis results... "<<std::endl;
 	QFileDialog dialog(this);
 	dialog.setWindowModality(Qt::WindowModal);
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -522,7 +525,7 @@ bool MainWindow::saveResults() {
 
 bool MainWindow::saveFile(const QString &fileName) {
 
-	pLogWidget_->append("Saving the VPP results to file");
+	std::cout<<"Saving the VPP results to file"<<std::endl;
 
 	// if save was successiful, return true, otherwise false
 	//    QFile file(fileName);
@@ -548,14 +551,14 @@ void MainWindow::importResults() {
 
 	if (!fileName.isEmpty())
 		//loadFile(fileName);
-		pLogWidget_->append("Importing the analysis results...");
+		std::cout<<"Importing the analysis results..."<<std::endl;
 
 }
 
 // Add a table widget with the results
 void MainWindow::tableResults() {
 
-	pLogWidget_->append("Showing the results in tabular form...");
+	std::cout<<"Showing the results in tabular form..."<<std::endl;
 
 	pTableWidget_.reset( new VppTableDockWidget(this) );
 	addDockWidget(Qt::TopDockWidgetArea, pTableWidget_.get());
@@ -588,7 +591,7 @@ bool MainWindow::hasBoatDescription() {
 // Plot the velocity polars
 void MainWindow::plotPolars() {
 
-	pLogWidget_->append("Plotting Polars...");
+	std::cout<<"Plotting Polars..."<<std::endl;
 
 	// Instantiate a graphic plotting window in the central widget
 	pPolarPlotWidget_.reset( new MultiplePlotWidget(this, "Polars") );
@@ -616,7 +619,7 @@ void MainWindow::plotSailCoeffs() {
 	if(!hasBoatDescription())
 		return;
 
-	pLogWidget_->append("Plotting Sail coeffs...");
+	std::cout<<"Plotting Sail coeffs..."<<std::endl;
 
 	// Instantiate an empty multiple plot widget
 	pSailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Coeffs") );
@@ -639,7 +642,7 @@ void MainWindow::plot_d_SailCoeffs() {
 	if(!hasBoatDescription())
 		return;
 
-	pLogWidget_->append("Plotting Sail coeffs Derivatives...");
+	std::cout<<"Plotting Sail coeffs Derivatives..."<<std::endl;
 
 	// Instantiate an empty multiple plot widget
 	p_d_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"d(Sail Coeffs)") );
@@ -663,7 +666,7 @@ void MainWindow::plot_d2_SailCoeffs() {
 	if(!hasBoatDescription())
 		return;
 
-	pLogWidget_->append("Plotting Second Derivatives of the Sail coeffs...");
+	std::cout<<"Plotting Second Derivatives of the Sail coeffs..."<<std::endl;
 
 	// Instantiate an empty multiple plot widget
 	p_d2_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"d2(Sail Coeffs)") );
@@ -683,7 +686,7 @@ void MainWindow::plotSailForceMoments() {
 	if(!hasBoatDescription())
 		return;
 
-	pLogWidget_->append("Plotting Sail Forces/Moments...");
+	std::cout<<"Plotting Sail Forces/Moments..."<<std::endl;
 
 	// Instantiate an multiple plot widget for the force and moments plot
 	pForceMomentsPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Force/Moments") );
@@ -705,7 +708,7 @@ void MainWindow::plotTotalResistance() {
 	if(!hasBoatDescription())
 		return;
 
-	pLogWidget_->append("Plotting Total Resistance...");
+	std::cout<<"Plotting Total Resistance..."<<std::endl;
 
 	// For which TWV, TWA shall we plot the aero forces/moments?
 	WindIndicesDialog wd(pVppItems_->getWind());
@@ -738,7 +741,7 @@ void MainWindow::plotFrictionalResistance() {
 	if(!hasBoatDescription())
 		return;
 
-	pLogWidget_->append("Plotting Frictional Resistance...");
+	std::cout<<"Plotting Frictional Resistance..."<<std::endl;
 
 	// Instantiate an empty multiple plot widget
 	pFricitionalResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Frictional Resistance") );
@@ -770,7 +773,7 @@ void MainWindow::plotDelta_FrictionalResistance_Heel() {
 	if(!hasBoatDescription())
 		return;
 
-	pLogWidget_->append("Plotting Delta Frictional Resistance due to Heel...");
+	std::cout<<"Plotting Delta Frictional Resistance due to Heel..."<<std::endl;
 
 	// For which TWV, TWA shall we plot the residuary resistance?
 	WindIndicesDialog dg(pVppItems_->getWind());
@@ -813,7 +816,7 @@ void MainWindow::plotInducedResistance() {
 	if( vd.exec() == QDialog::Rejected )
 		return;
 
-	pLogWidget_->append("Plotting Induced Resistance...");
+	std::cout<<"Plotting Induced Resistance..."<<std::endl;
 
 	// Instantiate an empty multiple plot widget
 	pInducedResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Induced Resistance") );
@@ -842,7 +845,7 @@ void MainWindow::plotResiduaryResistance() {
 	if(!hasBoatDescription())
 		return;
 
-	pLogWidget_->append("Plotting Residuary Resistance...");
+	std::cout<<"Plotting Residuary Resistance..."<<std::endl;
 
 	// For which TWV, TWA shall we plot the residuary resistance?
 	WindIndicesDialog dg(pVppItems_->getWind());
@@ -889,7 +892,7 @@ void MainWindow::plotNegativeResistance() {
 	if(!hasBoatDescription())
 		return;
 
-	pLogWidget_->append("Plotting Negative Resistance...");
+	std::cout<<"Plotting Negative Resistance..."<<std::endl;
 
 	// Instantiate an empty multiple plot widget
 	pNegativeResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Negative Resistance") );
@@ -928,7 +931,7 @@ void MainWindow::plotOptimizationSpace() {
 	if(!hasBoatDescription())
 		return;
 
-	pLogWidget_->append("Plotting the optimization space...");
+	std::cout<<"Plotting the optimization space..."<<std::endl;
 
 	// For which TWV, TWA shall we plot the aero forces/moments?
 	WindIndicesDialog wd(pVppItems_->getWind());
@@ -974,7 +977,7 @@ void MainWindow::plotGradient() {
 	if (sd.exec() == QDialog::Rejected)
 		return;
 
-	pLogWidget_->append("Plotting Gradient...");
+	std::cout<<"Plotting Gradient..."<<std::endl;
 
 	VectorXd x = sd.getStateVector();
 
@@ -1023,7 +1026,7 @@ void MainWindow::plotJacobian() {
 	if (sd.exec() == QDialog::Rejected)
 		return;
 
-	pLogWidget_->append("Plotting Jacobian...");
+	std::cout<<"Plotting Jacobian..."<<std::endl;
 
 	// Define the size of the sub-pb. Here we have 2 state
 	//  vars (subPbSize) and 2 optim vars

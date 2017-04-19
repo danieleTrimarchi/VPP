@@ -41,8 +41,3 @@ void RightingMomentItem::update(int vTW, int aTW) {
 	if(mathUtils::isNotValid(val_)) throw VPPException(HERE,"Righting moment is NAN");
 
 }
-
-// Print the class name -> in this case SailCoefficientItem
-void RightingMomentItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of VppRightingMomentItem "<<std::endl;
-}

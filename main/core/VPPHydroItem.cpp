@@ -53,11 +53,6 @@ double ResistanceItem::convertToVelocity( double fN ) {
 
 }
 
-
-void ResistanceItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of ResistanceItem "<<std::endl;
-}
-
 //=========================================================
 // For the definition of the Induced Resistance see DSYHS99 ch4 p128
 // Constructor
@@ -367,11 +362,6 @@ void InducedResistanceItem::plotTe(int twv, int twa) {
 
 }
 
-
-void InducedResistanceItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of InducedResistanceItem "<<std::endl;
-}
-
 //=================================================================
 // Residuary Resistance: see DSYHS99 3.1.1.2 p112
 // Constructor
@@ -450,9 +440,6 @@ void ResiduaryResistanceItem::update(int vTW, int aTW) {
 
 }
 
-void ResiduaryResistanceItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of ResiduaryResistanceItem "<<std::endl;
-}
 
 // Implement pure virtual of the parent class
 // Each resistance component knows how to generate a widget
@@ -550,10 +537,6 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( std::fabs(PHI_),1.7) ;
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
-}
-
-void Delta_ResiduaryResistance_HeelItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of Delta_ResiduaryResistance_HeelItem "<<std::endl;
 }
 
 // Implement pure virtual of the parent class
@@ -688,10 +671,6 @@ void ResiduaryResistanceKeelItem::update(int vTW, int aTW) {
 
 }
 
-void ResiduaryResistanceKeelItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of ResiduaryResistanceKeelItem "<<std::endl;
-}
-
 // Implement pure virtual of the parent class
 // Each resistance component knows how to generate a widget
 // to visualize itself in a plot
@@ -756,10 +735,6 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 	res_= Ch_ * fN_ * fN_ * PHI_;
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
-}
-
-void Delta_ResiduaryResistanceKeel_HeelItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of Delta_ResiduaryResistanceKeel_HeelItem "<<std::endl;
 }
 
 // Implement pure virtual of the parent class
@@ -873,10 +848,6 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 	res_ = rfh * pParser_->get("HULLFF");
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
-}
-
-void FrictionalResistanceItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of FrictionalResistanceItem "<<std::endl;
 }
 
 // Implement pure virtual of the parent class
@@ -1014,10 +985,6 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 
 }
 
-void Delta_FrictionalResistance_HeelItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of Delta_FrictionalResistance_HeelItem "<<std::endl;
-}
-
 // Plot the Frictional Resistance due to heel versus Fn curve
 std::vector<VppXYCustomPlotWidget*> Delta_FrictionalResistance_HeelItem::plot_deltaWettedArea_heel() {
 
@@ -1129,10 +1096,6 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 
 }
 
-void ViscousResistanceKeelItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of ViscousResistanceKeelItem "<<std::endl;
-}
-
 // Implement pure virtual of the parent class
 // Each resistance component knows how to generate a widget
 // to visualize itself in a plot
@@ -1211,10 +1174,6 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 
 }
 
-void ViscousResistanceRudderItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of ViscousResistanceRudderItem "<<std::endl;
-}
-
 // Implement pure virtual of the parent class
 // Each resistance component knows how to generate a widget
 // to visualize itself in a plot
@@ -1280,10 +1239,6 @@ void NegativeResistanceItem::update(int vTW, int aTW) {
 	else
 		res_=0;
 
-}
-
-void NegativeResistanceItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of NegativeResistanceItem "<<std::endl;
 }
 
 // Implement pure virtual of the parent class
