@@ -19,6 +19,7 @@
 #include "VPPXYChartWidget.h"
 #include "boost/shared_ptr.hpp"
 #include "DebugStream.h"
+#include "VPPSolverFactoryBase.h"
 
 class ToolBar;
 class VPPItemFactory;
@@ -153,7 +154,7 @@ private:
 	QToolBar* pToolBar_;
 
 	/// Widget that contains the tabular view of the results
-	boost::shared_ptr<VppTabDockWidget> pTableWidget_;
+	boost::shared_ptr<VppTableDockWidget> pTableWidget_;
 
 	/// XY Plot widget
 	boost::shared_ptr<VppTabDockWidget> pXYPlotWidget_;
@@ -193,6 +194,10 @@ private:
 	/// Declare a container for all the items that
 	/// constitute the VPP components (Wind, Resistance, RightingMoment...)
 	boost::shared_ptr<VPPItemFactory> pVppItems_;
+
+	/// Ptr to the solver factory - we want to keep this alive to
+	/// recover a handle to the results after  run
+	boost::shared_ptr<Optim::VPPSolverFactoryBase> pSolverFactory_;
 
 };
 

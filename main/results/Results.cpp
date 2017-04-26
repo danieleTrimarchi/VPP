@@ -8,11 +8,11 @@ using namespace mathUtils;
 
 // (disallowed) Default constructor
 Result::Result():
-							itwv_(0),
-							itwa_(0),
-							twv_(0),
-							twa_(0),
-							discard_(false) {
+									itwv_(0),
+									itwa_(0),
+									twv_(0),
+									twa_(0),
+									discard_(false) {
 
 	// init the result container
 	result_.resize(4);
@@ -25,12 +25,12 @@ Result::Result():
 
 // Constructor with no results
 Result::Result(	size_t itwv, double twv,
-				size_t itwa, double twa,bool discard/*=false*/):
-							itwv_(itwv),
-							itwa_(itwa),
-							twv_(twv),
-							twa_(twa),
-							discard_(discard) {
+		size_t itwa, double twa,bool discard/*=false*/):
+									itwv_(itwv),
+									itwa_(itwa),
+									twv_(twv),
+									twa_(twa),
+									discard_(discard) {
 
 	// init the result container
 	result_.resize(4);
@@ -48,11 +48,11 @@ Result::Result(	size_t itwv, double twv, size_t itwa,
 		double twa, double  v, double phi,
 		double b, double f, double dF, double dM,
 		bool discarde /*=false*/):
-									itwv_(itwv),
-									itwa_(itwa),
-									twv_(twv),
-									twa_(twa),
-									discard_(discarde) {
+											itwv_(itwv),
+											itwa_(itwa),
+											twv_(twv),
+											twa_(twa),
+											discard_(discarde) {
 
 	// Init the result container
 	result_<< v, phi, b, f;
@@ -65,11 +65,11 @@ Result::Result(	size_t itwv, double twv, size_t itwa,
 // Constructor
 Result::Result(size_t itwv, double twv, size_t itwa, double twa, std::vector<double>& res,
 		double dF, double dM, bool discarde) :
-								itwv_(itwv),
-								itwa_(itwa),
-								twv_(twv),
-								twa_(twa),
-								discard_(discarde) {
+										itwv_(itwv),
+										itwa_(itwa),
+										twv_(twv),
+										twa_(twa),
+										discard_(discarde) {
 
 	// Init the result container
 	result_<<res[0],res[1],res[2],res[3];
@@ -83,13 +83,13 @@ Result::Result(size_t itwv, double twv, size_t itwa, double twa, std::vector<dou
 Result::Result(	size_t itwv, double twv, size_t itwa, double twa,
 		Eigen::VectorXd& result,
 		Eigen::VectorXd& residuals, bool discarde ) :
-									itwv_(itwv),
-									itwa_(itwa),
-									twv_(twv),
-									twa_(twa),
-									result_(result),
-									residuals_(residuals),
-									discard_(discarde) {
+											itwv_(itwv),
+											itwa_(itwa),
+											twv_(twv),
+											twa_(twa),
+											result_(result),
+											residuals_(residuals),
+											discard_(discarde) {
 }
 
 // Constructor with residual array
@@ -126,6 +126,97 @@ void Result::print(FILE* outStream) const {
 	fprintf(outStream,"\n");
 }
 
+// How many columns for printing out this result?
+// 11 : iTWV  TWV  iTWa  TWA -- V  PHI  B  F -- dF dM -- discard
+size_t Result::getTableCols() const {
+
+	// Discard is the last of the list, its value is 10. The number
+	// of rows of a table is 11.
+	return TableResultType::discard+1;
+}
+
+// Returns the header for the table view
+QVariant Result::getColumnHeader(int col) const {
+
+	switch (col) {
+		case TableResultType::itwv :
+			return QString("iTWV [-]");
+		case TableResultType::twv :
+			return QString("TWV [m/s]");
+		case TableResultType::itwa :
+			return QString("iTWA [-]");
+		case TableResultType::twa :
+			return QString("TWA [Rad]");
+			// --
+		case TableResultType::u :
+			return QString("V [m/s]");
+		case TableResultType::phi :
+			return QString("PHI [Rad]");
+		case TableResultType::crew :
+			return QString("CREW [m]");
+		case TableResultType::flat :
+			return QString("FLAT [-]");
+			// --
+		case TableResultType::residual_f :
+			return QString("dF [N]");
+		case TableResultType::residual_m :
+			return QString("dM [N*m]");
+			// --
+		case TableResultType::discard :
+			return QString("Discard");
+			// --
+		default:
+			return QVariant();
+	}
+
+}
+
+// Return a value for filling the result table (see VppTableModel)
+// A table row looks like (see TableResultType)
+// iTWV  TWV  iTWa  TWA -- V  PHI  B  F -- dF dM -- discard
+double Result::getTableEntry(int col) const {
+
+	switch (col) {
+		case TableResultType::itwv :
+			return getiTWV();
+		case TableResultType::twv :
+			return getTWV();
+		case TableResultType::itwa :
+			return getiTWA();
+		case TableResultType::twa :
+			return getTWA();
+			// --
+		case TableResultType::u :
+			return result_[0];
+		case TableResultType::phi :
+			return result_[1];
+		case TableResultType::crew :
+			return result_[2];
+		case TableResultType::flat :
+			return result_[3];
+			// --
+		case TableResultType::residual_f :
+			return residuals_[0];
+		case TableResultType::residual_m :
+			return residuals_[1];
+			// --
+		case TableResultType::discard :
+			return discard_;
+			// --
+		default:
+			return -1;
+	}
+}
+
+// Get the index of twv for this result
+size_t Result::getiTWV() const {
+	return itwv_;
+}
+
+// Get the index of twa for this result
+size_t Result::getiTWA() const {
+	return itwa_;
+}
 
 // get the twv for this result
 const double Result::getTWV() const {
@@ -205,15 +296,15 @@ bool Result::operator == (const Result& rhs) const{
 
 // Default constructor
 ResultContainer::ResultContainer():
-					nWv_(0),
-					nWa_(0),
-					pWind_(0) {
+							nWv_(0),
+							nWa_(0),
+							pWind_(0) {
 
 }
 
 // Constructor using a windItem
 ResultContainer::ResultContainer(WindItem* pWindItem):
-						pWind_(pWindItem) {
+								pWind_(pWindItem) {
 
 	// Get the parser
 	VariableFileParser* pParser = pWind_->getParser();
@@ -297,6 +388,51 @@ const Result& ResultContainer::get(size_t iWv, size_t iWa) const {
 		throw VPPException(HERE,"In OptResultContainer::get(), requested out-of-bounds iWa!");
 
 	return resMat_[iWv][iWa];
+}
+
+// Get the result for a given wind velocity/angle. Assume
+// the results are shown (as in print) by WA first, and then
+// by WV
+const Result& ResultContainer::get(size_t idx) const {
+
+	if(idx >= size() )
+		throw VPPException(HERE,"In OptResultContainer::get(idx), requested out-of-bounds!");
+
+	// idx TWA  TWV
+	// 0    0    0
+	// 1    1    0
+	// 2    2    0
+	// 3    0    1
+	// 4    1    1
+	// 5    2    1
+	// 6 		0    2
+	// 7 		1    2
+	// 8 		2    2
+
+	// idx = 2 => tWv = 0 ; tWa = 2
+	// nWa = 3
+	// tWv = idx / nWa_ = 2 / 3 = 0
+	// tWa = idx - tWv * nWa;
+
+	// idx = 3; tWa = 0 ; tWv = 1
+	// nWa = 3
+	// tWv = idx / nWa_ = 3 / 3  = 1
+	// tWa = idx - tWv * nWa = 3 - 1 * 3 = 0
+
+	// idx = 7; tWa = 1 ; tWv = 2
+	// nWa = 3
+	// tWv = idx / nWa_ = 7 / 3  = 2
+	// tWa = idx - tWv * nWa = 7 - 2 * 3 = 1
+	size_t iWv= idx / nWa_;
+	size_t iWa= idx - iWv * nWa_;
+
+	if(iWv>=nWv_)
+		throw VPPException(HERE,"Requested out-of-bounds iWv!");
+	if(iWa>=nWa_)
+		throw VPPException(HERE,"Requested out-of-bounds iWa!");
+
+	return resMat_[iWv][iWa];
+
 }
 
 // How many results have been stored?
@@ -402,7 +538,7 @@ void ResultContainer::initResultMatrix() {
 		for(size_t iWa=0; iWa<nWa_; iWa++){
 			resMat_[iWv].push_back(
 					Result(iWv, pWind_->getTWV(iWv),iWa, pWind_->getTWA(iWa),true)
-					);
+			);
 		}
 	}
 }

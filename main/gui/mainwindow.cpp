@@ -98,6 +98,8 @@ windowLabel_("V++") {
 	// Set the menu bar: File, edit...
 	setupMenuBar();
 
+	// Make sure the solver factory is empty
+	pSolverFactory_.reset();
 }
 
 // Virtual destructor
@@ -470,7 +472,7 @@ void MainWindow::run() {
 		// Instantiate a solver by default. This can be an optimizer (with opt vars)
 		// or a simple solver that will keep fixed the values of the optimization vars
 		//		// SolverFactory solverFactory(pVppItems);
-		Optim::NLOptSolverFactory solverFactory(pVppItems_);
+		pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );
 		//		// SAOASolverFactory solverFactory(pVppItems);
 		//		// IppOptSolverFactory solverFactory(pVppItems);
 
@@ -491,8 +493,7 @@ void MainWindow::run() {
 				try{
 
 					// Run the optimizer for the current wind speed/angle
-					solverFactory.run(vTW,aTW);
-
+					pSolverFactory_->run(vTW,aTW);
 				}
 				catch(...){
 					//do nothing and keep going
@@ -555,10 +556,20 @@ void MainWindow::importResults() {
 void MainWindow::tableResults() {
 
 	try{
+
+		// Do nothing if there are no results to show
+		if(!pSolverFactory_){
+			QMessageBox msgBox;
+			msgBox.setText("Please run the analysis or import results first");
+			msgBox.setIcon(QMessageBox::Critical);
+			msgBox.exec();
+			return;
+		}
+
 		std::cout<<"Showing the results in tabular form..."<<std::endl;
 
+		pTableWidget_.reset( new VppTableDockWidget(pSolverFactory_->get(),this) );
 
-		pTableWidget_.reset( new VppTableDockWidget(this) );
 		addDockWidget(Qt::TopDockWidgetArea, pTableWidget_.get());
 
 		// Tab the widget if other widgets have already been instantiated
@@ -865,7 +876,7 @@ void MainWindow::plotInducedResistance() {
 		// Tab the widget with the others
 		tabDockWidget(pInducedResistancePlotWidget_.get());
 
-	// outer try-catch block
+		// outer try-catch block
 	}	catch(...) {}
 }
 
@@ -913,7 +924,7 @@ void MainWindow::plotResiduaryResistance() {
 		// Tab the widget with the others
 		tabDockWidget(pResiduaryResistancePlotWidget_.get());
 
-	// outer try-catch block
+		// outer try-catch block
 	}	catch(...) {}
 
 }
@@ -941,7 +952,7 @@ void MainWindow::plotNegativeResistance() {
 		// Tab the widget with the others
 		tabDockWidget(pNegativeResistancePlotWidget_.get());
 
-	// outer try-catch block
+		// outer try-catch block
 	}	catch(...) {}
 }
 
@@ -959,7 +970,7 @@ void MainWindow::testQCustomPlot() {
 		// Tabify the dockwidget
 		tabDockWidget(pXYPlotWidget_.get());
 
-	// outer try-catch block
+		// outer try-catch block
 	}	catch(...) {}
 }
 
@@ -998,7 +1009,7 @@ void MainWindow::plotOptimizationSpace() {
 		// I need to add the deleted signal to the slot removeWidgetFromVector
 		tabDockWidget(p3dPlotWidget_.get());
 
-	// outer try-catch block
+		// outer try-catch block
 	} catch(...) {}
 }
 
@@ -1049,7 +1060,7 @@ void MainWindow::plotGradient() {
 		// In the same area.
 		tabDockWidget(pGradientPlotWidget_.get());
 
-	// outer try-catch block
+		// outer try-catch block
 	}	catch(...) {}
 }
 
@@ -1104,7 +1115,7 @@ void MainWindow::plotJacobian() {
 		// In the same area.
 		tabDockWidget(pJacobianPlotWidget_.get());
 
-	// outer try-catch block
+		// outer try-catch block
 	}	catch(...) {}
 }
 

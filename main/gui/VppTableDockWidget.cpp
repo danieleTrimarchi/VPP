@@ -1,21 +1,21 @@
 #include "VppTableDockWidget.h"
 #include "VppTableModel.h"
 
-VppTableDockWidget::VppTableDockWidget( QMainWindow* parent/*=Q_NULLPTR*/, Qt::WindowFlags flags/*=0*/) :
-	VppTabDockWidget(parent, flags) {
+VppTableDockWidget::VppTableDockWidget(VPPSolverBase* pSolver, QMainWindow* parent/*=Q_NULLPTR*/, Qt::WindowFlags flags/*=0*/) :
+	VppTabDockWidget(parent, flags),
+	pSolver_(pSolver) {
 
-    setObjectName("Results");
-    setWindowTitle("Results");
+    setObjectName("Result table");
+    setWindowTitle("Result table");
 
     // Build the tree model and the TreeView this dock widget contains
-	pTreeModel_.reset( new VppTableModel(this) );
-	pTreeView_.reset( new QTreeView );
-	pTreeView_->setModel(pTreeModel_.get());
-	pTreeView_->setWindowTitle(QObject::tr("Vpp Results"));
-	pTreeView_->show();
+	pTableModel_.reset( new VppTableModel(pSolver_->getResults(), this) );
+	pTableView_.reset( new QTableView );
+	pTableView_->setModel(pTableModel_.get());
+	pTableView_->setWindowTitle(QObject::tr("Vpp Results"));
 
 	// Set the treeView as what is shown by this widget
-	setWidget(pTreeView_.get());
+	setWidget(pTableView_.get());
 
 }
 
@@ -37,5 +37,9 @@ QAction* VppTableDockWidget::getMenuToggleViewAction() {
 
 }
 
+// Returns the underlying table model
+VppTableModel* VppTableDockWidget::getTableModel() {
+	return pTableModel_.get();
+}
 
 

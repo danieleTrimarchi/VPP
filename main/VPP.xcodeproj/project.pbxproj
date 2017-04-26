@@ -82,6 +82,7 @@
 		AF7C04DC403CFB3620FA220D /* VPPHydroItem.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 50F291407EE8C164E64DDBA4 /* VPPHydroItem.cpp */; settings = {ATTRIBUTES = (); }; };
 		B1FD449BA9A24D8FBFD6B918 /* QtWidgets.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 17DDAFE5E52515581D095F18 /* QtWidgets.framework */; };
 		B2F54A3ECA917A378DACF112 /* suitesparseconfig in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = 21D6994D0E44278C59ACEDAF /* suitesparseconfig */; };
+		B30ADE161EAE771E00514002 /* DebugStream.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = B30ADE141EAE771E00514002 /* DebugStream.cpp */; };
 		B69261DD6648DBDE33C96052 /* QtDataVisualization.framework in Link Binary With Libraries */ = {isa = PBXBuildFile; fileRef = D7823A3E9B20D79AFE462B4E /* QtDataVisualization.framework */; };
 		B890D9B5705D4DC8F0C7EB1A /* Variables.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 3DC9612A351B632B01DBEBF1 /* Variables.cpp */; settings = {ATTRIBUTES = (); }; };
 		BC851D63CD7161177A68434E /* VppPolarChart.cpp in Compile Sources */ = {isa = PBXBuildFile; fileRef = 7B7C3CB1FE7F49D765F66163 /* VppPolarChart.cpp */; settings = {ATTRIBUTES = (); }; };
@@ -237,6 +238,8 @@
 		AE948FE2118181B06FB4E1A5 /* VPPSolverFactoryBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPSolverFactoryBase.h; path = /Users/dtrimarchi/VPP/main/solvers/VPPSolverFactoryBase.h; sourceTree = "<absolute>"; };
 		B1ED9D94B2C3E6DC8E30541C /* moc_VPPXYChartWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_VPPXYChartWidget.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_VPPXYChartWidget.cpp; sourceTree = "<absolute>"; };
 		B2639348F6F791EF2BB877BE /* moc_VppXYCustomPlotWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_VppXYCustomPlotWidget.cpp; path = /Users/dtrimarchi/VPP/xCodeBuild/moc_VppXYCustomPlotWidget.cpp; sourceTree = "<absolute>"; };
+		B30ADE141EAE771E00514002 /* DebugStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DebugStream.cpp; path = gui/DebugStream.cpp; sourceTree = "<group>"; };
+		B30ADE151EAE771E00514002 /* DebugStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugStream.h; path = gui/DebugStream.h; sourceTree = "<group>"; };
 		B31732F74C571393AA61B7F4 /* VPPItemFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VPPItemFactory.h; path = /Users/dtrimarchi/VPP/main/core/VPPItemFactory.h; sourceTree = "<absolute>"; };
 		B4953B0EB6F36A6FA6A1DBF5 /* VppTabDockWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VppTabDockWidget.h; path = /Users/dtrimarchi/VPP/main/gui/VppTabDockWidget.h; sourceTree = "<absolute>"; };
 		B58E96A6686474993FE0BEEF /* VppTableDockWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VppTableDockWidget.cpp; path = /Users/dtrimarchi/VPP/main/gui/VppTableDockWidget.cpp; sourceTree = "<absolute>"; };
@@ -556,6 +559,8 @@
 		C76D9EF5064E96CDBBDAB65E /* gui */ = {
 			isa = PBXGroup;
 			children = (
+				B30ADE141EAE771E00514002 /* DebugStream.cpp */,
+				B30ADE151EAE771E00514002 /* DebugStream.h */,
 				1B14A761DA72B7FF2DA85767 /* LogDockWidget.cpp */,
 				5159B92706FEF3FB1A7CDA89 /* LogWindow.cpp */,
 				C7A809130814324AFA05498B /* mainwindow.cpp */,
@@ -782,6 +787,7 @@
 				0AF1216A2CF223D59C37CBF1 /* VPPItem.cpp in Compile Sources */,
 				EE8F3A39D925DC1F0E562B4D /* VPPItemFactory.cpp in Compile Sources */,
 				C73D452C12FA2017C654644A /* VPPRightingMomentItem.cpp in Compile Sources */,
+				B30ADE161EAE771E00514002 /* DebugStream.cpp in Compile Sources */,
 				563F298A96AF779B9D37D515 /* VariableFileParser.cpp in Compile Sources */,
 				B890D9B5705D4DC8F0C7EB1A /* Variables.cpp in Compile Sources */,
 				77F684B83BBE8A14FC796FAB /* VPPResultIO.cpp in Compile Sources */,

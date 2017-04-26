@@ -8,10 +8,7 @@
 
 #include "VppTabDockWidget.h"
 #include "VppTableModel.h"
-
-//QT_FORWARD_DECLARE_CLASS(QAction)
-//QT_FORWARD_DECLARE_CLASS(QActionGroup)
-//QT_FORWARD_DECLARE_CLASS(QMenu)
+#include "VPPSolverBase.h"
 
 class VppTableDockWidget : public VppTabDockWidget {
 
@@ -20,7 +17,7 @@ class VppTableDockWidget : public VppTabDockWidget {
 public:
 
 	/// Explicit Constructor
-	explicit VppTableDockWidget(QMainWindow *parent = Q_NULLPTR, Qt::WindowFlags flags = 0);
+	explicit VppTableDockWidget(VPPSolverBase* pSolver, QMainWindow *parent = Q_NULLPTR, Qt::WindowFlags flags = 0);
 
 	/// virtual Dtor
 	virtual ~VppTableDockWidget();
@@ -28,11 +25,17 @@ public:
 	/// Get the toggle view action to be added to the menubar
 	QAction* getMenuToggleViewAction();
 
+	/// Returns the underlying table model
+	VppTableModel* getTableModel();
+
 private:
 
 	/// The VariableDockWidget contains a tree model with the variables
-	boost::shared_ptr<VppTableModel> pTreeModel_;
-	boost::shared_ptr<QTreeView> pTreeView_;
+	boost::shared_ptr<VppTableModel> pTableModel_;
+	boost::shared_ptr<QTableView> pTableView_;
+
+	/// Ptr to the solver that stores the results
+	VPPSolverBase* pSolver_;
 
 };
 
