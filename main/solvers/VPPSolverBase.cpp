@@ -228,39 +228,31 @@ const Eigen::VectorXd VPPSolverBase::getResult(int TWV, int TWA) {
 // Make a printout of the results for this run
 void VPPSolverBase::printResults() {
 
-	std::cout<<"==== VPPSolverBase RESULTS PRINTOUT ==================="<<std::endl;
 	pResults_->print();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
 
 }
 
 
 // Save the current results to file
-void VPPSolverBase::saveResults() {
+void VPPSolverBase::saveResults(string fileName) {
 
-	std::cout<<"==== VPPSolverBase RESULTS SAVING... ==================="<<std::endl;
 	VPPResultIO writer(pResults_.get());
-	writer.write();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
+	writer.write(fileName);
 
 }
 
 // Read results from file and places them in the current results
 void VPPSolverBase::importResults() {
 
-	std::cout<<"==== VPPSolverBase RESULTS IMPORT... ==================="<<std::endl;
 	VPPResultIO reader(pResults_.get());
 	reader.read();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
 
 }
 
 // Make a printout of the result bounds for this run
 void VPPSolverBase::printResultBounds() {
 
-	std::cout<<"==== VPPSolverBase RESULT BOUNDS PRINTOUT ==================="<<std::endl;
 	pResults_->printBounds();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
 
 }
 

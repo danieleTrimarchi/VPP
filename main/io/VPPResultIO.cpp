@@ -14,9 +14,9 @@ VPPResultIO::~VPPResultIO(){
 }
 
 // Write results to file
-void VPPResultIO::write(string fileName){
+void VPPResultIO::write(string fileName/*=string("vppResults.vpp")*/){
 
-	std::cout<<"writing result to file "<<fileName<<std::endl;
+	std::cout<<"Saving the analysis results to file "<<fileName<<std::endl;
 
 	// Open a file
 	FILE* outFile= fopen(fileName.c_str(), "w");

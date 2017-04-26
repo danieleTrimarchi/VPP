@@ -504,34 +504,41 @@ void MainWindow::run() {
 	}	catch(...) {}
 }
 
-bool MainWindow::saveResults() {
+void MainWindow::saveResults() {
 
-	std::cout<<"Saving the analyis results... "<<std::endl;
+	// Results must be available!
+	if(!pSolverFactory_ ||
+			!pSolverFactory_->get()->getResults() ) {
+		QMessageBox msgBox;
+		msgBox.setText("Please run the analysis or import results first");
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+		return;
+	}
+
 	QFileDialog dialog(this);
 	dialog.setWindowModality(Qt::WindowModal);
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
 	dialog.setNameFilter(tr("VPP Result File(*.vpp)"));
 	dialog.setDefaultSuffix(".vpp");
 	if (dialog.exec() != QDialog::Accepted)
-		return false;
-	return saveFile(dialog.selectedFiles().first());
-}
+		return;
 
-bool MainWindow::saveFile(const QString &fileName) {
+	// Get the file selected by the user
+	const QString fileName(dialog.selectedFiles().first());
+	QFile file(fileName);
 
-	std::cout<<"Saving the VPP results to file"<<std::endl;
+	// Check the file is writable and that is is a text file
+	if (!file.open(QFile::WriteOnly | QFile::Text)) {
+		QMessageBox::warning(this, tr("Application"),
+				tr("Cannot write file %1:\n%2.")
+				.arg(QDir::toNativeSeparators(fileName),
+						file.errorString()));
+		return;
+	}
 
-	// if save was successiful, return true, otherwise false
-	//    QFile file(fileName);
-	//    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-	//        QMessageBox::warning(this, tr("Application"),
-	//                             tr("Cannot write file %1:\n%2.")
-	//                             .arg(QDir::toNativeSeparators(fileName),
-	//                                  file.errorString()));
-	//        return false;
-	//    }
+	pSolverFactory_->get()->saveResults(fileName.toStdString());
 
-	return true;
 }
 
 // Import VPP results from file

@@ -59,10 +59,7 @@ public slots:
 	void run();
 
 	/// Save the VPP results to file
-	bool saveResults();
-
-	// if save was successiful, return true, otherwise false
-	bool saveFile(const QString &fileName);
+	void saveResults();
 
 	/// Import the VPP results from file to the current session
 	void importResults();
