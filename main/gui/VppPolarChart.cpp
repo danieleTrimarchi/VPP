@@ -8,7 +8,8 @@
 
 // Ctor
 VppPolarChart::VppPolarChart():
-QPolarChart() {
+QPolarChart(),
+fontSize_(8) {
 
 	// Set the plot axes
 	pAngularAxis_.reset(new QValueAxis());
@@ -17,7 +18,7 @@ QPolarChart() {
 
 	// Reduce the size of the font to 8
 	QFont curFont=pAngularAxis_->labelsFont();
-	curFont.setPointSize(8);
+	curFont.setPointSize(fontSize_);
 	pAngularAxis_->setLabelsFont(curFont);
 
 	pAngularAxis_->setShadesVisible(true);

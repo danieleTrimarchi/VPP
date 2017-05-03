@@ -28,7 +28,7 @@ public:
 	VppPolarChart* getPolarChart() const;
 
 	/// Returns the chart view
-	QChartView* getChartView() const;
+	VppPolarChartView* getChartView() const;
 
 private:
 

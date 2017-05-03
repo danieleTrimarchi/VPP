@@ -49,8 +49,8 @@ typedef QList<Data> DataList;
 typedef QList<DataList> DataTable;
 
 // forward declarations
-class MultiplePlotChartComponent;
 class VppXYCustomPlotWidget;
+class VppChartView;
 
 class MultiplePlotWidget : public VppTabDockWidget {
     Q_OBJECT
@@ -64,7 +64,7 @@ public:
 	virtual ~MultiplePlotWidget();
 
 	/// Add a chart in a given position
-	void addChart(QChart&, size_t px, size_t py);
+	void addChart(VppChartView*, size_t px, size_t py);
 
 	/// Add a chart in a given position
 	void addChart(VppXYCustomPlotWidget*, size_t px, size_t py);
@@ -78,7 +78,7 @@ public:
 public slots:
 
 	/// What to do when one of the plots is clicked?
-	void toggleFullScreen(const MultiplePlotChartComponent*);
+	void toggleFullScreen(const VppChartView*);
 
 	/// What to do when one of the plots is clicked?
 	void toggleFullScreen(const VppXYCustomPlotWidget*);
@@ -90,7 +90,7 @@ private:
 	void connectFullScreenSignals();
 
 	/// List with all the QChart-style plots that will be visualized
-	QList<boost::shared_ptr<MultiplePlotChartComponent> > chartList_;
+	QList<boost::shared_ptr<VppChartView> > chartList_;
 
 	/// List with all the qCustomPlot-style plots that will be visualized
 	QList<boost::shared_ptr<VppXYCustomPlotWidget> > customPlotList_;

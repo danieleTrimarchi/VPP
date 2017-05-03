@@ -9,39 +9,45 @@ QT_CHARTS_USE_NAMESPACE
 
 class VppChartView : public QChartView {
 
-	Q_OBJECT
+		Q_OBJECT
 
-public :
+	public :
 
-	/// Ctor
-    explicit VppChartView(QChart *chart, QWidget *parent = Q_NULLPTR);
+		/// Ctor
+		explicit VppChartView(QChart *chart, QWidget *parent = Q_NULLPTR);
 
-    /// Dtor
-    ~VppChartView();
+		/// Dtor
+		~VppChartView();
 
-protected:
+	Q_SIGNALS:
 
-    /// Overrides the key actions
-    virtual void keyPressEvent(QKeyEvent *event);
+		void requestFullScreen(const VppChartView*);
 
+	protected:
+
+		/// Override the parent class method called on double click
+		virtual void mouseDoubleClickEvent(QMouseEvent*);
+
+		/// Overrides the key actions
+		virtual void keyPressEvent(QKeyEvent *event);
 
 };
 
 class VppPolarChartView : public VppChartView {
 
-	Q_OBJECT
+		Q_OBJECT
 
-public :
+	public :
 
-	/// Ctor
-    explicit VppPolarChartView(QChart *chart, QWidget *parent = Q_NULLPTR);
+		/// Ctor
+		explicit VppPolarChartView(QChart *chart, QWidget *parent = Q_NULLPTR);
 
-    /// Dtor
-    ~VppPolarChartView();
+		/// Dtor
+		~VppPolarChartView();
 
-protected:
+	protected:
 
-    void keyPressEvent(QKeyEvent *event);
+		void keyPressEvent(QKeyEvent *event);
 
 
 };

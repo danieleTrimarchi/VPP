@@ -50,6 +50,7 @@ protected:
 	// Polar chart axes
 	boost::shared_ptr<QValueAxis> pAngularAxis_, pRadialAxis_;
 
+	const size_t fontSize_;
 };
 
 #endif

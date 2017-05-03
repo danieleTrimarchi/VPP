@@ -1,17 +1,35 @@
 #include "VppChartView.h"
 #include <QtWidgets/QGraphicsScene>
 #include <QtWidgets/QGraphicsView>
+#include "qEvent.h"
 
 // Ctor
 VppChartView::VppChartView(QChart* chart, QWidget* parent/*= Q_NULLPTR*/) :
 QChartView(chart,parent) {
 
+	// Reduce the margins and maximize the plot region
+	setContentsMargins(0,0,0,0);
+
 	setRubberBand(QChartView::RectangleRubberBand);
+
+	// Improve the readability of the chart with anti-aliasing
+	setRenderHint(QPainter::Antialiasing);
+
 }
 
 // Dtor
 VppChartView::~VppChartView() {
 
+}
+
+// Override the parent class method called on double click
+void VppChartView::mouseDoubleClickEvent(QMouseEvent* pMouseEvent) {
+
+	// Launch a signal that will be caught by the MultiplePlotWidget
+	requestFullScreen(this);
+
+	// This method decorates the parent method
+	QChartView::mouseDoubleClickEvent(pMouseEvent);
 }
 
 void VppChartView::keyPressEvent(QKeyEvent *event)

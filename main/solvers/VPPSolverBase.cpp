@@ -270,16 +270,16 @@ void VPPSolverBase::plotPolars() {
 void VPPSolverBase::plotPolars(MultiplePlotWidget* pMultiPlotWidget) {
 
 	PolarPlotWidget* pPolarPolarPlot1= new PolarPlotWidget;
-	pMultiPlotWidget->addChart( *(pPolarPolarPlot1->getPolarChart()),0,0 );
+	pMultiPlotWidget->addChart( pPolarPolarPlot1->getChartView(),0,0 );
 
 	PolarPlotWidget* pPolarPolarPlot2= new PolarPlotWidget;
-	pMultiPlotWidget->addChart( *(pPolarPolarPlot2->getPolarChart()),1,0 );
+	pMultiPlotWidget->addChart( pPolarPolarPlot2->getChartView(),1,0 );
 
 	PolarPlotWidget* pPolarPolarPlot3= new PolarPlotWidget;
-	pMultiPlotWidget->addChart( *(pPolarPolarPlot3->getPolarChart()),0,1 );
+	pMultiPlotWidget->addChart( pPolarPolarPlot3->getChartView(),0,1 );
 
 	PolarPlotWidget* pPolarPolarPlot4= new PolarPlotWidget;
-	pMultiPlotWidget->addChart( *(pPolarPolarPlot4->getPolarChart()),1,1 );
+	pMultiPlotWidget->addChart( pPolarPolarPlot4->getChartView(),1,1 );
 
 }
 
