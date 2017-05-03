@@ -14,6 +14,12 @@ QPolarChart() {
 	pAngularAxis_.reset(new QValueAxis());
 	pAngularAxis_->setTickCount(9); // First and last ticks are co-located on 0/360 angle.
 	pAngularAxis_->setLabelFormat("%.1f");
+
+	// Reduce the size of the font to 8
+	QFont curFont=pAngularAxis_->labelsFont();
+	curFont.setPointSize(8);
+	pAngularAxis_->setLabelsFont(curFont);
+
 	pAngularAxis_->setShadesVisible(true);
 	pAngularAxis_->setShadesBrush(QBrush(QColor(249, 249, 255)));
 	pAngularAxis_->setRange(0, 360);
@@ -22,7 +28,17 @@ QPolarChart() {
 	pRadialAxis_.reset(new QValueAxis());
 	pRadialAxis_->setTickCount(9);
 	pRadialAxis_->setLabelFormat("%.1f");
+
+	// Reduce the size of the font to 8
+	pRadialAxis_->setLabelsFont(curFont);
+
 	addAxis(pRadialAxis_.get(), QPolarChart::PolarOrientationRadial);
+
+	// Place the legend to the right of the chart area
+	legend()->setAlignment(Qt::AlignRight);
+
+	// Set the font for the legend
+	legend()->setFont(curFont);
 
 	// show the legend
 	legend()->show();
