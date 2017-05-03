@@ -1217,15 +1217,15 @@ void TVPPTest::ipOptFullRunTest() {
 		}
 
 	// Save the results (useful for debugging)
-	VPPResultIO writer(solverFactory.get()->getResults());
+	VPPResultIO writer(&parser, solverFactory.get()->getResults());
 	writer.write("testFiles/vppRunTest_curResults.vpp");
 
 	// Now import some baseline results
 	ResultContainer baselineResults(pVppItems->getWind());
 
 	// Read the results from file and push them back to the baselineResults container
-	VPPResultIO reader(&baselineResults);
-	reader.read("testFiles/vppRunTest_baseline.vpp");
+	VPPResultIO reader(&parser, &baselineResults);
+	reader.parse("testFiles/vppRunTest_baseline.vpp");
 
 	// Get a ptr to the current results
 	ResultContainer* pCurrentResults= solverFactory.get()->getResults();
@@ -1321,7 +1321,7 @@ void TVPPTest::vppResultIOTest() {
 	resWriteContainer.remove(3,4);
 
 	// Write the results to a file named testResult.vpp
-	VPPResultIO writer(&resWriteContainer);
+	VPPResultIO writer(&parser, &resWriteContainer);
 	writer.write("testFiles/testResult.vpp");
 
 	// Instantiate a new result container to push the results the writer has
@@ -1329,8 +1329,8 @@ void TVPPTest::vppResultIOTest() {
 	ResultContainer resReadContainer(pWind.get());
 
 	// Read the results from file and push them back to a new ResultContainer
-	VPPResultIO reader(&resReadContainer);
-	reader.read("testFiles/testResult.vpp");
+	VPPResultIO reader(&parser, &resReadContainer);
+	reader.parse("testFiles/testResult.vpp");
 
 	// Compare the results with the baseline
 	CPPUNIT_ASSERT(resReadContainer.get(0,0) == resWriteContainer.get(0,0));

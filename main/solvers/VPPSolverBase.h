@@ -37,7 +37,7 @@ class VPPSolverBase {
 		void saveResults(string fileName);
 
 		/// Read results from file and places them in the current results
-		void importResults();
+		void importResults(string fileName);
 
 		/// Make a printout of the result bounds for this run
 		void printResultBounds();

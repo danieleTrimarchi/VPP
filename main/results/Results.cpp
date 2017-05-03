@@ -6,6 +6,9 @@ using namespace mathUtils;
 
 ///////// Result Class ///////////////////////////////
 
+const string Result::headerBegin_=string("==RESULTS==");
+const string Result::headerEnd_=string("==END RESULTS==");
+
 // (disallowed) Default constructor
 Result::Result():
 									itwv_(0),
@@ -113,6 +116,9 @@ Result::~Result(){
 // PrintOut the values stored in this result
 void Result::print(FILE* outStream) const {
 
+	// Print the header begin
+	fprintf(outStream,headerBegin_.c_str());
+
 	fprintf(outStream,"%zu %8.6f %zu %8.6f  -- ", itwv_, twv_, itwa_, mathUtils::toDeg(twa_));
 	for(size_t iRes=0; iRes<result_.size(); iRes++)
 		fprintf(outStream,"  %8.6e",result_[iRes]);
@@ -121,9 +127,8 @@ void Result::print(FILE* outStream) const {
 		fprintf(outStream,"  %8.6e", residuals_(i) );
 	fprintf(outStream,"  --  %i ", discard_ );
 
-	// This is for readability, but also it flushes the stdout buffering
-	// thus allowing line-to-line printing
-	fprintf(outStream,"\n");
+	// Print the header end
+	fprintf(outStream,headerEnd_.c_str());
 }
 
 // How many columns for printing out this result?

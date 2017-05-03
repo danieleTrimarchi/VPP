@@ -106,9 +106,6 @@ int main(int argc, char** argv) {
 //			else if( s == string("print"))
 //				solverFactory.get()->printResults();
 //
-//			else if( s == string("save"))
-//				solverFactory.get()->saveResults();
-//
 //			else if( s == string("bounds"))
 //				solverFactory.get()->printResultBounds();
 //

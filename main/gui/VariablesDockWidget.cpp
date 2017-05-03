@@ -31,7 +31,7 @@ VariablesDockWidget::~VariablesDockWidget() {
 }
 
 // Returns the underlying item model
-VariableTreeModel* VariablesDockWidget::getModel() {
+VariableTreeModel* VariablesDockWidget::getTreeModel() {
 	return pTreeModel_.get();
 }
 

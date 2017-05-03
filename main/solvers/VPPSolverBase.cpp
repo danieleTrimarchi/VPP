@@ -236,16 +236,16 @@ void VPPSolverBase::printResults() {
 // Save the current results to file
 void VPPSolverBase::saveResults(string fileName) {
 
-	VPPResultIO writer(pResults_.get());
+	VPPResultIO writer(pParser_, pResults_.get());
 	writer.write(fileName);
 
 }
 
 // Read results from file and places them in the current results
-void VPPSolverBase::importResults() {
+void VPPSolverBase::importResults(string fileName) {
 
-	VPPResultIO reader(pResults_.get());
-	reader.read();
+	VPPResultIO reader(pParser_,pResults_.get());
+	reader.parse(fileName);
 
 }
 

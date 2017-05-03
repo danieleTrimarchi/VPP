@@ -42,6 +42,9 @@ Variable::operator double() const {
 
 //=========================================
 
+const string VarSet::headerBegin_=string("==VARIABLES==");
+const string VarSet::headerEnd_=string("==END VARIABLES==");
+
 // Overload operator [] - non const variety
 Variable& VarSet::operator [] (string varName){
 
@@ -72,11 +75,18 @@ const Variable& VarSet::operator [] (string varName) const {
 }
 
 // Iterate in the set and printout the variables
-void VarSet::print() {
+void VarSet::print(FILE* outStream/*=stdout*/) {
 
-	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it){
-		std::cout<< it->varName_ << ":  "<< it->val_ <<std::endl;
-	}
+	// Print the header begin
+	fprintf( outStream, headerBegin_.c_str() );
+
+	// Print the variables
+	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it)
+		fprintf(outStream, "%s : %8.6f \n", it->varName_.c_str(), it->val_ );
+
+	// Print the header end
+	fprintf( outStream, headerEnd_.c_str() );
+
 }
 
 // Populate the tree model that will be used to

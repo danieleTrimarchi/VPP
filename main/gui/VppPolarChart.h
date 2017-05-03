@@ -39,7 +39,6 @@ public slots:
 	/// What to do on legend marker click?
 	void handleMarkerClicked();
 
-
 protected:
 
 	bool sceneEvent(QEvent *event);

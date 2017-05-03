@@ -28,3 +28,4 @@ main/.qmake.stash
 *.mak
 *project.pbxproj
 *VPP.app/*
+*.vpp

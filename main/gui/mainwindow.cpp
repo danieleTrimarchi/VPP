@@ -445,10 +445,10 @@ void MainWindow::import() {
 			pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
 
 			// Populate the variable item tree accordingly
-			pVariableFileParser_->populate( pVariablesWidget_->getModel() );
+			pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
 
 			// SailSet also contains several variables. Append them to the bottom
-			pSails_->populate( pVariablesWidget_->getModel() );
+			pSails_->populate( pVariablesWidget_->getTreeModel() );
 
 			// Expand the items in the variable tree view, in order to see all the variables
 			pVariablesWidget_->getView()->expandAll();
@@ -506,38 +506,45 @@ void MainWindow::run() {
 
 void MainWindow::saveResults() {
 
-	// Results must be available!
-	if(!pSolverFactory_ ||
-			!pSolverFactory_->get()->getResults() ) {
-		QMessageBox msgBox;
-		msgBox.setText("Please run the analysis or import results first");
-		msgBox.setIcon(QMessageBox::Critical);
-		msgBox.exec();
-		return;
-	}
+	try {
+		// Results must be available!
+		if(!pSolverFactory_ ||
+				!pSolverFactory_->get()->getResults() ) {
+			QMessageBox msgBox;
+			msgBox.setText("Please run the analysis or import results first");
+			msgBox.setIcon(QMessageBox::Critical);
+			msgBox.exec();
+			return;
+		}
 
-	QFileDialog dialog(this);
-	dialog.setWindowModality(Qt::WindowModal);
-	dialog.setAcceptMode(QFileDialog::AcceptSave);
-	dialog.setNameFilter(tr("VPP Result File(*.vpp)"));
-	dialog.setDefaultSuffix(".vpp");
-	if (dialog.exec() != QDialog::Accepted)
-		return;
+		// todo dtrimarchi: improve the filtering to not grey out the
+		// *.vpp files! See what we do in MainWIndow::importResults where
+		// things work properly. Write a generic class for file selection?
+		QFileDialog dialog(this);
+		dialog.setWindowModality(Qt::WindowModal);
+		dialog.setAcceptMode(QFileDialog::AcceptSave);
+		dialog.setNameFilter(tr("VPP Result File(*.vpp)"));
+		dialog.setDefaultSuffix(".vpp");
+		if (dialog.exec() != QDialog::Accepted)
+			return;
 
-	// Get the file selected by the user
-	const QString fileName(dialog.selectedFiles().first());
-	QFile file(fileName);
+		// Get the file selected by the user
+		const QString fileName(dialog.selectedFiles().first());
+		QFile file(fileName);
 
-	// Check the file is writable and that is is a text file
-	if (!file.open(QFile::WriteOnly | QFile::Text)) {
-		QMessageBox::warning(this, tr("Application"),
-				tr("Cannot write file %1:\n%2.")
-				.arg(QDir::toNativeSeparators(fileName),
-						file.errorString()));
-		return;
-	}
+		// Check the file is writable and that is is a text file
+		if (!file.open(QFile::WriteOnly | QFile::Text)) {
+			QMessageBox::warning(this, tr("Application"),
+					tr("Cannot write file %1:\n%2.")
+					.arg(QDir::toNativeSeparators(fileName),
+							file.errorString()));
+			return;
+		}
 
-	pSolverFactory_->get()->saveResults(fileName.toStdString());
+		pSolverFactory_->get()->saveResults(fileName.toStdString());
+
+	// outer try-catch block
+	}	catch(...) {}
 
 }
 
@@ -552,8 +559,34 @@ void MainWindow::importResults() {
 				tr("VPP Result File(*.vpp);; All Files (*.*)"));
 
 		if (!fileName.isEmpty())
-			//loadFile(fileName);
-			std::cout<<"Importing the analysis results..."<<std::endl;
+			std::cout<<"attempting to import results from : "<<fileName.toStdString()<<std::endl;
+
+		// Instantiate an empty variableFileParser (and clear any previous one)
+		// Do not parse as the variables will be read directly from the result file
+		pVariableFileParser_.reset( new VariableFileParser( fileName.toStdString() ) );
+
+		// The variableFileParser can read its part in the result file
+		pVariableFileParser_->parse();
+
+		// Instantiate the sailset
+		pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
+
+		// Instantiate the items
+		pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
+
+		// Populate the variable item tree accordingly
+		pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
+
+		// SailSet also contains several variables. Append them to the bottom
+		pSails_->populate( pVariablesWidget_->getTreeModel() );
+
+		// Expand the items in the variable tree view, in order to see all the variables
+		pVariablesWidget_->getView()->expandAll();
+
+		// Instantiate a new solverFactory without vppItems_
+		pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );
+
+		pSolverFactory_->get()->importResults(fileName.toStdString());
 
 		// outer try-catch block
 	}	catch(...) {}

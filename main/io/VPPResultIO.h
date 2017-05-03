@@ -15,7 +15,7 @@ class VPPResultIO {
 	public:
 
 		/// Ctor
-		VPPResultIO(ResultContainer* pResults);
+		VPPResultIO(VariableFileParser* pParser, ResultContainer* pResults);
 
 		/// Dtor
 		~VPPResultIO();
@@ -24,12 +24,19 @@ class VPPResultIO {
 		void write(string fileName=string("vppResults.vpp"));
 
 		/// Read results from file
-		void read(string fileName=string("vppResults.vpp"));
+		void parse(string fileName=string("vppResults.vpp"));
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	private:
+
+		/// Once the result section has been identified, parse it
+		/// until the end. Exit when the section terminator is found
+		void parseSection(std::ifstream& infile);
+
+		/// Ptr to the parser that knows all of the variables
+		VariableFileParser* pParser_;
 
 		/// Ptr to the result container
 		ResultContainer* pResults_;

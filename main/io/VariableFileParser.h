@@ -26,6 +26,9 @@ class VariableFileParser {
 		/// Destructor
 		~VariableFileParser();
 
+		/// Clear all variables
+		void clear();
+
 		/// Parse the file
 		void parse();
 
@@ -40,7 +43,7 @@ class VariableFileParser {
 		const VarSet* getVariables() const;
 
 		/// Printout the list of all variables we have collected
-		void printVariables();
+		void print(FILE* outStream=stdout);
 
 		/// Get the number of variables that have been read in
 		size_t getNumVars();
@@ -50,6 +53,13 @@ class VariableFileParser {
 		void populate(VariableTreeModel* pTreeModel);
 
 	private:
+
+		// Parse the section of the file relative to the variables
+		void parseSection(std::ifstream& infile);
+
+		// Parse a string, generate a variable and insert it
+		// to the VarSet
+		void parseLine(string& line);
 
 		/// Name of the file to be opened
 		string fileName_;

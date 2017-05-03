@@ -95,6 +95,11 @@ VariableFileParser::~VariableFileParser() {
 	// make nothing
 }
 
+// Clear all variables
+void VariableFileParser::clear() {
+	variables_.clear();
+}
+
 // Parse the file
 void VariableFileParser::parse() {
 
@@ -110,37 +115,75 @@ void VariableFileParser::parse() {
 	}
 
 	std::string line;
+
+	// Searches the init of the variable section
+	while(std::getline(infile,line)){
+		if(line==VarSet::headerBegin_){
+			parseSection(infile);
+			break;
+		}
+	}
+}
+
+void VariableFileParser::parseSection(std::ifstream& infile) {
+
+	std::string line;
 	while(std::getline(infile,line)){
 
 		// printout the line we have read
-		//std::cout<<" Original line = "<<line<<std::endl;
+		//std::cout<<"-- Original line = "<<line<<std::endl;
 
-		// Searches for the comment char (%) in this file and erase from there
+		// Keep reading while we find the end marker
+		if(line==VarSet::headerEnd_)
+			break;
+
+			// Searches for the comment char (%) in this file and erase from there
 		size_t comment = line.find("%");
 		if(comment != std::string::npos) {
 			// erase the string from the comment onward
 			line.erase(line.begin()+comment, line.end());
 		}
-		//std::cout<<" Uncommented line= "<<line<<std::endl;
+		//std::cout<<"-- Uncommented line= "<<line<<std::endl;
 
-		// If the string is not empty, attempt reading the variable
-		if(!line.empty()){
+		// Do nothing for empty lines
+		if(line.empty())
+			continue;
 
-			// Use stringstream to read the name of the variable and its value
-			std::stringstream ss(line);
+		// If the string is not empty, parse it, generate
+		// a variable and insert it to the VarSet
+		parseLine(line);
 
-			Variable newVariable;
-			ss >> newVariable.varName_;
-			ss >> newVariable.val_;
-			//std::cout<< "Read: "<<newVariable<<std::endl;
-
-			variables_.insert(newVariable);
-		}
 	}
+
+	// Debug check : make sure the variables have been read correcly
+	print();
 
 	// make sure we have all the variables we need and that
 	// the values are reasonable
 	check();
+
+	// Close the variable/result file
+	infile.close();
+
+}
+
+// Parse a string, generate a variable and insert it
+// to the VarSet. Note that the line MUST contain the
+// variable name, value
+void VariableFileParser::parseLine(string& line) {
+
+	if(line.empty())
+		return;
+
+	// Use stringstream to read the name of the variable and its value
+	std::stringstream ss(line);
+
+	Variable newVariable;
+	ss >> newVariable.varName_;
+	ss >> newVariable.val_;
+	//std::cout<< "-- Read: "<<newVariable<<std::endl;
+
+	variables_.insert(newVariable);
 }
 
 // Check that all the required variables have been
@@ -174,11 +217,15 @@ void VariableFileParser::check() {
 			variables_["LWL"]/std::pow(variables_["DIVCAN"],1./3) >=  8.50 )
 		Warning("LWL/DIVCAN^(1/3) is out of valuable interval");
 
-	if( variables_["CPL"] <= 0.52 || variables_["CPL"] >= 0.6 )
-		Warning("CPL is out of valuable interval");
+	if( variables_["CPL"] <= 0.52 || variables_["CPL"] >= 0.6 ){
+		std::cout<<"CPL= "<<variables_["CPL"]<<std::endl;
+		Warning("CPL is out of valuable interval 0.52-0.6");
+	}
 
-	if( variables_["CMS"] <= 0.65 || variables_["CMS"] >= 0.78 )
-		Warning("CMS is out of valuable interval");
+	if( variables_["CMS"] <= 0.65 || variables_["CMS"] >= 0.78 ){
+		std::cout<<"CMS= "<<variables_["CMS"]<<std::endl;
+		Warning("CMS is out of valuable interval 0.65-0.78");
+	}
 
 	if( variables_["AW"]/std::pow(variables_["DIVCAN"],2./3) <= 3.78 ||
 			variables_["AW"]/std::pow(variables_["DIVCAN"],2./3) >= 12.67 )
@@ -210,11 +257,9 @@ const VarSet* VariableFileParser::getVariables() const {
 }
 
 // Printout the list of all variables we have collected
-void VariableFileParser::printVariables() {
+void VariableFileParser::print(FILE* outStream/*=stdout*/) {
 
-	std::cout<<"====== PRINTOUT USER VARIABLES ================ "<<std::endl;
-	variables_.print();
-	std::cout<<"==================================================\n"<<std::endl;
+	variables_.print(outStream);
 
 }
 

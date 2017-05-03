@@ -114,6 +114,10 @@ class Result {
 		/// Comparison operator
 		bool operator == (const Result& ) const;
 
+
+		/// Header of the Result section in a result file
+		static const string headerBegin_, headerEnd_;
+
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 

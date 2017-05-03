@@ -32,7 +32,7 @@ public:
 	void populate(VariableFileParser*);
 
 	/// Returns the underlying item model
-	VariableTreeModel* getModel();
+	VariableTreeModel* getTreeModel();
 
 	/// Returns the view of the item model
 	QTreeView* getView();
