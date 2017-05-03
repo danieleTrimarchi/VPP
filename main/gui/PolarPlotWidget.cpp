@@ -38,3 +38,9 @@ PolarPlotWidget::~PolarPlotWidget() {
 QChartView* PolarPlotWidget::getChartView() const {
 	return pChartWiew_.get();
 }
+
+// Returns the polar chart
+VppPolarChart* PolarPlotWidget::getPolarChart() const {
+	return pPolarChart_;
+}
+

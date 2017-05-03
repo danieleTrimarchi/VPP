@@ -24,6 +24,9 @@ public:
 	/// Virtual dtor
 	virtual ~PolarPlotWidget();
 
+	/// Returns the polar chart
+	VppPolarChart* getPolarChart() const;
+
 	/// Returns the chart view
 	QChartView* getChartView() const;
 

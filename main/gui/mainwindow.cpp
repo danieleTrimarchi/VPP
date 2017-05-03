@@ -638,20 +638,46 @@ bool MainWindow::hasBoatDescription() {
 	return true;
 }
 
+// Make sure a solver is available. Otherwise
+// warns the user with an error-like widget
+bool MainWindow::hasSolver() {
+
+	// If the boat description has not been imported we do not have the
+	// vppItems nor the coefficients to be plotted!
+	if(!pSolverFactory_){
+		QMessageBox msgBox;
+		msgBox.setText("Please run the analysis or import some analysis results!");
+		msgBox.setIcon(QMessageBox::Critical);
+		msgBox.exec();
+		return false;
+	}
+	return true;
+}
 
 // Plot the velocity polars
 void MainWindow::plotPolars() {
 
 	try{
 
+		// If the boat description has not been imported we do not have the
+		// vppItems nor the coefficients to be plotted!
+		// If the boat description has not been imported we do not have the
+		// vppItems nor the coefficients to be plotted!
+		if(!hasBoatDescription())
+			return;
+
+		if(!hasSolver())
+			return;
+
 		std::cout<<"Plotting Polars..."<<std::endl;
 
 		// Instantiate a graphic plotting window in the central widget
 		pPolarPlotWidget_.reset( new MultiplePlotWidget(this, "Polars") );
 
-		//	// Get all of the polar plots we are up to draw
-		//	std::vector<VppXYCustomPlotWidget*> polarPlotVector( solverFactory.get()->plotPolars() );
+		// Hand the multiplePlotwidget to the solver factory that stores the results and knows how to plot them
+		pSolverFactory_->get()->plotPolars( pPolarPlotWidget_.get() );
 
+		// Add the polar plot view to the left of the app window
 		addDockWidget(Qt::TopDockWidgetArea, pPolarPlotWidget_.get());
 
 		// Tab the widget if other widgets have already been instantiated
@@ -1104,9 +1130,11 @@ void MainWindow::plotGradient() {
 	}	catch(...) {}
 }
 
-// Plot the Jacobian of the solution
-// J = | dF/du dF/dPhi |	|du	 |
-//	   | dM/du dM/dPhi |	|dPhi|
+// Plot the Jacobian of the solution, defined as:
+// J = | dF/du dF/dPhi |
+//	   | dM/du dM/dPhi |
+// so that 	|dF| = J 	|du  |
+//					|dM|			|dPhi|
 void MainWindow::plotJacobian() {
 
 	try{

@@ -5,6 +5,7 @@
 #include "mathUtils.h"
 #include "VPPPlotSet.h"
 #include "VPPResultIO.h"
+#include "PolarPlotWidget.h"
 
 using namespace mathUtils;
 
@@ -262,6 +263,14 @@ void VPPSolverBase::plotPolars() {
 	// Instantiate a VPPPlotSet and sub-contract the plot
 	VPPPlotSet plotSet(pResults_.get());
 	plotSet.plotPolars();
+
+}
+
+// Plot the polar plots for the state variables
+void VPPSolverBase::plotPolars(MultiplePlotWidget* pMultiPlotWidget) {
+
+	PolarPlotWidget* pPolarPolarPlot= new PolarPlotWidget;
+	pMultiPlotWidget->addChart( *(pPolarPolarPlot->getPolarChart()),0,0 );
 
 }
 

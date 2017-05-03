@@ -110,9 +110,11 @@ public slots:
 	/// Grad(u) = | du/du du/dPhi  du/db  du/df  |
 	void plotGradient();
 
-	/// Plot the Jacobian of the solution
-	/// J = | dF/du dF/dPhi |	|du	 |
-	///	    | dM/du dM/dPhi |	|dPhi|
+	/// Plot the Jacobian of the solution, defined as:
+	/// J = | dF/du dF/dPhi |
+	///	   | dM/du dM/dPhi |
+	/// so that 	|dF| = J 	|du  |
+	///					|dM|			|dPhi|
 	void plotJacobian();
 
 	/// print out the software info
@@ -139,6 +141,10 @@ private:
 	/// Make sure a boat description has been imported. Otherwise
 	/// warns the user with an error-like widget
 	bool hasBoatDescription();
+
+	/// Make sure a solver is available. Otherwise
+	/// warns the user with an error-like widget
+	bool hasSolver();
 
 	/// Log widget - This must be declared at the very beginning as we want to
 	/// make sure it is the last item to be removed on destruction

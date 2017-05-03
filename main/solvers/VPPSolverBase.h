@@ -43,7 +43,11 @@ class VPPSolverBase {
 		void printResultBounds();
 
 		/// Plot the polar plots for the state variables
+		/// Version using plPlot to be removed!
 		void plotPolars();
+
+		/// Plot the polar plots for the state variables
+		void plotPolars(MultiplePlotWidget*);
 
 		/// Plot the XY plots for the state variables
 		void plotXY( size_t index );
