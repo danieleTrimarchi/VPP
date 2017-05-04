@@ -926,15 +926,13 @@ void MainWindow::plotInducedResistance() {
 		// Instantiate an empty multiple plot widget
 		pInducedResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Induced Resistance") );
 
-		// Ask the frictional resistance item to plot itself
-		pInducedResistancePlotWidget_->addChart(
-				pVppItems_->getInducedResistanceItem()->plot(&wd,&vd)[0],
-				0,0);
+		std::vector<VppXYCustomPlotWidget*> resCharts= pVppItems_->getInducedResistanceItem()->plot(&wd,&vd);
 
 		// Ask the frictional resistance item to plot itself
-		pInducedResistancePlotWidget_->addChart(
-				pVppItems_->getInducedResistanceItem()->plot(&wd,&vd)[1],
-				0,1);
+		pInducedResistancePlotWidget_->addChart(resCharts[0],0,0);
+
+		// Ask the frictional resistance item to plot itself
+		pInducedResistancePlotWidget_->addChart(resCharts[1],0,1);
 
 		// Add the xy plot view to the left of the app window
 		addDockWidget(Qt::TopDockWidgetArea, pInducedResistancePlotWidget_.get() );

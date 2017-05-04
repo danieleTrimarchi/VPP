@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "VPPItemFactory.h"
+#include "PolarPlotWidget.h"
 
 using namespace std;
 
@@ -226,6 +227,9 @@ class ResultContainer {
 
 		/// CLear the result vector
 		void initResultMatrix();
+
+		/// Returns all is required to plot the polar plots
+		std::vector<PolarPlotWidget*> plotPolars();
 
 	private:
 

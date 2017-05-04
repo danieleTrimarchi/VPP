@@ -91,6 +91,16 @@ void VppPolarChart::plotPolars() {
 	legend()->setVisible(true);
 }
 
+// Returns the angular axis of this chart
+QValueAxis* VppPolarChart::getAngularAxis() const {
+	return pAngularAxis_.get();
+}
+
+// Returns the radial axis of this chart
+QValueAxis* VppPolarChart::getRadialAxis() const {
+	return pRadialAxis_.get();
+}
+
 // Allow for switching on-off the curves on click
 void VppPolarChart::connectMarkers() {
 

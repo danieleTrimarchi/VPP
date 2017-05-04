@@ -4,11 +4,11 @@
 #include <QScreen>
 #include <QtGui>
 
-PolarPlotWidget::PolarPlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, Qt::WindowFlags flags/*=0*/) :
+PolarPlotWidget::PolarPlotWidget(QString title, QMainWindow* parent/*=Q_NULLPTR*/, Qt::WindowFlags flags/*=0*/) :
 VppTabDockWidget(parent, flags) {
 
-	setObjectName("PolarPlotView");
-	setWindowTitle("PolarPlotView");
+	setObjectName(title);
+	setWindowTitle(title);
 
 	// Instantiate the polar plot
 	pPolarChart_= new VppPolarChart();
@@ -35,12 +35,12 @@ PolarPlotWidget::~PolarPlotWidget() {
 }
 
 // Returns the chart view
-VppPolarChartView* PolarPlotWidget::getChartView() const {
+VppPolarChartView* PolarPlotWidget::getView() const {
 	return pChartWiew_.get();
 }
 
 // Returns the polar chart
-VppPolarChart* PolarPlotWidget::getPolarChart() const {
+VppPolarChart* PolarPlotWidget::chart() const {
 	return pPolarChart_;
 }
 

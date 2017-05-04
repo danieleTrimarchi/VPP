@@ -19,16 +19,16 @@ public:
 
 	/// Explicit Constructor (why explicit..?? This was in the initial Qt example, see
 	/// colorswatch in MainWindow example)
-	explicit PolarPlotWidget(QMainWindow *parent = Q_NULLPTR, Qt::WindowFlags flags = 0);
+	explicit PolarPlotWidget(QString title, QMainWindow *parent = Q_NULLPTR, Qt::WindowFlags flags = 0);
 
 	/// Virtual dtor
 	virtual ~PolarPlotWidget();
 
 	/// Returns the polar chart
-	VppPolarChart* getPolarChart() const;
+	VppPolarChart* chart() const;
 
 	/// Returns the chart view
-	VppPolarChartView* getChartView() const;
+	VppPolarChartView* getView() const;
 
 private:
 

@@ -4,10 +4,10 @@
 #include <QtCharts/QChart>
 #include <QtCharts/QPolarChart>
 #include <QtCharts/QValueAxis>
-#include <QtCharts/QSplineSeries>
 #include <QtCharts/QLegend>
 #include <QtCharts/QLegendMarker>
 #include <QtCharts/QXYLegendMarker>
+#include <QtCharts/QSplineSeries>
 #include "boost/shared_ptr.hpp"
 
 QT_CHARTS_USE_NAMESPACE
@@ -28,6 +28,12 @@ public:
 
 	/// Add curves to the plot
 	void plotPolars();
+
+	/// Returns the angular axis of this chart
+	QValueAxis* getAngularAxis() const;
+
+	/// Returns the radial axis of this chart
+	QValueAxis* getRadialAxis() const;
 
 public slots:
 

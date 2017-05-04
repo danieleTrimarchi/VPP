@@ -1,6 +1,7 @@
 #include "Results.h"
 #include "VPPException.h"
 #include "mathUtils.h"
+#include "VppPolarChartSeries.h"
 
 using namespace mathUtils;
 
@@ -11,11 +12,11 @@ const string Result::headerEnd_=string("==END RESULTS==");
 
 // (disallowed) Default constructor
 Result::Result():
-									itwv_(0),
-									itwa_(0),
-									twv_(0),
-									twa_(0),
-									discard_(false) {
+											itwv_(0),
+											itwa_(0),
+											twv_(0),
+											twa_(0),
+											discard_(false) {
 
 	// init the result container
 	result_.resize(4);
@@ -29,11 +30,11 @@ Result::Result():
 // Constructor with no results
 Result::Result(	size_t itwv, double twv,
 		size_t itwa, double twa,bool discard/*=false*/):
-									itwv_(itwv),
-									itwa_(itwa),
-									twv_(twv),
-									twa_(twa),
-									discard_(discard) {
+											itwv_(itwv),
+											itwa_(itwa),
+											twv_(twv),
+											twa_(twa),
+											discard_(discard) {
 
 	// init the result container
 	result_.resize(4);
@@ -51,11 +52,11 @@ Result::Result(	size_t itwv, double twv, size_t itwa,
 		double twa, double  v, double phi,
 		double b, double f, double dF, double dM,
 		bool discarde /*=false*/):
-											itwv_(itwv),
-											itwa_(itwa),
-											twv_(twv),
-											twa_(twa),
-											discard_(discarde) {
+													itwv_(itwv),
+													itwa_(itwa),
+													twv_(twv),
+													twa_(twa),
+													discard_(discarde) {
 
 	// Init the result container
 	result_<< v, phi, b, f;
@@ -68,11 +69,11 @@ Result::Result(	size_t itwv, double twv, size_t itwa,
 // Constructor
 Result::Result(size_t itwv, double twv, size_t itwa, double twa, std::vector<double>& res,
 		double dF, double dM, bool discarde) :
-										itwv_(itwv),
-										itwa_(itwa),
-										twv_(twv),
-										twa_(twa),
-										discard_(discarde) {
+												itwv_(itwv),
+												itwa_(itwa),
+												twv_(twv),
+												twa_(twa),
+												discard_(discarde) {
 
 	// Init the result container
 	result_<<res[0],res[1],res[2],res[3];
@@ -86,13 +87,13 @@ Result::Result(size_t itwv, double twv, size_t itwa, double twa, std::vector<dou
 Result::Result(	size_t itwv, double twv, size_t itwa, double twa,
 		Eigen::VectorXd& result,
 		Eigen::VectorXd& residuals, bool discarde ) :
-											itwv_(itwv),
-											itwa_(itwa),
-											twv_(twv),
-											twa_(twa),
-											result_(result),
-											residuals_(residuals),
-											discard_(discarde) {
+													itwv_(itwv),
+													itwa_(itwa),
+													twv_(twv),
+													twa_(twa),
+													result_(result),
+													residuals_(residuals),
+													discard_(discarde) {
 }
 
 // Constructor with residual array
@@ -301,15 +302,15 @@ bool Result::operator == (const Result& rhs) const{
 
 // Default constructor
 ResultContainer::ResultContainer():
-							nWv_(0),
-							nWa_(0),
-							pWind_(0) {
+									nWv_(0),
+									nWa_(0),
+									pWind_(0) {
 
 }
 
 // Constructor using a windItem
 ResultContainer::ResultContainer(WindItem* pWindItem):
-								pWind_(pWindItem) {
+										pWind_(pWindItem) {
 
 	// Get the parser
 	VariableFileParser* pParser = pWind_->getParser();
@@ -546,6 +547,96 @@ void ResultContainer::initResultMatrix() {
 			);
 		}
 	}
+}
+
+// Returns all is required to plot the polar plots
+std::vector<PolarPlotWidget*> ResultContainer::plotPolars() {
+
+	// Prepare the vector to be returned
+	std::vector<PolarPlotWidget*> retVec;
+
+	// Instantiate the polar plot widget that will be assigned to retVec
+	PolarPlotWidget* pUPlot= new PolarPlotWidget("Boat velocity [m/s]");
+	PolarPlotWidget* pPhiPlot= new PolarPlotWidget("Heeling angle [rad]");
+	PolarPlotWidget* pCrewBPlot= new PolarPlotWidget("Crew position [m]");
+	PolarPlotWidget* pFlatPlot= new PolarPlotWidget("Sail flat [-]");
+
+	// Loop on the wind velocities
+	for(size_t iWv=0; iWv<windVelocitySize(); iWv++) {
+
+		// Get the number of valid results for this velocity : all minus discarded
+		size_t numValidResults= windAngleSize() - getNumDiscardedResultsForVelocity(iWv);
+
+		// Store the wind velocity as a label for this curve
+		char windVelocityLabel[256];
+		sprintf(windVelocityLabel,"%3.1f", get(iWv,0).getTWV() );
+
+		// Instantiate the series required to plot the polars
+		VppPolarChartSeries* uSeries = new VppPolarChartSeries(
+				windVelocityLabel,
+				pUPlot->chart()->getRadialAxis(),
+				pUPlot->chart()->getAngularAxis()
+		);
+
+		VppPolarChartSeries* phiSeries = new VppPolarChartSeries(
+				windVelocityLabel,
+				pUPlot->chart()->getRadialAxis(),
+				pUPlot->chart()->getAngularAxis()
+		);
+
+		VppPolarChartSeries* crewBSeries = new VppPolarChartSeries(
+				windVelocityLabel,
+				pUPlot->chart()->getRadialAxis(),
+				pUPlot->chart()->getAngularAxis()
+		);
+
+		VppPolarChartSeries* sailFlatSeries = new VppPolarChartSeries(
+				windVelocityLabel,
+				pUPlot->chart()->getRadialAxis(),
+				pUPlot->chart()->getAngularAxis()
+		);
+
+		// Loop on the wind angles
+		for(size_t iWa=0; iWa<windAngleSize(); iWa++) {
+
+			if(!get(iWv,iWa).discard()){
+
+				// Fill the boat velocity
+				uSeries->append(
+						mathUtils::toDeg(get(iWv,iWa).getTWA()),
+						get(iWv,iWa).getX()->coeff(0) );
+
+				// Fill the boat heel
+				phiSeries->append(
+						mathUtils::toDeg(get(iWv,iWa).getTWA()),
+						mathUtils::toDeg(get(iWv,iWa).getX()->coeff(1)) );
+
+				// Fill the crew position
+				crewBSeries->append(
+						mathUtils::toDeg(get(iWv,iWa).getTWA()),
+						get(iWv,iWa).getX()->coeff(2) );
+
+				// Fill the sail flat
+				sailFlatSeries->append(
+						mathUtils::toDeg(get(iWv,iWa).getTWA()),
+						get(iWv,iWa).getX()->coeff(3) );
+			}
+		}
+
+		// Append the angles-data to the relevant plotter
+		pUPlot->chart()->addSeries(uSeries);
+		pPhiPlot->chart()->addSeries(phiSeries);
+		pCrewBPlot->chart()->addSeries(crewBSeries);
+		pFlatPlot->chart()->addSeries(sailFlatSeries);
+	}
+
+	// Push the chart to the buffer vector to be returned
+	retVec.push_back(pUPlot);
+	retVec.push_back(pPhiPlot);
+	retVec.push_back(pCrewBPlot);
+	retVec.push_back(pFlatPlot);
+
+	return retVec;
 }
 
 // Printout the bounds of the Results for the whole run
