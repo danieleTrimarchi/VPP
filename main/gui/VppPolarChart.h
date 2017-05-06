@@ -26,14 +26,14 @@ public:
 	/// Dtor
 	~VppPolarChart();
 
-	/// Add curves to the plot
-	void plotPolars();
-
 	/// Returns the angular axis of this chart
 	QValueAxis* getAngularAxis() const;
 
 	/// Returns the radial axis of this chart
 	QValueAxis* getRadialAxis() const;
+
+	/// Add curves to the plot
+	void plotPolars();
 
 public slots:
 

@@ -572,36 +572,20 @@ std::vector<PolarPlotWidget*> ResultContainer::plotPolars() {
 		sprintf(windVelocityLabel,"%3.1f", get(iWv,0).getTWV() );
 
 		// Instantiate the series required to plot the polars
-		VppPolarChartSeries* uSeries = new VppPolarChartSeries(
-				windVelocityLabel,
-				pUPlot->chart()->getRadialAxis(),
-				pUPlot->chart()->getAngularAxis()
-		);
+		VppPolarChartSeries* uSeries = new VppPolarChartSeries(windVelocityLabel);
 
-		VppPolarChartSeries* phiSeries = new VppPolarChartSeries(
-				windVelocityLabel,
-				pUPlot->chart()->getRadialAxis(),
-				pUPlot->chart()->getAngularAxis()
-		);
+		VppPolarChartSeries* phiSeries = new VppPolarChartSeries(windVelocityLabel);
 
-		VppPolarChartSeries* crewBSeries = new VppPolarChartSeries(
-				windVelocityLabel,
-				pUPlot->chart()->getRadialAxis(),
-				pUPlot->chart()->getAngularAxis()
-		);
+		VppPolarChartSeries* crewBSeries = new VppPolarChartSeries(windVelocityLabel);
 
-		VppPolarChartSeries* sailFlatSeries = new VppPolarChartSeries(
-				windVelocityLabel,
-				pUPlot->chart()->getRadialAxis(),
-				pUPlot->chart()->getAngularAxis()
-		);
+		VppPolarChartSeries* sailFlatSeries = new VppPolarChartSeries(windVelocityLabel);
 
 		// Loop on the wind angles
 		for(size_t iWa=0; iWa<windAngleSize(); iWa++) {
 
 			if(!get(iWv,iWa).discard()){
 
-				// Fill the boat velocity
+				// Fill the boat velocity series and add to the plot
 				uSeries->append(
 						mathUtils::toDeg(get(iWv,iWa).getTWA()),
 						get(iWv,iWa).getX()->coeff(0) );
@@ -628,6 +612,24 @@ std::vector<PolarPlotWidget*> ResultContainer::plotPolars() {
 		pPhiPlot->chart()->addSeries(phiSeries);
 		pCrewBPlot->chart()->addSeries(crewBSeries);
 		pFlatPlot->chart()->addSeries(sailFlatSeries);
+
+		// Attach the axes and reset the range
+		uSeries->attachAxis(pUPlot->chart()->getRadialAxis());
+		uSeries->attachAxis(pUPlot->chart()->getAngularAxis());
+		pUPlot->chart()->getRadialAxis()->setRange(0,2.5);
+
+		phiSeries->attachAxis(pPhiPlot->chart()->getRadialAxis());
+		phiSeries->attachAxis(pPhiPlot->chart()->getAngularAxis());
+		pPhiPlot->chart()->getRadialAxis()->setRange(0,45);
+
+		crewBSeries->attachAxis(pCrewBPlot->chart()->getRadialAxis());
+		crewBSeries->attachAxis(pCrewBPlot->chart()->getAngularAxis());
+		pCrewBPlot->chart()->getRadialAxis()->setRange(0,3.1);
+
+		sailFlatSeries->attachAxis(pFlatPlot->chart()->getRadialAxis());
+		sailFlatSeries->attachAxis(pFlatPlot->chart()->getAngularAxis());
+		pFlatPlot->chart()->getRadialAxis()->setRange(0,1.2);
+
 	}
 
 	// Push the chart to the buffer vector to be returned
@@ -635,6 +637,10 @@ std::vector<PolarPlotWidget*> ResultContainer::plotPolars() {
 	retVec.push_back(pPhiPlot);
 	retVec.push_back(pCrewBPlot);
 	retVec.push_back(pFlatPlot);
+
+	// Connect the legend markers to the click action
+	for(size_t i=0; i<retVec.size(); i++)
+		retVec[i]->chart()->connectMarkers();
 
 	return retVec;
 }

@@ -13,7 +13,7 @@ class VppPolarChartSeries : public QSplineSeries {
 	public:
 
 		/// Explicit Ctor
-		explicit VppPolarChartSeries(QString name, QValueAxis* xAxis, QValueAxis* yAxis, QObject *parent = Q_NULLPTR);
+		explicit VppPolarChartSeries(QString name, QObject *parent = Q_NULLPTR);
 
 		/// Dtor
 		~VppPolarChartSeries();

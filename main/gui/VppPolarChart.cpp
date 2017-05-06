@@ -53,6 +53,8 @@ fontSize_(8) {
 	layout()->setContentsMargins(0,0,0,0);
 	setBackgroundRoundness(0);
 
+	//plotPolars();
+
 }
 
 // Dtor
@@ -60,7 +62,7 @@ VppPolarChart::~VppPolarChart() {
 
 }
 
-/// Add curves to the plot
+// Add curves to the plot
 void VppPolarChart::plotPolars() {
 
 	const qreal angularMin = 30;

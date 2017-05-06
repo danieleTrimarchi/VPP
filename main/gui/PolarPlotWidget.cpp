@@ -12,7 +12,6 @@ VppTabDockWidget(parent, flags) {
 
 	// Instantiate the polar plot
 	pPolarChart_= new VppPolarChart();
-	pPolarChart_->plotPolars();
 
 	// Instantiate a view for this chart. The view is to be visualized in the widget
 	pChartWiew_.reset( new VppPolarChartView(pPolarChart_) );
