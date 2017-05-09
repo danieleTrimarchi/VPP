@@ -674,8 +674,6 @@ void MainWindow::plotPolars() {
 		// Instantiate a graphic plotting window in the central widget
 		pPolarPlotWidget_.reset( new MultiplePlotWidget(this, "Polars") );
 
-		pSolverFactory_->get()->plotPolars();
-
 		// Hand the multiplePlotwidget to the solver factory that stores the results and knows how to plot them
 		pSolverFactory_->get()->plotPolars( pPolarPlotWidget_.get() );
 

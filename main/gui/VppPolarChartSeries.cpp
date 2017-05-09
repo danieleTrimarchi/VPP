@@ -16,3 +16,15 @@ VppPolarChartSeries::VppPolarChartSeries(
 VppPolarChartSeries::~VppPolarChartSeries() {
 
 }
+
+// Get the max Y value of the series
+qreal VppPolarChartSeries::getMaxYVal() const {
+
+	qreal retVal=-1E20;
+	for(size_t i=0; i<count(); i++){
+		if(at(i).y()>retVal)
+			retVal=at(i).y();
+	}
+
+	return retVal;
+}

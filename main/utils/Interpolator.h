@@ -25,9 +25,6 @@ class Interpolator {
 		/// Interpolate the function X-Y for the value val
 		double interpolate(double val,Eigen::ArrayXd& X,Eigen::ArrayXd& Y);
 
-		/// Test the interpolator on some simple function
-		void test();
-
 	private:
 
 		/// Linearly interpolate
@@ -59,24 +56,12 @@ class SplineInterpolator {
 		/// Interpolate the function X-Y using the underlying spline for the value val
 		double interpolate(double);
 
-		/// Plot the spline and its underlying source points
-		void plot(double minVal,double maxVal,int nVals,
-				string title, string xLabel="x", string yLabel="y");
-
 		/// Plot the spline and its underlying source points.
 		/// Hand the points to a QCustomPlot
 		void plot(VppXYCustomPlotWidget* chart, double minVal,double maxVal,int nVals);
 
-		/// Plot the first derivative of the spline
-		void plotD1(double minVal,double maxVal,int nVals,
-				string title, string xLabel="x", string yLabel="y");
-
 		/// Plot the first derivative of the spline and its underlying source points
 		void plotD1(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals );
-
-		/// Plot the second derivative of the spline
-		void plotD2(double minVal,double maxVal,int nVals,
-				string title, string xLabel="x", string yLabel="y");
 
 		/// Plot the second derivative of the spline and its underlying source points
 		void plotD2(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals );

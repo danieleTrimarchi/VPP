@@ -357,9 +357,6 @@ void InducedResistanceItem::plotTe(int twv, int twa) {
 	//  std::cout<<"phiDArr= "<<phiD_<<std::endl;
 	//std::cout<<"Teffective= \n"<<Teffective<<std::endl;
 
-	// Make a check plot for the induced resistance6
-	interpolator.plot(0,toRad(30),30,"Effective Span","PHI [rad]","Te");
-
 }
 
 //=================================================================

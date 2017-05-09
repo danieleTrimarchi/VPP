@@ -4,7 +4,6 @@
 #include "Regression.h"
 #include <fstream>
 #include "mathUtils.h"
-#include "VPPPlotSet.h"
 #include "VPPResultIO.h"
 
 using namespace mathUtils;

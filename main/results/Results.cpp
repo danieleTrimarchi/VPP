@@ -572,13 +572,13 @@ std::vector<PolarPlotWidget*> ResultContainer::plotPolars() {
 		sprintf(windVelocityLabel,"%3.1f", get(iWv,0).getTWV() );
 
 		// Instantiate the series required to plot the polars
-		VppPolarChartSeries* uSeries = new VppPolarChartSeries(windVelocityLabel);
+		VppPolarChartSeries* uSeries = new VppPolarChartSeries(windVelocityLabel, pUPlot->chart());
 
-		VppPolarChartSeries* phiSeries = new VppPolarChartSeries(windVelocityLabel);
+		VppPolarChartSeries* phiSeries = new VppPolarChartSeries(windVelocityLabel, pPhiPlot->chart());
 
-		VppPolarChartSeries* crewBSeries = new VppPolarChartSeries(windVelocityLabel);
+		VppPolarChartSeries* crewBSeries = new VppPolarChartSeries(windVelocityLabel, pCrewBPlot->chart());
 
-		VppPolarChartSeries* sailFlatSeries = new VppPolarChartSeries(windVelocityLabel);
+		VppPolarChartSeries* sailFlatSeries = new VppPolarChartSeries(windVelocityLabel, pFlatPlot->chart());
 
 		// Loop on the wind angles
 		for(size_t iWa=0; iWa<windAngleSize(); iWa++) {
@@ -616,19 +616,19 @@ std::vector<PolarPlotWidget*> ResultContainer::plotPolars() {
 		// Attach the axes and reset the range
 		uSeries->attachAxis(pUPlot->chart()->getRadialAxis());
 		uSeries->attachAxis(pUPlot->chart()->getAngularAxis());
-		pUPlot->chart()->getRadialAxis()->setRange(0,2.5);
+		pUPlot->chart()->getRadialAxis()->setRange(0,uSeries->getMaxYVal());
 
 		phiSeries->attachAxis(pPhiPlot->chart()->getRadialAxis());
 		phiSeries->attachAxis(pPhiPlot->chart()->getAngularAxis());
-		pPhiPlot->chart()->getRadialAxis()->setRange(0,45);
+		pPhiPlot->chart()->getRadialAxis()->setRange(0,phiSeries->getMaxYVal());
 
 		crewBSeries->attachAxis(pCrewBPlot->chart()->getRadialAxis());
 		crewBSeries->attachAxis(pCrewBPlot->chart()->getAngularAxis());
-		pCrewBPlot->chart()->getRadialAxis()->setRange(0,3.1);
+		pCrewBPlot->chart()->getRadialAxis()->setRange(0,crewBSeries->getMaxYVal());
 
 		sailFlatSeries->attachAxis(pFlatPlot->chart()->getRadialAxis());
 		sailFlatSeries->attachAxis(pFlatPlot->chart()->getAngularAxis());
-		pFlatPlot->chart()->getRadialAxis()->setRange(0,1.2);
+		pFlatPlot->chart()->getRadialAxis()->setRange(0,sailFlatSeries->getMaxYVal());
 
 	}
 

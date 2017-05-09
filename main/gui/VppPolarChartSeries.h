@@ -18,6 +18,9 @@ class VppPolarChartSeries : public QSplineSeries {
 		/// Dtor
 		~VppPolarChartSeries();
 
+		/// Get the max Y value of the series
+		qreal getMaxYVal() const;
+
 	private:
 
 

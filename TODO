@@ -1,14 +1,3 @@
-- How to redirect output directly to the low window
-
-- Refactor the resistance items to plot with a unique interface: 
-  the resistance items know the wind (given @ construction) so they can 
-  direcly popup a dialog (WindIndicesDialog) if requested. 
- 
-  the plotting interface is of the type
-	VppXYCustomPlotWidget* resitanceItem::plot()
-
-  all this is driven by mainWindow, which is also in charge of deciding the position of the charts in the multiplot
-
 - Ask Stephane about the multiple environment warning 
 
 - Is it possible to compute analytical derivatives instead of numerical derivatives by finite differences? Presumably yes, I only need to write the code and check! 
@@ -26,7 +15,5 @@ Well, this is painful because we do not have the expressions for the
 
 - Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 		mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
 	To be investigated on UML!
-
-- eigen support for xcode?
 
 

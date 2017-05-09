@@ -3,7 +3,6 @@
 #include "Interpolator.h"
 #include <fstream>
 #include "mathUtils.h"
-#include "VPPPlotSet.h"
 #include "VPPResultIO.h"
 #include "PolarPlotWidget.h"
 
@@ -257,15 +256,6 @@ void VPPSolverBase::printResultBounds() {
 
 }
 
-// Make a printout of the results for this run
-void VPPSolverBase::plotPolars() {
-
-	// Instantiate a VPPPlotSet and sub-contract the plot
-	VPPPlotSet plotSet(pResults_.get());
-	plotSet.plotPolars();
-
-}
-
 // Plot the polar plots for the state variables
 void VPPSolverBase::plotPolars(MultiplePlotWidget* pMultiPlotWidget) {
 
@@ -279,6 +269,7 @@ void VPPSolverBase::plotPolars(MultiplePlotWidget* pMultiPlotWidget) {
 }
 
 // Make a printout of the results for this run
+// todo dtrimarchi : convert this method to a Qt style plot
 void VPPSolverBase::plotXY(size_t iWa) {
 
 	if( iWa>=pResults_->windAngleSize() ){
@@ -290,8 +281,8 @@ void VPPSolverBase::plotXY(size_t iWa) {
 	// results. The plotter manager prepares the results (makes
 	// sure to manage only valid results) and instantiates the
 	// plotter to prepare the XY plot
-	VPPPlotSet vppPlotSet(pResults_.get());
-	vppPlotSet.plotXY(iWa);
+	//VPPPlotSet vppPlotSet(pResults_.get());
+	//vppPlotSet.plotXY(iWa);
 
 }
 
