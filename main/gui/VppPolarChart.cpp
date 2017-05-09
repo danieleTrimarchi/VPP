@@ -7,8 +7,8 @@
 #include <QDebug>
 
 // Ctor
-VppPolarChart::VppPolarChart():
-QPolarChart(),
+VppPolarChart::VppPolarChart(QGraphicsItem* pParent /*= Q_NULLPTR*/):
+QPolarChart(pParent),
 fontSize_(8) {
 
 	// Set the plot axes
@@ -36,7 +36,11 @@ fontSize_(8) {
 	addAxis(pRadialAxis_.get(), QPolarChart::PolarOrientationRadial);
 
 	// Place the legend to the right of the chart area
-	legend()->setAlignment(Qt::AlignRight);
+	legend()->setAlignment(Qt::AlignLeft);
+	QRectF legendSize= legend()->geometry();
+	legendSize.setWidth(legendSize.width()*2);
+	legendSize.setHeight(legendSize.height()/2);
+	legend()->setGeometry(legendSize);
 
 	// Set the font for the legend
 	legend()->setFont(curFont);
@@ -91,6 +95,7 @@ void VppPolarChart::plotPolars() {
 	connectMarkers();
 
 	legend()->setVisible(true);
+	legend()->update();
 }
 
 // Returns the angular axis of this chart

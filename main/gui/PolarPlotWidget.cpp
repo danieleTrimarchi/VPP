@@ -11,10 +11,10 @@ VppTabDockWidget(parent, flags) {
 	setWindowTitle(title);
 
 	// Instantiate the polar plot
-	pPolarChart_= new VppPolarChart();
+	pPolarChart_.reset( new VppPolarChart );
 
 	// Instantiate a view for this chart. The view is to be visualized in the widget
-	pChartWiew_.reset( new VppPolarChartView(pPolarChart_) );
+	pChartWiew_.reset( new VppPolarChartView(pPolarChart_.get()) );
 
 	// Make the rendered lines look nicer
 	pChartWiew_->setRenderHint(QPainter::Antialiasing);
@@ -40,6 +40,6 @@ VppPolarChartView* PolarPlotWidget::getView() const {
 
 // Returns the polar chart
 VppPolarChart* PolarPlotWidget::chart() const {
-	return pPolarChart_;
+	return pPolarChart_.get();
 }
 

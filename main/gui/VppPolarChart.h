@@ -21,7 +21,7 @@ class VppPolarChart : public QPolarChart {
 public:
 
 	/// Ctor
-	VppPolarChart();
+	VppPolarChart(QGraphicsItem* pParent= Q_NULLPTR);
 
 	/// Dtor
 	~VppPolarChart();

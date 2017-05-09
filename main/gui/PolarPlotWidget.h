@@ -35,7 +35,7 @@ private:
 	/// Polar chart this widget is supposed to contain
 	/// Row ptr, apparently the ownership of this item is
 	/// given to the chart view
-	VppPolarChart* pPolarChart_;
+	boost::shared_ptr<VppPolarChart> pPolarChart_;
 
 	/// Chart view
 	boost::shared_ptr<VppPolarChartView> pChartWiew_;
