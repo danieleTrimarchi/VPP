@@ -640,7 +640,7 @@ std::vector<PolarPlotWidget*> ResultContainer::plotPolars() {
 
 	// Connect the legend markers to the click action
 	for(size_t i=0; i<retVec.size(); i++)
-		retVec[i]->chart()->connectMarkers();
+		retVec[i]->chart()->connectSignals();
 
 	return retVec;
 }

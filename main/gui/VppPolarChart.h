@@ -38,12 +38,15 @@ public:
 public slots:
 
 	/// Allow for switching on-off the curves on click
-	void connectMarkers();
+	void connectSignals();
 
 	void disconnectMarkers();
 
 	/// What to do on legend marker click?
 	void handleMarkerClicked();
+
+	/// What to do when a data series is clicked?
+	void handleSeriesClicked();
 
 protected:
 

@@ -92,7 +92,7 @@ void VppPolarChart::plotPolars() {
 	pRadialAxis_->setRange(radialMin,radialMax);
 
 	// Allow for switching on-off the curves on click
-	connectMarkers();
+	connectSignals();
 
 	legend()->setVisible(true);
 	legend()->update();
@@ -109,7 +109,7 @@ QValueAxis* VppPolarChart::getRadialAxis() const {
 }
 
 // Allow for switching on-off the curves on click
-void VppPolarChart::connectMarkers() {
+void VppPolarChart::connectSignals() {
 
 	// Connect all markers to handler
 	foreach (QLegendMarker* marker, legend()->markers()) {
@@ -117,6 +117,18 @@ void VppPolarChart::connectMarkers() {
 		QObject::disconnect(marker, SIGNAL(clicked()), this, SLOT(handleMarkerClicked()));
 		QObject::connect(marker, SIGNAL(clicked()), this, SLOT(handleMarkerClicked()));
 	}
+
+	// Connect all markers to handler
+	foreach (QAbstractSeries* series, series() ) {
+
+		// Cast the series to a QSplineSeries
+		QSplineSeries* pSplineSeries =  qobject_cast<QSplineSeries*>(series);
+
+		// Disconnect possible existing connection to avoid multiple connections
+		QObject::disconnect(pSplineSeries, SIGNAL(clicked(const QPointF &point)), this, SLOT(handleSeriesClicked()));
+		QObject::connect(pSplineSeries, SIGNAL(clicked(const QPointF &point)), this, SLOT(handleSeriesClicked()));
+	}
+
 }
 
 void VppPolarChart::disconnectMarkers() {
@@ -176,6 +188,33 @@ void VppPolarChart::handleMarkerClicked() {
 		{
 			qDebug() << "Unknown marker type";
 			break;
+		}
+	}
+}
+
+void VppPolarChart::handleSeriesClicked() {
+
+	QSplineSeries* series =  qobject_cast<QSplineSeries*>(sender());
+	Q_ASSERT(series);
+
+	if(series) {
+
+		// Get the list of markers associated to this series (in general, this
+		// list is sized 1)
+		QList<QLegendMarker*> markerList= legend()->markers(series);
+
+		for(size_t iMarker=0; iMarker<markerList.size(); iMarker++){
+
+			// Get the marker
+			QLegendMarker* pMarker= markerList[iMarker];
+
+			pMarker->setVisible(!pMarker->isVisible());
+			legend()->update();
+
+			//			// Set the brush
+//			QBrush markerBrush = pMarker->brush();
+//			markerBrush.setStyle(Qt::BrushStyle::Dense7Pattern);
+//			pMarker->setBrush(markerBrush);
 		}
 	}
 }
