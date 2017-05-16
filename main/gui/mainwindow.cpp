@@ -35,6 +35,7 @@
 #include "VPPGradient.h"
 #include "VPPSolverFactoryBase.h"
 #include "Version.h"
+#include "VppPolarCustomPlotWidget.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitely deleted in the destructor
@@ -656,6 +657,23 @@ bool MainWindow::hasSolver() {
 
 // Plot the velocity polars
 void MainWindow::plotPolars() {
+
+	// Instantiate a graphic plotting window in the central widget
+	pPolarPlotWidget_.reset( new MultiplePlotWidget(this, "Polars") );
+
+	VppPolarCustomPlotWidget* pChart = new VppPolarCustomPlotWidget("Polars","-","-", pPolarPlotWidget_.get());
+	pPolarPlotWidget_->addChart(pChart,0,0);
+
+	// Add the polar plot view to the left of the app window
+	addDockWidget(Qt::TopDockWidgetArea, pPolarPlotWidget_.get());
+
+	// Tab the widget if other widgets have already been instantiated
+	// In the same area. Todo dtrimarchi : this is way too fragile
+	// It requires widgets instantiated on the topDockWidgetArea and
+	// I need to add the deleted signal to the slot removeWidgetFromVector
+	tabDockWidget(pPolarPlotWidget_.get());
+
+	return;
 
 	try{
 
