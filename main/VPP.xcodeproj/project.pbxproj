@@ -286,6 +286,21 @@
 					);
 			};
 		};
+		399D777B52DC95C90F944936 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppPolarCustomPlotWidget.cpp";
+			name = "VppPolarCustomPlotWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		9061BAEF8CE15118F19FEB97 = {
+			fileRef = "399D777B52DC95C90F944936";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
 		04306F199F9FBC54052772BC = {
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/main/gui/VppTabDockWidget.cpp";
@@ -1051,6 +1066,21 @@
 					);
 			};
 		};
+		761BA09B2641374BCC16663D = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VppPolarCustomPlotWidget.cpp";
+			name = "moc_VppPolarCustomPlotWidget.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		48054BF80475C9D3A0DA26A8 = {
+			fileRef = "761BA09B2641374BCC16663D";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
 		11129B21777CADB90E065E97 = {
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VppTabDockWidget.cpp";
@@ -1264,6 +1294,13 @@
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/main/gui/VppPolarChartSeries.h";
 			name = "VppPolarChartSeries.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		9D946105581D89D0F7F15110 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VppPolarCustomPlotWidget.h";
+			name = "VppPolarCustomPlotWidget.h";
 			sourceTree = "<absolute>";
 			lastKnownFileType = "sourcecode.c.h";
 		};
@@ -1601,6 +1638,7 @@
 				"38306A80D2BC14226BE311AC",
 				"70D2952ABA64DED7B184EA05",
 				"9AECE1A3BB1740A894054E46",
+				"761BA09B2641374BCC16663D",
 				"11129B21777CADB90E065E97",
 				"7E8A58ABAA7DF29505984473",
 				"12C685494E636CC52F4E8324",
@@ -1672,6 +1710,7 @@
 				"7CA7A59B07FF427AECCCA6E1",
 				"7B7C3CB1FE7F49D765F66163",
 				"D316BDC16AA506D36FE2BDA6",
+				"399D777B52DC95C90F944936",
 				"04306F199F9FBC54052772BC",
 				"B58E96A6686474993FE0BEEF",
 				"63D3C8AD76023A0EC3D918BF",
@@ -1694,6 +1733,7 @@
 				"C5768F2D40ACF36A54889766",
 				"6326D1D9F7D79D5A3D9076F3",
 				"3B46EA6100FBD17B2230290C",
+				"9D946105581D89D0F7F15110",
 				"B4953B0EB6F36A6FA6A1DBF5",
 				"A6F6E728E46B65019D0ACCB5",
 				"1CF6764FEB0045428A1337B4",
@@ -1871,6 +1911,7 @@
 				"80146F910962893AE662D44F",
 				"BC851D63CD7161177A68434E",
 				"C52C64EBB65B1F7814314088",
+				"9061BAEF8CE15118F19FEB97",
 				"25F72F3CD1EE305F577F6BCB",
 				"C8091D0019724BF7E52C8248",
 				"9A43EB1698980269F17584C3",
@@ -1922,6 +1963,7 @@
 				"F53E43FB85FF07FE354023DF",
 				"6DE6EE811139C08213BDB9F6",
 				"E9216F773A3D11E7573E5058",
+				"48054BF80475C9D3A0DA26A8",
 				"678241618B2798A4073714F6",
 				"2DE1F6FBB19204E064E31091",
 				"EE99A568D5161783748B5041",

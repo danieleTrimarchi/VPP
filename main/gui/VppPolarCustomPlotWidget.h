@@ -58,6 +58,8 @@ private slots:
 	/// Change selection using arrow keys up or down. Called by keyPressEvent
 	void changeGraphSelection(int key);
 
+	/// Place the axes in the centre of the plot
+	void centreAxes();
 
 };
 

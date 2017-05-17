@@ -662,8 +662,9 @@ void MainWindow::plotPolars() {
 	pPolarPlotWidget_.reset( new MultiplePlotWidget(this, "Polars") );
 
 	VppPolarCustomPlotWidget* pChart = new VppPolarCustomPlotWidget("Polars","-","-", pPolarPlotWidget_.get());
+	// make sure the axes are in the centre
+	pChart->repaint();
 	pPolarPlotWidget_->addChart(pChart,0,0);
-
 	// Add the polar plot view to the left of the app window
 	addDockWidget(Qt::TopDockWidgetArea, pPolarPlotWidget_.get());
 
