@@ -49,7 +49,7 @@ typedef QList<Data> DataList;
 typedef QList<DataList> DataTable;
 
 // forward declarations
-class QCustomPlot;
+class VppCustomPlotWidgetBase;
 class VppChartView;
 
 class MultiplePlotWidget : public VppTabDockWidget {
@@ -67,7 +67,7 @@ public:
 	void addChart(VppChartView*, size_t px, size_t py);
 
 	/// Add a chart in a given position
-	void addChart(QCustomPlot*, size_t px, size_t py);
+	void addChart(VppCustomPlotWidgetBase*, size_t px, size_t py);
 
 	/// How many columns is this multiplePlotWidget made of?
 	int columnCount() const;
@@ -81,7 +81,7 @@ public slots:
 	void toggleFullScreen(const VppChartView*);
 
 	/// What to do when one of the plots is clicked?
-	void toggleFullScreen(const QCustomPlot*);
+	void toggleFullScreen(const VppCustomPlotWidgetBase*);
 
 private:
 
@@ -93,7 +93,7 @@ private:
 	QList<boost::shared_ptr<VppChartView> > chartList_;
 
 	/// List with all the qCustomPlot-style plots that will be visualized
-	QList<boost::shared_ptr<QCustomPlot> > customPlotList_;
+	QList<boost::shared_ptr<VppCustomPlotWidgetBase> > customPlotList_;
 
 	/// Grid layout of the multiple plot. Raw ptr, the ownership is taken by the widget
 	QGridLayout* pGridLayout_;
