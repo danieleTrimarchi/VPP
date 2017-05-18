@@ -12,8 +12,7 @@ class VppPolarCustomPlotWidget : public QCustomPlot {
 public:
 
 	/// Explicit Constructor
-	explicit VppPolarCustomPlotWidget(QString title, QString xAxisLabel, QString yAxisLabel,
-																	QWidget* parent= Q_NULLPTR);
+	explicit VppPolarCustomPlotWidget(QString title, QWidget* parent= Q_NULLPTR);
 
 	/// Dtor
 	~VppPolarCustomPlotWidget();
@@ -32,6 +31,11 @@ protected :
 
   /// Overrides the key actions
   virtual void keyPressEvent(QKeyEvent *event);
+
+private:
+
+  /// Number of velocity markers (circles) of the polar plot
+	size_t numCircles_;
 
 private slots:
 

@@ -1,9 +1,10 @@
 #include "VppPolarCustomPlotWidget.h"
 
 VppPolarCustomPlotWidget::VppPolarCustomPlotWidget(
-		QString title, QString xAxisLabel, QString yAxisLabel,
+		QString title,
 		QWidget* parent/*=Q_NULLPTR*/) :
-		QCustomPlot(parent) {
+		QCustomPlot(parent),
+		numCircles_(6) {
 
 	// Set the title of this widget. This won't be shown in
 	// the context of a multiplePlotWidget though.
@@ -30,23 +31,16 @@ VppPolarCustomPlotWidget::VppPolarCustomPlotWidget(
 
 	// Set the axis labels and the font
 	legendFont.setPointSize(9);
-	xAxis->setLabel(xAxisLabel);
-	yAxis->setLabel(yAxisLabel);
-	xAxis->setLabelFont(legendFont);
-	yAxis->setLabelFont(legendFont);
-
-	xAxis->setTickLabelFont(legendFont);
-	yAxis->setTickLabelFont(legendFont);
+	xAxis->setLabel("");
+	yAxis->setLabel("");
 
 	// Set the pen for the circles : thin dotted lines
 	QPen myPen;
 	myPen.setStyle(Qt::PenStyle::DashDotDotLine);
 	myPen.setWidth(0);
 
-	size_t nCircles=6;
-
 	// Now set some circles
-	for(size_t i=0; i<nCircles; i++){
+	for(size_t i=0; i<numCircles_+1; i++){
 		QCPItemEllipse* circle = new QCPItemEllipse(this);
 		double val= i;
 		circle->topLeft->setCoords(-val,val);
@@ -55,7 +49,7 @@ VppPolarCustomPlotWidget::VppPolarCustomPlotWidget(
 	}
 
 	// Set the axis range
-	float bound= nCircles + 0.1 * nCircles;
+	float bound= numCircles_ + 0.1 * numCircles_;
 	xAxis->setRange(-bound,bound);
 	yAxis->setRange(-bound,bound);
 

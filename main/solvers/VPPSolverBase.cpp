@@ -259,12 +259,12 @@ void VPPSolverBase::printResultBounds() {
 // Plot the polar plots for the state variables
 void VPPSolverBase::plotPolars(MultiplePlotWidget* pMultiPlotWidget) {
 
-	std::vector<PolarPlotWidget*> chartVec= pResults_->plotPolars();
+	std::vector<VppPolarCustomPlotWidget*> chartVec= pResults_->plotPolars();
 
-	pMultiPlotWidget->addChart( chartVec[0]->getView(),0,0 );
-	pMultiPlotWidget->addChart( chartVec[1]->getView(),1,0 );
-	pMultiPlotWidget->addChart( chartVec[2]->getView(),0,1 );
-	pMultiPlotWidget->addChart( chartVec[3]->getView(),1,1 );
+	pMultiPlotWidget->addChart( chartVec[0],0,0 );
+	pMultiPlotWidget->addChart( chartVec[1],1,0 );
+	pMultiPlotWidget->addChart( chartVec[2],0,1 );
+	pMultiPlotWidget->addChart( chartVec[3],1,1 );
 
 }
 
