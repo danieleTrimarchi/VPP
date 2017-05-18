@@ -30,19 +30,13 @@
 #ifndef MULTIPLEPLOTWIDGET_H
 #define MULTIPLEPLOTWIDGET_H
 
-#include <QtCharts/QChartGlobal>
-#include <QtCharts/QChart>
-#include <QtCharts/QChartView>
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QGraphicsWidget>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGraphicsGridLayout>
-#include <QtCharts/QLineSeries>
 #include <QMainWindow>
 #include "boost/shared_ptr.hpp"
 #include "VppTabDockWidget.h"
-
-QT_CHARTS_USE_NAMESPACE
 
 typedef QPair<QPointF, QString> Data;
 typedef QList<Data> DataList;
@@ -64,9 +58,6 @@ public:
 	virtual ~MultiplePlotWidget();
 
 	/// Add a chart in a given position
-	void addChart(VppChartView*, size_t px, size_t py);
-
-	/// Add a chart in a given position
 	void addChart(VppCustomPlotWidgetBase*, size_t px, size_t py);
 
 	/// How many columns is this multiplePlotWidget made of?
@@ -78,9 +69,6 @@ public:
 public slots:
 
 	/// What to do when one of the plots is clicked?
-	void toggleFullScreen(const VppChartView*);
-
-	/// What to do when one of the plots is clicked?
 	void toggleFullScreen(const VppCustomPlotWidgetBase*);
 
 private:
@@ -88,9 +76,6 @@ private:
 	/// Connect all the charts in the multiplot to the toggleFullScreen
 	/// signal that is used to expand one chart to full screen
 	void connectFullScreenSignals();
-
-	/// List with all the QChart-style plots that will be visualized
-	QList<boost::shared_ptr<VppChartView> > chartList_;
 
 	/// List with all the qCustomPlot-style plots that will be visualized
 	QList<boost::shared_ptr<VppCustomPlotWidgetBase> > customPlotList_;

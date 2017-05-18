@@ -3,20 +3,13 @@
 #include <QMainWindow>
 #include <QToolbar>
 #include "LogWindow.h"
-#include <QtCharts/QChartGlobal>
-#include <QtCharts/QChart>
-#include <QtCharts/QLogValueAxis>
-#include <QtCharts/QPolarChart>
-#include <QtCharts/QLegend>
 #include "VariablesDockWidget.h"
 #include "LogDockWidget.h"
-#include "PolarPlotWidget.h"
 #include "MultiplePlotWidget.h"
 #include "ThreeDPlotWidget.h"
 #include "VppTableDockWidget.h"
 #include "VariableFileParser.h"
 #include "SailSet.h"
-#include "VPPXYChartWidget.h"
 #include "boost/shared_ptr.hpp"
 #include "DebugStream.h"
 #include "VPPSolverFactoryBase.h"
@@ -25,7 +18,6 @@ class ToolBar;
 class VPPItemFactory;
 
 QT_FORWARD_DECLARE_CLASS(QMenu)
-QT_CHARTS_USE_NAMESPACE
 
 /* Main window of the V++ application. This class direcly
  * derives from the Qt example : MainWindow

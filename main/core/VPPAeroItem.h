@@ -11,7 +11,6 @@ using namespace Physic;
 /// Forward declarations
 class MultiplePlotWidget;
 class VppTabDockWidget;
-class VPPXYChart;
 
 class WindItem : public VPPItem {
 

@@ -5,7 +5,6 @@
 #include "mathUtils.h"
 #include "multiplePlotWidget.h"
 #include "VppTabDockWidget.h"
-#include "VPPXYChart.h"
 #include "VppXYCustomPlotWidget.h"
 #include "VPPDialogs.h"
 

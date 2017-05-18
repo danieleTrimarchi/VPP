@@ -4,7 +4,6 @@
 #include <fstream>
 #include "mathUtils.h"
 #include "VPPResultIO.h"
-#include "PolarPlotWidget.h"
 
 using namespace mathUtils;
 
