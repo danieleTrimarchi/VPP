@@ -1,4 +1,5 @@
 #include "VppCustomPlotWidgetBase.h"
+#include <iostream>
 
 VppCustomPlotWidgetBase::VppCustomPlotWidgetBase(
 		QString title, QString xAxisLabel, QString yAxisLabel,
@@ -211,18 +212,18 @@ void VppCustomPlotWidgetBase::selectionChanged() {
 	}
 
 	// Synchronize selection of graphs with selection of corresponding legend items:
-	for (int i=0; i<graphCount(); ++i) {
+	for (int i=0; i<plottableCount(); ++i) {
 
-		// Get a ptr to the i-th graph curve
-		QCPGraph* pGraph = graph(i);
+		// Get a ptr to the i-th plottable pLegendItem
+		QCPAbstractPlottable* pPlottable = plottable(i);
 
 		// Get a ptr to the legend item related to this graph curve
-		QCPPlottableLegendItem* item = legend->itemWithPlottable(pGraph);
+		QCPPlottableLegendItem* pLegendItem = legend->itemWithPlottable(pPlottable);
 
 		// If the curve OR the legend item have been selected, highlight them both
-		if (item->selected() || pGraph->selected()) {
-			item->setSelected(true);
-			pGraph->setSelection(QCPDataSelection(pGraph->data()->dataRange()));
+		if (pLegendItem->selected() || pPlottable->selected()) {
+			pLegendItem->setSelected(true);
+			pPlottable->setSelection( pPlottable->selection() );
 		}
 	}
 }

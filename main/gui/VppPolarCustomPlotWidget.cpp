@@ -46,23 +46,25 @@ void VppPolarCustomPlotWidget::centreAxes() {
 
 void VppPolarCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y, QString dataLabel /*=""*/) {
 
-	// create empty curve objects:
+	// Create empty curve objects:
 	QCPCurve* pDataCurve = new QCPCurve(xAxis_, yAxis_);
 
+	// Set the name of the curve (legend)
 	pDataCurve->setName(dataLabel);
 
-	// generate the curve data points:
+	// Generate the curve data points:
 	QVector<QCPCurveData> dataSpiral1(x.size());
 	for (int i=0; i<x.size(); ++i)
 	  dataSpiral1[i] = QCPCurveData(i, x[i], y[i] );
 
-	// pass the data to the curves; we know t (i in loop above) is ascending, so set alreadySorted=true (saves an extra internal sort):
+	// Pass the data to the curves; we know t (i in loop above) is ascending,
+	// so set alreadySorted=true (saves an extra internal sort):
 	pDataCurve->data()->set(dataSpiral1, true);
 
-	// color the curves:
+	// Color the curves:
 	pDataCurve->setPen(QPen(Qt::blue));
 
-	// set some basic customPlot config:
+	// Set some basic customPlot config:
 	axisRect()->setupFullAxesBox();
 	rescaleAxes();
 
