@@ -49,23 +49,18 @@ void VppPolarCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y, Q
 	// create empty curve objects:
 	QCPCurve* pDataCurve = new QCPCurve(xAxis_, yAxis_);
 
-	// generate the curve data points:
-	const int pointCount = 500;
-	QVector<QCPCurveData> dataSpiral1(pointCount);
-	for (int i=0; i<pointCount; ++i) {
+	pDataCurve->setName(dataLabel);
 
-	  double phi = i/(double)(pointCount-1)*8*M_PI;
-	  double theta = i/(double)(pointCount-1)*2*M_PI;
-	  dataSpiral1[i] = QCPCurveData(i, qSqrt(phi)*qCos(phi), qSqrt(phi)*qSin(phi));
-	}
+	// generate the curve data points:
+	QVector<QCPCurveData> dataSpiral1(x.size());
+	for (int i=0; i<x.size(); ++i)
+	  dataSpiral1[i] = QCPCurveData(i, x[i], y[i] );
+
 	// pass the data to the curves; we know t (i in loop above) is ascending, so set alreadySorted=true (saves an extra internal sort):
 	pDataCurve->data()->set(dataSpiral1, true);
 
 	// color the curves:
 	pDataCurve->setPen(QPen(Qt::blue));
-	pDataCurve->setBrush(QBrush(QColor(0, 0, 255, 20)));
-
-	QRadialGradient radialGrad(QPointF(310, 180), 200);
 
 	// set some basic customPlot config:
 	axisRect()->setupFullAxesBox();
