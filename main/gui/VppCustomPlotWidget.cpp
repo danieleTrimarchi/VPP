@@ -46,11 +46,11 @@ void VppCustomPlotWidget::setupQuadraticDemo(QString& demoName) {
   pCustomPlot->addGraph();
   pCustomPlot->graph(0)->setData(x, y);
   // give the axes some labels:
-  pCustomPlot->xAxis->setLabel("x");
-  pCustomPlot->yAxis->setLabel("y");
+  pCustomPlot->xAxis_->setLabel("x");
+  pCustomPlot->yAxis_->setLabel("y");
   // set axes ranges, so we see all data:
-  pCustomPlot->xAxis->setRange(-1, 1);
-  pCustomPlot->yAxis->setRange(0, 1);
+  pCustomPlot->xAxis_->setRange(-1, 1);
+  pCustomPlot->yAxis_->setRange(0, 1);
 
 }
 
@@ -83,8 +83,8 @@ void VppCustomPlotWidget::setupSimpleDemo(QString& demoName) {
   pCustomPlot->yAxis2->setVisible(true);
   pCustomPlot->yAxis2->setTickLabels(false);
   // make left and bottom axes always transfer their ranges to right and top axes:
-  connect(pCustomPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), pCustomPlot->xAxis2, SLOT(setRange(QCPRange)));
-  connect(pCustomPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), pCustomPlot->yAxis2, SLOT(setRange(QCPRange)));
+  connect(pCustomPlot->xAxis_, SIGNAL(rangeChanged(QCPRange)), pCustomPlot->xAxis2, SLOT(setRange(QCPRange)));
+  connect(pCustomPlot->yAxis_, SIGNAL(rangeChanged(QCPRange)), pCustomPlot->yAxis2, SLOT(setRange(QCPRange)));
   // pass data points to graphs:
   pCustomPlot->graph(0)->setData(x, y0);
   pCustomPlot->graph(1)->setData(x, y1);
@@ -136,7 +136,7 @@ void VppCustomPlotWidget::setupSincScatterDemo(QString& demoName) {
   pCustomPlot->graph(3)->setLineStyle(QCPGraph::lsNone);
   pCustomPlot->graph(3)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
   // add error bars:
-  QCPErrorBars *errorBars = new QCPErrorBars(pCustomPlot->xAxis, pCustomPlot->yAxis);
+  QCPErrorBars *errorBars = new QCPErrorBars(pCustomPlot->xAxis_, pCustomPlot->yAxis_);
   errorBars->removeFromLegend();
   errorBars->setAntialiased(false);
   errorBars->setDataPlottable(pCustomPlot->graph(3));
@@ -176,11 +176,11 @@ void VppCustomPlotWidget::setupSincScatterDemo(QString& demoName) {
   pCustomPlot->graph(2)->rescaleAxes();
   pCustomPlot->graph(3)->rescaleAxes(true);
   // setup look of bottom tick labels:
-  pCustomPlot->xAxis->setTickLabelRotation(30);
-  pCustomPlot->xAxis->ticker()->setTickCount(9);
-  pCustomPlot->xAxis->setNumberFormat("ebc");
-  pCustomPlot->xAxis->setNumberPrecision(1);
-  pCustomPlot->xAxis->moveRange(-10);
+  pCustomPlot->xAxis_->setTickLabelRotation(30);
+  pCustomPlot->xAxis_->ticker()->setTickCount(9);
+  pCustomPlot->xAxis_->setNumberFormat("ebc");
+  pCustomPlot->xAxis_->setNumberPrecision(1);
+  pCustomPlot->xAxis_->moveRange(-10);
   // make top right axes clones of bottom left axes. Looks prettier:
   pCustomPlot->axisRect()->setupFullAxesBox();
 
@@ -247,10 +247,10 @@ void VppCustomPlotWidget::setupScatterStyleDemo(QString& demoName)
   }
   // set blank axis lines:
   pCustomPlot->rescaleAxes();
-  pCustomPlot->xAxis->setTicks(false);
-  pCustomPlot->yAxis->setTicks(false);
-  pCustomPlot->xAxis->setTickLabels(false);
-  pCustomPlot->yAxis->setTickLabels(false);
+  pCustomPlot->xAxis_->setTicks(false);
+  pCustomPlot->yAxis_->setTicks(false);
+  pCustomPlot->xAxis_->setTickLabels(false);
+  pCustomPlot->yAxis_->setTickLabels(false);
   // make top right axes clones of bottom left axes:
   pCustomPlot->axisRect()->setupFullAxesBox();
 }
@@ -285,8 +285,8 @@ void VppCustomPlotWidget::setupScatterPixmapDemo(QString& demoName)
   pCustomPlot->plotLayout()->insertRow(0);
   pCustomPlot->plotLayout()->addElement(0, 0, new QCPTextElement(pCustomPlot, "Regenerative Energies"));
   // axis configurations:
-  pCustomPlot->xAxis->setLabel("Year");
-  pCustomPlot->yAxis->setLabel("Installed Gigawatts of\nphotovoltaic in the European Union");
+  pCustomPlot->xAxis_->setLabel("Year");
+  pCustomPlot->yAxis_->setLabel("Installed Gigawatts of\nphotovoltaic in the European Union");
   pCustomPlot->xAxis2->setVisible(true);
   pCustomPlot->yAxis2->setVisible(true);
   pCustomPlot->xAxis2->setTickLabels(false);
@@ -295,8 +295,8 @@ void VppCustomPlotWidget::setupScatterPixmapDemo(QString& demoName)
   pCustomPlot->yAxis2->setTicks(false);
   pCustomPlot->xAxis2->setSubTicks(false);
   pCustomPlot->yAxis2->setSubTicks(false);
-  pCustomPlot->xAxis->setRange(2004.5, 2011.5);
-  pCustomPlot->yAxis->setRange(0, 52);
+  pCustomPlot->xAxis_->setRange(2004.5, 2011.5);
+  pCustomPlot->yAxis_->setRange(0, 52);
   // setup legend:
   pCustomPlot->legend->setFont(QFont(font().family(), 7));
   pCustomPlot->legend->setIconSize(50, 20);
@@ -348,8 +348,8 @@ void VppCustomPlotWidget::setupTextureBrushDemo(QString& demoName)
   pCustomPlot->xAxis2->setTickLabels(false);
   pCustomPlot->yAxis2->setTickLabels(false);
   // set ranges:
-  pCustomPlot->xAxis->setRange(0, 2.5);
-  pCustomPlot->yAxis->setRange(0.9, 1.6);
+  pCustomPlot->xAxis_->setRange(0, 2.5);
+  pCustomPlot->yAxis_->setRange(0.9, 1.6);
   // assign top/right axes same properties as bottom/left:
   pCustomPlot->axisRect()->setupFullAxesBox();
 }
@@ -374,7 +374,7 @@ void VppCustomPlotWidget::setupMultiAxisDemo(QString& demoName)
 
   // setup for graph 0: key axis left, value axis bottom
   // will contain left maxwell-like function
-  pCustomPlot->addGraph(pCustomPlot->yAxis, pCustomPlot->xAxis);
+  pCustomPlot->addGraph(pCustomPlot->yAxis_, pCustomPlot->xAxis_);
   pCustomPlot->graph(0)->setPen(QPen(QColor(255, 100, 0)));
   pCustomPlot->graph(0)->setBrush(QBrush(QPixmap("./balboa.jpg"))); // fill with texture of specified image
   pCustomPlot->graph(0)->setLineStyle(QCPGraph::lsLine);
@@ -389,7 +389,7 @@ void VppCustomPlotWidget::setupMultiAxisDemo(QString& demoName)
   pCustomPlot->graph(1)->setLineStyle(QCPGraph::lsStepCenter);
   pCustomPlot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, Qt::red, Qt::white, 7));
   pCustomPlot->graph(1)->setName("Bottom maxwell function");
-  QCPErrorBars *errorBars = new QCPErrorBars(pCustomPlot->xAxis, pCustomPlot->yAxis);
+  QCPErrorBars *errorBars = new QCPErrorBars(pCustomPlot->xAxis_, pCustomPlot->yAxis_);
   errorBars->removeFromLegend();
   errorBars->setDataPlottable(pCustomPlot->graph(1));
 
@@ -455,8 +455,8 @@ void VppCustomPlotWidget::setupMultiAxisDemo(QString& demoName)
   pCustomPlot->xAxis2->setVisible(true);
   pCustomPlot->yAxis2->setVisible(true);
   // set ranges appropriate to show data:
-  pCustomPlot->xAxis->setRange(0, 2.7);
-  pCustomPlot->yAxis->setRange(0, 2.6);
+  pCustomPlot->xAxis_->setRange(0, 2.7);
+  pCustomPlot->yAxis_->setRange(0, 2.6);
   pCustomPlot->xAxis2->setRange(0, 3.0*M_PI);
   pCustomPlot->yAxis2->setRange(-70, 35);
   // set pi ticks on top axis:
@@ -465,13 +465,13 @@ void VppCustomPlotWidget::setupMultiAxisDemo(QString& demoName)
   pCustomPlot->plotLayout()->insertRow(0);
   pCustomPlot->plotLayout()->addElement(0, 0, new QCPTextElement(pCustomPlot, "Way too many graphs in one plot"));
   // set labels:
-  pCustomPlot->xAxis->setLabel("Bottom axis with outward ticks");
-  pCustomPlot->yAxis->setLabel("Left axis label");
+  pCustomPlot->xAxis_->setLabel("Bottom axis with outward ticks");
+  pCustomPlot->yAxis_->setLabel("Left axis label");
   pCustomPlot->xAxis2->setLabel("Top axis label");
   pCustomPlot->yAxis2->setLabel("Right axis label");
   // make ticks on bottom axis go outward:
-  pCustomPlot->xAxis->setTickLength(0, 5);
-  pCustomPlot->xAxis->setSubTickLength(0, 3);
+  pCustomPlot->xAxis_->setTickLength(0, 5);
+  pCustomPlot->xAxis_->setSubTickLength(0, 3);
   // make ticks on right axis go inward and outward:
   pCustomPlot->yAxis2->setTickLength(3, 3);
   pCustomPlot->yAxis2->setSubTickLength(1, 1);
@@ -486,9 +486,9 @@ void VppCustomPlotWidget::setupParametricCurveDemo(QString& demoName)
   setWidget(pCustomPlot);
 
   // create empty curve objects:
-  QCPCurve *fermatSpiral1 = new QCPCurve(pCustomPlot->xAxis, pCustomPlot->yAxis);
-  QCPCurve *fermatSpiral2 = new QCPCurve(pCustomPlot->xAxis, pCustomPlot->yAxis);
-  QCPCurve *deltoidRadial = new QCPCurve(pCustomPlot->xAxis, pCustomPlot->yAxis);
+  QCPCurve *fermatSpiral1 = new QCPCurve(pCustomPlot->xAxis_, pCustomPlot->yAxis_);
+  QCPCurve *fermatSpiral2 = new QCPCurve(pCustomPlot->xAxis_, pCustomPlot->yAxis_);
+  QCPCurve *deltoidRadial = new QCPCurve(pCustomPlot->xAxis_, pCustomPlot->yAxis_);
   // generate the curve data points:
   const int pointCount = 500;
   QVector<QCPCurveData> dataSpiral1(pointCount), dataSpiral2(pointCount), dataDeltoid(pointCount);

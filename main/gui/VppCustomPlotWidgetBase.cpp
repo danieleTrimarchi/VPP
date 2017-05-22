@@ -31,13 +31,13 @@ VppCustomPlotWidgetBase::VppCustomPlotWidgetBase(
 
 	// Set the axis labels and the font
 	legendFont.setPointSize(9);
-	xAxis->setLabel(xAxisLabel);
-	yAxis->setLabel(yAxisLabel);
-	xAxis->setLabelFont(legendFont);
-	yAxis->setLabelFont(legendFont);
+	xAxis_->setLabel(xAxisLabel);
+	yAxis_->setLabel(yAxisLabel);
+	xAxis_->setLabelFont(legendFont);
+	yAxis_->setLabelFont(legendFont);
 
-	xAxis->setTickLabelFont(legendFont);
-	yAxis->setTickLabelFont(legendFont);
+	xAxis_->setTickLabelFont(legendFont);
+	yAxis_->setTickLabelFont(legendFont);
 
 	// Allow for dragging and zooming the plot and selecting the curves
 	setInteractions(
@@ -197,17 +197,17 @@ void VppCustomPlotWidgetBase::changeGraphSelection(int key){
 void VppCustomPlotWidgetBase::selectionChanged() {
 
 	// make top and bottom axes be selected synchronously, and handle axis and tick labels as one selectable object:
-	if (xAxis->selectedParts().testFlag(QCPAxis::spAxis) || xAxis->selectedParts().testFlag(QCPAxis::spTickLabels) ||
+	if (xAxis_->selectedParts().testFlag(QCPAxis::spAxis) || xAxis_->selectedParts().testFlag(QCPAxis::spTickLabels) ||
 			xAxis2->selectedParts().testFlag(QCPAxis::spAxis) || xAxis2->selectedParts().testFlag(QCPAxis::spTickLabels)) {
 		xAxis2->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
-		xAxis->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+		xAxis_->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
 	}
 
 	// make left and right axes be selected synchronously, and handle axis and tick labels as one selectable object:
-	if (yAxis->selectedParts().testFlag(QCPAxis::spAxis) || yAxis->selectedParts().testFlag(QCPAxis::spTickLabels) ||
+	if (yAxis_->selectedParts().testFlag(QCPAxis::spAxis) || yAxis_->selectedParts().testFlag(QCPAxis::spTickLabels) ||
 			yAxis2->selectedParts().testFlag(QCPAxis::spAxis) || yAxis2->selectedParts().testFlag(QCPAxis::spTickLabels)) {
 		yAxis2->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
-		yAxis->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
+		yAxis_->setSelectedParts(QCPAxis::spAxis|QCPAxis::spTickLabels);
 	}
 
 	// Synchronize selection of graphs with selection of corresponding legend items:
@@ -231,10 +231,10 @@ void VppCustomPlotWidgetBase::selectionChanged() {
 // If no axis is selected, both directions may be dragged
 void VppCustomPlotWidgetBase::mousePress() {
 
-	if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
-		axisRect()->setRangeDrag(xAxis->orientation());
-	else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
-		axisRect()->setRangeDrag(yAxis->orientation());
+	if (xAxis_->selectedParts().testFlag(QCPAxis::spAxis))
+		axisRect()->setRangeDrag(xAxis_->orientation());
+	else if (yAxis_->selectedParts().testFlag(QCPAxis::spAxis))
+		axisRect()->setRangeDrag(yAxis_->orientation());
 	else
 		axisRect()->setRangeDrag(Qt::Horizontal|Qt::Vertical);
 }
@@ -243,10 +243,10 @@ void VppCustomPlotWidgetBase::mousePress() {
 // If no axis is selected, both directions may be zoomed
 void VppCustomPlotWidgetBase::mouseWheel() {
 
-	if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
-		axisRect()->setRangeZoom(xAxis->orientation());
-	else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
-		axisRect()->setRangeZoom(yAxis->orientation());
+	if (xAxis_->selectedParts().testFlag(QCPAxis::spAxis))
+		axisRect()->setRangeZoom(xAxis_->orientation());
+	else if (yAxis_->selectedParts().testFlag(QCPAxis::spAxis))
+		axisRect()->setRangeZoom(yAxis_->orientation());
 	else
 		axisRect()->setRangeZoom(Qt::Horizontal|Qt::Vertical);
 }

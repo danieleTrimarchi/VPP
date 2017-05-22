@@ -19,7 +19,7 @@ public:
 	~VppCustomPlotWidgetBase();
 
 	/// Add some data to the plot
-	void addData(QVector<double>& x, QVector<double>& y, QString dataLabel="");
+	virtual void addData(QVector<double>& x, QVector<double>& y, QString dataLabel="");
 
 	/// Add some quivers to the plots
 	void addQuivers(QVector<double>& x, QVector<double>& y, QVector<double>& dx, QVector<double>& dy );

@@ -12210,7 +12210,7 @@ QCPItemPosition *QCPAbstractItem::createPosition(const QString &name)
   QCPItemPosition *newPosition = new QCPItemPosition(mParentPlot, this, name);
   mPositions.append(newPosition);
   mAnchors.append(newPosition); // every position is also an anchor
-  newPosition->setAxes(mParentPlot->xAxis, mParentPlot->yAxis);
+  newPosition->setAxes(mParentPlot->xAxis_, mParentPlot->yAxis_);
   newPosition->setType(QCPItemPosition::ptPlotCoords);
   if (mParentPlot->axisRect())
     newPosition->setAxisRect(mParentPlot->axisRect());
@@ -12591,8 +12591,8 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
 */
 QCustomPlot::QCustomPlot(QWidget *parent) :
   QWidget(parent),
-  xAxis(0),
-  yAxis(0),
+  xAxis_(0),
+  yAxis_(0),
   xAxis2(0),
   yAxis2(0),
   legend(0),
@@ -12652,8 +12652,8 @@ QCustomPlot::QCustomPlot(QWidget *parent) :
   mPlotLayout->setLayer(QLatin1String("main"));
   QCPAxisRect *defaultAxisRect = new QCPAxisRect(this, true);
   mPlotLayout->addElement(0, 0, defaultAxisRect);
-  xAxis = defaultAxisRect->axis(QCPAxis::atBottom);
-  yAxis = defaultAxisRect->axis(QCPAxis::atLeft);
+  xAxis_ = defaultAxisRect->axis(QCPAxis::atBottom);
+  yAxis_ = defaultAxisRect->axis(QCPAxis::atLeft);
   xAxis2 = defaultAxisRect->axis(QCPAxis::atTop);
   yAxis2 = defaultAxisRect->axis(QCPAxis::atRight);
   legend = new QCPLegend;
@@ -12662,12 +12662,12 @@ QCustomPlot::QCustomPlot(QWidget *parent) :
   defaultAxisRect->insetLayout()->setMargins(QMargins(12, 12, 12, 12));
   
   defaultAxisRect->setLayer(QLatin1String("background"));
-  xAxis->setLayer(QLatin1String("axes"));
-  yAxis->setLayer(QLatin1String("axes"));
+  xAxis_->setLayer(QLatin1String("axes"));
+  yAxis_->setLayer(QLatin1String("axes"));
   xAxis2->setLayer(QLatin1String("axes"));
   yAxis2->setLayer(QLatin1String("axes"));
-  xAxis->grid()->setLayer(QLatin1String("grid"));
-  yAxis->grid()->setLayer(QLatin1String("grid"));
+  xAxis_->grid()->setLayer(QLatin1String("grid"));
+  yAxis_->grid()->setLayer(QLatin1String("grid"));
   xAxis2->grid()->setLayer(QLatin1String("grid"));
   yAxis2->grid()->setLayer(QLatin1String("grid"));
   legend->setLayer(QLatin1String("legend"));
@@ -13432,8 +13432,8 @@ QCPGraph *QCustomPlot::graph() const
 */
 QCPGraph *QCustomPlot::addGraph(QCPAxis *keyAxis, QCPAxis *valueAxis)
 {
-  if (!keyAxis) keyAxis = xAxis;
-  if (!valueAxis) valueAxis = yAxis;
+  if (!keyAxis) keyAxis = xAxis_;
+  if (!valueAxis) valueAxis = yAxis_;
   if (!keyAxis || !valueAxis)
   {
     qDebug() << Q_FUNC_INFO << "can't use default QCustomPlot xAxis or yAxis, because at least one is invalid (has been deleted)";
@@ -14957,12 +14957,12 @@ void QCustomPlot::freeOpenGl()
 */
 void QCustomPlot::axisRemoved(QCPAxis *axis)
 {
-  if (xAxis == axis)
-    xAxis = 0;
+  if (xAxis_ == axis)
+    xAxis_ = 0;
   if (xAxis2 == axis)
     xAxis2 = 0;
-  if (yAxis == axis)
-    yAxis = 0;
+  if (yAxis_ == axis)
+    yAxis_ = 0;
   if (yAxis2 == axis)
     yAxis2 = 0;
   
@@ -16682,8 +16682,8 @@ QCPAxis *QCPAxisRect::addAxis(QCPAxis::AxisType type, QCPAxis *axis)
   {
     switch (type)
     {
-      case QCPAxis::atBottom: { if (!mParentPlot->xAxis) mParentPlot->xAxis = newAxis; break; }
-      case QCPAxis::atLeft: { if (!mParentPlot->yAxis) mParentPlot->yAxis = newAxis; break; }
+      case QCPAxis::atBottom: { if (!mParentPlot->xAxis_) mParentPlot->xAxis_ = newAxis; break; }
+      case QCPAxis::atLeft: { if (!mParentPlot->yAxis_) mParentPlot->yAxis_ = newAxis; break; }
       case QCPAxis::atTop: { if (!mParentPlot->xAxis2) mParentPlot->xAxis2 = newAxis; break; }
       case QCPAxis::atRight: { if (!mParentPlot->yAxis2) mParentPlot->yAxis2 = newAxis; break; }
     }
@@ -17471,10 +17471,10 @@ void QCPAxisRect::layoutChanged()
 {
   if (mParentPlot && mParentPlot->axisRectCount() > 0 && mParentPlot->axisRect(0) == this)
   {
-    if (axisCount(QCPAxis::atBottom) > 0 && !mParentPlot->xAxis)
-      mParentPlot->xAxis = axis(QCPAxis::atBottom);
-    if (axisCount(QCPAxis::atLeft) > 0 && !mParentPlot->yAxis)
-      mParentPlot->yAxis = axis(QCPAxis::atLeft);
+    if (axisCount(QCPAxis::atBottom) > 0 && !mParentPlot->xAxis_)
+      mParentPlot->xAxis_ = axis(QCPAxis::atBottom);
+    if (axisCount(QCPAxis::atLeft) > 0 && !mParentPlot->yAxis_)
+      mParentPlot->yAxis_ = axis(QCPAxis::atLeft);
     if (axisCount(QCPAxis::atTop) > 0 && !mParentPlot->xAxis2)
       mParentPlot->xAxis2 = axis(QCPAxis::atTop);
     if (axisCount(QCPAxis::atRight) > 0 && !mParentPlot->yAxis2)

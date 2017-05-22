@@ -17,6 +17,9 @@ public:
 	/// Dtor
 	~VppPolarCustomPlotWidget();
 
+	/// Add some data to the polar plot. Derived by the qCustomPlot parametric curve demo
+	virtual void addData(QVector<double>& x, QVector<double>& y, QString dataLabel /*=""*/);
+
 private:
 
   /// Number of velocity markers (circles) of the polar plot

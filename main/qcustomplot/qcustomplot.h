@@ -3697,7 +3697,7 @@ public:
   void toPainter(QCPPainter *painter, int width=0, int height=0);
   Q_SLOT void replot(QCustomPlot::RefreshPriority refreshPriority=QCustomPlot::rpRefreshHint);
   
-  QCPAxis *xAxis, *yAxis, *xAxis2, *yAxis2;
+  QCPAxis *xAxis_, *yAxis_, *xAxis2, *yAxis2;
   QCPLegend *legend;
   
 signals:
