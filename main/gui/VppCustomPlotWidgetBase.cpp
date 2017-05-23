@@ -227,7 +227,7 @@ void VppCustomPlotWidgetBase::selectionChanged() {
 		// If the curve OR the legend item have been selected, highlight them both
 		if (pLegendItem->selected() || pPlottable->selected()) {
 			pLegendItem->setSelected(true);
-			pPlottable->setSelection( pPlottable->selection() );
+			select(pPlottable);
 		}
 	}
 }
