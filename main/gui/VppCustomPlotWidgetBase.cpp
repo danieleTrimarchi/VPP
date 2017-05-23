@@ -145,35 +145,39 @@ void VppCustomPlotWidgetBase::keyPressEvent(QKeyEvent *event) {
 void VppCustomPlotWidgetBase::changeGraphSelection(int key){
 
 	// Loop on the graphs and search which one is selected
-	for (int i=0; i<graphCount(); ++i) {
+	for (int i=0; i<plottableCount(); ++i) {
 
 		// Get a ptr to the i-th graph curve
-		QCPGraph* pGraph = graph(i);
+		QCPAbstractPlottable* pPlottable = plottable(i);
+
 		// Get a ptr to the legend item related to this graph curve
-		QCPPlottableLegendItem* item = legend->itemWithPlottable(pGraph);
+		QCPPlottableLegendItem* pLegendItem = legend->itemWithPlottable(pPlottable);
 
 		// If the curve OR the legend item have been selected, highlight them both
-		if (item->selected() || pGraph->selected()) {
+		if (pLegendItem->selected() || pPlottable->selected()) {
 
-			// Deselect the current legend item
-			item->setSelected(false);
-			pGraph->setSelection(QCPDataSelection());
+			// Deselect all items
+			deselectAll();
 
 			// todo dtrimarchi :
 			// 2_ make sure the value of k loops and does not go out of bounds!
 			int k=0;
 			if(key==Qt::Key_Up)
-				i==0 ? k=graphCount()-1 : k=i-1;
+				i==0 ? k=plottableCount()-1 : k=i-1;
 
 			else if(key==Qt::Key_Down)
-				i==graphCount()-1 ? k=0 : k=i+1;
+				i==plottableCount()-1 ? k=0 : k=i+1;
 
-			// Get the
-			QCPGraph* pGraphToSelect = graph(k);
-			QCPPlottableLegendItem* itemToSelect = legend->itemWithPlottable(pGraphToSelect);
+			// Get the plottable to select
+			QCPAbstractPlottable* pPlottableToSelect = plottable(k);
 
-			itemToSelect->setSelected(true);
-			pGraphToSelect->setSelection(QCPDataSelection(pGraphToSelect->data()->dataRange()));
+			// Call the virtual method that will select -alternatively- QCPGraphs (XY plots) or
+			// QCPCurves (polar plots)
+			select( pPlottableToSelect );
+
+			// Get and select the corresponding legend item
+			QCPPlottableLegendItem* legendItemToSelect = legend->itemWithPlottable(pPlottableToSelect);
+			legendItemToSelect->setSelected(true);
 
 			// Refresh the plot and visualize the new selection
 			replot();

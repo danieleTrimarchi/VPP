@@ -18,6 +18,11 @@ public:
 	/// Dtor
 	~VppXYCustomPlotWidget();
 
+protected:
+
+  /// Select a curve - in this case a QCPGraphs
+  virtual void select(QCPAbstractPlottable *);
+
 };
 
 #endif // VPP_XY_CUSTOMPLOTWIDGET_H

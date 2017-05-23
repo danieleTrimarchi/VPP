@@ -36,6 +36,10 @@ protected :
   /// Overrides the key actions
   virtual void keyPressEvent(QKeyEvent *event);
 
+  /// Select a curve - either a QCPGraphs (XY plots) or
+	// QCPCurves (polar plots)
+  virtual void select(QCPAbstractPlottable *) =0;
+
 protected slots:
 
 	/// Normally, axis base line, axis tick labels and axis labels are selectable separately, but we want

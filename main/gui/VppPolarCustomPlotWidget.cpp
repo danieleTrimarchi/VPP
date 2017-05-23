@@ -1,4 +1,5 @@
 #include "VppPolarCustomPlotWidget.h"
+#include "VppException.h"
 
 VppPolarCustomPlotWidget::VppPolarCustomPlotWidget(
 		QString title,
@@ -69,3 +70,15 @@ void VppPolarCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y, Q
 	rescaleAxes();
 
 }
+
+// Select a curve - in this case a QCPGraphs
+void VppPolarCustomPlotWidget::select(QCPAbstractPlottable* pCurveToSelect) {
+
+	QCPCurve* pCurve = qobject_cast<QCPCurve*>(pCurveToSelect);
+	if(!pCurve)
+		throw VPPException(HERE, "Could not cast to QCPGraph!");
+
+	pCurve->setSelection(QCPDataSelection(pCurve->data()->dataRange()));
+
+}
+

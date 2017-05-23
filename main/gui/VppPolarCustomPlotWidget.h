@@ -20,6 +20,11 @@ public:
 	/// Add some data to the polar plot. Derived by the qCustomPlot parametric curve demo
 	virtual void addData(QVector<double>& x, QVector<double>& y, QString dataLabel /*=""*/);
 
+protected:
+
+  /// Select a curve - in this case a QCPCurve
+  virtual void select(QCPAbstractPlottable *);
+
 private:
 
   /// Number of velocity markers (circles) of the polar plot
