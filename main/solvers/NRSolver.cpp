@@ -258,116 +258,64 @@ void NRSolver::printResultBounds() {
 
 }
 
-// Make a printout of the results for this run
-void NRSolver::plotPolars() {
-
-	// Instantiate the Polar Plotters for Boat velocity, Boat heel,
-	// Sail flat, Crew B, dF and dM
-	VPPPolarPlotter boatSpeedPolarPlotter("Boat Speed Polar Plot [m/s]");
-	VPPPolarPlotter boatHeelPolarPlotter("Boat Heel Polar Plot [º]");
-
-	// Instantiate the list of wind angles that will serve
-	// for each velocity
-	std::vector<double> windAngles, boatVelocity, boatHeel;
-
-	// Loop on the wind velocities
-	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
-
-		// Store the wind velocity as a label for this curve
-		char windVelocityLabel[256];
-		sprintf(windVelocityLabel,"%3.1f", pResults_->get(iWv,0).getTWV() );
-		string wVLabel(windVelocityLabel);
-
-		windAngles.clear();
-		boatVelocity.clear();
-		boatHeel.clear();
-
-		// Loop on the wind angles
-		for(size_t iWa=0; iWa<pResults_->windAngleSize(); iWa++) {
-
-			if( !pResults_->get(iWv,iWa).discard() ){
-
-				// Fill the list of wind angles in degrees
-				windAngles.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getTWA() ) );
-
-				// Fill the list of boat speeds
-				boatVelocity.push_back( pResults_->get(iWv,iWa).getX()->coeff(0) );
-
-				// Fill the list of boat heel
-				boatHeel.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) ) );
-
-			}
-		}
-
-		// Append the angles-data to the relevant plotter
-		boatSpeedPolarPlotter.append(wVLabel,windAngles,boatVelocity);
-		boatHeelPolarPlotter.append(wVLabel,windAngles,boatHeel);
-
-	}
-
-	// Ask all plotters to plot
-	boatSpeedPolarPlotter.plot();
-	boatHeelPolarPlotter.plot(50);
-}
-
-// Make a printout of the results for this run
-void NRSolver::plotXY(size_t iWa) {
-
-	if( iWa>=pResults_->windAngleSize() ){
-		std::cout<<"User requested a wrong index! \n";
-		return;
-	}
-
-	// Prepare the data for the plotter
-	std::vector<double> windSpeeds;
-	windSpeeds.reserve(pResults_->windVelocitySize());
-	std::vector<double> boatVelocity;
-	boatVelocity.reserve(pResults_->windVelocitySize());
-	std::vector<double> boatHeel;
-	boatHeel.reserve(pResults_->windVelocitySize());
-
-	std::vector<double> dF;
-	dF.reserve(pResults_->windVelocitySize());
-	std::vector<double> dM;
-	dM.reserve(pResults_->windVelocitySize());
-
-	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
-
-		if( !pResults_->get(iWv,iWa).discard() ){
-
-			windSpeeds.push_back( pResults_->get(iWv,iWa).getTWV() );
-			boatVelocity.push_back( pResults_->get(iWv,iWa).getX()->coeff(0) );
-			// Convert the heel results to degrees
-			boatHeel.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) ) );
-
-			dF.push_back( pResults_->get(iWv,iWa).getdF() );
-			dM.push_back( pResults_->get(iWv,iWa).getdM() );
-		}
-	}
-
-	char title[256];
-	sprintf(title,"AWA= %4.2f", mathUtils::toDeg( pWind_->getTWA(iWa) ) );
-
-	// Instantiate a plotter for the velocity
-	VPPPlotter plotter;
-	string t=string("Boat Speed")+string(title);
-	plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
-			t,"Wind Speed [m/s]","Boat Speed [m/s]");
-
-
-	// Instantiate a plotter for the heel
-	VPPPlotter plotter2;
-	string t2=string("Boat Heel")+string(title);
-	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
-			t2,"Wind Speed [m/s]","Boat Heel [º]");
-
-	// Instantiate a plotter for the residuals
-	VPPPlotter plotter5;
-	string t5=string("dF and dM Residuals")+string(title);
-	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
-			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
-
-}
+//// Make a printout of the results for this run
+//void NRSolver::plotXY(size_t iWa) {
+//
+//	if( iWa>=pResults_->windAngleSize() ){
+//		std::cout<<"User requested a wrong index! \n";
+//		return;
+//	}
+//
+//	// Prepare the data for the plotter
+//	std::vector<double> windSpeeds;
+//	windSpeeds.reserve(pResults_->windVelocitySize());
+//	std::vector<double> boatVelocity;
+//	boatVelocity.reserve(pResults_->windVelocitySize());
+//	std::vector<double> boatHeel;
+//	boatHeel.reserve(pResults_->windVelocitySize());
+//
+//	std::vector<double> dF;
+//	dF.reserve(pResults_->windVelocitySize());
+//	std::vector<double> dM;
+//	dM.reserve(pResults_->windVelocitySize());
+//
+//	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
+//
+//		if( !pResults_->get(iWv,iWa).discard() ){
+//
+//			windSpeeds.push_back( pResults_->get(iWv,iWa).getTWV() );
+//			boatVelocity.push_back( pResults_->get(iWv,iWa).getX()->coeff(0) );
+//			// Convert the heel results to degrees
+//			boatHeel.push_back( mathUtils::toDeg( pResults_->get(iWv,iWa).getX()->coeff(1) ) );
+//
+//			dF.push_back( pResults_->get(iWv,iWa).getdF() );
+//			dM.push_back( pResults_->get(iWv,iWa).getdM() );
+//		}
+//	}
+//
+//	char title[256];
+//	sprintf(title,"AWA= %4.2f", mathUtils::toDeg( pWind_->getTWA(iWa) ) );
+//
+//	// Instantiate a plotter for the velocity
+//	VPPPlotter plotter;
+//	string t=string("Boat Speed")+string(title);
+//	plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
+//			t,"Wind Speed [m/s]","Boat Speed [m/s]");
+//
+//
+//	// Instantiate a plotter for the heel
+//	VPPPlotter plotter2;
+//	string t2=string("Boat Heel")+string(title);
+//	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
+//			t2,"Wind Speed [m/s]","Boat Heel [º]");
+//
+//	// Instantiate a plotter for the residuals
+//	VPPPlotter plotter5;
+//	string t5=string("dF and dM Residuals")+string(title);
+//	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
+//			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
+//
+//}
 
 
 

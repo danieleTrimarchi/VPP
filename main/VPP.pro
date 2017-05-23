@@ -54,11 +54,7 @@ INCLUDEPATH +=	"/opt/local/include" \
 		"/Users/dtrimarchi/third_party/nlopt-2.4.2/api" \
 		"/Users/dtrimarchi/third_party/Ipopt-3.12.6/Ipopt/src/Interfaces" \
 		"/Users/dtrimarchi/third_party/Ipopt-3.12.6/include/coin" \
-		"/Users/dtrimarchi/third_party/opt/local/share/plplot5.11.1/examples/c++" \
-		"/Users/dtrimarchi/third_party/opt/local/include/plplot" \
-		"/Users/dtrimarchi/third_party/cppunit-1.13.2/build/include" \
-		"/opt/local/share/plplot5.11.1/examples/c++" \
-		"/opt/local/include/plplot"
+		"/Users/dtrimarchi/third_party/cppunit-1.13.2/build/include"
 
 # This fills Library Search Path in XCode
 LIBPATH += 	"/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A" \
@@ -82,9 +78,7 @@ LIBS +=	-lipopt \
 	-lcolamd \
 	-lcholmod \
 	-lsuitesparseconfig \
-	-lnlopt \
-	-lplplot \
-	-lplplotcxx
+	-lnlopt
 
 RESOURCES     = gui/VPP.qrc
 

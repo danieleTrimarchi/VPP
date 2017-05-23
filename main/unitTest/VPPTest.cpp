@@ -1,5 +1,4 @@
 #include "VPPTest.h"
-#include "VPPPlotter.h"
 #include "Regression.h"
 #include "VariableFileParser.h"
 #include "boost/shared_ptr.hpp"

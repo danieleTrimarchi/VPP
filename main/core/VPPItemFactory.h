@@ -163,10 +163,6 @@ class VPPItemFactory {
 		std::vector<VppXYCustomPlotWidget*> plotTotalResistance(WindIndicesDialog*, StateVectorDialog*);
 
 		/// Make a 3d plot of the optimization variables v, phi when varying the two opt
-		/// parameters flat and crew
-		void plotOptimizationSpace();
-
-		/// Make a 3d plot of the optimization variables v, phi when varying the two opt
 		/// parameters flat and crew. Qt 3d surface plot
 		vector<ThreeDDataContainer> plotOptimizationSpace(WindIndicesDialog&, OptimVarsStateVectorDialog&);
 

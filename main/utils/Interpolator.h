@@ -7,8 +7,6 @@
 #include "Spline.h"
 #include <vector>
 
-#include "VPPPlotter.h"
-
 /// Forward declarations
 class VppXYCustomPlotWidget;
 

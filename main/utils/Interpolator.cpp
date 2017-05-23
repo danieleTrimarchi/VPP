@@ -1,7 +1,6 @@
 #include "Interpolator.h"
 #include <math.h>
 #include "VPPException.h"
-#include "VPPPlotter.h"
 #include "VppXYCustomPlotWidget.h"
 
 // Constructor

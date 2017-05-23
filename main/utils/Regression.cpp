@@ -1,7 +1,6 @@
 #include "Regression.h"
 #include <Eigen/Dense>
 #include "VPPException.h"
-#include "VPPPlotter.h"
 
 
 // Constructor

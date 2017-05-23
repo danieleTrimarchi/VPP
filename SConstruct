@@ -177,20 +177,6 @@ releaseEnv.AddMethod(getIpOptLibPath, 'getIpOptLibPath')
 
 #-- 
 
-def getPlPlotIncludePath(self) : 
-    self.Append( CPPPATH=["/opt/local/share/plplot5.11.1/examples/c++",
-                          '/opt/local/include/plplot'] ) 
-
-releaseEnv.AddMethod(getPlPlotIncludePath, 'getPlPlotIncludePath')
-
-def getPlPlotLib(self) : 
-    self.Append( LIBS=["plplot",
-                       "plplotcxx"] ) 
-
-releaseEnv.AddMethod(getPlPlotLib, 'getPlPlotLib')
-
-#--
-
 def getCppUnitIncludePath(self) : 
     self.Append( CPPPATH=[third_party_root+"cppunit-1.13.2/build/include"] ) 
 

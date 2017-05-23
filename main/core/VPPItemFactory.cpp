@@ -426,65 +426,6 @@ std::vector<VppXYCustomPlotWidget*> VPPItemFactory::plotTotalResistance(WindIndi
 }
 
 // Make a 3d plot of the optimization variables v, phi when varying the two opt
-// parameters flat and crew
-void VPPItemFactory::plotOptimizationSpace() {
-
-	// Instantiate a IOUtil
-	IOUtils io(pWind_.get());
-
-	// Instantiate and ask for twv, twa, and the state vector
-	size_t twv, twa;
-	Eigen::VectorXd x;
-	io.askUserWindIndexes(twv, twa);
-	io.askUserStateVector(x);
-
-	// Instantiate a NRSolver
-	NRSolver nrSolver(this, 4, 2);
-
-	// Set the number of values for flat and crew -> x, y
-	size_t nFlat=15, nCrew=15;
-
-	// Instantiate the result matrices : v and phi
-	Eigen::ArrayXd flat(nFlat), crew(nCrew);
-	Eigen::MatrixXd u(nCrew,nFlat);
-	Eigen::MatrixXd phi(nCrew,nFlat);
-
-	// Get the bounds for crew and flat
-	double dCrew= ( pParser_->get("B_MAX")-pParser_->get("B_MIN") ) / (nCrew-1);
-	double dFlat= ( pParser_->get("F_MAX")-pParser_->get("F_MIN") ) / (nFlat-1);
-
-	// Loop on nFlat
-	for(size_t iFlat=0; iFlat<nFlat; iFlat++){
-
-		// set this flat
-		flat(iFlat)= pParser_->get("F_MIN")  + dFlat * iFlat;
-
-		//	loop on nCrew
-		for(size_t iCrew=0; iCrew<nCrew; iCrew++){
-
-			// set this crew
-			crew(iCrew)= pParser_->get("B_MIN")  + dCrew * iCrew;
-
-			//			set flat, crew in the state vector
-			x(2) = crew(iCrew);
-			x(3) = flat(iFlat);
-
-			// 			run NRSolver -> v, phi
-			x.block(0,0,2,1)= nrSolver.run(twv, twa,x).block(0,0,2,1);
-
-			//			store v, phi in MatrixXds
-			u(iCrew,iFlat) = x(0);
-			phi(iCrew,iFlat) = x(1);
-
-		}
-	}
-
-	VPPMagnitudeColoredCountourPlotter3d(crew, flat, u, "velocity opt", "crew", "flat" );
-	VPPMagnitudeColoredCountourPlotter3d(crew, flat, phi, "phi opt", "crew", "flat" );
-
-}
-
-// Make a 3d plot of the optimization variables v, phi when varying the two opt
 // parameters flat and crew. Qt 3d surface plot
 vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDialog& wd, OptimVarsStateVectorDialog& sd) {
 
