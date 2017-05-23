@@ -561,8 +561,7 @@ std::vector<VppPolarCustomPlotWidget*> ResultContainer::plotPolars() {
 	VppPolarCustomPlotWidget* pFlatPlot= new VppPolarCustomPlotWidget("Sail flat [-]");
 
 	// Loop on the wind velocities
-	//		for(size_t iWv=0; iWv<windVelocitySize(); iWv++) {
-	for(size_t iWv=0; iWv<2; iWv++) {
+	for(size_t iWv=0; iWv<windVelocitySize(); iWv++) {
 
 		// Get the number of valid results for this velocity : all minus discarded
 		size_t numValidResults= windAngleSize() - getNumDiscardedResultsForVelocity(iWv);

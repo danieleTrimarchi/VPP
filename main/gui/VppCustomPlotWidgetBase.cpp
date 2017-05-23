@@ -80,7 +80,6 @@ void VppCustomPlotWidgetBase::addData(QVector<double>& x, QVector<double>& y,  Q
 		graph()->setScatterStyle(QCPScatterStyle((QCPScatterStyle::ScatterShape)(rand()%14+1)));
 	QPen graphPen;
 	graphPen.setColor(QColor(rand()%245+10, rand()%245+10, rand()%245+10));
-	//graphPen.setWidthF(rand()/(double)RAND_MAX*2+1); commented to keep lines thin
 	graph()->setPen(graphPen);
 
 }

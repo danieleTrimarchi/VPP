@@ -62,8 +62,15 @@ void VppPolarCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y, Q
 	// so set alreadySorted=true (saves an extra internal sort):
 	pDataCurve->data()->set(dataSpiral1, true);
 
+	// Set the curve label
+	pDataCurve->setName(dataLabel);
+
 	// Color the curves:
-	pDataCurve->setPen(QPen(Qt::blue));
+	if (rand()%100 > 50)
+		pDataCurve->setScatterStyle(QCPScatterStyle((QCPScatterStyle::ScatterShape)(rand()%14+1)));
+	QPen graphPen;
+	graphPen.setColor(QColor(rand()%245+10, rand()%245+10, rand()%245+10));
+	pDataCurve->setPen(graphPen);
 
 	// Set some basic customPlot config:
 	axisRect()->setupFullAxesBox();
