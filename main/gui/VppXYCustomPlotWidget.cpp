@@ -22,3 +22,15 @@ void VppXYCustomPlotWidget::select(QCPAbstractPlottable* pGraphToSelect) {
 
 }
 
+// Show the coordinates of a point - connected to mouseMoveEvent.
+// Implemented of the advice given in: https://stackoverflow.com/questions/
+// 18140446/display-the-plot-values-on-mouse-over-detect-scatter-points
+void VppXYCustomPlotWidget::showPointToolTip(QMouseEvent* event) {
+
+	float x = this->xAxis_->pixelToCoord(event->pos().x());
+  float y = this->yAxis_->pixelToCoord(event->pos().y());
+
+  setToolTip(QString("%1 , %2").arg(x).arg(y));
+
+}
+

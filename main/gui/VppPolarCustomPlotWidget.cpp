@@ -1,5 +1,6 @@
 #include "VppPolarCustomPlotWidget.h"
 #include "VppException.h"
+#include "mathUtils.h"
 
 VppPolarCustomPlotWidget::VppPolarCustomPlotWidget(
 		QString title,
@@ -89,3 +90,17 @@ void VppPolarCustomPlotWidget::select(QCPAbstractPlottable* pCurveToSelect) {
 
 }
 
+// Show the coordinates of a point - connected to mouseMoveEvent.
+// Implemented of the advice given in: https://stackoverflow.com/questions/
+// 18140446/display-the-plot-values-on-mouse-over-detect-scatter-points
+void VppPolarCustomPlotWidget::showPointToolTip(QMouseEvent* event) {
+
+	double x = this->xAxis_->pixelToCoord(event->pos().x());
+  double y = this->yAxis_->pixelToCoord(event->pos().y());
+
+  double angle = 90 - mathUtils::toDeg( atan2(y,x) );
+  double mag = std::sqrt( x*x + y*y);
+
+  setToolTip(QString("%1 deg , %2").arg(angle).arg(mag));
+
+}

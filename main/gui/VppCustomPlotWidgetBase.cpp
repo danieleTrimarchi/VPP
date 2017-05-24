@@ -56,6 +56,8 @@ VppCustomPlotWidgetBase::VppCustomPlotWidgetBase(
 	connect(this, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
 	connect(this, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
 
+	connect(this, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
+
 }
 
 // Dtor
@@ -254,4 +256,3 @@ void VppCustomPlotWidgetBase::mouseWheel() {
 	else
 		axisRect()->setRangeZoom(Qt::Horizontal|Qt::Vertical);
 }
-

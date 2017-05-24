@@ -25,6 +25,15 @@ protected:
   /// Select a curve - in this case a QCPCurve
   virtual void select(QCPAbstractPlottable *);
 
+protected slots:
+
+		/// Show the coordinates of a point - connected to mouseMoveEvent.
+		/// Implemented of the advice given in: https://stackoverflow.com/questions/
+		/// 18140446/display-the-plot-values-on-mouse-over-detect-scatter-points
+		/// Pure virtual because the format of this method must change according to
+		/// the type of plot - polar plot must convert the xy coordinates to polar!
+		virtual void showPointToolTip(QMouseEvent*);
+
 private:
 
   /// Number of velocity markers (circles) of the polar plot

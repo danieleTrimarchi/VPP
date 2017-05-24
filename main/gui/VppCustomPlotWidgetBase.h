@@ -65,6 +65,12 @@ protected slots:
 	/// Change selection using arrow keys up or down. Called by keyPressEvent
 	void changeGraphSelection(int key);
 
+	/// Show the coordinates of a point - connected to mouseMoveEvent.
+	/// Implemented of the advice given in: https://stackoverflow.com/questions/
+	/// 18140446/display-the-plot-values-on-mouse-over-detect-scatter-points
+	/// Pure virtual because the format of this method must change according to
+	/// the type of plot - polar plot must convert the xy coordinates to polar!
+	virtual void showPointToolTip(QMouseEvent*) =0;
 
 };
 
