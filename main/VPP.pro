@@ -89,7 +89,6 @@ SOURCES += main.cxx \
 	core/*.cpp \
 	io/*.cpp \
 	solvers/*.cpp \
-	plotting/*.cpp \
 	results/*.cpp \
 	utils/*.cpp \
 	versioning/*.cpp 
@@ -101,7 +100,6 @@ HEADERS +=	qcustomplot/*.h \
 		core/*.h \
 		io/*.h \
 		solvers/*.h \
-		plotting/*.h \
 		results/*.h \
 		utils/*.h \
 		versioning/*.h 

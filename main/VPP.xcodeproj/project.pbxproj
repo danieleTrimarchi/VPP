@@ -661,21 +661,6 @@
 					);
 			};
 		};
-		3F7F0A85AF34FDD32EA67ED8 = {
-			isa = PBXFileReference;
-			path = "/Users/dtrimarchi/VPP/main/plotting/VPPPlotter.cpp";
-			name = "VPPPlotter.cpp";
-			sourceTree = "<absolute>";
-			lastKnownFileType = "sourcecode.cpp.cpp";
-		};
-		C24CCBD40DCD736316FA1AAD = {
-			fileRef = "3F7F0A85AF34FDD32EA67ED8";
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					);
-			};
-		};
 		273504F601EB6D79CE7C44EE = {
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/main/results/Results.cpp";
@@ -1329,13 +1314,6 @@
 			sourceTree = "<absolute>";
 			lastKnownFileType = "sourcecode.c.h";
 		};
-		6B2131CE1178639BAFF11652 = {
-			isa = PBXFileReference;
-			path = "/Users/dtrimarchi/VPP/main/plotting/VPPPlotter.h";
-			name = "VPPPlotter.h";
-			sourceTree = "<absolute>";
-			lastKnownFileType = "sourcecode.c.h";
-		};
 		715ADE45838457CEBD96F8E2 = {
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/main/results/Results.h";
@@ -1556,14 +1534,6 @@
 			name = "io";
 			sourceTree = "<group>";
 		};
-		0DC814FDE9068863A758C728 = {
-			isa = PBXGroup;
-			children = (
-				"3F7F0A85AF34FDD32EA67ED8",
-				"6B2131CE1178639BAFF11652");
-			name = "plotting";
-			sourceTree = "<group>";
-		};
 		5ECA7B35ED9E41D2A3490A30 = {
 			isa = PBXGroup;
 			children = (
@@ -1656,7 +1626,6 @@
 				"945D7270578AF32CDC99FDFE",
 				"1ED5EC6DAD903C11284F3BED",
 				"9EFAFB7ADC304C4F994AF22C",
-				"0DC814FDE9068863A758C728",
 				"75A93590F0E4928BE718B607",
 				"E003E8E901249ACE6A5EA19A",
 				"66F851D7A73FAB2F625EDCE4");
@@ -1736,7 +1705,6 @@
 				"7188E82353A23C080AF917CF",
 				"A9DEA3E3F995D621A9930E8A",
 				"1004F68AB671CF8D4E9ED3AF",
-				"C24CCBD40DCD736316FA1AAD",
 				"CE5094404CC9DC7237269F84",
 				"C779D8A839F2A9A97C2442AA",
 				"1CE2E9AA78F4B9DFC24F4505",
@@ -1864,32 +1832,6 @@
 		};
 		A243F769B1ABDD203363B6BE = {
 			fileRef = "49F3A6E2244BF8E9BBB9BC64";
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D1B7D5650E50D1736E530780 = {
-			isa = PBXFileReference;
-			name = "plplot";
-			path = "/opt/local/lib/libplplot.dylib";
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		FE0E127F1A005003755655A1 = {
-			fileRef = "D1B7D5650E50D1736E530780";
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F40D60FEC996A1BD0A3DBC73 = {
-			isa = PBXFileReference;
-			name = "plplotcxx";
-			path = "/opt/local/lib/libplplotcxx.dylib";
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D7F9FA241A1FA3A4F4B55242 = {
-			fileRef = "F40D60FEC996A1BD0A3DBC73";
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2058,8 +2000,6 @@
 				"C06D5D7F1758EDF3EDEF3A0C",
 				"21D6994D0E44278C59ACEDAF",
 				"49F3A6E2244BF8E9BBB9BC64",
-				"D1B7D5650E50D1736E530780",
-				"F40D60FEC996A1BD0A3DBC73",
 				"F165D8A70734D22F69C0ABDE",
 				"17DDAFE5E52515581D095F18",
 				"CD829298CA2038092A51A0F6",
@@ -2086,8 +2026,6 @@
 				"EB69D9407AE73D89E0305731",
 				"B2F54A3ECA917A378DACF112",
 				"A243F769B1ABDD203363B6BE",
-				"FE0E127F1A005003755655A1",
-				"D7F9FA241A1FA3A4F4B55242",
 				"446FA5B61F047CD6FE1AA646",
 				"B1FD449BA9A24D8FBFD6B918",
 				"7B61C92B0D756FD9703B0C41",
@@ -2218,11 +2156,7 @@
 					"../../third_party/nlopt-2.4.2/api",
 					"../../third_party/Ipopt-3.12.6/Ipopt/src/Interfaces",
 					"../../third_party/Ipopt-3.12.6/include/coin",
-					"/Users/dtrimarchi/third_party/opt/local/share/plplot5.11.1/examples/c++",
-					"/Users/dtrimarchi/third_party/opt/local/include/plplot",
 					"../../third_party/cppunit-1.13.2/build/include",
-					"/opt/local/share/plplot5.11.1/examples/c++",
-					"/opt/local/include/plplot",
 					"/usr/local/Cellar/qt5/5.7.0/lib/QtCharts.framework/Headers",
 					"/usr/local/Cellar/qt5/5.7.0/lib/QtPrintSupport.framework/Headers",
 					"/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/Headers",
@@ -2345,11 +2279,7 @@
 					"../../third_party/nlopt-2.4.2/api",
 					"../../third_party/Ipopt-3.12.6/Ipopt/src/Interfaces",
 					"../../third_party/Ipopt-3.12.6/include/coin",
-					"/Users/dtrimarchi/third_party/opt/local/share/plplot5.11.1/examples/c++",
-					"/Users/dtrimarchi/third_party/opt/local/include/plplot",
 					"../../third_party/cppunit-1.13.2/build/include",
-					"/opt/local/share/plplot5.11.1/examples/c++",
-					"/opt/local/include/plplot",
 					"/usr/local/Cellar/qt5/5.7.0/lib/QtCharts.framework/Headers",
 					"/usr/local/Cellar/qt5/5.7.0/lib/QtPrintSupport.framework/Headers",
 					"/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/Headers",

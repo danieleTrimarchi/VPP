@@ -1,3 +1,13 @@
+Michele: 
+	Polars and table -> chose data to visualize. Tick selection
+	axes equal
+	Stability curve -> centre of buoyancy 
+	Allow entering sail coefficients
+	CORRECT FRICTIONAL/VISCOUS PLOT NAMES
+
+See RhinoAPI for getting LPP data
+—————
+
 - Ask Stephane about the multiple environment warning 
 
 - Is it possible to compute analytical derivatives instead of numerical derivatives by finite differences? Presumably yes, I only need to write the code and check! 

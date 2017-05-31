@@ -55,7 +55,6 @@ VppCustomPlotWidgetBase::VppCustomPlotWidgetBase(
 	// connect slots that takes care that when an axis is selected, only that direction can be dragged and zoomed:
 	connect(this, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
 	connect(this, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
-
 	connect(this, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
 
 }

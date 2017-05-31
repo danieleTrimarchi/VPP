@@ -626,8 +626,10 @@ std::vector<VppPolarCustomPlotWidget*> ResultContainer::plotPolars() {
 	retVec.push_back(pFlatPlot);
 
 	// Connect the legend markers to the click action
-	for(size_t i=0; i<retVec.size(); i++)
+	for(size_t i=0; i<retVec.size(); i++){
 		retVec[i]->rescaleAxes();
+		retVec[i]->addCircles();
+	}
 
 	return retVec;
 }

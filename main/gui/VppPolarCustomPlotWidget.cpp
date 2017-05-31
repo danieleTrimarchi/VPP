@@ -5,16 +5,49 @@
 VppPolarCustomPlotWidget::VppPolarCustomPlotWidget(
 		QString title,
 		QWidget* parent/*=Q_NULLPTR*/) :
-		VppCustomPlotWidgetBase(title,QString(""),QString(""),parent),
-		numCircles_(6) {
+		VppCustomPlotWidgetBase(title,QString(""),QString(""),parent) {
+
+	// Allow for axes passing trough the centre
+	connect(this, SIGNAL(beforeReplot()), this, SLOT(centreAxes()));
+
+}
+
+/// Add the circles that draw the coordinate system on the canvas. One circle per
+/// integer value
+void VppPolarCustomPlotWidget::addCircles() {
 
 	// Set the pen for the circles : thin dotted lines
 	QPen myPen;
 	myPen.setStyle(Qt::PenStyle::DashDotDotLine);
 	myPen.setWidth(0);
 
+	// Number of circles to plot for all curves
+	int numCircles=0;
+
+	// Get the higher bound for the value (in terms of mag!) of this polar plot.
+	// Loop on the graphs and search which one is selected
+	for (int i=0; i<plottableCount(); ++i) {
+
+		// Get a ptr to the i-th graph curve
+		QCPAbstractPlottable* pPlottable = plottable(i);
+
+		// Get the range for this graph curve
+		bool found=false;
+		QCPRange curveRange= pPlottable->getValueRange(found);
+
+		// Get the current ranges of the x and y values
+		double maxX = xAxis_->range().upper;
+		double maxY = curveRange.upper;
+
+		// Get the number of curves to plot from range for this curve with a c-style cast
+		int curCircles= (int)sqrt( maxX*maxX + maxY*maxY );
+
+		if(curCircles>numCircles)
+			numCircles= curCircles;
+	}
+
 	// Now set some circles
-	for(size_t i=0; i<numCircles_+1; i++){
+	for(size_t i=0; i<numCircles+1; i++){
 		QCPItemEllipse* circle = new QCPItemEllipse(this);
 		double val= i;
 		circle->topLeft->setCoords(-val,val);
@@ -22,13 +55,10 @@ VppPolarCustomPlotWidget::VppPolarCustomPlotWidget(
 		circle->setPen(myPen);
 	}
 
-	// Set the axis range
-	float bound= numCircles_ + 0.1 * numCircles_;
+	// Set the axis range, based on the bounds
+	float bound= numCircles + 0.1 * numCircles;
 	xAxis_->setRange(-bound,bound);
 	yAxis_->setRange(-bound,bound);
-
-	// Allow for axes passing trough the centre
-	connect(this, SIGNAL(beforeReplot()), this, SLOT(centreAxes()));
 
 }
 
@@ -55,13 +85,13 @@ void VppPolarCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y, Q
 	pDataCurve->setName(dataLabel);
 
 	// Generate the curve data points:
-	QVector<QCPCurveData> dataSpiral1(x.size());
+	QVector<QCPCurveData> polarData(x.size());
 	for (int i=0; i<x.size(); ++i)
-	  dataSpiral1[i] = QCPCurveData(i, x[i], y[i] );
+	  polarData[i] = QCPCurveData(i, x[i], y[i] );
 
 	// Pass the data to the curves; we know t (i in loop above) is ascending,
 	// so set alreadySorted=true (saves an extra internal sort):
-	pDataCurve->data()->set(dataSpiral1, true);
+	pDataCurve->data()->set(polarData, true);
 
 	// Set the curve label
 	pDataCurve->setName(dataLabel);
@@ -75,7 +105,9 @@ void VppPolarCustomPlotWidget::addData(QVector<double>& x, QVector<double>& y, Q
 
 	// Set some basic customPlot config:
 	axisRect()->setupFullAxesBox();
-	rescaleAxes();
+
+	// Do not rescale axes yet, this will be done right at the end
+	//rescaleAxes();
 
 }
 
@@ -101,6 +133,6 @@ void VppPolarCustomPlotWidget::showPointToolTip(QMouseEvent* event) {
   double angle = 90 - mathUtils::toDeg( atan2(y,x) );
   double mag = std::sqrt( x*x + y*y);
 
-  setToolTip(QString("%1 deg , %2").arg(angle).arg(mag));
+  setToolTip(QString("|%1|, %2º").arg(mag).arg(angle));
 
 }

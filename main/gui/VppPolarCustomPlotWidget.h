@@ -20,6 +20,10 @@ public:
 	/// Add some data to the polar plot. Derived by the qCustomPlot parametric curve demo
 	virtual void addData(QVector<double>& x, QVector<double>& y, QString dataLabel /*=""*/);
 
+	/// Add the circles that draw the coordinate system on the canvas. One circle per
+	/// integer value
+	void addCircles();
+
 protected:
 
   /// Select a curve - in this case a QCPCurve
@@ -33,11 +37,6 @@ protected slots:
 		/// Pure virtual because the format of this method must change according to
 		/// the type of plot - polar plot must convert the xy coordinates to polar!
 		virtual void showPointToolTip(QMouseEvent*);
-
-private:
-
-  /// Number of velocity markers (circles) of the polar plot
-	size_t numCircles_;
 
 private slots:
 
