@@ -43,6 +43,9 @@ private slots:
 	/// Place the axes in the centre of the plot
 	void centreAxes();
 
+	/// Axes equal after each modification of the plot
+	void axesEqual();
+
 };
 
 #endif // VPP_POLAR_CUSTOMPLOTWIDGET_H

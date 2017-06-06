@@ -627,8 +627,13 @@ std::vector<VppPolarCustomPlotWidget*> ResultContainer::plotPolars() {
 
 	// Connect the legend markers to the click action
 	for(size_t i=0; i<retVec.size(); i++){
+
+		// Rescales the axes such that all plottables (like graphs) in the plot are fully visible
 		retVec[i]->rescaleAxes();
+
+		// Add polar plot circles
 		retVec[i]->addCircles();
+
 	}
 
 	return retVec;

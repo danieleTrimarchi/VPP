@@ -7,12 +7,31 @@ VppPolarCustomPlotWidget::VppPolarCustomPlotWidget(
 		QWidget* parent/*=Q_NULLPTR*/) :
 		VppCustomPlotWidgetBase(title,QString(""),QString(""),parent) {
 
+	// Allow for dragging and zooming the plot and selecting the curves
+	setInteractions(
+			QCP::iRangeDrag |
+			QCP::iRangeZoom |
+			QCP::iSelectPlottables |
+			QCP::iSelectLegend
+	);
+
 	// Allow for axes passing trough the centre
 	connect(this, SIGNAL(beforeReplot()), this, SLOT(centreAxes()));
 
+	// Axes equal
+	connect(xAxis_,SIGNAL(rangeChanged(const QCPRange&)),this,SLOT(axesEqual()));
+	connect(yAxis_,SIGNAL(rangeChanged(const QCPRange&)),this,SLOT(axesEqual()));
+	connect(this, SIGNAL(Resized(QSize)), this, SLOT(axesEqual()));
+
 }
 
-/// Add the circles that draw the coordinate system on the canvas. One circle per
+void VppPolarCustomPlotWidget::axesEqual() {
+
+	yAxis_->setScaleRatio(xAxis_,1.0);
+	replot();
+}
+
+// Add the circles that draw the coordinate system on the canvas. One circle per
 /// integer value
 void VppPolarCustomPlotWidget::addCircles() {
 

@@ -40,15 +40,6 @@ VppCustomPlotWidgetBase::VppCustomPlotWidgetBase(
 	xAxis_->setTickLabelFont(legendFont);
 	yAxis_->setTickLabelFont(legendFont);
 
-	// Allow for dragging and zooming the plot and selecting the curves
-	setInteractions(
-			QCP::iRangeDrag |
-			QCP::iRangeZoom |
-			QCP::iSelectPlottables |
-			QCP::iSelectLegend |
-			QCP::iSelectAxes
-	);
-
 	// Connect slot that ties some axis selections together (especially opposite axes):
 	connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
 
