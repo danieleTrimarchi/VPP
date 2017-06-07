@@ -15,24 +15,25 @@ VppPolarCustomPlotWidget::VppPolarCustomPlotWidget(
 			QCP::iSelectLegend
 	);
 
-	// Allow for axes passing trough the centre
-	connect(this, SIGNAL(beforeReplot()), this, SLOT(centreAxes()));
-
-	// Axes equal
-	connect(xAxis_,SIGNAL(rangeChanged(const QCPRange&)),this,SLOT(axesEqual()));
-	connect(yAxis_,SIGNAL(rangeChanged(const QCPRange&)),this,SLOT(axesEqual()));
-	connect(this, SIGNAL(Resized(QSize)), this, SLOT(axesEqual()));
+	// Allow for axes passing trough the centre and axes equal
+  connect(this, SIGNAL(afterReplot()), this, SLOT(centreAxes()));
+	connect(this, SIGNAL(afterReplot()), this, SLOT(axesEqual()));
 
 }
 
+// Set axes equal, so that circles will appear as circles
+// Not sure why, there is some interaction with the multiplotWidget (?)
+// that makes this not functional to begin with. One needs a mousePressEvent
+// to get the right plot...!
 void VppPolarCustomPlotWidget::axesEqual() {
 
 	yAxis_->setScaleRatio(xAxis_,1.0);
+
 	replot();
 }
 
 // Add the circles that draw the coordinate system on the canvas. One circle per
-/// integer value
+// integer value
 void VppPolarCustomPlotWidget::addCircles() {
 
 	// Set the pen for the circles : thin dotted lines
@@ -66,7 +67,7 @@ void VppPolarCustomPlotWidget::addCircles() {
 	}
 
 	// Now set some circles
-	for(size_t i=0; i<numCircles+1; i++){
+	for(int i=0; i<numCircles+1; i++){
 		QCPItemEllipse* circle = new QCPItemEllipse(this);
 		double val= i;
 		circle->topLeft->setCoords(-val,val);

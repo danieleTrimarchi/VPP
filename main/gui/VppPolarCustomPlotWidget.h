@@ -38,13 +38,17 @@ protected slots:
 		/// the type of plot - polar plot must convert the xy coordinates to polar!
 		virtual void showPointToolTip(QMouseEvent*);
 
+	/// Axes equal after each modification of the plot
+	/// Set axes equal, so that circles will appear as circles
+	/// Not sure why, there is some interaction with the multiplotWidget (?)
+	/// that makes this not functional to begin with. One needs a mousePressEvent
+	/// to get the right plot...!
+	void axesEqual();
+
 private slots:
 
 	/// Place the axes in the centre of the plot
 	void centreAxes();
-
-	/// Axes equal after each modification of the plot
-	void axesEqual();
 
 };
 

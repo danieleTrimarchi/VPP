@@ -43,4 +43,3 @@ void VppXYCustomPlotWidget::showPointToolTip(QMouseEvent* event) {
   setToolTip(QString("%1 , %2").arg(x).arg(y));
 
 }
-
