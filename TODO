@@ -1,6 +1,5 @@
 remove some warnings of the build
 
-
 ————
 
 Michele: 
@@ -8,7 +7,6 @@ Michele:
 	axes equal -> almost functional, perhaps ask Olivier
 	Stability curve -> centre of buoyancy 
 	Allow entering sail coefficients
-	CORRECT FRICTIONAL/VISCOUS PLOT NAMES
 
 See RhinoAPI for getting LPP data
 —————
