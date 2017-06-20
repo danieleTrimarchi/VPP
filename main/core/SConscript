@@ -12,7 +12,7 @@ localEnv.getEigenIncludePath()
 
 # Produce and return the objects to be used to link the main program
 obj = localEnv.Object( Glob('*.cpp'), 
-                       CPPPATH=cppPath 
+                       CPPPATH=cppPath
                        )
 Return('obj')
 

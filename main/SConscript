@@ -76,6 +76,7 @@ localEnv = releaseEnv.Clone()
 #env.Append(CCFLAGS= '-g')
 #env.Append(CPPFLAGS ='-Wc++11-extensions')
 localEnv.Append(LINKFLAGS ='-framework Accelerate -lm -ldl -Wno-inconsistent-missing-override')
+localEnv.Append(CPPFLAGS ='-Wno-inconsistent-missing-override')
 
 #warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]

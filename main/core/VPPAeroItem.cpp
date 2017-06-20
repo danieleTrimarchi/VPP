@@ -16,7 +16,7 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 								twv_(0),
 								twa_(0),
 								awa_(0),
-								awv_(Eigen::Vector2d::Zero()) {
+								awv_(Eigen::Vector2d::Zero())   {
 
 	// Get the max/min wind velocities from the parser
 	v_tw_min_= pParser_->get("V_TW_MIN");
