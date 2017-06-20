@@ -212,16 +212,16 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 
 //=================================================================
 
-// For the definition of the Frictional Resistance see Keuning 2.1 p108
-class FrictionalResistanceItem : public ResistanceItem {
+// For the definition of the Viscous Resistance see Keuning 2.1 p108
+class ViscousResistanceItem : public ResistanceItem {
 
 	public:
 
 		/// Constructor
-		FrictionalResistanceItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		ViscousResistanceItem(VariableFileParser*, boost::shared_ptr<SailSet>);
 
 		/// Destructor
-		~FrictionalResistanceItem();
+		~ViscousResistanceItem();
 
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget
@@ -234,25 +234,25 @@ class FrictionalResistanceItem : public ResistanceItem {
 		virtual void update(int vTW, int aTW);
 
 		double 	rN0_,  //< Velocity Independent part of the Reynolds number
-		rfh0_; //< Velocity Independent part of the Frictional resistance of the bare hull
+		rfh0_; //< Velocity Independent part of the viscous resistance of the bare hull
 
 };
 
 //=================================================================
 
-// For the definition of the Change in Frictional Resistance due to heel
+// For the definition of the Change in Viscous Resistance due to heel
 // see Keuning 3.1.2.1 p115-116
-class Delta_FrictionalResistance_HeelItem : public ResistanceItem {
+class Delta_ViscousResistance_HeelItem : public ResistanceItem {
 
 	public:
 
 		/// Constructor
-		Delta_FrictionalResistance_HeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		Delta_ViscousResistance_HeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
 
 		/// Destructor
-		~Delta_FrictionalResistance_HeelItem();
+		~Delta_ViscousResistance_HeelItem();
 
-		/// Plot the Frictional Resistance due to heel vs Fn curve
+		/// Plot the Viscous Resistance due to heel vs Fn curve
 		std::vector<VppXYCustomPlotWidget*> plot_deltaWettedArea_heel();
 
 		/// Implement pure virtual of the parent class

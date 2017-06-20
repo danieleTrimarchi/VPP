@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
 //			else if(s == string("convertVelocityToFn")) {
 //				IOUtils io(pVppItems->getWind());
 //				std::cout<<"Fn= "<<
-//						pVppItems->getFrictionalResistanceItem()->convertToFn(
+//						pVppItems->getViscousResistanceItem()->convertToFn(
 //								io.askUserDouble("Please enter the value of the velocity...")
 //						)<<std::endl;
 //			}
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 //			else if(s == string("convertFnToVelocity")) {
 //				IOUtils io(pVppItems->getWind());
 //				std::cout<<"Velocity= "<<
-//						pVppItems->getFrictionalResistanceItem()->convertToVelocity(
+//						pVppItems->getViscousResistanceItem()->convertToVelocity(
 //								io.askUserDouble("Please enter the value of the Fn...")
 //						)<<std::endl;
 //			}

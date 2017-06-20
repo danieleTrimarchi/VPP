@@ -145,9 +145,9 @@ void TVPPTest::itemComponentTest() {
 			-0.0538096001381927, 0., 5.11719177721191, 2.82574575845714,
 			-0.264885, 0, 28.9450011272918;
 
-	// ==== Compute and compare to baseline frictional resistance
-	// std::cout<<"FRICT= "<<pVppItems->getFrictionalResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(0), pVppItems->getFrictionalResistanceItem()->get(), 1.e-6 );
+	// ==== Compute and compare to baseline viscous resistance
+	// std::cout<<"VISCOUS= "<<pVppItems->getViscousResistanceItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(0), pVppItems->getViscousResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline residual resistance
 	//std::cout<<"RESID= "<<pVppItems->getResiduaryResistanceItem()->get()<<std::endl;
@@ -158,8 +158,8 @@ void TVPPTest::itemComponentTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(2), pVppItems->getInducedResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline Delta_FrictRes_Heel resistance
-	//std::cout<<"dFRICT_HEEL= "<<pVppItems->getDelta_FrictionalResistance_HeelItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(3), pVppItems->getDelta_FrictionalResistance_HeelItem()->get(), 1.e-6 );
+	//std::cout<<"dVISCOUS_HEEL= "<<pVppItems->getDelta_FrictionalResistance_HeelItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(3), pVppItems->getDelta_ViscousResistance_HeelItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline Delta_ResidRes_Heel resistance
 	//std::cout<<"dRESID_HEEL= "<<pVppItems->getDelta_ResiduaryResistance_HeelItem()->get()<<std::endl;
@@ -169,7 +169,7 @@ void TVPPTest::itemComponentTest() {
 	//std::cout<<"VISCOUS_KEEL= "<<pVppItems->getViscousResistanceKeelItem()->get()<<std::endl; //-> this does not plot
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(5), pVppItems->getViscousResistanceKeelItem()->get(), 1.e-6 );
 
-	// ==== Compute and compare to baseline FrictionalRes_Rudder resistance
+	// ==== Compute and compare to baseline ViscousRes_Rudder resistance
 	//std::cout<<"VISCOUS_RUDDER= "<<pVppItems->getViscousResistanceRudderItem()->get()<<std::endl; //-> this does not plot
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(6), pVppItems->getViscousResistanceRudderItem()->get(), 1.e-6 );
 
@@ -207,9 +207,9 @@ void TVPPTest::itemComponentTest() {
 			83.8661310956139,
 			0, 3467.11693068848;
 
-	// ==== Compute and compare to baseline frictional resistance
-	// std::cout<<"FRICT= "<<pVppItems->getFrictionalResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(0), pVppItems->getFrictionalResistanceItem()->get(), 1.e-6 );
+	// ==== Compute and compare to baseline viscous resistance
+	// std::cout<<"VISCOUS= "<<pVppItems->getViscousResistanceItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(0), pVppItems->getViscousResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline residual resistance
 	//std::cout<<"RESID= "<<pVppItems->getResiduaryResistanceItem()->get()<<std::endl;
@@ -220,8 +220,8 @@ void TVPPTest::itemComponentTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(2), pVppItems->getInducedResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline Delta_FrictRes_Heel resistance
-	//std::cout<<"dFRICT_HEEL= "<<pVppItems->getDelta_FrictionalResistance_HeelItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(3), pVppItems->getDelta_FrictionalResistance_HeelItem()->get(), 1.e-6 );
+	//std::cout<<"dFRICT_HEEL= "<<pVppItems->getDelta_ViscousResistance_HeelItem()->get()<<std::endl;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(3), pVppItems->getDelta_ViscousResistance_HeelItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline Delta_ResidRes_Heel resistance
 	//std::cout<<"dRESID_HEEL= "<<pVppItems->getDelta_ResiduaryResistance_HeelItem()->get()<<std::endl;
@@ -231,7 +231,7 @@ void TVPPTest::itemComponentTest() {
 	//std::cout<<"VISCOUS_KEEL= "<<pVppItems->getViscousResistanceKeelItem()->get()<<std::endl; //-> this does not plot
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(5), pVppItems->getViscousResistanceKeelItem()->get(), 1.e-6 );
 
-	// ==== Compute and compare to baseline FrictionalRes_Rudder resistance
+	// ==== Compute and compare to baseline ViscousRes_Rudder resistance
 	//std::cout<<"VISCOUS_RUDDER= "<<pVppItems->getViscousResistanceRudderItem()->get()<<std::endl; //-> this does not plot
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(6), pVppItems->getViscousResistanceRudderItem()->get(), 1.e-6 );
 

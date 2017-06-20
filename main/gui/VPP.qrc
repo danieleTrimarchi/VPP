@@ -16,12 +16,12 @@
     <file>icons/sailForceMoment.png</file>
     <file>icons/resistanceComponent.png</file>
     <file>icons/totResistance.png</file>
-    <file>icons/frictionalResistance.png</file>
+    <file>icons/viscousResistance.png</file>
     <file>icons/inducedResistance.png</file>
     <file>icons/residuaryResistance.png</file>
     <file>icons/negativeResistance.png</file>
     <file>icons/plotJacobian.png</file>
     <file>icons/plotGradient.png</file>
-    <file>icons/DeltaFrictRes_Heel.png</file>
+    <file>icons/DeltaViscousRes_Heel.png</file>
 </qresource>
 </RCC>

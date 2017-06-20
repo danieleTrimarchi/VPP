@@ -121,8 +121,8 @@ class VPPItemFactory {
 		/// Getter for the Residuary Resistance of the Keel item
 		ResiduaryResistanceKeelItem* getResiduaryResistanceKeelItem() const;
 
-		/// Getter for the Frictional Resistance item
-		FrictionalResistanceItem* getFrictionalResistanceItem() const;
+		/// Getter for the Viscous Resistance item
+		ViscousResistanceItem* getViscousResistanceItem() const;
 
 		/// Getter for the Delta Viscous Resistance of the keel item
 		ViscousResistanceKeelItem* getViscousResistanceKeelItem() const;
@@ -130,8 +130,8 @@ class VPPItemFactory {
 		/// Getter for the Delta Viscous Resistance of the Rudder item
 		ViscousResistanceRudderItem* getViscousResistanceRudderItem() const;
 
-		/// Getter for the Delta Frictional Resistance due to heel item
-		Delta_FrictionalResistance_HeelItem* getDelta_FrictionalResistance_HeelItem() const;
+		/// Getter for the Delta Viscous Resistance due to heel item
+		Delta_ViscousResistance_HeelItem* getDelta_ViscousResistance_HeelItem() const;
 
 		/// Getter for the Delta Residuary Resistance due to heel item
 		Delta_ResiduaryResistance_HeelItem* getDelta_ResiduaryResistance_HeelItem() const;
@@ -198,8 +198,8 @@ class VPPItemFactory {
 		/// Pointer to the Induced Resistance Item
 		boost::shared_ptr<InducedResistanceItem> pInducedResistanceItem_;
 
-		/// Pointer to the Frictional Resistance Item
-		boost::shared_ptr<FrictionalResistanceItem> pFrictionalResistanceItem_;
+		/// Pointer to the Viscous Resistance Item
+		boost::shared_ptr<ViscousResistanceItem> pViscousResistanceItem_;
 
 		/// Pointer to the Viscous Resistance of the keel Item
 		boost::shared_ptr<ViscousResistanceKeelItem> pViscousResistanceKeelItem_;
@@ -207,8 +207,8 @@ class VPPItemFactory {
 		/// Pointer to the Viscous Resistance of the rudder Item
 		boost::shared_ptr<ViscousResistanceRudderItem> pViscousResistanceRudderItem_;
 
-		/// Pointer to the Frictional Resistance due to Heel Item
-		boost::shared_ptr<Delta_FrictionalResistance_HeelItem> pDelta_FrictionalResistance_HeelItem_;
+		/// Pointer to the Viscous Resistance due to Heel Item
+		boost::shared_ptr<Delta_ViscousResistance_HeelItem> pDelta_ViscousResistance_HeelItem_;
 
 		/// Pointer to the Delta Residuary Resistance due to Heel Item
 		boost::shared_ptr<Delta_ResiduaryResistance_HeelItem> pDelta_ResiduaryResistance_HeelItem_;

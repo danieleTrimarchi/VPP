@@ -125,20 +125,20 @@ dM_(0) {
 
 	// -- INSTANTIATE THE 10 RESISTANCE ITEMS
 
-	// Instantiate a FrictionalResistanceItem Item and push it back to the children vector
-	// For the definition of the Frictional Resistance see Keuning 2.1 p108
-	pFrictionalResistanceItem_.reset(new FrictionalResistanceItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pFrictionalResistanceItem_ );
+	// Instantiate a ViscousResistanceItem Item and push it back to the children vector
+	// For the definition of the Viscous Resistance see Keuning 2.1 p108
+	pViscousResistanceItem_.reset(new ViscousResistanceItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pViscousResistanceItem_ );
 
 	// Instantiate a ResiduaryResistanceItem and push it back to the children vector
 	// For the definition of the Residuary Resistance: see Keuning 3.1.1.2 p112
 	pResiduaryResistanceItem_.reset(new ResiduaryResistanceItem(pParser_,pSailSet));
 	vppHydroItems_.push_back( pResiduaryResistanceItem_ );
 
-	// Instantiate a Delta_FrictionalResistance_HeelItem Item and push it back to the children vector
-	// For the definition of the Change in Frictional Resistance due to heel see Keuning ch3.1.2.1 p115-116
-	pDelta_FrictionalResistance_HeelItem_.reset(new Delta_FrictionalResistance_HeelItem(pParser_,pSailSet));
-	vppHydroItems_.push_back( pDelta_FrictionalResistance_HeelItem_ );
+	// Instantiate a Delta_ViscousResistance_HeelItem Item and push it back to the children vector
+	// For the definition of the Change in Viscous Resistance due to heel see Keuning ch3.1.2.1 p115-116
+	pDelta_ViscousResistance_HeelItem_.reset(new Delta_ViscousResistance_HeelItem(pParser_,pSailSet));
+	vppHydroItems_.push_back( pDelta_ViscousResistance_HeelItem_ );
 
 	// Instantiate a Delta_ResiduaryResistance_HeelItem Item push it back to the children vector
 	// For the definition of the change in Residuary Resistance due to heel
@@ -270,9 +270,9 @@ ViscousResistanceKeelItem* VPPItemFactory::getViscousResistanceKeelItem() const 
 	return pViscousResistanceKeelItem_.get();
 }
 
-// Getter for the Frictional Resistance item
-FrictionalResistanceItem* VPPItemFactory::getFrictionalResistanceItem() const {
-	return pFrictionalResistanceItem_.get();
+// Getter for the Viscous Resistance item
+ViscousResistanceItem* VPPItemFactory::getViscousResistanceItem() const {
+	return pViscousResistanceItem_.get();
 }
 
 // Getter for the Delta Viscous Resistance of the Rudder item
@@ -281,8 +281,8 @@ ViscousResistanceRudderItem* VPPItemFactory::getViscousResistanceRudderItem() co
 }
 
 // Getter for the Residuary Resistance due to heel item
-Delta_FrictionalResistance_HeelItem* VPPItemFactory::getDelta_FrictionalResistance_HeelItem() const {
-	return pDelta_FrictionalResistance_HeelItem_.get();
+Delta_ViscousResistance_HeelItem* VPPItemFactory::getDelta_ViscousResistance_HeelItem() const {
+	return pDelta_ViscousResistance_HeelItem_.get();
 }
 
 // Getter for the Delta Residuary Resistance due to heel item

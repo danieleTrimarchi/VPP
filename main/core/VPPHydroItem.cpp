@@ -801,7 +801,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistanceKeel_HeelItem::plot
 //=================================================================
 // For the definition of the Frictional Resistance see DSYHS99 2.1 p108
 // Constructor
-FrictionalResistanceItem::FrictionalResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+ViscousResistanceItem::ViscousResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 						ResistanceItem(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_
@@ -813,12 +813,12 @@ FrictionalResistanceItem::FrictionalResistanceItem(VariableFileParser* pParser, 
 }
 
 // Destructor
-FrictionalResistanceItem::~FrictionalResistanceItem() {
+ViscousResistanceItem::~ViscousResistanceItem() {
 
 }
 
 // Implement pure virtual method of the parent class
-void FrictionalResistanceItem::update(int vTW, int aTW) {
+void ViscousResistanceItem::update(int vTW, int aTW) {
 
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
@@ -836,7 +836,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 	// Compute the Frictional coefficient
 	double cF = 0.075 / std::pow( (std::log10(rN) - 2), 2);
 
-	// Compute the Frictional resistance of the bare hull
+	// Compute the Viscous resistance of the bare hull
 	// Rfh = 1/2 .* phys.rho_w .* V.^2 .* geom.SC .* Cf;
 	double rfh = rfh0_ * V_ * V_ * cF;
 
@@ -849,7 +849,7 @@ void FrictionalResistanceItem::update(int vTW, int aTW) {
 // Implement pure virtual of the parent class
 // Each resistance component knows how to generate a widget
 // to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> FrictionalResistanceItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
+std::vector<VppXYCustomPlotWidget*> ViscousResistanceItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
 
 	// buffer the velocity that is going to be modified by the plot
 	double bufferV= V_;
@@ -876,23 +876,22 @@ std::vector<VppXYCustomPlotWidget*> FrictionalResistanceItem::plot(WindIndicesDi
 	update(0,0);
 
 	// Instantiate a plotter and plot the curves
-	VppXYCustomPlotWidget* pFrictionalResPlot= new VppXYCustomPlotWidget("Frictional Resistance Hull","Fn [-]","Resistance [N]");
-	pFrictionalResPlot->addData(fN,y,"Frict Res");
-	pFrictionalResPlot->rescaleAxes();
+	VppXYCustomPlotWidget* pViscousResistancePlot= new VppXYCustomPlotWidget("Viscous Hull","Fn [-]","Resistance [N]");
+	pViscousResistancePlot->addData(fN,y,"Viscous Resistance");
+	pViscousResistancePlot->rescaleAxes();
 
-	return std::vector<VppXYCustomPlotWidget*>(1,pFrictionalResPlot);
-	//multiPlotWidget->addChart(pFrictionalResPlot,0,0);
+	return std::vector<VppXYCustomPlotWidget*>(1,pViscousResistancePlot);
 
 }
 
 //=================================================================
 
 // For the definition of the Change in wetted surface see DSYHS99 3.1.2.1 p115-116
-// For the definition of the Frictional Resistance use the std definition of
+// For the definition of the Viscous Resistance use the std definition of
 // DSYHS99
 
 // Constructor
-Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
+Delta_ViscousResistance_HeelItem::Delta_ViscousResistance_HeelItem(
 		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
 								ResistanceItem(pParser,pSailSet) {
 
@@ -941,12 +940,12 @@ Delta_FrictionalResistance_HeelItem::Delta_FrictionalResistance_HeelItem(
 }
 
 // Destructor
-Delta_FrictionalResistance_HeelItem::~Delta_FrictionalResistance_HeelItem() {
+Delta_ViscousResistance_HeelItem::~Delta_ViscousResistance_HeelItem() {
 
 }
 
 // Implement pure virtual method of the parent class
-void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
+void Delta_ViscousResistance_HeelItem::update(int vTW, int aTW) {
 
 	// Call the parent class update to update the Froude number
 	ResistanceItem::update(vTW,aTW);
@@ -968,8 +967,8 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 	// Compute the interpolated value of the change in wetted area wrt PHI [rad]
 	double SCphi = pInterpolator_->interpolate(PHI_);
 
-	// Compute the change in Frictional resistance using the delta of wetted surface
-	// Apart for the def. of the surface, the frictional resistance uses the std definition
+	// Compute the change in Viscous resistance using the delta of wetted surface
+	// Apart for the def. of the surface, the viscous resistance uses the std definition
 	// see DSYHS99 3.2.1.1 p119
 	// Rfh = 1/2 .* phys.rho_w .* V.^2 .* Cf .* ( S - S0 );
 	double rfhH = 0.5 * Physic::rho_w * V_ * V_ * cF * ( SCphi - pParser_->get("SC") );
@@ -981,8 +980,8 @@ void Delta_FrictionalResistance_HeelItem::update(int vTW, int aTW) {
 
 }
 
-// Plot the Frictional Resistance due to heel versus Fn curve
-std::vector<VppXYCustomPlotWidget*> Delta_FrictionalResistance_HeelItem::plot_deltaWettedArea_heel() {
+// Plot the Viscous Resistance due to heel versus Fn curve
+std::vector<VppXYCustomPlotWidget*> Delta_ViscousResistance_HeelItem::plot_deltaWettedArea_heel() {
 
 	// Make a check plot for the Residuary resistance of the keel
 	VppXYCustomPlotWidget* pPlot = new VppXYCustomPlotWidget("Change in wetted area due to HEEL","PHI [rad]","dS [m**2]");
@@ -995,7 +994,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_FrictionalResistance_HeelItem::plot_de
 /// Implement pure virtual of the parent class
 /// Each resistance component knows how to generate a widget
 /// to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> Delta_FrictionalResistance_HeelItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
+std::vector<VppXYCustomPlotWidget*> Delta_ViscousResistance_HeelItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
 
 	size_t nVelocities=40, maxAngleDeg=40;
 
@@ -1037,7 +1036,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_FrictionalResistance_HeelItem::plot(Wi
 	}
 
 	char msg[256];
-	sprintf(msg,"plot Delta Frictional Resistance due to Heel - "
+	sprintf(msg,"plot Delta Viscous Resistance due to Heel - "
 			"twv=%2.2f [m/s], twa=%2.2fº",
 			wd->getWind()->getTWV(wd->getTWV()),
 			mathUtils::toDeg(wd->getWind()->getTWA(wd->getTWA())) );

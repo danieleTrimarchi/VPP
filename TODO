@@ -1,11 +1,11 @@
-plotPolars and plotXY leak because the plots are not given a parent!
-remove some warnings
+remove some warnings of the build
+
 
 ————
 
 Michele: 
 	Polars and table -> chose data to visualize. Tick selection
-	axes equal
+	axes equal -> almost functional, perhaps ask Olivier
 	Stability curve -> centre of buoyancy 
 	Allow entering sail coefficients
 	CORRECT FRICTIONAL/VISCOUS PLOT NAMES
