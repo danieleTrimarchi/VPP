@@ -45,8 +45,8 @@ class VPPSolverBase {
 		/// Plot the polar plots for the state variables
 		void plotPolars(MultiplePlotWidget*);
 
-		/// Plot the XY plots for the state variables
-		void plotXY( size_t index );
+		/// Plot the XY results
+		void plotXY(MultiplePlotWidget*);
 
 		/// Returns the dimensionality of this problem (the size of the state vector)
 		size_t getDimension() const;

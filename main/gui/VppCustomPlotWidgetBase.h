@@ -11,6 +11,11 @@ class VppCustomPlotWidgetBase : public QCustomPlot {
 
 public:
 
+		enum lineStyle {
+			randomStyle,
+			showPoints
+		};
+
 	/// Explicit Constructor
 	explicit VppCustomPlotWidgetBase(QString title, QString xAxisLabel, QString yAxisLabel,
 																	QWidget* parent= Q_NULLPTR);
@@ -19,7 +24,7 @@ public:
 	~VppCustomPlotWidgetBase();
 
 	/// Add some data to the plot
-	virtual void addData(QVector<double>& x, QVector<double>& y, QString dataLabel="");
+	virtual void addData(QVector<double>& x, QVector<double>& y, QString dataLabel="", int style= lineStyle::randomStyle);
 
 	/// Add some quivers to the plots
 	void addQuivers(QVector<double>& x, QVector<double>& y, QVector<double>& dx, QVector<double>& dy );

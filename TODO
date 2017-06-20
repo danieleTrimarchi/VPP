@@ -1,3 +1,8 @@
+plotPolars and plotXY leak because the plots are not given a parent!
+remove some warnings
+
+————
+
 Michele: 
 	Polars and table -> chose data to visualize. Tick selection
 	axes equal

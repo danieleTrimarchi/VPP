@@ -231,6 +231,9 @@ class ResultContainer {
 		/// Returns all is required to plot the polar plots
 		std::vector<VppPolarCustomPlotWidget*> plotPolars();
 
+		/// Returns all is required to plot the XY result plots
+		std::vector<VppXYCustomPlotWidget*> plotXY();
+
 	private:
 
 		/// Default constructor

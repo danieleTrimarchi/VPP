@@ -13,6 +13,7 @@
 #include "boost/shared_ptr.hpp"
 #include "DebugStream.h"
 #include "VPPSolverFactoryBase.h"
+#include "VppCustomPlotWidget.h"
 
 class ToolBar;
 class VPPItemFactory;
@@ -61,6 +62,9 @@ public slots:
 
 	/// Plot the velocity polars
 	void plotPolars();
+
+	/// Plot XY results
+	void plotXY();
 
 	/// Plot the sail coefficients
 	void plotSailCoeffs();
@@ -151,16 +155,23 @@ private:
 	/// Widget that contains the tabular view of the results
 	boost::shared_ptr<VppTableDockWidget> pTableWidget_;
 
-	/// XY Plot widget
-	boost::shared_ptr<VppTabDockWidget> pXYPlotWidget_;
+	boost::shared_ptr<VppCustomPlotWidget> pCustomPlotWidget_;
 
 	/// Multi-plot widget used to plot sail coeffs
-	boost::shared_ptr<MultiplePlotWidget> pSailCoeffPlotWidget_, p_d_SailCoeffPlotWidget_,
-																				p_d2_SailCoeffPlotWidget_, pForceMomentsPlotWidget_,
-																				pTotResistancePlotWidget_, pFricitionalResistancePlotWidget_,
-																				pInducedResistancePlotWidget_, pResiduaryResistancePlotWidget_,
-																				p_dFrictRes_HeelPlotWidget_, pNegativeResistancePlotWidget_,
-																				pJacobianPlotWidget_, pGradientPlotWidget_, pPolarPlotWidget_;
+	MultiplePlotWidget	*pSailCoeffPlotWidget_,
+											*p_d_SailCoeffPlotWidget_,
+											*p_d2_SailCoeffPlotWidget_,
+											*pForceMomentsPlotWidget_,
+											*pTotResistancePlotWidget_,
+											*pFricitionalResistancePlotWidget_,
+											*pInducedResistancePlotWidget_,
+											*pResiduaryResistancePlotWidget_,
+											*p_dFrictRes_HeelPlotWidget_,
+											*pNegativeResistancePlotWidget_,
+											*pJacobianPlotWidget_,
+											*pGradientPlotWidget_,
+											*pPolarPlotWidget_,
+											*pXYPlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<ThreeDPlotWidget> p3dPlotWidget_;
@@ -169,7 +180,7 @@ private:
 	boost::shared_ptr<VariablesDockWidget> pVariablesWidget_;
 
 	/// Menu with the actions to plot sail coeffs and resistance components
-	boost::shared_ptr<QMenu> pSailCoeffsMenu_;
+	boost::shared_ptr<QMenu> pSailCoeffsMenu_, pPlotResultsMenu_;
 
 	/// Vector storing all of the actions. Used to assure that the actions are deleted
 	/// on destruction, thus preventing leaks

@@ -176,7 +176,12 @@ void MainWindow::setupMenuBar() {
 
 	// ---
 
-	// Create an action and associate an icon
+	// Add a menu in the toolbar. This is used to group polar and XY result plots
+	pPlotResultsMenu_.reset( new QMenu("Plot Results", this) );
+	pPlotResultsMenu_->setIcon( QIcon::fromTheme("Plot Results", QIcon(":/icons/plotPolars.png")) );
+	pToolBar_->addAction(pPlotResultsMenu_->menuAction());
+
+	// Create an action and associate an icon for plotting polars
 	actionVector_.push_back( boost::shared_ptr<QAction>(
 			new QAction(
 					QIcon::fromTheme("Plot polars", QIcon(":/icons/plotPolars.png")),
@@ -185,7 +190,20 @@ void MainWindow::setupMenuBar() {
 	QAction* plotPolarsAction = actionVector_.back().get();
 	plotPolarsAction->setStatusTip(tr("Plot polars"));
 	connect(plotPolarsAction, &QAction::triggered, this, &MainWindow::plotPolars);
-	pToolBar_->addAction(plotPolarsAction);
+	pPlotResultsMenu_->addAction(plotPolarsAction);
+
+	// Create an action and associate an icon for XY plotting
+	actionVector_.push_back( boost::shared_ptr<QAction>(
+			new QAction(
+					QIcon::fromTheme("Plot XY", QIcon(":/icons/plotXY.png")),
+					tr("&XYPlot"), this)
+	) );
+	QAction* plotXYAction = actionVector_.back().get();
+	plotXYAction->setStatusTip(tr("Plot XY"));
+	connect(plotXYAction, &QAction::triggered, this, &MainWindow::plotXY);
+	pPlotResultsMenu_->addAction(plotXYAction);
+
+	// ---
 
 	// Add a menu in the toolbar. This is used to group plot coeffs, and their derivatives
 	pSailCoeffsMenu_.reset( new QMenu("Plot Sail Related Quantities", this) );
@@ -673,24 +691,65 @@ void MainWindow::plotPolars() {
 		std::cout<<"Plotting Polars..."<<std::endl;
 
 		// Instantiate a graphic plotting window in the central widget
-		pPolarPlotWidget_.reset( new MultiplePlotWidget(this, "Polars") );
+		if(pPolarPlotWidget_)
+			delete pPolarPlotWidget_;
+
+		pPolarPlotWidget_= new MultiplePlotWidget(this, "Polars");
 
 		// Hand the multiplePlotwidget to the solver factory that stores the results and knows how to plot them
-		pSolverFactory_->get()->plotPolars( pPolarPlotWidget_.get() );
+		pSolverFactory_->get()->plotPolars( pPolarPlotWidget_ );
 
 		// Add the polar plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, pPolarPlotWidget_.get());
+		addDockWidget(Qt::TopDockWidgetArea, pPolarPlotWidget_);
 
 		// Tab the widget if other widgets have already been instantiated
 		// In the same area. Todo dtrimarchi : this is way too fragile
 		// It requires widgets instantiated on the topDockWidgetArea and
 		// I need to add the deleted signal to the slot removeWidgetFromVector
-		tabDockWidget(pPolarPlotWidget_.get());
+		tabDockWidget(pPolarPlotWidget_);
 
 		// outer try-catch block
 	}	catch(...) {}
 }
 
+// Plot XY results
+void MainWindow::plotXY() {
+
+	try{
+
+			// If the boat description has not been imported we do not have the
+			// vppItems nor the coefficients to be plotted!
+			// If the boat description has not been imported we do not have the
+			// vppItems nor the coefficients to be plotted!
+			if(!hasBoatDescription())
+				return;
+
+			if(!hasSolver())
+				return;
+
+			std::cout<<"Plotting XY Results..."<<std::endl;
+
+			// Instantiate a graphic plotting window in the central widget
+			if(pXYPlotWidget_)
+				delete pXYPlotWidget_;
+
+			pXYPlotWidget_= new MultiplePlotWidget(this, "XY plot");
+
+			// Hand the multiplePlotwidget to the solver factory that stores the results and knows how to plot them
+			pSolverFactory_->get()->plotXY( pXYPlotWidget_ );
+
+			// Add the polar plot view to the left of the app window
+			addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_);
+
+			// Tab the widget if other widgets have already been instantiated
+			// In the same area. Todo dtrimarchi : this is way too fragile
+			// It requires widgets instantiated on the topDockWidgetArea and
+			// I need to add the deleted signal to the slot removeWidgetFromVector
+			tabDockWidget(pPolarPlotWidget_);
+
+			// outer try-catch block
+		}	catch(...) {}
+}
 
 // Plot the velocity polars
 void MainWindow::plotSailCoeffs() {
@@ -706,15 +765,17 @@ void MainWindow::plotSailCoeffs() {
 		std::cout<<"Plotting Sail coeffs..."<<std::endl;
 
 		// Instantiate an empty multiple plot widget
-		pSailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Coeffs") );
+		if(pSailCoeffPlotWidget_)
+			delete pSailCoeffPlotWidget_;
+		pSailCoeffPlotWidget_= new MultiplePlotWidget(this,"Sail Coeffs");
 
 		// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
-		pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients( pSailCoeffPlotWidget_.get() );
+		pVppItems_->getSailCoefficientItem()->plotInterpolatedCoefficients( pSailCoeffPlotWidget_ );
 
 		// Add the xy plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, pSailCoeffPlotWidget_.get() );
+		addDockWidget(Qt::TopDockWidgetArea, pSailCoeffPlotWidget_ );
 
-		tabDockWidget(pSailCoeffPlotWidget_.get());
+		tabDockWidget(pSailCoeffPlotWidget_);
 
 		// outer try-catch block
 	} catch(...) {}
@@ -733,15 +794,18 @@ void MainWindow::plot_d_SailCoeffs() {
 		std::cout<<"Plotting Sail coeffs Derivatives..."<<std::endl;
 
 		// Instantiate an empty multiple plot widget
-		p_d_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"d(Sail Coeffs)") );
+		if(p_d_SailCoeffPlotWidget_)
+			delete p_d_SailCoeffPlotWidget_;
+
+		p_d_SailCoeffPlotWidget_= new MultiplePlotWidget(this,"d(Sail Coeffs)");
 
 		// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
-		pVppItems_->getSailCoefficientItem()->plot_D_InterpolatedCoefficients( p_d_SailCoeffPlotWidget_.get() );
+		pVppItems_->getSailCoefficientItem()->plot_D_InterpolatedCoefficients( p_d_SailCoeffPlotWidget_ );
 
 		// Add the xy plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, p_d_SailCoeffPlotWidget_.get() );
+		addDockWidget(Qt::TopDockWidgetArea, p_d_SailCoeffPlotWidget_ );
 
-		tabDockWidget(p_d_SailCoeffPlotWidget_.get());
+		tabDockWidget(p_d_SailCoeffPlotWidget_);
 
 		// outer try-catch block
 	}	catch(...) {}
@@ -761,15 +825,18 @@ void MainWindow::plot_d2_SailCoeffs() {
 		std::cout<<"Plotting Second Derivatives of the Sail coeffs..."<<std::endl;
 
 		// Instantiate an empty multiple plot widget
-		p_d2_SailCoeffPlotWidget_.reset( new MultiplePlotWidget(this,"d2(Sail Coeffs)") );
+		if(p_d2_SailCoeffPlotWidget_)
+			delete p_d2_SailCoeffPlotWidget_;
+
+		p_d2_SailCoeffPlotWidget_= new MultiplePlotWidget(this,"d2(Sail Coeffs)");
 
 		// Hand the multiple plot to the plot method of the sailCoeffs that knows how to plot
-		pVppItems_->getSailCoefficientItem()->plot_D2_InterpolatedCoefficients( p_d2_SailCoeffPlotWidget_.get() );
+		pVppItems_->getSailCoefficientItem()->plot_D2_InterpolatedCoefficients( p_d2_SailCoeffPlotWidget_ );
 
 		// Add the xy plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, p_d2_SailCoeffPlotWidget_.get() );
+		addDockWidget(Qt::TopDockWidgetArea, p_d2_SailCoeffPlotWidget_);
 
-		tabDockWidget(p_d2_SailCoeffPlotWidget_.get());
+		tabDockWidget(p_d2_SailCoeffPlotWidget_);
 		// outer try-catch block
 	}	catch(...) {}
 }
@@ -784,16 +851,19 @@ void MainWindow::plotSailForceMoments() {
 		std::cout<<"Plotting Sail Forces/Moments..."<<std::endl;
 
 		// Instantiate an multiple plot widget for the force and moments plot
-		pForceMomentsPlotWidget_.reset( new MultiplePlotWidget(this,"Sail Force/Moments") );
+		if(pForceMomentsPlotWidget_)
+			delete pForceMomentsPlotWidget_;
+
+		pForceMomentsPlotWidget_= new MultiplePlotWidget(this,"Sail Force/Moments");
 
 		// Ask the forces/moments to plot themself
-		pVppItems_->getAeroForcesItem()->plot(pForceMomentsPlotWidget_.get());
+		pVppItems_->getAeroForcesItem()->plot(pForceMomentsPlotWidget_);
 
 		// Add the xy plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, pForceMomentsPlotWidget_.get() );
+		addDockWidget(Qt::TopDockWidgetArea, pForceMomentsPlotWidget_ );
 
 		// Tab the widget with the others
-		tabDockWidget(pForceMomentsPlotWidget_.get());
+		tabDockWidget(pForceMomentsPlotWidget_);
 
 		// outer try-catch block
 	} catch(...) {}
@@ -817,7 +887,10 @@ void MainWindow::plotTotalResistance() {
 			return;
 
 		// Instantiate an empty multiple plot widget
-		pTotResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Total Resistance") );
+		if(pTotResistancePlotWidget_)
+			delete pTotResistancePlotWidget_;
+
+		pTotResistancePlotWidget_= new MultiplePlotWidget(this,"Total Resistance");
 
 		// Ask the forces/moments to plot themself
 		pTotResistancePlotWidget_->addChart(
@@ -825,10 +898,10 @@ void MainWindow::plotTotalResistance() {
 				0,0);
 
 		// Add the xy plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, pTotResistancePlotWidget_.get() );
+		addDockWidget(Qt::TopDockWidgetArea, pTotResistancePlotWidget_);
 
 		// Tab the widget with the others
-		tabDockWidget(pTotResistancePlotWidget_.get());
+		tabDockWidget(pTotResistancePlotWidget_);
 
 		// outer try-catch block
 	}	catch(...) {}
@@ -846,7 +919,10 @@ void MainWindow::plotFrictionalResistance() {
 		std::cout<<"Plotting Frictional Resistance..."<<std::endl;
 
 		// Instantiate an empty multiple plot widget
-		pFricitionalResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Frictional Resistance") );
+		if(pFricitionalResistancePlotWidget_)
+			delete pFricitionalResistancePlotWidget_;
+
+		pFricitionalResistancePlotWidget_= new MultiplePlotWidget(this,"Frictional Resistance");
 
 		// Add the plots generated by the items into the multiPlotWidget
 		pFricitionalResistancePlotWidget_->addChart(
@@ -862,10 +938,10 @@ void MainWindow::plotFrictionalResistance() {
 				0,2);
 
 		// Add the xy plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, pFricitionalResistancePlotWidget_.get() );
+		addDockWidget(Qt::TopDockWidgetArea, pFricitionalResistancePlotWidget_ );
 
 		// Tab the widget with the others
-		tabDockWidget(pFricitionalResistancePlotWidget_.get());
+		tabDockWidget(pFricitionalResistancePlotWidget_);
 
 		// outer try-catch block
 	}	catch(...) {}
@@ -885,8 +961,11 @@ void MainWindow::plotDelta_FrictionalResistance_Heel() {
 		if (dg.exec() == QDialog::Rejected)
 			return;
 
+		if(p_dFrictRes_HeelPlotWidget_)
+			delete p_dFrictRes_HeelPlotWidget_;
+
 		// Instantiate an empty multiple plot widget
-		p_dFrictRes_HeelPlotWidget_.reset( new MultiplePlotWidget(this,"Delta Frictional Resistance due to Heel") );
+		p_dFrictRes_HeelPlotWidget_= new MultiplePlotWidget(this,"Delta Frictional Resistance due to Heel");
 
 		// Plot the change of wetted area due to heel - see DSYHS99 p 116
 		p_dFrictRes_HeelPlotWidget_->addChart(
@@ -899,10 +978,10 @@ void MainWindow::plotDelta_FrictionalResistance_Heel() {
 				1,0);
 
 		// Add the xy plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, p_dFrictRes_HeelPlotWidget_.get() );
+		addDockWidget(Qt::TopDockWidgetArea, p_dFrictRes_HeelPlotWidget_ );
 
 		// Tab the widget with the others
-		tabDockWidget(p_dFrictRes_HeelPlotWidget_.get());
+		tabDockWidget(p_dFrictRes_HeelPlotWidget_);
 
 		// outer try-catch block
 	} catch(...) {}
@@ -925,7 +1004,10 @@ void MainWindow::plotInducedResistance() {
 			return;
 
 		// Instantiate an empty multiple plot widget
-		pInducedResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Induced Resistance") );
+		if(pInducedResistancePlotWidget_)
+			delete pInducedResistancePlotWidget_;
+
+		pInducedResistancePlotWidget_= new MultiplePlotWidget(this,"Induced Resistance");
 
 		std::vector<VppXYCustomPlotWidget*> resCharts= pVppItems_->getInducedResistanceItem()->plot(&wd,&vd);
 
@@ -936,10 +1018,10 @@ void MainWindow::plotInducedResistance() {
 		pInducedResistancePlotWidget_->addChart(resCharts[1],0,1);
 
 		// Add the xy plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, pInducedResistancePlotWidget_.get() );
+		addDockWidget(Qt::TopDockWidgetArea, pInducedResistancePlotWidget_ );
 
 		// Tab the widget with the others
-		tabDockWidget(pInducedResistancePlotWidget_.get());
+		tabDockWidget(pInducedResistancePlotWidget_);
 
 		// outer try-catch block
 	}	catch(...) {}
@@ -963,8 +1045,11 @@ void MainWindow::plotResiduaryResistance() {
 		if( vd.exec() == QDialog::Rejected )
 			return;
 
+		if(pResiduaryResistancePlotWidget_)
+			delete pResiduaryResistancePlotWidget_;
+
 		// Instantiate an empty multiple plot widget
-		pResiduaryResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Residuary Resistance") );
+		pResiduaryResistancePlotWidget_= new MultiplePlotWidget(this,"Residuary Resistance");
 
 		// Ask the Residuary resistance items of hull and keel to plot itself
 		pResiduaryResistancePlotWidget_->addChart(
@@ -984,10 +1069,10 @@ void MainWindow::plotResiduaryResistance() {
 				1,1);
 
 		// Add the xy plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, pResiduaryResistancePlotWidget_.get() );
+		addDockWidget(Qt::TopDockWidgetArea, pResiduaryResistancePlotWidget_ );
 
 		// Tab the widget with the others
-		tabDockWidget(pResiduaryResistancePlotWidget_.get());
+		tabDockWidget(pResiduaryResistancePlotWidget_);
 
 		// outer try-catch block
 	}	catch(...) {}
@@ -1004,7 +1089,10 @@ void MainWindow::plotNegativeResistance() {
 		std::cout<<"Plotting Negative Resistance..."<<std::endl;
 
 		// Instantiate an empty multiple plot widget
-		pNegativeResistancePlotWidget_.reset( new MultiplePlotWidget(this,"Negative Resistance") );
+		if(pNegativeResistancePlotWidget_)
+			delete pNegativeResistancePlotWidget_;
+
+		pNegativeResistancePlotWidget_= new MultiplePlotWidget(this,"Negative Resistance");
 
 		// Ask the frictional resistance item to plot itself
 		pNegativeResistancePlotWidget_->addChart(
@@ -1012,10 +1100,10 @@ void MainWindow::plotNegativeResistance() {
 				0,0);
 
 		// Add the xy plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, pNegativeResistancePlotWidget_.get() );
+		addDockWidget(Qt::TopDockWidgetArea, pNegativeResistancePlotWidget_ );
 
 		// Tab the widget with the others
-		tabDockWidget(pNegativeResistancePlotWidget_.get());
+		tabDockWidget(pNegativeResistancePlotWidget_);
 
 		// outer try-catch block
 	}	catch(...) {}
@@ -1027,13 +1115,13 @@ void MainWindow::testQCustomPlot() {
 
 	try{
 		// Init the widget that will be containing this plot
-		pXYPlotWidget_.reset( new VppCustomPlotWidget(this) );
+		pCustomPlotWidget_.reset( new VppCustomPlotWidget(this) );
 
 		// Add the xy plot view to the left of the app window
-		addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_.get() );
+		addDockWidget(Qt::TopDockWidgetArea, pCustomPlotWidget_.get() );
 
 		// Tabify the dockwidget
-		tabDockWidget(pXYPlotWidget_.get());
+		tabDockWidget(pCustomPlotWidget_.get());
 
 		// outer try-catch block
 	}	catch(...) {}
@@ -1103,7 +1191,10 @@ void MainWindow::plotGradient() {
 		// Instantiate a Gradient
 		VPPGradient G(x,pVppItems_.get());
 
-		pGradientPlotWidget_.reset(new MultiplePlotWidget(this,"VPP Gradient"));
+		if(pGradientPlotWidget_)
+			delete pGradientPlotWidget_;
+
+		pGradientPlotWidget_= new MultiplePlotWidget(this,"VPP Gradient");
 
 		// Get all of the plots the Gradient is up to draw
 		std::vector<VppXYCustomPlotWidget*> gPlotVector( G.plot(wd) );
@@ -1119,11 +1210,11 @@ void MainWindow::plotGradient() {
 		}
 
 		// Add the plot view to the top of the app window
-		addDockWidget(Qt::TopDockWidgetArea, pGradientPlotWidget_.get());
+		addDockWidget(Qt::TopDockWidgetArea, pGradientPlotWidget_);
 
 		// Tab the widget if other widgets have already been instantiated
 		// In the same area.
-		tabDockWidget(pGradientPlotWidget_.get());
+		tabDockWidget(pGradientPlotWidget_);
 
 		// outer try-catch block
 	}	catch(...) {}
@@ -1160,7 +1251,10 @@ void MainWindow::plotJacobian() {
 		VPPJacobian J(x, pVppItems_.get(), subPbsize);
 
 		// Instantiate a widget container for this plot
-		pJacobianPlotWidget_.reset(new MultiplePlotWidget(this,"VPP Jacobian"));
+		if(pJacobianPlotWidget_)
+			delete pJacobianPlotWidget_;
+
+		pJacobianPlotWidget_= new MultiplePlotWidget(this,"VPP Jacobian");
 
 		// Get all of the plots the Jacobian is up to draw
 		std::vector<VppXYCustomPlotWidget*> jPlotVector( J.plot(wd) );
@@ -1176,11 +1270,11 @@ void MainWindow::plotJacobian() {
 		}
 
 		// Add the plot view to the top of the app window
-		addDockWidget(Qt::TopDockWidgetArea, pJacobianPlotWidget_.get());
+		addDockWidget(Qt::TopDockWidgetArea, pJacobianPlotWidget_);
 
 		// Tab the widget if other widgets have already been instantiated
 		// In the same area.
-		tabDockWidget(pJacobianPlotWidget_.get());
+		tabDockWidget(pJacobianPlotWidget_);
 
 		// outer try-catch block
 	}	catch(...) {}

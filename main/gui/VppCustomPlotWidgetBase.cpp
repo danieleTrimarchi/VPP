@@ -55,7 +55,9 @@ VppCustomPlotWidgetBase::~VppCustomPlotWidgetBase() {
 }
 
 // Add some data to the plot
-void VppCustomPlotWidgetBase::addData(QVector<double>& x, QVector<double>& y,  QString dataLabel/*=""*/) {
+void VppCustomPlotWidgetBase::addData(QVector<double>& x, QVector<double>& y,
+		QString dataLabel/*=""*/,
+		int style/*=lineStyle::random*/) {
 
 	// Add one graph to the plot widget -- not sure if this should not go to the constructor..??
 	addGraph();
@@ -66,14 +68,26 @@ void VppCustomPlotWidgetBase::addData(QVector<double>& x, QVector<double>& y,  Q
 	// Set the name of these data.
 	graph()->setName(dataLabel);
 
-	// Set a random line-style, and pen
-	//graph()->setLineStyle((QCPGraph::LineStyle)(rand()%5+1)); commented to keep only continuous lines
-	if (rand()%100 > 50)
-		graph()->setScatterStyle(QCPScatterStyle((QCPScatterStyle::ScatterShape)(rand()%14+1)));
-	QPen graphPen;
-	graphPen.setColor(QColor(rand()%245+10, rand()%245+10, rand()%245+10));
-	graph()->setPen(graphPen);
+	switch( style )
+	{
+		case lineStyle::randomStyle : {
+			// Set a random line-style, and pen
+			if (rand()%100 > 50)
+				graph()->setScatterStyle(QCPScatterStyle((QCPScatterStyle::ScatterShape)(rand()%14+1)));
+			QPen graphPen;
+			graphPen.setColor(QColor(rand()%245+10, rand()%245+10, rand()%245+10));
+			graph()->setPen(graphPen);
+			}
+			break;
 
+		case lineStyle::showPoints :
+			graph()->setScatterStyle((QCPScatterStyle::ScatterShape::ssCircle));
+			break;
+
+		default:
+			throw std::logic_error("Requested lineStyle not recognized");
+
+	}
 }
 
 /// Add some quivers to the plots
