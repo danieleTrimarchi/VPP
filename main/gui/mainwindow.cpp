@@ -745,7 +745,7 @@ void MainWindow::plotXY() {
 			// In the same area. Todo dtrimarchi : this is way too fragile
 			// It requires widgets instantiated on the topDockWidgetArea and
 			// I need to add the deleted signal to the slot removeWidgetFromVector
-			tabDockWidget(pPolarPlotWidget_);
+			tabDockWidget(pXYPlotWidget_);
 
 			// outer try-catch block
 		}	catch(...) {}

@@ -260,6 +260,8 @@ void VPPSolverBase::plotPolars(MultiplePlotWidget* pMultiPlotWidget) {
 
 	std::vector<VppPolarCustomPlotWidget*> chartVec= pResults_->plotPolars();
 
+	// Assigns to a vector of shared_ptrs, so this won't leak because
+	// the possession is taken by the MultiplePlotWidget
 	pMultiPlotWidget->addChart( chartVec[0],0,0 );
 	pMultiPlotWidget->addChart( chartVec[1],1,0 );
 	pMultiPlotWidget->addChart( chartVec[2],0,1 );
@@ -272,6 +274,8 @@ void VPPSolverBase::plotXY(MultiplePlotWidget* pMultiPlotWidget) {
 
 	std::vector<VppXYCustomPlotWidget*> chartVec= pResults_->plotXY();
 
+	// Assigns to a vector of shared_ptrs, so this won't leak because
+	// the possession is taken by the MultiplePlotWidget
 	pMultiPlotWidget->addChart( chartVec[0],0,0 );
 	pMultiPlotWidget->addChart( chartVec[1],1,0 );
 	pMultiPlotWidget->addChart( chartVec[2],0,1 );
@@ -279,79 +283,6 @@ void VPPSolverBase::plotXY(MultiplePlotWidget* pMultiPlotWidget) {
 	pMultiPlotWidget->addChart( chartVec[4],2,0 );
 
 }
-
-//// Make XY plots for a given angle
-//void VPPPlotSet::plotXY(size_t iWa) {
-//
-//	// Get the number of valid results (discard==false)
-//	size_t numValidResults = pResults_->getNumValidResultsForAngle(iWa);
-//
-//	if(!numValidResults){
-//		std::cout<<"No valid results found for plotXY! \n";
-//		return;
-//	}
-//
-//	// Prepare the data for the plotter
-//	Eigen::ArrayXd windSpeeds(numValidResults);
-//	Eigen::ArrayXd boatVelocity(numValidResults);
-//	Eigen::ArrayXd boatHeel(numValidResults);
-//	Eigen::ArrayXd boatFlat(numValidResults);
-//	Eigen::ArrayXd boatB(numValidResults);
-//	Eigen::ArrayXd dF(numValidResults);
-//	Eigen::ArrayXd dM(numValidResults);
-//
-//	// Loop on all results but only plot the valid ones
-//	size_t idx=0;
-//	for(size_t iWv=0; iWv<pResults_->windVelocitySize(); iWv++) {
-//
-//		if(!pResults_->get(iWv,iWa).discard()) {
-//
-//			windSpeeds(idx)  = pResults_->get(iWv,iWa).getTWV();
-//			boatVelocity(idx)= pResults_->get(iWv,iWa).getX()->coeff(0);
-//			boatHeel(idx)    = mathUtils::toDeg(pResults_->get(iWv,iWa).getX()->coeff(1));
-//			boatB(idx)    	 = pResults_->get(iWv,iWa).getX()->coeff(2);
-//			boatFlat(idx)    = pResults_->get(iWv,iWa).getX()->coeff(3);
-//			dF(idx)          = pResults_->get(iWv,iWa).getdF();
-//			dM(idx)          = pResults_->get(iWv,iWa).getdM();
-//			idx++;
-//
-//		}
-//	}
-//
-//	char title[256];
-//	sprintf(title,"AWA= %4.2f", toDeg(pResults_->getWind()->getTWA(iWa)) );
-//
-//	// Instantiate a plotter for the velocity
-//	VPPPlotter plotter;
-//	string t=string("Boat Speed")+string(title);
-//	plotter.plot(windSpeeds,boatVelocity,windSpeeds,boatVelocity,
-//			t,"Wind Speed [m/s]","Boat Speed [m/s]");
-//
-//	// Instantiate a plotter for the heel
-//	VPPPlotter plotter2;
-//	string t2=string("Boat Heel")+string(title);
-//	plotter2.plot(windSpeeds,boatHeel,windSpeeds,boatHeel,
-//			t2,"Wind Speed [m/s]","Boat Heelº");
-//
-//	// Instantiate a plotter for the Flat
-//	VPPPlotter plotter3;
-//	string t3=string("Sail FLAT")+string(title);
-//	plotter3.plot(windSpeeds,boatFlat,windSpeeds,boatFlat,
-//			t3,"Wind Speed [m/s]","Sail FLAT [-]");
-//
-//	// Instantiate a plotter for the position of the movable crew B
-//	VPPPlotter plotter4;
-//	string t4=string("Crew position")+string(title);
-//	plotter4.plot(windSpeeds,boatB,windSpeeds,boatB,
-//			t4,"Wind Speed [m/s]","Position of the movable crew [m]");
-//
-//	// Instantiate a plotter for the residuals
-//	VPPPlotter plotter5;
-//	string t5=string("Residuals")+string(title);
-//	plotter5.plot(windSpeeds,dF,windSpeeds,dM,
-//			t5,"Wind Speed [m/s]","Residuals [N,N*m]");
-//}
-//
 
 // Returns the dimensionality of this problem (the size of the state vector)
 size_t VPPSolverBase::getDimension() const {

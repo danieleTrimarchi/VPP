@@ -661,7 +661,7 @@ std::vector<VppXYCustomPlotWidget*> ResultContainer::plotXY() {
 	std::vector<VppXYCustomPlotWidget*> retVec;
 
 	char title[256];
-	sprintf(title,"AWA= %4.2f", toDeg(getWind()->getTWA(iWa)) );
+	sprintf(title,"AWA= %4.2f[º]", toDeg(getWind()->getTWA(iWa)) );
 
 	// Instantiate the polar plot widget that will be assigned to retVec
 	VppXYCustomPlotWidget* pUPlot= new VppXYCustomPlotWidget(

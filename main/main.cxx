@@ -79,14 +79,6 @@ int main(int argc, char** argv) {
 //			}
 //
 // --
-//			else if( s == string("plotXY")) {
-//				std::cout<<"Please enter the index of the wind angle: \n";
-//				int idx;
-//				cin >> idx;
-//				solverFactory.get()->plotXY(idx);
-//			}
-//
-// --
 //
 //			else if( s == string("bounds"))
 //				solverFactory.get()->printResultBounds();
