@@ -136,11 +136,12 @@ void VppPolarCustomPlotWidget::select(QCPAbstractPlottable* pCurveToSelect) {
 
 	QCPCurve* pCurve = qobject_cast<QCPCurve*>(pCurveToSelect);
 	if(!pCurve)
-		throw VPPException(HERE, "Could not cast to QCPGraph!");
+		throw VPPException(HERE, "Could not cast to QCPCurve!");
 
 	pCurve->setSelection(QCPDataSelection(pCurve->data()->dataRange()));
 
 }
+
 
 // Show the coordinates of a point - connected to mouseMoveEvent.
 // Implemented of the advice given in: https://stackoverflow.com/questions/

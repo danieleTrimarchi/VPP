@@ -117,7 +117,7 @@ Result::~Result(){
 void Result::print(FILE* outStream) const {
 
 	// Print the header begin
-	fprintf(outStream,headerBegin_.c_str());
+	fprintf(outStream,"%s",headerBegin_.c_str());
 
 	fprintf(outStream,"%zu %8.6f %zu %8.6f  -- ", itwv_, twv_, itwa_, mathUtils::toDeg(twa_));
 	for(size_t iRes=0; iRes<result_.size(); iRes++)
@@ -128,7 +128,7 @@ void Result::print(FILE* outStream) const {
 	fprintf(outStream,"  --  %i ", discard_ );
 
 	// Print the header end
-	fprintf(outStream,headerEnd_.c_str());
+	fprintf(outStream,"%s",headerEnd_.c_str());
 }
 
 // How many columns for printing out this result?

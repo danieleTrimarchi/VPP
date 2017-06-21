@@ -1,5 +1,6 @@
 #include "VppCustomPlotWidgetBase.h"
 #include <iostream>
+#include "VppException.h"
 
 VppCustomPlotWidgetBase::VppCustomPlotWidgetBase(
 		QString title, QString xAxisLabel, QString yAxisLabel,
@@ -48,10 +49,46 @@ VppCustomPlotWidgetBase::VppCustomPlotWidgetBase(
 	connect(this, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
 	connect(this, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
 
+  // setup policy and connect slot for context menu popup (from : qcustomplot interactions example)
+  this->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+
 }
 
 // Dtor
 VppCustomPlotWidgetBase::~VppCustomPlotWidgetBase() {
+}
+
+
+// Manage what happens when the user right-clicks.
+// From : qcustomplot interaction example
+void VppCustomPlotWidgetBase::contextMenuRequest(QPoint pos) {
+
+  QMenu *menu = new QMenu(this);
+  menu->setAttribute(Qt::WA_DeleteOnClose);
+
+  if (selectedPlottables().size() > 0)
+    menu->addAction("Hide selected curve", this, SLOT(hideSelected(selectedPlottables().first())));
+  // else
+ // 	menu->addAction("filter", this, SLOT(filter()));
+
+  menu->popup(mapToGlobal(pos));
+}
+
+void VppCustomPlotWidgetBase::hideSelected(QCPAbstractPlottable* pSelectedCurve) {
+
+	// Hide the curve
+	pSelectedCurve->setVisible(false);
+
+	// Get a handle to the legend
+	QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pSelectedCurve);
+
+	// Gray-out the legend
+	const QColor color;
+	legendItemToGrayOut->setTextColor(color.red());
+
+	replot();
+
 }
 
 // Add some data to the plot

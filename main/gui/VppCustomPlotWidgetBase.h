@@ -45,6 +45,9 @@ protected :
 	// QCPCurves (polar plots)
   virtual void select(QCPAbstractPlottable *) =0;
 
+  /// Hide a curve that has been selected
+  void hideSelected(QCPAbstractPlottable *);
+
 protected slots:
 
 	/// Normally, axis base line, axis tick labels and axis labels are selectable separately, but we want
@@ -76,6 +79,11 @@ protected slots:
 	/// Pure virtual because the format of this method must change according to
 	/// the type of plot - polar plot must convert the xy coordinates to polar!
 	virtual void showPointToolTip(QMouseEvent*) =0;
+
+	/// Manage what happens when the user right-clicks.
+	/// From : qcustomplot interaction example
+  void contextMenuRequest(QPoint pos);
+
 
 };
 
