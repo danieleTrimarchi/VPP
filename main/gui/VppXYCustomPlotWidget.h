@@ -23,10 +23,10 @@ class VppXYCustomPlotWidget : public VppCustomPlotWidgetBase {
 		/// Select a curve - in this case a QCPGraphs
 		virtual void select(QCPAbstractPlottable *);
 
-	protected slots:
+		protected slots:
 
-		/// Hide a selected curve - in this case a QCPGraphs
-		virtual void hideSelected();
+		/// Hide/Show a selected curve - in this case a QCPGraphs
+		virtual void toggleSelected();
 
 		/// Show the coordinates of a point - connected to mouseMoveEvent.
 		/// Implemented of the advice given in: https://stackoverflow.com/questions/

@@ -67,9 +67,11 @@ void VppCustomPlotWidgetBase::contextMenuRequest(QPoint pos) {
   QMenu *menu = new QMenu(this);
   menu->setAttribute(Qt::WA_DeleteOnClose);
 
-  std::cout<<"In ContextMenuRequest, selectedPlottable size= "<<selectedPlottables().size()<<std::endl;
   if (selectedPlottables().size() > 0){
-    menu->addAction("Hide selected curve", this, SLOT(hideSelected()));
+  	if(selectedPlottables().first()->visible())
+  		menu->addAction("Hide selected curve", this, SLOT(toggleSelected()));
+  	else
+  		menu->addAction("Show selected curve", this, SLOT(toggleSelected()));
   }
   // else
  // 	menu->addAction("filter", this, SLOT(filter()));

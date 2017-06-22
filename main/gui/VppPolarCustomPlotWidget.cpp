@@ -142,25 +142,35 @@ void VppPolarCustomPlotWidget::select(QCPAbstractPlottable* pCurveToSelect) {
 
 }
 
-void VppPolarCustomPlotWidget::hideSelected() {
+void VppPolarCustomPlotWidget::toggleSelected() {
 
 	QCPAbstractPlottable* pSelectedPlottable = selectedPlottables().first();
 
-	std::cout<<" HideSelected for polar called\n";
 	QCPCurve* pCurve = qobject_cast<QCPCurve*>(pSelectedPlottable);
 	if(!pCurve)
 		throw VPPException(HERE, "Could not cast this plottable to QCPCurve!");
 
-	// Hide the curve
-	pCurve->setVisible(false);
+	// The curve is visible : hide it
+	if(pCurve->visible()){
 
-	// Get a handle to the legend and modify it
-	QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pCurve);
+		// Hide the curve
+		pCurve->setVisible(false);
 
-	// Gray-out the legend
-	const QColor color;
-	legendItemToGrayOut->setTextColor(color.red());
+		// Get a handle to the legend and modify it
+		QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pCurve);
 
+		// Gray-out the legend
+		const QColor color;
+		legendItemToGrayOut->setTextColor(color.red());
+
+	} else {
+		// The curve is hidden : show it
+		pCurve->setVisible(true);
+
+		// todo dtrimarchi : do something to restore the initial legend style
+	}
+
+	// Replot
 	replot();
 }
 

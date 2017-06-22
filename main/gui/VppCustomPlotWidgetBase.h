@@ -81,8 +81,8 @@ protected slots:
 	/// From : qcustomplot interaction example
   void contextMenuRequest(QPoint pos);
 
-  /// Hide a curve that has been selected
-  virtual void hideSelected() =0;
+  /// Hide/show a curve that has been selected
+  virtual void toggleSelected() =0;
 
 };
 

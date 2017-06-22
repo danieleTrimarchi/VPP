@@ -34,24 +34,33 @@ void VppXYCustomPlotWidget::select(QCPAbstractPlottable* pGraphToSelect) {
 }
 
 // Hide a selected curve - in this case a QCPGraphs
-void VppXYCustomPlotWidget::hideSelected() {
+void VppXYCustomPlotWidget::toggleSelected() {
 
 	QCPAbstractPlottable* pSelectedPlottable = selectedPlottables().first();
 
-	std::cout<<" HideSelected for XY called\n";
 	QCPGraph* pGraph = qobject_cast<QCPGraph*>(pSelectedPlottable);
 	if(!pGraph)
-		throw VPPException(HERE, "Could not cast to QCPGraph!");
+		throw VPPException(HERE, "Could not cast this plottable to QCPGraph!");
 
-	// Hide the curve
-	pGraph->setVisible(false);
+	// The curve is visible : hide it
+	if(pGraph->visible()){
 
-	// Get a handle to the legend and modify it
-	QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pGraph);
+		// Hide the curve
+		pGraph->setVisible(false);
 
-	// Gray-out the legend
-	const QColor color;
-	legendItemToGrayOut->setTextColor(color.red());
+		// Get a handle to the legend and modify it
+		QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pGraph);
+
+		// Gray-out the legend
+		const QColor color;
+		legendItemToGrayOut->setTextColor(color.red());
+
+	} else {
+		// The curve is hidden : show it
+		pGraph->setVisible(true);
+
+		// todo dtrimarchi : do something to restore the initial legend style
+	}
 
 	replot();
 
