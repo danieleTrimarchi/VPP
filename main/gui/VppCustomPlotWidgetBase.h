@@ -85,10 +85,10 @@ protected slots:
   virtual void toggleSelected() =0;
 
   /// Show all curves in the plot
-  virtual void showAllCurves() =0;
+  virtual void showAllCurves();
 
   /// Hide all curves in the plot
-  virtual void hideAllCurves() =0;
+  virtual void hideAllCurves();
 
 };
 

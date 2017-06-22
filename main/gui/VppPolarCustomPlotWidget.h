@@ -34,12 +34,6 @@ class VppPolarCustomPlotWidget : public VppCustomPlotWidgetBase {
 		/// Hide/show a selected curve - in this case a QCPCurve
 		virtual void toggleSelected();
 
-		/// Show all curves in the plot
-	  virtual void showAllCurves();
-
-	  /// Hide all curves in the plot
-	  virtual void hideAllCurves();
-
 		/// Show the coordinates of a point - connected to mouseMoveEvent.
 		/// Implemented of the advice given in: https://stackoverflow.com/questions/
 		/// 18140446/display-the-plot-values-on-mouse-over-detect-scatter-points

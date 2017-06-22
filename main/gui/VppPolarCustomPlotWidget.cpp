@@ -174,44 +174,6 @@ void VppPolarCustomPlotWidget::toggleSelected() {
 	replot();
 }
 
-// Show all curves in the plot
-void VppPolarCustomPlotWidget::showAllCurves() {
-
-	for (int i=0; i<plottableCount(); ++i) {
-
-		// Get a ptr to the i-th graph curve
-		QCPAbstractPlottable* pPlottable = plottable(i);
-
-		QCPCurve* pCurve = qobject_cast<QCPCurve*>(pPlottable);
-		if(!pCurve)
-			throw VPPException(HERE, "Could not cast this plottable to QCPCurve!");
-
-		pCurve->setVisible(true);
-
-		// todo dtrimarchi: do whatever needed for the legend
-
-	}
-}
-
-// Hide all curves in the plot
-void VppPolarCustomPlotWidget::hideAllCurves() {
-
-	for (int i=0; i<plottableCount(); ++i) {
-
-		// Get a ptr to the i-th graph curve
-		QCPAbstractPlottable* pPlottable = plottable(i);
-
-		QCPCurve* pCurve = qobject_cast<QCPCurve*>(pPlottable);
-		if(!pCurve)
-			throw VPPException(HERE, "Could not cast this plottable to QCPCurve!");
-
-		pCurve->setVisible(false);
-
-		// todo dtrimarchi: do whatever needed for the legend
-
-	}
-}
-
 // Show the coordinates of a point - connected to mouseMoveEvent.
 // Implemented of the advice given in: https://stackoverflow.com/questions/
 // 18140446/display-the-plot-values-on-mouse-over-detect-scatter-points

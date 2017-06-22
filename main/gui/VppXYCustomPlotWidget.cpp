@@ -66,30 +66,6 @@ void VppXYCustomPlotWidget::toggleSelected() {
 
 }
 
-// Show all curves in the plot
-void VppXYCustomPlotWidget::showAllCurves() {
-
-	for(size_t iGraph=0; iGraph<graphCount(); iGraph++) {
-		QCPGraph* pGraph= graph(iGraph);
-		pGraph->setVisible(true);
-
-		// todo dtrimarchi: do whatever needed for the legend
-	}
-	replot();
-}
-
-// Hide all curves in the plot
-void VppXYCustomPlotWidget::hideAllCurves() {
-
-	for(size_t iGraph=0; iGraph<graphCount(); iGraph++) {
-		QCPGraph* pGraph= graph(iGraph);
-		pGraph->setVisible(false);
-
-		// todo dtrimarchi: do whatever needed for the legend
-	}
-	replot();
-}
-
 // Show the coordinates of a point - connected to mouseMoveEvent.
 // Implemented of the advice given in: https://stackoverflow.com/questions/
 // 18140446/display-the-plot-values-on-mouse-over-detect-scatter-points

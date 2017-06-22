@@ -83,6 +83,31 @@ void VppCustomPlotWidgetBase::contextMenuRequest(QPoint pos) {
   menu->popup(mapToGlobal(pos));
 }
 
+// Hide all curves in the plot
+void VppCustomPlotWidgetBase::hideAllCurves() {
+
+	for (int i=0; i<plottableCount(); ++i) {
+		 plottable(i)->setVisible(false);
+
+		// todo dtrimarchi: do whatever needed for the legend
+
+	}
+	replot();
+}
+
+// Show all curves in the plot
+void VppCustomPlotWidgetBase::showAllCurves() {
+
+	for (int i=0; i<plottableCount(); ++i) {
+		plottable(i)->setVisible(true);
+
+		// todo dtrimarchi: do whatever needed for the legend
+	}
+
+	replot();
+}
+
+
 // Add some data to the plot
 void VppCustomPlotWidgetBase::addData(QVector<double>& x, QVector<double>& y,
 		QString dataLabel/*=""*/,
