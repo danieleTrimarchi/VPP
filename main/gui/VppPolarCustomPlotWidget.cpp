@@ -150,24 +150,29 @@ void VppPolarCustomPlotWidget::toggleSelected() {
 	if(!pCurve)
 		throw VPPException(HERE, "Could not cast this plottable to QCPCurve!");
 
+	// Get a handle to the legend to modify it
+	QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pCurve);
+
+	// Declare a color
+	QColor color;
+
 	// The curve is visible : hide it
 	if(pCurve->visible()){
 
 		// Hide the curve
 		pCurve->setVisible(false);
 
-		// Get a handle to the legend and modify it
-		QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pCurve);
-
-		// Gray-out the legend
-		const QColor color;
-		legendItemToGrayOut->setTextColor(color.red());
+		// Write the legend in red
+		color.setRgb(255,0,0);
+		legendItemToGrayOut->setTextColor(color);
 
 	} else {
 		// The curve is hidden : show it
 		pCurve->setVisible(true);
 
-		// todo dtrimarchi : do something to restore the initial legend style
+		// Restore the color of the legend to black
+		color.setRgb(0,0,0);
+		legendItemToGrayOut->setTextColor(color);
 	}
 
 	// Replot

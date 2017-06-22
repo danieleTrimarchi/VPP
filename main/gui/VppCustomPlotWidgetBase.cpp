@@ -49,9 +49,9 @@ VppCustomPlotWidgetBase::VppCustomPlotWidgetBase(
 	connect(this, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
 	connect(this, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
 
-  // setup policy and connect slot for context menu popup (from : qcustomplot interactions example)
-  this->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+	// setup policy and connect slot for context menu popup (from : qcustomplot interactions example)
+	this->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
 
 }
 
@@ -64,33 +64,38 @@ VppCustomPlotWidgetBase::~VppCustomPlotWidgetBase() {
 // From : qcustomplot interaction example
 void VppCustomPlotWidgetBase::contextMenuRequest(QPoint pos) {
 
-  QMenu *menu = new QMenu(this);
-  menu->setAttribute(Qt::WA_DeleteOnClose);
+	QMenu *menu = new QMenu(this);
+	menu->setAttribute(Qt::WA_DeleteOnClose);
 
-  if (selectedPlottables().size() > 0){
-  	if(selectedPlottables().first()->visible())
-  		menu->addAction("Hide selected curve", this, SLOT(toggleSelected()));
-  	else
-  		menu->addAction("Show selected curve", this, SLOT(toggleSelected()));
-  }
+	if (selectedPlottables().size() > 0){
+		if(selectedPlottables().first()->visible())
+			menu->addAction("Hide selected curve", this, SLOT(toggleSelected()));
+		else
+			menu->addAction("Show selected curve", this, SLOT(toggleSelected()));
+	}
 
-  menu->addAction("Show all curves", this, SLOT(showAllCurves()));
-  menu->addAction("Hide all curves", this, SLOT(hideAllCurves()));
+	menu->addAction("Show all curves", this, SLOT(showAllCurves()));
+	menu->addAction("Hide all curves", this, SLOT(hideAllCurves()));
 
-  // else
- // 	menu->addAction("filter", this, SLOT(filter()));
+	// else
+	// 	menu->addAction("filter", this, SLOT(filter()));
 
-  menu->popup(mapToGlobal(pos));
+	menu->popup(mapToGlobal(pos));
 }
 
 // Hide all curves in the plot
 void VppCustomPlotWidgetBase::hideAllCurves() {
 
 	for (int i=0; i<plottableCount(); ++i) {
-		 plottable(i)->setVisible(false);
+		plottable(i)->setVisible(false);
 
-		// todo dtrimarchi: do whatever needed for the legend
+		// Get a handle to the legend and modify it
+		QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(plottable(i));
 
+		// Write the legend in red
+		QColor color;
+		color.setRgb(255,0,0);
+		legendItemToGrayOut->setTextColor(color);
 	}
 	replot();
 }
@@ -101,7 +106,13 @@ void VppCustomPlotWidgetBase::showAllCurves() {
 	for (int i=0; i<plottableCount(); ++i) {
 		plottable(i)->setVisible(true);
 
-		// todo dtrimarchi: do whatever needed for the legend
+		// Get a handle to the legend and modify it
+		QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(plottable(i));
+
+		// Restore the color of the legend to black
+		QColor color;
+		color.setRgb(0,0,0);
+		legendItemToGrayOut->setTextColor(color);
 	}
 
 	replot();
@@ -131,8 +142,8 @@ void VppCustomPlotWidgetBase::addData(QVector<double>& x, QVector<double>& y,
 			QPen graphPen;
 			graphPen.setColor(QColor(rand()%245+10, rand()%245+10, rand()%245+10));
 			graph()->setPen(graphPen);
-			}
-			break;
+		}
+		break;
 
 		case lineStyle::showPoints :
 			graph()->setScatterStyle((QCPScatterStyle::ScatterShape::ssCircle));
@@ -150,13 +161,13 @@ void VppCustomPlotWidgetBase::addQuivers(QVector<double>& x, QVector<double>& y,
 	// Add the arrows now
 	for(size_t i=0; i<x.size();i++){
 
-			// Instantiate the quiver and set its style
-			QCPItemLine* arrow = new QCPItemLine(this);
-			arrow->setHead(QCPLineEnding::esLineArrow);
+		// Instantiate the quiver and set its style
+		QCPItemLine* arrow = new QCPItemLine(this);
+		arrow->setHead(QCPLineEnding::esLineArrow);
 
-			// Set the coordinates of the quiver
-			arrow->start->setCoords(x[i], y[i]);
-			arrow->end->setCoords(x[i]+dx[i], y[i]+dy[i]);
+		// Set the coordinates of the quiver
+		arrow->start->setCoords(x[i], y[i]);
+		arrow->end->setCoords(x[i]+dx[i], y[i]+dy[i]);
 	}
 }
 
@@ -240,7 +251,7 @@ void VppCustomPlotWidgetBase::changeGraphSelection(int key){
 
 			// Refresh the plot and visualize the new selection
 			replot();
-            
+
 			// Break, otherwise we keep looping and selecting items
 			break;
 

@@ -42,24 +42,30 @@ void VppXYCustomPlotWidget::toggleSelected() {
 	if(!pGraph)
 		throw VPPException(HERE, "Could not cast this plottable to QCPGraph!");
 
+	// Get a handle to the legend and modify it
+	QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pGraph);
+
+	// Declare a color
+	QColor color;
+
 	// The curve is visible : hide it
 	if(pGraph->visible()){
 
 		// Hide the curve
 		pGraph->setVisible(false);
 
-		// Get a handle to the legend and modify it
-		QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pGraph);
-
-		// Gray-out the legend
-		const QColor color;
-		legendItemToGrayOut->setTextColor(color.red());
+		// Write the legend in red
+		color.setRgb(255,0,0);
+		legendItemToGrayOut->setTextColor(color);
 
 	} else {
 		// The curve is hidden : show it
 		pGraph->setVisible(true);
 
-		// todo dtrimarchi : do something to restore the initial legend style
+		// Restore the color of the legend to black
+		color.setRgb(0,0,0);
+		legendItemToGrayOut->setTextColor(color);
+
 	}
 
 	replot();
