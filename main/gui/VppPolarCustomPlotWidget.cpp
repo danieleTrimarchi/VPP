@@ -142,6 +142,27 @@ void VppPolarCustomPlotWidget::select(QCPAbstractPlottable* pCurveToSelect) {
 
 }
 
+void VppPolarCustomPlotWidget::hideSelected() {
+
+	QCPAbstractPlottable* pSelectedPlottable = selectedPlottables().first();
+
+	std::cout<<" HideSelected for polar called\n";
+	QCPCurve* pCurve = qobject_cast<QCPCurve*>(pSelectedPlottable);
+	if(!pCurve)
+		throw VPPException(HERE, "Could not cast this plottable to QCPCurve!");
+
+	// Hide the curve
+	pCurve->setVisible(false);
+
+	// Get a handle to the legend and modify it
+	QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pCurve);
+
+	// Gray-out the legend
+	const QColor color;
+	legendItemToGrayOut->setTextColor(color.red());
+
+	replot();
+}
 
 // Show the coordinates of a point - connected to mouseMoveEvent.
 // Implemented of the advice given in: https://stackoverflow.com/questions/

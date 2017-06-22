@@ -1,5 +1,6 @@
 #include "VppXYCustomPlotWidget.h"
 #include "VPPException.h"
+#include <iostream>
 
 VppXYCustomPlotWidget::VppXYCustomPlotWidget(
 		QString title, QString xAxisLabel, QString yAxisLabel,
@@ -29,6 +30,30 @@ void VppXYCustomPlotWidget::select(QCPAbstractPlottable* pGraphToSelect) {
 		throw VPPException(HERE, "Could not cast to QCPGraph!");
 
 	pGraph->setSelection(QCPDataSelection(pGraph->data()->dataRange()));
+
+}
+
+// Hide a selected curve - in this case a QCPGraphs
+void VppXYCustomPlotWidget::hideSelected() {
+
+	QCPAbstractPlottable* pSelectedPlottable = selectedPlottables().first();
+
+	std::cout<<" HideSelected for XY called\n";
+	QCPGraph* pGraph = qobject_cast<QCPGraph*>(pSelectedPlottable);
+	if(!pGraph)
+		throw VPPException(HERE, "Could not cast to QCPGraph!");
+
+	// Hide the curve
+	pGraph->setVisible(false);
+
+	// Get a handle to the legend and modify it
+	QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pGraph);
+
+	// Gray-out the legend
+	const QColor color;
+	legendItemToGrayOut->setTextColor(color.red());
+
+	replot();
 
 }
 

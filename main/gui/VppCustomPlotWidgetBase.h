@@ -39,14 +39,11 @@ protected :
 	virtual void mouseDoubleClickEvent(QMouseEvent*);
 
   /// Overrides the key actions
-  virtual void keyPressEvent(QKeyEvent *event);
+  virtual void keyPressEvent(QKeyEvent*);
 
   /// Select a curve - either a QCPGraphs (XY plots) or
 	// QCPCurves (polar plots)
-  virtual void select(QCPAbstractPlottable *) =0;
-
-  /// Hide a curve that has been selected
-  void hideSelected(QCPAbstractPlottable *);
+  virtual void select(QCPAbstractPlottable*) =0;
 
 protected slots:
 
@@ -84,6 +81,8 @@ protected slots:
 	/// From : qcustomplot interaction example
   void contextMenuRequest(QPoint pos);
 
+  /// Hide a curve that has been selected
+  virtual void hideSelected() =0;
 
 };
 

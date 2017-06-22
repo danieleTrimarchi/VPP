@@ -67,28 +67,14 @@ void VppCustomPlotWidgetBase::contextMenuRequest(QPoint pos) {
   QMenu *menu = new QMenu(this);
   menu->setAttribute(Qt::WA_DeleteOnClose);
 
-  if (selectedPlottables().size() > 0)
-    menu->addAction("Hide selected curve", this, SLOT(hideSelected(selectedPlottables().first())));
+  std::cout<<"In ContextMenuRequest, selectedPlottable size= "<<selectedPlottables().size()<<std::endl;
+  if (selectedPlottables().size() > 0){
+    menu->addAction("Hide selected curve", this, SLOT(hideSelected()));
+  }
   // else
  // 	menu->addAction("filter", this, SLOT(filter()));
 
   menu->popup(mapToGlobal(pos));
-}
-
-void VppCustomPlotWidgetBase::hideSelected(QCPAbstractPlottable* pSelectedCurve) {
-
-	// Hide the curve
-	pSelectedCurve->setVisible(false);
-
-	// Get a handle to the legend
-	QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pSelectedCurve);
-
-	// Gray-out the legend
-	const QColor color;
-	legendItemToGrayOut->setTextColor(color.red());
-
-	replot();
-
 }
 
 // Add some data to the plot

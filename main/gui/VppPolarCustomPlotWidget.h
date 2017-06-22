@@ -31,6 +31,9 @@ protected:
 
 protected slots:
 
+	/// Hide a selected curve - in this case a QCPGraphs
+	virtual void hideSelected();
+
 		/// Show the coordinates of a point - connected to mouseMoveEvent.
 		/// Implemented of the advice given in: https://stackoverflow.com/questions/
 		/// 18140446/display-the-plot-values-on-mouse-over-detect-scatter-points
