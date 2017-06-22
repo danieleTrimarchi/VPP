@@ -73,6 +73,10 @@ void VppCustomPlotWidgetBase::contextMenuRequest(QPoint pos) {
   	else
   		menu->addAction("Show selected curve", this, SLOT(toggleSelected()));
   }
+
+  menu->addAction("Show all curves", this, SLOT(showAllCurves()));
+  menu->addAction("Hide all curves", this, SLOT(hideAllCurves()));
+
   // else
  // 	menu->addAction("filter", this, SLOT(filter()));
 

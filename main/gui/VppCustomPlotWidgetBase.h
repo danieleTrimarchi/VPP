@@ -84,6 +84,12 @@ protected slots:
   /// Hide/show a curve that has been selected
   virtual void toggleSelected() =0;
 
+  /// Show all curves in the plot
+  virtual void showAllCurves() =0;
+
+  /// Hide all curves in the plot
+  virtual void hideAllCurves() =0;
+
 };
 
 #endif // VPP_XY_CUSTOMPLOTWIDGET_H
