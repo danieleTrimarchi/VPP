@@ -1,9 +1,8 @@
-Change the legend text color when hiding a curve!
+Verify that tests still run…
 
 ————
 
 Michele: 
-	Polars and table -> chose data to visualize. Tick selection
 	axes equal -> almost functional, perhaps ask Olivier
 	Stability curve -> centre of buoyancy 
 	Allow entering sail coefficients
@@ -16,8 +15,6 @@ See RhinoAPI for getting LPP data
 - Is it possible to compute analytical derivatives instead of numerical derivatives by finite differences? Presumably yes, I only need to write the code and check!
 => COMPUTING THE DERIVATIVE OF A B-SPLINE! 
 Well, this is painful because we do not have the expressions for the 
-
-- logForCxx : drive the output with env vars
 
 - add a scons target: scons makeTest : ask Stephane about execution path
 	Hp : the code could simply search the files in a target path defined 

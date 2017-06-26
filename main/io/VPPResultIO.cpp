@@ -105,7 +105,7 @@ void VPPResultIO::parseSection(std::ifstream& infile){
 			pResults_->remove(itwv,itwa);
 
 		// Debug: print to screen the Result we just read
-		pResults_->get(itwv,itwa).print();
+		// pResults_->get(itwv,itwa).print();
 
 	}
 }

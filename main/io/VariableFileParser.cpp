@@ -156,7 +156,7 @@ void VariableFileParser::parseSection(std::ifstream& infile) {
 	}
 
 	// Debug check : make sure the variables have been read correcly
-	print();
+	//print();
 
 	// make sure we have all the variables we need and that
 	// the values are reasonable

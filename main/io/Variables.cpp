@@ -78,14 +78,14 @@ const Variable& VarSet::operator [] (string varName) const {
 void VarSet::print(FILE* outStream/*=stdout*/) {
 
 	// Print the header begin
-	fprintf( outStream, headerBegin_.c_str() );
+	fprintf( outStream, "%s\n", headerBegin_.c_str() );
 
 	// Print the variables
 	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it)
 		fprintf(outStream, "%s : %8.6f \n", it->varName_.c_str(), it->val_ );
 
 	// Print the header end
-	fprintf( outStream, headerEnd_.c_str() );
+	fprintf( outStream, "%s\n", headerEnd_.c_str() );
 
 }
 

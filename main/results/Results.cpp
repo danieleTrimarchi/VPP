@@ -116,19 +116,14 @@ Result::~Result(){
 // PrintOut the values stored in this result
 void Result::print(FILE* outStream) const {
 
-	// Print the header begin
-	fprintf(outStream,"%s",headerBegin_.c_str());
-
 	fprintf(outStream,"%zu %8.6f %zu %8.6f  -- ", itwv_, twv_, itwa_, mathUtils::toDeg(twa_));
 	for(size_t iRes=0; iRes<result_.size(); iRes++)
 		fprintf(outStream,"  %8.6e",result_[iRes]);
 	fprintf(outStream,"  --  ");
 	for(size_t i=0; i<residuals_.size(); i++)
 		fprintf(outStream,"  %8.6e", residuals_(i) );
-	fprintf(outStream,"  --  %i ", discard_ );
+	fprintf(outStream,"  --  %i\n", discard_ );
 
-	// Print the header end
-	fprintf(outStream,"%s",headerEnd_.c_str());
 }
 
 // How many columns for printing out this result?
@@ -520,9 +515,15 @@ void ResultContainer::print(FILE* outStream) {
 	fprintf(outStream,  "%%  [-]    [m/s]    [-]    [º]  -- [m/s] [rad] [m]  [-] --  [N]  [N*m]  --         \n");
 	fprintf(outStream,  "%%----------------------------------------------------------------------------------\n");
 
+	// Print the header begin
+	fprintf(outStream,"%s\n",Result::headerBegin_.c_str());
+
 	for(size_t iWv=0; iWv<nWv_; iWv++)
 		for(size_t iWa=0; iWa<nWa_; iWa++)
 			resMat_[iWv][iWa].print(outStream);
+
+	// Print the header end
+	fprintf(outStream,"%s\n",Result::headerEnd_.c_str());
 }
 
 // CLear the result vector

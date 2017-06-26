@@ -1329,6 +1329,7 @@ void TVPPTest::vppResultIOTest() {
 
 	// Read the results from file and push them back to a new ResultContainer
 	VPPResultIO reader(&parser, &resReadContainer);
+
 	reader.parse("testFiles/testResult.vpp");
 
 	// Compare the results with the baseline
