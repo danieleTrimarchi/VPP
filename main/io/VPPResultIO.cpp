@@ -54,7 +54,9 @@ void VPPResultIO::parse(string fileName){
 	std::string line;
 	while(std::getline(infile,line)){
 
+		std::cout<<"Got line: "<<line<<std::endl;
 		if(line==Result::headerBegin_){
+			std::cout<<"Line IS headerBegin!"<<std::endl;
 			parseSection(infile);
 			break;
 		}
@@ -67,7 +69,7 @@ void VPPResultIO::parseSection(std::ifstream& infile){
 	while(std::getline(infile,line)){
 
 		// printout the line we have read
-		// std::cout<<" Original line = "<<line<<std::endl;
+		std::cout<<" Original line = "<<line<<std::endl;
 
 		// Keep reading while we find the end marker
 		if(line==Result::headerEnd_)

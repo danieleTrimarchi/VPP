@@ -82,7 +82,7 @@ void VarSet::print(FILE* outStream/*=stdout*/) {
 
 	// Print the variables
 	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it)
-		fprintf(outStream, "%s : %8.6f \n", it->varName_.c_str(), it->val_ );
+		fprintf(outStream, "%s  %8.6f \n", it->varName_.c_str(), it->val_ );
 
 	// Print the header end
 	fprintf( outStream, "%s\n", headerEnd_.c_str() );

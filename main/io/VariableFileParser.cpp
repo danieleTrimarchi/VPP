@@ -131,7 +131,7 @@ void VariableFileParser::parseSection(std::ifstream& infile) {
 	while(std::getline(infile,line)){
 
 		// printout the line we have read
-		//std::cout<<"-- Original line = "<<line<<std::endl;
+		std::cout<<"-- Original line = "<<line<<std::endl;
 
 		// Keep reading while we find the end marker
 		if(line==VarSet::headerEnd_)
@@ -143,7 +143,7 @@ void VariableFileParser::parseSection(std::ifstream& infile) {
 			// erase the string from the comment onward
 			line.erase(line.begin()+comment, line.end());
 		}
-		//std::cout<<"-- Uncommented line= "<<line<<std::endl;
+		std::cout<<"-- Uncommented line= "<<line<<std::endl;
 
 		// Do nothing for empty lines
 		if(line.empty())
@@ -181,7 +181,7 @@ void VariableFileParser::parseLine(string& line) {
 	Variable newVariable;
 	ss >> newVariable.varName_;
 	ss >> newVariable.val_;
-	//std::cout<< "-- Read: "<<newVariable<<std::endl;
+	std::cout<< "  -->> Read: "<<newVariable<<std::endl;
 
 	variables_.insert(newVariable);
 }
