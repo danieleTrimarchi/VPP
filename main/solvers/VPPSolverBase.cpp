@@ -3,7 +3,6 @@
 #include "Interpolator.h"
 #include <fstream>
 #include "mathUtils.h"
-#include "VPPPlotSet.h"
 #include "VPPResultIO.h"
 
 using namespace mathUtils;
@@ -228,90 +227,60 @@ const Eigen::VectorXd VPPSolverBase::getResult(int TWV, int TWA) {
 // Make a printout of the results for this run
 void VPPSolverBase::printResults() {
 
-	std::cout<<"==== VPPSolverBase RESULTS PRINTOUT ==================="<<std::endl;
 	pResults_->print();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
 
 }
 
 
 // Save the current results to file
-void VPPSolverBase::saveResults() {
+void VPPSolverBase::saveResults(string fileName) {
 
-	std::cout<<"==== VPPSolverBase RESULTS SAVING... ==================="<<std::endl;
-	VPPResultIO writer(pResults_.get());
-	writer.write();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
+	VPPResultIO writer(pParser_, pResults_.get());
+	writer.write(fileName);
 
 }
 
 // Read results from file and places them in the current results
-void VPPSolverBase::importResults() {
+void VPPSolverBase::importResults(string fileName) {
 
-	std::cout<<"==== VPPSolverBase RESULTS IMPORT... ==================="<<std::endl;
-	VPPResultIO reader(pResults_.get());
-	reader.read();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
+	VPPResultIO reader(pParser_,pResults_.get());
+	reader.parse(fileName);
 
 }
 
 // Make a printout of the result bounds for this run
 void VPPSolverBase::printResultBounds() {
 
-	std::cout<<"==== VPPSolverBase RESULT BOUNDS PRINTOUT ==================="<<std::endl;
 	pResults_->printBounds();
-	std::cout<<"---------------------------------------------------\n"<<std::endl;
 
 }
 
-// Make a printout of the results for this run
-void VPPSolverBase::plotPolars() {
+// Plot the polar plots for the state variables
+void VPPSolverBase::plotPolars(MultiplePlotWidget* pMultiPlotWidget) {
 
-	// Instantiate a VPPPlotSet and sub-contract the plot
-	VPPPlotSet plotSet(pResults_.get());
-	plotSet.plotPolars();
+	std::vector<VppPolarCustomPlotWidget*> chartVec= pResults_->plotPolars();
 
-}
-
-// Make a printout of the results for this run
-void VPPSolverBase::plotXY(size_t iWa) {
-
-	if( iWa>=pResults_->windAngleSize() ){
-		std::cout<<"User requested a wrong index! \n";
-		return;
-	}
-
-	// Ask the plotter manager to produce the plots given the
-	// results. The plotter manager prepares the results (makes
-	// sure to manage only valid results) and instantiates the
-	// plotter to prepare the XY plot
-	VPPPlotSet vppPlotSet(pResults_.get());
-	vppPlotSet.plotXY(iWa);
+	// Assigns to a vector of shared_ptrs, so this won't leak because
+	// the possession is taken by the MultiplePlotWidget
+	pMultiPlotWidget->addChart( chartVec[0],0,0 );
+	pMultiPlotWidget->addChart( chartVec[1],1,0 );
+	pMultiPlotWidget->addChart( chartVec[2],0,1 );
+	pMultiPlotWidget->addChart( chartVec[3],1,1 );
 
 }
 
-// Add this method for compatibility with the NR solver.
-void VPPSolverBase::plotJacobian() {
-	nrSolver_->plotJacobian();
-}
+// Plot the XY results
+void VPPSolverBase::plotXY(MultiplePlotWidget* pMultiPlotWidget) {
 
-void VPPSolverBase::plotGradient() {
+	std::vector<VppXYCustomPlotWidget*> chartVec= pResults_->plotXY();
 
-	// Define a linearization point
-	IOUtils io(pVppItemsContainer_->getWind());
-	Eigen::VectorXd xp;
-	io.askUserStateVector(xp);
-
-	// Instantiate a Gradient
-	VPPGradient G(xp,pVppItemsContainer_.get());
-
-	// ask the user which awv, awa
-	// For which TWV, TWA shall we plot the aero forces/moments?
-	size_t twv=0, twa=0;
-	io.askUserWindIndexes(twv, twa);
-
-	// call jacobian.testPlot
-	G.testPlot(twv, twa);
+	// Assigns to a vector of shared_ptrs, so this won't leak because
+	// the possession is taken by the MultiplePlotWidget
+	pMultiPlotWidget->addChart( chartVec[0],0,0 );
+	pMultiPlotWidget->addChart( chartVec[1],1,0 );
+	pMultiPlotWidget->addChart( chartVec[2],0,1 );
+	pMultiPlotWidget->addChart( chartVec[3],1,1 );
+	pMultiPlotWidget->addChart( chartVec[4],2,0 );
 
 }
 

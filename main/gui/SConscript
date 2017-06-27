@@ -1,0 +1,11 @@
+# Import the environement
+Import('env')
+
+# Clone the external environment
+localEnv = env.Clone()
+
+# Produce and return the objects to be used to link the main program
+obj = localEnv.Object( Glob('*.cpp')  + Glob('*.qrc') )
+Return('obj')
+
+

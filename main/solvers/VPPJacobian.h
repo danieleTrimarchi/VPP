@@ -33,12 +33,13 @@ class VPPJacobian : public Eigen::MatrixXd {
 		/// Compute this Jacobian
 		void run(int twv, int twa);
 
-		/// Produces a test plot for a range of values of the state variables
+		/// Produces a plot for a range of values of the state variables
 		/// in order to test for the coherence of the values that have been computed
-		void testPlot(int twv, int twa);
+		std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog&);
 
 		/// Destructor
 		~VPPJacobian();
+
 
 	private:
 
@@ -59,38 +60,6 @@ class VPPJacobian : public Eigen::MatrixXd {
 
 		/// Size of the complete optimization problem : u, phi, b, f.
 		size_t size_;
-};
-
-/// Class used to plot the Jacobian derivatives for a step that
-/// has failed to converge. Note that the class Jacobian contains a
-/// method 'test' used to check for the derivatives on a generic
-/// interval. The JacobianChecker differs from that method because
-/// it stores the actual iteration-wise history of Jacobian-solution
-class JacobianChecker {
-
-public:
-
-	/// Constructor
-	JacobianChecker();
-
-	/// Destructor
-	~JacobianChecker();
-
-	/// Buffer a Jacobian-state vector
-	void push_back(VPPJacobian& J, Eigen::VectorXd& x, Eigen::VectorXd& res );
-
-	/// Plot the Jacobian-state vector for the stored history
-	void testPlot();
-
-private:
-
-	/// Vector that buffers a Jacobian for each iteration
-	std::vector<VPPJacobian> jacobians_;
-
-	/// Vector that buffers the state vector x and the residual vector res
-	/// for each iteration
-	std::vector<Eigen::VectorXd> xs_, res_;
-
 };
 
 #endif

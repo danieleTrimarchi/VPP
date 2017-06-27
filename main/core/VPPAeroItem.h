@@ -8,6 +8,10 @@
 
 using namespace Physic;
 
+/// Forward declarations
+class MultiplePlotWidget;
+class VppTabDockWidget;
+
 class WindItem : public VPPItem {
 
 	public:
@@ -46,9 +50,6 @@ class WindItem : public VPPItem {
 
 		/// Returns the apparent wind velocity vector norm for this step
 		const double getAWNorm() const;
-
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -115,20 +116,18 @@ class SailCoefficientItem : public VPPItem {
 
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
-		virtual void plotInterpolatedCoefficients() const=0;
+		/// Fill a multiple plot
+		virtual void plotInterpolatedCoefficients( MultiplePlotWidget* ) const =0;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D_InterpolatedCoefficients() const=0;
+		virtual void plot_D_InterpolatedCoefficients( MultiplePlotWidget* ) const=0;
 
 		/// Plot the second derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D2_InterpolatedCoefficients() const=0;
-
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
+		virtual void plot_D2_InterpolatedCoefficients( MultiplePlotWidget* ) const=0;
 
 	protected:
 
@@ -195,22 +194,20 @@ class MainOnlySailCoefficientItem : public SailCoefficientItem {
 		/// Destructor
 		~MainOnlySailCoefficientItem();
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
-		virtual void plotInterpolatedCoefficients() const;
+		/// Fill a multiple plot
+		virtual void plotInterpolatedCoefficients( MultiplePlotWidget* ) const;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D_InterpolatedCoefficients() const;
+		virtual void plot_D_InterpolatedCoefficients(MultiplePlotWidget*) const;
 
 		/// Plot the second derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D2_InterpolatedCoefficients() const;
+		virtual void plot_D2_InterpolatedCoefficients(MultiplePlotWidget*) const;
 
 	private:
 
@@ -236,22 +233,20 @@ class MainAndJibCoefficientItem : public SailCoefficientItem {
 		/// Destructor
 		~MainAndJibCoefficientItem();
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
-		virtual void plotInterpolatedCoefficients() const;
+		/// Fill a multiple plot
+		virtual void plotInterpolatedCoefficients( MultiplePlotWidget* ) const;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D_InterpolatedCoefficients() const;
+		virtual void plot_D_InterpolatedCoefficients(MultiplePlotWidget*) const;
 
 		/// Plot the second derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D2_InterpolatedCoefficients() const;
+		virtual void plot_D2_InterpolatedCoefficients(MultiplePlotWidget*) const;
 
 	private:
 
@@ -277,22 +272,20 @@ class MainAndSpiCoefficientItem : public SailCoefficientItem {
 		/// Destructor
 		~MainAndSpiCoefficientItem();
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
-		virtual void plotInterpolatedCoefficients() const;
+		/// Fill a multiple plot
+		virtual void plotInterpolatedCoefficients( MultiplePlotWidget* ) const;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D_InterpolatedCoefficients() const;
+		virtual void plot_D_InterpolatedCoefficients(MultiplePlotWidget*) const;
 
 		/// Plot the second derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D2_InterpolatedCoefficients() const;
+		virtual void plot_D2_InterpolatedCoefficients(MultiplePlotWidget*) const;
 
 	private:
 
@@ -318,22 +311,20 @@ class MainJibAndSpiCoefficientItem : public SailCoefficientItem {
 		/// Destructor
 		~MainJibAndSpiCoefficientItem();
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 		/// Plot the spline-interpolated curves based on the Larsson's
 		/// sail coefficients. The range is set 0-180deg
-		virtual void plotInterpolatedCoefficients() const;
+		/// Fill a multiple plot
+		virtual void plotInterpolatedCoefficients( MultiplePlotWidget* ) const;
 
 		/// Plot the first derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D_InterpolatedCoefficients() const;
+		virtual void plot_D_InterpolatedCoefficients(MultiplePlotWidget*) const;
 
 		/// Plot the second derivative of the spline-interpolated
 		/// curves based on the Larsson's sail coefficients.
 		/// The range is set 0-180deg
-		virtual void plot_D2_InterpolatedCoefficients() const;
+		virtual void plot_D2_InterpolatedCoefficients(MultiplePlotWidget*) const;
 
 	private:
 
@@ -386,11 +377,9 @@ class AeroForcesItem : public VPPItem {
 		/// Get a ptr to the sailCoeffs Item - const variety
 		const SailCoefficientItem* getSailCoeffItem() const;
 
-		/// plot the aeroForces for a fixed range
-		void plot();
-
-		/// Print the class name -> in this case AeroForcesItem
-		virtual void printWhoAmI();
+		/// plot the aeroForces for a fixed range. Fill a multiplePlotWidget
+		/// with this plot
+		void plot(MultiplePlotWidget*);
 
 	private:
 

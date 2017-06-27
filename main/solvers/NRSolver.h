@@ -9,7 +9,6 @@
 #include "IOUtils.h"
 #include "VPPItemFactory.h"
 #include "Results.h"
-#include "VPPPlotter.h"
 
 using namespace std;
 
@@ -49,20 +48,6 @@ class NRSolver {
 
 		/// Make a printout of the result bounds for this run
 		void printResultBounds();
-
-		/// Plot the polar plots for the state variables
-		/// It is really not the solver to be responsible
-		/// for plotting...
-		void plotPolars();
-
-		/// Plot the XY plots for the state variables
-		/// It is really not the solver to be responsible
-		/// for plotting...
-		void plotXY( size_t index );
-
-		/// Plot the Jacobian derivatives on a fixed interval of linearization
-		/// points and for given awv, awa
-		void plotJacobian();
 
 		/// Print the result to screen and save it to the result container
 		void printAndSave(int twv, int twa);

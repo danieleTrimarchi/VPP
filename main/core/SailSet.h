@@ -6,12 +6,18 @@
 
 using namespace std;
 
-enum sailConfig {
-	mainOnly=1,
-	mainAndJib=3,
-	mainAndSpi=5,
-	mainJibAndSpi=7,
-};
+	enum sailConfig {
+		mainOnly=1,
+		mainAndJib=3,
+		mainAndSpi=5,
+		mainJibAndSpi=7
+	};
+
+	enum activeSail {
+		mainSail=0,
+		jib=1,
+		spi=2
+	};
 
 /// forward declarations
 class WindItem;
@@ -36,9 +42,6 @@ class SailSet {
 		/// Destructor
 		virtual ~SailSet();
 
-		/// Printout the list of all variables we have computed
-		void printVariables();
-
 		/// Return the Id of this SailSet (this is the enum sailConfig)
 		virtual size_t getType()=0;
 
@@ -48,6 +51,10 @@ class SailSet {
 		/// Make a new SailCoefficientItem of the type required for
 		/// this sailSet
 		virtual SailCoefficientItem* sailCoefficientItemFactory(WindItem*) =0;
+
+		/// Populate the tree model that will be used to
+		/// visualize the variables in the UI
+		void populate(VariableTreeModel* pTreeModel);
 
 	protected:
 

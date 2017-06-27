@@ -23,3 +23,9 @@ EclipseWorkSpace/*
 main/versioning/Version.cpp
 DerivedData/*
 *.xcsettings
+xCodeBuild/*
+main/.qmake.stash
+*.mak
+*project.pbxproj
+*VPP.app/*
+*.vpp

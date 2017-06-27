@@ -3,6 +3,7 @@
 % all data must be provided at zero speed
 
 %%%% VPP CONFIGURATION %%%%%%%%%
+==VARIABLES==
 V_MIN	0		% [m/s] Min allowed boat velocity
 V_MAX	15		% [m/s] Max allowed boat velocity
 PHI_MIN	-0.00001 	% [deg] Min allowed boat heel angle
@@ -77,3 +78,4 @@ EHM     9.754  % [m]  Mast?s heigth above deck
 EMDC    0.254  % [m]  Mast?s avarage diameter
 %%%%%%% CREW %%%%%%%%%%
 MMVBLCRW 228   % [kg] Movable Crew Mass
+==END VARIABLES==

@@ -7,7 +7,8 @@
 #include "Spline.h"
 #include <vector>
 
-#include "VPPPlotter.h"
+/// Forward declarations
+class VppXYCustomPlotWidget;
 
 class Interpolator {
 
@@ -21,9 +22,6 @@ class Interpolator {
 
 		/// Interpolate the function X-Y for the value val
 		double interpolate(double val,Eigen::ArrayXd& X,Eigen::ArrayXd& Y);
-
-		/// Test the interpolator on some simple function
-		void test();
 
 	private:
 
@@ -47,26 +45,24 @@ class SplineInterpolator {
 		/// Constructor for Eigen::ArrayXd
 		SplineInterpolator(Eigen::ArrayXd&,Eigen::ArrayXd&);
 
-		/// Constructor for std::vector
-		SplineInterpolator(std::vector<double>&, std::vector<double>&);
-
 		/// Destructor
 		virtual ~SplineInterpolator();
+
+		/// How many points are used to build this spline?
+		size_t getNumPoints() const;
 
 		/// Interpolate the function X-Y using the underlying spline for the value val
 		double interpolate(double);
 
-		/// Plot the spline and its underlying source points
-		void plot(double minVal,double maxVal,int nVals,
-				string title, string xLabel="x", string yLabel="y");
+		/// Plot the spline and its underlying source points.
+		/// Hand the points to a QCustomPlot
+		void plot(VppXYCustomPlotWidget* chart, double minVal,double maxVal,int nVals);
 
-		/// Plot the first derivative of the spline
-		void plotD1(double minVal,double maxVal,int nVals,
-				string title, string xLabel="x", string yLabel="y");
+		/// Plot the first derivative of the spline and its underlying source points
+		void plotD1(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals );
 
-		/// Plot the second derivative of the spline
-		void plotD2(double minVal,double maxVal,int nVals,
-				string title, string xLabel="x", string yLabel="y");
+		/// Plot the second derivative of the spline and its underlying source points
+		void plotD2(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals );
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW

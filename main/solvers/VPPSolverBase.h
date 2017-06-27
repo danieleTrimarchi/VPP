@@ -34,25 +34,19 @@ class VPPSolverBase {
 		void printResults();
 
 		/// Save the current results to file
-		void saveResults();
+		void saveResults(string fileName);
 
 		/// Read results from file and places them in the current results
-		void importResults();
+		void importResults(string fileName);
 
 		/// Make a printout of the result bounds for this run
 		void printResultBounds();
 
 		/// Plot the polar plots for the state variables
-		void plotPolars();
+		void plotPolars(MultiplePlotWidget*);
 
-		/// Plot the XY plots for the state variables
-		void plotXY( size_t index );
-
-		/// Ask the underlying NRSolver to plot its Jacobian
-		void plotJacobian();
-
-		/// Plot the jacobian vector component (sanity check)
-		void plotGradient();
+		/// Plot the XY results
+		void plotXY(MultiplePlotWidget*);
 
 		/// Returns the dimensionality of this problem (the size of the state vector)
 		size_t getDimension() const;

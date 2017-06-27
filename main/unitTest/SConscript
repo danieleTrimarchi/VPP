@@ -20,9 +20,6 @@ allObjects= localEnv['objList']
 localEnv.getGlobalLibPath()
 # ...EIGEN...
 localEnv.getEigenIncludePath()
-# ...PlPlot...
-localEnv.getPlPlotIncludePath()
-localEnv.getPlPlotLib()
 # ...NlOpt...
 localEnv.getNlOptIncludePath()
 localEnv.getNLOptLibPath()

@@ -65,19 +65,15 @@ SailSet::~SailSet() {
 
 }
 
-
-/// Printout the list of all variables we have computed
-void SailSet::printVariables() {
-
-	std::cout<<"====== PRINTOUT SAILSET VARIABLES ================ "<<std::endl;
-	sailVariables_.print();
-	std::cout<<"==================================================\n"<<std::endl;
-
-}
-
 // Get the value of a variable
 double SailSet::get(std::string varName) {
 	return sailVariables_[varName];
+}
+
+// Populate the tree model that will be used to
+// visualize the variables in the UI
+void SailSet::populate(VariableTreeModel* pTreeModel) {
+	sailVariables_.populate(pTreeModel);
 }
 
 //////////////////////////////////////////////////////////
@@ -192,4 +188,5 @@ size_t MainJibAndSpiSailSet::getType() {
 SailCoefficientItem* MainJibAndSpiSailSet::sailCoefficientItemFactory(WindItem* pWind) {
 	return new MainJibAndSpiCoefficientItem(pWind);
 }
+
 

@@ -18,9 +18,6 @@ class RightingMomentItem : public VPPItem {
 		/// Get the righting moment value
 		const double get() const;
 
-		/// Print the class name - implement the pure virtual of VPPItem
-		virtual void printWhoAmI();
-
 	private:
 
 		/// Update the item for the current step (wind velocity and angle),

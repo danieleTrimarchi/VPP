@@ -86,20 +86,23 @@ void VPPGradient::run(int twv, int twa) {
 
 }
 
-// Produces a test plot for a range of values of the state variables
+// Produces a plot for a range of values of the state variables
 // in order to test for the coherence of the values that have been computed
-void VPPGradient::testPlot(int twv, int twa) {
+std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
+
+	// Instantiate a vector with the plot widgets to return
+	std::vector<VppXYCustomPlotWidget*> retVector;
 
 	// Init the state vector at the value of the state vector at the beginning of
 	// the current iteration
 	x_= xp0_;
 
 	// How many values this test is made of
-	size_t n=100;
+	size_t n=50;
 
 	// Instantiate the containers used to feed the plotter
 	// for the moment just one variable at the time...
-	Eigen::MatrixXd phi(1,n), u(1,n), du_dPhi(1,n), dPhi(1,n);
+	QVector<double> phi(n), u(n), du_dPhi(n), dPhi(n);
 
 	// Plot the Jacobian components when varying the boat velocity x(0)
 	for(int iStep=0; iStep<n; iStep++) {
@@ -116,15 +119,15 @@ void VPPGradient::testPlot(int twv, int twa) {
 		pSolver_->setSubPbSize(1);
 
 		// Compute the equilibrium velocity for this Phi
-		x_= pSolver_->run(twv,twa,x_);
+		x_= pSolver_->run(wd.getTWV(),wd.getTWA(),x_);
 
 		// Store the values into the buffer vectors
 		// These buffers will be used to plot(phi,u)
-		phi(0,iStep) = x_(1);
-		u(0,iStep) = x_(0);
+		phi[iStep] = x_(1);
+		u[iStep] = x_(0);
 
 		// Now run the vppGradient
-		run(twv, twa);
+		run(wd.getTWV(),wd.getTWA());
 
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences. But here we use d./dPhi
@@ -132,26 +135,31 @@ void VPPGradient::testPlot(int twv, int twa) {
 		if(x_(1)) eps *= std::fabs(x_(1));
 
 		// x-component of the gradient vector du/dPhi
-		dPhi(0,iStep) = eps;
+		dPhi[iStep] = eps;
 		// y-component of the gradient vector du/dPhi
-		du_dPhi(0,iStep) = coeffRef(1) * eps;
+		du_dPhi[iStep] = coeffRef(1) * eps;
 
 	}
 
 	// Instantiate a vector plotter and produce the plot
-	VPPVectorPlotter dudPhi;
-	dudPhi.plot(phi,u,dPhi,du_dPhi,2,"du/dPhi Gradient test plot","Phi [rad]","u [m/s]");
+	VppXYCustomPlotWidget* dudPhiPlot= new VppXYCustomPlotWidget("du/dPhi Gradient","Phi [rad]","u [m/s]");
+
+	dudPhiPlot->addData(phi,u,"u(Phi)");
+	dudPhiPlot->addQuivers(phi,u,dPhi,du_dPhi);
+
+	dudPhiPlot->rescaleAxes();
+	retVector.push_back(dudPhiPlot);
+
+	// --
 
 	// Reset the state vector to its initial state
 	x_=xp0_;
 
-	// --
 
 	// Repeat the procedure for the third state variable b, the position of the crew
 	// Instantiate the containers used to feed the plotter
 	// for the moment just one variable at the time...
-	Eigen::MatrixXd b(1,n), /*u(1,n),*/ du_db(1,n), db(1,n);
-	u.setZero();
+	QVector<double> b(n), du_db(n), db(n);
 
 	// Plot the Jacobian components when varying the boat velocity x(0)
 	for(int iStep=0; iStep<n; iStep++) {
@@ -163,15 +171,15 @@ void VPPGradient::testPlot(int twv, int twa) {
 		pSolver_->setSubPbSize(2);
 
 		// Compute the equilibrium velocity for this Phi
-		x_= pSolver_->run(twv,twa,x_);
+		x_= pSolver_->run(wd.getTWV(),wd.getTWA(),x_);
 
 		// Store the values into the buffer vectors
 		// These buffers will be used to plot(phi,u)
-		b(0,iStep) = x_(2);
-		u(0,iStep) = x_(0);
+		b[iStep] = x_(2);
+		u[iStep] = x_(0);
 
 		// Now run the vppGradient
-		run(twv, twa);
+		run(wd.getTWV(),wd.getTWA());
 
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences. But here we use d./dPhi
@@ -179,15 +187,19 @@ void VPPGradient::testPlot(int twv, int twa) {
 		if(x_(2)) eps *= std::fabs(x_(2));
 
 		// x-component of the gradient vector du/dPhi
-		db(0,iStep) = eps;
+		db[iStep] = eps;
 		// y-component of the gradient vector du/dPhi
-		du_db(0,iStep) = coeffRef(2) * eps;
+		du_db[iStep] = coeffRef(2) * eps;
 
 	}
 
+	VppXYCustomPlotWidget* dudbPlot= new VppXYCustomPlotWidget("du/db Gradient","b [m]","u [m/s]");
 
-	VPPVectorPlotter dudb;
-	dudb.plot(b,u,db,du_db,3,"du/db Gradient test plot","b [m]","u [m/s]");
+	dudbPlot->addData(b,u,"u(b)");
+	dudbPlot->addQuivers(b,u,db,du_db);
+
+	dudbPlot->rescaleAxes();
+	retVector.push_back(dudbPlot);
 
 	// Reset the state vector to its initial state
 	x_=xp0_;
@@ -197,8 +209,7 @@ void VPPGradient::testPlot(int twv, int twa) {
 	// Repeat the procedure for the fourth state variable f, the sail flat
 	// Instantiate the containers used to feed the plotter
 	// for the moment just one variable at the time...
-	Eigen::MatrixXd f(1,n), /*u(1,n),*/ du_df(1,n), df(1,n);
-	u.setZero();
+	QVector<double> f(n), du_df(n), df(n);
 
 	// Plot the Jacobian components when varying the boat velocity x(0)
 	for(int iStep=0; iStep<n; iStep++) {
@@ -211,15 +222,15 @@ void VPPGradient::testPlot(int twv, int twa) {
 		pSolver_->setSubPbSize(2);
 
 		// Compute the equilibrium velocity for this Phi
-		x_= pSolver_->run(twv,twa,x_);
+		x_= pSolver_->run(wd.getTWV(),wd.getTWA(),x_);
 
 		// Store the values into the buffer vectors
 		// These buffers will be used to plot(phi,u)
-		f(0,iStep) = x_(3);
-		u(0,iStep) = x_(0);
+		f[iStep] = x_(3);
+		u[iStep] = x_(0);
 
 		// Now run the vppGradient
-		run(twv, twa);
+		run(wd.getTWV(),wd.getTWA());
 
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences. But here we use d./dPhi
@@ -227,17 +238,26 @@ void VPPGradient::testPlot(int twv, int twa) {
 		if(x_(3)) eps *= std::fabs(x_(2));
 
 		// x-component of the gradient vector du/dPhi
-		df(0,iStep) = eps;
+		df[iStep] = eps;
 		// y-component of the gradient vector du/dPhi
-		du_df(0,iStep) = coeffRef(3) * eps;
+		du_df[iStep] = coeffRef(3) * eps;
 
 	}
 
-	VPPVectorPlotter dudf;
-	dudf.plot(f,u,df,du_df,5,"du/df Gradient test plot","f [m]","u [m/s]");
+	VppXYCustomPlotWidget* dudfPlot= new VppXYCustomPlotWidget("du/df Gradient","f [-]","u [m/s]");
+
+	dudfPlot->addData(f,u,"u(f)");
+	dudfPlot->addQuivers(f,u,df, du_df);
+
+	dudfPlot->rescaleAxes();
+	retVector.push_back(dudfPlot);
+
+	// --
 
 	// Reset the state vector to its initial state
 	x_=xp0_;
+
+	return retVector;
 
 }
 

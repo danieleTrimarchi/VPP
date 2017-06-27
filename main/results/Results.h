@@ -7,8 +7,26 @@
 #include <math.h>
 
 #include "VPPItemFactory.h"
+#include "VppPolarCustomPlotWidget.h"
 
 using namespace std;
+
+/// Enum used to table the results to the VPPTableModel.
+/// We describe here the rows of the table, the cell-values
+/// of which are to be returned by method get(ResultTableType)
+enum TableResultType {
+	itwv,
+	twv,
+	itwa,
+	twa,
+	u,
+	phi,
+	crew,
+	flat,
+	residual_f,
+	residual_m,
+	discard
+};
 
 /// Struct containing the results of the current
 /// run. For each step (i.e. twv,twa it contains
@@ -57,6 +75,22 @@ class Result {
 		/// PrintOut the values stored in this result. Use stdout as default stream
 		void print(FILE* outStream=stdout) const;
 
+		/// How many columns for printing out this result?
+		/// 11 : iTWV  TWV  iTWa  TWA -- V  PHI  B  F -- dF dM
+		size_t getTableCols() const;
+
+		// Returns the header for the table view
+		QVariant getColumnHeader(int col) const;
+
+		/// Return a value for filling the result table (see VppTableModel)
+		double getTableEntry(int index) const;
+
+		/// Get the index of twv for this result
+		size_t getiTWV() const;
+
+		/// Get the index of twa for this result
+		size_t getiTWA() const;
+
 		/// Get the twv for this result
 		const double getTWV() const;
 
@@ -81,6 +115,10 @@ class Result {
 		/// Comparison operator
 		bool operator == (const Result& ) const;
 
+
+		/// Header of the Result section in a result file
+		static const string headerBegin_, headerEnd_;
+
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -104,7 +142,7 @@ class Result {
 		/// Flag used to mark a result that must be discarded -> not plotted
 		bool discard_;
 
-} ;
+};
 
 /// Container for VPPResult, which is a wrapper around
 /// vector<vector<VPPResults > >
@@ -141,6 +179,14 @@ class ResultContainer {
 
 		/// Get the result for a given wind velocity/angle
 		const Result& get(size_t iWv, size_t iWa) const;
+
+		/// Get the result for a given wind velocity/angle - non const variety
+		Result& get(size_t iWv, size_t iWa);
+
+		/// Get the result for a given wind velocity/angle. Assume
+		/// the results are shown (as in print) by WA first, and then
+		/// by WV
+		const Result& get(size_t idx) const;
 
 		/// How many results have been stored?
 		const size_t size() const;
@@ -184,6 +230,12 @@ class ResultContainer {
 
 		/// CLear the result vector
 		void initResultMatrix();
+
+		/// Returns all is required to plot the polar plots
+		std::vector<VppPolarCustomPlotWidget*> plotPolars();
+
+		/// Returns all is required to plot the XY result plots
+		std::vector<VppXYCustomPlotWidget*> plotXY();
 
 	private:
 

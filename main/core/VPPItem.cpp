@@ -12,7 +12,6 @@ PHI_(0), // Note that PHI is in deg
 b_(0),
 f_(0),
 pbSize_(4){
-
 }
 
 // Destructor

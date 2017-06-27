@@ -1,24 +1,30 @@
-- Is it possible to compute analytical derivatives instead of numerical derivatives by finite differences? Presumably yes, I only need to write the code and check! 
+Verify that tests still run…
 
-- logForCxx : drive the output with env vars
+————
+
+Michele: 
+	axes equal -> almost functional, perhaps ask Olivier
+	Stability curve -> centre of buoyancy 
+	Allow entering sail coefficients
+
+See RhinoAPI for getting LPP data
+—————
+
+- Ask Stephane about the multiple environment warning 
+
+- Is it possible to compute analytical derivatives instead of numerical derivatives by finite differences? Presumably yes, I only need to write the code and check!
+=> COMPUTING THE DERIVATIVE OF A B-SPLINE! 
+Well, this is painful because we do not have the expressions for the 
 
 - add a scons target: scons makeTest : ask Stephane about execution path
 	Hp : the code could simply search the files in a target path defined 
 	in the sconscript. See what MEMSp does.
   	
-- build Qt integration. Allow for 2/3d dynamic plotting (scale, move, zoom). 
-	in that phase think how to refactor the code in order to provide a flexible
-	and well structured plotting utility. Perhaps using visitor?
-
-- group resistanceItem plot(wind) -> at least part of this will be adressed with the previous item (Qt) 
-
 - New definitions of the resistance with new version of the DYSHS
 
 - Excel integration to save directly the files in .xlsx format
 
 - Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 		mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
 	To be investigated on UML!
-
-- eigen support for xcode?
 
 

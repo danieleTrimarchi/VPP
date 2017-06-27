@@ -13,7 +13,6 @@
 #include "VPPException.h"
 #include "VPPJacobian.h"
 #include "VPPException.h"
-#include "VPPPlotSet.h"
 #include "VPPResultIO.h"
 
 using namespace Ipopt;

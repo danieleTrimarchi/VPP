@@ -53,7 +53,7 @@ class TVPPTest : public CppUnit::TestFixture{
 
   /// Make a full run of ipOpt, and compare the full results with a baseline
   /// Warning : this is a relatively long test
-//  CPPUNIT_TEST(ipOptFullRunTest);
+  // CPPUNIT_TEST(ipOptFullRunTest);
 
   /// Test the SmoothedStepFunction values
   CPPUNIT_TEST(smoothedTestFunctionTest);

@@ -3,8 +3,9 @@
 #include <fstream>
 
 // Ctor
-VPPResultIO::VPPResultIO(ResultContainer* pResults):
-pResults_(pResults) {
+VPPResultIO::VPPResultIO(VariableFileParser* pParser, ResultContainer* pResults):
+	pParser_(pParser),
+	pResults_(pResults) {
 
 }
 
@@ -14,12 +15,15 @@ VPPResultIO::~VPPResultIO(){
 }
 
 // Write results to file
-void VPPResultIO::write(string fileName){
+void VPPResultIO::write(string fileName/*=string("vppResults.vpp")*/){
 
-	std::cout<<"writing result to file "<<fileName<<std::endl;
+	std::cout<<"Saving the analysis results to file "<<fileName<<std::endl;
 
 	// Open a file
 	FILE* outFile= fopen(fileName.c_str(), "w");
+
+	// Ask the parser to print the variables to the file
+	pParser_->print(outFile);
 
 	// Ask the results to print to the file
 	pResults_->print(outFile);
@@ -29,22 +33,47 @@ void VPPResultIO::write(string fileName){
 
 }
 
-// Read results from file
-void VPPResultIO::read(string fileName){
 
-	// Verify the extension of the file (.vpp)
-	// -> throw if the extension is not correct
+// Read results from file. The result file is formatted output, it has the
+// variables : format "%s : %8.6f
+// results   : format "%zu %le %zu %le -- %le %le %le %le -- %le %le -- %d"
+// We attempt to read both
+void VPPResultIO::parse(string fileName){
+
+	// Get the file as an ifstream
+	std::ifstream infile(fileName.c_str());
+	if(!infile.good()){
+		char msg[256];
+		sprintf(msg,"Result file: %s  not found!", fileName.c_str());
+		throw VPPException(HERE, msg);
+	}
 
 	// Clear the results before writing
 	pResults_->initResultMatrix();
 
-	// Get the file as an ifstream
-	std::ifstream infile(fileName.c_str());
-	if(!infile.good())
-		throw VPPException(HERE, "Variable file not found!");
+	std::string line;
+	while(std::getline(infile,line)){
+
+		std::cout<<"Got line: "<<line<<std::endl;
+		if(line==Result::headerBegin_){
+			std::cout<<"Line IS headerBegin!"<<std::endl;
+			parseSection(infile);
+			break;
+		}
+	}
+}
+
+void VPPResultIO::parseSection(std::ifstream& infile){
 
 	std::string line;
 	while(std::getline(infile,line)){
+
+		// printout the line we have read
+		//std::cout<<" Original line = "<<line<<std::endl;
+
+		// Keep reading while we find the end marker
+		if(line==Result::headerEnd_)
+			break;
 
 		// Searches for the comment char (%) in this file and erase from there
 		size_t comment = line.find("%");
@@ -53,31 +82,32 @@ void VPPResultIO::read(string fileName){
 			line.erase(line.begin()+comment, line.end());
 		}
 
-		// if the string is not empty, attempt reading the variable
-		if(!line.empty()){
+		// Do nothing for empty lines
+		if(line.empty())
+			continue;
 
-			// Use stringstream to read the name of the variable and its value
-			std::stringstream ss(line);
+		// Use stringstream to read the name of the variable and its value
+		std::stringstream ss(line);
 
-			// Get the values from the formatted line
-			size_t itwv, itwa;
-			double twv, twa, v, phi, b, f, df, dm;
-			int discard;
-			if (sscanf(line.c_str(),"%zu %le %zu %le -- %le %le %le %le -- %le %le -- %d",
-					                     &itwv, &twv, &itwa, &twa, &v, &phi, &b, &f, &df, &dm, &discard) == 11 ){
+		// Get the values from the formatted line
+		size_t itwv, itwa;
+		double twv, twa, v, phi, b, f, df, dm;
+		int discard;
 
-				// Push the result to the stack
-				pResults_->push_back( itwv, itwa, v, phi, b, f, df, dm);
+		// Does this line contain a result..?
+		if( sscanf(line.c_str(),"%zu %le %zu %le -- %le %le %le %le -- %le %le -- %d",
+					                     &itwv, &twv, &itwa, &twa, &v, &phi, &b, &f, &df, &dm, &discard) != 11 )
+			break;
 
-				// Set the parameter discard
-				if(discard)
-					pResults_->remove(itwv,itwa);
+		// Push the result to the stack
+		pResults_->push_back( itwv, itwa, v, phi, b, f, df, dm);
 
-				// Debug: print to screen the Result just read
-				// pResults_->get(itwv,itwa).print();
+		// Set the parameter discard
+		if(discard)
+			pResults_->remove(itwv,itwa);
 
-			} else
-					throw VPPException(HERE,"Unknown format!");
-		}
+		// Debug: print to screen the Result we just read
+		// pResults_->get(itwv,itwa).print();
+
 	}
 }

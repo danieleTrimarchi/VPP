@@ -1,6 +1,7 @@
 #include "VPPException.h"
 #include <iostream>
 #include <sstream>
+#include <QMessageBox>
 
 // Constructor
 VPPException::VPPException(const char* inFile, int inLine, const char* inFunction, const char* message ){
@@ -9,7 +10,15 @@ VPPException::VPPException(const char* inFile, int inLine, const char* inFunctio
 	oss<<"Error in function: "<<inFunction<<"\n in file: "<<inFile<<" line: "<<inLine<<std::endl;
 	oss<<" Message: "<<message<<std::endl;
 	msg=oss.str();
+
+	std::cout<<"\n-----------------------------------------\n";
 	std::cout<<msg<<std::endl;
+	std::cout<<"\n-----------------------------------------\n";
+
+	QMessageBox msgBox;
+	msgBox.setText(QString(what()));
+	msgBox.setIcon(QMessageBox::Critical);
+	msgBox.exec();
 }
 
 // Destructor
@@ -30,7 +39,11 @@ NonConvergedException::NonConvergedException(const char* inFile, int inLine, con
 	oss<<"Error in function: "<<inFunction<<"\n in file: "<<inFile<<" line: "<<inLine<<std::endl;
 	oss<<" Message: "<<message<<std::endl;
 	msg=oss.str();
+
+	std::cout<<"\n-----------------------------------------\n";
 	std::cout<<msg<<std::endl;
+	std::cout<<"\n-----------------------------------------\n";
+
 }
 
 // Destructor
@@ -52,7 +65,16 @@ NoPreviousConvergedException::NoPreviousConvergedException(const char* inFile, i
 	oss<<"Warning: in function: "<<inFunction<<"\n in file: "<<inFile<<" line: "<<inLine<<std::endl;
 	oss<<" Message: "<<message<<std::endl;
 	msg=oss.str();
+
+	std::cout<<"\n-----------------------------------------\n";
 	std::cout<<msg<<std::endl;
+	std::cout<<"\n-----------------------------------------\n";
+
+	QMessageBox msgBox;
+	msgBox.setText(QString(what()));
+	msgBox.setIcon(QMessageBox::Critical);
+	msgBox.exec();
+
 }
 
 // Destructor

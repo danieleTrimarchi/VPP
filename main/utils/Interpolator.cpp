@@ -1,7 +1,7 @@
 #include "Interpolator.h"
 #include <math.h>
 #include "VPPException.h"
-#include "VPPPlotter.h"
+#include "VppXYCustomPlotWidget.h"
 
 // Constructor
 Interpolator::Interpolator() {
@@ -75,70 +75,6 @@ double Interpolator::CosineInterpolate(double y1,double y2,double mu) {
 	return(y1*(1-mu2)+y2*mu2);
 }
 
-void Interpolator::test() {
-
-	std::cout<<"Beginning of Interpolator::test() "<<std::endl;
-
-	// Define an arbitrary function by points
-	Eigen::ArrayXXd VALS;
-	VALS.resize(2,5);
-
-	// Define point X0,Y0
-	VALS(0,0) = 0;
-	VALS(1,0) = 3.5;
-	// Define point X1,Y1
-	VALS(0,1) = 3;
-	VALS(1,1) = 4;
-	// Define point X2,Y2
-	VALS(0,2) = 5;
-	VALS(1,2) = 7;
-	// Define point X3,Y3
-	VALS(0,3) = 7.5;
-	VALS(1,3) = 2.5;
-	// Define point X3,Y3
-	VALS(0,4) = 10;
-	VALS(1,4) = 1.5;
-
-	size_t nVals=100;
-	size_t extrapVals=20;
-
-	// compute a dx dividing the range by 1000
-	double dx = ( VALS(0,4) - VALS(0,0) ) / nVals;
-
-	// Define a container for the interpolated values
-	Eigen::ArrayXXd InterpVals;
-	InterpVals.resize(2,nVals+extrapVals);
-
-	Eigen::ArrayXd x=VALS.row(0);
-	Eigen::ArrayXd y=VALS.row(1);
-
-	for(size_t i=0; i<nVals;i++) {
-
-		InterpVals(0,i) = i*dx;
-		InterpVals(1,i) = interpolate(i*dx,x,y);
-
-	}
-
-	// Now append 20 values that are to be extrapolated
-	for(size_t i=nVals; i<nVals+extrapVals;i++) {
-
-		InterpVals(0,i) = i*dx;
-		InterpVals(1,i) = interpolate(i*dx,x,y);
-
-	}
-
-	// Now plot the interpolated values
-
-	ArrayXd x0=VALS.row(0);
-	ArrayXd y0=VALS.row(1);
-	ArrayXd x1=InterpVals.row(0);
-	ArrayXd y1=InterpVals.row(1);
-
-	VPPPlotter plotter;
-	plotter.plot(x0,y0,x1,y1);
-
-}
-
 ////////////////////////////////////////////////////////////////////////////////////
 
 // Default constructor (test)
@@ -185,24 +121,12 @@ SplineInterpolator::SplineInterpolator(Eigen::ArrayXd& X0,Eigen::ArrayXd& Y0) {
 	X_.resize(X0.size());
 	Y_.resize(Y0.size());
 
-	// Copy the values
+	// Copy the values. Todo dtrimarchi : the copy can be avoided simply using
+	// Eigen utils such as Maps!
 	for(size_t i=0; i<X0.size(); i++){
 		X_[i]=X0(i);
 		Y_[i]=Y0(i);
 	}
-
-	// Generate the underlying spline
-	generate();
-
-}
-
-SplineInterpolator::SplineInterpolator(std::vector<double>& x, std::vector<double>& y) {
-
-	if(x.size() != y.size())
-		throw VPPException(HERE,"In SplineInterpolator: Size mismatch");
-
-	X_=x;
-	Y_=y;
 
 	// Generate the underlying spline
 	generate();
@@ -228,98 +152,111 @@ SplineInterpolator::~SplineInterpolator() {
 
 }
 
+// How many points are used to build this spline?
+size_t SplineInterpolator::getNumPoints() const {
+	return X_.size();
+}
 
 double SplineInterpolator::interpolate(double val) {
 
 	return s_(val);
 }
 
-// Plot the spline and its underlying source points
-void SplineInterpolator::plot(double minVal,double maxVal,int nVals,
-		string title, string xLabel, string yLabel) {
+// Plot the spline and its underlying source points.
+// Hand the points to a QCustomPlot
+void SplineInterpolator::plot(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals) {
 
-	std::vector<double> x(nVals+1), y(nVals+1);
 	double dx= (maxVal-minVal)/(nVals);
 
-	// Generate the n.points for the current plot
-	for(size_t i=0; i<nVals+1; i++){
-		x[i] = minVal + i*dx;
-		y[i] = s_(x[i]);
-	}
+  // Copy the data to the current plotting container
+  QVector<double> x(nVals+1), y(nVals+1);
+  for (int i = 0; i < nVals+1; i++) {
+    x[i] = minVal + i*dx;
+    y[i] = s_(x[i]);
+  }
 
-	// Instantiate a plotter and prepare the data
-	VPPPlotter plotter;
-	std::vector<double> x0(s_.get_points(0));
-	std::vector<double> y0(s_.get_points(1));
+  // create graph and assign data to it:
+  plot->addData(x, y, "Interpolated");
 
-	// Limit the values to the ranges specified for this plot
-	for(size_t i=0; i<x0.size(); i++)
-		if(x0[i]<minVal || x0[i]>maxVal){
-			x0.erase(x0.begin()+i);
-			y0.erase(y0.begin()+i);
-			i--;
-		}
+  // Also add the point data - mark them with blue crosses
+  // Fill the data for graph 1, that contains the originating data
+  QVector<double> xp(getNumPoints()), yp(getNumPoints());
+  for (int i = 0; i < getNumPoints(); i++) {
+  	xp[i]= X_[i];
+  	yp[i]= Y_[i];
+  }
 
-	// Ask the plotter to plot the curves
-	plotter.plot(x0,y0,x,y,title,xLabel,yLabel);
+  // Add the data to the plot
+  plot->addData(xp, yp,"Primitive data");
+
+  // Set the last curve style to be no curve but only red cross markers
+  plot->graph()->setPen(QPen(Qt::red));
+  plot->graph()->setLineStyle(QCPGraph::lsNone);
+  plot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
+
+  // Set the plot bounds in a reasonable way
+  plot->rescaleAxes();
 
 }
 
-// Plot the spline and its underlying source points
-void SplineInterpolator::plotD1(double minVal,double maxVal,int nVals,
-		string title, string xLabel, string yLabel) {
+// Plot the first derivative of the spline
+void SplineInterpolator::plotD1(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals ) {
 
-	std::vector<double> x(nVals+1), y(nVals+1);
 	double dx= (maxVal-minVal)/(nVals);
 
 	// Generate the n.points for the current plot
+	std::vector<double> x(nVals+1), y(nVals+1);
 	for(size_t i=0; i<nVals+1; i++){
 		x[i] = minVal + i*dx;
 		y[i] = s_(x[i]);
 	}
 
-	// now compute the first derivative of this curve
-	std::vector<double> x1(nVals), y1(nVals);
+	// now compute the first derivative of this curve.
+	QVector<double> x1(nVals), y1(nVals);
 	for(size_t i=0; i<nVals; i++){
 		x1[i] = (x[i]+x[i+1])/2;
 		y1[i] = (y[i+1]-y[i])/(x[i+1]-x[i]);
 	}
 
-	// Instantiate a plotter and plot the data
-	VPPPlotter plotter;
-	plotter.plot(x1,y1,title,xLabel,yLabel);
+  // create graph and assign data to it:
+  plot->addData(x1, y1);
+  plot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+
+  // Set the plot bounds in a reasonable way
+  plot->rescaleAxes();
 
 }
 
-// Plot the spline and its underlying source points
-void SplineInterpolator::plotD2(double minVal,double maxVal,int nVals,
-		string title, string xLabel, string yLabel) {
+// Plot the second derivative spline
+void SplineInterpolator::plotD2(VppXYCustomPlotWidget* plot, double minVal,double maxVal,int nVals ) {
 
-	std::vector<double> x(nVals+1), y(nVals+1);
 	double dx= (maxVal-minVal)/(nVals);
 
 	// Generate the n.points for the current plot
+	QVector<double> x(nVals+1), y(nVals+1);
 	for(size_t i=0; i<nVals+1; i++){
 		x[i] = minVal + i*dx;
 		y[i] = s_(x[i]);
 	}
 
-	// now compute the second derivative of this curve
-	std::vector<double> x2(nVals-1), y2(nVals-1);
-	for(size_t i=0; i<nVals-1; i++){
-		x2[i] = (x[i+2]+2*x[i+1]+x[i])/4;
-		y2[i] = 2*(
-								y[i+2]*(x[i+1]-x[i]) +
-								y[i+1]*(x[i]-2*x[i+1]-x[i+2]) +
-								y[i]  *(x[i+1]-x[i+2])
-							) / ( x[i+2]-x[i] );
+	x.pop_front();
+	x.pop_back();
+
+	// Compute the second derivative of this curve
+	QVector<double> x2(nVals-1), y2(nVals-1);
+	for(size_t i=1; i<nVals; i++){
+		y2[i-1] = ( y[i+1] - 2 * y[i] + y[i-1] ) / (dx * dx) ;
 	}
 
-	// Instantiate a plotter and plot the data
-	VPPPlotter plotter;
-	plotter.plot(x2,y2,title,xLabel,yLabel);
+  // create graph and assign data to it:
+  plot->addData(x, y2);
+  plot->graph()->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+
+  // Set the plot bounds in a reasonable way
+  plot->rescaleAxes();
 
 }
+
 ////////////////////////////////////////////////////////////////////////////////////
 
 // Constructor

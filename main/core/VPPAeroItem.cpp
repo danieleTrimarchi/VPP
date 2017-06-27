@@ -3,6 +3,10 @@
 #include "IOUtils.h"
 #include "VPPException.h"
 #include "mathUtils.h"
+#include "multiplePlotWidget.h"
+#include "VppTabDockWidget.h"
+#include "VppXYCustomPlotWidget.h"
+#include "VPPDialogs.h"
 
 using namespace mathUtils;
 
@@ -12,7 +16,7 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 								twv_(0),
 								twa_(0),
 								awa_(0),
-								awv_(Eigen::Vector2d::Zero()) {
+								awv_(Eigen::Vector2d::Zero())   {
 
 	// Get the max/min wind velocities from the parser
 	v_tw_min_= pParser_->get("V_TW_MIN");
@@ -83,10 +87,6 @@ void WindItem::update(int vTW, int aTW) {
 	awa_= atan2( awv_(1),awv_(0) );
 	if(mathUtils::isNotValid(awa_))	throw VPPException(HERE,"awa_ is NAN!");
 
-}
-
-void WindItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of WindItem "<<std::endl;
 }
 
 // Returns the true wind velocity for a given step
@@ -282,24 +282,24 @@ WindItem* SailCoefficientItem::getWindItem() const {
 void SailCoefficientItem::computeForMain() {
 
 	// Interpolate the values of the sail coefficients for the MainSail
-	allCl_(0) = interpClVec_[0]->interpolate(awa_);
-	allCd_(0) = interpCdVec_[0]->interpolate(awa_);
+	allCl_(activeSail::mainSail) = interpClVec_[activeSail::mainSail]->interpolate(awa_);
+	allCd_(activeSail::mainSail) = interpCdVec_[activeSail::mainSail]->interpolate(awa_);
 
 }
 
 void SailCoefficientItem::computeForJib() {
 
 	// Interpolate the values of the sail coefficients for the Jib
-	allCl_(1) = interpClVec_[1]->interpolate(awa_);
-	allCd_(1) = interpCdVec_[1]->interpolate(awa_);
+	allCl_(activeSail::jib)  = interpClVec_[activeSail::jib]->interpolate(awa_);
+	allCd_(activeSail::jib)  = interpCdVec_[activeSail::jib]->interpolate(awa_);
 
 }
 
 void SailCoefficientItem::computeForSpi() {
 
 	// Interpolate the values of the sail coefficients for the Spi
-	allCl_(1) = interpClVec_[2]->interpolate(awa_);
-	allCd_(2) = interpCdVec_[2]->interpolate(awa_);
+	allCl_(activeSail::jib)  = interpClVec_[activeSail::spi]->interpolate(awa_);
+	allCd_(activeSail::spi) = interpCdVec_[activeSail::spi]->interpolate(awa_);
 
 }
 
@@ -312,13 +312,6 @@ const double SailCoefficientItem::getCl() const {
 // Returns the current value of the lift coefficient
 const double SailCoefficientItem::getCd() const {
 	return cd_;
-}
-
-// Print the class name -> in this case SailCoefficientItem
-void SailCoefficientItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of SailCoefficientItem "<<std::endl;
-
-	printCoefficients();
 }
 
 /// PrintOut the coefficient matrices
@@ -360,39 +353,83 @@ void MainOnlySailCoefficientItem::update(int vTW, int aTW) {
 	SailCoefficientItem::update(vTW,aTW);
 
 	// In this case the lift/drag coeffs are just what was computed for main
-	cl_ = allCl_(0);
-	cdp_ = allCd_(0);
+	cl_ = allCl_(activeSail::mainSail) ;
+	cdp_ = allCd_(activeSail::mainSail) ;
 
 	// Call the parent method that computes the effective cd=cdp+cd0+cdI
 	SailCoefficientItem::postUpdate();
 
 }
 
-// Print the class name - implement the pure virtual of VPPItem
-void MainOnlySailCoefficientItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of MainOnlySailCoefficientItem "<<std::endl;
-}
+// Plot the spline-interpolated curves based on the Larsson's
+// sail coefficients. The range is set 0-180deg
+// Fill a multiple plot
+void MainOnlySailCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* pMultiPlotWidget ) const {
 
-void MainOnlySailCoefficientItem::plotInterpolatedCoefficients() const {
+	// -> Instantiate a VppXYCustomPlotWidget for cl of Main. Set title and axis title
+	VppXYCustomPlotWidget* pClMainPlot = new VppXYCustomPlotWidget("CL for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plot(pClMainPlot,0,toRad(180),50);
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
+	// Add it to the multiplot widget
+	pMultiPlotWidget->addChart(pClMainPlot,0,0);
 
-}
+	//---
 
-void MainOnlySailCoefficientItem::plot_D_InterpolatedCoefficients() const {
+	// -> Instantiate a VppXYCustomPlotWidget for cd of Main. Set title and axis title
+	VppXYCustomPlotWidget* pCdMainPlot = new VppXYCustomPlotWidget("CD for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plot(pCdMainPlot,0,toRad(180),50);
 
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
-
-}
-
-void MainOnlySailCoefficientItem::plot_D2_InterpolatedCoefficients() const {
-
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
+	// Add it to the multiplot widget
+	pMultiPlotWidget->addChart(pCdMainPlot,0,1);
 
 }
+
+// Plot the spline-interpolated curves based on the Larsson's
+// sail coefficients. The range is set 0-180deg
+// Fill a multiple plot
+void MainOnlySailCoefficientItem::plot_D_InterpolatedCoefficients( MultiplePlotWidget* pMultiPlotWidget ) const {
+
+	// -> Instantiate a VppXYCustomPlotWidget for cl of Main. Set title and axis title
+	VppXYCustomPlotWidget* pClMainPlot = new VppXYCustomPlotWidget("d(CL) for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plotD1(pClMainPlot,0,toRad(180),50);
+
+	// Add it to the multiplot widget
+	pMultiPlotWidget->addChart(pClMainPlot,0,0);
+
+	//---
+
+	// -> Instantiate a VppXYCustomPlotWidget for cd of Main. Set title and axis title
+	VppXYCustomPlotWidget* pCdMainPlot = new VppXYCustomPlotWidget("d(CD) for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plotD1(pCdMainPlot,0,toRad(180),50);
+
+	// Add it to the multiplot widget
+	pMultiPlotWidget->addChart(pCdMainPlot,0,1);
+
+}
+
+// Plot the spline-interpolated curves based on the Larsson's
+// sail coefficients. The range is set 0-180deg
+// Fill a multiple plot
+void MainOnlySailCoefficientItem::plot_D2_InterpolatedCoefficients( MultiplePlotWidget* pMultiPlotWidget ) const {
+
+	// -> Instantiate a VppXYCustomPlotWidget for cl of Main. Set title and axis title
+	VppXYCustomPlotWidget* pClMainPlot = new VppXYCustomPlotWidget("d2(CL) for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plotD2(pClMainPlot,0,toRad(180),75);
+
+	// Add it to the multiplot widget
+	pMultiPlotWidget->addChart(pClMainPlot,0,0);
+
+	//---
+
+	// -> Instantiate a VppXYCustomPlotWidget for cd of Main. Set title and axis title
+	VppXYCustomPlotWidget* pCdMainPlot = new VppXYCustomPlotWidget("d2(CD) for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plotD2(pCdMainPlot,0,toRad(180),75);
+
+	// Add it to the multiplot widget
+	pMultiPlotWidget->addChart(pCdMainPlot,0,1);
+
+}
+
 
 //=================================================================
 
@@ -428,8 +465,8 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 	boost::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
-	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") ) /  ps->get("AN");
-	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") ) /  ps->get("AN");
+	cl_ = ( allCl_(activeSail::mainSail)  * ps->get("AM") + allCl_(activeSail::jib)  *  ps->get("AJ") ) /  ps->get("AN");
+	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get("AM") + allCd_(activeSail::jib)  *  ps->get("AJ") ) /  ps->get("AN");
 
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
@@ -439,35 +476,80 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 
 }
 
-// Print the class name - implement the pure virtual of VPPItem
-void MainAndJibCoefficientItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of MainAndJibCoefficientItem "<<std::endl;
+// Plot the spline-interpolated curves based on the Larsson's sail coefficients.
+// The range is set 0-180deg
+void MainAndJibCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* pMultiPlotWidget ) const {
+
+	// -> Instantiate a chart for cl of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pClMainPlot = new VppXYCustomPlotWidget("CL for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plot(pClMainPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pClMainPlot,0,0);
+
+	// -> Instantiate a chart for cl of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pClJibPlot = new VppXYCustomPlotWidget("CL for JIB","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib]->plot(pClJibPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pClJibPlot,1,0);
+
+	// -> Instantiate a chart for cd of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pCdMainPlot = new VppXYCustomPlotWidget("CD for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plot(pCdMainPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pCdMainPlot,0,1);
+
+	// -> Instantiate a chart for cd of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pCdJibPlot = new VppXYCustomPlotWidget("CD for Jib","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib]->plot(pCdJibPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pCdJibPlot,1,1);
+
 }
 
-void MainAndJibCoefficientItem::plotInterpolatedCoefficients() const {
+void MainAndJibCoefficientItem::plot_D_InterpolatedCoefficients(MultiplePlotWidget* pMultiPlotWidget) const {
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
-	interpClVec_[1] -> plot(0,toRad(180),50,"Interpolated CL for JIB","AWA [rad]","[-]");
-	interpCdVec_[1] -> plot(0,toRad(180),50,"Interpolated CD for JIB","AWA [rad]","[-]");
+	// -> Instantiate a chart for the derivative of cl of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdClMainPlot = new VppXYCustomPlotWidget("d(CL) for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plotD1(pdClMainPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pdClMainPlot,0,0);
+
+	// -> Instantiate a chart for the derivative of cl of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdClJibPlot = new VppXYCustomPlotWidget("d(CL) for JIB","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib]->plotD1(pdClJibPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pdClJibPlot,1,0);
+
+	// -> Instantiate a chart for the derivative of cd of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdCdMainPlot = new VppXYCustomPlotWidget("d(CD) for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plotD1(pdCdMainPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pdCdMainPlot,0,1);
+
+	// -> Instantiate a chart for the derivative of cd of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdCdJibPlot = new VppXYCustomPlotWidget("d(CD) for Jib","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib]->plotD1(pdCdJibPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pdCdJibPlot,1,1);
 
 }
 
-void MainAndJibCoefficientItem::plot_D_InterpolatedCoefficients() const {
+// Plot the second derivative of the spline-interpolated
+// curves based on the Larsson's sail coefficients.
+// The range is set 0-180deg
+void MainAndJibCoefficientItem::plot_D2_InterpolatedCoefficients(MultiplePlotWidget* pMultiPlotWidget) const {
 
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
+	// -> Instantiate a chart for the second derivative of cl of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pd2ClMainPlot = new VppXYCustomPlotWidget("d2(CL) for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plotD2(pd2ClMainPlot,0,toRad(180),150);
+	pMultiPlotWidget->addChart(pd2ClMainPlot,0,0);
 
-}
+	// -> Instantiate a chart for the second derivative of cl of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pd2ClJibPlot = new VppXYCustomPlotWidget("d2(CL) for JIB","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib]->plotD2(pd2ClJibPlot,0,toRad(180),150);
+	pMultiPlotWidget->addChart(pd2ClJibPlot,1,0);
 
-void MainAndJibCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+	// -> Instantiate a chart for the second derivative of cd of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pd2CdMainPlot = new VppXYCustomPlotWidget("d2(CD) for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plotD2(pd2CdMainPlot,0,toRad(180),150);
+	pMultiPlotWidget->addChart(pd2CdMainPlot,0,1);
 
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
+	// -> Instantiate a chart for the second derivative of cl of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pd2CdJibPlot = new VppXYCustomPlotWidget("d2(CD) for Jib","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib]->plotD2(pd2CdJibPlot,0,toRad(180),150);
+	pMultiPlotWidget->addChart(pd2CdJibPlot,1,1);
 
 }
 
@@ -505,8 +587,8 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 	boost::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
-	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
-	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
+	cl_ = ( allCl_(activeSail::mainSail)  * ps->get("AM") + allCl_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
+	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get("AM") + allCd_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
@@ -515,37 +597,81 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 
 }
 
-// Print the class name - implement the pure virtual of VPPItem
-void MainAndSpiCoefficientItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of MainAndSpiCoefficientItem "<<std::endl;
-}
+// Plot the spline-interpolated curves based on the Larsson's
+// sail coefficients. The range is set 0-180deg
+// Fill a multiple plot
+void MainAndSpiCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* pMultiPlotWidget ) const {
 
-void MainAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
+	// -> Instantiate a chart for the cl of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pClMainPlot = new VppXYCustomPlotWidget("CL for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plot(pClMainPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pClMainPlot,0,0);
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
-	interpClVec_[2] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
-	interpCdVec_[2] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
+	// -> Instantiate a chart for the cl of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pClSpiPlot = new VppXYCustomPlotWidget("CL for SPI","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi]->plot(pClSpiPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pClSpiPlot,1,0);
 
-}
+	// -> Instantiate a chart for the cd of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pCdMainPlot = new VppXYCustomPlotWidget("CD for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plot(pCdMainPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pCdMainPlot,0,1);
 
-void MainAndSpiCoefficientItem::plot_D_InterpolatedCoefficients() const {
-
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
-
-}
-
-void MainAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients() const {
-
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
+	// -> Instantiate a chart for the cd of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pCdSpiPlot = new VppXYCustomPlotWidget("CD for SPI","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi]->plot(pCdSpiPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pCdSpiPlot,1,1);
 
 }
+
+void MainAndSpiCoefficientItem::plot_D_InterpolatedCoefficients(MultiplePlotWidget* pMultiPlotWidget) const {
+
+	// -> Instantiate a chart for the derivative of cl of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdClMainPlot = new VppXYCustomPlotWidget("d(CL) for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plotD1(pdClMainPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pdClMainPlot,0,0);
+
+	// -> Instantiate a chart for the derivative of cl of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdClSpiPlot = new VppXYCustomPlotWidget("d(CL) for SPI","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi]->plotD1(pdClSpiPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pdClSpiPlot,1,0);
+
+	// -> Instantiate a chart for the derivative of cd of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdCdMainPlot = new VppXYCustomPlotWidget("d(CD) for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plotD1(pdCdMainPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pdCdMainPlot,0,1);
+
+	// -> Instantiate a chart for the derivative of cd of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdCdSpiPlot = new VppXYCustomPlotWidget("d(CD) for SPI","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi]->plotD1(pdCdSpiPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pdCdSpiPlot,1,1);
+
+}
+
+void MainAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients(MultiplePlotWidget* pMultiPlotWidget) const {
+
+	// -> Instantiate a chart for the derivative of cl of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pd2ClMainPlot = new VppXYCustomPlotWidget("d2(CL) for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plotD2(pd2ClMainPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pd2ClMainPlot,0,0);
+
+	// -> Instantiate a chart for the derivative of cl of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pd2ClSpiPlot = new VppXYCustomPlotWidget("d2(CL) for SPI","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi]->plotD2(pd2ClSpiPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pd2ClSpiPlot,1,0);
+
+	// -> Instantiate a chart for the derivative of cd of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pd2CdMainPlot = new VppXYCustomPlotWidget("d2(CD) for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plotD2(pd2CdMainPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pd2CdMainPlot,0,1);
+
+	// -> Instantiate a chart for the derivative of cd of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pd2CdSpiPlot = new VppXYCustomPlotWidget("d2(CD) for SPI","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi]->plotD2(pd2CdSpiPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pd2CdSpiPlot,1,1);
+
+}
+
 
 //=================================================================
 
@@ -582,8 +708,8 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 	boost::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
-	cl_ = ( allCl_(0) * ps->get("AM") + allCl_(1) *  ps->get("AJ") + allCl_(2) *  ps->get("AS") ) /  ps->get("AN");
-	cdp_ = ( allCd_(0) * ps->get("AM") + allCd_(1) *  ps->get("AJ") + allCd_(2) *  ps->get("AS") ) /  ps->get("AN");
+	cl_ = ( allCl_(activeSail::mainSail)  * ps->get("AM") + allCl_(activeSail::jib)  *  ps->get("AJ") + allCl_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
+	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get("AM") + allCd_(activeSail::jib)  *  ps->get("AJ") + allCd_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
@@ -592,41 +718,108 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 
 }
 
-// Print the class name - implement the pure virtual of VPPItem
-void MainJibAndSpiCoefficientItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of MainJibAndSpiCoefficientItem "<<std::endl;
+// Plot the spline-interpolated curves based on the Larsson's
+// sail coefficients. The range is set 0-180deg
+// Fill a multiple plot
+void MainJibAndSpiCoefficientItem::plotInterpolatedCoefficients( MultiplePlotWidget* pMultiPlotWidget ) const {
+
+	// -> Instantiate a chart for the cl of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pClMainPlot = new VppXYCustomPlotWidget("CL for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plot(pClMainPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pClMainPlot,0,0);
+
+	// -> Instantiate a chart for the cl of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pClJibPlot = new VppXYCustomPlotWidget("CL for JIB","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib]->plot(pClJibPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pClJibPlot,1,0);
+
+	// -> Instantiate a chart for the cl of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pClSpiPlot = new VppXYCustomPlotWidget("CL for SPI","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi]->plot(pClSpiPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pClSpiPlot,2,0);
+
+	// -> Instantiate a chart for the cd of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pCdMainPlot = new VppXYCustomPlotWidget("CD for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plot(pCdMainPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pCdMainPlot,0,1);
+
+	// -> Instantiate a chart for the cd of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pCdJibPlot = new VppXYCustomPlotWidget("CD for Jib","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib]->plot(pCdJibPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pCdJibPlot,1,1);
+
+	// -> Instantiate a chart for the cd of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pCdSpiPlot = new VppXYCustomPlotWidget("CD for Spi","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi]->plot(pCdSpiPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pCdSpiPlot,2,1);
+
 }
 
-void MainJibAndSpiCoefficientItem::plotInterpolatedCoefficients() const {
+void MainJibAndSpiCoefficientItem::plot_D_InterpolatedCoefficients(MultiplePlotWidget* pMultiPlotWidget) const {
 
-	interpClVec_[0] -> plot(0,toRad(180),50,"Interpolated CL for MAIN","AWA [rad]","[-]");
-	interpCdVec_[0] -> plot(0,toRad(180),50,"Interpolated CD for MAIN","AWA [rad]","[-]");
-	interpClVec_[1] -> plot(0,toRad(180),50,"Interpolated CL for JIB","AWA [rad]","[-]");
-	interpCdVec_[1] -> plot(0,toRad(180),50,"Interpolated CD for JIB","AWA [rad]","[-]");
-	interpClVec_[2] -> plot(0,toRad(180),50,"Interpolated CL for SPI","AWA [rad]","[-]");
-	interpCdVec_[2] -> plot(0,toRad(180),50,"Interpolated CD for SPI","AWA [rad]","[-]");
+	// -> Instantiate a chart for the first derivative of cl of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdClMainPlot = new VppXYCustomPlotWidget("d(CL) for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plotD1(pdClMainPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pdClMainPlot,0,0);
+
+	// -> Instantiate a chart for the first derivative of cl of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdClJibPlot = new VppXYCustomPlotWidget("d(CL) for JIB","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib]->plotD1(pdClJibPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pdClJibPlot,1,0);
+
+	// -> Instantiate a chart for the first derivative of cl of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdClSpiPlot = new VppXYCustomPlotWidget("d(CL) for SPI","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi]->plotD1(pdClSpiPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pdClSpiPlot,2,0);
+
+	// -> Instantiate a chart for the first derivative of cd of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdCdMainPlot = new VppXYCustomPlotWidget("d(CD) for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plotD1(pdCdMainPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pdCdMainPlot,0,1);
+
+	// -> Instantiate a chart for the first derivative of cd of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdCdJibPlot = new VppXYCustomPlotWidget("d(CD) for Jib","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib]->plotD1(pdCdJibPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pdCdJibPlot,1,1);
+
+	// -> Instantiate a chart for the first derivative of cd of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdCdSpiPlot = new VppXYCustomPlotWidget("d(CD) for Spi","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi]->plotD1(pdCdSpiPlot,0,toRad(180),50);
+	pMultiPlotWidget->addChart(pdCdSpiPlot,2,1);
 
 }
 
-void MainJibAndSpiCoefficientItem::plot_D_InterpolatedCoefficients() const {
+void MainJibAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients(MultiplePlotWidget* pMultiPlotWidget) const {
 
-	interpClVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CL for MAIN - first derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD1(0,toRad(180),50,"Interpolated CD for MAIN - first derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CL for JIB - first derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD1(0,toRad(180),50,"Interpolated CD for JIB - first derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CL for SPI - first derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD1(0,toRad(180),50,"Interpolated CD for SPI - first derivative","AWA [rad]","[-]");
+	// -> Instantiate a chart for the first derivative of cl of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdClMainPlot = new VppXYCustomPlotWidget("d2(CL) for MAIN","AWA [rad]","[-]");
+	interpClVec_[activeSail::mainSail]->plotD2(pdClMainPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pdClMainPlot,0,0);
 
-}
+	// -> Instantiate a chart for the first derivative of cl of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdClJibPlot = new VppXYCustomPlotWidget("d2(CL) for JIB","AWA [rad]","[-]");
+	interpClVec_[activeSail::jib]->plotD2(pdClJibPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pdClJibPlot,1,0);
 
-void MainJibAndSpiCoefficientItem::plot_D2_InterpolatedCoefficients() const {
+	// -> Instantiate a chart for the first derivative of cl of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdClSpiPlot = new VppXYCustomPlotWidget("d2(CL) for SPI","AWA [rad]","[-]");
+	interpClVec_[activeSail::spi]->plotD2(pdClSpiPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pdClSpiPlot,2,0);
 
-	interpClVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CL for MAIN - second derivative","AWA [rad]","[-]");
-	interpCdVec_[0] -> plotD2(0,toRad(180),50,"Interpolated CD for MAIN - second derivative","AWA [rad]","[-]");
-	interpClVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CL for JIB - second derivative","AWA [rad]","[-]");
-	interpCdVec_[1] -> plotD2(0,toRad(180),50,"Interpolated CD for JIB - second derivative","AWA [rad]","[-]");
-	interpClVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CL for SPI - second derivative","AWA [rad]","[-]");
-	interpCdVec_[2] -> plotD2(0,toRad(180),50,"Interpolated CD for SPI - second derivative","AWA [rad]","[-]");
+	// -> Instantiate a chart for the first derivative of cd of Main. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdCdMainPlot = new VppXYCustomPlotWidget("d2(CD) for MAIN","AWA [rad]","[-]");
+	interpCdVec_[activeSail::mainSail]->plotD2(pdCdMainPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pdCdMainPlot,0,1);
+
+	// -> Instantiate a chart for the first derivative of cd of Jib. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdCdJibPlot = new VppXYCustomPlotWidget("d2(CD) for Jib","AWA [rad]","[-]");
+	interpCdVec_[activeSail::jib]->plotD2(pdCdJibPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pdCdJibPlot,1,1);
+
+	// -> Instantiate a chart for the first derivative of cd of Spi. Plot and add it to the multiplot
+	VppXYCustomPlotWidget* pdCdSpiPlot = new VppXYCustomPlotWidget("d2(CD) for Spi","AWA [rad]","[-]");
+	interpCdVec_[activeSail::spi]->plotD2(pdCdSpiPlot,0,toRad(180),75);
+	pMultiPlotWidget->addChart(pdCdSpiPlot,2,1);
 
 }
 
@@ -689,15 +882,15 @@ void AeroForcesItem::update(int vTW, int aTW) {
 }
 
 // plot the aeroForces for a fixed range
-void AeroForcesItem::plot() {
+void AeroForcesItem::plot(MultiplePlotWidget* pMultiPlotWidget ) {
 
 	// Number of points of the plots
 	size_t nVelocities=60;
 
 	// For which TWV, TWA shall we plot the aero forces/moments?
-	size_t twv=0, twa=0;
-	IOUtils io(pWindItem_);
-	io.askUserWindIndexes(twv, twa);
+	WindIndicesDialog dg(pWindItem_);
+	if (dg.exec() == QDialog::Rejected)
+		return;
 
 	// Buffer the current solution
 	Eigen::VectorXd xbuf(4);
@@ -708,8 +901,10 @@ void AeroForcesItem::plot() {
 	f_= 0.99;
 
 	// Declare containers for the velocity and angle-wise data
-	std::vector<ArrayXd> v, Lift, Drag, fDrive, fSide, mHeel;
-	std::vector<string> curveLabels;
+	std::vector<QVector<double> > fN, Lift, Drag, fDrive, fSide, mHeel;
+	std::vector<QString> curveLabels;
+
+	double fNmin, fNmax;
 
 	// Loop on heel angles : from 0 to 90 deg in steps of 15 deg
 	for(int hAngle=-20; hAngle<90; hAngle+=15){
@@ -718,8 +913,8 @@ void AeroForcesItem::plot() {
 		PHI_= toRad(hAngle);
 		// vectors with the current boat velocity, the drive force
 		// and heeling moment values
-		ArrayXd x_v, lift, drag, f_v, fs_v, m_v;
-		x_v.resize(nVelocities);
+		QVector<double> x_fN, lift, drag, f_v, fs_v, m_v;
+		x_fN.resize(nVelocities);
 		lift.resize(nVelocities);
 		drag.resize(nVelocities);
 		f_v.resize(nVelocities);
@@ -739,26 +934,32 @@ void AeroForcesItem::plot() {
 
 			// Update the wind. For the moment fix the apparent wind velocity and angle
 			// to the first values contained in the variableFiles.
-			pWindItem_->updateSolution(twv, twa, stateVector);
+			pWindItem_->updateSolution(dg.getTWV(), dg.getTWA(), stateVector);
 
 			// Update the sail coefficients for the current wind
-			pSailCoeffs_->updateSolution(twv, twa, stateVector);
+			pSailCoeffs_->updateSolution(dg.getTWV(), dg.getTWA(), stateVector);
 
 			// Update 'this': compute sail forces
-			update(twv, twa);
+			update(dg.getTWV(), dg.getTWA());
 
 			// Store velocity-wise data:
-			x_v(iTwv)= V_ / sqrt( Physic::g * pParser_->get("LWL") );	// Fn...
-			lift(iTwv) = getLift(); // lift...
-			drag(iTwv) = getDrag(); // drag...
-			f_v(iTwv)= getFDrive(); // fDrive...
-			fs_v(iTwv)= getFSide(); // fSide_...
-			m_v(iTwv)= getMHeel();  // mHeel...
+			x_fN[iTwv]= V_ / sqrt( Physic::g * pParser_->get("LWL") );	// Fn...
+
+			if(iTwv==0)
+				fNmin=x_fN[iTwv];
+			if(iTwv==nVelocities-1)
+				fNmax=x_fN[iTwv];
+
+			lift[iTwv] = getLift(); // lift...
+			drag[iTwv] = getDrag(); // drag...
+			f_v[iTwv]= getFDrive(); // fDrive...
+			fs_v[iTwv]= getFSide(); // fSide_...
+			m_v[iTwv]= getMHeel();  // mHeel...
 
 		}
 
 		// Append the velocity-wise curve for each heel angle
-		v.push_back(x_v);
+		fN.push_back(x_fN);
 		Lift.push_back(lift);
 		Drag.push_back(drag);
 		fDrive.push_back(f_v);
@@ -771,57 +972,67 @@ void AeroForcesItem::plot() {
 
 	}
 
-	// Instantiate a plotter and plot Lift
-	VPPPlotter liftPlotter;
-	for(size_t i=0; i<v.size(); i++)
-		liftPlotter.append(curveLabels[i],v[i],Lift[i]);
-
 	char msg[256];
-	sprintf(msg,"plot Sail Lift vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2fº",
-			pWindItem_->getTWV(twv),
-			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	liftPlotter.plot("Fn [-]","Lift [N]", msg);
+	sprintf(msg,"Sail Lift vs speed - twv=%2.2f [m/s], twa=%2.2fº",
+			pWindItem_->getTWV(dg.getTWV()),
+			mathUtils::toDeg(pWindItem_->getTWA(dg.getTWA())) );
 
+	// Instantiate a plotter and plot Lift. We new with a raw ptr, then the
+	// ownership will be assigned to the pMultiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pLiftPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Lift [N]");
+	for(size_t i=0; i<fN.size(); i++)
+		pLiftPlot->addData(fN[i],Lift[i],curveLabels[i]);
+	pLiftPlot->rescaleAxes();
+	pMultiPlotWidget->addChart(pLiftPlot,0,0);
 
-	// Instantiate a plotter and plot Drag
-	VPPPlotter dragPlotter;
-	for(size_t i=0; i<v.size(); i++)
-		dragPlotter.append(curveLabels[i],v[i],Drag[i]);
+	//--
 
-	sprintf(msg,"plot Sail Drag vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2fº",
-			pWindItem_->getTWV(twv),
-			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	dragPlotter.plot("Fn [-]","Drag [N]", msg);
+	sprintf(msg,"Sail Drag vs speed - twv=%2.2f [m/s], twa=%2.2fº",
+			pWindItem_->getTWV(dg.getTWV()),
+			mathUtils::toDeg(pWindItem_->getTWA(dg.getTWA())) );
 
-	// Instantiate a plotter and plot fDrive
-	VPPPlotter fPlotter;
-	for(size_t i=0; i<v.size(); i++)
-		fPlotter.append(curveLabels[i],v[i],fDrive[i]);
+	// Instantiate a plotter and plot Drag. We new with a raw ptr, then the
+	// ownership will be assigned to the pMultiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pDragPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Drag [N]");
+	for(size_t i=0; i<fN.size(); i++)
+		pDragPlot->addData(fN[i],Drag[i],curveLabels[i]);
+	pDragPlot->rescaleAxes();
+	pMultiPlotWidget->addChart(pDragPlot,0,1);
 
-	sprintf(msg,"plot drive force vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2fº",
-			pWindItem_->getTWV(twv),
-			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	fPlotter.plot("Fn [-]","Fdrive [N]", msg);
+	//--
 
-	// Instantiate a plotter and plot fSide
-	VPPPlotter fSidePlotter;
-	for(size_t i=0; i<v.size(); i++)
-		fSidePlotter.append(curveLabels[i],v[i],fSide[i]);
+	sprintf(msg,"Drive force vs speed - twv=%2.2f [m/s], twa=%2.2fº",
+			pWindItem_->getTWV(dg.getTWV()),
+			mathUtils::toDeg(pWindItem_->getTWA(dg.getTWA())) );
 
-	sprintf(msg,"plot side force vs boat speed - "
-			"twv=%2.2f [m/s], twa=%2.2fº",
-			pWindItem_->getTWV(twv),
-			mathUtils::toDeg(pWindItem_->getTWA(twa)) );
-	fSidePlotter.plot("Fn [-]","Fside [N]", msg);
+	// Instantiate a plotter and plot Driving Force
+	VppXYCustomPlotWidget* pDriveFPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","FDrive [N]");
+	for(size_t i=0; i<fN.size(); i++)
+		pDriveFPlot->addData(fN[i],fDrive[i],curveLabels[i]);
+	pDriveFPlot->rescaleAxes();
+	pMultiPlotWidget->addChart(pDriveFPlot,1,0);
 
-	// Instantiate a plotter and plot mHeel
-	VPPPlotter mPlotter;
-	for(size_t i=0; i<v.size(); i++)
-		mPlotter.append(curveLabels[i],v[i],mHeel[i]);
-	mPlotter.plot("Fn [-]","mHeel [N*m]","plot heeling moment vs boat speed");
+	//--
+
+	sprintf(msg,"Side force vs speed - twv=%2.2f [m/s], twa=%2.2fº",
+			pWindItem_->getTWV(dg.getTWV()),
+			mathUtils::toDeg(pWindItem_->getTWA(dg.getTWA())) );
+
+	// Instantiate a plotter and plot Driving Force
+	VppXYCustomPlotWidget* pSideFPlot = new VppXYCustomPlotWidget(msg,"Fn [-]","FSide [N]");
+	for(size_t i=0; i<fN.size(); i++)
+		pSideFPlot->addData(fN[i],fSide[i],curveLabels[i]);
+	pSideFPlot->rescaleAxes();
+	pMultiPlotWidget->addChart(pSideFPlot,1,1);
+
+	//--
+
+	// Instantiate a plotter and plot Driving Force
+	VppXYCustomPlotWidget* pMPlot = new VppXYCustomPlotWidget("Heeling moment vs boat speed","Fn [-]","mHeel [N*m]");
+	for(size_t i=0; i<fN.size(); i++)
+		pMPlot->addData(fN[i],mHeel[i],curveLabels[i]);
+	pMPlot->rescaleAxes();
+	pMultiPlotWidget->addChart(pMPlot,2,0);
 
 	// Restore the current solution
 	V_  = xbuf(0);
@@ -874,8 +1085,4 @@ SailCoefficientItem* AeroForcesItem::getSailCoeffItem() {
 // Get a ptr to the sailCoeffs Item - const variety
 const SailCoefficientItem* AeroForcesItem::getSailCoeffItem() const {
 	return pSailCoeffs_;
-}
-
-void AeroForcesItem::printWhoAmI() {
-	std::cout<<"--> WhoAmI of AeroForcesItem "<<std::endl;
 }
