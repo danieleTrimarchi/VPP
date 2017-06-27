@@ -646,6 +646,9 @@ std::vector<VppPolarCustomPlotWidget*> ResultContainer::plotPolars() {
 		// Add polar plot circles
 		retVec[i]->addCircles();
 
+		// Place the origin in the centre
+		retVec[i]->centreAxes();
+
 	}
 
 	return retVec;

@@ -24,6 +24,9 @@ class VppPolarCustomPlotWidget : public VppCustomPlotWidgetBase {
 		/// integer value
 		void addCircles();
 
+		/// Place the axes in the centre of the plot
+		void centreAxes();
+
 	protected:
 
 		/// Select a curve - in this case a QCPCurve
@@ -47,11 +50,6 @@ class VppPolarCustomPlotWidget : public VppCustomPlotWidgetBase {
 		/// that makes this not functional to begin with. One needs a mousePressEvent
 		/// to get the right plot...!
 		void axesEqual();
-
-		private slots:
-
-		/// Place the axes in the centre of the plot
-		void centreAxes();
 
 };
 
