@@ -141,9 +141,9 @@ void IppOptSolverFactory::run(int vTW, int aTW) {
 	if (status == Solve_Succeeded) {
 		std::cout << std::endl << std::endl << "*** The problem solved!" << std::endl;
 	}
-	else
-		throw VPPException(HERE,"ipOpt failed to find the solution!");
-
+	else {
+		throw NonConvergedException(HERE,"ipOpt failed to find the solution!");
+	}
 }
 
 } // End namespace Optim

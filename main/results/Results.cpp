@@ -390,6 +390,17 @@ const Result& ResultContainer::get(size_t iWv, size_t iWa) const {
 	return resMat_[iWv][iWa];
 }
 
+/// Get the result for a given wind velocity/angle - non const variety
+Result& ResultContainer::get(size_t iWv, size_t iWa) {
+
+	if(iWv>=nWv_)
+		throw VPPException(HERE,"In OptResultContainer::get, requested out-of-bounds iWv!");
+	if(iWa>=nWa_)
+		throw VPPException(HERE,"In OptResultContainer::get(), requested out-of-bounds iWa!");
+
+	return resMat_[iWv][iWa];
+}
+
 // Get the result for a given wind velocity/angle. Assume
 // the results are shown (as in print) by WA first, and then
 // by WV

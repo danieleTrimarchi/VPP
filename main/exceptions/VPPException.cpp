@@ -19,7 +19,6 @@ VPPException::VPPException(const char* inFile, int inLine, const char* inFunctio
 	msgBox.setText(QString(what()));
 	msgBox.setIcon(QMessageBox::Critical);
 	msgBox.exec();
-
 }
 
 // Destructor
@@ -44,11 +43,6 @@ NonConvergedException::NonConvergedException(const char* inFile, int inLine, con
 	std::cout<<"\n-----------------------------------------\n";
 	std::cout<<msg<<std::endl;
 	std::cout<<"\n-----------------------------------------\n";
-
-	QMessageBox msgBox;
-	msgBox.setText(QString(what()));
-	msgBox.setIcon(QMessageBox::Critical);
-	msgBox.exec();
 
 }
 

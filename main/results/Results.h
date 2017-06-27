@@ -180,6 +180,9 @@ class ResultContainer {
 		/// Get the result for a given wind velocity/angle
 		const Result& get(size_t iWv, size_t iWa) const;
 
+		/// Get the result for a given wind velocity/angle - non const variety
+		Result& get(size_t iWv, size_t iWa);
+
 		/// Get the result for a given wind velocity/angle. Assume
 		/// the results are shown (as in print) by WA first, and then
 		/// by WV
