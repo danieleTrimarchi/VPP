@@ -203,9 +203,6 @@ void VppCustomPlotWidgetBase::keyPressEvent(QKeyEvent *event) {
 		case Qt::Key_Down:
 			changeGraphSelection(Qt::Key_Down);
 			break;
-			//    case Qt::Key_Space:
-			//        switchChartType();
-			//        break;
 		default:
 			QWidget::keyPressEvent(event);
 			break;

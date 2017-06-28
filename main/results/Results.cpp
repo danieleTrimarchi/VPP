@@ -649,6 +649,9 @@ std::vector<VppPolarCustomPlotWidget*> ResultContainer::plotPolars() {
 		// Place the origin in the centre
 		retVec[i]->centreAxes();
 
+		// Place the origin in the centre
+		retVec[i]->axesEqual();
+
 	}
 
 	return retVec;

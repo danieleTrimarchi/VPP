@@ -12,11 +12,12 @@ VppPolarCustomPlotWidget::VppPolarCustomPlotWidget(
 			QCP::iRangeDrag |
 			QCP::iRangeZoom |
 			QCP::iSelectPlottables |
-			QCP::iSelectLegend
+			QCP::iSelectLegend |
+			QCP::iMultiSelect
 	);
 
-	// Allow for axes passing trough the centre and axes equal
-  connect(this, SIGNAL(afterReplot()), this, SLOT(centreAxes()));
+	setMultiSelectModifier(Qt::AltModifier);
+
 	connect(this, SIGNAL(afterReplot()), this, SLOT(axesEqual()));
 
 }
@@ -144,35 +145,41 @@ void VppPolarCustomPlotWidget::select(QCPAbstractPlottable* pCurveToSelect) {
 
 void VppPolarCustomPlotWidget::toggleSelected() {
 
-	QCPAbstractPlottable* pSelectedPlottable = selectedPlottables().first();
+	QList<QCPAbstractPlottable*> selectedPlottableList= selectedPlottables();
 
-	QCPCurve* pCurve = qobject_cast<QCPCurve*>(pSelectedPlottable);
-	if(!pCurve)
-		throw VPPException(HERE, "Could not cast this plottable to QCPCurve!");
+	for(QList<QCPAbstractPlottable*>::iterator it=selectedPlottableList.begin();
+			it!=selectedPlottableList.end(); ++it){
 
-	// Get a handle to the legend to modify it
-	QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pCurve);
+		QCPAbstractPlottable* pSelectedPlottable = *it;
 
-	// Declare a color
-	QColor color;
+		QCPCurve* pCurve = qobject_cast<QCPCurve*>(pSelectedPlottable);
+		if(!pCurve)
+			throw VPPException(HERE, "Could not cast this plottable to QCPCurve!");
 
-	// The curve is visible : hide it
-	if(pCurve->visible()){
+		// Get a handle to the legend to modify it
+		QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pCurve);
 
-		// Hide the curve
-		pCurve->setVisible(false);
+		// Declare a color
+		QColor color;
 
-		// Write the legend in red
-		color.setRgb(255,0,0);
-		legendItemToGrayOut->setTextColor(color);
+		// The curve is visible : hide it
+		if(pCurve->visible()){
 
-	} else {
-		// The curve is hidden : show it
-		pCurve->setVisible(true);
+			// Hide the curve
+			pCurve->setVisible(false);
 
-		// Restore the color of the legend to black
-		color.setRgb(0,0,0);
-		legendItemToGrayOut->setTextColor(color);
+			// Write the legend in red
+			color.setRgb(255,0,0);
+			legendItemToGrayOut->setTextColor(color);
+
+		} else {
+			// The curve is hidden : show it
+			pCurve->setVisible(true);
+
+			// Restore the color of the legend to black
+			color.setRgb(0,0,0);
+			legendItemToGrayOut->setTextColor(color);
+		}
 	}
 
 	// Replot

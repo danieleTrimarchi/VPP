@@ -13,8 +13,11 @@ VppXYCustomPlotWidget::VppXYCustomPlotWidget(
 			QCP::iRangeZoom |
 			QCP::iSelectPlottables |
 			QCP::iSelectLegend |
-			QCP::iSelectAxes
+			QCP::iSelectAxes |
+			QCP::iMultiSelect
 	);
+
+	setMultiSelectModifier(Qt::AltModifier);
 
 }
 
@@ -36,36 +39,42 @@ void VppXYCustomPlotWidget::select(QCPAbstractPlottable* pGraphToSelect) {
 // Hide a selected curve - in this case a QCPGraphs
 void VppXYCustomPlotWidget::toggleSelected() {
 
-	QCPAbstractPlottable* pSelectedPlottable = selectedPlottables().first();
+	QList<QCPAbstractPlottable*> selectedPlottableList= selectedPlottables();
 
-	QCPGraph* pGraph = qobject_cast<QCPGraph*>(pSelectedPlottable);
-	if(!pGraph)
-		throw VPPException(HERE, "Could not cast this plottable to QCPGraph!");
+	for(QList<QCPAbstractPlottable*>::iterator it=selectedPlottableList.begin();
+			it!=selectedPlottableList.end(); ++it){
 
-	// Get a handle to the legend and modify it
-	QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pGraph);
+		QCPAbstractPlottable* pSelectedPlottable = *it;
 
-	// Declare a color
-	QColor color;
+		QCPGraph* pGraph = qobject_cast<QCPGraph*>(pSelectedPlottable);
+		if(!pGraph)
+			throw VPPException(HERE, "Could not cast this plottable to QCPGraph!");
 
-	// The curve is visible : hide it
-	if(pGraph->visible()){
+		// Get a handle to the legend and modify it
+		QCPPlottableLegendItem* legendItemToGrayOut = legend->itemWithPlottable(pGraph);
 
-		// Hide the curve
-		pGraph->setVisible(false);
+		// Declare a color
+		QColor color;
 
-		// Write the legend in red
-		color.setRgb(255,0,0);
-		legendItemToGrayOut->setTextColor(color);
+		// The curve is visible : hide it
+		if(pGraph->visible()){
 
-	} else {
-		// The curve is hidden : show it
-		pGraph->setVisible(true);
+			// Hide the curve
+			pGraph->setVisible(false);
 
-		// Restore the color of the legend to black
-		color.setRgb(0,0,0);
-		legendItemToGrayOut->setTextColor(color);
+			// Write the legend in red
+			color.setRgb(255,0,0);
+			legendItemToGrayOut->setTextColor(color);
 
+		} else {
+			// The curve is hidden : show it
+			pGraph->setVisible(true);
+
+			// Restore the color of the legend to black
+			color.setRgb(0,0,0);
+			legendItemToGrayOut->setTextColor(color);
+
+		}
 	}
 
 	replot();

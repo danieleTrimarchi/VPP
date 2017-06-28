@@ -56,7 +56,6 @@ void VPPResultIO::parse(string fileName){
 
 		//std::cout<<"Got line: "<<line<<std::endl;
 		if(line==Result::headerBegin_){
-			std::cout<<"Line IS headerBegin!"<<std::endl;
 			parseSection(infile);
 			break;
 		}
