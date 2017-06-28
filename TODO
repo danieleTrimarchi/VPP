@@ -7,10 +7,6 @@
 	- 2 fields : “angle” “value” 
 - Compute the derivative of a cubic spline, thus removing the FDs
 
-————
-BUG : import results + plotXY + cancel
-————
-
 Michele: 
 	Stability curve -> centre of buoyancy 
 	Allow entering sail coefficients

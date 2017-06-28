@@ -649,21 +649,13 @@ std::vector<VppPolarCustomPlotWidget*> ResultContainer::plotPolars() {
 		// Place the origin in the centre
 		retVec[i]->centreAxes();
 
-		// Place the origin in the centre
-		retVec[i]->axesEqual();
-
 	}
 
 	return retVec;
 }
 
 // Returns all is required to plot the XY result plots
-std::vector<VppXYCustomPlotWidget*> ResultContainer::plotXY() {
-
-	// For which TWV, TWA shall we plot the aero forces/moments?
-	WindIndicesDialog wd(pWind_);
-	if (wd.exec() == QDialog::Rejected)
-		return std::vector<VppXYCustomPlotWidget*>(0);;
+std::vector<VppXYCustomPlotWidget*> ResultContainer::plotXY(WindIndicesDialog& wd) {
 
 	size_t iWa = wd.getTWA();
 

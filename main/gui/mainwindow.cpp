@@ -727,6 +727,11 @@ void MainWindow::plotXY() {
 			if(!hasSolver())
 				return;
 
+			// For which TWV, TWA shall we plot the aero forces/moments?
+			WindIndicesDialog wd(pVppItems_->getWind());
+			if (wd.exec() == QDialog::Rejected)
+				return;
+
 			std::cout<<"Plotting XY Results..."<<std::endl;
 
 			// Instantiate a graphic plotting window in the central widget
@@ -736,7 +741,7 @@ void MainWindow::plotXY() {
 			pXYPlotWidget_= new MultiplePlotWidget(this, "XY plot");
 
 			// Hand the multiplePlotwidget to the solver factory that stores the results and knows how to plot them
-			pSolverFactory_->get()->plotXY( pXYPlotWidget_ );
+			pSolverFactory_->get()->plotXY( pXYPlotWidget_, wd );
 
 			// Add the polar plot view to the left of the app window
 			addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_);

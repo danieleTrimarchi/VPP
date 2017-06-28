@@ -270,9 +270,9 @@ void VPPSolverBase::plotPolars(MultiplePlotWidget* pMultiPlotWidget) {
 }
 
 // Plot the XY results
-void VPPSolverBase::plotXY(MultiplePlotWidget* pMultiPlotWidget) {
+void VPPSolverBase::plotXY(MultiplePlotWidget* pMultiPlotWidget, WindIndicesDialog& wd) {
 
-	std::vector<VppXYCustomPlotWidget*> chartVec= pResults_->plotXY();
+	std::vector<VppXYCustomPlotWidget*> chartVec= pResults_->plotXY(wd);
 
 	// Assigns to a vector of shared_ptrs, so this won't leak because
 	// the possession is taken by the MultiplePlotWidget

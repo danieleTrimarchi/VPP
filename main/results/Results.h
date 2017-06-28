@@ -235,7 +235,7 @@ class ResultContainer {
 		std::vector<VppPolarCustomPlotWidget*> plotPolars();
 
 		/// Returns all is required to plot the XY result plots
-		std::vector<VppXYCustomPlotWidget*> plotXY();
+		std::vector<VppXYCustomPlotWidget*> plotXY(WindIndicesDialog&);
 
 	private:
 
