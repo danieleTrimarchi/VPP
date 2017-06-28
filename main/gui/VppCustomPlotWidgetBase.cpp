@@ -77,10 +77,30 @@ void VppCustomPlotWidgetBase::contextMenuRequest(QPoint pos) {
 	menu->addAction("Show all curves", this, SLOT(showAllCurves()));
 	menu->addAction("Hide all curves", this, SLOT(hideAllCurves()));
 
-	// else
-	// 	menu->addAction("filter", this, SLOT(filter()));
+	// the user has right-clicked on the legend
+  if (legend->selectTest(pos, false) >= 0) {
+    menu->addAction("Move legend to top left", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignLeft));
+    menu->addAction("Move legend to top center", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignHCenter));
+    menu->addAction("Move legend to top right", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignRight));
+    menu->addAction("Move legend to bottom right", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom|Qt::AlignRight));
+    menu->addAction("Move legend to bottom left", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom|Qt::AlignLeft));
+  }
 
 	menu->popup(mapToGlobal(pos));
+}
+
+void VppCustomPlotWidgetBase::moveLegend() {
+
+	// make sure this slot is really called by a context menu action, so it carries the data we need
+  if (QAction* contextAction = qobject_cast<QAction*>(sender()))
+  {
+    bool ok;
+    int dataInt = contextAction->data().toInt(&ok);
+    if (ok) {
+      axisRect()->insetLayout()->setInsetAlignment(0, (Qt::Alignment)dataInt);
+      replot();
+    }
+  }
 }
 
 // Hide all curves in the plot

@@ -90,6 +90,9 @@ protected slots:
   /// Hide all curves in the plot
   virtual void hideAllCurves();
 
+  /// Move the legend
+  void moveLegend();
+
 };
 
 #endif // VPP_XY_CUSTOMPLOTWIDGET_H
