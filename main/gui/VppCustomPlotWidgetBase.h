@@ -45,6 +45,9 @@ protected :
 	// QCPCurves (polar plots)
   virtual void select(QCPAbstractPlottable*) =0;
 
+  /// Arrange the legend on one or two columns
+  void toggleMultiColumnsLegend();
+
 protected slots:
 
 	/// Normally, axis base line, axis tick labels and axis labels are selectable separately, but we want

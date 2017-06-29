@@ -30,6 +30,8 @@ VppCustomPlotWidgetBase::VppCustomPlotWidgetBase(
 	legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
 	legend->setIconSize(15,5);
 
+	// The legend will be placed on two cols
+	toggleMultiColumnsLegend();
 
 	// Set the axis labels and the font
 	legendFont.setPointSize(9);
@@ -79,11 +81,13 @@ void VppCustomPlotWidgetBase::contextMenuRequest(QPoint pos) {
 
 	// the user has right-clicked on the legend
   if (legend->selectTest(pos, false) >= 0) {
-    menu->addAction("Move legend to top left", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignLeft));
-    menu->addAction("Move legend to top center", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignHCenter));
-    menu->addAction("Move legend to top right", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignRight));
+  	menu->addSeparator();
     menu->addAction("Move legend to bottom right", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom|Qt::AlignRight));
+    menu->addAction("Move legend to bottom center", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom|Qt::AlignHCenter));
     menu->addAction("Move legend to bottom left", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom|Qt::AlignLeft));
+    menu->addAction("Move legend to top right", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignRight));
+    menu->addAction("Move legend to top center", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignHCenter));
+  	menu->addAction("Move legend to top left", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignLeft));
   }
 
 	menu->popup(mapToGlobal(pos));
@@ -92,8 +96,7 @@ void VppCustomPlotWidgetBase::contextMenuRequest(QPoint pos) {
 void VppCustomPlotWidgetBase::moveLegend() {
 
 	// make sure this slot is really called by a context menu action, so it carries the data we need
-  if (QAction* contextAction = qobject_cast<QAction*>(sender()))
-  {
+  if (QAction* contextAction = qobject_cast<QAction*>(sender())) {
     bool ok;
     int dataInt = contextAction->data().toInt(&ok);
     if (ok) {
@@ -136,6 +139,14 @@ void VppCustomPlotWidgetBase::showAllCurves() {
 	}
 
 	replot();
+}
+
+void VppCustomPlotWidgetBase::toggleMultiColumnsLegend() {
+	// Set the legend on multiple colums
+	legend->setWrap(2);
+	legend->setRowSpacing(1);
+	legend->setColumnSpacing(2);
+	legend->setFillOrder(QCPLayoutGrid::FillOrder::foColumnsFirst, true);
 }
 
 
