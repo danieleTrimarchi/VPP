@@ -1,10 +1,10 @@
-- Finish the legend on multiple cols on request
-- sail coefficients : build a QDialog with dynamically appendable QLineEdits
-	- perhaps start with a few : 4 or 6
-	- “+” button to add a row
-	- “-“ button to remove a row
-	- min : 3 rows
-	- 2 fields : “angle” “value” 
+-SailCoeff will be entered by file. 
+	The user can either leave the default or select the sail coeff file,
+	which is a raw file with as many lines as the user wants. 0 and 180 are
+	requested data
+	
+	this is a layout with QFileDialogs	
+
 - …openCascade…
 
 

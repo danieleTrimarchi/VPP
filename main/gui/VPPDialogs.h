@@ -35,8 +35,12 @@ class StateVectorDialog : public QDialog {
 		/// Explicit protected Ctor
 		explicit StateVectorDialog(QWidget *parent = Q_NULLPTR);
 
+		/// Add the 'Ok' and 'Cancel' buttons at the bottom of the widget
+		void addOkCancelButtons(size_t);
+
 		boost::shared_ptr<QLineEdit> pV_Edit_, pPhi_Edit_, pCrew_Edit_, pFlat_Edit_;
 
+		/// Layout of the Dialog (place holders for the elements the dialog is made of)
 		boost::shared_ptr<QGridLayout> pGridLayout_;
 };
 
@@ -89,10 +93,16 @@ class WindIndicesDialog : public QDialog {
 
 	private:
 
+		/// Add the 'Ok' and 'Cancel' buttons at the bottom of the widget
+		void addOkCancelButtons(size_t);
+
 		/// raw ptr to the wind
 		WindItem* pWind_;
 
 		boost::shared_ptr<QLineEdit> pTWV_Edit_, pTWA_Edit_;
+
+		/// Layout of the Dialog (place holders for the elements the dialog is made of)
+		boost::shared_ptr<QGridLayout> pGridLayout_;
 
 };
 #endif

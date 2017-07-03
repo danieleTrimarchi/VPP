@@ -64,6 +64,16 @@ Eigen::VectorXd StateVectorDialog::getStateVector() const {
 	return v;
 }
 
+// Add the 'Ok' and 'Cancel' buttons at the bottom of the widget
+void StateVectorDialog::addOkCancelButtons(size_t vPos) {
+
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+  connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+  connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+  pGridLayout_->addWidget(buttonBox, vPos, 0, 1, 2);
+
+}
+
 //====================================================
 
 // Ctor
@@ -85,10 +95,8 @@ FullStateVectorDialog::FullStateVectorDialog(QWidget* parent /*=Q_NULLPTR*/) :
   pGridLayout_->addWidget(new QLabel(tr("Flat [-]:")), vPos, 0);
   pGridLayout_->addWidget(pFlat_Edit_.get(), vPos++, 1);
 
-  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-  connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-  connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-  pGridLayout_->addWidget(buttonBox, vPos, 0, 1, 2);
+  // And now add the 'Ok' or 'Cancel' buttons
+  addOkCancelButtons(vPos);
 
 }
 
@@ -110,10 +118,8 @@ OptimVarsStateVectorDialog::OptimVarsStateVectorDialog(QWidget* parent /*=Q_NULL
   pGridLayout_->addWidget(new QLabel(tr("Flat [-]:")), vPos, 0);
   pGridLayout_->addWidget(pFlat_Edit_.get(), vPos++, 1);
 
-  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-  connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-  connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-  pGridLayout_->addWidget(buttonBox, vPos, 0, 1, 2);
+  // And now add the 'Ok' or 'Cancel' buttons
+  addOkCancelButtons(vPos);
 
 }
 
@@ -129,7 +135,7 @@ WindIndicesDialog::WindIndicesDialog(WindItem* pWind, QWidget* parent)
 
     setWindowTitle(tr("Enter the wind indices"));
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    QGridLayout *layout = new QGridLayout(this);
+    pGridLayout_.reset( new QGridLayout(this) );
 
     // Set local settings for the validators
     QLocale localSettings = QLocale::c();
@@ -145,16 +151,24 @@ WindIndicesDialog::WindIndicesDialog(WindItem* pWind, QWidget* parent)
     pTWA_Edit_->setValidator(twaValueValidator);
 
     size_t vPos=0;
-    layout->addWidget(new QLabel(tr("TWV:")), vPos, 0);
-    layout->addWidget(pTWV_Edit_.get(), vPos++, 1);
+    pGridLayout_->addWidget(new QLabel(tr("TWV:")), vPos, 0);
+    pGridLayout_->addWidget(pTWV_Edit_.get(), vPos++, 1);
 
-    layout->addWidget(new QLabel(tr("TWA:")), vPos, 0);
-    layout->addWidget(pTWA_Edit_.get(), vPos++, 1);
+    pGridLayout_->addWidget(new QLabel(tr("TWA:")), vPos, 0);
+    pGridLayout_->addWidget(pTWA_Edit_.get(), vPos++, 1);
 
-    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-    layout->addWidget(buttonBox, vPos, 0, 1, 2);
+    // And now add the 'Ok' or 'Cancel' buttons
+    addOkCancelButtons(vPos);
+}
+
+// Add the 'Ok' and 'Cancel' buttons at the bottom of the widget
+void WindIndicesDialog::addOkCancelButtons(size_t vPos) {
+
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+  connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+  connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+  pGridLayout_->addWidget(buttonBox, vPos, 0, 1, 2);
+
 }
 
 int WindIndicesDialog::getTWV() const {

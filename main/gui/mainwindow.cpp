@@ -36,6 +36,7 @@
 #include "VPPSolverFactoryBase.h"
 #include "Version.h"
 #include "VppPolarCustomPlotWidget.h"
+#include "VPPDefaultFileBrowser.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitely deleted in the destructor
@@ -112,8 +113,6 @@ MainWindow::~MainWindow() {
 
 void MainWindow::setupMenuBar() {
 
-	pVppActionMenu_.reset( menuBar()->addMenu(tr("&VPP Actions")) );
-
 	// Create 'Import boat description' action and associate an icon
 	actionVector_.push_back( boost::shared_ptr<QAction>(
 			new QAction(
@@ -123,7 +122,6 @@ void MainWindow::setupMenuBar() {
 	QAction* importBoatAction= actionVector_.back().get();
 	importBoatAction->setStatusTip(tr("Import boat description"));
 	connect(importBoatAction, &QAction::triggered, this, &MainWindow::import);
-	pVppActionMenu_->addAction(importBoatAction);
 	pToolBar_->addAction(importBoatAction);
 
 	// Create 'run' action and associate an icon
@@ -135,7 +133,6 @@ void MainWindow::setupMenuBar() {
 	QAction* runAction = actionVector_.back().get();
 	runAction->setStatusTip(tr("Run the VPP analysis"));
 	connect(runAction, &QAction::triggered, this, &MainWindow::run);
-	pVppActionMenu_->addAction(runAction);
 	pToolBar_->addAction(runAction);
 
 	// Create 'tabular' action and associate an icon
@@ -147,10 +144,7 @@ void MainWindow::setupMenuBar() {
 	QAction* tabResAction = actionVector_.back().get();
 	tabResAction->setStatusTip(tr("Show the result table"));
 	connect(tabResAction, &QAction::triggered, this, &MainWindow::tableResults);
-	pVppActionMenu_->addAction(tabResAction);
 	pToolBar_->addAction(tabResAction);
-
-	pVppActionMenu_->addSeparator();
 
 	// Create a 'Save Results'action and associate an icon
 	actionVector_.push_back( boost::shared_ptr<QAction>(
@@ -161,7 +155,6 @@ void MainWindow::setupMenuBar() {
 	QAction* saveResultsAction = actionVector_.back().get();
 	saveResultsAction->setStatusTip(tr("Save results"));
 	connect(saveResultsAction, &QAction::triggered, this, &MainWindow::saveResults);
-	pVppActionMenu_->addAction(saveResultsAction);
 
 	// Create a 'Save Results'action and associate an icon
 	actionVector_.push_back( boost::shared_ptr<QAction>(
@@ -172,7 +165,6 @@ void MainWindow::setupMenuBar() {
 	QAction* importResultsAction = actionVector_.back().get();
 	importResultsAction->setStatusTip(tr("Import Previous Results"));
 	connect(importResultsAction, &QAction::triggered, this, &MainWindow::importResults);
-	pVppActionMenu_->addAction(importResultsAction);
 
 	// ---
 
@@ -375,7 +367,7 @@ void MainWindow::setupMenuBar() {
 	// ---
 
 	pPreferencesMenu_.reset( menuBar()->addMenu(tr("&VPP Settings")) );
-	pPreferencesMenu_->addAction(tr("&Select formulations"), this, &MainWindow::plotSailCoeffs);
+	pPreferencesMenu_->addAction(tr("&Import Sail Coefficients"), this, &MainWindow::importSailCoeffs);
 
 	pHelpMenu_.reset( menuBar()->addMenu(tr("&Help")) );
 	QAction *aboutAct = pHelpMenu_->addAction(tr("&About"), this, &MainWindow::about);
@@ -671,6 +663,17 @@ bool MainWindow::hasSolver() {
 		return false;
 	}
 	return true;
+}
+
+// Run a VPPDefaultFileBrowser to select a sail coefficient file
+// OR leave the default sail coeffs in place
+void MainWindow::importSailCoeffs() {
+
+  VPPDefaultFileBrowser* w = new VPPDefaultFileBrowser;
+  w->show();
+
+  return;
+
 }
 
 // Plot the velocity polars

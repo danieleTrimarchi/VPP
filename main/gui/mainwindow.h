@@ -142,12 +142,16 @@ private:
 	/// warns the user with an error-like widget
 	bool hasSolver();
 
+	/// Run a VPPDefaultFileBrowser to select a sail coefficient file
+	/// OR leave the default sail coeffs in place
+	void importSailCoeffs();
+
 	/// Log widget - This must be declared at the very beginning as we want to
 	/// make sure it is the last item to be removed on destruction
 	boost::shared_ptr<QTextEdit> pLogWidget_;
 
 	/// Menus available to the menu bar
-	boost::shared_ptr<QMenu> pVppActionMenu_, pPreferencesMenu_, pWidgetMenu_, pHelpMenu_;
+	boost::shared_ptr<QMenu> pPreferencesMenu_, pWidgetMenu_, pHelpMenu_;
 
 	/// Toolbar with some shortcuts to actions
 	QToolBar* pToolBar_;
