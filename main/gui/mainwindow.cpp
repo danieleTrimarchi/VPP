@@ -36,7 +36,6 @@
 #include "VPPSolverFactoryBase.h"
 #include "Version.h"
 #include "VppPolarCustomPlotWidget.h"
-#include "VPPDefaultFileBrowser.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitely deleted in the destructor

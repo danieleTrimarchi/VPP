@@ -9,7 +9,28 @@
 #include <Eigen/Core>
 #include "VppAeroItem.h"
 
-class StateVectorDialog : public QDialog {
+class DialogBase : public QDialog {
+
+		Q_OBJECT
+
+	public:
+
+	protected:
+
+		/// Explicit protected Ctor
+		explicit DialogBase(QWidget *parent = Q_NULLPTR);
+
+		/// Add the 'Ok' and 'Cancel' buttons at the bottom of the widget
+		void addOkCancelButtons(size_t);
+
+		/// Layout of the Dialog (place holders for the elements the dialog is made of)
+		boost::shared_ptr<QGridLayout> pGridLayout_;
+
+};
+
+//---------------------------------------------------------------
+
+class StateVectorDialog : public DialogBase {
 
 		Q_OBJECT
 
@@ -35,13 +56,8 @@ class StateVectorDialog : public QDialog {
 		/// Explicit protected Ctor
 		explicit StateVectorDialog(QWidget *parent = Q_NULLPTR);
 
-		/// Add the 'Ok' and 'Cancel' buttons at the bottom of the widget
-		void addOkCancelButtons(size_t);
-
 		boost::shared_ptr<QLineEdit> pV_Edit_, pPhi_Edit_, pCrew_Edit_, pFlat_Edit_;
 
-		/// Layout of the Dialog (place holders for the elements the dialog is made of)
-		boost::shared_ptr<QGridLayout> pGridLayout_;
 };
 
 //---------------------------------------------------------------
@@ -70,10 +86,9 @@ class OptimVarsStateVectorDialog : public StateVectorDialog {
 
 };
 
-//=========================================================================
+//---------------------------------------------------------------
 
-
-class WindIndicesDialog : public QDialog {
+class WindIndicesDialog : public DialogBase {
 
 		Q_OBJECT
 
@@ -93,16 +108,26 @@ class WindIndicesDialog : public QDialog {
 
 	private:
 
-		/// Add the 'Ok' and 'Cancel' buttons at the bottom of the widget
-		void addOkCancelButtons(size_t);
-
 		/// raw ptr to the wind
 		WindItem* pWind_;
 
 		boost::shared_ptr<QLineEdit> pTWV_Edit_, pTWA_Edit_;
 
-		/// Layout of the Dialog (place holders for the elements the dialog is made of)
-		boost::shared_ptr<QGridLayout> pGridLayout_;
+};
+
+//---------------------------------------------------------------
+
+class VPPDefaultFileBrowser : public DialogBase
+{
+		Q_OBJECT
+
+	public:
+		VPPDefaultFileBrowser(QWidget *parent = Q_NULLPTR);
+
+	private slots:
+
+		void selectFile();
 
 };
+
 #endif

@@ -1,10 +1,30 @@
 #include <QLabel>
 #include <QIntValidator>
 #include <QDoubleValidator>
+#include <QPushButton>
+#include <QFileDialog>
 #include "VPPDialogs.h"
 
+DialogBase::DialogBase(QWidget *parent) :
+ QDialog(parent) {
+
+	pGridLayout_.reset( new QGridLayout(this) );
+
+}
+
+// Add the 'Ok' and 'Cancel' buttons at the bottom of the widget
+void DialogBase::addOkCancelButtons(size_t vPos) {
+
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+  connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+  connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+  pGridLayout_->addWidget(buttonBox, vPos, 0, 1, 2);
+
+}
+///////////////////////////////////////////////////////
+
 StateVectorDialog::StateVectorDialog(QWidget *parent)
-    : QDialog(parent),
+    : DialogBase(parent),
 	  pV_Edit_(new QLineEdit(this)),
 	  pPhi_Edit_(new QLineEdit(this)),
 	  pCrew_Edit_(new QLineEdit(this)),
@@ -64,16 +84,6 @@ Eigen::VectorXd StateVectorDialog::getStateVector() const {
 	return v;
 }
 
-// Add the 'Ok' and 'Cancel' buttons at the bottom of the widget
-void StateVectorDialog::addOkCancelButtons(size_t vPos) {
-
-  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-  connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-  connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-  pGridLayout_->addWidget(buttonBox, vPos, 0, 1, 2);
-
-}
-
 //====================================================
 
 // Ctor
@@ -81,7 +91,6 @@ FullStateVectorDialog::FullStateVectorDialog(QWidget* parent /*=Q_NULLPTR*/) :
 		StateVectorDialog(parent) {
 
   size_t vPos=0;
-  pGridLayout_.reset( new QGridLayout(this) );
 
   pGridLayout_->addWidget(new QLabel(tr("V [m/s]:")), vPos, 0);
   pGridLayout_->addWidget(pV_Edit_.get(), vPos++, 1);
@@ -107,7 +116,6 @@ OptimVarsStateVectorDialog::OptimVarsStateVectorDialog(QWidget* parent /*=Q_NULL
 		StateVectorDialog(parent) {
 
   size_t vPos=0;
-  pGridLayout_.reset( new QGridLayout(this) );
 
   pV_Edit_->hide();
   pPhi_Edit_->hide();
@@ -128,14 +136,13 @@ OptimVarsStateVectorDialog::OptimVarsStateVectorDialog(QWidget* parent /*=Q_NULL
 
 
 WindIndicesDialog::WindIndicesDialog(WindItem* pWind, QWidget* parent)
-    : QDialog(parent),
+    : DialogBase(parent),
 			pWind_(pWind),
 			pTWV_Edit_(new QLineEdit(this)),
 			pTWA_Edit_(new QLineEdit(this))	{
 
     setWindowTitle(tr("Enter the wind indices"));
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    pGridLayout_.reset( new QGridLayout(this) );
 
     // Set local settings for the validators
     QLocale localSettings = QLocale::c();
@@ -161,16 +168,6 @@ WindIndicesDialog::WindIndicesDialog(WindItem* pWind, QWidget* parent)
     addOkCancelButtons(vPos);
 }
 
-// Add the 'Ok' and 'Cancel' buttons at the bottom of the widget
-void WindIndicesDialog::addOkCancelButtons(size_t vPos) {
-
-  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-  connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-  connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-  pGridLayout_->addWidget(buttonBox, vPos, 0, 1, 2);
-
-}
-
 int WindIndicesDialog::getTWV() const {
 	return pTWV_Edit_->text().toInt();
 }
@@ -183,5 +180,44 @@ int WindIndicesDialog::getTWA() const {
 WindItem* WindIndicesDialog::getWind() const {
 	return pWind_;
 }
+
+//====================================================
+
+
+VPPDefaultFileBrowser::VPPDefaultFileBrowser(QWidget *parent):
+ DialogBase(parent) {
+
+	// Set the window title
+	setWindowTitle("Sail coefficient file browser");
+
+	// Set the minimum width - in order for the title to be visible
+	setMinimumWidth(250);
+
+	// Declare labels that are children of the layout
+	pGridLayout_->addWidget( new QLabel(QStringLiteral("Choose file..."), this), 0,0);
+	QPushButton* b = new QPushButton("default...", this);
+	pGridLayout_->addWidget(b, 0, 1);
+	connect(b,SIGNAL(clicked()), this, SLOT(selectFile()) );
+
+	addOkCancelButtons(1);
+
+	setLayout(pGridLayout_.get());
+}
+
+void VPPDefaultFileBrowser::selectFile() {
+
+	QString caption;
+	QString dir;
+
+	QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
+			tr("Sail Coefficient Input File(*.sailCoeff);; All Files (*.*)"));
+
+	QPushButton* pButton= qobject_cast<QPushButton*>(sender());
+	if(fileName.size())
+		pButton->setText(fileName);
+	else
+		pButton->setText("default...");
+}
+
 
 
