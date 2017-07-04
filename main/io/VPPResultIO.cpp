@@ -4,6 +4,7 @@
 
 // Ctor
 VPPResultIO::VPPResultIO(VariableFileParser* pParser, ResultContainer* pResults):
+	FileParserBase("vppResults.vpp"),
 	pParser_(pParser),
 	pResults_(pResults) {
 
@@ -33,33 +34,55 @@ void VPPResultIO::write(string fileName/*=string("vppResults.vpp")*/){
 
 }
 
-
-// Read results from file. The result file is formatted output, it has the
-// variables : format "%s : %8.6f
-// results   : format "%zu %le %zu %le -- %le %le %le %le -- %le %le -- %d"
-// We attempt to read both
-void VPPResultIO::parse(string fileName){
-
-	// Get the file as an ifstream
-	std::ifstream infile(fileName.c_str());
-	if(!infile.good()){
-		char msg[256];
-		sprintf(msg,"Result file: %s  not found!", fileName.c_str());
-		throw VPPException(HERE, msg);
-	}
-
+// Implement pure virtual : do all is required before
+// starting the parse (init)
+void VPPResultIO::preParse() {
 	// Clear the results before writing
 	pResults_->initResultMatrix();
+}
 
-	std::string line;
-	while(std::getline(infile,line)){
+// Implement pure virtual : get the identifier for the
+// beginning of a file section
+const string VPPResultIO::getHeaderBegin() const {
+	return Result::headerBegin_;
+}
 
-		//std::cout<<"Got line: "<<line<<std::endl;
-		if(line==Result::headerBegin_){
-			parseSection(infile);
-			break;
-		}
-	}
+// Implement pure virtual : get the identifier for the end
+// of a file section
+const string VPPResultIO::getHeaderEnd() const {
+	return Result::headerEnd_;
+}
+
+// Implement pure virtual : each subclass implement its own
+// method to do something out of this stream
+void VPPResultIO::parseLine(std::string& line) {
+
+	// Get the values from the formatted line
+	size_t itwv, itwa;
+	double twv, twa, v, phi, b, f, df, dm;
+	int discard;
+
+	// Does this line contain a result..?
+	if( sscanf(line.c_str(),"%zu %le %zu %le -- %le %le %le %le -- %le %le -- %d",
+				                     &itwv, &twv, &itwa, &twa, &v, &phi, &b, &f, &df, &dm, &discard) != 11 )
+		return;
+
+	// Push the result to the stack
+	pResults_->push_back( itwv, itwa, v, phi, b, f, df, dm);
+
+	// Set the parameter discard
+	if(discard)
+		pResults_->remove(itwv,itwa);
+
+	// Debug: print to screen the Result we just read
+	// pResults_->get(itwv,itwa).print();
+
+}
+
+// Implement pure virtual : check that all the required entries
+// have been prompted into the file. Otherwise throw
+void VPPResultIO::check() {
+ /* Make nothing */
 }
 
 void VPPResultIO::parseSection(std::ifstream& infile){
@@ -87,26 +110,6 @@ void VPPResultIO::parseSection(std::ifstream& infile){
 
 		// Use stringstream to read the name of the variable and its value
 		std::stringstream ss(line);
-
-		// Get the values from the formatted line
-		size_t itwv, itwa;
-		double twv, twa, v, phi, b, f, df, dm;
-		int discard;
-
-		// Does this line contain a result..?
-		if( sscanf(line.c_str(),"%zu %le %zu %le -- %le %le %le %le -- %le %le -- %d",
-					                     &itwv, &twv, &itwa, &twa, &v, &phi, &b, &f, &df, &dm, &discard) != 11 )
-			break;
-
-		// Push the result to the stack
-		pResults_->push_back( itwv, itwa, v, phi, b, f, df, dm);
-
-		// Set the parameter discard
-		if(discard)
-			pResults_->remove(itwv,itwa);
-
-		// Debug: print to screen the Result we just read
-		// pResults_->get(itwv,itwa).print();
 
 	}
 }

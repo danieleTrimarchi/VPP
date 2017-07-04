@@ -7,6 +7,7 @@
 #include <sstream>
 #include <vector>
 
+#include "FileParserBase.h"
 #include "Variables.h"
 
 using namespace std;
@@ -16,7 +17,7 @@ class VariableTreeModel;
 
 /// File parser able to store the variables read
 /// into a file to a container set
-class VariableFileParser {
+class VariableFileParser : public FileParserBase {
 
 	public:
 
@@ -24,17 +25,11 @@ class VariableFileParser {
 		VariableFileParser(string);
 
 		/// Destructor
-		~VariableFileParser();
-
-		/// Clear all variables
-		void clear();
-
-		/// Parse the file
-		void parse();
+		virtual ~VariableFileParser();
 
 		/// Check that all the required variables have been
 		/// prompted into the file. Otherwise throws
-		void check();
+		virtual void check();
 
 		/// Get the value of a variable by name
 		double get(std::string);
@@ -52,17 +47,25 @@ class VariableFileParser {
 		/// visualize the variables in the UI
 		void populate(VariableTreeModel* pTreeModel);
 
+	protected:
+
+		/// Implement the pure virtual : do all is required before
+		/// starting the parse (init)
+		virtual void preParse();
+
+		/// Implement pure virtual: get the identifier for the beginning
+		/// of a file section
+		virtual const string getHeaderBegin() const;
+
+		/// Implement pure virtual: get the identifier for the end of a
+		/// file section
+		virtual const string getHeaderEnd() const;
+
+		/// Each subclass implement its own method to do something
+		/// out of this stream
+		virtual void parseLine(string&);
+
 	private:
-
-		// Parse the section of the file relative to the variables
-		void parseSection(std::ifstream& infile);
-
-		// Parse a string, generate a variable and insert it
-		// to the VarSet
-		void parseLine(string& line);
-
-		/// Name of the file to be opened
-		string fileName_;
 
 		/// Set of variables read from input file
 		VarSet variables_;
