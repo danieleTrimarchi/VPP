@@ -7,6 +7,7 @@
 #include "VppTabDockWidget.h"
 #include "VppXYCustomPlotWidget.h"
 #include "VPPDialogs.h"
+#include "VPPSailCoefficientIO.h"
 
 using namespace mathUtils;
 
@@ -148,71 +149,26 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 								cd0_(0),
 								cd_(0) {
 
-	// Init static members with values from: Hazer Cl-Cd coefficients, 1999
-	// Cols: rwa_, Main_Cl, Jib_Cl, Spi_Cl
-	Eigen::ArrayXXd clMat0,cdpMat0;
-
-	// Pick the lift coefficient for this main (full batten or not)
-	if( pParser_->get("MFLB") ) {
-
-		clMat0.resize(9,4);
-		clMat0.row(0) << 0, 	0, 			0, 		0   ;
-		clMat0.row(1) << 20, 	1.3, 	  1.2,	0.02;
-		clMat0.row(2) << 27, 	1.725,	1.5,	0.1 ;
-		clMat0.row(3) << 50, 	1.5, 		0.5,	1.5 ;
-		clMat0.row(4) << 60, 	1.25, 	0.4,	1.25;
-		clMat0.row(5) << 80,	0.95, 	0.3,	1.0 ;
-		clMat0.row(6) << 100,	0.85, 	0.1,	0.85;
-		clMat0.row(7) << 140,	0.2, 		0.05,	0.2 ;
-		clMat0.row(8) << 180,	0, 			0, 		0		;
-
-	} else {
-
-		clMat0.resize(9,4);
-		clMat0.row(0) << 0, 	0, 	 	0 , 	0;
-		clMat0.row(1) << 20, 	1.2, 	1.2,   0.02;
-		clMat0.row(2) << 27, 	1.5, 	1.5,	0.1;
-		clMat0.row(3) << 50, 	1.5, 	0.5,	1.5;
-		clMat0.row(4) << 60, 	1.25, 0.4,	1.25;
-		clMat0.row(5) << 80, 	0.95,	0.3,	1.0;
-		clMat0.row(6) << 100,	0.85,	0.0,	0.85;
-		clMat0.row(7) << 140,	0.2, 		0.05,	0.2 ;
-		clMat0.row(8) << 180,	0., 		0.05,	0.1 ;
-
-	}
-
-	// Convert the angular values to radians
-	clMat0.col(0) *= M_PI / 180.0;
-
-	// We only dispose of one drag coeff array for the moment
-	cdpMat0.resize(8,4);
-	cdpMat0.row(0) << 0,  	0,   	0,   	0;
-	cdpMat0.row(1) << 15,  	0.02, 0.005, 0.02;
-	cdpMat0.row(2) << 27, 	0.03,	0.02,	0.05;
-	cdpMat0.row(3) << 50, 	0.15,	0.25,	0.25;
-	cdpMat0.row(4) << 80, 	0.8, 	0.15,	0.9;
-	cdpMat0.row(5) << 100,	1.0, 	0.05, 1.2;
-	cdpMat0.row(6) << 140,	0.95, 	0.01, 0.8;
-	cdpMat0.row(7) << 180,	0.9, 	0.0, 	0.66;
-
-	// Convert the angular values to radians
-	cdpMat0.col(0) *= M_PI / 180.0;
+	// Instantiate a VPPSailCoefficientIO to get the sail coefficients
+	// (default OR user-defined
+	VPP_CL_IO cl(pParser_,"");
+	VPP_CD_IO cd("");
 
 	// Reset the interpolator vectors before filling them
 	interpClVec_.clear();
 	interpCdVec_.clear();
 
 	Eigen::ArrayXd x, y;
-	x=clMat0.col(0);
+	x=cl.getCoefficientMatrix()->col(0);
 	// Interpolate the values of the sail coefficients for the MainSail
 	for(size_t i=1; i<4; i++){
-		y=clMat0.col(i);
+		y=cl.getCoefficientMatrix()->col(i);
 		interpClVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y) ) );
 	}
-	x=cdpMat0.col(0);
+	x=cd.getCoefficientMatrix()->col(0);
 	// Interpolate the values of the sail coefficients for the MainSail
 	for(size_t i=1; i<4; i++){
-		y=cdpMat0.col(i);
+		y=cd.getCoefficientMatrix()->col(i);
 		interpCdVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
 	}
 

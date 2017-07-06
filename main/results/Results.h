@@ -115,7 +115,6 @@ class Result {
 		/// Comparison operator
 		bool operator == (const Result& ) const;
 
-
 		/// Header of the Result section in a result file
 		static const string headerBegin_, headerEnd_;
 

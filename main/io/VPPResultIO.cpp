@@ -4,9 +4,9 @@
 
 // Ctor
 VPPResultIO::VPPResultIO(VariableFileParser* pParser, ResultContainer* pResults):
-	FileParserBase("vppResults.vpp"),
-	pParser_(pParser),
-	pResults_(pResults) {
+FileParserBase("vppResults.vpp"),
+pParser_(pParser),
+pResults_(pResults) {
 
 }
 
@@ -64,7 +64,7 @@ void VPPResultIO::parseLine(std::string& line) {
 
 	// Does this line contain a result..?
 	if( sscanf(line.c_str(),"%zu %le %zu %le -- %le %le %le %le -- %le %le -- %d",
-				                     &itwv, &twv, &itwa, &twa, &v, &phi, &b, &f, &df, &dm, &discard) != 11 )
+			&itwv, &twv, &itwa, &twa, &v, &phi, &b, &f, &df, &dm, &discard) != 11 )
 		return;
 
 	// Push the result to the stack
@@ -82,7 +82,7 @@ void VPPResultIO::parseLine(std::string& line) {
 // Implement pure virtual : check that all the required entries
 // have been prompted into the file. Otherwise throw
 void VPPResultIO::check() {
- /* Make nothing */
+	/* Make nothing */
 }
 
 void VPPResultIO::parseSection(std::ifstream& infile){
