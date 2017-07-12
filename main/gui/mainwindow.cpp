@@ -43,6 +43,9 @@
 // of MainWindow
 boost::shared_ptr<QDebugStream> pQstream;
 
+// Init static members
+boost::shared_ptr<VPPDefaultFileBrowser> MainWindow::pSailCoeffFileBrowser_= 0;
+
 Q_DECLARE_METATYPE(VppTabDockWidget::DockWidgetFeatures)
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags):
@@ -672,20 +675,22 @@ void MainWindow::importSailCoeffs() {
 	if(!hasBoatDescription())
 		return;
 
-  VPPDefaultFileBrowser* w = new VPPDefaultFileBrowser(
+	if(!pSailCoeffFileBrowser_)
+		pSailCoeffFileBrowser_.reset( new VPPDefaultFileBrowser(
   		"Sail coefficient file browser",
   		tr("Sail Coeffs Input File(*.sailCoeff);; All Files (*.*)"),
-			this);
+			this)
+	);
 
   // Show the dialog and block the rest of the application
-  w->exec();
+	pSailCoeffFileBrowser_->exec();
 
   // Get the sailCoeffsItem that owns the VPP_CL/CD_IOs
 	SailCoefficientItem* pSailCoeffItem= pVppItems_->getSailCoefficientItem();
 
 	// The IO containers will parse the coeff file and override the current coeffs
-	pSailCoeffItem->getClIO()->parse( w->getSelectedFileName() );
-	pSailCoeffItem->getCdIO()->parse( w->getSelectedFileName() );
+	pSailCoeffItem->getClIO()->parse( pSailCoeffFileBrowser_->getSelectedFileName() );
+	pSailCoeffItem->getCdIO()->parse( pSailCoeffFileBrowser_->getSelectedFileName() );
 
 	// Remember to refresh the spline interpolators with the new coefficient arrays
 	pSailCoeffItem->interpolateCoeffs();

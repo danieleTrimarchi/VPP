@@ -192,6 +192,11 @@ private:
 
 	std::vector<VppTabDockWidget*> tabbedWidgets_;
 
+	/// Singleton
+	/// File browser used to choose sail coeffs file. This becomes member to
+	/// report the previous file chosen - in the case of multiple calls
+	static boost::shared_ptr<VPPDefaultFileBrowser> pSailCoeffFileBrowser_;
+
 	/// Main window label
 	const QString windowLabel_;
 
