@@ -34,13 +34,15 @@ void VPPSailCoefficientIO::parseLine(string& line) {
 	// Use stringstream to read the name of the variable and its value
 	std::stringstream ss(line);
 
-
 	coeffs_.conservativeResize(coeffs_.rows()+1, 4);
 
 	ss >> coeffs_( coeffs_.rows()-1, 0 ); // Fill the angle
 	ss >> coeffs_( coeffs_.rows()-1, 1 );	// Fill the Coefficient for MAIN
 	ss >> coeffs_( coeffs_.rows()-1, 2 ); // Fill the Coefficient for JIB
 	ss >> coeffs_( coeffs_.rows()-1, 3 ); // Fill the Coefficient for SPI
+
+	// Convert the first value of the line - the angle - from deg to rad
+	coeffs_( coeffs_.rows()-1, 0 ) *= M_PI / 180.0;
 
 	//std::cout<< "  -->> coeffs_: "<<coeffs_<<std::endl;
 
@@ -62,10 +64,10 @@ void VPPSailCoefficientIO::check() {
 		}
 	}
 
-//	// Check 2: angles are defined in ascending order
-//	for(size_t i=1; i<coeffs_.rows(); i++)
-//		if(coeffs_(i,0) < coeffs_(i-1,0) )
-//			throw VPPException(HERE,"Sail coefficient are supposedly defined by ascending angles");
+	// Check 2: angles are defined in ascending order
+	for(size_t i=1; i<coeffs_.rows(); i++)
+		if(coeffs_(i,0) < coeffs_(i-1,0) )
+			throw VPPException(HERE,"Sail coefficient are supposedly defined by ascending angles");
 
 }
 
