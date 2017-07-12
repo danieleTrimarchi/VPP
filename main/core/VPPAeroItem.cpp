@@ -151,24 +151,24 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 
 	// Instantiate a VPPSailCoefficientIO to get the sail coefficients
 	// (default OR user-defined
-	VPP_CL_IO cl(pParser_,"");
-	VPP_CD_IO cd("");
+	pCl_.reset(new VPP_CL_IO(pParser_,""));
+	pCd_.reset(new VPP_CD_IO("") );
 
 	// Reset the interpolator vectors before filling them
 	interpClVec_.clear();
 	interpCdVec_.clear();
 
 	Eigen::ArrayXd x, y;
-	x=cl.getCoefficientMatrix()->col(0);
+	x=pCl_->getCoefficientMatrix()->col(0);
 	// Interpolate the values of the sail coefficients for the MainSail
 	for(size_t i=1; i<4; i++){
-		y=cl.getCoefficientMatrix()->col(i);
+		y=pCl_->getCoefficientMatrix()->col(i);
 		interpClVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y) ) );
 	}
-	x=cd.getCoefficientMatrix()->col(0);
+	x=pCd_->getCoefficientMatrix()->col(0);
 	// Interpolate the values of the sail coefficients for the MainSail
 	for(size_t i=1; i<4; i++){
-		y=cd.getCoefficientMatrix()->col(i);
+		y=pCd_->getCoefficientMatrix()->col(i);
 		interpCdVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
 	}
 
@@ -229,11 +229,20 @@ void SailCoefficientItem::postUpdate() {
 
 }
 
-/// Returns a ptr to the wind Item
+// Returns a ptr to the wind Item
 WindItem* SailCoefficientItem::getWindItem() const {
 	return pWindItem_;
 }
 
+// Returns a ptr to the CL_IO container
+VPP_CL_IO* SailCoefficientItem::getClIO() const {
+	return pCl_.get();
+}
+
+// Returns a ptr to the CD_IO container
+VPP_CD_IO* SailCoefficientItem::getCdIO() const {
+	return pCd_.get();
+}
 
 void SailCoefficientItem::computeForMain() {
 

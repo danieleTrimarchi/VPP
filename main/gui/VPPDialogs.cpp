@@ -184,11 +184,16 @@ WindItem* WindIndicesDialog::getWind() const {
 //====================================================
 
 
-VPPDefaultFileBrowser::VPPDefaultFileBrowser(QWidget *parent):
- DialogBase(parent) {
+VPPDefaultFileBrowser::VPPDefaultFileBrowser(
+			QString title,
+			QString fileExtension,
+			QWidget *parent):
+		fileExtensionFilter_(fileExtension),
+		selectedFileName_(""),
+		DialogBase(parent) {
 
 	// Set the window title
-	setWindowTitle("Sail coefficient file browser");
+	setWindowTitle(title);
 
 	// Set the minimum width - in order for the title to be visible
 	setMinimumWidth(250);
@@ -204,17 +209,28 @@ VPPDefaultFileBrowser::VPPDefaultFileBrowser(QWidget *parent):
 	setLayout(pGridLayout_.get());
 }
 
+// Returns the name (with abs path) of the file selected
+// by the user
+string VPPDefaultFileBrowser::getSelectedFileName() const {
+
+	if(selectedFileName_.size())
+		return selectedFileName_.toStdString();
+
+	else
+		return string("");
+
+}
+
 void VPPDefaultFileBrowser::selectFile() {
 
 	QString caption;
 	QString dir;
 
-	QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
-			tr("Sail Coefficient Input File(*.sailCoeff);; All Files (*.*)"));
+	selectedFileName_ = QFileDialog::getOpenFileName(this,caption,dir,fileExtensionFilter_);
 
 	QPushButton* pButton= qobject_cast<QPushButton*>(sender());
-	if(fileName.size())
-		pButton->setText(fileName);
+	if(selectedFileName_.size())
+		pButton->setText(selectedFileName_);
 	else
 		pButton->setText("default...");
 }

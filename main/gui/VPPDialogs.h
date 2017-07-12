@@ -116,17 +116,35 @@ class WindIndicesDialog : public DialogBase {
 };
 
 //---------------------------------------------------------------
+/// Class that implements a dialog with a button.
+/// The button label is initially set to 'default'
+/// Pressing the button opens a file browser. Once
+/// a file has been selected, the button label changes
+/// from 'default' to path/selectedFileName
+class VPPDefaultFileBrowser : public DialogBase {
 
-class VPPDefaultFileBrowser : public DialogBase
-{
 		Q_OBJECT
 
 	public:
-		VPPDefaultFileBrowser(QWidget *parent = Q_NULLPTR);
+
+		/// Ctor
+		VPPDefaultFileBrowser(QString title,
+													QString fileExtension,
+													QWidget *parent = Q_NULLPTR);
+
+		/// Returns the name (with abs path) of the file selected
+		/// by the user
+		string getSelectedFileName() const;
 
 	private slots:
 
+		/// Opens a file browser to select a file
 		void selectFile();
+
+	private:
+
+		/// File type and name
+		QString fileExtensionFilter_, selectedFileName_;
 
 };
 

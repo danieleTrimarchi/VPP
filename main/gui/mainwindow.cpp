@@ -36,6 +36,7 @@
 #include "VPPSolverFactoryBase.h"
 #include "Version.h"
 #include "VppPolarCustomPlotWidget.h"
+#include "VPPSailCoefficientIO.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitely deleted in the destructor
@@ -668,10 +669,25 @@ bool MainWindow::hasSolver() {
 // OR leave the default sail coeffs in place
 void MainWindow::importSailCoeffs() {
 
-  VPPDefaultFileBrowser* w = new VPPDefaultFileBrowser;
-  w->show();
+	if(!hasBoatDescription())
+		return;
 
-  return;
+  VPPDefaultFileBrowser* w = new VPPDefaultFileBrowser(
+  		"Sail coefficient file browser",
+  		tr("Sail Coeffs Input File(*.sailCoeff);; All Files (*.*)"),
+			this);
+
+  // Show the dialog and block the rest of the application
+  w->exec();
+
+  // Get the sailCoeffsItem that owns the VPP_CL/CD_IOs
+	SailCoefficientItem* pSailCoeffItem= pVppItems_->getSailCoefficientItem();
+
+	// The IO containers will parse the coeff file and override the current coeffs
+	pSailCoeffItem->getClIO()->parse( w->getSelectedFileName() );
+	pSailCoeffItem->getCdIO()->parse( w->getSelectedFileName() );
+
+	return;
 
 }
 

@@ -27,11 +27,15 @@ void FileParserBase::parse(string fileName/*=""*/) {
 	if( fileName != "")
 		fileName_=fileName;
 
+	// Say the user has not defined the filename to be opened...
+	if(!fileName_.size())
+		throw VPPException(HERE, "==>> Variable file is UNDEFINED <<==");
+
 	// Get the file as an ifstream
 	std::ifstream infile(fileName_.c_str());
 	if(!infile.good()){
 		char msg[256];
-		sprintf(msg,"Variable file: %s  not found!", fileName_.c_str());
+		sprintf(msg,"==>> Variable file: %s  not found! <<==", fileName_.c_str());
 		throw VPPException(HERE, msg);
 	}
 

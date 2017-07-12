@@ -5,6 +5,7 @@
 #include "SailSet.h"
 #include "Physics.h"
 #include "boost/shared_ptr.hpp"
+#include "VPPSailCoefficientIO.h"
 
 using namespace Physic;
 
@@ -109,6 +110,12 @@ class SailCoefficientItem : public VPPItem {
 		/// Returns a ptr to the wind Item
 		WindItem* getWindItem() const;
 
+		/// Returns a ptr to the CL_IO container
+		VPP_CL_IO* getClIO() const;
+
+		/// Returns a ptr to the CD_IO container
+		VPP_CD_IO* getCdIO() const;
+
 		/// PrintOut the coefficients for main, jib and spi.
 		/// Note that these coefficients are the values interpolated
 		/// for the current awa_
@@ -179,6 +186,13 @@ class SailCoefficientItem : public VPPItem {
 
 		/// Ptr to the wind item
 		WindItem* pWindItem_;
+
+		/// Ptr to the sail coeffs I/O containers.
+		/// These containers own the sail coeffs, but
+		/// they are able to read a sail-coeffs file
+		/// to override the initial values
+		boost::shared_ptr<VPP_CL_IO> pCl_;
+		boost::shared_ptr<VPP_CD_IO> pCd_;
 
 };
 
