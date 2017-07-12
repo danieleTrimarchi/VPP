@@ -235,8 +235,8 @@ WindItem* VPPItemFactory::getWind() const {
 	return pWind_.get();
 }
 
-/// Getter for the sail coefficients container
-const SailCoefficientItem* VPPItemFactory::getSailCoefficientItem() const {
+/// Getter for the sail coefficients container - const version
+SailCoefficientItem* VPPItemFactory::getSailCoefficientItem() const {
 	return pSailCoeffItem_.get();
 }
 

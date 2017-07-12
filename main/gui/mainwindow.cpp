@@ -687,6 +687,9 @@ void MainWindow::importSailCoeffs() {
 	pSailCoeffItem->getClIO()->parse( w->getSelectedFileName() );
 	pSailCoeffItem->getCdIO()->parse( w->getSelectedFileName() );
 
+	// Remember to refresh the spline interpolators with the new coefficient arrays
+	pSailCoeffItem->interpolateCoeffs();
+
 	return;
 
 }

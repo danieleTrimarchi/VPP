@@ -154,6 +154,11 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 	pCl_.reset(new VPP_CL_IO(pParser_,""));
 	pCd_.reset(new VPP_CD_IO("") );
 
+	interpolateCoeffs();
+}
+
+void SailCoefficientItem::interpolateCoeffs() {
+
 	// Reset the interpolator vectors before filling them
 	interpClVec_.clear();
 	interpCdVec_.clear();

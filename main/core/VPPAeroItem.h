@@ -100,6 +100,11 @@ class SailCoefficientItem : public VPPItem {
 		/// Destructor
 		~SailCoefficientItem();
 
+		/// Reset the spline interpolators over the sail coefficient matrix
+		/// stored in the cL/cD IO. These coefficient matrix can change, so
+		/// we need to refresh the interpolators!
+		void interpolateCoeffs();
+
 		/// Returns the current value of the lift coefficient for
 		/// the current sail
 		const double getCl() const;
