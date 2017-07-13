@@ -1,10 +1,3 @@
--SailCoeff will be entered by file. 
-	The user can either leave the default or select the sail coeff file,
-	which is a raw file with as many lines as the user wants. 0 and 180 are
-	requested data
-	
-	this is a layout with QFileDialogs	
-
 - …openCascade…
 
 
