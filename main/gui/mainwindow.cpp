@@ -447,10 +447,10 @@ void MainWindow::import() {
 			std::cout<<string("Opening the vpp input file... ") << fileName.toStdString() <<std::endl;
 
 			// Instantiate a variableFileParser (and clear any previous one)
-			pVariableFileParser_.reset( new VariableFileParser(fileName.toStdString()) );
+			pVariableFileParser_.reset( new VariableFileParser );
 
 			// Parse the variables file
-			pVariableFileParser_->parse();
+			pVariableFileParser_->parse(fileName.toStdString());
 
 			// Instantiate the sailset
 			pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
@@ -577,10 +577,10 @@ void MainWindow::importResults() {
 
 		// Instantiate an empty variableFileParser (and clear any previous one)
 		// Do not parse as the variables will be read directly from the result file
-		pVariableFileParser_.reset( new VariableFileParser( fileName.toStdString() ) );
+		pVariableFileParser_.reset( new VariableFileParser );
 
 		// The variableFileParser can read its part in the result file
-		pVariableFileParser_->parse();
+		pVariableFileParser_->parse(fileName.toStdString());
 
 		// Instantiate the sailset
 		pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );

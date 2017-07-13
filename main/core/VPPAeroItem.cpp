@@ -151,8 +151,8 @@ SailCoefficientItem::SailCoefficientItem(WindItem* pWindItem) :
 
 	// Instantiate a VPPSailCoefficientIO to get the sail coefficients
 	// (default OR user-defined
-	pCl_.reset(new VPP_CL_IO(pParser_,""));
-	pCd_.reset(new VPP_CD_IO("") );
+	pCl_.reset(new VPP_CL_IO(pParser_));
+	pCd_.reset(new VPP_CD_IO );
 
 	interpolateCoeffs();
 }

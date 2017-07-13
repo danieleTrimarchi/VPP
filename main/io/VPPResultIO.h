@@ -30,7 +30,7 @@ class VPPResultIO : public FileParserBase {
 
 		/// Implement pure virtual : do all is required before
 		/// starting the parse (init)
-		virtual void preParse();
+		virtual size_t preParse();
 
 		/// Implement pure virtual : get the identifier for the
 		/// beginning of a file section

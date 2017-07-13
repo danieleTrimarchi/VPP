@@ -23,10 +23,10 @@ namespace Test {
 void TVPPTest::variableParseTest() {
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("testFiles/variableFile_test.txt");
+	VariableFileParser parser;
 
 	// Parse the variables file
-	parser.parse();
+	parser.parse("testFiles/variableFile_test.txt");
 
 	// VPP CONFIGURATION
 	CPPUNIT_ASSERT_EQUAL( parser.get("V_MIN"), 0. );
@@ -120,10 +120,10 @@ void TVPPTest::itemComponentTest() {
 	boost::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("testFiles/variableFile_test.txt");
+	VariableFileParser parser;
 
 	// Parse the variables file
-	parser.parse();
+	parser.parse("testFiles/variableFile_test.txt");
 
 	// Instantiate the sailset
 	pSails.reset( SailSet::SailSetFactory(parser) );
@@ -439,7 +439,7 @@ void TVPPTest::jacobianTest() {
 	std::cout<<"=== Testing the computation of the Jacobian matrix === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("testFiles/variableFile_test.txt");
+	VariableFileParser parser;
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -450,7 +450,7 @@ void TVPPTest::jacobianTest() {
 	boost::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
-	parser.parse();
+	parser.parse("testFiles/variableFile_test.txt");
 
 	// Instantiate the sailset
 	pSails.reset( SailSet::SailSetFactory(parser) );
@@ -487,7 +487,7 @@ void TVPPTest::gradientTest() {
 	std::cout<<"=== Testing the computation of the Gradient vector === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("testFiles/variableFile_test.txt");
+	VariableFileParser parser;
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -498,7 +498,7 @@ void TVPPTest::gradientTest() {
 	boost::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
-	parser.parse();
+	parser.parse("testFiles/variableFile_test.txt");
 
 	// Instantiate the sailset
 	pSails.reset( SailSet::SailSetFactory(parser) );
@@ -533,7 +533,7 @@ void TVPPTest::newtonRaphsonTest() {
 	std::cout<<"=== Testing the Newton-Raphson algorithm === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("testFiles/variableFile_test.txt");
+	VariableFileParser parser;
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -544,7 +544,7 @@ void TVPPTest::newtonRaphsonTest() {
 	boost::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
-	parser.parse();
+	parser.parse("testFiles/variableFile_test.txt");
 
 	// Instantiate the sailset
 	pSails.reset( SailSet::SailSetFactory(parser) );
@@ -1030,7 +1030,7 @@ void TVPPTest::vppPointTest() {
 	std::cout<<"=== Testing one point computed by the vpp === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("testFiles/variableFile_test.txt");
+	VariableFileParser parser;
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -1041,7 +1041,7 @@ void TVPPTest::vppPointTest() {
 	boost::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
-	parser.parse();
+	parser.parse("testFiles/variableFile_test.txt");
 
 	// Instantiate the sailset
 	pSails.reset( SailSet::SailSetFactory(parser) );
@@ -1177,7 +1177,7 @@ void TVPPTest::ipOptFullRunTest() {
 	std::cout<<"=== Testing a full run of IPOPT in the VPP usage === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("testFiles/variableFile_ipOptFullTest.txt");
+	VariableFileParser parser;
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -1188,7 +1188,7 @@ void TVPPTest::ipOptFullRunTest() {
 	boost::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
-	parser.parse();
+	parser.parse("testFiles/variableFile_ipOptFullTest.txt");
 
 	// Instantiate the sailset
 	pSails.reset( SailSet::SailSetFactory(parser) );
@@ -1282,7 +1282,7 @@ void TVPPTest::vppResultIOTest() {
 	std::cout<<"=== Testing VPP Results IO === \n"<<std::endl;
 
 	// Instantiate a parser with the variables
-	VariableFileParser parser("testFiles/variableFile_small_test.txt");
+	VariableFileParser parser;
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
@@ -1293,7 +1293,7 @@ void TVPPTest::vppResultIOTest() {
 	boost::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
-	parser.parse();
+	parser.parse("testFiles/variableFile_small_test.txt");
 
 	// Instantiate the sailset
 	pSails.reset( SailSet::SailSetFactory(parser) );

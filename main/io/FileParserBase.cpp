@@ -7,8 +7,7 @@
 #include "VariableTreeModel.h"
 
 // Constructor
-FileParserBase::FileParserBase(std::string fileName) :
-	fileName_(fileName) {
+FileParserBase::FileParserBase() {
 	// make nothing
 }
 
@@ -18,18 +17,17 @@ FileParserBase::~FileParserBase() {
 }
 
 // Parse the file
-void FileParserBase::parse(string fileName/*=""*/) {
+void FileParserBase::parse(string fileName) {
+
+	// Assign fileName_
+	fileName_=fileName;
 
 	/// Do all is required before starting the parse (init)
-	preParse();
-
-	// If the arg string is not empty, modify fileName_
-	if( fileName != "")
-		fileName_=fileName;
-
-	// Say the user has not defined the filename to be opened...
-	if(!fileName_.size())
-		throw VPPException(HERE, "==>> Variable file is UNDEFINED <<==");
+	/// including that we have a filename for some. We use preParse
+	/// also in the case where the filename is not defined, for sail
+	/// coeffs to restore the default values before returning
+	if( preParse() == keepParsing::stop)
+		return;
 
 	// Get the file as an ifstream
 	std::ifstream infile(fileName_.c_str());

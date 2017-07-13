@@ -19,7 +19,7 @@ class VPPSailCoefficientIO : public FileParserBase {
 	public:
 
 		/// Constructor
-		VPPSailCoefficientIO(string);
+		VPPSailCoefficientIO();
 
 		/// Destructor
 		virtual ~VPPSailCoefficientIO();
@@ -38,7 +38,7 @@ class VPPSailCoefficientIO : public FileParserBase {
 
 		/// Implement the pure virtual : do all is required before
 		/// starting the parse (init)
-		virtual void preParse();
+		virtual size_t preParse();
 
 		/// Implement pure virtual: get the identifier for the beginning
 		/// of a file section
@@ -47,6 +47,10 @@ class VPPSailCoefficientIO : public FileParserBase {
 		/// Implement pure virtual: get the identifier for the end of a
 		/// file section
 		virtual const string getHeaderEnd() const =0;
+
+		/// Assign the value of the initial sail coeffs to the
+		/// current coeffs_ matrix
+		virtual void restoreDefaultCoefficients() =0;
 
 		/// Each subclass implement its own method to do something
 		/// out of this stream
@@ -69,7 +73,7 @@ class VPP_CL_IO : public VPPSailCoefficientIO {
 	public:
 
 		/// Ctor
-		VPP_CL_IO(VariableFileParser*, string);
+		VPP_CL_IO(VariableFileParser*);
 
 		/// Dtor
 		~VPP_CL_IO();
@@ -83,6 +87,10 @@ class VPP_CL_IO : public VPPSailCoefficientIO {
 		/// Implement pure virtual: get the identifier for the end of a
 		/// file section
 		virtual const string getHeaderEnd() const;
+
+		/// Implement pure virtual: Assign the value of the initial
+		/// sail coeffs to the current coeffs_ matrix
+		virtual void restoreDefaultCoefficients();
 
 	private:
 
@@ -108,7 +116,7 @@ class VPP_CD_IO : public VPPSailCoefficientIO {
 	public:
 
 		/// Ctor
-		VPP_CD_IO(string);
+		VPP_CD_IO();
 
 		/// Dtor
 		~VPP_CD_IO();
@@ -122,6 +130,10 @@ class VPP_CD_IO : public VPPSailCoefficientIO {
 		/// Implement pure virtual: get the identifier for the end of a
 		/// file section
 		virtual const string getHeaderEnd() const;
+
+		/// Implement pure virtual: Assign the value of the initial
+		/// sail coeffs to the current coeffs_ matrix
+		virtual void restoreDefaultCoefficients();
 
 	private:
 

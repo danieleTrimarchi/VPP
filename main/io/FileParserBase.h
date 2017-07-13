@@ -17,19 +17,24 @@ class FileParserBase {
 
 	public:
 
+		enum keepParsing {
+			stop=0,
+			keep_going=1
+		};
+
 		/// Constructor
-		FileParserBase(string);
+		FileParserBase();
 
 		/// Destructor
 		virtual ~FileParserBase();
 
 		/// Parse the file
-		void parse(string fileName=string(""));
+		void parse(string fileName);
 
 	protected:
 
 		/// Do all is required before starting the parse (init)
-		virtual void preParse() =0;
+		virtual size_t preParse() =0;
 
 		/// Get the identifier for the beginning of a file section
 		virtual const string getHeaderBegin() const =0;

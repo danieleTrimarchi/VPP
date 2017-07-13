@@ -6,8 +6,7 @@
 #include "mathUtils.h"
 
 // Constructor
-VPPSailCoefficientIO::VPPSailCoefficientIO(std::string fileName) :
-FileParserBase(fileName) {
+VPPSailCoefficientIO::VPPSailCoefficientIO() {
 
 }
 
@@ -18,11 +17,28 @@ VPPSailCoefficientIO::~VPPSailCoefficientIO() {
 
 // Implement the pure virtual : do all is required before
 // starting the parse (init)
-void VPPSailCoefficientIO::preParse() {
+size_t VPPSailCoefficientIO::preParse() {
+
+	// ==>> THIS IS IMPORTANT <<================================
+	// Unlike brother classes, we do not check here if fileName_
+	// is defined : this is because the user may set the filename
+	// to UNDEF to restore the initial default sail coefficients
+	if(!fileName_.size()){
+
+		// Restore the initial coeffs
+		restoreDefaultCoefficients();
+		return keepParsing::stop;
+
+	}
+
 
 	// Clear the coefficient container
 	coeffs_.resize(0,0);
+
+	return keepParsing::keep_going;
+
 }
+
 
 // Each subclass implement its own method to do something
 // out of this stream
@@ -95,8 +111,7 @@ const Eigen::ArrayXXd* VPPSailCoefficientIO::getCoefficientMatrix() const {
 
 //---------------------------------------------------------------------
 
-VPP_CL_IO::VPP_CL_IO(VariableFileParser* pParser, string fileName) :
-						VPPSailCoefficientIO(fileName),
+VPP_CL_IO::VPP_CL_IO(VariableFileParser* pParser) :
 						fullBattens_(pParser->get("MFLB")){
 
 	// Pick the lift coefficient for this main (full batten or not)
@@ -150,11 +165,16 @@ const string VPP_CL_IO::getHeaderEnd() const {
 	return string("==END SAIL COEFFS CL==");
 }
 
+// Implement pure virtual: Assign the value of the initial
+// sail coeffs to the current coeffs_ matrix
+void VPP_CL_IO::restoreDefaultCoefficients() {
+	coeffs_ = clMat0_;
+}
+
 
 //---------------------------------------------------------------------
 
-VPP_CD_IO::VPP_CD_IO(string fileName)  :
-						VPPSailCoefficientIO(fileName) {
+VPP_CD_IO::VPP_CD_IO() {
 
 	cdMat0_ << 0,  	0,   	0,   		0,
 			15,  	0.02, 0.005, 	0.02,
@@ -190,3 +210,10 @@ const string VPP_CD_IO::getHeaderBegin() const {
 const string VPP_CD_IO::getHeaderEnd() const {
 	return string("==END SAIL COEFFS CD==");
 }
+
+// Implement pure virtual: Assign the value of the initial
+// sail coeffs to the current coeffs_ matrix
+void VPP_CD_IO::restoreDefaultCoefficients() {
+	coeffs_ = cdMat0_;
+}
+

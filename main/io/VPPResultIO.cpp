@@ -4,7 +4,6 @@
 
 // Ctor
 VPPResultIO::VPPResultIO(VariableFileParser* pParser, ResultContainer* pResults):
-FileParserBase("vppResults.vpp"),
 pParser_(pParser),
 pResults_(pResults) {
 
@@ -36,9 +35,17 @@ void VPPResultIO::write(string fileName/*=string("vppResults.vpp")*/){
 
 // Implement pure virtual : do all is required before
 // starting the parse (init)
-void VPPResultIO::preParse() {
+size_t VPPResultIO::preParse() {
+
+	// Make sure we have a file to parse
+	if(!fileName_.size())
+		throw VPPException(HERE,"VariableFileName not defined!");
+
 	// Clear the results before writing
 	pResults_->initResultMatrix();
+
+	return keepParsing::keep_going;
+
 }
 
 // Implement pure virtual : get the identifier for the

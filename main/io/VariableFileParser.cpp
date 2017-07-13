@@ -7,8 +7,7 @@
 #include "VariableTreeModel.h"
 
 // Constructor
-VariableFileParser::VariableFileParser(std::string fileName) :
-FileParserBase(fileName) {
+VariableFileParser::VariableFileParser() {
 
 	// Set the variable the user must define in the input file.
 	// Method check() will assure all variables have been defined
@@ -97,11 +96,16 @@ VariableFileParser::~VariableFileParser() {
 
 // Implement the pure virtual : do all is required before
 // starting the parse (init)
-void VariableFileParser::preParse() {
+size_t VariableFileParser::preParse() {
+
+	// Make sure we have a file to parse
+	if(!fileName_.size())
+		throw VPPException(HERE,"VariableFileName not defined!");
 
 	// Make sure the variables_ set is empty
 	variables_.clear();
 
+	return keepParsing::keep_going;
 }
 
 // Implement pure virtual: get the identifier for the beginning
