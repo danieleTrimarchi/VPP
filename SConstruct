@@ -95,7 +95,7 @@ releaseEnv.AddMethod(makeAppFolderStructure, 'makeAppFolderStructure')
 
 # ---------------------------------------------------------------
 
-def fixDynamicLibPath(self):
+def fixDynamicLibPath(self, target, source, env):
     
     print "===>>>>  fixDynamicLibPath!   <<<<<================"
 

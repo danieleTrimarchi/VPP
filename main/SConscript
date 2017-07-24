@@ -66,16 +66,6 @@ if 'makeXCode' in COMMAND_LINE_TARGETS:
 	Exit(2)
 
 # --- 
-# 1_ Copy the required dlls to the app folder structure
-# 2_ call install_name_tools to reference the copy of the dlls instead of the shared ones
-#if 'install' in COMMAND_LINE_TARGETS:
-#					  'QtGui',
-#					  'QtCore',
-#					  'QtWidgets',
-#					  'QtDataVisualization', 
-#					  'QtPrintSupport'
-
-# --- 
 
 Import('releaseEnv')
 
@@ -162,9 +152,15 @@ localEnv.makeAppFolderStructure()
 # The VPP program is to be installed in the app folder structure, at least for MAC
 installedExe= localEnv.Install( localEnv.getAppInstallDir(), vppExe )
 
+# --- THIS IS BROKEN! 
 # As the exe has been installed, modify it to use the local Qt frameworks
-localEnv.AddPostAction(installedExe, localEnv.fixDynamicLibPath())
-	
+#localEnv.AddPostAction(installedExe, localEnv.fixDynamicLibPath() )
+# -------------------
+fixDynamicLibPath_command = Command('fixDynamicLibPath', [], localEnv.fixDynamicLibPath)
+Depends( fixDynamicLibPath_command, installedExe )
+Default( fixDynamicLibPath_command )
+
+#--------------------	
 # Append the list of the objects to the env, in order for the 
 # auto-test to find them
 testEnv= localEnv.Clone()
