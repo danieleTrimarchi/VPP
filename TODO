@@ -1,5 +1,7 @@
 - …openCascade…
-
+	- Get pre-requisites : file:///Users/dtrimarchi/third_party/opencascade-7.1.0/doc/overview/html/occt_dev_guides__building_3rdparty_osx.html
+	-> Tcl 8.5 : from http://www.tcl.tk/software/tcltk/download.html
+	-> 
 
 - Compute the derivative of a cubic spline, thus removing the FDs
 - See RhinoAPI for getting LPP data

@@ -1,6 +1,7 @@
 import os 
 from shutil import copyfile
 from shutil import copytree
+import subprocess
 
 # Define a common build environment
 common_env = Environment()
@@ -34,6 +35,14 @@ releaseEnv.AddMethod(getSrcTreeRoot, 'getSrcTreeRoot')
 
 # --
 
+def getExecutableName(self):
+
+    return "VPP"
+
+releaseEnv.AddMethod(getExecutableName, 'getExecutableName')
+
+# --
+
 # Returns the absolute path of the Contents folder in the app bundle
 # /Users/dtrimarchi/VPP/VPP.app/Contents
 def getAppDirContents(self):
@@ -51,7 +60,7 @@ def getAppInstallDir(self):
 
 releaseEnv.AddMethod(getAppInstallDir, 'getAppInstallDir')
 
-# --
+#----------------------------------------------------------------
 
 # Create (if required) the app folder structure : 
 # VPP.app/
@@ -63,17 +72,51 @@ releaseEnv.AddMethod(getAppInstallDir, 'getAppInstallDir')
 #            VPP.icns
 def makeAppFolderStructure(self):
     
+    print "===>>>>  makeAppFolderStructure!  <<<<<================"
+    
     if not os.path.exists( self.getAppDirContents() ):
         os.makedirs(self.getAppDirContents())
         copyfile( os.path.join( self.getSrcTreeRoot(),"gui/Info.pList"), os.path.join( self.getAppDirContents(),"Info.pList") )
 
     if not os.path.exists(self.getAppDirContents()+"/Resources"):
+        
         os.makedirs(self.getAppDirContents()+"/Resources")
         copyfile( os.path.join( self.getSrcTreeRoot(), "Icons/VPP.icns"), self.getAppDirContents()+"/Resources/VPP.icns")
+        
+        # Note that this is probably too much : I am copying over the content of the whole framework, 
+        # while the framework/lib are probably sufficient. TODO dtrimarchi!!!
+        for iFamework in self.getQtFrameWorkList() :
+            copytree( os.path.join( self.getQtFrameworkRoot(), iFamework + ".framework"),
+                             os.path.join( self.getAppDirContents(), "Resources", iFamework + ".framework" ),
+                             symlinks=True 
+                             )
 
 releaseEnv.AddMethod(makeAppFolderStructure, 'makeAppFolderStructure')
 
-#----------------------------------------------------------------
+# ---------------------------------------------------------------
+
+def fixDynamicLibPath(self):
+    
+    print "===>>>>  fixDynamicLibPath!   <<<<<================"
+
+     # Once the frameworks have been copied over to Resources, the app must be modified to 
+     # point to these frameworks with install_name_tool
+     #print "self.getQtFrameWorkList()= ", self.getQtFrameWorkList()
+#     for iFamework in self.getQtFrameWorkList() :
+#         p=subprocess.Popen(
+#                             "install_name_tool -change {} @executable_path/../Resources/{} {}"
+#                             .format(
+#                                     os.path.join(self.getQtFrameworkRoot(),iFamework ),
+#                                     iFamework,  
+#                                     os.path.join( self.getAppInstallDir(), self.getExecutableName() )
+#                                     ), 
+#                             shell=True
+#                             )
+#         p.wait()
+    
+releaseEnv.AddMethod(fixDynamicLibPath, 'fixDynamicLibPath')
+
+# ---------------------------------------------------------------
 
 # Also copy the input file 'variableFile.txt' to the build folder
 def copyInputFileToFolderStructure(self):
@@ -203,6 +246,28 @@ releaseEnv.AddMethod(getQtPKGConfig, 'getQtPKGConfig')
 
 #--
 
+# Returns the absolute path of the Qt Framework folder
+def getQtFrameworkRoot(self):
+    return "/usr/local/Cellar/qt5/5.7.0/lib/"
+
+releaseEnv.AddMethod(getQtFrameworkRoot, 'getQtFrameworkRoot')
+
+#--
+
+# Returns the list of the Qt frameworks required to compile VPP
+def getQtFrameWorkList(self):
+    return [
+            'QtGui',
+            'QtCore',
+            'QtWidgets',
+            'QtDataVisualization', 
+            'QtPrintSupport'
+            ]
+
+releaseEnv.AddMethod(getQtFrameWorkList, 'getQtFrameWorkList')
+
+#--
+
 def getQt(self):
     
     self.Append( QT5DIR = qtdir ) 
@@ -212,15 +277,7 @@ def getQt(self):
 
     self.Tool('qt5')
 
-    self.EnableQt5Modules([
-                      'QtGui',
-                      'QtCore',
-                      'QtNetwork',
-                      'QtWidgets',
-                      'QtCharts',
-                      'QtDataVisualization', 
-                      'QtPrintSupport'
-                      ])
+    self.EnableQt5Modules( self.getQtFrameWorkList() )
 
     self.Append( CPPPATH=['/usr/local/Cellar/qt5/5.7.0/include/QtWidgets'] ) 
     self.Append( LIBPATH=[ os.path.join(qtdir,'lib') ] )     
