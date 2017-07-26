@@ -47,8 +47,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # This fills "Header Search Paths in XCode"
 INCLUDEPATH +=	"/opt/local/include" \
 		"/Users/dtrimarchi/third_party/eigen-3.2.7" \
-		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Include" \
-		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config" \
+#		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Include" \
+#		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config" \
 		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Include" \
 		"/Users/dtrimarchi/third_party/boost_1_60_0" \
 		"/Users/dtrimarchi/third_party/nlopt-2.4.2/api" \
@@ -59,7 +59,7 @@ INCLUDEPATH +=	"/opt/local/include" \
 # This fills Library Search Path in XCode
 LIBPATH += 	"/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A" \
 		"/opt/local/lib" \ 
-		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib" \
+#		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib" \
 		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config" \ 
 		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Lib" \ 
 		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib" \
@@ -72,7 +72,7 @@ LIBPATH += 	"/System/Library/Frameworks/Accelerate.framework/Versions/Current/Fr
 
 # Libs to be linked in
 LIBS +=	-lipopt \
-	-lumfpack \
+#	-lumfpack \
 	-lBLAS \
 	-lamd \
 	-lcolamd \

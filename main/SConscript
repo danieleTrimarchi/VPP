@@ -123,9 +123,9 @@ localEnv.getIpOptLib()
 # ...Boost...
 localEnv.getBoostIncludePath()
 # ...UMFPack...
-localEnv.getUMFPackIncludePath()
-localEnv.getUMFPackLibPath()
-localEnv.getUMFPackLib()
+#localEnv.getUMFPackIncludePath()
+#localEnv.getUMFPackLibPath()
+#localEnv.getUMFPackLib()
 #...Qt...
 localEnv.getQtPKGConfig(localEnv)
 localEnv.getQt()
