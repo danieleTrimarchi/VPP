@@ -2,6 +2,7 @@ import os
 from shutil import copyfile
 from shutil import copytree
 import subprocess
+import shutil
 
 # Define a common build environment
 common_env = Environment()
@@ -71,6 +72,16 @@ def getAppFrameworksDir(self):
 
 releaseEnv.AddMethod(getAppFrameworksDir, 'getAppFrameworksDir')
 
+#-- 
+
+# Returns the absolute path of the Resources folder in the app bundle
+# /Users/dtrimarchi/VPP/VPP.app/Contents/Resources
+def getAppPlugInsDir(self):
+
+    return os.path.join( releaseEnv.getAppContentsDir(), "plugins" )
+
+releaseEnv.AddMethod(getAppPlugInsDir, 'getAppPlugInsDir')
+
 
 # --
 
@@ -100,42 +111,42 @@ def makeAppFolderStructure(self):
         os.makedirs(self.getAppContentsDir())
         copyfile( os.path.join( self.getSrcTreeRoot(),"gui/Info.pList"), os.path.join( self.getAppContentsDir(),"Info.pList") )
 
-    if not os.path.exists(self.getAppContentsDir()+"/Resources"):
+    if not os.path.exists(self.getAppResourcesDir() ):
         
-        os.makedirs(self.getAppContentsDir()+"/Resources")
-        copyfile( os.path.join( self.getSrcTreeRoot(), "Icons/VPP.icns"), self.getAppContentsDir()+"/Resources/VPP.icns")
+        os.makedirs(self.getAppResourcesDir() )
+        copyfile( os.path.join( self.getSrcTreeRoot(), "Icons/VPP.icns"), os.path.join(self.getAppResourcesDir(),"VPP.icns") )
         
 
-    if not os.path.exists(self.getAppContentsDir()+"/Frameworks"):
+    if not os.path.exists( self.getAppFrameworksDir() ):
 
-        os.makedirs(self.getAppContentsDir()+"/Frameworks")
-        # Note that this is probably too much : I am copying over the content of the whole framework, 
-        # while the framework/lib are probably sufficient. TODO dtrimarchi!!!
+        os.makedirs( self.getAppFrameworksDir() )
+        
+        # Copy the Qt frameworks to the APP bundle
         for iFramework in self.getQtFrameWorkList() :
             copytree( os.path.join( self.getQtLocalFrameworkRootList()[0], iFramework + ".framework"),
-                             os.path.join( self.getAppContentsDir(), "Frameworks", iFramework + ".framework" ),
+                             os.path.join( self.getAppFrameworksDir(), iFramework + ".framework" ),
                              symlinks=True 
                              )
             # After the copy give full permissions to the frameworks in the app
             p = subprocess.Popen('chmod -R 777 {}'.format( 
-                                os.path.join( self.getAppContentsDir(), "Frameworks", iFramework + ".framework" ) ), 
+                                os.path.join( self.getAppFrameworksDir(), iFramework + ".framework" ) ), 
                                 shell=True)
             p.wait()
-        
+                
         #---
 
         # Run install_name_tool to set the identification names for the frameworks
         for iFramework in self.getQtFrameWorkList() :
 
-            print   "\n=> Executing install_name_tool -id "   \
-                    "@executable_path/../Frameworks/{}.framework/Versions/Current/{} " \
-                    "{}.framework/Versions/Current/{} " \
-                    .format(
-                            iFramework,
-                            iFramework,  
-                            os.path.join( self.getAppFrameworksDir(), iFramework ),
-                            iFramework
-                            )
+#             print   "\n=> Executing install_name_tool -id "   \
+#                     "@executable_path/../Frameworks/{}.framework/Versions/Current/{} " \
+#                     "{}.framework/Versions/Current/{} " \
+#                     .format(
+#                             iFramework,
+#                             iFramework,  
+#                             os.path.join( self.getAppFrameworksDir(), iFramework ),
+#                             iFramework
+#                             )
 
             # run install_name_tool -id an all of the frameworks 
             p=subprocess.Popen(
@@ -159,23 +170,22 @@ def makeAppFolderStructure(self):
             for iFramework in self.getQtFrameWorkList() :
                 for jFramework in self.getQtFrameWorkList() :
     
-                    print "iFramework= ", iFramework, " jFramework= ", jFramework
+#                    print "iFramework= ", iFramework, " jFramework= ", jFramework
                     if jFramework == iFramework:                    
-                        print 'CONTINUE!'
                         continue
                                     
-                    print "\n=> Executing install_name_tool "  \
-                            "-change {}.framework/Versions/5/{} \n"  \
-                            "@executable_path/../Frameworks/{}.framework/Versions/Current/{} \n"    \
-                            "{}.framework/{}" \
-                            .format(
-                                    os.path.join(frameworkRoot,jFramework ),
-                                    jFramework,
-                                    jFramework,  
-                                    jFramework,  
-                                    os.path.join( self.getAppFrameworksDir(), iFramework ),
-                                    iFramework
-                                    )
+#                     print "\n=> Executing install_name_tool "  \
+#                             "-change {}.framework/Versions/5/{} \n"  \
+#                             "@executable_path/../Frameworks/{}.framework/Versions/Current/{} \n"    \
+#                             "{}.framework/{}" \
+#                             .format(
+#                                     os.path.join(frameworkRoot,jFramework ),
+#                                     jFramework,
+#                                     jFramework,  
+#                                     jFramework,  
+#                                     os.path.join( self.getAppFrameworksDir(), iFramework ),
+#                                     iFramework
+#                                     )
                                    
                     # Now modify the frameworks to refeerence
                     p=subprocess.Popen(
@@ -194,8 +204,67 @@ def makeAppFolderStructure(self):
                                    shell=True
                                    )
                     p.wait()
-    
-            
+
+    # Other dylibs - treated as plugins
+    if not os.path.exists( self.getAppPlugInsDir() ):                    
+
+        os.makedirs( self.getAppPlugInsDir() )
+
+        for root in self.getIpOptLocalFrameworkRootList():
+            for dyLib in self.getIpOptFrameWorkList() : 
+                #print "copy from : ", os.path.join(root,dyLib)
+                #print "copy to : ", self.getAppPlugInsDir() 
+                shutil.copy(
+                            src=os.path.join(root,dyLib), 
+                            dst=self.getAppPlugInsDir() 
+                            )
+                
+        # Run install_name_tool to set the identification names for the frameworks
+        for iFramework in self.getIpOptFrameWorkList() :
+
+            #print "==>> Setting the ID : @executable_path/../plugins/{} ".format(iFramework)
+            #print "==>> For framework: {} \n".format(os.path.join( self.getAppPlugInsDir(), iFramework )), 
+            # run install_name_tool -id <newName> <dylibToRename> 
+            p=subprocess.Popen(
+                               "install_name_tool -id "
+                               "@executable_path/../plugins/{} "
+                               "{} " 
+                               .format(
+                                       iFramework,
+                                       os.path.join( self.getAppPlugInsDir(), iFramework )
+                                       ), 
+                               shell=True
+                               )
+            p.wait()
+
+        # Run install_name_tool to set the identification names for the frameworks
+        # run install_name_tool -change 
+        #    CurAbsPathTo_jDyLib (/users/dtrimarchi/../libcoinmumps.1.dylib
+        #    NewPathTo_jDyLib ( @executablePath/../plugins/libcoinmumps.1.dylib ) 
+        #    iDylib to be modified ( VPP.app/Contents/plugins/libipopt.1.dylib ) 
+        for frameworkRoot in self.getIpOptLocalFrameworkRootList(): 
+            for iFramework in self.getIpOptFrameWorkList() :
+                for jFramework in self.getIpOptFrameWorkList() :
+                    
+                    if iFramework == jFramework:
+                        continue
+                    
+                    p=subprocess.Popen(
+                                       "install_name_tool -change "
+                                       "{} " 
+                                       "@executable_path/../plugins/{} "
+                                       "{}"
+                                       .format(
+                                               os.path.join(frameworkRoot,jFramework ),
+                                               jFramework,
+                                               os.path.join( self.getAppPlugInsDir(), iFramework )
+                                               ), 
+                                       shell=True
+                                       )
+                    p.wait()
+
+        
+
 releaseEnv.AddMethod(makeAppFolderStructure, 'makeAppFolderStructure')
 
 # ---------------------------------------------------------------
@@ -230,7 +299,30 @@ def fixDynamicLibPath(self, target, source, env):
                                 shell=True
                                 )
             p.wait()
-                    
+     
+    # Fix the references to ipOpt now
+    # /Users/dtrimarchi/third_party/Ipopt-3.12.6/lib/libipopt.1.dylib
+    # @executable_path/../plugins/libipopt.dylib 
+    for frameworkRoot in self.getIpOptLocalFrameworkRootList():
+        for iFramework in self.getIpOptFrameWorkList() :
+            print "FROM: {}".format( os.path.join(frameworkRoot,iFramework) )
+            print "TO: @executable_path/../plugins/{} ".format(iFramework)
+            print "for EXE: {}".format(os.path.join( self.getAppInstallDir(), self.getExecutableName() ))
+            p1=subprocess.Popen(
+                                "install_name_tool -change "
+                                "{} " 
+                                "@executable_path/../plugins/{} "
+                                "{} "
+                                .format(
+                                        os.path.join(frameworkRoot,iFramework),
+                                        iFramework,
+                                        os.path.join( self.getAppInstallDir(), self.getExecutableName() )
+                                        ), 
+                                shell=True
+                                )
+            p1.wait()
+
+
 releaseEnv.AddMethod(fixDynamicLibPath, 'fixDynamicLibPath')
 
 # ---------------------------------------------------------------
@@ -324,6 +416,25 @@ def getIpOptIncludePath(self) :
                            third_party_root+'Ipopt-3.12.6/include/coin'] ) 
 
 releaseEnv.AddMethod(getIpOptIncludePath, 'getIpOptIncludePath')
+
+# --
+
+def getIpOptLocalFrameworkRootList(self):
+    
+    return [os.path.join(third_party_root,"Ipopt-3.12.6/lib")]
+
+releaseEnv.AddMethod(getIpOptLocalFrameworkRootList, 'getIpOptLocalFrameworkRootList')
+
+# --
+
+def getIpOptFrameWorkList(self):
+    return [
+            'libipopt.1.dylib', 
+            'libcoinmumps.1.dylib', 
+            'libcoinmetis.1.dylib'
+            ]
+
+releaseEnv.AddMethod(getIpOptFrameWorkList, 'getIpOptFrameWorkList')
 
 def getIpOptLib(self) : 
     self.Append( LIBS=["ipopt" ] ) 
