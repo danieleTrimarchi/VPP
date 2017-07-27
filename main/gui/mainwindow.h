@@ -18,12 +18,6 @@
 class ToolBar;
 class VPPItemFactory;
 
-#if defined(Q_OS_MAC)
-if (pluginsDir.dirName() == "MacOS") {
-    pluginsDir.cdUp();
-}
-#endif
-
 QT_FORWARD_DECLARE_CLASS(QMenu)
 
 /* Main window of the V++ application. This class direcly
