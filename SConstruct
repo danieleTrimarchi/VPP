@@ -141,7 +141,7 @@ def makeAppFolderStructure(self):
             # run install_name_tool -id an all of the frameworks 
             p=subprocess.Popen(
                                "install_name_tool -id "
-                               "@rpath/{}.framework/Versions/Current/{} "
+                               "@executable_path/../Frameworks/{}.framework/Versions/Current/{} "
                                "{}.framework/Versions/Current/{} " 
                                .format(
                                        iFramework,
@@ -181,7 +181,7 @@ def makeAppFolderStructure(self):
                     p=subprocess.Popen(
                                    "install_name_tool -change "
                                    "{}.framework/Versions/5/{} " 
-                                   "@rpath/{}.framework/Versions/Current/{} "
+                                   "@executable_path/../Frameworks/{}.framework/Versions/Current/{} "
                                    "{}.framework/{}"
                                    .format(
                                            os.path.join(frameworkRoot,jFramework ),
@@ -213,7 +213,7 @@ def makeAppFolderStructure(self):
             # run install_name_tool -id <newName> <dylibToRename> 
             p=subprocess.Popen(
                                "install_name_tool -id "
-                               "@rpath/{} "
+                               "@executable_path/../Frameworks/{} "
                                "{} " 
                                .format(
                                        iFramework,
@@ -226,7 +226,7 @@ def makeAppFolderStructure(self):
         # Run install_name_tool to set the identification names for the frameworks
         # run install_name_tool -change 
         #    CurAbsPathTo_jDyLib (/users/dtrimarchi/../libcoinmumps.1.dylib
-        #    NewPathTo_jDyLib ( @executablePath/libcoinmumps.1.dylib ) 
+        #    NewPathTo_jDyLib ( @executable_path/libcoinmumps.1.dylib ) 
         #    iDylib to be modified ( VPP.app/Contents/Frameworks/libipopt.1.dylib ) 
         for frameworkRoot in self.getIpOptLocalFrameworkRootList(): 
             for iFramework in self.getIpOptFrameWorkList() :
@@ -238,7 +238,7 @@ def makeAppFolderStructure(self):
                     p=subprocess.Popen(
                                        "install_name_tool -change "
                                        "{} " 
-                                       "@rpath/{} "
+                                       "@executable_path/../Frameworks/{} "
                                        "{}"
                                        .format(
                                                os.path.join(frameworkRoot,jFramework ),
@@ -268,12 +268,12 @@ def fixDynamicLibPath(self, target, source, env):
             #                            os.path.join(self.getQtLocalFrameworkRootList(),iFramework ),
             #                            iFramework
             #                            )
-            #print "   To     : @rpath/../Resources/{}.framework/Versions/5/{}".format(iFramework,iFramework)
+            #print "   To     : @executable_path/../Frameworks/{}.framework/Versions/Current/{}".format(iFramework,iFramework)
             #print "   For exe: {}".format(os.path.join( self.getAppInstallDir(), self.getExecutableName() ))
             p=subprocess.Popen(
                                 "install_name_tool -change "
                                 "{}.framework/Versions/5/{} " 
-                                "@rpath/{}.framework/Versions/Current/{} "
+                                "@executable_path/../Frameworks/{}.framework/Versions/Current/{} "
                                 "{}"
                                 .format(
                                         os.path.join(frameworkRoot,iFramework ),
@@ -291,13 +291,13 @@ def fixDynamicLibPath(self, target, source, env):
     # @rpath/libipopt.dylib 
     for frameworkRoot in self.getIpOptLocalFrameworkRootList():
         for iFramework in self.getIpOptFrameWorkList() :
-            print "FROM: {}".format( os.path.join(frameworkRoot,iFramework) )
-            print "TO: @rpath/{} ".format(iFramework)
-            print "for EXE: {}".format(os.path.join( self.getAppInstallDir(), self.getExecutableName() ))
+            #print "FROM: {}".format( os.path.join(frameworkRoot,iFramework) )
+            #print "TO: @executable_path/../Frameworks/{} ".format(iFramework)
+            #print "for EXE: {}".format(os.path.join( self.getAppInstallDir(), self.getExecutableName() ))
             p1=subprocess.Popen(
                                 "install_name_tool -change "
                                 "{} " 
-                                "@rpath/{} "
+                                "@executable_path/../Frameworks/{} "
                                 "{} "
                                 .format(
                                         os.path.join(frameworkRoot,iFramework),
