@@ -64,16 +64,38 @@ releaseEnv.AddMethod(getAppResourcesDir, 'getAppResourcesDir')
 
 #-- 
 
-# Returns the absolute path of the Resources folder in the app bundle
-# /Users/dtrimarchi/VPP/VPP.app/Contents/Resources
+# Returns the absolute path of the Frameworks folder in the app bundle
+# /Users/dtrimarchi/VPP/VPP.app/Contents/Frameworks
 def getAppFrameworksDir(self):
 
     return os.path.join( releaseEnv.getAppContentsDir(), "Frameworks" )
 
 releaseEnv.AddMethod(getAppFrameworksDir, 'getAppFrameworksDir')
 
+# --
+
+# Returns the absolute path of the Frameworks folder in the app bundle
+# /Users/dtrimarchi/VPP/VPP.app/Contents/Frameworks
+def getAppPlugInsDir(self):
+
+    return os.path.join( releaseEnv.getAppContentsDir(), "PlugIns" )
+
+releaseEnv.AddMethod(getAppPlugInsDir, 'getAppPlugInsDir')
+
 
 # --
+
+# Returns the absolute path of the Frameworks folder in the app bundle
+# /Users/dtrimarchi/VPP/VPP.app/Contents/Frameworks
+def getAppPlattformsDir(self):
+
+    return os.path.join( releaseEnv.getAppPlugInsDir(), "platforms" )
+
+releaseEnv.AddMethod(getAppPlattformsDir, 'getAppPlattformsDir')
+
+
+# --
+
 
 # Returns the absolute path of the Install folder in the app bundle
 # /Users/dtrimarchi/VPP/VPP.app/Contents/MacOS
@@ -127,17 +149,18 @@ def makeAppFolderStructure(self):
 
         # Run install_name_tool to set the identification names for the frameworks
         for iFramework in self.getQtFrameWorkList() :
-
-#             print   "\n=> Executing install_name_tool -id "   \
-#                     "@rpath/{}.framework/Versions/Current/{} " \
-#                     "{}.framework/Versions/Current/{} " \
-#                     .format(
-#                             iFramework,
-#                             iFramework,  
-#                             os.path.join( self.getAppFrameworksDir(), iFramework ),
-#                             iFramework
-#                             )
-
+              
+            print ("Running install_name_tool -id "
+                    "@executable_path/../Frameworks/{}.framework/Versions/Current/{} "
+                    "{}.framework/Versions/Current/{} " 
+                               .format(
+                                       iFramework,
+                                       iFramework,  
+                                       os.path.join( self.getAppFrameworksDir(), iFramework ),
+                                       iFramework
+                                       )  
+                   )
+   
             # run install_name_tool -id an all of the frameworks 
             p=subprocess.Popen(
                                "install_name_tool -id "
@@ -152,36 +175,23 @@ def makeAppFolderStructure(self):
                                shell=True
                                )
             p.wait()
-
+  
         #---
-            
+             
         # modify the frameworks id in order to cross-reference their local copy instead of the system one 
         for frameworkRoot in self.getQtLocalFrameworkRootList(): 
             for iFramework in self.getQtFrameWorkList() :
                 for jFramework in self.getQtFrameWorkList() :
-    
+     
 #                    print "iFramework= ", iFramework, " jFramework= ", jFramework
                     if jFramework == iFramework:                    
                         continue
-                                    
-#                     print "\n=> Executing install_name_tool "  \
-#                             "-change {}.framework/Versions/5/{} \n"  \
-#                             "@rpath/{}.framework/Versions/Current/{} \n"    \
-#                             "{}.framework/{}" \
-#                             .format(
-#                                     os.path.join(frameworkRoot,jFramework ),
-#                                     jFramework,
-#                                     jFramework,  
-#                                     jFramework,  
-#                                     os.path.join( self.getAppFrameworksDir(), iFramework ),
-#                                     iFramework
-#                                     )
-                                   
+                                                                        
                     # Now modify the frameworks to refeerence
                     p=subprocess.Popen(
                                    "install_name_tool -change "
                                    "{}.framework/Versions/5/{} " 
-                                   "@executable_path/../Frameworks/{}.framework/Versions/Current/{} "
+                                   "@executable_path/../Frameworks//{}.framework/Versions/Current/{} "
                                    "{}.framework/{}"
                                    .format(
                                            os.path.join(frameworkRoot,jFramework ),
@@ -249,7 +259,59 @@ def makeAppFolderStructure(self):
                                        )
                     p.wait()
 
+    # Now make the plugins folder...
+    if not os.path.exists(self.getAppPlugInsDir() ):
+        os.makedirs(self.getAppPlugInsDir() )
+
+        # ...and the platforms sub-folder
+        if not os.path.exists(self.getAppPlattformsDir() ):
+            os.makedirs(self.getAppPlattformsDir() )
         
+            # Copy libqcocoa.dylib - this is to be improved -- todo dtrimarchi!
+            copyfile( "/usr/local/opt/qt5/plugins/platforms/libqcocoa.dylib", os.path.join(self.getAppPlattformsDir(),"libqcocoa.dylib") )
+
+            # Give full permissions to the dylib
+            p = subprocess.Popen('chmod -R +x {}'.format( 
+                                os.path.join(self.getAppPlattformsDir(),"libqcocoa.dylib") ), 
+                                shell=True)
+            p.wait()
+            
+            # Modify the id of libqcocoa.dylib
+            p=subprocess.Popen(
+                               "install_name_tool -id "
+                               "@executable_path/../PlugIns/platforms/libqcocoa.dylib "
+                               "{}" 
+                               .format(
+                                       os.path.join(self.getAppPlattformsDir(),"libqcocoa.dylib"),
+                                       ), 
+                               shell=True
+                               )
+            p.wait()
+
+            # ---
+            
+            # Now modify all references to the qt frameworks in libcocoa.dylib...
+            for frameworkRoot in self.getQtLocalFrameworkRootList(): 
+                for jFramework in self.getQtFrameWorkList() :
+                                                                             
+                    # Now modify the frameworks to refeerence
+                    p=subprocess.Popen(
+                                   "install_name_tool -change "
+                                   "{}.framework/Versions/5/{} " 
+                                   "@executable_path/../Frameworks//{}.framework/Versions/Current/{} "
+                                   "{}"
+                                   .format(
+                                           os.path.join(frameworkRoot,jFramework ),
+                                           jFramework,
+                                           jFramework,  
+                                           jFramework,  
+                                           os.path.join(self.getAppPlattformsDir(),"libqcocoa.dylib")
+                                           ), 
+                                   shell=True
+                                   )
+                    p.wait()
+
+            # ---
 
 releaseEnv.AddMethod(makeAppFolderStructure, 'makeAppFolderStructure')
 
@@ -473,8 +535,8 @@ releaseEnv.AddMethod(getQtLocalFrameworkRootList, 'getQtLocalFrameworkRootList')
 # Returns the list of the Qt frameworks required to compile VPP
 def getQtFrameWorkList(self):
     return [
-            'QtGui',
             'QtCore',
+            'QtGui',
             'QtWidgets',
             'QtDataVisualization', 
             'QtPrintSupport'
