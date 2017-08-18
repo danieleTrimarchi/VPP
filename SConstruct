@@ -144,12 +144,12 @@ def makeAppFolderStructure(self):
                                 os.path.join( self.getAppFrameworksDir(), iFramework + ".framework" ) ), 
                                 shell=True)
             p.wait()
-                
+                 
         #---
-
+ 
         # Run install_name_tool to set the identification names for the frameworks
         for iFramework in self.getQtFrameWorkList() :
-              
+               
             print ("Running install_name_tool -id "
                     "@executable_path/../Frameworks/{}.framework/Versions/Current/{} "
                     "{}.framework/Versions/Current/{} " 
@@ -160,7 +160,7 @@ def makeAppFolderStructure(self):
                                        iFramework
                                        )  
                    )
-   
+    
             # run install_name_tool -id an all of the frameworks 
             p=subprocess.Popen(
                                "install_name_tool -id "
@@ -175,18 +175,18 @@ def makeAppFolderStructure(self):
                                shell=True
                                )
             p.wait()
-  
+   
         #---
-             
+              
         # modify the frameworks id in order to cross-reference their local copy instead of the system one 
         for frameworkRoot in self.getQtLocalFrameworkRootList(): 
             for iFramework in self.getQtFrameWorkList() :
                 for jFramework in self.getQtFrameWorkList() :
-     
+      
 #                    print "iFramework= ", iFramework, " jFramework= ", jFramework
                     if jFramework == iFramework:                    
                         continue
-                                                                        
+                                                                         
                     # Now modify the frameworks to refeerence
                     p=subprocess.Popen(
                                    "install_name_tool -change "
@@ -293,12 +293,12 @@ def makeAppFolderStructure(self):
             # Now modify all references to the qt frameworks in libcocoa.dylib...
             for frameworkRoot in self.getQtLocalFrameworkRootList(): 
                 for jFramework in self.getQtFrameWorkList() :
-                                                                             
+                                                                              
                     # Now modify the frameworks to refeerence
                     p=subprocess.Popen(
                                    "install_name_tool -change "
                                    "{}.framework/Versions/5/{} " 
-                                   "@executable_path/../Frameworks//{}.framework/Versions/Current/{} "
+                                   "@executable_path/../Frameworks/{}.framework/Versions/Current/{} "
                                    "{}"
                                    .format(
                                            os.path.join(frameworkRoot,jFramework ),
@@ -325,13 +325,14 @@ def fixDynamicLibPath(self, target, source, env):
     #    @rpath/../Resources/QtWidgets
     for frameworkRoot in self.getQtLocalFrameworkRootList():
         for iFramework in self.getQtFrameWorkList() :
-            #print "Redefine reference to lib{}.dylib...".format(iFramework)
-            #print "   From   : {}.framework/Versions/5/{}".format(
-            #                            os.path.join(self.getQtLocalFrameworkRootList(),iFramework ),
-            #                            iFramework
-            #                            )
-            #print "   To     : @executable_path/../Frameworks/{}.framework/Versions/Current/{}".format(iFramework,iFramework)
-            #print "   For exe: {}".format(os.path.join( self.getAppInstallDir(), self.getExecutableName() ))
+            print "\n-----------------------------\n"
+            print "Redefine reference to lib {}.dylib...".format(iFramework)
+            print "   From   : {}.framework/Versions/Current/{}".format(
+                                        os.path.join(frameworkRoot,iFramework ),
+                                        iFramework
+                                        )
+            print "   To     : @executable_path/../Frameworks/{}.framework/Versions/Current/{}".format(iFramework,iFramework)
+            print "   For exe: {}".format(os.path.join( self.getAppInstallDir(), self.getExecutableName() ))
             p=subprocess.Popen(
                                 "install_name_tool -change "
                                 "{}.framework/Versions/5/{} " 
@@ -347,13 +348,13 @@ def fixDynamicLibPath(self, target, source, env):
                                 shell=True
                                 )
             p.wait()
-     
+      
     # Fix the references to ipOpt now
     # /Users/dtrimarchi/third_party/Ipopt-3.12.6/lib/libipopt.1.dylib
     # @rpath/libipopt.dylib 
     for frameworkRoot in self.getIpOptLocalFrameworkRootList():
         for iFramework in self.getIpOptFrameWorkList() :
-            #print "FROM: {}".format( os.path.join(frameworkRoot,iFramework) )
+            print "FROM: {}".format( os.path.join(frameworkRoot,iFramework) )
             #print "TO: @executable_path/../Frameworks/{} ".format(iFramework)
             #print "for EXE: {}".format(os.path.join( self.getAppInstallDir(), self.getExecutableName() ))
             p1=subprocess.Popen(

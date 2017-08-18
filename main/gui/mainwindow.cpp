@@ -488,7 +488,7 @@ void MainWindow::run() {
 		//		// SolverFactory solverFactory(pVppItems);
 		pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );
 		//		// SAOASolverFactory solverFactory(pVppItems);
-		//		// IppOptSolverFactory solverFactory(pVppItems);
+		//pSolverFactory_.reset( new Optim::IppOptSolverFactory(pVppItems_) );
 
 		std::cout<<"Running the VPP analysis... "<<std::endl;
 
