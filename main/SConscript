@@ -110,25 +110,14 @@ localEnv.copyInputFileToFolderStructure
 # ------- Add the third_parties -----------------
 # Path for the globally installed libs
 localEnv.getGlobalLibPath()
-# ...EIGEN...
-localEnv.getEigenIncludePath()
-# ...NlOpt...
-localEnv.getNlOptIncludePath()
-localEnv.getNLOptLibPath()
-localEnv.getNLOptLib()
-# ...IpOpt...
-localEnv.getIpOptIncludePath()
-localEnv.getIpOptLibPath()
-localEnv.getIpOptLib()
-# ...Boost...
-localEnv.getBoostIncludePath()
-# ...UMFPack...
-#localEnv.getUMFPackIncludePath()
-#localEnv.getUMFPackLibPath()
-#localEnv.getUMFPackLib()
-#...Qt...
-localEnv.getQtPKGConfig(localEnv)
-localEnv.getQt()
+
+import thirdParties
+thirdParties.Eigen(localEnv)
+thirdParties.NLOpt(localEnv)
+thirdParties.IPOpt(localEnv)
+thirdParties.Boost(localEnv)
+thirdParties.Qt(localEnv)
+
 # -----------------------------------------------
 
 # List the objects required to build the program

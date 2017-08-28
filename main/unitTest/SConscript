@@ -18,22 +18,16 @@ allObjects= localEnv['objList']
 # ------- Add the third_parties -----------------
 # Path for the globally installed libs
 localEnv.getGlobalLibPath()
-# ...EIGEN...
-localEnv.getEigenIncludePath()
-# ...NlOpt...
-localEnv.getNlOptIncludePath()
-localEnv.getNLOptLibPath()
-localEnv.getNLOptLib()
-# ...IpOpt...
-localEnv.getIpOptIncludePath()
-localEnv.getIpOptLibPath()
-localEnv.getIpOptLib()
-# ...Boost...
-localEnv.getBoostIncludePath()
-# ...CppUnit...
-localEnv.getCppUnitIncludePath()
-localEnv.getCppUnitLibPath()
-localEnv.getCppUnitLib()
+
+
+# Import the third_parties required for the build
+import thirdParties
+thirdParties.Eigen(localEnv)
+thirdParties.NLOpt(localEnv)
+thirdParties.IPOpt(localEnv)
+thirdParties.Boost(localEnv)
+thirdParties.CppUnit(localEnv)
+
 # ----------------------------------------------
 
 
