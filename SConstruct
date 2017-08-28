@@ -394,6 +394,8 @@ def getGlobalIncludePath(self) :
 
 releaseEnv.AddMethod(getGlobalIncludePath, 'getGlobalIncludePath')
 
+#----------------------------------------------------------------
+
 def getGlobalLibPath(self) : 
     self.Append( LIBPATH=[
                           "/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
@@ -401,53 +403,6 @@ def getGlobalLibPath(self) :
 
 releaseEnv.AddMethod(getGlobalLibPath, 'getGlobalLibPath')
 
-#-- 
-
-def getUMFPackIncludePath(self) : 
-    self.Append( CPPPATH=[third_party_root+"SuiteSparse-4.5.2/UMFPACK/Include",
-                          third_party_root+"SuiteSparse-4.5.2/SuiteSparse_config",
-                          third_party_root+"SuiteSparse-4.5.2/AMD/Include" ] ) 
-
-releaseEnv.AddMethod(getUMFPackIncludePath, 'getUMFPackIncludePath')
-
-def getUMFPackLib(self) : 
-    self.Append( LIBS=["umfpack",
-                       "BLAS",
-                       "amd",
-                       "colamd",
-                       "cholmod",
-                       "suitesparseconfig" ] ) 
-
-releaseEnv.AddMethod(getUMFPackLib, 'getUMFPackLib')
-
-def getUMFPackLibPath(self) : 
-    self.Append( LIBPATH=[third_party_root+"SuiteSparse-4.5.2/UMFPACK/Lib",
-                          third_party_root+"SuiteSparse-4.5.2/SuiteSparse_config",
-                          third_party_root+"SuiteSparse-4.5.2/AMD/Lib",
-                          third_party_root+"SuiteSparse-4.5.2/CHOLMOD/Lib",
-                          third_party_root+"SuiteSparse-4.5.2/COLAMD/Lib" ] ) 
-
-releaseEnv.AddMethod(getUMFPackLibPath, 'getUMFPackLibPath')
-
-# --
-
-def getIpOptLocalFrameworkRootList(self):
-    
-    return [os.path.join(third_party_root,"Ipopt-3.12.6/lib")]
-
-releaseEnv.AddMethod(getIpOptLocalFrameworkRootList, 'getIpOptLocalFrameworkRootList')
-
-# --
-
-def getIpOptFrameWorkList(self):
-    return [
-            'libipopt.1.dylib', 
-            'libcoinmumps.1.dylib', 
-            'libcoinmetis.1.dylib'
-            ]
-
-releaseEnv.AddMethod(getIpOptFrameWorkList, 'getIpOptFrameWorkList')
-    
 # ---------------------------------------------------------------
 
 # We define our debug build environment in a similar fashion...

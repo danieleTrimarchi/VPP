@@ -13,8 +13,11 @@ class thirdParty(object) :
 
         # Declare class members, to be filled by the children
         self.__includePath__= ""
+        self.__frameworksPath__= ""
         self.__libpath__= ""
+
         self.__libs__= []
+        self.__frameworks__= []
 
     # Public method, called by children once the 
     # members have been defined
@@ -24,9 +27,15 @@ class thirdParty(object) :
         environment.Append( LIBPATH= self.__libpath__ )
         environment.Append( LIBS= self.__libs__ )
 
-    # Retutrn the list of libs (to be overwritten by children)         
+    # Retutrn the list of libs (to be overwritten by child classes)         
     def libs(self):
-        return []
+        return self.__libs__
+    
+    # Retutrn the list of frameworks (to be overwritten by child classes)         
+    def frameworks(self):
+        return self.__frameworks__
+
+# --- 
 
 class Eigen( thirdParty ) :
 
@@ -71,7 +80,18 @@ class IPOpt( thirdParty ) :
         self.__includePath__= [self.__rootDir__ + 'Ipopt-3.12.6/Ipopt/src/Interfaces',
                                self.__rootDir__ +'Ipopt-3.12.6/include/coin']
         self.__libpath__= [self.__rootDir__ + 'Ipopt-3.12.6/lib']
+        
+        self.__frameworksPath__= os.path.join(self.__rootDir__,"Ipopt-3.12.6/lib")
+
+        # Define the list of libs
         self.__libs__= ['ipopt']
+        
+        # Define the list of frameworks         
+        self.__frameworks__= [
+                              'libipopt.1.dylib', 
+                              'libcoinmumps.1.dylib', 
+                              'libcoinmetis.1.dylib'
+                            ]
     
         self.__addTo__(env)
 
@@ -118,7 +138,16 @@ class Qt( thirdParty ) :
         
         # Overrride rootDir that is different for Qt as it is installed via homebrew
         self.__rootDir__ = '/usr/local/Cellar/qt5/5.7.0'
-        
+
+        # Define the list of the libs (frameworks in this case)         
+        self.__frameworks__= [
+                              'QtCore',
+                              'QtGui',
+                              'QtWidgets',
+                              'QtDataVisualization', 
+                              'QtPrintSupport'
+                              ]
+
         # Direcly customize the env for the package config
         env['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(self.__rootDir__,'lib/pkgconfig') ]    
         env['ENV']['PATH'] += ':/opt/local/bin:'+self.__rootDir__
@@ -130,7 +159,7 @@ class Qt( thirdParty ) :
 
         env.Tool('qt5')
 
-        env.EnableQt5Modules( self.libs() )
+        env.EnableQt5Modules( self.__frameworks__ )
 
         self.__includePath__= [ os.path.join(self.__rootDir__,'/include/QtWidgets') ]
         
@@ -140,14 +169,3 @@ class Qt( thirdParty ) :
 
         self.__addTo__(env)
         
-    # Override method libs to return the Qt framework list
-    def libs(self):
-        
-        return [
-            'QtCore',
-            'QtGui',
-            'QtWidgets',
-            'QtDataVisualization', 
-            'QtPrintSupport'
-            ]
-
