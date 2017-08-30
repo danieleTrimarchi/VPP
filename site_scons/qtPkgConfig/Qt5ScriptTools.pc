@@ -1,0 +1,14 @@
+prefix=/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 ScriptTools
+Description: Qt ScriptTools module
+Version: 5.9.1
+Libs: -F${libdir} -framework QtScriptTools 
+Libs.private: -F/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -F/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -framework QtCore -framework DiskArbitration -framework IOKit -framework QtWidgets -F/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtScript -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtScriptTools -I${includedir}
+Requires: Qt5Core
+

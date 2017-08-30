@@ -1,0 +1,14 @@
+prefix=$QTROOT$
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 UiTools
+Description: Qt UiTools module
+Version: $QTVERSION$
+Libs: -L${libdir} -lQt5UiTools 
+Libs.private: -F$QTROOT$/lib -F$QTROOT$/lib -framework QtWidgets -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtWidgets -F$QTROOT$/lib -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtUiTools -I${includedir}
+Requires: Qt5Core Qt5Gui Qt5Widgets
+

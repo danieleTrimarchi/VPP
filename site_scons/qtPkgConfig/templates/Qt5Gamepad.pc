@@ -1,0 +1,14 @@
+prefix=$QTROOT$
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 Gamepad
+Description: Qt Gamepad module
+Version: $QTVERSION$
+Libs: -F${libdir} -framework QtGamepad 
+Libs.private: -F$QTROOT$/lib -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtGamepad -I${includedir}
+Requires: Qt5Core Qt5Gui
+

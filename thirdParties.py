@@ -137,7 +137,7 @@ class Qt( thirdParty ) :
         super(Qt,self).__init__()
         
         # Overrride rootDir that is different for Qt as it is installed via homebrew
-        self.__rootDir__ = '/usr/local/Cellar/qt5/5.7.0'
+        self.__rootDir__ = self.__rootDir__ + "Qt/5.9.1/clang64"
 
         # Define the list of the libs (frameworks in this case)         
         self.__frameworks__= [
@@ -149,7 +149,7 @@ class Qt( thirdParty ) :
                               ]
 
         # Direcly customize the env for the package config
-        env['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(self.__rootDir__,'lib/pkgconfig') ]    
+        env['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(self.__rootDir__,'Qt/5.9.1/clang64/lib/pkgconfig') ]    
         env['ENV']['PATH'] += ':/opt/local/bin:'+self.__rootDir__
 
         env.Append( QT5DIR = self.__rootDir__ )

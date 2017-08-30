@@ -1,0 +1,14 @@
+prefix=/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 Location
+Description: Qt Location module
+Version: 5.9.1
+Libs: -F${libdir} -framework QtLocation 
+Libs.private: -F/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -F/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -F/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -framework QtPositioning -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQuick -framework QtGui -framework QtQml -framework QtNetwork -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtLocation -I${includedir}
+Requires: Qt5Core Qt5Positioning Qt5Gui Qt5Quick
+

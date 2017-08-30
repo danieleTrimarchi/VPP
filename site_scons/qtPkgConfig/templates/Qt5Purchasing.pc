@@ -1,0 +1,14 @@
+prefix=$QTROOT$
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 Purchasing
+Description: Qt Purchasing module
+Version: $QTVERSION$
+Libs: -F${libdir} -framework QtPurchasing 
+Libs.private: -F$QTROOT$/lib -framework StoreKit -framework Foundation -framework QtCore -framework DiskArbitration -framework IOKit   
+Cflags: -I${includedir}/QtPurchasing -I${includedir}
+Requires: Qt5Core
+

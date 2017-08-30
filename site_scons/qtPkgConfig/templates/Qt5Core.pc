@@ -1,0 +1,15 @@
+prefix=$QTROOT$
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+host_bins=${prefix}/bin
+qt_config=minimal-config small-config medium-config large-config full-config c++11 c++14 c++1z accessibility opengl shared qpa reduce_exports getaddrinfo ipv6ifname getifaddrs poll_poll png doubleconversion freetype harfbuzz system-zlib nis cups iconv ssl securetransport corewlan concurrent audio-backend release qt_framework
+
+Name: Qt5 Core
+Description: Qt Core module
+Version: $QTVERSION$
+Libs: -F${libdir} -framework QtCore 
+Libs.private: -framework DiskArbitration -framework IOKit -lz -L$QTROOT$/lib -lqtpcre -lm -framework Foundation -framework CoreServices -framework AppKit -framework ApplicationServices -framework CoreFoundation  
+Cflags: -I${includedir}/QtCore -I${includedir}
+
