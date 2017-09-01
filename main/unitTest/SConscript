@@ -20,16 +20,12 @@ allObjects= localEnv['objList']
 localEnv.getGlobalLibPath()
 
 
-# Import the third_parties required for the build
+# Import the third_parties required for the tests.
+# WARNING!
 import thirdParties
-thirdParties.Eigen(localEnv)
-thirdParties.NLOpt(localEnv)
-thirdParties.IPOpt(localEnv)
-thirdParties.Boost(localEnv)
 thirdParties.CppUnit(localEnv)
 
 # ----------------------------------------------
-
 
 autotestsProgram= localEnv.Program('unitTest', Glob('*.cpp')+
 							allObjects

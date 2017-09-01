@@ -144,7 +144,7 @@ for subdir in subFolders :
 vppExe= localEnv.Program(localEnv.getExecutableName(), ['main.cxx'] + allObj )
 
 # Send the build to a convenient apple-style bundle folder structure 
-#localEnv.makeAppFolderStructure(thirdPartyDict)
+localEnv.makeAppFolderStructure(thirdPartyDict)
 
 # The VPP program is to be installed in the app folder structure, at least for MAC
 installedExe= localEnv.Install( localEnv.getAppInstallDir(), vppExe )
