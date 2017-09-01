@@ -116,35 +116,41 @@ releaseEnv.AddMethod(getAppInstallDir, 'getAppInstallDir')
 #            VPP.exe
 #        Resources/
 #            VPP.icns
-def makeAppFolderStructure(self):
+def makeAppFolderStructure(self, thirdPartyDict):
     
     print "===>>>>  makeAppFolderStructure!  <<<<<================"
     
-#     if not os.path.exists( self.getAppContentsDir() ):
-#         os.makedirs(self.getAppContentsDir())
-#         copyfile( os.path.join( self.getSrcTreeRoot(),"gui/Info.pList"), os.path.join( self.getAppContentsDir(),"Info.pList") )
-# 
-#     if not os.path.exists(self.getAppResourcesDir() ):
-#         
-#         os.makedirs(self.getAppResourcesDir() )
-#         copyfile( os.path.join( self.getSrcTreeRoot(), "Icons/VPP.icns"), os.path.join(self.getAppResourcesDir(),"VPP.icns") )
+    if not os.path.exists( self.getAppContentsDir() ):
+        os.makedirs(self.getAppContentsDir())
+        copyfile( os.path.join( self.getSrcTreeRoot(),"gui/Info.pList"), os.path.join( self.getAppContentsDir(),"Info.pList") )
+ 
+    if not os.path.exists(self.getAppResourcesDir() ):
+         
+        os.makedirs(self.getAppResourcesDir() )
+        copyfile( os.path.join( self.getSrcTreeRoot(), "Icons/VPP.icns"), os.path.join(self.getAppResourcesDir(),"VPP.icns") )
 #         
 # 
 #     if not os.path.exists( self.getAppFrameworksDir() ):
 # 
 #         os.makedirs( self.getAppFrameworksDir() )
 #         
-#         # Copy the Qt frameworks to the APP bundle
-#         for iFramework in self.getQtFrameWorkList() :
-#             copytree( os.path.join( self.getQtLocalFrameworkRootList()[0], iFramework + ".framework"),
-#                              os.path.join( self.getAppFrameworksDir(), iFramework + ".framework" ),
-#                              symlinks=True 
-#                              )
-#             # After the copy give full permissions to the frameworks in the app
-#             p = subprocess.Popen('chmod -R 777 {}'.format( 
-#                                 os.path.join( self.getAppFrameworksDir(), iFramework + ".framework" ) ), 
-#                                 shell=True)
-#             p.wait()
+    frameworkRoot= thirdPartyDict['Qt'].getFrameworkRoot()
+    frameworkList= thirdPartyDict['Qt'].getFrameworks()
+    
+    # Copy the Qt frameworks to the APP bundle 
+    # Note that at this point what we do is silly, as we do copy over for each build
+    # better would be only copying the pieces that we need to copy over!
+    for iFramework in frameworkList: 
+        # Copy the Qt frameworks to the APP bundle - just to the APP dir to start with
+        copytree( os.path.join( frameworkRoot, iFramework + ".framework"),
+                  os.path.join( self.getAppInstallDir(), iFramework + ".framework" ),
+                  symlinks=True 
+                )
+        # After the copy give full permissions to the frameworks in the app
+        p = subprocess.Popen('chmod -R 777 {}'.format( 
+                             os.path.join( self.getAppInstallDir(), iFramework + ".framework" ) ), 
+                             shell=True)
+        p.wait()
 #                  
 #         #---
 #  
