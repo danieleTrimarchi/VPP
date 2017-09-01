@@ -111,12 +111,15 @@ localEnv.copyInputFileToFolderStructure
 # Path for the globally installed libs
 localEnv.getGlobalLibPath()
 
+# Define a dictionary that will store the thirdParties
+thirdPartyDict={}
+
 import thirdParties
-thirdParties.Eigen(localEnv)
-thirdParties.NLOpt(localEnv)
-thirdParties.IPOpt(localEnv)
-thirdParties.Boost(localEnv)
-thirdParties.Qt(localEnv)
+thirdPartyDict['Eigen'] = thirdParties.Eigen(localEnv) 
+thirdPartyDict['NLOpt'] = thirdParties.NLOpt(localEnv) 
+thirdPartyDict['IPOpt'] = thirdParties.IPOpt(localEnv) 
+thirdPartyDict['Boost'] = thirdParties.Boost(localEnv) 
+thirdPartyDict['Qt'] 	= thirdParties.Qt(localEnv) 
 
 # -----------------------------------------------
 
@@ -141,10 +144,7 @@ localEnv.makeAppFolderStructure()
 # The VPP program is to be installed in the app folder structure, at least for MAC
 installedExe= localEnv.Install( localEnv.getAppInstallDir(), vppExe )
 
-# --- THIS IS BROKEN! 
 # As the exe has been installed, modify it to use the local Qt frameworks
-#localEnv.AddPostAction(installedExe, localEnv.fixDynamicLibPath() )
-# -------------------
 fixDynamicLibPath_command = Command('fixDynamicLibPath', [], localEnv.fixDynamicLibPath)
 Depends( fixDynamicLibPath_command, installedExe )
 Default( fixDynamicLibPath_command )

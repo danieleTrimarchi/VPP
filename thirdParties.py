@@ -38,8 +38,11 @@ class thirdParty(object) :
         return self.__libs__
     
     # Retutrn the list of frameworks (to be overwritten by child classes)         
-    def frameworks(self):
+    def getFrameworks(self):
         return self.__frameworks__
+
+    def getFrameworkRoot(self):
+        return self.__frameworksPath__
 
 # --- 
 
@@ -179,10 +182,12 @@ class Qt( thirdParty ) :
 
         env.EnableQt5Modules( self.__frameworks__ )
 
-        self.__includePath__= [ os.path.join(self.__rootDir__,'lib/QtCore.framework/Versions/Current/Headers'),
-                                os.path.join(self.__rootDir__,'lib/QtWidgets.framework/Versions/Current/Headers'),
-                                os.path.join(self.__rootDir__,'lib/QtGui.framework/Versions/Current/Headers')
-                              ]
+        self.__frameworksPath__ = os.path.join(self.__rootDir__,'lib')
+
+        self.__includePath__= [ os.path.join(self.__frameworksPath__,'QtCore.framework/Versions/Current/Headers'),
+                                os.path.join(self.__frameworksPath__,'QtWidgets.framework/Versions/Current/Headers'),
+                                os.path.join(self.__frameworksPath__,'QtGui.framework/Versions/Current/Headers')
+                               ]
         
         # Returns the absolute path of the Qt Framework folder
         self.__libpath__= [ os.path.join(self.__rootDir__, 'lib') ]
