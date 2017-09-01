@@ -52,7 +52,7 @@ class Eigen( thirdParty ) :
         
         self.__version__ = "3.2.7"
         # Declare class members, to be filled by the children
-        self.__includePath__= [self.__rootDir__ + 'eigen-' + self.__version__ ]
+        self.__includePath__= [ os.path.join(self.__rootDir__, 'eigen-' + self.__version__) ]
         self.__libpath__= []
         self.__libs__= []
     
@@ -71,7 +71,7 @@ class NLOpt( thirdParty ) :
 
         # Declare class members, to be filled by the children
         self.__includePath__= [ os.path.join( self.__rootDir__,'nlopt-' + self.__version__,'api') ]
-        self.__libpath__= [ os.path.join( self.__rootDir__,'nlopt-' + self.__version__,'libs']
+        self.__libpath__= [ os.path.join( self.__rootDir__,'nlopt-' + self.__version__,'libs')]
         self.__libs__= ['nlopt']
     
         self.__addTo__(env)
