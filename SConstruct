@@ -151,7 +151,7 @@ def makeAppFolderStructure(self, thirdPartyDict):
                              os.path.join( self.getAppInstallDir(), iFramework + ".framework" ) ), 
                              shell=True)
         p.wait()
-#                  
+        
 #         #---
 #  
 #         # Run install_name_tool to set the identification names for the frameworks
@@ -324,13 +324,46 @@ releaseEnv.AddMethod(makeAppFolderStructure, 'makeAppFolderStructure')
 
 # ---------------------------------------------------------------
 
-def fixDynamicLibPath(self, target, source, env):
+def fixDynamicLibPath(self,source,target,env):
     
+    # Modify the executable in order to change @rpath -> @executable_path thus making 
+    # it executable. Not sure why @rpath would not work though... 
+    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
+    QtFrameworkList= self['THIRDPARTYDICT']['Qt'].getFrameworks()
+    
+    # Loop on the frameworks
+    for iFramework in QtFrameworkList: 
+
+        print "RUNNING : "
+        print ('install_name_tool -change '
+               '@rpath/{}.framework/Versions/5/{} '
+               '@executable_path/{}.framework/Versions/5/{} '
+               '{}/VPP'.format( 
+                        iFramework,iFramework,
+                        iFramework,iFramework,
+                        self.getAppInstallDir()
+                        )
+            )
+
+        # Also change the reference to the frameworks from @rpath to @executable_path
+        p = subprocess.Popen('install_name_tool -change '
+                             '@rpath/{}.framework/Versions/5/{} '
+                             '@executable_path/{}.framework/Versions/5/{} '
+                             '{}/VPP'.format( 
+                                             iFramework,iFramework,
+                                             iFramework,iFramework,
+                                             self.getAppInstallDir()
+                                             ), 
+                             shell=True )
+        p.wait()
+
     # Once the frameworks have been copied over to Resources, the app must be modified to 
     # point to these frameworks with install_name_tool :      
     #     /usr/local/opt/qt5/lib/QtWidgets.framework/Versions/5/QtWidgets 
     #    @rpath/../Resources/QtWidgets
-    print "fixDynamicLibPath"
+
+    
+
 #     for frameworkRoot in self.getQtLocalFrameworkRootList():
 #         for iFramework in self.getQtFrameWorkList() :
 #             print "\n-----------------------------\n"

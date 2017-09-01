@@ -121,6 +121,11 @@ thirdPartyDict['IPOpt'] = thirdParties.IPOpt(localEnv)
 thirdPartyDict['Boost'] = thirdParties.Boost(localEnv) 
 thirdPartyDict['Qt'] 	= thirdParties.Qt(localEnv) 
 
+# Give the list of the third_parties to the env, this way 
+# it will be possible to direcly use the methods defined 
+# in the third parties 
+localEnv.Append( THIRDPARTYDICT=thirdPartyDict )
+
 # -----------------------------------------------
 
 # List the objects required to build the program
@@ -139,7 +144,7 @@ for subdir in subFolders :
 vppExe= localEnv.Program(localEnv.getExecutableName(), ['main.cxx'] + allObj )
 
 # Send the build to a convenient apple-style bundle folder structure 
-localEnv.makeAppFolderStructure(thirdPartyDict)
+#localEnv.makeAppFolderStructure(thirdPartyDict)
 
 # The VPP program is to be installed in the app folder structure, at least for MAC
 installedExe= localEnv.Install( localEnv.getAppInstallDir(), vppExe )
