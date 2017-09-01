@@ -108,13 +108,12 @@ localEnv.Append( CPPPATH=myCppPath )
 localEnv.copyInputFileToFolderStructure
 
 # ------- Add the third_parties -----------------
-# Path for the globally installed libs
-localEnv.getGlobalLibPath()
 
 # Define a dictionary that will store the thirdParties
 thirdPartyDict={}
 
 import thirdParties
+thirdPartyDict['System']= thirdParties.System(localEnv)
 thirdPartyDict['Eigen'] = thirdParties.Eigen(localEnv) 
 thirdPartyDict['NLOpt'] = thirdParties.NLOpt(localEnv) 
 thirdPartyDict['IPOpt'] = thirdParties.IPOpt(localEnv) 

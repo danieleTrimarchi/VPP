@@ -46,6 +46,23 @@ class thirdParty(object) :
 
 # --- 
 
+# Place-holder class for the system global libs 
+class System( thirdParty ) :
+
+    def __init__(self, env):
+        
+        # Call mother-class constructor
+        super(System,self).__init__()
+    
+        self.__libpath__= [
+                           "/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
+                           "/opt/local/lib"
+                          ]
+        
+        self.__addTo__(env)
+
+# --- 
+
 class Eigen( thirdParty ) :
 
     def __init__(self, env):
@@ -56,8 +73,6 @@ class Eigen( thirdParty ) :
         self.__version__ = "3.2.7"
         # Declare class members, to be filled by the children
         self.__includePath__= [ os.path.join(self.__rootDir__, 'eigen-' + self.__version__) ]
-        self.__libpath__= []
-        self.__libs__= []
     
         self.__addTo__(env)
         

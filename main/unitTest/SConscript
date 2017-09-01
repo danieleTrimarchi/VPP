@@ -16,13 +16,11 @@ allObjects= localEnv['objList']
 #      C++11 extension [-Wc++11-extensions]
 
 # ------- Add the third_parties -----------------
-# Path for the globally installed libs
-localEnv.getGlobalLibPath()
-
 
 # Import the third_parties required for the tests.
 # WARNING!
 import thirdParties
+thirdParties.System(localEnv)
 thirdParties.CppUnit(localEnv)
 
 # ----------------------------------------------

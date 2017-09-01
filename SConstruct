@@ -201,21 +201,6 @@ def copyInputFileToFolderStructure(self):
 
 releaseEnv.AddMethod(copyInputFileToFolderStructure, 'copyInputFileToFolderStructure')
 
-#----------------------------------------------------------------
-
-def getGlobalIncludePath(self) : 
-    self.Append( CPPPATH=["/opt/local/include" ] ) 
-
-releaseEnv.AddMethod(getGlobalIncludePath, 'getGlobalIncludePath')
-
-#----------------------------------------------------------------
-
-def getGlobalLibPath(self) : 
-    self.Append( LIBPATH=[
-                          "/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
-                          '/opt/local/lib'] ) 
-
-releaseEnv.AddMethod(getGlobalLibPath, 'getGlobalLibPath')
 
 # ---------------------------------------------------------------
 
