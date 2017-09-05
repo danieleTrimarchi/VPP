@@ -140,13 +140,22 @@ def makeAppFolderStructure(self, thirdPartyDict):
         # Note that at this point what we do is silly, as we do copy over for each build
         # better would be only copying the pieces that we need to copy over!
         for iFramework in frameworkList: 
+
+            print "==>> Copying framework : ", iFramework
+            
+            # Def the dest folder
+            dst = os.path.join( iFramework + ".framework","Versions","Current" )  
+            
+            # Make the dest folder
+            os.makedirs( os.path.join( self.getAppFrameworksDir(), dst ) )
+                         
             # Copy the Qt frameworks to the APP bundle - just to the APP dir to start with
-            copytree( os.path.join( frameworkRoot, iFramework + ".framework"),
-                      os.path.join( self.getAppFrameworksDir(), iFramework + ".framework" ),
-                      symlinks=True 
-                      )
+            shutil.copy( os.path.join( frameworkRoot, dst, iFramework ),
+                         os.path.join( self.getAppFrameworksDir(), dst, iFramework ),
+                         )
+            
             # After the copy give full permissions to the frameworks in the app
-            p = subprocess.Popen('chmod -R 777 {}'.format( 
+            p = subprocess.Popen('chmod -R 755 {}'.format( 
                                                           os.path.join( self.getAppFrameworksDir(), iFramework + ".framework" ) ), 
                                  shell=True)
             p.wait()        
@@ -168,7 +177,7 @@ def fixDynamicLibPath(self,source,target,env):
         print "RUNNING : "
         print ('install_name_tool -change '
                '@rpath/{}.framework/Versions/5/{} '
-               '@executable_path/../Frameworks/{}.framework/Versions/5/{} '
+               '@executable_path/../Frameworks/{}.framework/Versions/Current/{} '
                '{}/VPP'.format( 
                         iFramework,iFramework,
                         iFramework,iFramework,
@@ -179,7 +188,7 @@ def fixDynamicLibPath(self,source,target,env):
         # Also change the reference to the frameworks from @rpath to @executable_path
         p = subprocess.Popen('install_name_tool -change '
                              '@rpath/{}.framework/Versions/5/{} '
-                             '@executable_path/../Frameworks/{}.framework/Versions/5/{} '
+                             '@executable_path/../Frameworks/{}.framework/Versions/Current/{} '
                              '{}/VPP'.format( 
                                              iFramework,iFramework,
                                              iFramework,iFramework,
