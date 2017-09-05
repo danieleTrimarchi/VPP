@@ -18,14 +18,14 @@ allObjects= localEnv['objList']
 # ------- Add the third_parties -----------------
 
 # Import the third_parties required for the tests.
-# WARNING!
 import thirdParties
 thirdParties.System(localEnv)
 thirdParties.CppUnit(localEnv)
+thirdParties.Eigen(localEnv)
 
 # ----------------------------------------------
 
-autotestsProgram= localEnv.Program('unitTest', Glob('*.cpp')+
+autotestsProgram= localEnv.Program('unitTest', Glob('*.cpp') +
 							allObjects
 								)
 

@@ -107,6 +107,9 @@ localEnv.Append( CPPPATH=myCppPath )
 # Copy the test input file (variableFile.txt) to the build folder
 localEnv.copyInputFileToFolderStructure
 
+# Clone the test env before adding the thirdParties
+testEnv= localEnv.Clone()
+
 # ------- Add the third_parties -----------------
 
 # Define a dictionary that will store the thirdParties
@@ -156,7 +159,6 @@ Default( fixDynamicLibPath_command )
 #--------------------	
 # Append the list of the objects to the env, in order for the 
 # auto-test to find them
-testEnv= localEnv.Clone()
 testEnv.Append( objList = allObj )
 
 # And now proceed to the subFolders
