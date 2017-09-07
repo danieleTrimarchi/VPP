@@ -1,3 +1,11 @@
+- Apparently switching the solver NLopt -> ipOpt at the instantiation produces segv. 
+	Why..? The test do not produce the same result. 
+- Add a control to choose the solver NLOpt IPOpt NRSolver (2 dofs)
+- Add a tabbed widget to interactively fill all of the VPP input. This can be 
+	automatically filled from file ; or be saved to a VPPin file
+
+————
+
 - …openCascade…
 	- Get pre-requisites : file:///Users/dtrimarchi/third_party/opencascade-7.1.0/doc/overview/html/occt_dev_guides__building_3rdparty_osx.html
 	-> Tcl 8.5 : from http://www.tcl.tk/software/tcltk/download.html
