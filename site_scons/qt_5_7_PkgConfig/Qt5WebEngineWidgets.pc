@@ -1,0 +1,14 @@
+prefix=/usr/local/Cellar/qt5/5.7.0
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 WebEngineWidgets
+Description: Qt WebEngineWidgets module
+Version: 5.7.0
+Libs: -F${libdir} -framework QtWebEngineWidgets 
+Libs.private: -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtWebEngineCore -framework QtQuick -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQml -framework QtNetwork -framework QtWebChannel -framework QtPositioning -framework QtWidgets -framework QtQuick -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQml -framework QtNetwork -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtWebEngineWidgets -I${includedir}
+Requires: Qt5Core Qt5Gui Qt5WebEngineCore Qt5Widgets Qt5Network Qt5Quick
+

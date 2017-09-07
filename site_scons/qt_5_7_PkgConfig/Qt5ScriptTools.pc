@@ -1,0 +1,14 @@
+prefix=/usr/local/Cellar/qt5/5.7.0
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 ScriptTools
+Description: Qt ScriptTools module
+Version: 5.7.0
+Libs: -F${libdir} -framework QtScriptTools 
+Libs.private: -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtCore -framework DiskArbitration -framework IOKit -framework QtWidgets -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtScript -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtScriptTools -I${includedir}
+Requires: Qt5Core
+
