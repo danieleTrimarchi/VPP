@@ -15,6 +15,9 @@ class thirdParty(object) :
         # This is done because the Qt .pc files currently live in the src tree... 
         self.__VPPprogramSrcDir__ = "/Users/dtrimarchi/VPP"
 
+        # Define the name of this third_party
+        self.__name__= ""
+        
         # Declare class members, to be filled by the children
         self.__includePath__= ""
         self.__frameworksPath__= ""
@@ -54,6 +57,8 @@ class System( thirdParty ) :
         # Call mother-class constructor
         super(System,self).__init__()
     
+        self.__name__= "System"
+        
         self.__libpath__= [
                            "/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
                            "/opt/local/lib"
@@ -70,6 +75,8 @@ class Eigen( thirdParty ) :
         # Call mother-class constructor
         super(Eigen,self).__init__()
         
+        self.__name__= "Eigen"
+
         self.__version__ = "3.2.7"
         # Declare class members, to be filled by the children
         self.__includePath__= [ os.path.join(self.__rootDir__, 'eigen-' + self.__version__) ]
@@ -84,6 +91,8 @@ class NLOpt( thirdParty ) :
         
         # Call mother-class constructor
         super(NLOpt,self).__init__()
+        
+        self.__name__= "NLOpt"
         
         self.__version__ = "2.4.2"
 
@@ -103,6 +112,8 @@ class IPOpt( thirdParty ) :
         # Call mother-class constructor
         super(IPOpt,self).__init__()
         
+        self.__name__= "IPOpt"
+
         self.__version__ = "3.12.6"
 
         # Declare class members, to be filled by the children
@@ -133,6 +144,8 @@ class Boost( thirdParty ) :
         # Call mother-class constructor
         super(Boost,self).__init__()
         
+        self.__name__= "Boost"
+
         self.__version__ = "1_60_0"
 
         # Declare class members, to be filled by the children
@@ -151,6 +164,8 @@ class CppUnit( thirdParty ) :
         # Call mother-class constructor
         super(CppUnit,self).__init__()
 
+        self.__name__= "CppUnit"
+
         self.__version__ = "1.13.2"
 
         # Declare class members, to be filled by the children
@@ -168,6 +183,8 @@ class Qt( thirdParty ) :
         
         # Call mother-class constructor
         super(Qt,self).__init__()
+
+        self.__name__= "Qt"
         
         self.__version__ = "5.9.1"
 

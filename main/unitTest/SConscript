@@ -15,20 +15,10 @@ allObjects= localEnv['objList']
 # Warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]
 
-# ------- Add the third_parties -----------------
-
-# Define a dictionary that will store the thirdParties
-thirdPartyDict={}
-
-# Import the third_parties required for the tests.
+# ------- Add cppunit to the third_parties -----------------
 import thirdParties
-thirdPartyDict['System']= thirdParties.System(localEnv)
+thirdPartyDict= localEnv['THIRDPARTYDICT']
 thirdPartyDict['CppUnit']= thirdParties.CppUnit(localEnv)
-thirdPartyDict['Eigen']= thirdParties.Eigen(localEnv)
-thirdPartyDict['Qt']= thirdParties.Qt(localEnv)
-thirdPartyDict['Boost']= thirdParties.Boost(localEnv)
-thirdPartyDict['NLOpt']= thirdParties.NLOpt(localEnv)
-thirdPartyDict['IPOpt']= thirdParties.IPOpt(localEnv)
 
 # ----------------------------------------------
 
@@ -38,7 +28,6 @@ autotestsProgram= localEnv.Program('unitTest', Glob('*.cpp') +
 
 # Add the path of the program to the env
 localEnv.Append( TEST_EXE_PATH=autotestsProgram[0].abspath )
-localEnv.Append( THIRDPARTYDICT=thirdPartyDict )
 
 # As the exe has been installed, modify it to use the local Qt frameworks
 fixDynamicLibPath_commandTest = Command('fixDynamicLibPathTest', [], localEnv.fixDynamicLibPathTest)
