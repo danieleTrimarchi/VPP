@@ -17,20 +17,39 @@ allObjects= localEnv['objList']
 
 # ------- Add the third_parties -----------------
 
+# Define a dictionary that will store the thirdParties
+thirdPartyDict={}
+
 # Import the third_parties required for the tests.
 import thirdParties
-thirdParties.System(localEnv)
-thirdParties.CppUnit(localEnv)
-thirdParties.Eigen(localEnv)
+thirdPartyDict['System']= thirdParties.System(localEnv)
+thirdPartyDict['CppUnit']= thirdParties.CppUnit(localEnv)
+thirdPartyDict['Eigen']= thirdParties.Eigen(localEnv)
+thirdPartyDict['Qt']= thirdParties.Qt(localEnv)
+thirdPartyDict['Boost']= thirdParties.Boost(localEnv)
+thirdPartyDict['NLOpt']= thirdParties.NLOpt(localEnv)
+thirdPartyDict['IPOpt']= thirdParties.IPOpt(localEnv)
 
 # ----------------------------------------------
 
+localEnv.Append(RPATH="/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib")
+#localEnv.Append(CXXFLAGS="/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib")
+
 autotestsProgram= localEnv.Program('unitTest', Glob('*.cpp') +
 							allObjects
-								)
+							)
+
+# Add the path of the program to the env
+localEnv.Append( TEST_EXE_PATH=autotestsProgram[0].abspath )
+localEnv.Append( THIRDPARTYDICT=thirdPartyDict )
 
 # Add a target 'runTest' that will ensure that it's built before running the test suite
 test_alias = Alias('runTest', [autotestsProgram], autotestsProgram[0].path)
+
+# As the exe has been installed, modify it to use the local Qt frameworks
+fixDynamicLibPath_commandTest = Command('fixDynamicLibPathTest', [], localEnv.fixDynamicLibPathTest)
+Depends( fixDynamicLibPath_commandTest, autotestsProgram )
+Default( fixDynamicLibPath_commandTest )
 
 # Simply required.  Without it, 'test' is never considered out of date.
 AlwaysBuild(test_alias)

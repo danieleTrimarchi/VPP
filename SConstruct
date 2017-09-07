@@ -201,6 +201,47 @@ releaseEnv.AddMethod(fixDynamicLibPath, 'fixDynamicLibPath')
 
 # ---------------------------------------------------------------
 
+def fixDynamicLibPathTest(self,source,target,env):
+    
+    print "==>>  fixDynamicLibPathTest <<=="
+
+    # Modify the executable in order to change @rpath -> @executable_path thus making 
+    # it executable. Not sure why @rpath would not work though... 
+    testExecutablePath= self['TEST_EXE_PATH']
+    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
+    QtFrameworkList= self['THIRDPARTYDICT']['Qt'].getFrameworks()
+
+    # Loop on the frameworks
+    for iFramework in QtFrameworkList: 
+
+        print "RUNNING : "
+        print ('install_name_tool -change '
+               '@rpath/{}.framework/Versions/5/{} '
+               '{}/{}.framework/Versions/Current/{} '
+               '{}'.format( 
+                        iFramework,iFramework,
+                        QtFrameworkRoot,iFramework,iFramework,
+                        testExecutablePath
+                        )
+            )
+
+        # Also change the reference to the frameworks from @rpath to @executable_path
+        p = subprocess.Popen('install_name_tool -change '
+                             '@rpath/{}.framework/Versions/5/{} '
+                             '{}/{}.framework/Versions/Current/{} '
+                             '{}'.format( 
+                                             iFramework,iFramework,
+                                             QtFrameworkRoot,iFramework,iFramework,
+                                             testExecutablePath
+                                             ), 
+                             shell=True )
+        p.wait()
+        
+releaseEnv.AddMethod(fixDynamicLibPathTest, 'fixDynamicLibPathTest')
+
+# ---------------------------------------------------------------
+
+
 # Also copy the input file 'variableFile.txt' to the build folder
 def copyInputFileToFolderStructure(self):
     
