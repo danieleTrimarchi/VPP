@@ -1,3 +1,7 @@
+- Fix the IPOpt test. Does this fail under default..?
+
+————
+
 - Apparently switching the solver NLopt -> ipOpt at the instantiation produces segv. 
 	Why..? The test do not produce the same result. 
 - Add a control to choose the solver NLOpt IPOpt NRSolver (2 dofs)
@@ -6,13 +10,14 @@
 
 ————
 
-- …openCascade…
+- …openCascade… Or other solid modelling tools?
 	- Get pre-requisites : file:///Users/dtrimarchi/third_party/opencascade-7.1.0/doc/overview/html/occt_dev_guides__building_3rdparty_osx.html
 	-> Tcl 8.5 : from http://www.tcl.tk/software/tcltk/download.html
 	-> 
 
 - Compute the derivative of a cubic spline, thus removing the FDs
 - See RhinoAPI for getting LPP data
+
 —————
 
 - Ask Stephane about the multiple environment warning 

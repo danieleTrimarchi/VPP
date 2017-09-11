@@ -99,7 +99,7 @@ curDirAbsPath= Dir('.').srcnode().abspath
 myCppPath= [ curDirAbsPath ]
 
 for subdir in subFolders : 
-	myCppPath.append(curDirAbsPath + "/" + subdir)
+	myCppPath.append( os.path.join(curDirAbsPath,subdir) )
 
 # Add the subfolder path to the CPPPATH of the localEnv
 localEnv.Append( CPPPATH=myCppPath )
