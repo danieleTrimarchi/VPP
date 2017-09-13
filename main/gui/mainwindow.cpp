@@ -472,6 +472,7 @@ void MainWindow::import() {
 	}	catch(...) {}
 }
 
+
 void MainWindow::run() {
 
 	try {
@@ -485,10 +486,10 @@ void MainWindow::run() {
 		// todo dtrimarchi : this should be selected by a switch in the UI!
 		// Instantiate a solver by default. This can be an optimizer (with opt vars)
 		// or a simple solver that will keep fixed the values of the optimization vars
-		//		// SolverFactory solverFactory(pVppItems);
-		pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );
-		//		// SAOASolverFactory solverFactory(pVppItems);
-		//pSolverFactory_.reset( new Optim::IppOptSolverFactory(pVppItems_) );
+		//pSolverFactory_.reset( new Optim::SolverFactory(pVppItems_) );
+		//pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );
+		//pSolverFactory_.reset( 	new Optim::SAOASolverFactory(pVppItems_) );
+		pSolverFactory_.reset( new Optim::IppOptSolverFactory(pVppItems_) );
 
 		std::cout<<"Running the VPP analysis... "<<std::endl;
 

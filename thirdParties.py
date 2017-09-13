@@ -150,8 +150,15 @@ class Boost( thirdParty ) :
 
         # Declare class members, to be filled by the children
         self.__includePath__= [ os.path.join( self.__rootDir__,'boost_'+self.__version__) ]
-        self.__libpath__= []
-        self.__libs__= []
+        self.__libpath__= [ os.path.join( self.__rootDir__,'boost_'+self.__version__,
+                                          "bin.v2","libs","system","build","darwin-4.2.1",
+                                          "release","link-static","threading-multi"),
+                           os.path.join( self.__rootDir__,'boost_'+self.__version__,
+                                          "bin.v2","libs","fileSystem","build","darwin-4.2.1",
+                                          "release","link-static","threading-multi")                            
+                           ]
+        
+        self.__libs__= ["boost_system","boost_filesystem"]
     
         self.__addTo__(env)
 

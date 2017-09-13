@@ -1,4 +1,6 @@
 #include "VPPSolverFactoryBase.h"
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 
 namespace Optim {
 
@@ -94,6 +96,8 @@ void SAOASolverFactory::run(int TWV, int TWA) {
 }
 
 //////////////////////////////////////////////////////////////
+#include <mach-o/dyld.h>
+#include <limits.h>
 
 // Ctor
 IppOptSolverFactory::IppOptSolverFactory(boost::shared_ptr<VPPItemFactory> pVppItems) :
@@ -103,8 +107,33 @@ IppOptSolverFactory::IppOptSolverFactory(boost::shared_ptr<VPPItemFactory> pVppI
 
 	pApp_->Options()->SetNumericValue("tol", 1e-3);
 	pApp_->Options()->SetStringValue("mu_strategy", "adaptive");
-	pApp_->Options()->SetStringValue("output_file", "ipopt.out");
 	pApp_->Options()->SetStringValue("hessian_approximation", "limited-memory");
+
+	// Try getting the abs path of the working directory
+	namespace fs = boost::filesystem;
+	fs::path full_path(fs::current_path() );
+	std::cout<<"Full Path= "<< full_path <<std::endl;
+	std::cout<<"Full Path Stem= "<<full_path.stem() <<std::endl;
+
+	char buffer[PATH_MAX+1];
+	unsigned int bufsize= sizeof(buffer);
+	if( _NSGetExecutablePath(buffer,&bufsize) == -1 )
+		throw VPPException(HERE,"Buffer size exceeded by current requested executable path!");
+	std::cout<<buffer<<std::endl;
+
+	// Try constructing a boost path to deduce the app path
+	fs::path exepath(buffer);
+	std::cout<<"FS PATH= "<<exepath<<std::endl;
+
+	std::cout<<"APP PATH= "<<exepath.parent_path().parent_path().parent_path()<<std::endl;
+
+
+
+	// Not sure why, but this option generates an 'Invalid_Option' return status
+	// when run from the app. It is always possible to run from console, on the
+	// other hand. Not easy to debug because this is not reproductible in the xcode
+	// debug build. For the moment, who cares..?
+	pApp_->Options()->SetStringValue("output_file", "ipopt.out");
 
 	// Call method VPP_NLP::get_scaling_parameters which is used to set the pb to
 	// maximization and eventually to improve the conditioning of the pb
@@ -114,7 +143,7 @@ IppOptSolverFactory::IppOptSolverFactory(boost::shared_ptr<VPPItemFactory> pVppI
 	pApp_->Options()->SetIntegerValue("print_level",0);
 	pApp_->Options()->SetIntegerValue("file_print_level", 0);
 
-	if (pApp_->Initialize() != Solve_Succeeded)
+	if ( pApp_->Initialize() != Solve_Succeeded)
 		throw VPPException(HERE,"Error during initialization of ipOpt!");
 
 }
