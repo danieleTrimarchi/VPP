@@ -35,7 +35,9 @@ class thirdParty(object) :
         environment.Append( CPPPATH= self.__includePath__ )
         environment.Append( LIBPATH= self.__libpath__ )
         environment.Append( LIBS= self.__libs__ )
-
+        for iFramework in self.__frameworks__:
+            environment.Append( LINKFLAGS= ['-framework', iFramework ] )
+        
     # Retutrn the list of libs (to be overwritten by child classes)         
     def libs(self):
         return self.__libs__
@@ -59,9 +61,12 @@ class System( thirdParty ) :
     
         self.__name__= "System"
         
+        self.__frameworks__= ["CoreFoundation"]
+        
         self.__libpath__= [
                            "/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
-                           "/opt/local/lib"
+                           "/opt/local/lib",
+                           "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
                           ]
         
         self.__addTo__(env)
@@ -127,11 +132,11 @@ class IPOpt( thirdParty ) :
         self.__libs__= ['ipopt']
         
         # Define the list of frameworks         
-        self.__frameworks__= [
-                              'libipopt.1.dylib', 
-                              'libcoinmumps.1.dylib', 
-                              'libcoinmetis.1.dylib'
-                            ]
+        #self.__frameworks__= [
+        #                      'libipopt.1.dylib', 
+        #                      'libcoinmumps.1.dylib', 
+        #                      'libcoinmetis.1.dylib'
+        #                    ]
     
         self.__addTo__(env)
 
@@ -201,7 +206,7 @@ class Qt( thirdParty ) :
         self.__rootDir__ = os.path.join("/usr/local/Cellar/qt5",self.__version__)
 
         # Define the list of the libs (frameworks in this case)         
-        self.__frameworks__= [
+        self.__modules__= [
                               'QtCore',
                               'QtGui',
                               'QtWidgets',
@@ -223,7 +228,7 @@ class Qt( thirdParty ) :
 
         env.Tool('qt5')
 
-        env.EnableQt5Modules( self.__frameworks__ )
+        env.EnableQt5Modules( self.__modules__ )
 
         self.__frameworksPath__ = os.path.join(self.__rootDir__,'lib')
 

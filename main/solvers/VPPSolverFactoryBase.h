@@ -4,7 +4,6 @@
 #include "VPPItemFactory.h"
 #include "boost/shared_ptr.hpp"
 
-
 #include "VPPSolver.h"
 
 // NLOpt integration
