@@ -18,6 +18,11 @@ class thirdParty(object) :
         # Define the name of this third_party
         self.__name__= ""
         
+        # Switch used to add the framweworks to the linking line. 
+        # This is set to False for third_parties that treat linking 
+        # in a special way, such as for example Qt
+        self.__addFrameworkLinkLine__= True
+        
         # Declare class members, to be filled by the children
         self.__includePath__= ""
         self.__frameworksPath__= ""
@@ -35,8 +40,10 @@ class thirdParty(object) :
         environment.Append( CPPPATH= self.__includePath__ )
         environment.Append( LIBPATH= self.__libpath__ )
         environment.Append( LIBS= self.__libs__ )
-        for iFramework in self.__frameworks__:
-            environment.Append( LINKFLAGS= ['-framework', iFramework ] )
+        
+        if(self.__addFrameworkLinkLine__):
+            for iFramework in self.__frameworks__:
+                environment.Append( LINKFLAGS= ['-framework', iFramework ] )
         
     # Retutrn the list of libs (to be overwritten by child classes)         
     def libs(self):
@@ -205,8 +212,11 @@ class Qt( thirdParty ) :
         # ==>> self.__rootDir__ = os.path.join(self.__rootDir__,'Qt',self.__version__,'clang_64')
         self.__rootDir__ = os.path.join("/usr/local/Cellar/qt5",self.__version__)
 
+        # Linkline is treated specially by the Qt5 module. Do not add the frameworks 
+        self.__addFrameworkLinkLine__= False
+
         # Define the list of the libs (frameworks in this case)         
-        self.__modules__= [
+        self.__frameworks__= [
                               'QtCore',
                               'QtGui',
                               'QtWidgets',
@@ -228,7 +238,7 @@ class Qt( thirdParty ) :
 
         env.Tool('qt5')
 
-        env.EnableQt5Modules( self.__modules__ )
+        env.EnableQt5Modules( self.__frameworks__ )
 
         self.__frameworksPath__ = os.path.join(self.__rootDir__,'lib')
 
