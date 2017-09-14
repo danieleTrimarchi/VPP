@@ -107,16 +107,13 @@ IppOptSolverFactory::IppOptSolverFactory(boost::shared_ptr<VPPItemFactory> pVppI
 	pApp_->Options()->SetStringValue("hessian_approximation", "limited-memory");
 
 	PathUtils pathUtils;
-
-	std::cout<<"FS PATH= "<<pathUtils.getExecutablePath()<<std::endl;
-	std::cout<<"APP PATH= "<<pathUtils.getWorkingDirPath()<<std::endl;
-
+	string outFileAbsPath= pathUtils.getWorkingDirPath().string() + string("ipopt.out");
 
 	// Not sure why, but this option generates an 'Invalid_Option' return status
 	// when run from the app. It is always possible to run from console, on the
 	// other hand. Not easy to debug because this is not reproductible in the xcode
 	// debug build. For the moment, who cares..?
-	pApp_->Options()->SetStringValue("output_file", "ipopt.out");
+	pApp_->Options()->SetStringValue("output_file",outFileAbsPath.c_str());
 
 	// Call method VPP_NLP::get_scaling_parameters which is used to set the pb to
 	// maximization and eventually to improve the conditioning of the pb

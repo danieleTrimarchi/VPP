@@ -25,7 +25,7 @@ PathUtils::~PathUtils() {
 // Get the path of the current executable which
 // is executed
 fs::path PathUtils::getExecutablePath() const {
-	return exePath_;
+	return exePath_.parent_path();
 }
 
 // Get the path of the current working directory
@@ -47,6 +47,6 @@ fs::path PathUtils::getWorkingDirPath() const {
 	CFRelease(str);
 
 	fs::path appPath(path);
-	return appPath;
+	return appPath.parent_path();
 
 }
