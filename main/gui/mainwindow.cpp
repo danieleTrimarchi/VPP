@@ -493,11 +493,17 @@ void MainWindow::run() {
 
 		std::cout<<"Running the VPP analysis... "<<std::endl;
 
-		for(size_t itwv=0; itwv<5; itwv++){
-			char msg[256];
-			sprintf(msg,"Analyzing wind velocity %zu", itwv);
-			pLogWidget_->append(msg);
-		}
+		// Instantiate a progress dialog. Also instantiate a
+		// count to update the bar progression
+		QProgressDialog progressDialog(this);
+		size_t maxVal=
+				pVariableFileParser_->get("N_ALPHA_TW")*
+				pVariableFileParser_->get("N_TWV");
+		progressDialog.setRange(0,maxVal);
+    progressDialog.setCancelButtonText(tr("&Cancel"));
+    progressDialog.setWindowTitle(tr("Running VPP analysis..."));
+
+		int statusProgress=0;
 
 		// Loop on the wind ANGLES and VELOCITIES
 		for(int aTW=0; aTW<pVariableFileParser_->get("N_ALPHA_TW"); aTW++)
@@ -509,6 +515,15 @@ void MainWindow::run() {
 
 					// Run the optimizer for the current wind speed/angle
 					pSolverFactory_->run(vTW,aTW);
+
+					// Refresh the UI -> update the progress bar and the log
+					//QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+					QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
+			    progressDialog.setValue(statusProgress);
+			    progressDialog.setLabelText(tr("Solving case number %1 of %n...", 0, maxVal).arg(statusProgress));
+
+			    statusProgress++;
 				}
 				catch(...){
 					//do nothing and keep going
@@ -558,7 +573,7 @@ void MainWindow::saveResults() {
 
 		pSolverFactory_->get()->saveResults(fileName.toStdString());
 
-	// outer try-catch block
+		// outer try-catch block
 	}	catch(...) {}
 
 }
@@ -678,15 +693,15 @@ void MainWindow::importSailCoeffs() {
 
 	if(!pSailCoeffFileBrowser_)
 		pSailCoeffFileBrowser_.reset( new VPPDefaultFileBrowser(
-  		"Sail coefficient file browser",
-  		tr("Sail Coeffs Input File(*.sailCoeff);; All Files (*.*)"),
-			this)
-	);
+				"Sail coefficient file browser",
+				tr("Sail Coeffs Input File(*.sailCoeff);; All Files (*.*)"),
+				this)
+		);
 
-  // Show the dialog and block the rest of the application
+	// Show the dialog and block the rest of the application
 	pSailCoeffFileBrowser_->exec();
 
-  // Get the sailCoeffsItem that owns the VPP_CL/CD_IOs
+	// Get the sailCoeffsItem that owns the VPP_CL/CD_IOs
 	SailCoefficientItem* pSailCoeffItem= pVppItems_->getSailCoefficientItem();
 
 	// The IO containers will parse the coeff file and override the current coeffs
@@ -744,43 +759,43 @@ void MainWindow::plotXY() {
 
 	try{
 
-			// If the boat description has not been imported we do not have the
-			// vppItems nor the coefficients to be plotted!
-			// If the boat description has not been imported we do not have the
-			// vppItems nor the coefficients to be plotted!
-			if(!hasBoatDescription())
-				return;
+		// If the boat description has not been imported we do not have the
+		// vppItems nor the coefficients to be plotted!
+		// If the boat description has not been imported we do not have the
+		// vppItems nor the coefficients to be plotted!
+		if(!hasBoatDescription())
+			return;
 
-			if(!hasSolver())
-				return;
+		if(!hasSolver())
+			return;
 
-			// For which TWV, TWA shall we plot the aero forces/moments?
-			WindIndicesDialog wd(pVppItems_->getWind());
-			if (wd.exec() == QDialog::Rejected)
-				return;
+		// For which TWV, TWA shall we plot the aero forces/moments?
+		WindIndicesDialog wd(pVppItems_->getWind());
+		if (wd.exec() == QDialog::Rejected)
+			return;
 
-			std::cout<<"Plotting XY Results..."<<std::endl;
+		std::cout<<"Plotting XY Results..."<<std::endl;
 
-			// Instantiate a graphic plotting window in the central widget
-			if(pXYPlotWidget_)
-				delete pXYPlotWidget_;
+		// Instantiate a graphic plotting window in the central widget
+		if(pXYPlotWidget_)
+			delete pXYPlotWidget_;
 
-			pXYPlotWidget_= new MultiplePlotWidget(this, "XY plot");
+		pXYPlotWidget_= new MultiplePlotWidget(this, "XY plot");
 
-			// Hand the multiplePlotwidget to the solver factory that stores the results and knows how to plot them
-			pSolverFactory_->get()->plotXY( pXYPlotWidget_, wd );
+		// Hand the multiplePlotwidget to the solver factory that stores the results and knows how to plot them
+		pSolverFactory_->get()->plotXY( pXYPlotWidget_, wd );
 
-			// Add the polar plot view to the left of the app window
-			addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_);
+		// Add the polar plot view to the left of the app window
+		addDockWidget(Qt::TopDockWidgetArea, pXYPlotWidget_);
 
-			// Tab the widget if other widgets have already been instantiated
-			// In the same area. Todo dtrimarchi : this is way too fragile
-			// It requires widgets instantiated on the topDockWidgetArea and
-			// I need to add the deleted signal to the slot removeWidgetFromVector
-			tabDockWidget(pXYPlotWidget_);
+		// Tab the widget if other widgets have already been instantiated
+		// In the same area. Todo dtrimarchi : this is way too fragile
+		// It requires widgets instantiated on the topDockWidgetArea and
+		// I need to add the deleted signal to the slot removeWidgetFromVector
+		tabDockWidget(pXYPlotWidget_);
 
-			// outer try-catch block
-		}	catch(...) {}
+		// outer try-catch block
+	}	catch(...) {}
 }
 
 // Plot the velocity polars

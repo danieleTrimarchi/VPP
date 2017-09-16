@@ -1,12 +1,10 @@
 
-- Apparently switching the solver NLopt -> ipOpt at the instantiation produces segv. 
-	Why..? The test do not produce the same result. 
-
 - Add a control to choose the solver NLOpt IPOpt NRSolver (2 dofs)
 - Add a tabbed widget to interactively fill all of the VPP input. This can be 
 	automatically filled from file ; or be saved to a VPPin file
 - Hide Variable tree by default
 - Progression bar during runs…
+- Print df/dm in RELATIVE terms - the curves of df/dm are of the same color!
 ————
 
 - …openCascade… Or other solid modelling tools?
