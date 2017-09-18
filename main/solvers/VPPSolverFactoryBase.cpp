@@ -147,12 +147,8 @@ void IppOptSolverFactory::run(int vTW, int aTW) {
 
 	ApplicationReturnStatus status= pApp_->OptimizeTNLP(pSolver_);
 
-	if (status == Solve_Succeeded) {
-		std::cout << std::endl << std::endl << "*** The problem solved!" << std::endl;
-	}
-	else {
+	if ( status != Solve_Succeeded )
 		throw NonConvergedException(HERE,"ipOpt failed to find the solution!");
-	}
 }
 
 } // End namespace Optim

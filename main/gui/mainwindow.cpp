@@ -509,7 +509,7 @@ void MainWindow::run() {
 		for(int aTW=0; aTW<pVariableFileParser_->get("N_ALPHA_TW"); aTW++)
 			for(int vTW=0; vTW<pVariableFileParser_->get("N_TWV"); vTW++){
 
-				pLogWidget_->append("vTW=" + QString(vTW) + "  -  aTW=" + QString(aTW) );
+				std::cout<<"vTW= " << vTW << "  -  aTW= " << aTW << std::endl;
 
 				try{
 
@@ -517,11 +517,10 @@ void MainWindow::run() {
 					pSolverFactory_->run(vTW,aTW);
 
 					// Refresh the UI -> update the progress bar and the log
-					//QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 					QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
 			    progressDialog.setValue(statusProgress);
-			    progressDialog.setLabelText(tr("Solving case number %1 of %n...", 0, maxVal).arg(statusProgress));
+			    progressDialog.setLabelText(tr(" Solving case number %1 of %n...", 0, maxVal).arg(statusProgress));
 
 			    statusProgress++;
 				}

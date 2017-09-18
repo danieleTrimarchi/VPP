@@ -1,9 +1,10 @@
+- Progression bar during runs…
 
 - Add a control to choose the solver NLOpt IPOpt NRSolver (2 dofs)
 - Add a tabbed widget to interactively fill all of the VPP input. This can be 
 	automatically filled from file ; or be saved to a VPPin file
+- Exception in pathUtils if this is not MACOSX 
 - Hide Variable tree by default
-- Progression bar during runs…
 - Print df/dm in RELATIVE terms - the curves of df/dm are of the same color!
 ————
 

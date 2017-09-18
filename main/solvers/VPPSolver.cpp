@@ -43,7 +43,7 @@ void VPPSolver::resetInitialGuess(int TWV, int TWA) {
 	xp_[2]= fixedB_;
 	xp_[3]= fixedF_;
 
-	std::cout<<"-->> VPPSolver first guess: "<<xp_.transpose()<<std::endl;
+	//std::cout<<"-->> VPPSolver first guess: "<<xp_.transpose()<<std::endl;
 
 }
 
