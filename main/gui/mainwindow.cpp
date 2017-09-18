@@ -39,7 +39,7 @@
 #include "VPPSailCoefficientIO.h"
 
 // Stream used to redirect cout to the log window
-// This object is explicitely deleted in the destructor
+// This object is explicitly deleted in the destructor
 // of MainWindow
 boost::shared_ptr<QDebugStream> pQstream;
 
@@ -71,7 +71,6 @@ windowLabel_("V++") {
 	pLogWidget_->setReadOnly(true);
 
 	// Tie cout to the log widget
-	//QDebugStream qout(std::cout, pLogWidget_.get());
 	pQstream.reset(new QDebugStream(std::cout, pLogWidget_.get()));
 
 	std::cout<<"======================="<<std::endl;
@@ -500,13 +499,18 @@ void MainWindow::run() {
 				pVariableFileParser_->get("N_ALPHA_TW")*
 				pVariableFileParser_->get("N_TWV");
 		progressDialog.setRange(0,maxVal);
-    progressDialog.setCancelButtonText(tr("&Cancel"));
-    progressDialog.setWindowTitle(tr("Running VPP analysis..."));
+		progressDialog.setCancelButtonText(tr("&Cancel"));
+		progressDialog.setWindowTitle(tr("Running VPP analysis..."));
 
 		int statusProgress=0;
 
 		// Loop on the wind ANGLES and VELOCITIES
-		for(int aTW=0; aTW<pVariableFileParser_->get("N_ALPHA_TW"); aTW++)
+		for(int aTW=0; aTW<pVariableFileParser_->get("N_ALPHA_TW"); aTW++) {
+
+			// exit the outer loop if the user pressed the 'cancel' button
+			if (progressDialog.wasCanceled())
+				break;
+
 			for(int vTW=0; vTW<pVariableFileParser_->get("N_TWV"); vTW++){
 
 				std::cout<<"vTW= " << vTW << "  -  aTW= " << aTW << std::endl;
@@ -517,20 +521,19 @@ void MainWindow::run() {
 					pSolverFactory_->run(vTW,aTW);
 
 					// Refresh the UI -> update the progress bar and the log
-					QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+					QCoreApplication::processEvents();
 
-			    progressDialog.setValue(statusProgress);
-			    progressDialog.setLabelText(tr(" Solving case number %1 of %n...", 0, maxVal).arg(statusProgress));
+					progressDialog.setValue(statusProgress);
+					progressDialog.setLabelText(tr("_ Solving case number %1 of %n...", 0, maxVal).arg(statusProgress));
 
-			    statusProgress++;
+					statusProgress++;
+
 				}
-				catch(...){
-					//do nothing and keep going
-				}
+				catch(...){ /* do nothing and keep going */ }
 			}
-
+		}
 		// outer try-catch block
-	}	catch(...) {}
+	}	catch(...) { /* do nothing */ }
 }
 
 void MainWindow::saveResults() {
