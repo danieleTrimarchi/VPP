@@ -48,12 +48,13 @@
 **
 ****************************************************************************/
 
+#include "VPPSettingsDialog.h"
+
 #include <QtWidgets>
 
-#include "tabdialog.h"
 
 //! [0]
-TabDialog::TabDialog(const QString &fileName, QWidget *parent)
+VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
     : QDialog(parent)
 {
     QFileInfo fileInfo(fileName);

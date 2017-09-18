@@ -48,8 +48,8 @@
 **
 ****************************************************************************/
 
-#ifndef TABDIALOG_H
-#define TABDIALOG_H
+#ifndef VPPSettingsDialog_H
+#define VPPSettingsDialog_H
 
 #include <QDialog>
 
@@ -93,12 +93,12 @@ public:
 
 
 //! [3]
-class TabDialog : public QDialog
+class VPPSettingsDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit TabDialog(const QString &fileName, QWidget *parent = 0);
+    explicit VPPSettingsDialog(const QString &fileName=".", QWidget *parent = 0);
 
 private:
     QTabWidget *tabWidget;

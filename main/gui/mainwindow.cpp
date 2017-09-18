@@ -34,6 +34,7 @@
 #include "VPPJacobian.h"
 #include "VPPGradient.h"
 #include "VPPSolverFactoryBase.h"
+#include "VPPSettingsDialog.h"
 #include "Version.h"
 #include "VppPolarCustomPlotWidget.h"
 #include "VPPSailCoefficientIO.h"
@@ -118,8 +119,8 @@ void MainWindow::setupMenuBar() {
 	// Create 'Import boat description' action and associate an icon
 	actionVector_.push_back( boost::shared_ptr<QAction>(
 			new QAction(
-					QIcon::fromTheme("Import boat description", QIcon(":/icons/importBoatData.png")),
-					tr("&Import boat description..."), this)
+					QIcon::fromTheme("Setup boat description", QIcon(":/icons/importBoatData.png")),
+					tr("&Setup boat description..."), this)
 	) );
 	QAction* importBoatAction= actionVector_.back().get();
 	importBoatAction->setStatusTip(tr("Import boat description"));
@@ -432,44 +433,55 @@ void MainWindow::removeWidgetFromVector(VppTabDockWidget* pWidget) {
 
 void MainWindow::import() {
 
-	try {
+		try {
 
-		QString caption;
-		QString dir;
+			// Instantiate a VPPSettingsDialog
+			VPPSettingsDialog settingsDialog;
+			settingsDialog.show();
 
-		// Launch a file selector
-		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
-				tr("VPP Input File(*.vppIn);; All Files (*.*)"));
-
-		if (!fileName.isEmpty()) {
-
-			std::cout<<string("Opening the vpp input file... ") << fileName.toStdString() <<std::endl;
-
-			// Instantiate a variableFileParser (and clear any previous one)
-			pVariableFileParser_.reset( new VariableFileParser );
-
-			// Parse the variables file
-			pVariableFileParser_->parse(fileName.toStdString());
-
-			// Instantiate the sailset
-			pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
-
-			// Instantiate the items
-			pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
-
-			// Populate the variable item tree accordingly
-			pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
-
-			// SailSet also contains several variables. Append them to the bottom
-			pSails_->populate( pVariablesWidget_->getTreeModel() );
-
-			// Expand the items in the variable tree view, in order to see all the variables
-			pVariablesWidget_->getView()->expandAll();
-
-		}
-
-	}	catch(...) {}
+		}	catch(...) {}
 }
+
+//void MainWindow::import() {
+//
+//	try {
+//
+//		QString caption;
+//		QString dir;
+//
+//		// Launch a file selector
+//		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
+//				tr("VPP Input File(*.vppIn);; All Files (*.*)"));
+//
+//		if (!fileName.isEmpty()) {
+//
+//			std::cout<<string("Opening the vpp input file... ") << fileName.toStdString() <<std::endl;
+//
+//			// Instantiate a variableFileParser (and clear any previous one)
+//			pVariableFileParser_.reset( new VariableFileParser );
+//
+//			// Parse the variables file
+//			pVariableFileParser_->parse(fileName.toStdString());
+//
+//			// Instantiate the sailset
+//			pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
+//
+//			// Instantiate the items
+//			pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
+//
+//			// Populate the variable item tree accordingly
+//			pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
+//
+//			// SailSet also contains several variables. Append them to the bottom
+//			pSails_->populate( pVariablesWidget_->getTreeModel() );
+//
+//			// Expand the items in the variable tree view, in order to see all the variables
+//			pVariablesWidget_->getView()->expandAll();
+//
+//		}
+//
+//	}	catch(...) {}
+//}
 
 
 void MainWindow::run() {
