@@ -98,7 +98,7 @@ class VPPSettingsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit VPPSettingsDialog(const QString &fileName=".", QWidget *parent = 0);
+    explicit VPPSettingsDialog(const QString &fileName, QWidget *parent = 0);
 
 private:
     QTabWidget *tabWidget;

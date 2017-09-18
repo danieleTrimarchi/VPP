@@ -435,9 +435,12 @@ void MainWindow::import() {
 
 		try {
 
+			std::cout<<"Pre instantiating the VPPSettingsDialog..."<<std::endl;
 			// Instantiate a VPPSettingsDialog
-			VPPSettingsDialog settingsDialog;
-			settingsDialog.show();
+			QString fileName=".";
+			VPPSettingsDialog settingsDialog(fileName, this);
+			settingsDialog.exec();
+			std::cout<<"Post instantiating the VPPSettingsDialog..."<<std::endl;
 
 		}	catch(...) {}
 }
