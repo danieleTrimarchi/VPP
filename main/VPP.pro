@@ -59,15 +59,14 @@ INCLUDEPATH +=	"/opt/local/include" \
 # This fills Library Search Path in XCode
 LIBPATH += 	"/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A" \
 		"/opt/local/lib" \ 
-#		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/UMFPACK/Lib" \
 		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/SuiteSparse_config" \ 
 		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/AMD/Lib" \ 
 		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/CHOLMOD/Lib" \
 		"/Users/dtrimarchi/third_party/SuiteSparse-4.5.2/COLAMD/Lib" \
 		"/Users/dtrimarchi/third_party/nlopt-2.4.2/libs" \
 		"/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib" \
-		"/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib"
-
+                "/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib" \
+                "/Users/dtrimarchi/third_party/boost_1_60_0/bin.v2/libs/system/build/darwin-4.2.1/debug"
 
 
 # Libs to be linked in
@@ -78,7 +77,8 @@ LIBS +=	-lipopt \
 	-lcolamd \
 	-lcholmod \
 	-lsuitesparseconfig \
-	-lnlopt
+        -lnlopt \
+        -lboost_system
 
 RESOURCES     = gui/VPP.qrc
 

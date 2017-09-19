@@ -60,9 +60,9 @@ VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
     QFileInfo fileInfo(fileName);
 
     tabWidget = new QTabWidget;
-    tabWidget->addTab(new GeneralTab(fileInfo), tr("General"));
-    tabWidget->addTab(new PermissionsTab(fileInfo), tr("Permissions"));
-    tabWidget->addTab(new ApplicationsTab(fileInfo), tr("Applications"));
+    tabWidget->addTab(new HullDataTab(fileInfo), tr("Hull Data"));
+    tabWidget->addTab(new KeelDataTab(fileInfo), tr("Permissions"));
+    tabWidget->addTab(new RudderDataTab(fileInfo), tr("Applications"));
 //! [0]
 
 //! [1] //! [2]
@@ -87,47 +87,34 @@ VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
 //! [5]
 
 //! [6]
-GeneralTab::GeneralTab(const QFileInfo &fileInfo, QWidget *parent)
-    : QWidget(parent)
-{
-    QLabel *fileNameLabel = new QLabel(tr("File Name:"));
-    QLineEdit *fileNameEdit = new QLineEdit(fileInfo.fileName());
+HullDataTab::HullDataTab(const QFileInfo &fileInfo, QWidget *parent)
+    : QWidget(parent) {
 
-    QLabel *pathLabel = new QLabel(tr("Path:"));
-    QLabel *pathValueLabel = new QLabel(fileInfo.absoluteFilePath());
-    pathValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+	size_t vPos=0;
 
-    QLabel *sizeLabel = new QLabel(tr("Size:"));
-    qlonglong size = fileInfo.size()/1024;
-    QLabel *sizeValueLabel = new QLabel(tr("%1 K").arg(size));
-    sizeValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  QLocale localSettings = QLocale::c();
 
-    QLabel *lastReadLabel = new QLabel(tr("Last Read:"));
-    QLabel *lastReadValueLabel = new QLabel(fileInfo.lastRead().toString());
-    lastReadValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  // Set all the line edit with double validators
+	QLineEdit* pL_Edit = new QLineEdit(this);
+	QDoubleValidator* lenghtValueValidator= new QDoubleValidator(0.0, 999.0, 2, pL_Edit );
+	lenghtValueValidator->setLocale(localSettings);
+	pL_Edit->setValidator(lenghtValueValidator);
+  pGridLayout_->addWidget(new QLabel(tr("LWL [m]:")), vPos, 0);
+  pGridLayout_->addWidget(pL_Edit, vPos++, 1);
 
-    QLabel *lastModLabel = new QLabel(tr("Last Modified:"));
-    QLabel *lastModValueLabel = new QLabel(fileInfo.lastModified().toString());
-    lastModValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  // Set all the line edit with double validators
+	QLineEdit* pB_Edit = new QLineEdit(this);
+	QDoubleValidator* beamValueValidator= new QDoubleValidator(0.0, 999.0, 2, pB_Edit );
+	beamValueValidator->setLocale(localSettings);
+	pB_Edit->setValidator(beamValueValidator);
+  pGridLayout_->addWidget(new QLabel(tr("B [m]:")), vPos, 0);
+  pGridLayout_->addWidget(pB_Edit, vPos++, 1);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(fileNameLabel);
-    mainLayout->addWidget(fileNameEdit);
-    mainLayout->addWidget(pathLabel);
-    mainLayout->addWidget(pathValueLabel);
-    mainLayout->addWidget(sizeLabel);
-    mainLayout->addWidget(sizeValueLabel);
-    mainLayout->addWidget(lastReadLabel);
-    mainLayout->addWidget(lastReadValueLabel);
-    mainLayout->addWidget(lastModLabel);
-    mainLayout->addWidget(lastModValueLabel);
-    mainLayout->addStretch(1);
-    setLayout(mainLayout);
 }
 //! [6]
 
 //! [7]
-PermissionsTab::PermissionsTab(const QFileInfo &fileInfo, QWidget *parent)
+KeelDataTab::KeelDataTab(const QFileInfo &fileInfo, QWidget *parent)
     : QWidget(parent)
 {
     QGroupBox *permissionsGroup = new QGroupBox(tr("Permissions"));
@@ -176,7 +163,7 @@ PermissionsTab::PermissionsTab(const QFileInfo &fileInfo, QWidget *parent)
 //! [7]
 
 //! [8]
-ApplicationsTab::ApplicationsTab(const QFileInfo &fileInfo, QWidget *parent)
+RudderDataTab::RudderDataTab(const QFileInfo &fileInfo, QWidget *parent)
     : QWidget(parent)
 {
     QLabel *topLabel = new QLabel(tr("Open with:"));

@@ -52,6 +52,8 @@
 #define VPPSettingsDialog_H
 
 #include <QDialog>
+#include <QGridLayout>
+#include <boost/shared_ptr.hpp>
 
 QT_BEGIN_NAMESPACE
 class QDialogButtonBox;
@@ -59,51 +61,54 @@ class QFileInfo;
 class QTabWidget;
 QT_END_NAMESPACE
 
-//! [0]
-class GeneralTab : public QWidget
-{
-    Q_OBJECT
+class HullDataTab : public QWidget {
+
+		Q_OBJECT
 
 public:
-    explicit GeneralTab(const QFileInfo &fileInfo, QWidget *parent = 0);
+    explicit HullDataTab(const QFileInfo &fileInfo, QWidget *parent = 0);
+
+private:
+
+    /// Layout of the Dialog (place holders for the elements the dialog is made of)
+		boost::shared_ptr<QGridLayout> pGridLayout_;
+
 };
-//! [0]
 
 
-//! [1]
-class PermissionsTab : public QWidget
-{
-    Q_OBJECT
+class KeelDataTab : public QWidget {
+
+		Q_OBJECT
 
 public:
-    explicit PermissionsTab(const QFileInfo &fileInfo, QWidget *parent = 0);
+    explicit KeelDataTab(const QFileInfo &fileInfo, QWidget *parent = 0);
 };
-//! [1]
 
 
-//! [2]
-class ApplicationsTab : public QWidget
-{
-    Q_OBJECT
+class RudderDataTab : public QWidget {
+
+		Q_OBJECT
 
 public:
-    explicit ApplicationsTab(const QFileInfo &fileInfo, QWidget *parent = 0);
+    explicit RudderDataTab(const QFileInfo &fileInfo, QWidget *parent = 0);
 };
-//! [2]
 
 
-//! [3]
-class VPPSettingsDialog : public QDialog
-{
-    Q_OBJECT
+// ---
+
+
+class VPPSettingsDialog : public QDialog {
+
+		Q_OBJECT
 
 public:
     explicit VPPSettingsDialog(const QString &fileName, QWidget *parent = 0);
 
 private:
+
     QTabWidget *tabWidget;
     QDialogButtonBox *buttonBox;
+
 };
-//! [3]
 
 #endif

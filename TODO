@@ -6,6 +6,8 @@
 - Exception in pathUtils if this is not MACOSX 
 - Hide Variable tree by default
 - Print df/dm in RELATIVE terms - the curves of df/dm are of the same color!
+- makeXCode rely on the correctness of VPP.PRO. Write that file on the fly before calling qmake!
+
 ————
 
 - …openCascade… Or other solid modelling tools?

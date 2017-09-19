@@ -226,21 +226,6 @@
 					);
 			};
 		};
-		0A33E9EE1B99542F1E504428 = {
-			isa = PBXFileReference;
-			path = "/Users/dtrimarchi/VPP/main/gui/VPPDialogContainer.cpp";
-			name = "VPPDialogContainer.cpp";
-			sourceTree = "<absolute>";
-			lastKnownFileType = "sourcecode.cpp.cpp";
-		};
-		182930BE9B2649806F75C22D = {
-			fileRef = "0A33E9EE1B99542F1E504428";
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					);
-			};
-		};
 		7CA7A59B07FF427AECCCA6E1 = {
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/main/gui/VPPDialogs.cpp";
@@ -265,6 +250,21 @@
 		};
 		9061BAEF8CE15118F19FEB97 = {
 			fileRef = "399D777B52DC95C90F944936";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		54E5F2C34837E6E425766367 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VPPSettingsDialog.cpp";
+			name = "VPPSettingsDialog.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		5716A8DB4DF7E5B35186A76F = {
+			fileRef = "54E5F2C34837E6E425766367";
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
@@ -460,6 +460,21 @@
 		};
 		7034DE7E806C916BEF562AB9 = {
 			fileRef = "2193AF641E200A0F7A88D487";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		702C79C1BEF3F27214FE1823 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/io/PathUtils.cpp";
+			name = "PathUtils.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		3FBD85CFE5EB9497F8119CE7 = {
+			fileRef = "702C79C1BEF3F27214FE1823";
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
@@ -931,21 +946,6 @@
 					);
 			};
 		};
-		CE8E74B722A8E89C06DEAD8F = {
-			isa = PBXFileReference;
-			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VPPDialogContainer.cpp";
-			name = "moc_VPPDialogContainer.cpp";
-			sourceTree = "<absolute>";
-			lastKnownFileType = "sourcecode.cpp.cpp";
-		};
-		725BD3860DFE3E6C0B8256FB = {
-			fileRef = "CE8E74B722A8E89C06DEAD8F";
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					);
-			};
-		};
 		38306A80D2BC14226BE311AC = {
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VPPDialogs.cpp";
@@ -970,6 +970,21 @@
 		};
 		48054BF80475C9D3A0DA26A8 = {
 			fileRef = "761BA09B2641374BCC16663D";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		FCBC776CA3A85AE7E693FCE5 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/xCodeBuild/moc_VPPSettingsDialog.cpp";
+			name = "moc_VPPSettingsDialog.cpp";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		3C6E97E7D7B105828332B2D8 = {
+			fileRef = "FCBC776CA3A85AE7E693FCE5";
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
@@ -1134,13 +1149,6 @@
 			sourceTree = "<absolute>";
 			lastKnownFileType = "sourcecode.c.h";
 		};
-		65B540B46C0B4B3312917B57 = {
-			isa = PBXFileReference;
-			path = "/Users/dtrimarchi/VPP/main/gui/VPPDialogContainer.h";
-			name = "VPPDialogContainer.h";
-			sourceTree = "<absolute>";
-			lastKnownFileType = "sourcecode.c.h";
-		};
 		C5768F2D40ACF36A54889766 = {
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/main/gui/VPPDialogs.h";
@@ -1152,6 +1160,13 @@
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/main/gui/VppPolarCustomPlotWidget.h";
 			name = "VppPolarCustomPlotWidget.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		B30E6091A9AF86BE0707618B = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/gui/VPPSettingsDialog.h";
+			name = "VPPSettingsDialog.h";
 			sourceTree = "<absolute>";
 			lastKnownFileType = "sourcecode.c.h";
 		};
@@ -1250,6 +1265,13 @@
 			isa = PBXFileReference;
 			path = "/Users/dtrimarchi/VPP/main/io/IOUtils.h";
 			name = "IOUtils.h";
+			sourceTree = "<absolute>";
+			lastKnownFileType = "sourcecode.c.h";
+		};
+		C65342B9917310F6F5878615 = {
+			isa = PBXFileReference;
+			path = "/Users/dtrimarchi/VPP/main/io/PathUtils.h";
+			name = "PathUtils.h";
 			sourceTree = "<absolute>";
 			lastKnownFileType = "sourcecode.c.h";
 		};
@@ -1464,9 +1486,9 @@
 				"724FC7CC13416231B8122B3E",
 				"BE0D5F71C24F6C8382475063",
 				"0E7A9EAF9170BADA0128DF5F",
-				"CE8E74B722A8E89C06DEAD8F",
 				"38306A80D2BC14226BE311AC",
 				"761BA09B2641374BCC16663D",
+				"FCBC776CA3A85AE7E693FCE5",
 				"11129B21777CADB90E065E97",
 				"7E8A58ABAA7DF29505984473",
 				"12C685494E636CC52F4E8324",
@@ -1532,9 +1554,9 @@
 				"0B249122FD48B4BB598011C7",
 				"D36BE713696FA75C2279DBB8",
 				"A0319882CAB275BDBE97FC71",
-				"0A33E9EE1B99542F1E504428",
 				"7CA7A59B07FF427AECCCA6E1",
 				"399D777B52DC95C90F944936",
+				"54E5F2C34837E6E425766367",
 				"04306F199F9FBC54052772BC",
 				"B58E96A6686474993FE0BEEF",
 				"63D3C8AD76023A0EC3D918BF",
@@ -1551,9 +1573,9 @@
 				"32208B5652ED65FBE537FBF9",
 				"BA9CFC210F81F1AE53B62F84",
 				"EFA02C1E141610C156FE2445",
-				"65B540B46C0B4B3312917B57",
 				"C5768F2D40ACF36A54889766",
 				"9D946105581D89D0F7F15110",
+				"B30E6091A9AF86BE0707618B",
 				"B4953B0EB6F36A6FA6A1DBF5",
 				"A6F6E728E46B65019D0ACCB5",
 				"1CF6764FEB0045428A1337B4",
@@ -1565,12 +1587,14 @@
 			isa = PBXGroup;
 			children = (
 				"2193AF641E200A0F7A88D487",
+				"702C79C1BEF3F27214FE1823",
 				"14F0F1B53E3D1B3DD1127F97",
 				"3DC9612A351B632B01DBEBF1",
 				"CE048B65E5616394B4055ADF",
 				"DC2BC47DE2B992167912ECEE",
 				"548A2D06B24AF147A93FBF34",
 				"02D40B796BEA315707373816",
+				"C65342B9917310F6F5878615",
 				"360FDE91977FE1D108EFAE76",
 				"0E7C40F049E3D1F22165965D",
 				"0E28EB96A992EBFA9906A982",
@@ -1716,9 +1740,9 @@
 				"CAF7C7E200F4428E18E6BE5B",
 				"419F20CC6446BFF9F789320B",
 				"00DD45A5631FF3AA124C5DB5",
-				"182930BE9B2649806F75C22D",
 				"80146F910962893AE662D44F",
 				"9061BAEF8CE15118F19FEB97",
+				"5716A8DB4DF7E5B35186A76F",
 				"25F72F3CD1EE305F577F6BCB",
 				"C8091D0019724BF7E52C8248",
 				"9A43EB1698980269F17584C3",
@@ -1732,6 +1756,7 @@
 				"EE8F3A39D925DC1F0E562B4D",
 				"C73D452C12FA2017C654644A",
 				"7034DE7E806C916BEF562AB9",
+				"3FBD85CFE5EB9497F8119CE7",
 				"563F298A96AF779B9D37D515",
 				"B890D9B5705D4DC8F0C7EB1A",
 				"77F684B83BBE8A14FC796FAB",
@@ -1763,9 +1788,9 @@
 				"BDA3A34FC779764B195418E3",
 				"3DA078F6B6DD6D6317429A3D",
 				"7D6ADFD9F0B42646124A13A0",
-				"725BD3860DFE3E6C0B8256FB",
 				"F53E43FB85FF07FE354023DF",
 				"48054BF80475C9D3A0DA26A8",
+				"3C6E97E7D7B105828332B2D8",
 				"678241618B2798A4073714F6",
 				"2DE1F6FBB19204E064E31091",
 				"EE99A568D5161783748B5041",
@@ -1861,6 +1886,19 @@
 		};
 		A243F769B1ABDD203363B6BE = {
 			fileRef = "49F3A6E2244BF8E9BBB9BC64";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		ECFAABDDB0256BDD796B043F = {
+			isa = PBXFileReference;
+			name = "boost_system";
+			path = "/Users/dtrimarchi/third_party/boost_1_60_0/bin.v2/libs/system/build/darwin-4.2.1/debug/libboost_system.dylib";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		32EA2E1FB97C611B2C154B7C = {
+			fileRef = "ECFAABDDB0256BDD796B043F";
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2028,6 +2066,7 @@
 				"C06D5D7F1758EDF3EDEF3A0C",
 				"21D6994D0E44278C59ACEDAF",
 				"49F3A6E2244BF8E9BBB9BC64",
+				"ECFAABDDB0256BDD796B043F",
 				"F165D8A70734D22F69C0ABDE",
 				"17DDAFE5E52515581D095F18",
 				"CD829298CA2038092A51A0F6",
@@ -2053,6 +2092,7 @@
 				"EB69D9407AE73D89E0305731",
 				"B2F54A3ECA917A378DACF112",
 				"A243F769B1ABDD203363B6BE",
+				"32EA2E1FB97C611B2C154B7C",
 				"446FA5B61F047CD6FE1AA646",
 				"B1FD449BA9A24D8FBFD6B918",
 				"7B61C92B0D756FD9703B0C41",
@@ -2204,6 +2244,7 @@
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
 					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
 					"/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
+					"/Users/dtrimarchi/third_party/boost_1_60_0/bin.v2/libs/system/build/darwin-4.2.1/debug",
 					"/usr/local/Cellar/qt5/5.7.0/lib",
 					"/System/Library/Frameworks/");
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2253,6 +2294,7 @@
 						"-L/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
 						"-L/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
 						"-L/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
+						"-L/Users/dtrimarchi/third_party/boost_1_60_0/bin.v2/libs/system/build/darwin-4.2.1/debug",
 						"-F/usr/local/Cellar/qt5/5.7.0/lib");
 				ARCHS = "x86_64";
 				OBJROOT = "../xCodeBuild/";
@@ -2323,6 +2365,7 @@
 					"/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
 					"/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
 					"/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
+					"/Users/dtrimarchi/third_party/boost_1_60_0/bin.v2/libs/system/build/darwin-4.2.1/debug",
 					"/usr/local/Cellar/qt5/5.7.0/lib",
 					"/System/Library/Frameworks/");
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2372,6 +2415,7 @@
 						"-L/Users/dtrimarchi/third_party/nlopt-2.4.2/libs",
 						"-L/Users/dtrimarchi/third_party/Ipopt-3.12.6/lib",
 						"-L/Users/dtrimarchi/third_party/cppunit-1.13.2/build/lib",
+						"-L/Users/dtrimarchi/third_party/boost_1_60_0/bin.v2/libs/system/build/darwin-4.2.1/debug",
 						"-F/usr/local/Cellar/qt5/5.7.0/lib");
 				ARCHS = "x86_64";
 				OBJROOT = "../xCodeBuild/";
