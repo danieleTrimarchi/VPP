@@ -7,105 +7,10 @@ from test._mock_backport import inplace
 import re
 import shutil
 
-if 'makeDocs' in COMMAND_LINE_TARGETS:
-	print 'Generating doxygen documentation...'
-	p= subprocess.Popen(['doxygen', 'doxiConfig'], cwd='/Users/dtrimarchi/VPP/main')
-	p.wait()
-	Exit(2)
-
-# -- 
-
-if 'makeXCode' in COMMAND_LINE_TARGETS:
-	print 'Making xCode project...'
-	
-	# Remember where we start and need to go back
-	intialDir= os.getcwd()
-		
-	# 1_ cd to main and call qmake to generate a new xcode project
-	os.chdir('../../main')
- 
-	# 2_ Cleanup. Add try-except block in case the files are not present 
-	try: 
-		shutil.rmtree( os.path.join('..','xCodeBuild'),ignore_errors=True )
-		shutil.rmtree('VPP.xcodeproj',ignore_errors=True)
-	except:
-		pass
- 	
-	# 3_ Call qmake and generate an xcode project 
-	p= subprocess.Popen("qmake -spec macx-xcode VPP.pro",shell=True)
-	p.wait()
- 	
-	# 4_ Read the lines of VPP.xcodeproj/project.pbxproj, modify the
-	# 	 required lines (the value of SYMROOT ), write to a new file 
-	# 	 and finally rename the new file to VPP.xcodeproj/project.pbxproj
-	fXCode = open( "VPP.xcodeproj/project.pbxproj", 'r' )
-	fTmp = open("tmpFile", 'w')
- 	
-	newLine=""
-	for line in fXCode:
- 
-		if( re.search("SYMROOT (.*)",line )	):	
-			newLine= line.replace( '/main/', '/' )
- 
-		else : 
-			newLine = line
- 		
-		fTmp.write(newLine)
- 
-	# Close the file and mv it to its final location
-	fTmp.close()
-	fXCode.close()
- 	
-	# Now substitute the project.pbxproject with the tmp file that was opportunely modified	
-	os.remove( os.path.join("VPP.xcodeproj","project.pbxproj") )
-	os.rename("tmpFile", os.path.join("VPP.xcodeproj","project.pbxproj") )
- 	
-	# 4_ get back to the original folder
-	os.chdir(intialDir)
-
-	Exit(2)
-
-# --- 
-
 Import('releaseEnv')
 
 # Get the environement 
 localEnv = releaseEnv.Clone()
-
-#Compile Debug mode
-#env.Append(CCFLAGS= '-g')
-#env.Append(CPPFLAGS ='-Wc++11-extensions')
-localEnv.Append(LINKFLAGS ='-framework Accelerate -lm -ldl -Wno-inconsistent-missing-override -headerpad_max_install_names')
-localEnv.Append(CPPFLAGS ='-Wno-inconsistent-missing-override')
-
-#warning: use of enumeration in a nested name specifier is a
-#      C++11 extension [-Wc++11-extensions]
-
-# List the subFolders
-subFolders= ['qcustomplot', # the presence of this folder is assured by copyQCustomPlotFiles
-			 'gui',
-			 'exceptions', 
-			 'core', 
-			 'io',
-			 'solvers', 
-			 'results',
-			 'utils',
-			 'versioning'
-			 ] 
-
-curDirAbsPath= Dir('.').srcnode().abspath
-
-# First loop, build the subfolder include path
-myCppPath= [ curDirAbsPath ]
-
-for subdir in subFolders : 
-	myCppPath.append( os.path.join(curDirAbsPath,subdir) )
-
-# Add the subfolder path to the CPPPATH of the localEnv
-localEnv.Append( CPPPATH=myCppPath )
-
-# Copy the test input file (variableFile.txt) to the build folder
-localEnv.copyInputFileToFolderStructure
 
 # ------- Add the third_parties -----------------
 
@@ -124,6 +29,107 @@ thirdPartyDict['Qt'] 	= thirdParties.Qt(localEnv)
 # it will be possible to direcly use the methods defined 
 # in the third parties 
 localEnv.Append( THIRDPARTYDICT=thirdPartyDict )
+
+# ------- List the subFolders of the current project -----------------
+
+subFolders= ['qcustomplot',
+			 'gui',
+			 'exceptions', 
+			 'core', 
+			 'io',
+			 'solvers', 
+			 'results',
+			 'utils',
+			 'versioning' ] 
+
+# -- 
+
+if 'makeDocs' in COMMAND_LINE_TARGETS:
+	print 'Generating doxygen documentation...'
+	p= subprocess.Popen(['doxygen', 'doxiConfig'], cwd='/Users/dtrimarchi/VPP/main')
+	p.wait()
+	Exit(2)
+
+# -- 
+
+if 'makeXCode' in COMMAND_LINE_TARGETS:
+	print 'Making xCode project...'
+	
+	# Remember where we start and need to go back
+	intialDir= os.getcwd()
+		
+	# 1_ cd to main and call qmake to generate a new xcode project
+	os.chdir('../../main')
+  
+	# 2_ Cleanup. Add try-except block in case the files are not present 
+	try: 
+		shutil.rmtree( os.path.join('..','xCodeBuild'),ignore_errors=True )
+		shutil.rmtree('VPP.xcodeproj',ignore_errors=True)
+	except:
+		pass
+ 
+  	# 3_ --> Write the file VPP.pro 
+  	xcode= thirdParties.xCode(thirdPartyDict)
+  	xcode.makeProjectFile(subFolders)
+  	
+	# 4_ Call qmake and generate an xcode project 
+	#p= subprocess.Popen("qmake -spec macx-xcode VPP.pro",shell=True)
+	#p.wait()
+ 	
+	# 5_ Read the lines of VPP.xcodeproj/project.pbxproj, modify the
+	# 	 required lines (the value of SYMROOT ), write to a new file 
+	# 	 and finally rename the new file to VPP.xcodeproj/project.pbxproj
+	#fXCode = open( "VPP.xcodeproj/project.pbxproj", 'r' )
+	#fTmp = open("tmpFile", 'w')
+ 	
+	#newLine=""
+	#for line in fXCode:
+ 
+	#	if( re.search("SYMROOT (.*)",line )	):	
+	#		newLine= line.replace( '/main/', '/' )
+ 
+	#	else : 
+	#		newLine = line
+ 		
+	#	fTmp.write(newLine)
+ 
+	# Close the file and mv it to its final location
+	#fTmp.close()
+	#fXCode.close()
+ 	
+	# Now substitute the project.pbxproject with the tmp file that was opportunely modified	
+	#os.remove( os.path.join("VPP.xcodeproj","project.pbxproj") )
+	#os.rename("tmpFile", os.path.join("VPP.xcodeproj","project.pbxproj") )
+ 	
+	# 4_ get back to the original folder
+	#os.chdir(intialDir)
+
+	Exit(2)
+
+# --- 
+
+#Compile Debug mode
+#env.Append(CCFLAGS= '-g')
+#env.Append(CPPFLAGS ='-Wc++11-extensions')
+localEnv.Append(LINKFLAGS ='-framework Accelerate -lm -ldl -Wno-inconsistent-missing-override -headerpad_max_install_names')
+localEnv.Append(CPPFLAGS ='-Wno-inconsistent-missing-override')
+
+#warning: use of enumeration in a nested name specifier is a
+#      C++11 extension [-Wc++11-extensions]
+
+curDirAbsPath= Dir('.').srcnode().abspath
+
+# First loop, build the subfolder include path
+myCppPath= [ curDirAbsPath ]
+
+for subdir in subFolders : 
+	myCppPath.append( os.path.join(curDirAbsPath,subdir) )
+
+# Add the subfolder path to the CPPPATH of the localEnv
+localEnv.Append( CPPPATH=myCppPath )
+
+# Copy the test input file (variableFile.txt) to the build folder
+localEnv.copyInputFileToFolderStructure
 
 # -----------------------------------------------
 

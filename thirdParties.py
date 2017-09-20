@@ -4,6 +4,220 @@ from shutil import copytree
 import subprocess
 import shutil
 
+class xCode(object):
+    
+    def __init__(self, thirdPartyDict):
+        
+        # Dictionary with the list of third_parties 
+        # to be used to compile the VPP project.
+        self.__thirdPartyDict__ = thirdPartyDict
+
+    # -- 
+    
+    def makeProjectFile(self, VPPsubFolders):
+        
+        # Open a new VPP.pro file to be written
+        projectFile = open("VPP.pro", 'w')
+
+        # Write the file header - Comments only
+        self.__writeHeader__(projectFile)
+        
+        # Write the modules for Qt, or the string : 
+        # Qt += core gui ...
+        self.__writeQtModules__(projectFile)
+        
+        # Write settings such as target, template, flags...
+        self.__writeSettings__(projectFile)
+        
+        # Write the include path of all third parties in the dict
+        self.__writeIncludePath__(projectFile)
+
+        # Write the include path of all third parties in the dict
+        self.__writeLibPath__(projectFile)
+
+        # Write the include path of all third parties in the dict
+        self.__writeLibs__(projectFile)
+        
+        # Write the source and header file paths
+        self.__writeFiles__(projectFile,VPPsubFolders)
+
+    # -- 
+    
+    def __writeHeader__(self, projectFile):
+        
+        header= '''#-------------------------------------------------
+# README dtrimarchi!
+#  
+# This file is required - with mainWindow.ui - in order for 
+# QMake to create a local XCode project with : 
+#
+# qmake -spec macx-xcode VPP.pro 
+# 
+# Note that this will NOT set the paths : 
+#
+#     Per-Configuration Build Product Path
+#     Per-Configuration Intermediate Build Files Path
+#
+# These are defined by the xCode variable SYMROOT
+#
+# with the effect of creating a local Debug/VPP.app folder
+# This is unwanted because ideally we should not pollute 
+# the content of 'main' with build outputs, that should be 
+# sent to the xCodeBuild folder (See DEST_BIN) 
+# By now the easiest possibility is to reset these two 
+# variables by hand when regenerating the xCode project
+# 
+# One (dirty) possibility - when including the xcode project
+# generation into a scons script, is to 'sed' VPP.xcodeproj
+# and change the value of SYMROOT in VPP.xcodeproj/project.pbxproj
+# 
+#-------------------------------------------------
+'''
+        projectFile.write(header)
+
+    # -- 
+    
+    def __writeQtModules__(self,projectFile):
+        
+        Qt = self.__thirdPartyDict__['Qt']
+        
+        # Loop over the frameworks, remove the pre-pended "Qt"
+        # and make the string lower case
+        line= "QT += "
+        for iFramework in Qt.__frameworks__: 
+            line += iFramework.replace("Qt","").lower() + " "
+        line += "\n\n"
+        
+        projectFile.write(line)
+
+    # -- 
+    
+    def __writeSettings__(self,projectFile) :
+        
+        line= "TARGET = VPP \n\n"
+        projectFile.write(line)
+        
+        line= "TEMPLATE = app \n\n"
+        projectFile.write(line)
+        
+        line='''# The following define makes your compiler emit warnings if you use
+# any feature of Qt which as been marked as deprecated (the exact warnings
+# depend on your compiler). Please consult the documentation of the
+# deprecated API in order to know how to port your code away from it.\n\n'''
+        projectFile.write(line)
+
+        line="DEFINES += QT_DEPRECATED_WARNINGS\n\n"
+        projectFile.write(line)
+        
+        line= "RESOURCES = gui/VPP.qrc \n\n"
+        projectFile.write(line)
+
+        line= "FORMS += gui/MainWindow.ui \n\n"
+        projectFile.write(line)
+
+        line= '''BUILD_DIR =  ../xCodeBuild
+OBJECTS_DIR = ../xCodeBuild
+MOC_DIR = ../xCodeBuild
+RCC_DIR = ../xCodeBuild
+UI_DIR = ../xCodeBuild 
+DESTDIR = ../xCodeBuild
+SYMROOT= ../xCodeBuild\n\n'''
+        projectFile.write(line)
+
+    # -- 
+    
+    def __writeIncludePath__(self,projectFile) :
+
+        line = "INCLUDEPATH += "
+                
+        # Loop on the third_parties in the dictionary
+        for depName, iDep in self.__thirdPartyDict__.iteritems() :      
+            # Loop on the include paths of this dependency
+            for iPath in iDep.includePath() : 
+            
+                # Get the third_party include paths. 
+                line += "\"" + iPath + "\"" 
+                           
+                #Add the return statement for all but the last line
+                if( depName != self.__thirdPartyDict__.keys()[-1] ) :
+                    line += " \\ \n"
+
+                if( depName == self.__thirdPartyDict__.keys()[-1] and iPath != iDep.includePath()[-1] ):
+                    line += " \\ \n"
+
+        line += "\n\n"  
+        projectFile.write(line)
+
+    # ---
+
+    def __writeLibPath__(self,projectFile) :
+
+        line = "LIBPATH += "
+        
+        # Loop on the third_parties in the dictionary
+        for depName, iDep in self.__thirdPartyDict__.iteritems() : 
+            # Loop on the lib paths of this dependency
+            for iPath in iDep.libPath() : 
+
+                # Get the third_party include paths. 
+                line += "\"" + iPath + "\"" 
+
+                #Add the return statement for all but the last line
+                if( depName != self.__thirdPartyDict__.keys()[-1] ) :
+                    line += " \\ \n"
+
+                if( depName == self.__thirdPartyDict__.keys()[-1] and iPath != iDep.libPath()[-1] ):
+                    line += " \\ \n"
+        
+        line += "\n\n"                      
+        projectFile.write(line)
+
+    # ---
+
+    def __writeLibs__(self,projectFile) :
+
+        line = "LIBS += "
+        
+        # Loop on the third_parties in the dictionary
+        for depName, iDep in self.__thirdPartyDict__.iteritems() : 
+            # Loop on the libs of this dependency
+            for iLib in iDep.libs() : 
+
+                # Get the third_party include paths. 
+                line += "-l" + iLib  
+
+                #Add the return statement for all but the last line
+                if( depName != self.__thirdPartyDict__.keys()[-1] ) :
+                    line += " \\ \n"
+
+                if( depName == self.__thirdPartyDict__.keys()[-1] and iLib != iDep.libs()[-1] ):
+                    line += " \\ \n"
+                    
+        line += "\n\n"                      
+        projectFile.write(line)
+
+    # ---
+    
+    # Write the source and header file paths
+    def __writeFiles__(self,projectFile, VPPsubFolders) :
+        
+        line = "SOURCES += main.cxx \ \n"
+        for iSubFolder in VPPsubFolders : 
+            line += os.path.join(iSubFolder,"*.cpp")
+            if(iSubFolder != VPPsubFolders[-1] ):
+                line += " \ \n"
+        
+        line += "\n\nHEADERS +="
+        for iSubFolder in VPPsubFolders : 
+            line += os.path.join(iSubFolder,"*.h")
+            if(iSubFolder != VPPsubFolders[-1] ):
+                line += " \ \n"
+
+        line += "\n\n"                                  
+        projectFile.write(line)
+
+# ----------------------------------------
+
 class thirdParty(object) : 
     
     def __init__(self):
@@ -24,9 +238,9 @@ class thirdParty(object) :
         self.__addFrameworkLinkLine__= True
         
         # Declare class members, to be filled by the children
-        self.__includePath__= ""
-        self.__frameworksPath__= ""
-        self.__libpath__= ""
+        self.__includePath__= []
+        self.__frameworksPath__= []
+        self.__libpath__= []
 
         self.__libs__= []
         self.__frameworks__= []
@@ -48,6 +262,14 @@ class thirdParty(object) :
     # Retutrn the list of libs (to be overwritten by child classes)         
     def libs(self):
         return self.__libs__
+
+    # Retutrn the list of include paths        
+    def includePath(self):
+        return self.__includePath__
+
+    # Retutrn the list of lib paths        
+    def libPath(self):
+        return self.__libpath__
     
     # Retutrn the list of frameworks (to be overwritten by child classes)         
     def getFrameworks(self):
