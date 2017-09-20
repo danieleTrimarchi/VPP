@@ -12,38 +12,42 @@ class xCode(object):
         # to be used to compile the VPP project.
         self.__thirdPartyDict__ = thirdPartyDict
 
+        self.__projectFile__ = ""
     # -- 
     
     def makeProjectFile(self, VPPsubFolders):
         
         # Open a new VPP.pro file to be written
-        projectFile = open("VPP.pro", 'w')
+        self.__projectFile__ = open("VPP.pro", 'w')
 
         # Write the file header - Comments only
-        self.__writeHeader__(projectFile)
+        self.__writeHeader__()
         
         # Write the modules for Qt, or the string : 
         # Qt += core gui ...
-        self.__writeQtModules__(projectFile)
+        self.__writeQtModules__()
         
         # Write settings such as target, template, flags...
-        self.__writeSettings__(projectFile)
+        self.__writeSettings__()
         
-        # Write the include path of all third parties in the dict
-        self.__writeIncludePath__(projectFile)
+        # Write the include path of all third parties present in the dict
+        self.__write__("INCLUDEPATH += ", "includePath", "\"", "\"" )
 
-        # Write the include path of all third parties in the dict
-        self.__writeLibPath__(projectFile)
+        # Write the lib path of all third parties present in the dict
+        self.__write__("LIBPATH += ", "libPath", "\"", "\"" )
 
-        # Write the include path of all third parties in the dict
-        self.__writeLibs__(projectFile)
+        # Write the libs of all third parties present in the dict
+        self.__write__("LIBS += ","libs", "-l", "")
         
         # Write the source and header file paths
-        self.__writeFiles__(projectFile,VPPsubFolders)
+        self.__writeFiles__(VPPsubFolders)
 
+        # Close the VPP.pro project file
+        self.__projectFile__.close()
+        
     # -- 
     
-    def __writeHeader__(self, projectFile):
+    def __writeHeader__(self):
         
         header= '''#-------------------------------------------------
 # README dtrimarchi!
@@ -73,11 +77,11 @@ class xCode(object):
 # 
 #-------------------------------------------------
 '''
-        projectFile.write(header)
+        self.__projectFile__.write(header)
 
     # -- 
     
-    def __writeQtModules__(self,projectFile):
+    def __writeQtModules__(self):
         
         Qt = self.__thirdPartyDict__['Qt']
         
@@ -88,32 +92,32 @@ class xCode(object):
             line += iFramework.replace("Qt","").lower() + " "
         line += "\n\n"
         
-        projectFile.write(line)
+        self.__projectFile__.write(line)
 
     # -- 
     
-    def __writeSettings__(self,projectFile) :
+    def __writeSettings__(self) :
         
         line= "TARGET = VPP \n\n"
-        projectFile.write(line)
+        self.__projectFile__.write(line)
         
         line= "TEMPLATE = app \n\n"
-        projectFile.write(line)
+        self.__projectFile__.write(line)
         
         line='''# The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.\n\n'''
-        projectFile.write(line)
+        self.__projectFile__.write(line)
 
         line="DEFINES += QT_DEPRECATED_WARNINGS\n\n"
-        projectFile.write(line)
+        self.__projectFile__.write(line)
         
         line= "RESOURCES = gui/VPP.qrc \n\n"
-        projectFile.write(line)
+        self.__projectFile__.write(line)
 
         line= "FORMS += gui/MainWindow.ui \n\n"
-        projectFile.write(line)
+        self.__projectFile__.write(line)
 
         line= '''BUILD_DIR =  ../xCodeBuild
 OBJECTS_DIR = ../xCodeBuild
@@ -122,84 +126,34 @@ RCC_DIR = ../xCodeBuild
 UI_DIR = ../xCodeBuild 
 DESTDIR = ../xCodeBuild
 SYMROOT= ../xCodeBuild\n\n'''
-        projectFile.write(line)
+        self.__projectFile__.write(line)
 
     # -- 
-    
-    def __writeIncludePath__(self,projectFile) :
 
-        line = "INCLUDEPATH += "
-                
+    def __write__(self, line, functionName, prefix, suffix ):
+        
         # Loop on the third_parties in the dictionary
         for depName, iDep in self.__thirdPartyDict__.iteritems() :      
             # Loop on the include paths of this dependency
-            for iPath in iDep.includePath() : 
+            for iPath in getattr(iDep,functionName)() : 
             
                 # Get the third_party include paths. 
-                line += "\"" + iPath + "\"" 
+                line += prefix + iPath + suffix 
                            
                 #Add the return statement for all but the last line
                 if( depName != self.__thirdPartyDict__.keys()[-1] ) :
                     line += " \\ \n"
 
-                if( depName == self.__thirdPartyDict__.keys()[-1] and iPath != iDep.includePath()[-1] ):
+                if( depName == self.__thirdPartyDict__.keys()[-1] and iPath != getattr(iDep,functionName)()[-1] ):
                     line += " \\ \n"
 
         line += "\n\n"  
-        projectFile.write(line)
+        self.__projectFile__.write(line)
 
-    # ---
+    # -- 
 
-    def __writeLibPath__(self,projectFile) :
-
-        line = "LIBPATH += "
-        
-        # Loop on the third_parties in the dictionary
-        for depName, iDep in self.__thirdPartyDict__.iteritems() : 
-            # Loop on the lib paths of this dependency
-            for iPath in iDep.libPath() : 
-
-                # Get the third_party include paths. 
-                line += "\"" + iPath + "\"" 
-
-                #Add the return statement for all but the last line
-                if( depName != self.__thirdPartyDict__.keys()[-1] ) :
-                    line += " \\ \n"
-
-                if( depName == self.__thirdPartyDict__.keys()[-1] and iPath != iDep.libPath()[-1] ):
-                    line += " \\ \n"
-        
-        line += "\n\n"                      
-        projectFile.write(line)
-
-    # ---
-
-    def __writeLibs__(self,projectFile) :
-
-        line = "LIBS += "
-        
-        # Loop on the third_parties in the dictionary
-        for depName, iDep in self.__thirdPartyDict__.iteritems() : 
-            # Loop on the libs of this dependency
-            for iLib in iDep.libs() : 
-
-                # Get the third_party include paths. 
-                line += "-l" + iLib  
-
-                #Add the return statement for all but the last line
-                if( depName != self.__thirdPartyDict__.keys()[-1] ) :
-                    line += " \\ \n"
-
-                if( depName == self.__thirdPartyDict__.keys()[-1] and iLib != iDep.libs()[-1] ):
-                    line += " \\ \n"
-                    
-        line += "\n\n"                      
-        projectFile.write(line)
-
-    # ---
-    
     # Write the source and header file paths
-    def __writeFiles__(self,projectFile, VPPsubFolders) :
+    def __writeFiles__(self, VPPsubFolders) :
         
         line = "SOURCES += main.cxx \ \n"
         for iSubFolder in VPPsubFolders : 
@@ -214,7 +168,7 @@ SYMROOT= ../xCodeBuild\n\n'''
                 line += " \ \n"
 
         line += "\n\n"                                  
-        projectFile.write(line)
+        self.__projectFile__.write(line)
 
 # ----------------------------------------
 
