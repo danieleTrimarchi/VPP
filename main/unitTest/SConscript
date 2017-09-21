@@ -30,13 +30,13 @@ autotestsProgram= localEnv.Program('unitTest', Glob('*.cpp') +
 localEnv.Append( TEST_EXE_PATH=autotestsProgram[0].abspath )
 
 # As the exe has been installed, modify it to use the local Qt frameworks
-#fixDynamicLibPath_commandTest = Command('fixDynamicLibPathTest', [], localEnv.fixDynamicLibPathTest)
-#Depends( fixDynamicLibPath_commandTest, autotestsProgram )
-#Default( fixDynamicLibPath_commandTest )
+fixDynamicLibPath_commandTest = Command('fixDynamicLibPathTest', [], localEnv.fixDynamicLibPathTest)
+Depends( fixDynamicLibPath_commandTest, autotestsProgram )
+Default( fixDynamicLibPath_commandTest )
 
 # Add a target 'runTest' that will ensure that it's built before running the test suite
 test_alias = Alias('runTest', [autotestsProgram], autotestsProgram[0].path)
-#Depends( test_alias, fixDynamicLibPath_commandTest) 
+Depends( test_alias, fixDynamicLibPath_commandTest) 
 
 # Simply required.  Without it, 'test' is never considered out of date.
 AlwaysBuild(test_alias)

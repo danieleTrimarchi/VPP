@@ -417,7 +417,6 @@ class Qt( thirdParty ) :
 
         self.__name__= "Qt"
         
-        # ==>> self.__version__ = "5.9.1"
         self.__version__ = "5.9.1"
 
         # Overrride rootDir that is different for Qt as it is installed via homebrew

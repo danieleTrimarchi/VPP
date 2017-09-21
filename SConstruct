@@ -160,6 +160,8 @@ releaseEnv.AddMethod(makeAppFolderStructure, 'makeAppFolderStructure')
 
 def fixDynamicLibPath(self,source,target,env):
     
+    print "==>>  fixDynamicLibPath <<=="
+
     # Modify the executable in order to change @rpath -> @executable_path thus making 
     # it executable. Not sure why @rpath would not work though... 
     QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()

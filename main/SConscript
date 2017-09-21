@@ -125,9 +125,9 @@ localEnv.makeAppFolderStructure(thirdPartyDict)
 installedExe= localEnv.Install( localEnv.getAppInstallDir(), vppExe )
 
 # As the exe has been installed, modify it to use the local Qt frameworks
-#fixDynamicLibPath_command = Command('fixDynamicLibPath', [], localEnv.fixDynamicLibPath)
-#Depends( fixDynamicLibPath_command, installedExe )
-#Default( fixDynamicLibPath_command )
+fixDynamicLibPath_command = Command('fixDynamicLibPath', [], localEnv.fixDynamicLibPath)
+Depends( fixDynamicLibPath_command, installedExe )
+Default( fixDynamicLibPath_command )
 
 #--------------------	
 # Clone the test env before adding the thirdParties
