@@ -33,13 +33,19 @@ class xCode(object):
         self.__writeSettings__()
         
         # Write the include path of all third parties present in the dict
-        self.__write__("INCLUDEPATH += ", "includePath", "\"", "\"" )
+        self.__write__("INCLUDEPATH += ", "getIncludePath", "\"", "\"" )
 
         # Write the lib path of all third parties present in the dict
         self.__write__("LIBPATH += ", "libPath", "\"", "\"" )
 
         # Write the libs of all third parties present in the dict
-        self.__write__("LIBS += ","libs", "-l", "")
+        self.__write__("LIBS += ","getLibs", "-l", "")
+
+        # Write the frameworks of all third parties present in the dict
+        self.__write__("LIBS += ","getFrameworks", "-framework ", "")
+        
+        # Write : QMAKE-LFLAGS+=-F/PATH/TO/FRAMEWORK/dir
+        self.__write__("QMAKE-LFLAGS+= ", "getFrameworkRoot", "-F", "")
         
         # Write the source and header file paths
         self.__writeFiles__(VPPsubFolders)
@@ -148,34 +154,23 @@ SYMROOT= ../xCodeBuild\n\n'''
             for iPath in getattr(iDep,functionName)() : 
             
                 # Get the third_party include paths. 
-                line += prefix + iPath + suffix 
+                line += " \\ \n" + prefix + iPath + suffix 
                            
-                #Add the return statement for all but the last line
-                if( depName != self.__thirdPartyDict__.keys()[-1] ) :
-                    line += " \\ \n"
-
-                if( depName == self.__thirdPartyDict__.keys()[-1] and iPath != getattr(iDep,functionName)()[-1] ):
-                    line += " \\ \n"
-
         line += "\n\n"  
         self.__projectFile__.write(line)
 
     # -- 
-
+    
     # Write the source and header file paths
     def __writeFiles__(self, VPPsubFolders) :
         
-        line = "SOURCES += main.cxx \ \n"
+        line = "SOURCES += main.cxx"
         for iSubFolder in VPPsubFolders : 
-            line += os.path.join(iSubFolder,"*.cpp")
-            if(iSubFolder != VPPsubFolders[-1] ):
-                line += " \ \n"
+            line += " \ \n " + os.path.join(iSubFolder,"*.cpp")
         
         line += "\n\nHEADERS +="
         for iSubFolder in VPPsubFolders : 
-            line += os.path.join(iSubFolder,"*.h")
-            if(iSubFolder != VPPsubFolders[-1] ):
-                line += " \ \n"
+            line += " \ \n " + os.path.join(iSubFolder,"*.h")
 
         line += "\n\n"                                  
         self.__projectFile__.write(line)
@@ -231,7 +226,7 @@ class thirdParty(object) :
         
         # Declare class members, to be filled by the children
         self.__includePath__= []
-        self.__frameworksPath__= []
+        self.__frameworksPaths__= []
         self.__libpath__= []
 
         self.__libs__= []
@@ -252,23 +247,23 @@ class thirdParty(object) :
                 environment.Append( LINKFLAGS= ['-framework', iFramework ] )
         
     # Retutrn the list of libs (to be overwritten by child classes)         
-    def libs(self):
+    def getLibs(self):
         return self.__libs__
 
     # Retutrn the list of include paths        
-    def includePath(self):
+    def getIncludePath(self):
         return self.__includePath__
 
     # Retutrn the list of lib paths        
     def libPath(self):
         return self.__libpath__
     
-    # Retutrn the list of frameworks (to be overwritten by child classes)         
+    # Return the list of frameworks (to be overwritten by child classes)         
     def getFrameworks(self):
         return self.__frameworks__
 
     def getFrameworkRoot(self):
-        return self.__frameworksPath__
+        return self.__frameworksPaths__
 
 # --- 
 
@@ -290,6 +285,9 @@ class System( thirdParty ) :
                            "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
                           ]
         
+        self.__frameworksPaths__= [
+                                  "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+                                  ]
         self.__addTo__(env)
 
 # --- 
@@ -347,7 +345,7 @@ class IPOpt( thirdParty ) :
                                os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'include/coin') ]
         self.__libpath__= [ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
         
-        self.__frameworksPath__= os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib')
+        self.__frameworksPaths__= [ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
 
         # Define the list of libs
         self.__libs__= ['ipopt']
@@ -420,11 +418,11 @@ class Qt( thirdParty ) :
         self.__name__= "Qt"
         
         # ==>> self.__version__ = "5.9.1"
-        self.__version__ = "5.7.0"
+        self.__version__ = "5.9.1"
 
         # Overrride rootDir that is different for Qt as it is installed via homebrew
-        # ==>> self.__rootDir__ = os.path.join(self.__rootDir__,'Qt',self.__version__,'clang_64')
-        self.__rootDir__ = os.path.join("/usr/local/Cellar/qt5",self.__version__)
+        self.__rootDir__ = os.path.join(self.__rootDir__,'Qt',self.__version__,'clang_64')
+        #self.__rootDir__ = os.path.join("/usr/local/Cellar/qt5",self.__version__)
 
         # Linkline is treated specially by the Qt5 module. Do not add the frameworks 
         self.__addFrameworkLinkLine__= False
@@ -439,8 +437,7 @@ class Qt( thirdParty ) :
                               ]
 
         # Direcly customize the env for the package config
-        # ==>> env['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(self.__VPPprogramSrcDir__,'site_scons','qtPkgConfig') ]    
-        env['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(self.__VPPprogramSrcDir__,'site_scons','qt_5_7_PkgConfig') ]  
+        env['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(self.__VPPprogramSrcDir__,'site_scons','qtPkgConfig') ]    
         
         env['ENV']['PATH'] += ':/opt/local/bin:'+self.__rootDir__
 
@@ -454,11 +451,11 @@ class Qt( thirdParty ) :
 
         env.EnableQt5Modules( self.__frameworks__ )
 
-        self.__frameworksPath__ = os.path.join(self.__rootDir__,'lib')
-
-        self.__includePath__= [ os.path.join(self.__frameworksPath__,'QtCore.framework/Versions/Current/Headers'),
-                                os.path.join(self.__frameworksPath__,'QtWidgets.framework/Versions/Current/Headers'),
-                                os.path.join(self.__frameworksPath__,'QtGui.framework/Versions/Current/Headers')
+        self.__frameworksPaths__ = [ os.path.join(self.__rootDir__,'lib') ]
+        
+        self.__includePath__= [ os.path.join(self.__frameworksPaths__[0],'QtCore.framework/Versions/Current/Headers'),
+                                os.path.join(self.__frameworksPaths__[0],'QtWidgets.framework/Versions/Current/Headers'),
+                                os.path.join(self.__frameworksPaths__[0],'QtGui.framework/Versions/Current/Headers')
                                ]
         
         # Returns the absolute path of the Qt Framework folder

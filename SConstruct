@@ -20,12 +20,6 @@ releaseEnv.Append( variant_dir = 'build/release' )
 # ... and release builds end up in the "build/release" dir
 releaseEnv.VariantDir( releaseEnv['variant_dir'], 'main', duplicate=0)
 
-# ---------------------------------------------------------------
-# Define the location of the third_parties
-third_party_root='/Users/dtrimarchi/third_party/'
-#Qt lives in its own universe...
-qtdir='/usr/local/Cellar/qt5/5.7.0'
-
 #----------------------------------------------------------------
 
 # Returns the absolute path of the Main folder, the root of the source tree
