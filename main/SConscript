@@ -4,7 +4,6 @@ from shutil import copyfile, rmtree
 import sys
 import os
 from test._mock_backport import inplace
-import re
 import shutil
 
 Import('releaseEnv')
@@ -72,37 +71,8 @@ if 'makeXCode' in COMMAND_LINE_TARGETS:
   	xcode= thirdParties.xCode(thirdPartyDict)
   	xcode.makeProjectFile(subFolders)
   	
-	# 4_ Call qmake and generate an xcode project 
-	#p= subprocess.Popen("qmake -spec macx-xcode VPP.pro",shell=True)
-	#p.wait()
- 	
-	# 5_ Read the lines of VPP.xcodeproj/project.pbxproj, modify the
-	# 	 required lines (the value of SYMROOT ), write to a new file 
-	# 	 and finally rename the new file to VPP.xcodeproj/project.pbxproj
-	#fXCode = open( "VPP.xcodeproj/project.pbxproj", 'r' )
-	#fTmp = open("tmpFile", 'w')
- 	
-	#newLine=""
-	#for line in fXCode:
- 
-	#	if( re.search("SYMROOT (.*)",line )	):	
-	#		newLine= line.replace( '/main/', '/' )
- 
-	#	else : 
-	#		newLine = line
- 		
-	#	fTmp.write(newLine)
- 
-	# Close the file and mv it to its final location
-	#fTmp.close()
-	#fXCode.close()
- 	
-	# Now substitute the project.pbxproject with the tmp file that was opportunely modified	
-	#os.remove( os.path.join("VPP.xcodeproj","project.pbxproj") )
-	#os.rename("tmpFile", os.path.join("VPP.xcodeproj","project.pbxproj") )
- 	
 	# 4_ get back to the original folder
-	#os.chdir(intialDir)
+	os.chdir(intialDir)
 
 	Exit(2)
 

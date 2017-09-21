@@ -51,16 +51,16 @@ DESTDIR = ../xCodeBuild
 SYMROOT= ../xCodeBuild
 
 INCLUDEPATH += "/Users/dtrimarchi/third_party/nlopt-2.4.2/api" \ 
-"/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib/QtCore.framework/Versions/Current/Headers" \ 
-"/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib/QtWidgets.framework/Versions/Current/Headers" \ 
-"/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib/QtGui.framework/Versions/Current/Headers" \ 
+"/usr/local/Cellar/qt5/5.7.0/lib/QtCore.framework/Versions/Current/Headers" \ 
+"/usr/local/Cellar/qt5/5.7.0/lib/QtWidgets.framework/Versions/Current/Headers" \ 
+"/usr/local/Cellar/qt5/5.7.0/lib/QtGui.framework/Versions/Current/Headers" \ 
 "/Users/dtrimarchi/third_party/eigen-3.2.7" \ 
 "/Users/dtrimarchi/third_party/boost_1_60_0" \ 
 "/Users/dtrimarchi/third_party/Ipopt-3.12.6/Ipopt/src/Interfaces" \ 
 "/Users/dtrimarchi/third_party/Ipopt-3.12.6/include/coin"
 
 LIBPATH += "/Users/dtrimarchi/third_party/nlopt-2.4.2/libs" \ 
-"/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib" \ 
+"/usr/local/Cellar/qt5/5.7.0/lib" \ 
 "/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A" \ 
 "/opt/local/lib" \ 
 "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks" \ 

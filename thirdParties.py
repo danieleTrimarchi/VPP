@@ -3,6 +3,8 @@ from shutil import copyfile
 from shutil import copytree
 import subprocess
 import shutil
+import re
+
 
 class xCode(object):
     
@@ -45,7 +47,15 @@ class xCode(object):
         # Close the VPP.pro project file
         self.__projectFile__.close()
         
+        # Call qmake and generate an xcode project 
+        p= subprocess.Popen("qmake -spec macx-xcode VPP.pro",shell=True)
+        p.wait()
+
+        self.__patchXCodeProject__()
+        
+     
     # -- 
+    
     
     def __writeHeader__(self):
         
@@ -169,6 +179,34 @@ SYMROOT= ../xCodeBuild\n\n'''
 
         line += "\n\n"                                  
         self.__projectFile__.write(line)
+        
+    def __patchXCodeProject__(self) :
+        
+        # Read the lines of VPP.xcodeproj/project.pbxproj, modify the
+        # required lines (the value of SYMROOT ), write to a new file 
+        # and finally rename the new file to VPP.xcodeproj/project.pbxproj
+        fXCode = open( "VPP.xcodeproj/project.pbxproj", 'r' )
+        fTmp = open("tmpFile", 'w')
+     
+        newLine=""
+        for line in fXCode:
+ 
+            if( re.search("SYMROOT (.*)",line )    ):    
+                newLine= line.replace( '/main/', '/' )
+     
+            else : 
+                newLine = line
+             
+            fTmp.write(newLine)
+ 
+        # Close the file and mv it to its final location
+        fTmp.close()
+        fXCode.close()
+     
+        # Now substitute the project.pbxproject with the tmp file that was opportunely modified    
+        os.remove( os.path.join("VPP.xcodeproj","project.pbxproj") )
+        os.rename("tmpFile", os.path.join("VPP.xcodeproj","project.pbxproj") )
+     
 
 # ----------------------------------------
 
