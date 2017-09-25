@@ -170,11 +170,11 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 		// Make sure the initial guess does not exceeds the bounds
 		for(size_t i=0; i<lowerBounds_.size(); i++) {
 			if(xp_[i]<lowerBounds_[i]){
-				std::cout<<"Resetting xp_["<<i<<"]= "<< xp_[i]<<" to the lower bound "<<lowerBounds_[i]<<std::endl;
+				//std::cout<<"Resetting xp_["<<i<<"]= "<< xp_[i]<<" to the lower bound "<<lowerBounds_[i]<<std::endl;
 				xp_[i]=lowerBounds_[i];
 			}
 			if(xp_[i]>upperBounds_[i]){
-				std::cout<<"Resetting xp_["<<i<<"]= "<< xp_[i]<<" to the upper bound "<<upperBounds_[i]<<std::endl;
+				//std::cout<<"Resetting xp_["<<i<<"]= "<< xp_[i]<<" to the upper bound "<<upperBounds_[i]<<std::endl;
 				xp_[i]=upperBounds_[i];
 			}
 		}

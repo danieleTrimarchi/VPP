@@ -513,8 +513,6 @@ void MainWindow::run() {
 
 			for(int vTW=0; vTW<pVariableFileParser_->get("N_TWV"); vTW++){
 
-				std::cout<<"vTW= " << vTW << "  -  aTW= " << aTW << std::endl;
-
 				try{
 
 					// Run the optimizer for the current wind speed/angle

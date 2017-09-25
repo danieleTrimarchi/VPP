@@ -271,7 +271,10 @@ class thirdParty(object) :
     def getFrameworks(self):
         return self.__frameworks__
 
+    # Retutrn the LIST of framework paths        
     def getFrameworkRoot(self):
+        if(len(self.__frameworksPaths__)>1):
+            raise "The build system must be modified to comply with len(__frameworksPaths__)>1!"
         return self.__frameworksPaths__
 
 # --- 

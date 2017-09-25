@@ -127,7 +127,7 @@ def makeAppFolderStructure(self, thirdPartyDict):
 
         os.makedirs( self.getAppFrameworksDir() )
 
-        frameworkRoot= thirdPartyDict['Qt'].getFrameworkRoot()
+        frameworkRoot= thirdPartyDict['Qt'].getFrameworkRoot()[0]
         frameworkList= thirdPartyDict['Qt'].getFrameworks()
     
         # Copy the Qt frameworks to the APP bundle 
@@ -142,10 +142,10 @@ def makeAppFolderStructure(self, thirdPartyDict):
             
             # Make the dest folder
             os.makedirs( os.path.join( self.getAppFrameworksDir(), dst ) )
-                         
+                        
             # Copy the Qt frameworks to the APP bundle - just to the APP dir to start with
             shutil.copy( os.path.join( frameworkRoot, dst, iFramework ),
-                         os.path.join( self.getAppFrameworksDir(), dst, iFramework ),
+                         os.path.join( self.getAppFrameworksDir(), dst, iFramework )
                          )
             
             # After the copy give full permissions to the frameworks in the app
