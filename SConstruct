@@ -1,6 +1,9 @@
 import os 
 from shutil import copyfile
 from shutil import copytree
+import subprocess
+import shutil
+import thirdParties
 
 # Define a common build environment
 common_env = Environment()
@@ -17,12 +20,6 @@ releaseEnv.Append( variant_dir = 'build/release' )
 # ... and release builds end up in the "build/release" dir
 releaseEnv.VariantDir( releaseEnv['variant_dir'], 'main', duplicate=0)
 
-# ---------------------------------------------------------------
-# Define the location of the third_parties
-third_party_root='/Users/dtrimarchi/third_party/'
-#Qt lives in its own universe...
-qtdir='/usr/local/Cellar/qt5/5.7.0'
-
 #----------------------------------------------------------------
 
 # Returns the absolute path of the Main folder, the root of the source tree
@@ -34,24 +31,76 @@ releaseEnv.AddMethod(getSrcTreeRoot, 'getSrcTreeRoot')
 
 # --
 
+def getExecutableName(self):
+
+    return "VPP"
+
+releaseEnv.AddMethod(getExecutableName, 'getExecutableName')
+
+# --
+
 # Returns the absolute path of the Contents folder in the app bundle
 # /Users/dtrimarchi/VPP/VPP.app/Contents
-def getAppDirContents(self):
+def getAppContentsDir(self):
 
     return os.path.join( self['root_dir'], "VPP.app/Contents" )
 
-releaseEnv.AddMethod(getAppDirContents, 'getAppDirContents')
+releaseEnv.AddMethod(getAppContentsDir, 'getAppContentsDir')
+
+#-- 
+
+# Returns the absolute path of the Resources folder in the app bundle
+# /Users/dtrimarchi/VPP/VPP.app/Contents/Resources
+def getAppResourcesDir(self):
+
+    return os.path.join( releaseEnv.getAppContentsDir(), "Resources" )
+
+releaseEnv.AddMethod(getAppResourcesDir, 'getAppResourcesDir')
+
+#-- 
+
+# Returns the absolute path of the Frameworks folder in the app bundle
+# /Users/dtrimarchi/VPP/VPP.app/Contents/Frameworks
+def getAppFrameworksDir(self):
+
+    return os.path.join( releaseEnv.getAppContentsDir(), "Frameworks" )
+
+releaseEnv.AddMethod(getAppFrameworksDir, 'getAppFrameworksDir')
 
 # --
+
+# Returns the absolute path of the Frameworks folder in the app bundle
+# /Users/dtrimarchi/VPP/VPP.app/Contents/Frameworks
+def getAppPlugInsDir(self):
+
+    return os.path.join( releaseEnv.getAppContentsDir(), "PlugIns" )
+
+releaseEnv.AddMethod(getAppPlugInsDir, 'getAppPlugInsDir')
+
+
+# --
+
+# Returns the absolute path of the Frameworks folder in the app bundle
+# /Users/dtrimarchi/VPP/VPP.app/Contents/Frameworks
+def getAppPlattformsDir(self):
+
+    return os.path.join( releaseEnv.getAppPlugInsDir(), "platforms" )
+
+releaseEnv.AddMethod(getAppPlattformsDir, 'getAppPlattformsDir')
+
+
+# --
+
+
 # Returns the absolute path of the Install folder in the app bundle
 # /Users/dtrimarchi/VPP/VPP.app/Contents/MacOS
 def getAppInstallDir(self):
 
-    return os.path.join( self.getAppDirContents(), "MacOS")
+    return os.path.join( self.getAppContentsDir(), "MacOS")
 
 releaseEnv.AddMethod(getAppInstallDir, 'getAppInstallDir')
 
-# --
+#----------------------------------------------------------------
 
 # Create (if required) the app folder structure : 
 # VPP.app/
@@ -61,19 +110,133 @@ releaseEnv.AddMethod(getAppInstallDir, 'getAppInstallDir')
 #            VPP.exe
 #        Resources/
 #            VPP.icns
-def makeAppFolderStructure(self):
+def makeAppFolderStructure(self, thirdPartyDict):
     
-    if not os.path.exists( self.getAppDirContents() ):
-        os.makedirs(self.getAppDirContents())
-        copyfile( os.path.join( self.getSrcTreeRoot(),"gui/Info.pList"), os.path.join( self.getAppDirContents(),"Info.pList") )
+    print "===>>>>  makeAppFolderStructure!  <<<<<================"
+    
+    if not os.path.exists( self.getAppContentsDir() ):
+        os.makedirs(self.getAppContentsDir())
+        copyfile( os.path.join( self.getSrcTreeRoot(),"gui/Info.pList"), os.path.join( self.getAppContentsDir(),"Info.pList") )
+ 
+    if not os.path.exists(self.getAppResourcesDir() ):
+         
+        os.makedirs(self.getAppResourcesDir() )
+        copyfile( os.path.join( self.getSrcTreeRoot(), "Icons/VPP.icns"), os.path.join(self.getAppResourcesDir(),"VPP.icns") )
 
-    if not os.path.exists(self.getAppDirContents()+"/Resources"):
-        os.makedirs(self.getAppDirContents()+"/Resources")
-        copyfile( os.path.join( self.getSrcTreeRoot(), "Icons/VPP.icns"), self.getAppDirContents()+"/Resources/VPP.icns")
+    if not os.path.exists( self.getAppFrameworksDir() ): 
+
+        os.makedirs( self.getAppFrameworksDir() )
+
+        frameworkRoot= thirdPartyDict['Qt'].getFrameworkRoot()
+        frameworkList= thirdPartyDict['Qt'].getFrameworks()
+    
+        # Copy the Qt frameworks to the APP bundle 
+        # Note that at this point what we do is silly, as we do copy over for each build
+        # better would be only copying the pieces that we need to copy over!
+        for iFramework in frameworkList: 
+
+            print "==>> Copying framework : ", iFramework
+            
+            # Def the dest folder
+            dst = os.path.join( iFramework + ".framework","Versions","Current" )  
+            
+            # Make the dest folder
+            os.makedirs( os.path.join( self.getAppFrameworksDir(), dst ) )
+                         
+            # Copy the Qt frameworks to the APP bundle - just to the APP dir to start with
+            shutil.copy( os.path.join( frameworkRoot, dst, iFramework ),
+                         os.path.join( self.getAppFrameworksDir(), dst, iFramework ),
+                         )
+            
+            # After the copy give full permissions to the frameworks in the app
+            p = subprocess.Popen('chmod -R 755 {}'.format( 
+                                                          os.path.join( self.getAppFrameworksDir(), iFramework + ".framework" ) ), 
+                                 shell=True)
+            p.wait()        
 
 releaseEnv.AddMethod(makeAppFolderStructure, 'makeAppFolderStructure')
 
-#----------------------------------------------------------------
+# ---------------------------------------------------------------
+
+def fixDynamicLibPath(self,source,target,env):
+    
+    print "==>>  fixDynamicLibPath <<=="
+
+    # Modify the executable in order to change @rpath -> @executable_path thus making 
+    # it executable. Not sure why @rpath would not work though... 
+    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
+    QtFrameworkList= self['THIRDPARTYDICT']['Qt'].getFrameworks()
+    
+    # Loop on the frameworks
+    for iFramework in QtFrameworkList: 
+
+        print "RUNNING : "
+        print ('install_name_tool -change '
+               '@rpath/{}.framework/Versions/5/{} '
+               '@executable_path/../Frameworks/{}.framework/Versions/Current/{} '
+               '{}/VPP'.format( 
+                        iFramework,iFramework,
+                        iFramework,iFramework,
+                        self.getAppInstallDir()
+                        )
+            )
+
+        # Also change the reference to the frameworks from @rpath to @executable_path
+        p = subprocess.Popen('install_name_tool -change '
+                             '@rpath/{}.framework/Versions/5/{} '
+                             '@executable_path/../Frameworks/{}.framework/Versions/Current/{} '
+                             '{}/VPP'.format( 
+                                             iFramework,iFramework,
+                                             iFramework,iFramework,
+                                             self.getAppInstallDir()
+                                             ), 
+                             shell=True )
+        p.wait()
+        
+releaseEnv.AddMethod(fixDynamicLibPath, 'fixDynamicLibPath')
+
+# ---------------------------------------------------------------
+
+def fixDynamicLibPathTest(self,source,target,env):
+    
+    print "==>>  fixDynamicLibPathTest <<=="
+
+    # Modify the executable in order to change @rpath -> @executable_path thus making 
+    # it executable. Not sure why @rpath would not work though... 
+    testExecutablePath= self['TEST_EXE_PATH']
+    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
+    QtFrameworkList= self['THIRDPARTYDICT']['Qt'].getFrameworks()
+
+    # Loop on the frameworks
+    for iFramework in QtFrameworkList: 
+
+        print "RUNNING : "
+        print ('install_name_tool -change '
+               '@rpath/{}.framework/Versions/5/{} '
+               '{}/{}.framework/Versions/Current/{} '
+               '{}'.format( 
+                        iFramework,iFramework,
+                        QtFrameworkRoot,iFramework,iFramework,
+                        testExecutablePath
+                        )
+            )
+
+        # Also change the reference to the frameworks from @rpath to @executable_path
+        p = subprocess.Popen('install_name_tool -change '
+                             '@rpath/{}.framework/Versions/5/{} '
+                             '{}/{}.framework/Versions/Current/{} '
+                             '{}'.format( 
+                                             iFramework,iFramework,
+                                             QtFrameworkRoot,iFramework,iFramework,
+                                             testExecutablePath
+                                             ), 
+                             shell=True )
+        p.wait()
+        
+releaseEnv.AddMethod(fixDynamicLibPathTest, 'fixDynamicLibPathTest')
+
+# ---------------------------------------------------------------
+
 
 # Also copy the input file 'variableFile.txt' to the build folder
 def copyInputFileToFolderStructure(self):
@@ -84,156 +247,7 @@ def copyInputFileToFolderStructure(self):
 
 releaseEnv.AddMethod(copyInputFileToFolderStructure, 'copyInputFileToFolderStructure')
 
-#----------------------------------------------------------------
 
-def getGlobalIncludePath(self) : 
-    self.Append( CPPPATH=["/opt/local/include" ] ) 
-
-releaseEnv.AddMethod(getGlobalIncludePath, 'getGlobalIncludePath')
-
-def getGlobalLibPath(self) : 
-    self.Append( LIBPATH=[
-                          "/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
-                          '/opt/local/lib'] ) 
-
-releaseEnv.AddMethod(getGlobalLibPath, 'getGlobalLibPath')
-
-#--
-
-def getEigenIncludePath(self) : 
-    self.Append( CPPPATH=[third_party_root+'eigen-3.2.7'] ) 
-
-releaseEnv.AddMethod(getEigenIncludePath, 'getEigenIncludePath')
-
-#-- 
-
-def getUMFPackIncludePath(self) : 
-    self.Append( CPPPATH=[third_party_root+"SuiteSparse-4.5.2/UMFPACK/Include",
-                          third_party_root+"SuiteSparse-4.5.2/SuiteSparse_config",
-                          third_party_root+"SuiteSparse-4.5.2/AMD/Include" ] ) 
-
-releaseEnv.AddMethod(getUMFPackIncludePath, 'getUMFPackIncludePath')
-
-def getUMFPackLib(self) : 
-    self.Append( LIBS=["umfpack",
-                       "BLAS",
-                       "amd",
-                       "colamd",
-                       "cholmod",
-                       "suitesparseconfig" ] ) 
-
-releaseEnv.AddMethod(getUMFPackLib, 'getUMFPackLib')
-
-def getUMFPackLibPath(self) : 
-    self.Append( LIBPATH=[third_party_root+"SuiteSparse-4.5.2/UMFPACK/Lib",
-                          third_party_root+"SuiteSparse-4.5.2/SuiteSparse_config",
-                          third_party_root+"SuiteSparse-4.5.2/AMD/Lib",
-                          third_party_root+"SuiteSparse-4.5.2/CHOLMOD/Lib",
-                          third_party_root+"SuiteSparse-4.5.2/COLAMD/Lib" ] ) 
-
-releaseEnv.AddMethod(getUMFPackLibPath, 'getUMFPackLibPath')
-
-#-- 
-
-def getBoostIncludePath(self) : 
-    self.Append( CPPPATH=[third_party_root+"boost_1_60_0" ] ) 
-
-releaseEnv.AddMethod(getBoostIncludePath, 'getBoostIncludePath')
-
-#-- 
-
-def getNlOptIncludePath(self) : 
-    self.Append( CPPPATH=[third_party_root+"nlopt-2.4.2/api" ] ) 
-
-releaseEnv.AddMethod(getNlOptIncludePath, 'getNlOptIncludePath')
-
-def getNLOptLib(self) : 
-    self.Append( LIBS=["nlopt" ] ) 
-
-releaseEnv.AddMethod(getNLOptLib, 'getNLOptLib')
-
-def getNLOptLibPath(self) : 
-    self.Append( LIBPATH=[third_party_root+"nlopt-2.4.2/libs" ] ) 
-
-releaseEnv.AddMethod(getNLOptLibPath, 'getNLOptLibPath')
-
-#-- 
-
-def getIpOptIncludePath(self) : 
-    self.Append( CPPPATH=[ third_party_root+'Ipopt-3.12.6/Ipopt/src/Interfaces',
-                           third_party_root+'Ipopt-3.12.6/include/coin'] ) 
-
-releaseEnv.AddMethod(getIpOptIncludePath, 'getIpOptIncludePath')
-
-def getIpOptLib(self) : 
-    self.Append( LIBS=["ipopt" ] ) 
-
-releaseEnv.AddMethod(getIpOptLib, 'getIpOptLib')
-
-def getIpOptLibPath(self) : 
-    self.Append( LIBPATH=[third_party_root+"Ipopt-3.12.6/lib" ] ) 
-
-releaseEnv.AddMethod(getIpOptLibPath, 'getIpOptLibPath')
-
-#-- 
-
-def getCppUnitIncludePath(self) : 
-    self.Append( CPPPATH=[third_party_root+"cppunit-1.13.2/build/include"] ) 
-
-releaseEnv.AddMethod(getCppUnitIncludePath, 'getCppUnitIncludePath')
-
-def getCppUnitLib(self) : 
-    self.Append( LIBS=["cppunit"] ) 
-
-releaseEnv.AddMethod(getCppUnitLib, 'getCppUnitLib')
-
-def getCppUnitLibPath(self) : 
-    self.Append( LIBPATH=[third_party_root+"cppunit-1.13.2/build/lib" ] ) 
-
-releaseEnv.AddMethod(getCppUnitLibPath, 'getCppUnitLibPath')
-
-#--
-
-def getQtPKGConfig(self,qtEnv):
-
-    qtEnv['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(qtdir,'lib/pkgconfig') ]    
-    qtEnv['ENV']['PATH'] += ':/opt/local/bin:/usr/local/Cellar/qt5/5.7.0/bin'
-    
-releaseEnv.AddMethod(getQtPKGConfig, 'getQtPKGConfig')
-
-#--
-
-def getQt(self):
-    
-    self.Append( QT5DIR = qtdir ) 
-    
-    # This is for http://stackoverflow.com/questions/37897209/qt-requires-c11-support-make-error
-    self.Append( CXXFLAGS =  ['-std=c++11'] )
-
-    self.Tool('qt5')
-
-    self.EnableQt5Modules([
-                      'QtGui',
-                      'QtCore',
-                      'QtNetwork',
-                      'QtWidgets',
-                      'QtCharts',
-                      'QtDataVisualization', 
-                      'QtPrintSupport'
-                      ])
-
-    self.Append( CPPPATH=['/usr/local/Cellar/qt5/5.7.0/include/QtWidgets'] ) 
-    self.Append( LIBPATH=[ os.path.join(qtdir,'lib') ] )     
-
-    #Compile Debug mode
-    #env.Append(CCFLAGS= '-g')
-    #env.Append(CPPFLAGS ='-Wc++11-extensions')
-
-    #Compile Release
-    #self.Append(CPPDEFINES=['RELEASE'])
-
-releaseEnv.AddMethod(getQt, 'getQt')
-    
 # ---------------------------------------------------------------
 
 # We define our debug build environment in a similar fashion...

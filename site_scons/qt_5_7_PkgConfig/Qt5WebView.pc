@@ -1,0 +1,13 @@
+prefix=/usr/local/Cellar/qt5/5.7.0
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 WebView
+Description: Qt WebView module
+Version: 5.7.0
+Libs: -F${libdir} -framework QtWebView 
+Libs.private: -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtQuick -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQml -framework QtNetwork -framework QtWebEngine -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtWebEngineCore -framework QtQuick -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQml -framework QtNetwork -framework QtWebChannel -framework QtPositioning -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtWebView -I${includedir}
+

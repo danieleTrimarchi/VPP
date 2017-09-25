@@ -1,4 +1,5 @@
 #include "VPPSolverFactoryBase.h"
+#include "PathUtils.h"
 
 namespace Optim {
 
@@ -103,8 +104,16 @@ IppOptSolverFactory::IppOptSolverFactory(boost::shared_ptr<VPPItemFactory> pVppI
 
 	pApp_->Options()->SetNumericValue("tol", 1e-3);
 	pApp_->Options()->SetStringValue("mu_strategy", "adaptive");
-	pApp_->Options()->SetStringValue("output_file", "ipopt.out");
 	pApp_->Options()->SetStringValue("hessian_approximation", "limited-memory");
+
+	PathUtils pathUtils;
+	string outFileAbsPath= pathUtils.getWorkingDirPath().string() + string("ipopt.out");
+
+	// Not sure why, but this option generates an 'Invalid_Option' return status
+	// when run from the app. It is always possible to run from console, on the
+	// other hand. Not easy to debug because this is not reproductible in the xcode
+	// debug build. For the moment, who cares..?
+	pApp_->Options()->SetStringValue("output_file",outFileAbsPath.c_str());
 
 	// Call method VPP_NLP::get_scaling_parameters which is used to set the pb to
 	// maximization and eventually to improve the conditioning of the pb
@@ -114,7 +123,7 @@ IppOptSolverFactory::IppOptSolverFactory(boost::shared_ptr<VPPItemFactory> pVppI
 	pApp_->Options()->SetIntegerValue("print_level",0);
 	pApp_->Options()->SetIntegerValue("file_print_level", 0);
 
-	if (pApp_->Initialize() != Solve_Succeeded)
+	if ( pApp_->Initialize() != Solve_Succeeded)
 		throw VPPException(HERE,"Error during initialization of ipOpt!");
 
 }
@@ -138,12 +147,8 @@ void IppOptSolverFactory::run(int vTW, int aTW) {
 
 	ApplicationReturnStatus status= pApp_->OptimizeTNLP(pSolver_);
 
-	if (status == Solve_Succeeded) {
-		std::cout << std::endl << std::endl << "*** The problem solved!" << std::endl;
-	}
-	else {
+	if ( status != Solve_Succeeded )
 		throw NonConvergedException(HERE,"ipOpt failed to find the solution!");
-	}
 }
 
 } // End namespace Optim

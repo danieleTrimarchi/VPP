@@ -38,6 +38,12 @@ int main(int argc, char** argv) {
 		// Instantiate a Qt application that will be executed at the end of main
 		QApplication app(argc, argv);
 
+		//
+		QDir dir(QCoreApplication::applicationDirPath());
+		dir.cdUp();
+		dir.cd("PlugIns/platforms");
+		QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
+
 		// Instantiate the MainWindow of the VPP application
 		MainWindow mainWin;
 		mainWin.resize(800, 600);

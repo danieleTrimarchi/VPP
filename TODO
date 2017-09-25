@@ -1,8 +1,21 @@
-- …openCascade…
+- Progression bar during runs…
 
+- Add a control to choose the solver NLOpt IPOpt NRSolver (2 dofs)
+- Add a tabbed widget to interactively fill all of the VPP input. This can be 
+	automatically filled from file ; or be saved to a VPPin file
+- Exception in pathUtils if this is not MACOSX 
+- Hide Variable tree by default
+- Print df/dm in RELATIVE terms - the curves of df/dm are of the same color!
+————
+
+- …openCascade… Or other solid modelling tools?
+	- Get pre-requisites : file:///Users/dtrimarchi/third_party/opencascade-7.1.0/doc/overview/html/occt_dev_guides__building_3rdparty_osx.html
+	-> Tcl 8.5 : from http://www.tcl.tk/software/tcltk/download.html
+	-> 
 
 - Compute the derivative of a cubic spline, thus removing the FDs
 - See RhinoAPI for getting LPP data
+
 —————
 
 - Ask Stephane about the multiple environment warning 

@@ -1,0 +1,14 @@
+prefix=/usr/local/Cellar/qt5/5.7.0
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 3DQuick
+Description: Qt 3DQuick module
+Version: 5.7.0
+Libs: -F${libdir} -framework Qt3DQuick 
+Libs.private: -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtQuick -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQml -framework QtNetwork -framework Qt3DCore -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/Qt3DQuick -I${includedir}
+Requires: Qt5Core Qt5Gui Qt5Qml Qt5Quick Qt53DCore
+

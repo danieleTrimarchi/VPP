@@ -1,0 +1,14 @@
+prefix=/usr/local/Cellar/qt5/5.7.0
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 Xml
+Description: Qt Xml module
+Version: 5.7.0
+Libs: -F${libdir} -framework QtXml 
+Libs.private: -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtCore -framework DiskArbitration -framework IOKit   
+Cflags: -I${includedir}/QtXml -I${includedir}
+Requires: Qt5Core
+

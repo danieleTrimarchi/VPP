@@ -302,10 +302,10 @@ void VPP_NLP::finalize_solution(SolverReturn status,
 	// so we could use the solution.
 
 	// For this example, we write the solution to the console
-	std::cout << std::endl << std::endl << "Solution of the state variables, x" << std::endl;
-	for (int i=0; i<n; i++)
-		std::cout <<  x[i] << "  ";
-	std::cout<<"\n";
+	//std::cout << std::endl << std::endl << "Solution of the state variables, x" << std::endl;
+	//for (int i=0; i<n; i++)
+	//	std::cout <<  x[i] << "  ";
+	//std::cout<<"\n";
 
 	// Map the c-style container x to an Eigen object
 	Eigen::Map<const Eigen::VectorXd> solutionMap(x,dimension_);

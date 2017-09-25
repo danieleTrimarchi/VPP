@@ -15,38 +15,28 @@ allObjects= localEnv['objList']
 # Warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]
 
-# ------- Add the third_parties -----------------
-# Path for the globally installed libs
-localEnv.getGlobalLibPath()
-# ...EIGEN...
-localEnv.getEigenIncludePath()
-# ...NlOpt...
-localEnv.getNlOptIncludePath()
-localEnv.getNLOptLibPath()
-localEnv.getNLOptLib()
-# ...IpOpt...
-localEnv.getIpOptIncludePath()
-localEnv.getIpOptLibPath()
-localEnv.getIpOptLib()
-# ...Boost...
-localEnv.getBoostIncludePath()
-# ...UMFPack...
-localEnv.getUMFPackIncludePath()
-localEnv.getUMFPackLibPath()
-localEnv.getUMFPackLib()
-# ...CppUnit...
-localEnv.getCppUnitIncludePath()
-localEnv.getCppUnitLibPath()
-localEnv.getCppUnitLib()
+# ------- Add cppunit to the third_parties -----------------
+import thirdParties
+thirdPartyDict= localEnv['THIRDPARTYDICT']
+thirdPartyDict['CppUnit']= thirdParties.CppUnit(localEnv)
+
 # ----------------------------------------------
 
-
-autotestsProgram= localEnv.Program('unitTest', Glob('*.cpp')+
+autotestsProgram= localEnv.Program('unitTest', Glob('*.cpp') +
 							allObjects
-								)
+							)
+
+# Add the path of the program to the env
+localEnv.Append( TEST_EXE_PATH=autotestsProgram[0].abspath )
+
+# As the exe has been installed, modify it to use the local Qt frameworks
+fixDynamicLibPath_commandTest = Command('fixDynamicLibPathTest', [], localEnv.fixDynamicLibPathTest)
+Depends( fixDynamicLibPath_commandTest, autotestsProgram )
+Default( fixDynamicLibPath_commandTest )
 
 # Add a target 'runTest' that will ensure that it's built before running the test suite
 test_alias = Alias('runTest', [autotestsProgram], autotestsProgram[0].path)
+Depends( test_alias, fixDynamicLibPath_commandTest) 
 
 # Simply required.  Without it, 'test' is never considered out of date.
 AlwaysBuild(test_alias)

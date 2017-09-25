@@ -1,0 +1,14 @@
+prefix=$QTROOT$
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 WebEngineWidgets
+Description: Qt WebEngineWidgets module
+Version: $QTVERSION$
+Libs: -F${libdir} -framework QtWebEngineWidgets 
+Libs.private: -F$QTROOT$/lib -F$QTROOT$/lib -F$QTROOT$/lib -F$QTROOT$/lib -F$QTROOT$/lib -framework QtWebEngineCore -framework QtQuick -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQml -framework QtNetwork -framework QtWebChannel -framework QtPositioning -framework QtWidgets -framework QtQuick -F$QTROOT$/lib -F$QTROOT$/lib -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQml -framework QtNetwork -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtWebEngineWidgets -I${includedir}
+Requires: Qt5Core Qt5Gui Qt5WebEngineCore Qt5Widgets Qt5Network Qt5Quick
+

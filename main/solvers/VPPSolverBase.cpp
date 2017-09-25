@@ -180,7 +180,7 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 		}
 	}
 
-	std::cout<<"-->> solver first guess: "<<xp_.transpose()<<std::endl;
+	//std::cout<<"-->> solver first guess: "<<xp_.transpose()<<std::endl;
 
 }
 

@@ -1,0 +1,14 @@
+prefix=$QTROOT$
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 Qml
+Description: Qt Qml module
+Version: $QTVERSION$
+Libs: -F${libdir} -framework QtQml 
+Libs.private: -F$QTROOT$/lib -framework QtNetwork -framework QtCore -framework DiskArbitration -framework IOKit   
+Cflags: -I${includedir}/QtQml -I${includedir}
+Requires: Qt5Core Qt5Network
+

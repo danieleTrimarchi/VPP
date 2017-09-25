@@ -1,0 +1,14 @@
+prefix=$QTROOT$
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 3DLogic
+Description: Qt 3DLogic module
+Version: $QTVERSION$
+Libs: -F${libdir} -framework Qt3DLogic 
+Libs.private: -F$QTROOT$/lib -F$QTROOT$/lib -framework Qt3DCore -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/Qt3DLogic -I${includedir}
+Requires: Qt5Core Qt5Gui Qt53DCore
+
