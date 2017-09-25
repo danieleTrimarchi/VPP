@@ -32,20 +32,24 @@ class xCode(object):
         # Write settings such as target, template, flags...
         self.__writeSettings__()
         
-        # Write the include path of all third parties present in the dict
-        self.__write__("INCLUDEPATH += ", "getIncludePath", "\"", "\"" )
+        # Write the include path of all third parties present in the dict - 
+        # Except Qt that is handled separately via the __writeQtModules__ method 
+        self.__write__(line="INCLUDEPATH += ",
+                       functionName="getIncludePath", 
+                       prefix="\"", suffix="\"", 
+                       excludePackages=["Qt"] )
 
         # Write the lib path of all third parties present in the dict
-        self.__write__("LIBPATH += ", "libPath", "\"", "\"" )
+        self.__write__("LIBPATH += ", "libPath", "\"", "\"",[] )
 
         # Write the libs of all third parties present in the dict
-        self.__write__("LIBS += ","getLibs", "-l", "")
+        self.__write__("LIBS += ","getLibs", "-l", "",[] )
 
         # Write the frameworks of all third parties present in the dict
-        self.__write__("LIBS += ","getFrameworks", "-framework ", "")
+        self.__write__("LIBS += ","getFrameworks","-framework ","",[] )
         
         # Write : QMAKE-LFLAGS+=-F/PATH/TO/FRAMEWORK/dir
-        self.__write__("QMAKE-LFLAGS+= ", "getFrameworkRoot", "-F", "")
+        self.__write__("QMAKE-LFLAGS+= ","getFrameworkRoot","-F","",[] )
         
         # Write the source and header file paths
         self.__writeFiles__(VPPsubFolders)
@@ -146,10 +150,15 @@ SYMROOT= ../xCodeBuild\n\n'''
 
     # -- 
 
-    def __write__(self, line, functionName, prefix, suffix ):
+    def __write__(self, line, functionName, prefix, suffix, excludePackages ):
         
         # Loop on the third_parties in the dictionary
-        for depName, iDep in self.__thirdPartyDict__.iteritems() :      
+        for depName, iDep in self.__thirdPartyDict__.iteritems() :   
+            
+            # Do nothing for excluded packages
+            if depName in excludePackages:
+                continue   
+            
             # Loop on the include paths of this dependency
             for iPath in getattr(iDep,functionName)() : 
             
@@ -420,7 +429,7 @@ class Qt( thirdParty ) :
         self.__version__ = "5.9.1"
 
         # Overrride rootDir that is different for Qt as it is installed via homebrew
-        self.__rootDir__ = os.path.join(self.__rootDir__,'Qt',self.__version__,'clang_64')
+        self.__rootDir__ = os.path.join(self.__rootDir__,'Qt',self.__version__)
         #self.__rootDir__ = os.path.join("/usr/local/Cellar/qt5",self.__version__)
 
         # Linkline is treated specially by the Qt5 module. Do not add the frameworks 
@@ -438,10 +447,10 @@ class Qt( thirdParty ) :
         # Direcly customize the env for the package config
         env['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(self.__VPPprogramSrcDir__,'site_scons','qtPkgConfig') ]    
         
-        env['ENV']['PATH'] += ':/opt/local/bin:'+self.__rootDir__
+        env['ENV']['PATH'] += ':/opt/local/bin:'+os.path.join(self.__rootDir__,'clang_64')
 
         # Remember rootDir is overwritten for Qt!
-        env.Append( QT5DIR = self.__rootDir__ )
+        env.Append( QT5DIR = os.path.join(self.__rootDir__, 'clang_64') )
         
         # This is for http://stackoverflow.com/questions/37897209/qt-requires-c11-support-make-error
         env.Append( CXXFLAGS =  ['-std=c++11'] )
@@ -450,11 +459,13 @@ class Qt( thirdParty ) :
 
         env.EnableQt5Modules( self.__frameworks__ )
 
-        self.__frameworksPaths__ = [ os.path.join(self.__rootDir__,'lib') ]
+        self.__frameworksPaths__ = [ os.path.join(self.__rootDir__, 'clang_64', 'lib') ]
         
-        self.__includePath__= [ os.path.join(self.__frameworksPaths__[0],'QtCore.framework/Versions/Current/Headers'),
-                                os.path.join(self.__frameworksPaths__[0],'QtWidgets.framework/Versions/Current/Headers'),
-                                os.path.join(self.__frameworksPaths__[0],'QtGui.framework/Versions/Current/Headers')
+        self.__includePath__= [
+                               # Framework-wise include for SCons
+                               os.path.join(self.__frameworksPaths__[0],'QtCore.framework/Versions/Current/Headers'),
+                               os.path.join(self.__frameworksPaths__[0],'QtWidgets.framework/Versions/Current/Headers'),
+                               os.path.join(self.__frameworksPaths__[0],'QtGui.framework/Versions/Current/Headers')
                                ]
         
         # Returns the absolute path of the Qt Framework folder
