@@ -290,75 +290,6 @@ class System( thirdParty ) :
                                   ]
         self.__addTo__(env)
 
-# --- 
-
-class Eigen( thirdParty ) :
-
-    def __init__(self, env):
-        
-        # Call mother-class constructor
-        super(Eigen,self).__init__()
-        
-        self.__name__= "Eigen"
-
-        self.__version__ = "3.2.7"
-        # Declare class members, to be filled by the children
-        self.__includePath__= [ os.path.join(self.__rootDir__, 'eigen-' + self.__version__) ]
-    
-        self.__addTo__(env)
-        
-#-- 
-
-class NLOpt( thirdParty ) :
-
-    def __init__(self, env):
-        
-        # Call mother-class constructor
-        super(NLOpt,self).__init__()
-        
-        self.__name__= "NLOpt"
-        
-        self.__version__ = "2.4.2"
-
-        # Declare class members, to be filled by the children
-        self.__includePath__= [ os.path.join( self.__rootDir__,'nlopt-' + self.__version__,'api') ]
-        self.__libpath__= [ os.path.join( self.__rootDir__,'nlopt-' + self.__version__,'libs')]
-        self.__libs__= ['nlopt']
-    
-        self.__addTo__(env)
-        
-#-- 
-
-class IPOpt( thirdParty ) :
-
-    def __init__(self, env):
-        
-        # Call mother-class constructor
-        super(IPOpt,self).__init__()
-        
-        self.__name__= "IPOpt"
-
-        self.__version__ = "3.12.6"
-
-        # Declare class members, to be filled by the children
-        self.__includePath__= [os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'Ipopt/src/Interfaces'),
-                               os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'include/coin') ]
-        self.__libpath__= [ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
-        
-        self.__frameworksPaths__= [ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
-
-        # Define the list of libs
-        self.__libs__= ['ipopt']
-        
-        # Define the list of frameworks         
-        #self.__frameworks__= [
-        #                      'libipopt.1.dylib', 
-        #                      'libcoinmumps.1.dylib', 
-        #                      'libcoinmetis.1.dylib'
-        #                    ]
-    
-        self.__addTo__(env)
-
 # -- 
 
 class Boost( thirdParty ) :
@@ -406,6 +337,75 @@ class CppUnit( thirdParty ) :
     
         self.__addTo__(env)
 
+# -- 
+
+class Eigen( thirdParty ) :
+
+    def __init__(self, env):
+        
+        # Call mother-class constructor
+        super(Eigen,self).__init__()
+        
+        self.__name__= "Eigen"
+
+        self.__version__ = "3.2.7"
+        # Declare class members, to be filled by the children
+        self.__includePath__= [ os.path.join(self.__rootDir__, 'eigen-' + self.__version__) ]
+    
+        self.__addTo__(env)
+
+# --- 
+        
+class IPOpt( thirdParty ) :
+
+    def __init__(self, env):
+        
+        # Call mother-class constructor
+        super(IPOpt,self).__init__()
+        
+        self.__name__= "IPOpt"
+
+        self.__version__ = "3.12.6"
+
+        # Declare class members, to be filled by the children
+        self.__includePath__= [os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'Ipopt/src/Interfaces'),
+                               os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'include/coin') ]
+        self.__libpath__= [ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
+        
+        self.__frameworksPaths__= [ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
+
+        # Define the list of libs
+        self.__libs__= ['ipopt']
+        
+        # Define the list of frameworks         
+        #self.__frameworks__= [
+        #                      'libipopt.1.dylib', 
+        #                      'libcoinmumps.1.dylib', 
+        #                      'libcoinmetis.1.dylib'
+        #                    ]
+    
+        self.__addTo__(env)
+        
+# -- 
+
+class NLOpt( thirdParty ) :
+
+    def __init__(self, env):
+        
+        # Call mother-class constructor
+        super(NLOpt,self).__init__()
+        
+        self.__name__= "NLOpt"
+        
+        self.__version__ = "2.4.2"
+
+        # Declare class members, to be filled by the children
+        self.__includePath__= [ os.path.join( self.__rootDir__,'nlopt-' + self.__version__,'api') ]
+        self.__libpath__= [ os.path.join( self.__rootDir__,'nlopt-' + self.__version__,'libs')]
+        self.__libs__= ['nlopt']
+    
+        self.__addTo__(env)
+    
 # -- 
 
 class Qt( thirdParty ) :
