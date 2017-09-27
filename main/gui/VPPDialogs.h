@@ -9,6 +9,11 @@
 #include <Eigen/Core>
 #include "VppAeroItem.h"
 
+QT_BEGIN_NAMESPACE
+class QTabWidget;
+QT_END_NAMESPACE
+
+/// Base class for widget dialog used to prompt values
 class DialogBase : public QDialog {
 
 		Q_OBJECT
@@ -30,6 +35,8 @@ class DialogBase : public QDialog {
 
 //---------------------------------------------------------------
 
+/// Base class used to prompt the values for the VPP state vector:
+/// V, Phi, Crew, Flat. Used mainly for plotting purposes
 class StateVectorDialog : public DialogBase {
 
 		Q_OBJECT
@@ -60,8 +67,8 @@ class StateVectorDialog : public DialogBase {
 
 };
 
-//---------------------------------------------------------------
-
+///---------------------------------------------------------------
+/// Prompt the full state vector : V, Phi, Crew, Flat
 class FullStateVectorDialog : public StateVectorDialog {
 
 		Q_OBJECT
@@ -73,8 +80,8 @@ class FullStateVectorDialog : public StateVectorDialog {
 
 };
 
-//---------------------------------------------------------------
-
+///---------------------------------------------------------------
+/// Prompt the optimization variables of the state vector : Crew, Flat
 class OptimVarsStateVectorDialog : public StateVectorDialog {
 
 		Q_OBJECT
@@ -87,7 +94,7 @@ class OptimVarsStateVectorDialog : public StateVectorDialog {
 };
 
 //---------------------------------------------------------------
-
+/// Prompts the wind indexes : TWA, TWV
 class WindIndicesDialog : public DialogBase {
 
 		Q_OBJECT
@@ -115,7 +122,7 @@ class WindIndicesDialog : public DialogBase {
 
 };
 
-//---------------------------------------------------------------
+///---------------------------------------------------------------
 /// Class that implements a dialog with a button.
 /// The button label is initially set to 'default'
 /// Pressing the button opens a file browser. Once
@@ -129,23 +136,75 @@ class VPPDefaultFileBrowser : public DialogBase {
 
 		/// Ctor
 		VPPDefaultFileBrowser(QString title,
-													QString fileExtension,
-													QWidget *parent = Q_NULLPTR);
+				QString fileExtension,
+				QWidget *parent = Q_NULLPTR);
 
 		/// Returns the name (with abs path) of the file selected
 		/// by the user
 		string getSelectedFileName() const;
 
-	private slots:
+		private slots:
 
 		/// Opens a file browser to select a file
 		void selectFile();
 
-	private:
+		private:
 
 		/// File type and name
 		QString fileExtensionFilter_, selectedFileName_;
 
 };
+
+///---------------------------------------------------------------
+/// Class implementing the VPP interface used to prompt all of the
+/// values required by the program. These values were originally
+/// stored in the *.vppin file. The class allows for ui-based filling
+/// of these values.
+class VPPSettingsDialog : public DialogBase {
+
+		Q_OBJECT
+
+	public:
+
+		/// Ctor
+		VPPSettingsDialog(QWidget *parent = Q_NULLPTR);
+
+	private:
+
+		/// Temporary place-holder that will be removed
+		boost::shared_ptr<QLineEdit> pV_Edit_;
+
+};
+
+///---------------------------------------------------------------
+/// Base Class for the tabs to be inserted into the VPPSettingsDialog
+/// Directly derived from the Qt tab dialog example
+class GeneralTab : public QWidget {
+
+		Q_OBJECT
+
+	public:
+
+		explicit GeneralTab(QWidget *parent = 0);
+
+};
+
+///---------------------------------------------------------------
+/// Class implementing the VPP Config Tab, living in the VPPSettingsDialog
+/// The VPP Config tab contains the bounds for the state vector variables
+class TabDialog : public QDialog {
+
+		Q_OBJECT
+
+	public:
+
+		explicit TabDialog(const QString &fileName, QWidget *parent = 0);
+
+	private:
+
+		QTabWidget* pTabWidget_;
+		QDialogButtonBox* pButtonBox_;
+};
+
 
 #endif
