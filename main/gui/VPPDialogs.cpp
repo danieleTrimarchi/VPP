@@ -293,7 +293,7 @@ TabDialog::TabDialog(const QString &fileName, QWidget *parent)
 
 	pTabWidget_ = new QTabWidget;
 	pTabWidget_->addTab(new GeneralTab(), tr("General"));
-	pTabWidget_->addTab(new GeneralTab(), tr("General1"));
+	pTabWidget_->addTab(new FullStateVectorDialog(), tr("General1"));
 	pTabWidget_->addTab(new GeneralTab(), tr("General2"));
 
 	pButtonBox_ = new QDialogButtonBox(	QDialogButtonBox::Ok |
