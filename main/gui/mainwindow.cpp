@@ -435,7 +435,7 @@ void MainWindow::import() {
 	try {
 
 		// For which TWV, TWA shall we plot the aero forces/moments?
-		TabDialog sd("tabtest",this);
+		VPPSettingsDialog sd("tabtest",this);
 		if (sd.exec() == QDialog::Rejected)
 			return;
 

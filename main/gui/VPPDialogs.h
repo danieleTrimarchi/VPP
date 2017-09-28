@@ -156,27 +156,6 @@ class VPPDefaultFileBrowser : public DialogBase {
 };
 
 ///---------------------------------------------------------------
-/// Class implementing the VPP interface used to prompt all of the
-/// values required by the program. These values were originally
-/// stored in the *.vppin file. The class allows for ui-based filling
-/// of these values.
-class VPPSettingsDialog : public DialogBase {
-
-		Q_OBJECT
-
-	public:
-
-		/// Ctor
-		VPPSettingsDialog(QWidget *parent = Q_NULLPTR);
-
-	private:
-
-		/// Temporary place-holder that will be removed
-		boost::shared_ptr<QLineEdit> pV_Edit_;
-
-};
-
-///---------------------------------------------------------------
 /// Base Class for the tabs to be inserted into the VPPSettingsDialog
 /// Directly derived from the Qt tab dialog example
 class GeneralTab : public QWidget {
@@ -190,15 +169,29 @@ class GeneralTab : public QWidget {
 };
 
 ///---------------------------------------------------------------
-/// Class implementing the VPP Config Tab, living in the VPPSettingsDialog
-/// The VPP Config tab contains the bounds for the state vector variables
-class TabDialog : public QDialog {
+/// This widget includes several setting trees, from which the
+/// individual settings can be expanded and visualized. To be
+/// inserted in the VPPSettingsDialog
+class TreeTab : public QWidget {
 
 		Q_OBJECT
 
 	public:
 
-		explicit TabDialog(const QString &fileName, QWidget *parent = 0);
+		explicit TreeTab(QWidget *parent = 0);
+
+};
+
+///---------------------------------------------------------------
+/// Class implementing the VPP Config Tab, living in the VPPSettingsDialog
+/// The VPP Config tab contains the bounds for the state vector variables
+class VPPSettingsDialog : public QDialog {
+
+		Q_OBJECT
+
+	public:
+
+		explicit VPPSettingsDialog(const QString &fileName, QWidget *parent = 0);
 
 	private:
 

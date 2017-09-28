@@ -239,34 +239,6 @@ void VPPDefaultFileBrowser::selectFile() {
 
 //---------------------------------------------------------------
 
-// Ctor
-VPPSettingsDialog::VPPSettingsDialog(QWidget *parent)
-: DialogBase(parent),
-	pV_Edit_(new QLineEdit(this)) {
-
-	setWindowTitle(tr("VPP Settings"));
-	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-
-	// Set local settings for the validators
-	QLocale localSettings = QLocale::c();
-	localSettings.setNumberOptions(QLocale::RejectGroupSeparator | QLocale::OmitGroupSeparator);
-
-	// Set all the line edit with double validators
-	QDoubleValidator* velocityValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pV_Edit_.get() );
-	velocityValueValidator->setLocale(localSettings);
-	pV_Edit_->setValidator(velocityValueValidator);
-
-	size_t vPos=0;
-	pGridLayout_->addWidget(new QLabel(tr("V [m/s]:")), vPos, 0);
-	pGridLayout_->addWidget(pV_Edit_.get(), vPos++, 1);
-
-	// And now add the 'Ok' or 'Cancel' buttons
-	addOkCancelButtons(vPos);
-
-}
-
-// ----
-
 GeneralTab::GeneralTab(QWidget *parent) :
 						QWidget(parent) {
 
@@ -288,7 +260,35 @@ GeneralTab::GeneralTab(QWidget *parent) :
 
 // ----------------------------------------------------------------
 
-TabDialog::TabDialog(const QString &fileName, QWidget *parent)
+//---------------------------------------------------------------
+// This widget includes several setting trees, from which the
+// individual settings can be expanded and visualized. To be
+// inserted in the VPPSettingsDialog
+TreeTab::TreeTab(QWidget* parent):
+		QWidget(parent) {
+
+	HullSettingsModel hullSettings;
+
+	// Instantiate a model view, assign a model and show it
+	QTreeView* pView = new QTreeView;
+	pView->setModel(&hullSettings);
+	pView->setWindowTitle(QObject::tr("Simple Tree Model"));
+	pView->show();
+
+	// Instantiate a layout to add the model-views
+	// to the widget
+	QVBoxLayout* mainLayout = new QVBoxLayout(this);
+	mainLayout->addWidget(pView);
+
+	setLayout(mainLayout);
+
+}
+
+// ----------------------------------------------------------------
+
+
+
+VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
 : QDialog(parent) {
 
 	pTabWidget_ = new QTabWidget;
