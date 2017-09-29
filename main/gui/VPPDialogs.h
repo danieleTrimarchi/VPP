@@ -8,9 +8,11 @@
 #include "boost/shared_ptr.hpp"
 #include <Eigen/Core>
 #include "VppAeroItem.h"
+#include "SettingsModel.h"
 
 QT_BEGIN_NAMESPACE
 class QTabWidget;
+class QTreeView;
 QT_END_NAMESPACE
 
 /// Base class for widget dialog used to prompt values
@@ -180,6 +182,11 @@ class TreeTab : public QWidget {
 
 		explicit TreeTab(QWidget *parent = 0);
 
+	private :
+
+		boost::shared_ptr<SettingsModel> pTreeModel_;
+		boost::shared_ptr<QTreeView> pTreeView_;
+		boost::shared_ptr<QVBoxLayout> pBoxLayout_;
 };
 
 ///---------------------------------------------------------------

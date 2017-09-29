@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include "VPPDialogs.h"
 #include <QtWidgets>
+#include <SettingsModel.h>
 
 DialogBase::DialogBase(QWidget *parent) :
 QDialog(parent) {
@@ -267,20 +268,23 @@ GeneralTab::GeneralTab(QWidget *parent) :
 TreeTab::TreeTab(QWidget* parent):
 		QWidget(parent) {
 
-	HullSettingsModel hullSettings;
+	//SettingsModel hullSettings(this);
+	pTreeModel_.reset( new SettingsModel(this) );
+	pTreeView_.reset( new QTreeView(this) );
 
 	// Instantiate a model view, assign a model and show it
-	QTreeView* pView = new QTreeView;
-	pView->setModel(&hullSettings);
-	pView->setWindowTitle(QObject::tr("Simple Tree Model"));
-	pView->show();
+	pTreeView_->setModel(pTreeModel_.get());
+	pTreeView_->setWindowTitle(QObject::tr("Diaog Tree Model"));
 
 	// Instantiate a layout to add the model-views
 	// to the widget
-	QVBoxLayout* mainLayout = new QVBoxLayout(this);
-	mainLayout->addWidget(pView);
+	pBoxLayout_.reset( new QVBoxLayout(this) );
+	pBoxLayout_->addWidget(pTreeView_.get());
 
-	setLayout(mainLayout);
+	pTreeView_->expandAll();
+	pTreeView_->show();
+
+	setLayout(pBoxLayout_.get());
 
 }
 
@@ -291,10 +295,9 @@ TreeTab::TreeTab(QWidget* parent):
 VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
 : QDialog(parent) {
 
-	pTabWidget_ = new QTabWidget;
-	pTabWidget_->addTab(new GeneralTab(), tr("General"));
-	pTabWidget_->addTab(new FullStateVectorDialog(), tr("General1"));
-	pTabWidget_->addTab(new GeneralTab(), tr("General2"));
+	pTabWidget_ = new QTabWidget(this);
+	pTabWidget_->addTab(new GeneralTab(this), tr("General"));
+	pTabWidget_->addTab(new TreeTab(this), tr("TreeTab"));
 
 	pButtonBox_ = new QDialogButtonBox(	QDialogButtonBox::Ok |
 			QDialogButtonBox::Cancel);
