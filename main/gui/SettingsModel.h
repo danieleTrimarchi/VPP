@@ -25,6 +25,9 @@ class SettingItem {
     /// How many children do I have?
     int childCount() const;
 
+    /// What child number am I?
+    int childNumber() const;
+
 		/// Number of cols required for this item.
 		int columnCount() const;
 
@@ -42,6 +45,9 @@ class SettingItem {
     /// Returns the associated icon - in this case an empty QVariant
 		QVariant getIcon();
 
+		/// Set the data for this item
+    bool setData(int column, const QVariant &value);
+
 	private:
 
 		/// Parent of this item
@@ -52,7 +58,7 @@ class SettingItem {
 
 		/// Data stored in this item and that will be
 		/// shown in the tree
-    QList<QVariant> data_;
+    QVector<QVariant> data_;
 
 };
 
@@ -79,15 +85,15 @@ class SettingsModel : public QAbstractItemModel {
 
 		/// Called by Qt, returns the header
 		virtual QVariant headerData(
-				int section, Qt::Orientation orientation,
-				int role = Qt::DisplayRole
-				) const Q_DECL_OVERRIDE;
+																	int section, Qt::Orientation orientation,
+																	int role = Qt::DisplayRole
+																) const Q_DECL_OVERRIDE;
 
 		/// Returns an index given row and column
 		virtual QModelIndex index(
-				int row, int column,
-				const QModelIndex &parent = QModelIndex()
-				) const Q_DECL_OVERRIDE;
+																int row, int column,
+																const QModelIndex &parent = QModelIndex()
+																) const Q_DECL_OVERRIDE;
 
 		/// Get my parent
 		QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
@@ -101,7 +107,17 @@ class SettingsModel : public QAbstractItemModel {
 		/// Append a variable item to the tree
 		void append( QList<QVariant>& columnData );
 
+		/// Set some data for a given item - i.e: edit some value
+		bool setData(const QModelIndex &index, const QVariant &value, int role);
+
+
 	private:
+
+		/// Setup the data of this model
+    void setupModelData(SettingItem *parent);
+
+		/// Get an item of this model
+		SettingItem *getItem(const QModelIndex &index) const;
 
 		/// Root of the model tree
 		SettingItem* rootItem_;

@@ -2,7 +2,7 @@
 
 // Ctor
 SettingItem::SettingItem(SettingItem* parentItem):
-	pParent_(parentItem){
+pParent_(parentItem){
 
 	// Set some data by default - just string for the moment
 	data_ << "VariableName" << 0.1243;
@@ -11,7 +11,7 @@ SettingItem::SettingItem(SettingItem* parentItem):
 
 // Dtor
 SettingItem::~SettingItem() {
-  qDeleteAll(children_);
+	qDeleteAll(children_);
 }
 
 // Append a child under me
@@ -21,12 +21,20 @@ void SettingItem::appendChild(SettingItem* child) {
 
 // Get the i-th child
 SettingItem* SettingItem::child(int row) {
-  return children_.value(row);
+	return children_.value(row);
 }
 
 // How many children do I have?
 int SettingItem::childCount() const {
-  return children_.count();
+	return children_.count();
+}
+
+// What child number am I?
+int SettingItem::childNumber() const {
+  if (pParent_)
+      return pParent_->children_.indexOf(const_cast<SettingItem*>(this));
+
+  return 0;
 }
 
 // Number of rows required to the cols of this item.
@@ -50,10 +58,10 @@ SettingItem* SettingItem::parentItem() {
 
 int SettingItem::row() const {
 
-    if (pParent_)
-        return pParent_->children_.indexOf(const_cast<SettingItem*>(this));
+	if (pParent_)
+		return pParent_->children_.indexOf(const_cast<SettingItem*>(this));
 
-    return 0;
+	return 0;
 }
 
 // Returns the associated icon - in this case an empty QVariant
@@ -61,21 +69,38 @@ QVariant SettingItem::getIcon() {
 	return QVariant();
 }
 
+bool SettingItem::setData(int column, const QVariant &value)
+{
+    if (column < 0 || column >= data_.size())
+        return false;
+
+    data_[column] = value;
+    return true;
+}
 
 //-----------------------------------------------
 
 
 SettingsModel::SettingsModel(QObject* parent):
-	QAbstractItemModel(parent) {
+			QAbstractItemModel(parent) {
 
 	// Instantiate the root, which is invisible
 	rootItem_ = new SettingItem;
 
+	// Propperly fill the model
+  setupModelData(rootItem_);
+
+}
+
+
+/// Setup the data of this model
+void SettingsModel::setupModelData(SettingItem *parent) {
+
 	// Instantiate the sections. These items are addedd under
 	// the root. They are label and they have editable children
 	// composed by label and an editable value with validator
-//	QList<QVariant> sections;
-//	sections << "Hull Data";
+	//	QList<QVariant> sections;
+	//	sections << "Hull Data";
 	SettingItem* pHullSettings = new SettingItem(rootItem_);
 	SettingItem* pSailSettings = new SettingItem(rootItem_);
 
@@ -209,4 +234,29 @@ void SettingsModel::append( QList<QVariant>& columnData ) {
 
 	endInsertRows();
 
+}
+
+SettingItem* SettingsModel::getItem(const QModelIndex &index) const {
+
+	if (index.isValid()) {
+		SettingItem* item = static_cast<SettingItem*>(index.internalPointer());
+		if (item)
+			return item;
+	}
+	return rootItem_;
+}
+
+
+bool SettingsModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+
+	if (role != Qt::EditRole)
+		return false;
+
+	SettingItem* item = getItem(index);
+	bool result = item->setData(index.column(), value);
+
+	if (result)
+		emit dataChanged(index, index);
+
+	return result;
 }

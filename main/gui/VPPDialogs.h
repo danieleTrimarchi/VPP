@@ -186,7 +186,6 @@ class TreeTab : public QWidget {
 
 		boost::shared_ptr<SettingsModel> pTreeModel_;
 		boost::shared_ptr<QTreeView> pTreeView_;
-		boost::shared_ptr<QVBoxLayout> pBoxLayout_;
 };
 
 ///---------------------------------------------------------------

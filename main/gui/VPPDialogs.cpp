@@ -278,13 +278,10 @@ TreeTab::TreeTab(QWidget* parent):
 
 	// Instantiate a layout to add the model-views
 	// to the widget
-	pBoxLayout_.reset( new QVBoxLayout(this) );
-	pBoxLayout_->addWidget(pTreeView_.get());
 
 	pTreeView_->expandAll();
 	pTreeView_->show();
 
-	setLayout(pBoxLayout_.get());
 
 }
 
