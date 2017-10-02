@@ -1,11 +1,12 @@
 #include "SettingsModel.h"
+#include "VPPException.h"
 
 // Ctor
 SettingItem::SettingItem(SettingItem* parentItem):
-pParent_(parentItem){
+pParent_(parentItem),
+editable_(Qt::ItemIsEditable){
 
-	// Set some data by default - just string for the moment
-	data_ << "VariableName" << 0.1243;
+	data_ << "VariableName" << "";
 
 }
 
@@ -69,8 +70,8 @@ QVariant SettingItem::getIcon() {
 	return QVariant();
 }
 
-bool SettingItem::setData(int column, const QVariant &value)
-{
+bool SettingItem::setData(int column, const QVariant &value) {
+
     if (column < 0 || column >= data_.size())
         return false;
 
@@ -78,14 +79,32 @@ bool SettingItem::setData(int column, const QVariant &value)
     return true;
 }
 
-//-----------------------------------------------
+// Set if this item is editable
+void SettingItem::setEditable(bool editable) {
+	if(editable)
+		editable_ = Qt::ItemIsEditable;
+	else
+		editable_ = Qt::NoItemFlags;
+
+}
+
+// Is this item editable?
+Qt::ItemFlag SettingItem::editable() const {
+	return editable_;
+}
+
+
+//------------------------------------------------------------------
 
 
 SettingsModel::SettingsModel(QObject* parent):
 			QAbstractItemModel(parent) {
 
 	// Instantiate the root, which is invisible
-	rootItem_ = new SettingItem;
+	rootItem_ = new SettingItem(rootItem_);
+	rootItem_->setData(0,"Variable Name");
+	rootItem_->setData(1,"Value");
+	rootItem_->setEditable(false);
 
 	// Propperly fill the model
   setupModelData(rootItem_);
@@ -99,13 +118,24 @@ void SettingsModel::setupModelData(SettingItem *parent) {
 	// Instantiate the sections. These items are addedd under
 	// the root. They are label and they have editable children
 	// composed by label and an editable value with validator
-	//	QList<QVariant> sections;
-	//	sections << "Hull Data";
 	SettingItem* pHullSettings = new SettingItem(rootItem_);
-	SettingItem* pSailSettings = new SettingItem(rootItem_);
-
+	pHullSettings->setData(0,"Hull Settings");
+	pHullSettings->setEditable(false);
 	rootItem_->appendChild(pHullSettings);
+
+	pHullSettings->appendChild(new SettingItem(pHullSettings));
+	pHullSettings->child(0)->setData(0,"Lenght");
+	pHullSettings->child(0)->setData(1,"12.3");
+
+	// Second Root...
+	SettingItem* pSailSettings = new SettingItem(rootItem_);
+	pSailSettings->setData(0,"Sail Settings");
+	pSailSettings->setEditable(false);
 	rootItem_->appendChild(pSailSettings);
+
+	pSailSettings->appendChild(new SettingItem(pSailSettings));
+	pSailSettings->child(0)->setData(0,"SailArea");
+	pSailSettings->child(0)->setData(1,"3.2");
 
 }
 
@@ -145,7 +175,7 @@ Qt::ItemFlags SettingsModel::flags(const QModelIndex &index) const
 	if(index.column()==0)
 		return QAbstractItemModel::flags(index);
 
-	return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+	return getItem(index)->editable() | QAbstractItemModel::flags(index);
 }
 
 QVariant SettingsModel::headerData(int section, Qt::Orientation orientation,
@@ -216,6 +246,8 @@ int SettingsModel::columnCount(const QModelIndex &parent) const {
 
 // Append a variable item to the tree
 void SettingsModel::append( QList<QVariant>& columnData ) {
+
+	throw VPPException(HERE,"In append");
 
 	// Get the index of the fake root item
 	QModelIndex fakeRootItemIndex= index(1,0);

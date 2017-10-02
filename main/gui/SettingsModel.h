@@ -48,6 +48,12 @@ class SettingItem {
 		/// Set the data for this item
     bool setData(int column, const QVariant &value);
 
+    /// Set if this item is editable
+    void setEditable(bool);
+
+    /// Is this item editable?
+    Qt::ItemFlag editable() const;
+
 	private:
 
 		/// Parent of this item
@@ -59,6 +65,9 @@ class SettingItem {
 		/// Data stored in this item and that will be
 		/// shown in the tree
     QVector<QVariant> data_;
+
+    /// Is this item editable?
+    Qt::ItemFlag editable_;
 
 };
 
@@ -109,7 +118,6 @@ class SettingsModel : public QAbstractItemModel {
 
 		/// Set some data for a given item - i.e: edit some value
 		bool setData(const QModelIndex &index, const QVariant &value, int role);
-
 
 	private:
 
