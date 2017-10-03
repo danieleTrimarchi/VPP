@@ -147,22 +147,20 @@ SettingsModel::~SettingsModel(){
 
 QVariant SettingsModel::data(const QModelIndex &index, int role) const {
 
-	if (!index.isValid()){
+	// Index not valid, just return
+	if (!index.isValid())
 		return QVariant();
-	}
 
-	if (role == Qt::DisplayRole) {
-		SettingItem *item = static_cast<SettingItem*>(index.internalPointer());
-		return item->data(index.column());
-	}
-	else if (role == Qt::DecorationRole ) {
-		SettingItem *item = static_cast<SettingItem*>(index.internalPointer());
-		if(index.column()==0)
-			return item->getIcon();
-		else
-			return QVariant();
-	}
+	// Display or edit...
+	if (role == Qt::DisplayRole || role == Qt::EditRole)
+	  return getItem(index)->data(index.column());
 
+	// Decorate with an icon...
+	else if (role == Qt::DecorationRole )
+		return getItem(index)->getIcon();
+
+
+	// Default, that should never happen
 	return QVariant();
 
 }
@@ -176,6 +174,7 @@ Qt::ItemFlags SettingsModel::flags(const QModelIndex &index) const
 		return QAbstractItemModel::flags(index);
 
 	return getItem(index)->editable() | QAbstractItemModel::flags(index);
+
 }
 
 QVariant SettingsModel::headerData(int section, Qt::Orientation orientation,

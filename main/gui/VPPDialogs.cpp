@@ -276,15 +276,27 @@ TreeTab::TreeTab(QWidget* parent):
 	pTreeView_->setModel(pTreeModel_.get());
 	pTreeView_->setWindowTitle(QObject::tr("Diaog Tree Model"));
 
-	// Instantiate a layout to add the model-views
-	// to the widget
-
+  for (int column = 0; column < pTreeModel_->columnCount(); ++column)
+  	pTreeView_->resizeColumnToContents(column);
 	pTreeView_->expandAll();
 	pTreeView_->show();
 
+ // connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+  connect(pTreeView_->selectionModel(), &QItemSelectionModel::selectionChanged,
+          this, &TreeTab::updateActions);
+
+	updateActions();
 
 }
 
+void TreeTab::updateActions() {
+
+    bool hasCurrent = pTreeView_->selectionModel()->currentIndex().isValid();
+
+    if (hasCurrent)
+    	pTreeView_->closePersistentEditor(pTreeView_->selectionModel()->currentIndex());
+
+}
 // ----------------------------------------------------------------
 
 

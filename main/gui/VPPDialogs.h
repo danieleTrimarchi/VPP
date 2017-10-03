@@ -182,6 +182,10 @@ class TreeTab : public QWidget {
 
 		explicit TreeTab(QWidget *parent = 0);
 
+	public slots:
+
+			void updateActions();
+
 	private :
 
 		boost::shared_ptr<SettingsModel> pTreeModel_;
