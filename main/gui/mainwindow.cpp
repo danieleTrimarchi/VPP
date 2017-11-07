@@ -37,6 +37,7 @@
 #include "Version.h"
 #include "VppPolarCustomPlotWidget.h"
 #include "VPPSailCoefficientIO.h"
+#include "VPPSettingsDialog.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitly deleted in the destructor

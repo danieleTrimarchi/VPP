@@ -1,11 +1,10 @@
 #include <QLabel>
 #include <QIntValidator>
-#include <QDoubleValidator>
 #include <QPushButton>
 #include <QFileDialog>
 #include "VPPDialogs.h"
 #include <QtWidgets>
-#include <SettingsModel.h>
+#include <settingsWindow/SettingsModel.h>
 
 DialogBase::DialogBase(QWidget *parent) :
 QDialog(parent) {
@@ -238,86 +237,4 @@ void VPPDefaultFileBrowser::selectFile() {
 		pButton->setText("default...");
 }
 
-//---------------------------------------------------------------
 
-GeneralTab::GeneralTab(QWidget *parent) :
-						QWidget(parent) {
-
-	QLabel *fileNameLabel = new QLabel(tr("File Name:"));
-	QLineEdit *fileNameEdit = new QLineEdit("FileName");
-
-	QLabel *pathLabel = new QLabel(tr("Path:"));
-	QLabel *pathValueLabel = new QLabel("FileName");
-	pathValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-
-	QVBoxLayout* mainLayout = new QVBoxLayout;
-	mainLayout->addWidget(fileNameLabel);
-	mainLayout->addWidget(fileNameEdit);
-	mainLayout->addWidget(pathLabel);
-	mainLayout->addWidget(pathValueLabel);
-	mainLayout->addStretch(1);
-	setLayout(mainLayout);
-}
-
-// ----------------------------------------------------------------
-
-//---------------------------------------------------------------
-// This widget includes several setting trees, from which the
-// individual settings can be expanded and visualized. To be
-// inserted in the VPPSettingsDialog
-TreeTab::TreeTab(QWidget* parent):
-		QWidget(parent) {
-
-	//SettingsModel hullSettings(this);
-	pTreeModel_.reset( new SettingsModel(this) );
-	pTreeView_.reset( new QTreeView(this) );
-
-	// Instantiate a model view, assign a model and show it
-	pTreeView_->setModel(pTreeModel_.get());
-	pTreeView_->setWindowTitle(QObject::tr("Diaog Tree Model"));
-
-  for (int column = 0; column < pTreeModel_->columnCount(); ++column)
-  	pTreeView_->resizeColumnToContents(column);
-	pTreeView_->expandAll();
-	pTreeView_->show();
-
- // connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
-  connect(pTreeView_->selectionModel(), &QItemSelectionModel::selectionChanged,
-          this, &TreeTab::updateActions);
-
-	updateActions();
-
-}
-
-void TreeTab::updateActions() {
-
-    bool hasCurrent = pTreeView_->selectionModel()->currentIndex().isValid();
-
-    if (hasCurrent)
-    	pTreeView_->closePersistentEditor(pTreeView_->selectionModel()->currentIndex());
-
-}
-// ----------------------------------------------------------------
-
-
-
-VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
-: QDialog(parent) {
-
-	pTabWidget_ = new QTabWidget(this);
-	pTabWidget_->addTab(new GeneralTab(this), tr("General"));
-	pTabWidget_->addTab(new TreeTab(this), tr("TreeTab"));
-
-	pButtonBox_ = new QDialogButtonBox(	QDialogButtonBox::Ok |
-			QDialogButtonBox::Cancel);
-
-	connect(pButtonBox_, &QDialogButtonBox::accepted, this, &QDialog::accept);
-	connect(pButtonBox_, &QDialogButtonBox::rejected, this, &QDialog::reject);
-
-	QVBoxLayout *mainLayout = new QVBoxLayout;
-	mainLayout->addWidget(pTabWidget_);
-	mainLayout->addWidget(pButtonBox_);
-	setLayout(mainLayout);
-
-	setWindowTitle(tr("Tab Dialog"));
-}

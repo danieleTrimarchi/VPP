@@ -33,6 +33,7 @@ localEnv.Append( THIRDPARTYDICT=thirdPartyDict )
 
 subFolders= ['qcustomplot',
 			 'gui',
+			 'gui/settingsWindow',
 			 'exceptions', 
 			 'core', 
 			 'io',
