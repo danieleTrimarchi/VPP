@@ -132,7 +132,7 @@ private:
 
 	// Remove a widget from the buffer vector. This should be called from the
 	// as a slot from the delete of the QDockWidget right before the destruction
-	void removeWidgetFromVector(VppTabDockWidget* pWidget);
+	void removeTabWidgetFromVector(VppTabDockWidget* pWidget);
 
 	/// Make sure a boat description has been imported. Otherwise
 	/// warns the user with an error-like widget

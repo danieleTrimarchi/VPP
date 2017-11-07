@@ -421,7 +421,7 @@ void MainWindow::updateTabbedWidgetsVector(const VppTabDockWidget* deleteWidget)
 
 
 // Make sure the vector is in sync
-void MainWindow::removeWidgetFromVector(VppTabDockWidget* pWidget) {
+void MainWindow::removeTabWidgetFromVector(VppTabDockWidget* pWidget) {
 
 	for(std::vector<VppTabDockWidget*>::iterator it=tabbedWidgets_.begin(); it!=tabbedWidgets_.end(); it++){
 
@@ -435,47 +435,9 @@ void MainWindow::import() {
 
 	try {
 
-		// For which TWV, TWA shall we plot the aero forces/moments?
-		VPPSettingsDialog sd("tabtest",this);
-		if (sd.exec() == QDialog::Rejected)
-			return;
-
-		return;
-		//----- OLD CODE --------
-
-		QString caption;
-		QString dir;
-
-		// Launch a file selector
-		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
-				tr("VPP Input File(*.vppIn);; All Files (*.*)"));
-
-		if (!fileName.isEmpty()) {
-
-			std::cout<<string("Opening the vpp input file... ") << fileName.toStdString() <<std::endl;
-
-			// Instantiate a variableFileParser (and clear any previous one)
-			pVariableFileParser_.reset( new VariableFileParser );
-
-			// Parse the variables file
-			pVariableFileParser_->parse(fileName.toStdString());
-
-			// Instantiate the sailset
-			pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
-
-			// Instantiate the items
-			pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
-
-			// Populate the variable item tree accordingly
-			pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
-
-			// SailSet also contains several variables. Append them to the bottom
-			pSails_->populate( pVariablesWidget_->getTreeModel() );
-
-			// Expand the items in the variable tree view, in order to see all the variables
-			pVariablesWidget_->getView()->expandAll();
-
-		}
+		// Open up a VPP settings dialog
+		VPPSettingsDialog sd("VPP Settings",this);
+		sd.exec();
 
 	}	catch(...) {}
 }
