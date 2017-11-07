@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>7</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>154</x>
+      <y>0</y>
+      <w>266</w>
+      <h>266</h>
+    </coordinates>
+    <panel_attributes>PropertyWindow
+--
+columns_ : vector&lt;PropertyColumnBase*&gt;
+rootModel_ : PropertyElement*
+model_ : QtPropertyItemModel*
+propTree_ : PropertyTreeView*
+buttonBox_ : QDialogButtonBox*; 
+centralLayout_ : QVBoxLayout*
+centralWidget_ : QWidget* 
+--
+initialize() : 
+  - get the columns and store them ito the columns_ vector
+  - instantiate model_
+  - instantiate propTree_
+  - instantiate buttonBox_
+  - instantiate QVBoxLayout
+  - add to the vboxLayout : 
+  			tree
+  			error bar
+  			buttonBox
+  -instantiate centralwidget  			   
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>469</x>
+      <y>28</y>
+      <w>294</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>QtPropertyItemModel
+--
+columns_ : vector&lt;PropertyColumnBase*&gt;
+rootElement_ : propertyElement*
+hiddenRootElement_ : propertyElement*
+--
+Constructor
+setRootElement(pElement) 
+index(...)
+
+--
+data(index,role){
+     element= getelement(index)
+     if(role=..)
+	         return ...
+
+     GetDataModelVisitor dv(columns_[index.column(),role])
+     element-&gt;accept(dv)
+     return dv.getValue()
+}
+
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>791</x>
+      <y>175</y>
+      <w>301</w>
+      <h>175</h>
+    </coordinates>
+    <panel_attributes>GetDataModelVisitor
+--
+value_ : QVariant
+column: PropertyColumnBase* 
+role_ : int  
+--
+GetDataModelVisitor(PropertyColumnBase* column, int role)
+
+visit&lt;TYPE&gt;(&lt;TYPE&gt;&amp; d){
+	value_ = column_ -&gt; getData(d, role_)
+}
+--
+	</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>756</x>
+      <y>175</y>
+      <w>49</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>50.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1085</x>
+      <y>259</y>
+      <w>42</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>40.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1113</x>
+      <y>259</y>
+      <w>168</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>ValueColumn
+--
+GetData(&lt;TYPE&gt; d, const int role){
+  QVariant value = QVariant(); 
+  if( role==... ) {
+  		value= ...
+  }
+  if role==fontRole
+     return QColor(Qt::red)
+
+return  value</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1253</x>
+      <y>161</y>
+      <w>112</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>PropertyColumnBase</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1183</x>
+      <y>224</y>
+      <w>21</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>413</x>
+      <y>28</y>
+      <w>70</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;80.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1162</x>
+      <y>210</y>
+      <w>98</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>ExpressionColumn</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1183</x>
+      <y>175</y>
+      <w>140</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>180.0;10.0;180.0;30.0;10.0;30.0;10.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1267</x>
+      <y>210</y>
+      <w>77</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>NameColumn</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1351</x>
+      <y>210</y>
+      <w>77</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>SIValueColumn</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1302</x>
+      <y>175</y>
+      <w>21</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1302</x>
+      <y>175</y>
+      <w>98</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0;120.0;30.0;120.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1302</x>
+      <y>175</y>
+      <w>182</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0;240.0;30.0;240.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>462</x>
+      <y>364</y>
+      <w>644</w>
+      <h>385</h>
+    </coordinates>
+    <panel_attributes>PropertyTreeView
+--
+PropertyTreeView::PropertyTreeView(QtPropertyItemModel* newModel, QWidget *parent){
+  setWindowModality( Qt::ApplicationModal );
+  ...
+  // Set the background color
+  setStyleSheet(QString("QTreeView {background-color: qlineargradient(x1: 0, y1: 0, x2: 0.75, y2: 0.75, stop: 0 rgb(238,238,238), stop: 1 white)}"));
+
+  setModel(model_);
+
+  // Set default columns widths
+  for (int i = 0; i&lt;model_-&gt;columnCount(QModelIndex()); i++) {
+    setColumnWidth (i, 110);
+  }
+
+  ... 
+
+  // Set the appropriate delegate to the view
+  TreeDelegate_ = new QtPropertyItemDelegate(model_-&gt;getColumns());
+  setItemDelegate(TreeDelegate_);
+
+  connect(TreeDelegate_, SIGNAL(editorTextEdited()),
+           this, SLOT(refreshStatusBar()));
+  ...
+  
+  // Open every editors that needs to be persistent
+  if (model_ &amp;&amp; model_-&gt;getRootElement()) {
+    OpenEditorModelVisitor oemv(model_, this);
+    model_-&gt;getRootElement()-&gt;accept(oemv);
+  }
+
+}
+ </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>413</x>
+      <y>49</y>
+      <w>63</w>
+      <h>336</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;50.0;10.0;50.0;460.0;70.0;460.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>343</x>
+      <y>560</y>
+      <w>133</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;170.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>553</y>
+      <w>350</w>
+      <h>245</h>
+    </coordinates>
+    <panel_attributes>QtPropertyItemDelegate
+--
+paint(QPainter *painter, const QStyleOptionViewItem &amp;option,
+    const QModelIndex &amp;index)  &lt;- set style of text in edit boxes
+
+createEditor(QWidget *parent, const QStyleOptionViewItem &amp;option,
+    const QModelIndex &amp;index){
+
+    }
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>126</x>
+      <y>511</y>
+      <w>161</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>QStyledItemDelegate
+fg=#3c7a00</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>196</x>
+      <y>525</y>
+      <w>21</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>126</x>
+      <y>469</y>
+      <w>161</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>QAbstractItemDelegate
+fg=#3c7a00</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>196</x>
+      <y>483</y>
+      <w>21</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>196</x>
+      <y>441</y>
+      <w>21</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>126</x>
+      <y>427</y>
+      <w>161</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>QObject
+fg=#3c7a00</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>756</x>
+      <y>49</y>
+      <w>511</w>
+      <h>133</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;630.0;10.0;630.0;170.0;710.0;170.0</additional_attributes>
+  </element>
+</diagram>

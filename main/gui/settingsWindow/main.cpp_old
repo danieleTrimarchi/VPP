@@ -1,0 +1,18 @@
+/* Test program created to design a dynamic settings
+   window, where the data are to be edited via trees
+   of qlineedits (or something similar).
+   The code is direcly inspired --not copied!!- from
+   the MEMS+ property window code.
+*/
+#include <QtWidgets/QApplication>
+#include "VPPSettingsDialog.h"
+
+int main(int argc, char **argv) {
+
+    QApplication app(argc, argv);
+
+    VPPSettingsDialog sd("tabTest");
+	sd.show();
+
+    return app.exec();
+}

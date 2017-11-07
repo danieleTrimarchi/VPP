@@ -1,0 +1,5 @@
+Import('qtEnv')
+
+env = qtEnv.clone()
+
+env.Program('qtTest', Glob('*.cpp'))
