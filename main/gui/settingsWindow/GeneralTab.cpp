@@ -1,7 +1,7 @@
 #include "GeneralTab.h"
-#include <QLabel>
-#include <QLineEdit>
-#include <QVBoxLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QVBoxLayout>
 
 GeneralTab::GeneralTab(QWidget *parent) :
 						QWidget(parent) {
@@ -14,14 +14,14 @@ GeneralTab::GeneralTab(QWidget *parent) :
 				  "QLineEdit { background-color: white; "
 							" selection-color: orange; }");
 
-	QLabel *fileNameLabel = new QLabel(tr("File Name:"));
-	QLineEdit *fileNameEdit = new QLineEdit("FileName");
+	QLabel* fileNameLabel = new QLabel(tr("File Name:"));
+	QLineEdit* fileNameEdit = new QLineEdit("FileName");
 
 	QLabel *otherLabel = new QLabel(tr("Other data:"));
-	QLineEdit *otherNameEdit = new QLineEdit("OtherName");
+	QLineEdit* otherNameEdit = new QLineEdit("OtherName");
 
-	QLabel *pathLabel = new QLabel(tr("Path:"));
-	QLabel *pathValueLabel = new QLabel("FileName");
+	QLabel* pathLabel = new QLabel(tr("Path:"));
+	QLabel* pathValueLabel = new QLabel("FileName");
 	pathValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 
 	QVBoxLayout* mainLayout = new QVBoxLayout;

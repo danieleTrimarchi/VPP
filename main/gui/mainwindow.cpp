@@ -3,31 +3,31 @@
 #include <stdio.h>
 #include <iostream>
 
-#include <QDockWidget>
+#include <QtWidgets/QDockWidget>
 
-#include <QAction>
-#include <QLayout>
-#include <QMenu>
-#include <QMenuBar>
-#include <QStatusBar>
-#include <QTextEdit>
-#include <QFile>
-#include <QDataStream>
-#include <QFileDialog>
-#include <QDialogButtonBox>
-#include <QMessageBox>
-#include <QSignalMapper>
-#include <QApplication>
-#include <QPainter>
-#include <QMouseEvent>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QLabel>
-#include <QPushButton>
-#include <QTextEdit>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QLayout>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTextEdit>
+#include <QtCore/QFile>
+#include <QtCore/QDataStream>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QMessageBox>
+#include <QtCore/QSignalMapper>
+#include <QtWidgets/QApplication>
+#include <QtGui/QPainter>
+#include <QtGui/QMouseEvent>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextEdit>
 #include <QtCore>
 #include "VariableTreeModel.h"
-#include <QScreen>
+#include <QtGui/QScreen>
 #include "VPPItemFactory.h"
 #include "VppCustomPlotWidget.h"
 #include "VPPDialogs.h"
@@ -89,12 +89,12 @@ windowLabel_("V++") {
 	// Add the variable view to the right of the app window
 	addDockWidget(Qt::RightDockWidgetArea, pVariablesWidget_.get());
 
-	// Add the menubar item for the variable widget
+	// Add the menu-bar item for the variable widget
 	pWidgetMenu_->addAction(pVariablesWidget_->getMenuToggleViewAction());
 
 	// --
 
-	// Set the toolbars. In this case NO horizontal toolbars.
+	// Set the toolbar. In this case NO horizontal toolbar.
 	setupToolBar();
 
 	// Message that will appear in the status (lower) bar

@@ -1,5 +1,5 @@
 #include "SettingsColumn.h"
-#include <QLineEdit>
+#include <QtWidgets/QLineEdit>
 
 // Ctor
 SettingsColumn::SettingsColumn() {

@@ -1,10 +1,10 @@
 #ifndef VARIABLES_DOCK_WIDGET_H
 #define VARIABLES_DOCK_WIDGET_H
 
-#include <QDockWidget>
-#include <QTreeView>
-#include <QMainWindow>
-#include <QMenu>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QTreeView>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
 #include "boost/shared_ptr.hpp"
 
 #include "VariableTreeModel.h"
@@ -21,8 +21,7 @@ class VariablesDockWidget : public QDockWidget {
 
 public:
 
-	/// Explicit Constructor (why explicit..?? This was in the initial Qt example, see
-	/// colorswatch in MainWindow example)
+	/// Explicit Constructor
 	explicit VariablesDockWidget(QMainWindow *parent = Q_NULLPTR, Qt::WindowFlags flags = 0);
 
 	/// virtual Dtor

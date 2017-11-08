@@ -5,8 +5,8 @@
     using a spin box widget.*/
 #include "delegate.h"
 
-#include <QSpinBox>
-#include <QLineEdit>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QLineEdit>
 #include "SettingsItem.h"
 
 SpinBoxDelegate::SpinBoxDelegate(QObject *parent)

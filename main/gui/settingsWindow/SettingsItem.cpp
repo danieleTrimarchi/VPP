@@ -1,6 +1,7 @@
 #include "SettingsItem.h"
-#include <QLineEdit>
-#include <QSpinBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QSpinBox>
+#include <QtGui/QColor>
 #include <iostream>
 
 #include "GetSettingsItemVisitor.h"
@@ -14,10 +15,10 @@ editable_(Qt::ItemIsEditable) {
 
 // Ctor
 SettingsItemBase::SettingsItemBase(SettingsItemBase* parentItem ) :
-			pParent_(parentItem),
-			editable_(Qt::ItemIsEditable),
-			tooltip_(QVariant()),
-			path_(""){
+					pParent_(parentItem),
+					editable_(Qt::ItemIsEditable),
+					tooltip_(QVariant()),
+					path_(""){
 
 	columns_.push_back(new NameColumn);
 	columns_.push_back(new ValueColumn);
@@ -32,8 +33,8 @@ void SettingsItemBase::setInternalName(const QVariant& name) {
 	// parentName.myName, where the "spaces" have been substituted
 	// by "_"
 	path_ = 	pParent_->getInternalName() +
-									QString(".") +
-									name.toString().replace(" ","_",Qt::CaseSensitive);
+			QString(".") +
+			name.toString().replace(" ","_",Qt::CaseSensitive);
 }
 
 // Dtor
@@ -163,8 +164,8 @@ void SettingsItemBase::setEditorData(QWidget *editor, const QModelIndex&) {
 
 // Set the data in the model
 void SettingsItemBase::setModelData(	QWidget* editor,
-																	QAbstractItemModel* model,
-																	const QModelIndex& index) const {
+		QAbstractItemModel* model,
+		const QModelIndex& index) const {
 	// do nothing
 }
 
@@ -241,7 +242,7 @@ QString SettingsItemBase::getActiveLabel() const {
 // ----------------------------------------------------------------
 
 SettingsItemRoot::SettingsItemRoot(SettingsItemBase* parentItem ):
-				SettingsItemBase(parentItem) {
+						SettingsItemBase(parentItem) {
 
 	path_ = "/";
 
@@ -263,7 +264,7 @@ SettingsItemRoot::~SettingsItemRoot() {
 
 // Ctor
 SettingsItemGroup::SettingsItemGroup(const QVariant& name,SettingsItemBase* parentItem):
-				SettingsItemBase(parentItem) {
+						SettingsItemBase(parentItem) {
 
 	// The group is not editable
 	columns_[0]->setData( name );
@@ -294,7 +295,7 @@ QFont SettingsItemGroup::getFont() const {
 
 // Ctor
 SettingsItemBounds::SettingsItemBounds(const QVariant& name,double min,double max,const QVariant& unit,const QVariant& tooltip, SettingsItemBase* parentItem) :
-		SettingsItemGroup(name,parentItem){
+				SettingsItemGroup(name,parentItem){
 
 	// Set the internal name for this item
 	setInternalName(name);
@@ -325,11 +326,11 @@ QFont SettingsItemBounds::getFont() const {
 
 // Ctor
 SettingsItem::SettingsItem(	const QVariant& name,
-													const QVariant& value,
-													const QVariant& unit,
-													const QVariant& tooltip,
-													SettingsItemBase* parentItem ):
-				SettingsItemBase(parentItem){
+		const QVariant& value,
+		const QVariant& unit,
+		const QVariant& tooltip,
+		SettingsItemBase* parentItem ):
+						SettingsItemBase(parentItem){
 
 	columns_[0]->setData( name );
 	columns_[1]->setData( value );
@@ -404,8 +405,8 @@ void SettingsItem::setEditorData(QWidget *editor,const QModelIndex& index) {
 
 // Set the data in the model
 void SettingsItem::setModelData(	QWidget* editor,
-																	QAbstractItemModel* model,
-																	const QModelIndex& index) const {
+		QAbstractItemModel* model,
+		const QModelIndex& index) const {
 
 	QLineEdit* pQLineEdit = static_cast<QLineEdit*>(editor);
 
@@ -428,7 +429,7 @@ void SettingsItem::paint(QPainter* painter, const QStyleOptionViewItem &option,
 		boxRect.adjust(1, 1, -1, -1);
 
 		// Sets the color of the border depending on the selected or hovered state
-		if (option.state & QStyle::State_Selected || option.state & QStyle::State_MouseOver)
+		if ( (option.state & QStyle::State_Selected) || (option.state & QStyle::State_MouseOver) )
 			painter->setPen(QApplication::palette().highlight().color());
 		else
 			painter->setPen(QPen(Qt::lightGray));
@@ -457,7 +458,7 @@ SettingsItemInt::SettingsItemInt(const QVariant& name,
 		const QVariant& unit,
 		const QVariant& tooltip,
 		SettingsItemBase* parentItem):
-		SettingsItem(name,value,unit,tooltip,parentItem){
+				SettingsItem(name,value,unit,tooltip,parentItem){
 
 }
 
@@ -495,8 +496,9 @@ void SettingsItemInt::setEditorData(QWidget *editor,const QModelIndex& index) {
 }
 
 void SettingsItemInt::setModelData(	QWidget *editor,
-																	QAbstractItemModel *model,
-																	const QModelIndex &index) const {
+									QAbstractItemModel *model,
+									const QModelIndex &index) const {
+
 	QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
 	spinBox->interpretText();
 	int value = spinBox->value();
@@ -512,9 +514,9 @@ SettingsItemComboBox::SettingsItemComboBox(const QVariant& name,
 		const QList<QString>& options,
 		const QVariant& tooltip,
 		SettingsItemBase* parentItem):
-		SettingsItem(name,"Main only",unit,tooltip,parentItem),
-		opts_(options),
-		activeIndex_(0) {
+				SettingsItem(name,"Main only",unit,tooltip,parentItem),
+				opts_(options),
+				activeIndex_(0) {
 
 }
 
@@ -532,10 +534,10 @@ QWidget* SettingsItemComboBox::createEditor(QWidget *parent) {
 	for(size_t i=0; i<opts_.size(); i++)
 		editor->addItem(opts_[i]);
 
-  editor->setCurrentIndex(activeIndex_);
+	editor->setCurrentIndex(activeIndex_);
 
 	editor->setStyleSheet(	"background-color: white;"
-												"selection-color: orange;");
+			"selection-color: orange;");
 
 	return editor;
 }

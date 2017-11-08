@@ -2,10 +2,10 @@
 #define VPP_SETTINGS_DIALOG_H
 
 #include <QDialog>
-#include <QDialogButtonBox>
-#include <QLineEdit>
-#include <QGridLayout>
-#include <QTabWidget>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QTabWidget>
 
 class VPPSettingsDialog : public QDialog {
 

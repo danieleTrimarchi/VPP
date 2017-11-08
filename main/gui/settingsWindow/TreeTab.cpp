@@ -1,5 +1,5 @@
 #include "TreeTab.h"
-#include <QVBoxLayout>
+#include <QtWidgets/QVBoxLayout>
 
 //---------------------------------------------------------------
 // This widget includes several setting trees, from which the
@@ -20,7 +20,8 @@ QWidget(parent) {
 	pDelegate_ = new QLineEditDelegate(this);
 	pTreeView_->setItemDelegate(pDelegate_);
 
-	pTreeView_->expandAll();
+	// Expand all the items.
+	//pTreeView_->expandAll();
 
 	// Assign the tree view to a VBoxLayout
 	QVBoxLayout* centralLayout = new QVBoxLayout(this);

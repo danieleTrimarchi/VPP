@@ -1,6 +1,7 @@
 #include "VPPSettingsDialog.h"
 #include "GeneralTab.h"
 #include "TreeTab.h"
+#include <QtWidgets/QVBoxLayout>
 
 VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
 : QDialog(parent) {
@@ -11,7 +12,7 @@ VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
 	pTabWidget_->setTabShape(QTabWidget::TabShape::Triangular);
 
 	TreeTab* pTreeTab = new TreeTab(this);
-	pTabWidget_->addTab(pTreeTab, tr("TreeTab"));
+	pTabWidget_->addTab(pTreeTab, tr("VPP Settings"));
 	pTabWidget_->addTab(new GeneralTab(this), tr("General"));
 
 	pButtonBox_ = new QDialogButtonBox(	QDialogButtonBox::Ok |

@@ -472,7 +472,7 @@ class Qt( thirdParty ) :
                                ]
         
         # Returns the absolute path of the Qt Framework folder
-        self.__libpath__= [ os.path.join(self.__rootDir__, 'lib') ]
+        self.__libpath__= []
 
         self.__addTo__(env)
         

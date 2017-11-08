@@ -1,7 +1,7 @@
 #include "VPPException.h"
 #include <iostream>
 #include <sstream>
-#include <QMessageBox>
+#include <QtWidgets/QMessageBox>
 
 // Constructor
 VPPException::VPPException(const char* inFile, int inLine, const char* inFunction, const char* message ){

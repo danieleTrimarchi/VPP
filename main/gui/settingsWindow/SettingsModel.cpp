@@ -80,6 +80,10 @@ void SettingsModel::setupModelData(SettingsItemBase *parent) {
 	pOtherSettings->appendChild( new SettingsItem("J2",2.2,"m","Foretriangle base",pOtherSettings) );
 	pOtherSettings->appendChild( new SettingsItem("P2",3.2,"m","Mainsail height",pOtherSettings) );
 
+	// Make sure everything has space enough
+	for(size_t i=0; i<pRootItem_->getColumnVector().size();i++)
+		pView_->resizeColumnToContents(i);
+
 }
 
 // Virtual Dtor

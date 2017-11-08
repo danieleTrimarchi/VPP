@@ -1,9 +1,8 @@
-#include <QLabel>
-#include <QIntValidator>
-#include <QPushButton>
-#include <QFileDialog>
+#include <QtWidgets/QLabel>
+#include <QtGui/QIntValidator>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QFileDialog>
 #include "VPPDialogs.h"
-#include <QtWidgets>
 #include <settingsWindow/SettingsModel.h>
 
 DialogBase::DialogBase(QWidget *parent) :

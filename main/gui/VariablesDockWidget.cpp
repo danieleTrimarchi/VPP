@@ -1,5 +1,5 @@
 #include "VariablesDockWidget.h"
-#include <QHeaderView>
+#include <QtWidgets/QHeaderView>
 #include "VariableFileParser.h"
 
 VariablesDockWidget::VariablesDockWidget( QMainWindow* parent/*=Q_NULLPTR*/, Qt::WindowFlags flags/*=0*/) :
