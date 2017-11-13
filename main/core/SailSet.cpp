@@ -70,12 +70,6 @@ double SailSet::get(std::string varName) {
 	return sailVariables_[varName];
 }
 
-// Populate the tree model that will be used to
-// visualize the variables in the UI
-void SailSet::populate(VariableTreeModel* pTreeModel) {
-	sailVariables_.populate(pTreeModel);
-}
-
 //////////////////////////////////////////////////////////
 
 // Constructor

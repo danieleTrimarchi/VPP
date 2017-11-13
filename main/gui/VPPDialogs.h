@@ -2,9 +2,9 @@
 #define STATEVECTORDIALOG_H
 
 #include <QtWidgets/QDialog>
-#include <QtCore/QDialogButtonBox>
-#include <QtCore/QLineEdit>
-#include <QtCore/QGridLayout>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QGridLayout>
 #include "boost/shared_ptr.hpp"
 #include <Eigen/Core>
 #include "VppAeroItem.h"

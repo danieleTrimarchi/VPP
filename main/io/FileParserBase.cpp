@@ -4,7 +4,6 @@
 #include "Warning.h"
 #include "VPPException.h"
 #include "mathUtils.h"
-#include "VariableTreeModel.h"
 
 // Constructor
 FileParserBase::FileParserBase() {

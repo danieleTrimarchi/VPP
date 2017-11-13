@@ -3,7 +3,6 @@
 #include <QMainWindow>
 #include <QToolbar>
 #include "LogWindow.h"
-#include "VariablesDockWidget.h"
 #include "LogDockWidget.h"
 #include "MultiplePlotWidget.h"
 #include "ThreeDPlotWidget.h"
@@ -179,9 +178,6 @@ private:
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<ThreeDPlotWidget> p3dPlotWidget_;
-
-	/// Variable Widget
-	boost::shared_ptr<VariablesDockWidget> pVariablesWidget_;
 
 	/// Menu with the actions to plot sail coeffs and resistance components
 	boost::shared_ptr<QMenu> pSailCoeffsMenu_, pPlotResultsMenu_;

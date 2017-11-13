@@ -26,7 +26,6 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QTextEdit>
 #include <QtCore>
-#include "VariableTreeModel.h"
 #include <QtGui/QScreen>
 #include "VPPItemFactory.h"
 #include "VppCustomPlotWidget.h"
@@ -57,7 +56,6 @@ pSailCoeffPlotWidget_(0),
 p_d_SailCoeffPlotWidget_(0),
 p_d2_SailCoeffPlotWidget_(0),
 pForceMomentsPlotWidget_(0),
-pVariablesWidget_(0),
 p3dPlotWidget_(0),
 pJacobianPlotWidget_(0),
 windowLabel_("V++") {
@@ -81,16 +79,7 @@ windowLabel_("V++") {
 	// --
 
 	// Add the widget menu, to be populated by each widget
-	pWidgetMenu_.reset(menuBar()->addMenu(tr("&Widgets")));
-
-	// Add the variable tree widget
-	pVariablesWidget_.reset( new VariablesDockWidget() );
-
-	// Add the variable view to the right of the app window
-	addDockWidget(Qt::RightDockWidgetArea, pVariablesWidget_.get());
-
-	// Add the menu-bar item for the variable widget
-	pWidgetMenu_->addAction(pVariablesWidget_->getMenuToggleViewAction());
+	//pWidgetMenu_.reset(menuBar()->addMenu(tr("&Widgets")));
 
 	// --
 
@@ -574,15 +563,6 @@ void MainWindow::importResults() {
 
 		// Instantiate the items
 		pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
-
-		// Populate the variable item tree accordingly
-		pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
-
-		// SailSet also contains several variables. Append them to the bottom
-		pSails_->populate( pVariablesWidget_->getTreeModel() );
-
-		// Expand the items in the variable tree view, in order to see all the variables
-		pVariablesWidget_->getView()->expandAll();
 
 		// Instantiate a new solverFactory without vppItems_
 		pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );

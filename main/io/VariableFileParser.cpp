@@ -4,7 +4,6 @@
 #include "Warning.h"
 #include "VPPException.h"
 #include "mathUtils.h"
-#include "VariableTreeModel.h"
 
 // Constructor
 VariableFileParser::VariableFileParser() {
@@ -219,12 +218,6 @@ void VariableFileParser::print(FILE* outStream/*=stdout*/) {
 // Get the number of variables that have been read in
 size_t VariableFileParser::getNumVars() {
 	return variables_.size();
-}
-
-// Populate the tree model that will be used to
-// visualize the variables in the UI
-void VariableFileParser::populate(VariableTreeModel* pTreeModel) {
-	variables_.populate(pTreeModel);
 }
 
 
