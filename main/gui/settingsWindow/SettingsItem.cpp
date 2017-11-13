@@ -514,7 +514,7 @@ SettingsItemComboBox::SettingsItemComboBox(const QVariant& name,
 		const QList<QString>& options,
 		const QVariant& tooltip,
 		SettingsItemBase* parentItem):
-				SettingsItem(name,"Main only",unit,tooltip,parentItem),
+				SettingsItem(name,options[0],unit,tooltip,parentItem),
 				opts_(options),
 				activeIndex_(0) {
 
