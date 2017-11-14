@@ -1,7 +1,7 @@
 #ifndef TREETAB_H
 #define TREETAB_H
 
-#include <QWidget>
+#include <QtWidgets/QWidget>
 #include "SettingsModel.h"
 #include "SettingsWindowView.h"
 #include "Delegate.h"

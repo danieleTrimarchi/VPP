@@ -125,17 +125,17 @@ void SettingsModel::setupModelData(SettingsItemBase *parent) {
 	options.append("Main, jib and spinnaker");
 	SettingsItemComboBox* pSettingsCombo = new SettingsItemComboBox("SailSet"," ",options,"Sail configuration",pSailSettings);
 	pSailSettings->appendChild( pSettingsCombo );
-//
-//	// Get a variable by name and modify its unit
+
+	// Get a variable by name and modify its unit
 //	GetSettingsItemByPathVisitor v(pRootItem_);
-//	SettingsItemBase* pItem = v.get("/.Sail_Settings.SA");
+//	SettingsItemBase* pItem = v.get("/.Sail_Settings.MROACH");
 //
 //	pItem->getColumn(columnNames::unit)->setData("newUnit");
-//	std::cout<<"SA value= "<<pItem->data(columnNames::value).toDouble()<<"\n";
+//	std::cout<<"MROACH value= "<<pItem->data(columnNames::value).toDouble()<<"\n";
 //
 //	GetSettingsItemByNameVisitor vn(pRootItem_);
-//	SettingsItemBase* pNItem = vn.get("LWL");
-//	std::cout<<"LWL value= "<<pNItem->data(columnNames::value).toDouble()<<"\n";
+//	SettingsItemBase* pNItem = vn.get("KEELFF");
+//	std::cout<<"KEELFF value= "<<pNItem->data(columnNames::value).toDouble()<<"\n";
 //
 //	pNItem = vn.get("SailSet");
 //	std::cout<<"SailSet value= "<<pNItem->data(columnNames::value).toString().toStdString()<<"\n";
@@ -143,14 +143,15 @@ void SettingsModel::setupModelData(SettingsItemBase *parent) {
 //	std::cout<<"SailSet current index (from Visitor)= "<<pNItem->getActiveIndex()<<"\n";
 //	std::cout<<"SailSet current index (from Item)= "<<pSettingsCombo->getActiveIndex()<<"\n";
 //	std::cout<<"SailSet current Value= "<<pSettingsCombo->getActiveLabel().toStdString()<<"\n";
-//
-//
 
-	// Make sure everything has space enough
-	for(size_t i=0; i<pRootItem_->getColumnVector().size();i++)
-		pView_->resizeColumnToContents(i);
+
+	connect(
+			pView_,&SettingsWindowView::expanded,
+			this,&SettingsModel::resizeColumnsToContents
+			);
 
 }
+
 
 // Virtual Dtor
 SettingsModel::~SettingsModel(){
@@ -296,3 +297,11 @@ bool SettingsModel::setData(const QModelIndex &index, const QVariant &value, int
 
 	return result;
 }
+
+void SettingsModel::resizeColumnsToContents(const QModelIndex& index) {
+
+	// Take a chance to resize all columns
+	for(size_t iCol=0; iCol<pRootItem_->getColumnVector().size(); iCol++ )
+		pView_->resizeColumnToContents(iCol);
+}
+

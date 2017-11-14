@@ -59,6 +59,11 @@ class SettingsModel : public QAbstractItemModel {
 		/// Set some data for a given item - i.e: edit some value
 		bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
+	public slots:
+
+		/// Call the resizeColumnToContents of the view
+		void resizeColumnsToContents(const QModelIndex& );
+
 	private:
 
 		/// Setup the data of this model

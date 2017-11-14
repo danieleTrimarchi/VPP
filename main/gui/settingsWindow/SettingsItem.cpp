@@ -52,6 +52,22 @@ SettingsItemBase* SettingsItemBase::child(int row) {
 	return children_.value(row);
 }
 
+// Get a child by name
+SettingsItemBase* SettingsItemBase::child(QString& childName) {
+
+	// Instantiate a visitor that will be searching for the item by name
+	GetSettingsItemByNameVisitor vn(this);
+	return vn.get(childName);
+}
+
+// Get a child by path - inclusive of the child name, of course
+SettingsItemBase* SettingsItemBase::childPath(QString& childPath) {
+
+	// Instantiate a visitor that will be searching for the item by name
+	GetSettingsItemByPathVisitor vp(this);
+	return vp.get(childPath);
+}
+
 // How many children do I have?
 int SettingsItemBase::childCount() const {
 	return children_.count();

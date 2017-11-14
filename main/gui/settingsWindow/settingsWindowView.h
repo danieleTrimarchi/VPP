@@ -1,7 +1,8 @@
 #ifndef SETTINGS_WINDOW_VIEW_H
 #define SETTINGS_WINDOW_VIEW_H
 
-#include <QTreeView>
+#include <QtCore/QModelIndex>
+#include <QtWidgets/QTreeView>
 
 class SettingsWindowView : public QTreeView {
 

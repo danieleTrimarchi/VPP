@@ -30,6 +30,12 @@ public:
 	/// Get the i-th child
 	SettingsItemBase* child(int row);
 
+	/// Get a child by name
+	SettingsItemBase* child(QString& childName);
+
+	/// Get a child by path - inclusive of the child name, of course
+	SettingsItemBase* childPath(QString& childPath);
+
 	/// How many children do I have?
 	int childCount() const;
 

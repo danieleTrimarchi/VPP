@@ -1,4 +1,5 @@
 #include "SettingsWindowView.h"
+#include <QtCore/QAbstractItemModel>
 
 // Ctor
 SettingsWindowView::SettingsWindowView(QWidget *parent) :
@@ -11,6 +12,7 @@ SettingsWindowView::SettingsWindowView(QWidget *parent) :
 
 	setFrameStyle(QFrame::NoFrame);
 	setLineWidth(10);
+
 }
 
 
@@ -18,3 +20,4 @@ SettingsWindowView::SettingsWindowView(QWidget *parent) :
 SettingsWindowView::~SettingsWindowView() {
 	/* make nothing */
 }
+

@@ -1,5 +1,6 @@
 #include "TreeTab.h"
 #include <QtWidgets/QVBoxLayout>
+#include <iostream>
 
 //---------------------------------------------------------------
 // This widget includes several setting trees, from which the
