@@ -10,8 +10,18 @@ TreeTab::TreeTab(QWidget* parent):
 QWidget(parent) {
 
 	//SettingsModel hullSettings(this);
-	pTreeView_= new SettingsWindowView(this);
-	pTreeModel_= new SettingsModel(pTreeView_,this);
+	pTreeModel_= new SettingsModel(this);
+	pTreeView_= new SettingsWindowView(pTreeModel_,this);
+
+	connect(
+			pTreeView_,&SettingsWindowView::expanded,
+			pTreeView_,&SettingsWindowView::resizeColumnsToContents
+			);
+
+	connect(
+			pTreeModel_,&SettingsModel::dataChanged,
+			pTreeView_,&SettingsWindowView::resizeColumnsToContents
+			);
 
 	// Instantiate a model view, assign a model and show it
 	pTreeView_->setModel(pTreeModel_);
@@ -33,7 +43,6 @@ QWidget(parent) {
 
 	this->setLayout(centralLayout);
 
-	// connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 	connect(pTreeView_->selectionModel(), &QItemSelectionModel::selectionChanged,
 			this, &TreeTab::updateActions);
 

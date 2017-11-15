@@ -12,7 +12,6 @@
 #include <QtGui/QDoubleValidator>
 #include <QtWidgets/QLineEdit>
 #include "SettingsItem.h"
-#include "SettingsWindowView.h"
 
 class SettingsModel : public QAbstractItemModel {
 
@@ -21,7 +20,7 @@ class SettingsModel : public QAbstractItemModel {
 	public:
 
 		/// Ctor
-		explicit SettingsModel(SettingsWindowView*,QObject* parent = 0);
+		explicit SettingsModel(QObject* parent = 0);
 
 		/// Virtual Dtor
 		virtual ~SettingsModel();
@@ -59,11 +58,6 @@ class SettingsModel : public QAbstractItemModel {
 		/// Set some data for a given item - i.e: edit some value
 		bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
-	public slots:
-
-		/// Call the resizeColumnToContents of the view
-		void resizeColumnsToContents(const QModelIndex& );
-
 	private:
 
 		/// Setup the data of this model
@@ -75,8 +69,6 @@ class SettingsModel : public QAbstractItemModel {
 		/// Root of the model tree
 		SettingsItemBase* pRootItem_;
 
-		/// Raw ptr to the current item tree view
-		SettingsWindowView* pView_;
 
 };
 

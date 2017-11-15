@@ -3,9 +3,8 @@
 
 #include "GetSettingsItemVisitor.h"
 
-SettingsModel::SettingsModel(SettingsWindowView* pView,QObject* parent):
-			QAbstractItemModel(parent),
-			pView_(pView) {
+SettingsModel::SettingsModel(QObject* parent):
+			QAbstractItemModel(parent) {
 
 	// Instantiate the root, which is invisible
 	pRootItem_ = new SettingsItemRoot;
@@ -143,12 +142,6 @@ void SettingsModel::setupModelData(SettingsItemBase *parent) {
 //	std::cout<<"SailSet current index (from Visitor)= "<<pNItem->getActiveIndex()<<"\n";
 //	std::cout<<"SailSet current index (from Item)= "<<pSettingsCombo->getActiveIndex()<<"\n";
 //	std::cout<<"SailSet current Value= "<<pSettingsCombo->getActiveLabel().toStdString()<<"\n";
-
-
-	connect(
-			pView_,&SettingsWindowView::expanded,
-			this,&SettingsModel::resizeColumnsToContents
-			);
 
 }
 
@@ -292,16 +285,8 @@ bool SettingsModel::setData(const QModelIndex &index, const QVariant &value, int
 
 	if (result){
 		emit dataChanged(index, index);
-		pView_->resizeColumnToContents(index.column());
 	}
 
 	return result;
-}
-
-void SettingsModel::resizeColumnsToContents(const QModelIndex& index) {
-
-	// Take a chance to resize all columns
-	for(size_t iCol=0; iCol<pRootItem_->getColumnVector().size(); iCol++ )
-		pView_->resizeColumnToContents(iCol);
 }
 
