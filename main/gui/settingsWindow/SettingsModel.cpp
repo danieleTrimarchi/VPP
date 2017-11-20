@@ -63,7 +63,7 @@ void SettingsModel::setupModelData(SettingsItemBase *parent) {
 	SettingsItemGroup* pCrewSettings = new SettingsItemGroup("Crew Settings",pRootItem_);
 	pRootItem_->appendChild(pCrewSettings);
 
-	pCrewSettings->appendChild( new SettingsItem("MMVBLCRW",0,"Kg","Movable Crew Mass",pHullSettings) 	);
+	pCrewSettings->appendChild( new SettingsItem("MMVBLCRW",0,"Kg","Movable Crew Mass",pCrewSettings) 	);
 
 	// Keel Settings...
 	SettingsItemGroup* pKeelSettings = new SettingsItemGroup("Keel Settings",pRootItem_);

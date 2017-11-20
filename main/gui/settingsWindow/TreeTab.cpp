@@ -34,6 +34,8 @@ QWidget(parent) {
 	// Expand all the items.
 	//pTreeView_->expandAll();
 
+
+
 	// Assign the tree view to a VBoxLayout
 	QVBoxLayout* centralLayout = new QVBoxLayout(this);
 

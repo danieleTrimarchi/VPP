@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include <QMainWindow>
-#include <QToolbar>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QToolbar>
 #include "LogWindow.h"
 #include "LogDockWidget.h"
 #include "MultiplePlotWidget.h"
@@ -13,6 +13,7 @@
 #include "DebugStream.h"
 #include "VPPSolverFactoryBase.h"
 #include "VppCustomPlotWidget.h"
+#include "SettingsModel.h"
 
 class ToolBar;
 class VPPItemFactory;

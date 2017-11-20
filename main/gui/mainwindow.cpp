@@ -43,7 +43,7 @@
 // of MainWindow
 boost::shared_ptr<QDebugStream> pQstream;
 
-// Init static members
+// Init static members : sail coeffs browser used to define new sail coeffs
 boost::shared_ptr<VPPDefaultFileBrowser> MainWindow::pSailCoeffFileBrowser_= 0;
 
 Q_DECLARE_METATYPE(VppTabDockWidget::DockWidgetFeatures)
@@ -425,8 +425,8 @@ void MainWindow::import() {
 	try {
 
 		// Open up a VPP settings dialog
-		VPPSettingsDialog sd("VPP Settings",this);
-		sd.exec();
+		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance("VPP Settings",this);
+		pSd->exec();
 
 	}	catch(...) {}
 }

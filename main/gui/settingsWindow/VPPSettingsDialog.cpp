@@ -3,7 +3,18 @@
 #include "TreeTab.h"
 #include <QtWidgets/QVBoxLayout>
 
-/// Ctor
+// Init static (instance) member
+VPPSettingsDialog* VPPSettingsDialog::pInstance_= 0;
+
+// Singleton-style constructor
+VPPSettingsDialog* VPPSettingsDialog::getInstance(const QString &fileName, QWidget *parent){
+
+	if(!pInstance_)
+		pInstance_= new VPPSettingsDialog(fileName, parent);
+	return pInstance_;
+}
+
+// Ctor
 VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
 : QDialog(parent) {
 
@@ -41,4 +52,11 @@ VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
 
 	// Set the title of this widget
 	setWindowTitle(tr("Tab Dialog"));
+}
+
+// Disallowed default constructor
+VPPSettingsDialog::VPPSettingsDialog() :
+		pTabWidget_(0),
+		pButtonBox_(0){
+
 }
