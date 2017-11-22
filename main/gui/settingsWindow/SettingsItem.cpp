@@ -6,16 +6,9 @@
 
 #include "GetSettingsItemVisitor.h"
 
-// Disallowed default constructor
-SettingsItemBase::SettingsItemBase() :
-pParent_(NULL),
-editable_(Qt::ItemIsEditable) {
-
-}
-
 // Ctor
-SettingsItemBase::SettingsItemBase(SettingsItemBase* parentItem ) :
-					pParent_(parentItem),
+SettingsItemBase::SettingsItemBase() :
+					pParent_(0),
 					editable_(Qt::ItemIsEditable),
 					tooltip_(QVariant()),
 					path_(""){
@@ -26,15 +19,36 @@ SettingsItemBase::SettingsItemBase(SettingsItemBase* parentItem ) :
 
 }
 
+// Copy Ctor
+SettingsItemBase::SettingsItemBase(const 	SettingsItemBase& rhs) {
+	pParent_=rhs.pParent_;
+	editable_=rhs.editable_;
+	tooltip_=rhs.tooltip_;
+	path_=rhs.path_;
+	columns_=rhs.columns_;
+
+	std::cout<<"Copying the children!\n";
+	// Also copy the children!
+	children_ = rhs.children_;
+}
+
+// Set the parent of this item
+void SettingsItemBase::setParent(SettingsItemBase* parentItem) {
+	pParent_=parentItem;
+}
+
 // Set the internal name of this item
 void SettingsItemBase::setInternalName(const QVariant& name) {
 
 	// Set the internal name of this item. This is in the format
 	// parentName.myName, where the "spaces" have been substituted
 	// by "_"
-	path_ = 	pParent_->getInternalName() +
-			QString(".") +
-			name.toString().replace(" ","_",Qt::CaseSensitive);
+	if(pParent_)
+		path_ = 	pParent_->getInternalName() +
+				QString(".") +
+				name.toString().replace(" ","_",Qt::CaseSensitive);
+	else
+		path_ = 	name.toString().replace(" ","_",Qt::CaseSensitive);
 }
 
 // Dtor
@@ -45,6 +59,16 @@ SettingsItemBase::~SettingsItemBase() {
 // Append a child under me
 void SettingsItemBase::appendChild(SettingsItemBase* child) {
 	children_.append(child);
+}
+
+// Remove all children under me
+void SettingsItemBase::clearChildren() {
+	children_.clear();
+}
+
+// Remove a child by position
+void SettingsItemBase::removeChild(size_t iChild) {
+	children_.removeAt(iChild);
 }
 
 // Get the i-th child
@@ -79,6 +103,12 @@ int SettingsItemBase::childNumber() const {
 		return pParent_->children_.indexOf(const_cast<SettingsItemBase*>(this));
 
 	return 0;
+}
+
+// Clone this item, which is basically equivalent to calling the copy ctor
+SettingsItemBase* SettingsItemBase::clone() const {
+
+	return new SettingsItemBase(*this);
 }
 
 // Number of rows required to the cols of this item.
@@ -255,10 +285,23 @@ QString SettingsItemBase::getActiveLabel() const {
 	return QString();
 }
 
+// Assignment operator
+const SettingsItemBase& SettingsItemBase::operator=(const SettingsItemBase& rhs) {
+
+	pParent_= rhs.pParent_;
+	editable_= rhs.editable_;
+	tooltip_= rhs.tooltip_;
+	path_= rhs.path_;
+	columns_=rhs.columns_;
+
+	return *this;
+}
+
+
 // ----------------------------------------------------------------
 
-SettingsItemRoot::SettingsItemRoot(SettingsItemBase* parentItem ):
-						SettingsItemBase(parentItem) {
+SettingsItemRoot::SettingsItemRoot():
+						SettingsItemBase() {
 
 	path_ = "/";
 
@@ -279,8 +322,8 @@ SettingsItemRoot::~SettingsItemRoot() {
 // ----------------------------------------------------------------
 
 // Ctor
-SettingsItemGroup::SettingsItemGroup(const QVariant& name,SettingsItemBase* parentItem):
-						SettingsItemBase(parentItem) {
+SettingsItemGroup::SettingsItemGroup(const QVariant& name):
+						SettingsItemBase(){
 
 	// The group is not editable
 	columns_[0]->setData( name );
@@ -310,14 +353,14 @@ QFont SettingsItemGroup::getFont() const {
 // ----------------------------------------------------------------
 
 // Ctor
-SettingsItemBounds::SettingsItemBounds(const QVariant& name,double min,double max,const QVariant& unit,const QVariant& tooltip, SettingsItemBase* parentItem) :
-				SettingsItemGroup(name,parentItem){
+SettingsItemBounds::SettingsItemBounds(const QVariant& name,double min,double max,const QVariant& unit,const QVariant& tooltip) :
+				SettingsItemGroup(name){
 
 	// Set the internal name for this item
 	setInternalName(name);
 
-	appendChild( new SettingsItem("min",min,unit,"min value",this) );
-	appendChild( new SettingsItem("max",max,unit,"max value",this) );
+	appendChild( new SettingsItem("min",min,unit,"min value") );
+	appendChild( new SettingsItem("max",max,unit,"max value") );
 
 	// Set the tooltip
 	tooltip_= tooltip;
@@ -338,15 +381,33 @@ QFont SettingsItemBounds::getFont() const {
 	return myFont;
 }
 
+// Get the min value of this bound
+double SettingsItemBounds::getMin(){
+
+	// Just return the first item, that I know is 'min'
+	// return this->child(0)->data(columnNames::value).toDouble();
+	// Better strategy : instantiate a visitor and search the item by name
+	GetSettingsItemByNameVisitor v(this);
+	return v.get("min")->data(columnNames::value).toDouble();
+}
+
+// Get the max value of this bound
+double SettingsItemBounds::getMax() {
+	// Just return the first item, that I know is 'max'
+	// return this->child(1)->data(columnNames::value).toDouble();
+	// Better strategy : instantiate a visitor and search the item by name
+	GetSettingsItemByNameVisitor v(this);
+	return v.get("max")->data(columnNames::value).toDouble();
+}
+
 // ----------------------------------------------------------------
 
 // Ctor
 SettingsItem::SettingsItem(	const QVariant& name,
 		const QVariant& value,
 		const QVariant& unit,
-		const QVariant& tooltip,
-		SettingsItemBase* parentItem ):
-						SettingsItemBase(parentItem){
+		const QVariant& tooltip):
+						SettingsItemBase(){
 
 	columns_[0]->setData( name );
 	columns_[1]->setData( value );
@@ -360,6 +421,12 @@ SettingsItem::SettingsItem(	const QVariant& name,
 
 	// The editable columns for the settings item are editable
 	setEditable(true);
+
+}
+
+// Copy Ctor
+SettingsItem::SettingsItem(const SettingsItem& rhs) :
+	SettingsItemBase(rhs) {
 
 }
 
@@ -472,9 +539,8 @@ void SettingsItem::paint(QPainter* painter, const QStyleOptionViewItem &option,
 SettingsItemInt::SettingsItemInt(const QVariant& name,
 		const QVariant& value,
 		const QVariant& unit,
-		const QVariant& tooltip,
-		SettingsItemBase* parentItem):
-				SettingsItem(name,value,unit,tooltip,parentItem){
+		const QVariant& tooltip):
+				SettingsItem(name,value,unit,tooltip){
 
 }
 
@@ -528,9 +594,8 @@ void SettingsItemInt::setModelData(	QWidget *editor,
 SettingsItemComboBox::SettingsItemComboBox(const QVariant& name,
 		const QVariant& unit,
 		const QList<QString>& options,
-		const QVariant& tooltip,
-		SettingsItemBase* parentItem):
-				SettingsItem(name,options[0],unit,tooltip,parentItem),
+		const QVariant& tooltip):
+				SettingsItem(name,options[0],unit,tooltip),
 				opts_(options),
 				activeIndex_(0) {
 
@@ -590,5 +655,26 @@ QString SettingsItemComboBox::getActiveLabel() const {
 // other items
 size_t SettingsItemComboBox::getActiveIndex() const {
 	return activeIndex_;
+}
+
+// Assignment operator
+const SettingsItemComboBox& SettingsItemComboBox::operator=(const SettingsItemComboBox& rhs) {
+
+	// Call the parent operator=
+	SettingsItem::operator=(rhs);
+
+	// Now copy own members
+	opts_= rhs.opts_;
+	activeIndex_= rhs.activeIndex_;
+
+	return *this;
+}
+
+// Copy Ctor
+SettingsItemComboBox::SettingsItemComboBox(const SettingsItemComboBox& rhs) :
+		SettingsItem(rhs),
+		opts_(rhs.opts_),
+		activeIndex_(rhs.activeIndex_){
+
 }
 

@@ -1,7 +1,7 @@
 #include "VPPSettingsDialog.h"
 #include "GeneralTab.h"
-#include "TreeTab.h"
 #include <QtWidgets/QVBoxLayout>
+#include <iostream>
 
 // Init static (instance) member
 VPPSettingsDialog* VPPSettingsDialog::pInstance_= 0;
@@ -26,8 +26,8 @@ VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
 	pTabWidget_->setTabShape(QTabWidget::TabShape::Triangular);
 
 	// Add a tree tab (a tab containing an item tree)
-	TreeTab* pTreeTab = new TreeTab(this);
-	pTabWidget_->addTab(pTreeTab, tr("VPP Settings"));
+	pTreeTab_ = new TreeTab(this);
+	pTabWidget_->addTab(pTreeTab_, tr("VPP Settings"));
 
 	// Add a general tab (a tab containing genreral settings, not sure if we'll keep this)
 	pTabWidget_->addTab(new GeneralTab(this), tr("General"));
@@ -48,15 +48,38 @@ VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
 	setLayout(mainLayout);
 
 	// Resize the window in order to show as much as possible
-	resize(pTreeTab->width(),pTreeTab->height());
+	resize(pTreeTab_->width(),pTreeTab_->height());
 
 	// Set the title of this widget
 	setWindowTitle(tr("Tab Dialog"));
 }
 
+// Slot called when the user hits the button "Ok" in the bottom of the widget
+void VPPSettingsDialog::accept(){
+
+	// Sync phase : store the 'floating' the user has just edited into the reference model
+	pTreeTab_->save();
+
+	// Call mother class method
+	QDialog::accept();
+
+}
+
+// Slot called when the user hits the button "Cancel" in the bottom of the widget
+void VPPSettingsDialog::reject() {
+
+	// Sync phase : store the 'floating' the user has just edited into the reference model
+	pTreeTab_->revert();
+
+	//Call mother class method
+	QDialog::reject();
+
+}
+
 // Disallowed default constructor
 VPPSettingsDialog::VPPSettingsDialog() :
 		pTabWidget_(0),
+		pTreeTab_(0),
 		pButtonBox_(0){
 
 }

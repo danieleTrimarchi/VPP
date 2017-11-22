@@ -10,7 +10,17 @@ TreeTab::TreeTab(QWidget* parent):
 QWidget(parent) {
 
 	//SettingsModel hullSettings(this);
-	pTreeModel_= new SettingsModel(this);
+	pTreeReferenceModel_ = new SettingsModel;
+
+	// Fill the reference model with the items
+	pTreeReferenceModel_->setupModelData();
+	pTreeReferenceModel_->setParent(this);
+
+	// Instantiate the model that will be visualized in the
+	// tab as a clone of the reference model
+	pTreeModel_= new SettingsModel(*pTreeReferenceModel_);
+
+	// Instantiate a view that will be used to visualize the model
 	pTreeView_= new SettingsWindowView(pTreeModel_,this);
 
 	connect(
@@ -33,8 +43,6 @@ QWidget(parent) {
 
 	// Expand all the items.
 	//pTreeView_->expandAll();
-
-
 
 	// Assign the tree view to a VBoxLayout
 	QVBoxLayout* centralLayout = new QVBoxLayout(this);
@@ -60,6 +68,24 @@ TreeTab::~TreeTab() {
 	delete pTreeModel_;
 	delete pTreeView_;
 }
+
+// Save the model the user has edited to the underlying (permanent) model
+void TreeTab::save() {
+	// Dereference the ptr to make sure we are actually calling
+	// the operator= of SettingsModel
+	*pTreeReferenceModel_ = *pTreeModel_;
+}
+
+// When the user hits 'cancel' in the main dialog, we
+// revert the model: so that any change the user has
+// done is erased.
+void TreeTab::revert() {
+	// Dereference the ptr to make sure we are actually calling
+	// the operator= of SettingsModel
+	*pTreeModel_ = *pTreeReferenceModel_;
+}
+
+
 
 void TreeTab::updateActions() {
 

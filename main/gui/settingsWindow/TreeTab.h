@@ -18,13 +18,22 @@ class TreeTab : public QWidget {
 		/// Dtor
 		~TreeTab();
 
+		/// Save the model the user has edited to the underlying (permanent) model
+		void save();
+
+		/// When the user hits 'cancel' in the main dialog, we
+		/// revert the model: so that any change the user has
+		/// done is erased.
+		void revert();
+
+		/// Save the
 	public slots:
 
 			void updateActions();
 
 	private :
 
-		SettingsModel* pTreeModel_;
+		SettingsModel *pTreeReferenceModel_, *pTreeModel_;
 		SettingsWindowView* pTreeView_;
 		QStyledItemDelegate* pDelegate_;
 };

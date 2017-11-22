@@ -20,7 +20,10 @@ class SettingsModel : public QAbstractItemModel {
 	public:
 
 		/// Ctor
-		explicit SettingsModel(QObject* parent = 0);
+		explicit SettingsModel();
+
+		/// Copy Ctor
+		explicit SettingsModel(const SettingsModel&);
 
 		/// Virtual Dtor
 		virtual ~SettingsModel();
@@ -31,6 +34,9 @@ class SettingsModel : public QAbstractItemModel {
 
 		/// Called by Qt, returns specific flags
 		virtual Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
+
+		/// Returns a ptr to the root of this model
+		SettingsItemBase* getRoot() const;
 
 		/// Called by Qt, returns the header
 		virtual QVariant headerData(int section,
@@ -58,17 +64,19 @@ class SettingsModel : public QAbstractItemModel {
 		/// Set some data for a given item - i.e: edit some value
 		bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 
-	private:
+		/// Assignment operator
+		const SettingsModel& operator=(const SettingsModel&);
 
 		/// Setup the data of this model
-		void setupModelData(SettingsItemBase *parent);
+		void setupModelData();
+
+	private:
 
 		/// Get an item of this model
 		SettingsItemBase *getItem(const QModelIndex &index) const;
 
 		/// Root of the model tree
 		SettingsItemBase* pRootItem_;
-
 
 };
 

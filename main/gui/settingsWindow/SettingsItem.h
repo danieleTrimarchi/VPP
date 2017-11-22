@@ -24,8 +24,22 @@ public:
 	/// Dtor
 	virtual ~SettingsItemBase();
 
+	/// Accept a visitor, the role of which is to iterate and
+	/// return an item by path
+	SettingsItemBase* accept(const GetSettingsItemByPathVisitor&,QString);
+
+	/// Accept a visitor, the role of which is to iterate and
+	/// return an item by name
+	SettingsItemBase* accept(const GetSettingsItemByNameVisitor&, QString);
+
 	/// Append a child under me
 	void appendChild(SettingsItemBase* child);
+
+	/// Remove all children under me
+	void clearChildren();
+
+	/// Remove a child by position
+	void removeChild(size_t iChild);
 
 	/// Get the i-th child
 	SettingsItemBase* child(int row);
@@ -42,31 +56,36 @@ public:
 	/// What child number am I?
 	int childNumber() const;
 
+	/// Clone this item, which is basically equivalent to calling the copy ctor
+	virtual SettingsItemBase* clone() const;
+
 	/// Number of cols required for this item.
 	int columnCount() const;
 
-	/// Return the parent item
-	SettingsItemBase* parentItem();
-
-	/// What child number am I for my parent?
-	int row() const;
-
-	/// Returns the associated icon - in this case an empty QVariant
-	QVariant getIcon();
-
-	/// Set the data for this item
-	bool setData(int column, const QVariant &value);
+	/// The item will create its editor. The delegate
+	/// is in charge to manage the brand new editor
+	virtual QWidget* createEditor(QWidget *parent);
 
 	/// Return the data stored in the i-th column of
 	/// this item. In this case, either the label
 	/// or the numerical value
 	QVariant data(int column) const;
 
-	/// Set if this item is editable
-	void setEditable(bool);
-
 	/// Is this item editable?
 	Qt::ItemFlag editable() const;
+
+	/// Only meaningful for the combo-box item,
+	/// returns zero for all the other items
+	virtual size_t getActiveIndex() const;
+
+	/// Only meaningful for the combo-box item,
+	/// returns an empty QString for the base-class
+	virtual QString getActiveLabel() const;
+
+	/// Return the backGround color for this item
+	/// The backGroundRole is grey for all, but white
+	/// for the editable entry of the editable items
+	virtual QColor getBackGroundColor(int iColumn) const;
 
 	/// Get a reference to the columns vector
 	std::vector<SettingsColumn*>& getColumnVector();
@@ -78,17 +97,30 @@ public:
 	/// with in the item tree
 	virtual QFont getFont() const;
 
-	/// Return the backGround color for this item
-	/// The backGroundRole is grey for all, but white
-	/// for the editable entry of the editable items
-	virtual QColor getBackGroundColor(int iColumn) const;
+	/// Returns the associated icon - in this case an empty QVariant
+	QVariant getIcon();
+
+	/// Get the internal name of this item, used to locate it in the tree
+	QString getInternalName();
 
 	/// Returns the tooltip for this item, if any
 	QVariant getToolTip();
 
-	/// The item will create its editor. The delegate
-	/// is in charge to manage the brand new editor
-	virtual QWidget* createEditor(QWidget *parent);
+	/// Visual options - requested by the Delegate
+	virtual void paint(QPainter* painter, const QStyleOptionViewItem &option,
+			const QModelIndex &index) const;
+
+	/// Return the parent item
+	SettingsItemBase* parentItem();
+
+	/// What child number am I for my parent?
+	int row() const;
+
+	/// Set the data for this item
+	bool setData(int column, const QVariant &value);
+
+	/// Set if this item is editable
+	void setEditable(bool);
 
 	/// Edit the data in the editor - requested by the Delegate
 	virtual void setEditorData(QWidget *editor,const QModelIndex&);
@@ -98,33 +130,19 @@ public:
 			QAbstractItemModel* model,
 			const QModelIndex& index) const;
 
-	/// Visual options - requested by the Delegate
-	virtual void paint(QPainter* painter, const QStyleOptionViewItem &option,
-			const QModelIndex &index) const;
+	/// Assignment operator
+	virtual const SettingsItemBase& operator=(const SettingsItemBase& rhs);
 
-	/// Accept a visitor, the role of which is to iterate and
-	/// return an item by path
-	SettingsItemBase* accept(const GetSettingsItemByPathVisitor&,QString);
-
-	/// Accept a visitor, the role of which is to iterate and
-	/// return an item by name
-	SettingsItemBase* accept(const GetSettingsItemByNameVisitor&, QString);
-
-	/// Get the internal name of this item, used to locate it in the tree
-	QString getInternalName();
-
-	/// Only meaningful for the combo-box item,
-	/// returns zero for all the other items
-	virtual size_t getActiveIndex() const;
-
-	/// Only meaningful for the combo-box item,
-	/// returns an empty QString for the base-class
-	virtual QString getActiveLabel() const;
+	/// Set the parent of this item
+	void setParent(SettingsItemBase* parentItem);
 
 protected:
 
 	/// Ctor to be called from child classes
-	SettingsItemBase(SettingsItemBase* parentItem);
+	SettingsItemBase();
+
+	/// Copy Ctor
+	SettingsItemBase(const 	SettingsItemBase&);
 
 	/// Set the internal name of this item
 	virtual void setInternalName(const QVariant&);
@@ -139,13 +157,10 @@ protected:
 	/// Stores the tooltip for this item
 	QVariant tooltip_;
 
-private:
-
-	/// Disallow default constructor
-	SettingsItemBase();
-
 	/// Parent of this item
 	SettingsItemBase* pParent_;
+
+private:
 
 	/// Children of this item
 	QList<SettingsItemBase*> children_;
@@ -161,8 +176,8 @@ class SettingsItemRoot : public SettingsItemBase {
 
 public:
 
-	/// Ctor
-	SettingsItemRoot(SettingsItemBase* parentItem=0);
+	/// Default Ctor
+	SettingsItemRoot();
 
 	/// Dtor
 	virtual ~SettingsItemRoot();
@@ -178,7 +193,7 @@ class SettingsItemGroup : public SettingsItemBase {
 public:
 
 	/// Ctor
-	SettingsItemGroup(const QVariant& name,SettingsItemBase* parentItem);
+	SettingsItemGroup(const QVariant& name);
 
 	/// Dtor
 	virtual ~SettingsItemGroup();
@@ -198,7 +213,7 @@ class SettingsItemBounds : public SettingsItemGroup {
 public:
 
 	/// Ctor
-	SettingsItemBounds(const QVariant& name,double min, double max, const QVariant& unit, const QVariant& tooltip,SettingsItemBase* parentItem);
+	SettingsItemBounds(const QVariant& name,double min, double max, const QVariant& unit, const QVariant& tooltip);
 
 	/// Dtor
 	virtual ~SettingsItemBounds();
@@ -206,6 +221,12 @@ public:
 	/// Returns the font this item should be visualized
 	/// with in the item tree
 	virtual QFont getFont() const;
+
+	/// Get the min value of this bound
+	double getMin();
+
+	/// Get the max value of this bound
+	double getMax();
 
 private:
 
@@ -218,7 +239,7 @@ class SettingsItem : public SettingsItemBase {
 public:
 
 	/// Ctor
-	SettingsItem(const QVariant&, const QVariant&, const QVariant&, const QVariant&, SettingsItemBase*);
+	SettingsItem(const QVariant&, const QVariant&, const QVariant&, const QVariant&);
 
 	/// Dtor
 	virtual ~SettingsItem();
@@ -247,6 +268,11 @@ public:
 			const QStyleOptionViewItem &option,
 			const QModelIndex &index) const;
 
+protected:
+
+	/// Copy Ctor
+	SettingsItem(const SettingsItem&);
+
 private:
 
 };
@@ -259,7 +285,7 @@ class SettingsItemInt : public SettingsItem {
 public:
 
 	/// Ctor
-	SettingsItemInt(const QVariant&, const QVariant&, const QVariant&, const QVariant&, SettingsItemBase*);
+	SettingsItemInt(const QVariant&, const QVariant&, const QVariant&, const QVariant&);
 
 	/// Dtor
 	virtual ~SettingsItemInt();
@@ -286,7 +312,7 @@ class SettingsItemComboBox : public SettingsItem {
 public:
 
 	/// Ctor
-	SettingsItemComboBox(const QVariant&, const QVariant&, const QList<QString>&, const QVariant&, SettingsItemBase*);
+	SettingsItemComboBox(const QVariant&, const QVariant&, const QList<QString>&, const QVariant&);
 
 	/// Dtor
 	virtual ~SettingsItemComboBox();
@@ -309,7 +335,13 @@ public:
 	// Returns the label of the active (selected) item
 	virtual QString getActiveLabel() const;
 
+	/// Assignment operator
+	virtual const SettingsItemComboBox& operator=(const SettingsItemComboBox& rhs);
+
 private:
+
+	/// Copy Ctor
+	SettingsItemComboBox(const SettingsItemComboBox& rhs);
 
 	/// Options shown in this combo box
 	QList<QString> opts_;
