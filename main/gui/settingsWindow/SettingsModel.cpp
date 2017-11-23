@@ -1,19 +1,19 @@
 #include "SettingsModel.h"
 #include <iostream>
-
+#include "VPPException.h"
 #include "GetSettingsItemVisitor.h"
 
 SettingsModel::SettingsModel():
-			QAbstractItemModel() {
+QAbstractItemModel() {
 
 	// Instantiate the root, which is invisible
 	pRootItem_ = new SettingsItemRoot;
-
 }
 
 // Copy Ctor
 SettingsModel::SettingsModel(const SettingsModel& rhs) :
-			pRootItem_( rhs.pRootItem_->clone() )	{
+					pRootItem_( rhs.pRootItem_->clone() ) {
+
 }
 
 
@@ -135,22 +135,22 @@ void SettingsModel::setupModelData() {
 	pSailSettings->appendChild( pSettingsCombo );
 
 	// Get a variable by name and modify its unit
-//	GetSettingsItemByPathVisitor v(pRootItem_);
-//	SettingsItemBase* pItem = v.get("/.Sail_Settings.MROACH");
-//
-//	pItem->getColumn(columnNames::unit)->setData("newUnit");
-//	std::cout<<"MROACH value= "<<pItem->data(columnNames::value).toDouble()<<"\n";
-//
-//	GetSettingsItemByNameVisitor vn(pRootItem_);
-//	SettingsItemBase* pNItem = vn.get("KEELFF");
-//	std::cout<<"KEELFF value= "<<pNItem->data(columnNames::value).toDouble()<<"\n";
-//
-//	pNItem = vn.get("SailSet");
-//	std::cout<<"SailSet value= "<<pNItem->data(columnNames::value).toString().toStdString()<<"\n";
-//
-//	std::cout<<"SailSet current index (from Visitor)= "<<pNItem->getActiveIndex()<<"\n";
-//	std::cout<<"SailSet current index (from Item)= "<<pSettingsCombo->getActiveIndex()<<"\n";
-//	std::cout<<"SailSet current Value= "<<pSettingsCombo->getActiveLabel().toStdString()<<"\n";
+	//	GetSettingsItemByPathVisitor v(pRootItem_);
+	//	SettingsItemBase* pItem = v.get("/.Sail_Settings.MROACH");
+	//
+	//	pItem->getColumn(columnNames::unit)->setData("newUnit");
+	//	std::cout<<"MROACH value= "<<pItem->data(columnNames::value).toDouble()<<"\n";
+	//
+	//	GetSettingsItemByNameVisitor vn(pRootItem_);
+	//	SettingsItemBase* pNItem = vn.get("KEELFF");
+	//	std::cout<<"KEELFF value= "<<pNItem->data(columnNames::value).toDouble()<<"\n";
+	//
+	//	pNItem = vn.get("SailSet");
+	//	std::cout<<"SailSet value= "<<pNItem->data(columnNames::value).toString().toStdString()<<"\n";
+	//
+	//	std::cout<<"SailSet current index (from Visitor)= "<<pNItem->getActiveIndex()<<"\n";
+	//	std::cout<<"SailSet current index (from Item)= "<<pSettingsCombo->getActiveIndex()<<"\n";
+	//	std::cout<<"SailSet current Value= "<<pSettingsCombo->getActiveLabel().toStdString()<<"\n";
 
 }
 
@@ -169,10 +169,10 @@ QVariant SettingsModel::data(const QModelIndex &index, int role) const {
 
 	// Display or edit...
 	if (role == Qt::DisplayRole || role == Qt::EditRole)
-	  return getItem(index)->data(index.column());
+		return getItem(index)->data(index.column());
 
 	if(role==Qt::FontRole)
-	  return getItem(index)->getFont();
+		return getItem(index)->getFont();
 
 	if(role==Qt::BackgroundColorRole)
 		return getItem(index)->getBackGroundColor(index.column());
@@ -199,7 +199,7 @@ Qt::ItemFlags SettingsModel::flags(const QModelIndex &index) const {
 
 	// We return editable IF the item AND the column are both editable
 	if( getItem(index)->editable() == Qt::ItemIsEditable &&
-			 getItem(index)->getColumn(index.column())->editable() == Qt::ItemIsEditable )
+			getItem(index)->getColumn(index.column())->editable() == Qt::ItemIsEditable )
 		return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
 	else
 		return Qt::NoItemFlags | QAbstractItemModel::flags(index);
@@ -212,8 +212,8 @@ SettingsItemBase* SettingsModel::getRoot() const {
 }
 
 QVariant SettingsModel::headerData(	int section,
-																	Qt::Orientation orientation,
-																	int role) const {
+		Qt::Orientation orientation,
+		int role) const {
 
 	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
 		return pRootItem_->data(section);
@@ -249,10 +249,17 @@ QModelIndex SettingsModel::parent(const QModelIndex &index) const {
 	SettingsItemBase* childItem = static_cast<SettingsItemBase*>(index.internalPointer());
 	SettingsItemBase* parentItem = childItem->parentItem();
 
+    if(!childItem)
+        throw VPPException(HERE,"index has no item associated!");
+
+	if(!parentItem)
+		throw VPPException(HERE,"This item has no parent!");
+
 	if (parentItem == pRootItem_)
 		return QModelIndex();
 
 	return createIndex(parentItem->row(), 0, parentItem);
+
 }
 
 // How many rows?
@@ -314,7 +321,7 @@ const SettingsModel& SettingsModel::operator=(const SettingsModel& rhs) {
 
 	// Loop on the children of the rhs and clone them here
 	for(size_t iChild=0; iChild<rhs.getRoot()->childCount(); iChild++)
-			pRootItem_->appendChild(rhs.getRoot()->child(iChild)->clone());
+		pRootItem_->appendChild(rhs.getRoot()->child(iChild)->clone());
 
 	// Return me with the new data
 	return *this;

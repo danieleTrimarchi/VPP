@@ -3,7 +3,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QFileDialog>
 #include "VPPDialogs.h"
-#include <settingsWindow/SettingsModel.h>
+#include "settingsWindow/SettingsModel.h"
 
 DialogBase::DialogBase(QWidget *parent) :
 QDialog(parent) {

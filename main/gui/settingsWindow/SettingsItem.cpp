@@ -20,21 +20,29 @@ SettingsItemBase::SettingsItemBase() :
 }
 
 // Copy Ctor
-SettingsItemBase::SettingsItemBase(const 	SettingsItemBase& rhs) {
-	pParent_=rhs.pParent_;
+SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs) {
+	// Do not copy the parent as the clone is not
+	// supposed to be under the original parent!
+	//pParent_=rhs.pParent_;
+	pParent_ = 0;
 	editable_=rhs.editable_;
 	tooltip_=rhs.tooltip_;
 	path_=rhs.path_;
 	columns_=rhs.columns_;
 
-	std::cout<<"Copying the children!\n";
+	int nchild = children_.size();
+
 	// Also copy the children!
 	children_ = rhs.children_;
+
+	// Make sure the children have knowledge of their parent
+	for(size_t iChild=0; iChild<children_.size(); iChild++)
+		children_[iChild]->setParent(this);
 }
 
 // Set the parent of this item
 void SettingsItemBase::setParent(SettingsItemBase* parentItem) {
-	pParent_=parentItem;
+	pParent_= parentItem;
 }
 
 // Set the internal name of this item
@@ -58,7 +66,12 @@ SettingsItemBase::~SettingsItemBase() {
 
 // Append a child under me
 void SettingsItemBase::appendChild(SettingsItemBase* child) {
+
+	// Make sure the item knows who his parent is
+	child->setParent(this);
+	// Append the item to the child list
 	children_.append(child);
+
 }
 
 // Remove all children under me

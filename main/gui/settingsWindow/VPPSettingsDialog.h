@@ -30,7 +30,7 @@ class VPPSettingsDialog : public QDialog {
 
 	private:
 
-		/// Private Ctor - instanciated by the getInstance -> this is a Singleton!
+		/// Private Ctor - instantiated by the getInstance -> this is a Singleton!
 		explicit VPPSettingsDialog(const QString &fileName, QWidget *parent = 0);
 
 		/// Disallow default constructor
