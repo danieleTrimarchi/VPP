@@ -25,15 +25,17 @@ SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs) {
 	// supposed to be under the original parent!
 	//pParent_=rhs.pParent_;
 	pParent_ = 0;
-	editable_=rhs.editable_;
-	tooltip_=rhs.tooltip_;
-	path_=rhs.path_;
-	columns_=rhs.columns_;
+	editable_= rhs.editable_;
+	tooltip_= rhs.tooltip_;
+	path_= rhs.path_;
+	columns_= rhs.columns_;
 
-	int nchild = children_.size();
-
-	// Also copy the children!
-	children_ = rhs.children_;
+	// Also deep copy the children!
+//	children_.clear();
+//	for(size_t iChild=0; iChild<rhs.children_.size(); iChild++)
+//		children_.append( rhs.children_[iChild]->clone() );
+	// this is a shallow copy that generates a lot of pbs!
+	children_ = rhs.children_; //<<<<<<<<<<<<<<<<<<<<!!!!!!!
 
 	// Make sure the children have knowledge of their parent
 	for(size_t iChild=0; iChild<children_.size(); iChild++)
@@ -43,6 +45,18 @@ SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs) {
 // Set the parent of this item
 void SettingsItemBase::setParent(SettingsItemBase* parentItem) {
 	pParent_= parentItem;
+}
+
+// Set the parent of this item
+void SettingsItemBase::setParentRecursive(SettingsItemBase* parentItem) {
+
+	// Give me a parent
+	pParent_= parentItem;
+
+	// Tell my children that I am their father
+	for(size_t iChild=0; iChild<children_.size(); iChild++)
+		children_[iChild]->setParentRecursive(this);
+
 }
 
 // Set the internal name of this item

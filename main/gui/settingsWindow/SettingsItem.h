@@ -38,9 +38,6 @@ public:
 	/// Remove all children under me
 	void clearChildren();
 
-	/// Remove a child by position
-	void removeChild(size_t iChild);
-
 	/// Get the i-th child
 	SettingsItemBase* child(int row);
 
@@ -113,6 +110,9 @@ public:
 	/// Return the parent item
 	SettingsItemBase* parentItem();
 
+	/// Remove a child by position
+	void removeChild(size_t iChild);
+
 	/// What child number am I for my parent?
 	int row() const;
 
@@ -135,6 +135,9 @@ public:
 
 	/// Set the parent of this item
 	void setParent(SettingsItemBase* parentItem);
+
+	/// Recursively set the parent of this item and of all its children
+	void setParentRecursive(SettingsItemBase* parentItem);
 
 protected:
 

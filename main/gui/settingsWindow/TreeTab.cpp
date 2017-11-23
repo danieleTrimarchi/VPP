@@ -16,9 +16,6 @@ QWidget(parent) {
 	pTreeReferenceModel_->setupModelData();
 	pTreeReferenceModel_->setParent(this);
 
-    int n = pTreeReferenceModel_->getRoot()->childCount();
-    std::cout<<"N= "<<n<<std::endl;
-
     // Instantiate the model that will be visualized in the
 	// tab as a clone of the reference model
 	pTreeModel_= new SettingsModel(*pTreeReferenceModel_);
@@ -85,6 +82,7 @@ void TreeTab::save() {
 void TreeTab::revert() {
 	// Dereference the ptr to make sure we are actually calling
 	// the operator= of SettingsModel
+	std::cout<<"Reverting...\n";
 	*pTreeModel_ = *pTreeReferenceModel_;
 }
 
