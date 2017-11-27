@@ -31,11 +31,9 @@ SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs) {
 	columns_= rhs.columns_;
 
 	// Also deep copy the children!
-//	children_.clear();
-//	for(size_t iChild=0; iChild<rhs.children_.size(); iChild++)
-//		children_.append( rhs.children_[iChild]->clone() );
-	// this is a shallow copy that generates a lot of pbs!
-	children_ = rhs.children_; //<<<<<<<<<<<<<<<<<<<<!!!!!!!
+	children_.clear();
+	for(size_t iChild=0; iChild<rhs.children_.size(); iChild++)
+		children_.append( rhs.children_[iChild]->clone() );
 
 	// Make sure the children have knowledge of their parent
 	for(size_t iChild=0; iChild<children_.size(); iChild++)
@@ -226,6 +224,8 @@ QVariant SettingsItemBase::getToolTip() {
 QWidget* SettingsItemBase::createEditor(QWidget *parent) {
 
 	QLineEdit *editor = new QLineEdit(parent);
+	editor->setStyleSheet(	"background-color: white;"
+			"selection-color: orange;");
 	return editor;
 
 }
@@ -346,6 +346,17 @@ SettingsItemRoot::~SettingsItemRoot() {
 
 }
 
+// Clone this item, which is basically equivalent to calling the copy ctor
+SettingsItemRoot* SettingsItemRoot::clone() const {
+	return new SettingsItemRoot(*this);
+}
+
+/// Clone this item, which is basically equivalent to calling the copy ctor
+SettingsItemRoot::SettingsItemRoot(const SettingsItemRoot& rhs) :
+		SettingsItemBase(rhs){
+	// Do nothing because this class does not own members
+}
+
 // ----------------------------------------------------------------
 
 // Ctor
@@ -363,9 +374,21 @@ SettingsItemGroup::SettingsItemGroup(const QVariant& name):
 
 }
 
+// Copy Ctor, called by clone()
+SettingsItemGroup::SettingsItemGroup(const SettingsItemGroup& rhs):
+		SettingsItemBase(rhs){
+	// Do nothing as the class has no own members
+}
+
+
 // Dtor
 SettingsItemGroup::~SettingsItemGroup() {
 
+}
+
+// Clone this item, which is basically equivalent to calling the copy ctor
+SettingsItemGroup* SettingsItemGroup::clone() const {
+	return new SettingsItemGroup(*this);
 }
 
 // Returns the font this item should be visualized
@@ -394,9 +417,21 @@ SettingsItemBounds::SettingsItemBounds(const QVariant& name,double min,double ma
 
 }
 
+// Copy Ctor, called by clone()
+SettingsItemBounds::SettingsItemBounds(const SettingsItemBounds& rhs):
+		SettingsItemGroup(rhs){
+
+	// Do nothing as SettingsItemBounds do not have own members
+}
+
 // Dtor
 SettingsItemBounds::~SettingsItemBounds() {
 
+}
+
+/// Clone this item, which is basically equivalent to calling the copy ctor
+SettingsItemBounds* SettingsItemBounds::clone() const {
+	return new SettingsItemBounds(*this);
 }
 
 QFont SettingsItemBounds::getFont() const {
@@ -460,6 +495,11 @@ SettingsItem::SettingsItem(const SettingsItem& rhs) :
 // Dtor
 SettingsItem::~SettingsItem(){
 
+}
+
+// Clone this item, which is basically equivalent to calling the copy ctor
+SettingsItem* SettingsItem::clone() const {
+	return new SettingsItem(*this);
 }
 
 // Return the backGround color for this item based on the column
@@ -576,6 +616,11 @@ SettingsItemInt::~SettingsItemInt() {
 	/* do nothing */
 }
 
+// Clone this item, which is basically equivalent to calling the copy ctor
+SettingsItemInt* SettingsItemInt::clone() const {
+	return new SettingsItemInt(*this);
+}
+
 /// The item will give the Delegate the editor
 /// to be properly edited - in this case a spinbox
 QWidget* SettingsItemInt::createEditor(QWidget *parent) {
@@ -615,6 +660,14 @@ void SettingsItemInt::setModelData(	QWidget *editor,
 	model->setData(index, value, Qt::EditRole);
 }
 
+// Copy ctor, called by clone()
+SettingsItemInt::SettingsItemInt(const SettingsItemInt& rhs) :
+		SettingsItem(rhs) {
+
+	// There is nothing else to do, as there are no owned class
+	// members
+}
+
 // ---------------------------------------------------------------
 
 // Ctor
@@ -631,6 +684,11 @@ SettingsItemComboBox::SettingsItemComboBox(const QVariant& name,
 // Dtor
 SettingsItemComboBox::~SettingsItemComboBox() {
 	/* do nothing */
+}
+
+/// Clone this item, which is basically equivalent to calling the copy ctor
+SettingsItemComboBox* SettingsItemComboBox::clone() const {
+	return new SettingsItemComboBox(*this);
 }
 
 // The item will give the Delegate the editor

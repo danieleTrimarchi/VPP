@@ -319,7 +319,6 @@ bool SettingsModel::setData(const QModelIndex &index, const QVariant &value, int
 // Assignment operator
 const SettingsModel& SettingsModel::operator=(const SettingsModel& rhs) {
 
-	std::cout<<"SettingsModel operator =\n";
 	// Cleanup the root of the current model
 	pRootItem_->clearChildren();
 

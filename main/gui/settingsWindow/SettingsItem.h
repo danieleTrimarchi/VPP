@@ -185,7 +185,13 @@ public:
 	/// Dtor
 	virtual ~SettingsItemRoot();
 
+	/// Clone this item, which is basically equivalent to calling the copy ctor
+	SettingsItemRoot* clone() const;
+
 private:
+
+	/// Clone this item, which is basically equivalent to calling the copy ctor
+	SettingsItemRoot(const SettingsItemRoot&);
 
 };
 
@@ -201,11 +207,17 @@ public:
 	/// Dtor
 	virtual ~SettingsItemGroup();
 
+	/// Clone this item, which is basically equivalent to calling the copy ctor
+	virtual SettingsItemGroup* clone() const;
+
 	/// Returns the font this item should be visualized
 	/// with in the item tree
 	virtual QFont getFont() const;
 
-private:
+protected:
+
+	/// Copy Ctor, called by clone()
+	SettingsItemGroup(const SettingsItemGroup&);
 
 };
 
@@ -221,6 +233,9 @@ public:
 	/// Dtor
 	virtual ~SettingsItemBounds();
 
+	/// Clone this item, which is basically equivalent to calling the copy ctor
+	virtual SettingsItemBounds* clone() const;
+
 	/// Returns the font this item should be visualized
 	/// with in the item tree
 	virtual QFont getFont() const;
@@ -232,6 +247,9 @@ public:
 	double getMax();
 
 private:
+
+	/// Copy Ctor, called by clone()
+	SettingsItemBounds(const SettingsItemBounds&);
 
 };
 
@@ -246,6 +264,9 @@ public:
 
 	/// Dtor
 	virtual ~SettingsItem();
+
+	/// Clone this item, which is basically equivalent to calling the copy ctor
+	virtual SettingsItem* clone() const;
 
 	/// Return the backGround color for this item
 	/// The backGroundRole is grey for all, but white
@@ -273,7 +294,7 @@ public:
 
 protected:
 
-	/// Copy Ctor
+	/// Copy Ctor, called by clone()
 	SettingsItem(const SettingsItem&);
 
 private:
@@ -293,6 +314,9 @@ public:
 	/// Dtor
 	virtual ~SettingsItemInt();
 
+	/// Clone this item, which is basically equivalent to calling the copy ctor
+	virtual SettingsItemInt* clone() const;
+
 	/// The item will give the Delegate the editor
 	/// to be properly edited - in this case a spinbox
 	virtual QWidget* createEditor(QWidget *parent) override;
@@ -305,6 +329,9 @@ public:
 			const QModelIndex &index) const override;
 
 private:
+
+	/// Copy ctor, called by clone()
+	SettingsItemInt(const SettingsItemInt&);
 
 };
 
@@ -319,6 +346,9 @@ public:
 
 	/// Dtor
 	virtual ~SettingsItemComboBox();
+
+	/// Clone this item, which is basically equivalent to calling the copy ctor
+	virtual SettingsItemComboBox* clone() const;
 
 	/// The item will give the Delegate the editor
 	/// to be properly edited - in this case a spinbox
