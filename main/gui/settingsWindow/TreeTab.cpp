@@ -19,6 +19,7 @@ QWidget(parent) {
     // Instantiate the model that will be visualized in the
 	// tab as a clone of the reference model
 	pTreeModel_= new SettingsModel(*pTreeReferenceModel_);
+	pTreeModel_->setParent(this);
 
 	// Instantiate a view that will be used to visualize the model
 	pTreeView_= new SettingsWindowView(pTreeModel_,this);
@@ -84,8 +85,10 @@ void TreeTab::revert() {
 	// the operator= of SettingsModel
 	std::cout<<"Reverting...\n";
 	*pTreeModel_ = *pTreeReferenceModel_;
-}
 
+	// Make sure the view is up to date
+	updateActions();
+}
 
 
 void TreeTab::updateActions() {

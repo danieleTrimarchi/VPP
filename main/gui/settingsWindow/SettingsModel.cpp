@@ -21,14 +21,15 @@ SettingsModel::SettingsModel(const SettingsModel& rhs) :
 /// Setup the data of this model
 void SettingsModel::setupModelData() {
 
+	pRootItem_->appendChild( new SettingsItem("LWL",0,"m","Design waterline length") );
 	// Instantiate the SettingsItemGroups. These items are added under
 	// the root. They are label and they have editable children
 	// composed by label and an editable value with validator
-	SettingsItemGroup* pVPPSettings = new SettingsItemGroup("VPP Settings");
-	pVPPSettings->setParent(pRootItem_);
-	pRootItem_->appendChild(pVPPSettings);
+//	SettingsItemGroup* pVPPSettings = new SettingsItemGroup("VPP Settings");
+//	pVPPSettings->setParent(pRootItem_);
+//	pRootItem_->appendChild(pVPPSettings);
 
-	pVPPSettings->appendChild( new SettingsItemBounds("Velocity bounds",0,15,"m/s","Allowed boat speed bounds"));
+	//pVPPSettings->appendChild( new SettingsItemBounds("Velocity bounds",0,15,"m/s","Allowed boat speed bounds"));
 	//	pVPPSettings->appendChild( new SettingsItemBounds("Heel angle bounds",-1e-5,85,"deg","Allowed boat heel angle bounds"));
 	//	pVPPSettings->appendChild( new SettingsItemBounds("Crew position bounds",0,3,"[m]","Allowed boat heel angle bounds"));
 	//	pVPPSettings->appendChild( new SettingsItemBounds("Flat bounds",0.4,1," ","Allowed boat heel angle bounds"));
