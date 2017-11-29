@@ -28,7 +28,12 @@ SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs) {
 	editable_= rhs.editable_;
 	tooltip_= rhs.tooltip_;
 	path_= rhs.path_;
-	columns_= rhs.columns_;
+
+	// Deep copy the columns
+	columns_.clear();
+	columns_.resize(rhs.columns_.size());
+	for(size_t i=0; i<columns_.size(); i++)
+		columns_[i] = rhs.columns_[i]->clone();
 
 	// Also deep copy the children!
 	children_.clear();
@@ -657,6 +662,7 @@ void SettingsItemInt::setModelData(	QWidget *editor,
 	spinBox->interpretText();
 	int value = spinBox->value();
 
+	std::cout<<"Setting \'"<<value<<"\' to item "<<this<<" ; model "<<model<<std::endl;
 	model->setData(index, value, Qt::EditRole);
 }
 

@@ -19,8 +19,11 @@ class SettingsColumn {
 		/// Dtor
 		virtual ~SettingsColumn();
 
+		/// Clone this item, which is basically equivalent to calling the copy ctor
+		virtual SettingsColumn* clone() const =0;
+
 		/// Get the data stored in this column
-		virtual QVariant getData(const int role=0) =0;
+		QVariant getData(const int role=0) const;
 
 		/// Set the data stored in this column
 		void setData(const QVariant&);
@@ -34,10 +37,15 @@ class SettingsColumn {
 
 	protected:
 
+		/// Copy Ctor
+		SettingsColumn(const SettingsColumn&);
+
 		/// Container that stores the actual data to be visualized
 		QVariant data_;
 
 	private:
+
+
 
 };
 
@@ -53,13 +61,17 @@ class NameColumn : public SettingsColumn {
 		/// Dtor
 		virtual ~NameColumn();
 
-		/// Get the data stored in this column
-		virtual QVariant getData(const int role=0);
+		/// Clone this item, which is basically equivalent to calling the copy ctor
+		virtual NameColumn* clone() const;
 
 		/// Is this column editable in the view?
 		virtual Qt::ItemFlag editable() const;
 
 	private:
+
+		/// Copy Ctor
+		NameColumn(const NameColumn&);
+
 
 };
 
@@ -75,8 +87,8 @@ class ValueColumn : public SettingsColumn {
 		/// Dtor
 		virtual ~ValueColumn();
 
-		/// Get the data stored in this column
-		virtual QVariant getData(const int role=0);
+		/// Clone this item, which is basically equivalent to calling the copy ctor
+		virtual ValueColumn* clone() const;
 
 		/// Is this column editable in the view?
 		virtual Qt::ItemFlag editable() const;
@@ -86,6 +98,9 @@ class ValueColumn : public SettingsColumn {
 		virtual QColor getBackGroundColor() const;
 
 	private:
+
+		/// Copy Ctor
+		ValueColumn(const ValueColumn&);
 
 };
 
@@ -101,13 +116,16 @@ class UnitColumn : public SettingsColumn {
 		/// Dtor
 		virtual ~UnitColumn();
 
-		/// Get the data stored in this column
-		virtual QVariant getData(const int role=0);
+		/// Clone this item, which is basically equivalent to calling the copy ctor
+		virtual UnitColumn* clone() const;
 
 		/// Is this column editable in the view?
 		virtual Qt::ItemFlag editable() const;
 
 	private:
+
+		/// Copy Ctor
+		UnitColumn(const UnitColumn&);
 
 };
 

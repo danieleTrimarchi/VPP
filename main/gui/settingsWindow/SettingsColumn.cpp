@@ -6,6 +6,11 @@ SettingsColumn::SettingsColumn() {
 
 }
 
+// Copy Ctor
+SettingsColumn::SettingsColumn(const SettingsColumn& rhs) {
+	data_ = rhs.data_;
+}
+
 // Dtor
 SettingsColumn::~SettingsColumn() {
 
@@ -14,6 +19,11 @@ SettingsColumn::~SettingsColumn() {
 // Set the data stored in this column
 void SettingsColumn::setData(const QVariant& data){
 	data_ =	data;
+}
+
+// Get the data stored in this column
+QVariant SettingsColumn::getData(const int role /*=0*/) const {
+	return data_;
 }
 
 // Get the backGround color for the items of this
@@ -30,15 +40,20 @@ NameColumn::NameColumn() :
 
 }
 
+// Copy Ctor
+NameColumn::NameColumn(const NameColumn& rhs) :
+	SettingsColumn(rhs){
+
+}
+
 // Dtor
 NameColumn::~NameColumn() {
 
 }
 
-// Get the data stored in this column
-QVariant NameColumn::getData(const int role /*=0*/) {
-
-	return data_;
+// Clone this item, which is basically equivalent to calling the copy ctor
+NameColumn* NameColumn::clone() const {
+	return new NameColumn(*this);
 }
 
 // Is this column editable in the view?
@@ -54,16 +69,20 @@ ValueColumn::ValueColumn() :
 
 }
 
+// Copy Ctor
+ValueColumn::ValueColumn(const ValueColumn& rhs):
+		SettingsColumn(rhs){
+
+}
+
 // Dtor
 ValueColumn::~ValueColumn() {
 
 }
 
-// Get the data stored in this column
-QVariant ValueColumn::getData(const int role /*=0*/) {
-
-	return data_;
-
+// Clone this item, which is basically equivalent to calling the copy ctor
+ValueColumn* ValueColumn::clone() const {
+	return new ValueColumn(*this);
 }
 
 // Is this column editable in the view?
@@ -85,16 +104,20 @@ UnitColumn::UnitColumn() :
 
 }
 
+// Copy Ctor
+UnitColumn::UnitColumn(const UnitColumn& rhs) :
+		SettingsColumn(rhs) {
+
+}
+
 // Dtor
 UnitColumn::~UnitColumn() {
 
 }
 
-// Get the data stored in this column
-QVariant UnitColumn::getData(const int role /*=0*/) {
-
-	return data_;
-
+// Clone this item, which is basically equivalent to calling the copy ctor
+UnitColumn* UnitColumn::clone() const {
+	return new UnitColumn(*this);
 }
 
 // Is this column editable in the view?

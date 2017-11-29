@@ -1,6 +1,7 @@
 #include "TreeTab.h"
 #include <QtWidgets/QVBoxLayout>
 #include <iostream>
+#include "GetSettingsItemVisitor.h"
 
 //---------------------------------------------------------------
 // This widget includes several setting trees, from which the
@@ -18,7 +19,8 @@ QWidget(parent) {
 
     // Instantiate the model that will be visualized in the
 	// tab as a clone of the reference model
-	pTreeModel_= new SettingsModel(*pTreeReferenceModel_);
+	pTreeModel_= new SettingsModel; //(*pTreeReferenceModel_);
+	pTreeModel_->setupModelData();
 	pTreeModel_->setParent(this);
 
 	// Instantiate a view that will be used to visualize the model
@@ -72,21 +74,24 @@ TreeTab::~TreeTab() {
 
 // Save the model the user has edited to the underlying (permanent) model
 void TreeTab::save() {
+
 	// Dereference the ptr to make sure we are actually calling
 	// the operator= of SettingsModel
 	*pTreeReferenceModel_ = *pTreeModel_;
+
+	// Make sure the view is up to date
+	updateActions();
 }
 
 // When the user hits 'cancel' in the main dialog, we
 // revert the model: so that any change the user has
 // done is erased.
 void TreeTab::revert() {
+
 	// Dereference the ptr to make sure we are actually calling
 	// the operator= of SettingsModel
-	std::cout<<"Reverting...\n";
 	*pTreeModel_ = *pTreeReferenceModel_;
 
-	// Make sure the view is up to date
 	updateActions();
 }
 

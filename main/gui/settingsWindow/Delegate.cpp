@@ -9,6 +9,8 @@
 #include <QtWidgets/QLineEdit>
 #include "SettingsItem.h"
 
+#include <iostream>
+
 SpinBoxDelegate::SpinBoxDelegate(QObject *parent)
 : QStyledItemDelegate(parent) {
 
@@ -92,8 +94,9 @@ void QLineEditDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
 
 	if (index.isValid()) {
 		SettingsItemBase* pItem = static_cast<SettingsItemBase*>(index.internalPointer());
-		if(pItem)
+		if(pItem){
 			pItem->setModelData(editor,model,index);
+		}
 	}
 }
 
