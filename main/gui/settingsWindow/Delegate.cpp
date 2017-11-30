@@ -78,8 +78,7 @@ QWidget* QLineEditDelegate::createEditor(QWidget* parent,
 	return new QWidget(parent);
 }
 
-void QLineEditDelegate::setEditorData(QWidget *editor,
-		const QModelIndex& index) const {
+void QLineEditDelegate::setEditorData(QWidget *editor,const QModelIndex& index) const {
 
 	if (index.isValid()) {
 		SettingsItemBase* pItem = static_cast<SettingsItemBase*>(index.internalPointer());

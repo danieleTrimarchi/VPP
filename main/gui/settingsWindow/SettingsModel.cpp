@@ -158,6 +158,33 @@ void SettingsModel::setupModelData() {
 }
 
 
+// The view notifies the model that an item has been expanded
+// The model will pass the information to the item itself
+// Required to remember the current state of the items when
+// cloning item trees
+void SettingsModel::setItemExpanded(const QModelIndex& index) {
+
+	if (!index.isValid())
+		return;
+
+	std::cout<<"Item expanded...\n";
+	getItem(index)->setExpanded(true);
+}
+
+// The view notifies the model that an item has been folded
+// The model will pass the information to the item itself
+// Required to remember the current state of the items when
+// cloning item trees
+void SettingsModel::setItemCollapsed(const QModelIndex& index) {
+
+	if (!index.isValid())
+		return;
+
+	std::cout<<"Item collapsed...\n";
+	getItem(index)->setExpanded(false);
+
+}
+
 // Virtual Dtor
 SettingsModel::~SettingsModel(){
 	delete pRootItem_;

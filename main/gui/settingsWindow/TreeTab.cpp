@@ -17,7 +17,7 @@ QWidget(parent) {
 	pTreeReferenceModel_->setupModelData();
 	pTreeReferenceModel_->setParent(this);
 
-    // Instantiate the model that will be visualized in the
+	// Instantiate the model that will be visualized in the
 	// tab as a clone of the reference model
 	pTreeModel_= new SettingsModel; //(*pTreeReferenceModel_);
 	pTreeModel_->setupModelData();
@@ -25,16 +25,6 @@ QWidget(parent) {
 
 	// Instantiate a view that will be used to visualize the model
 	pTreeView_= new SettingsWindowView(pTreeModel_,this);
-
-	connect(
-			pTreeView_,&SettingsWindowView::expanded,
-			pTreeView_,&SettingsWindowView::resizeColumnsToContents
-			);
-
-	connect(
-			pTreeModel_,&SettingsModel::dataChanged,
-			pTreeView_,&SettingsWindowView::resizeColumnsToContents
-			);
 
 	// Instantiate a model view, assign a model and show it
 	pTreeView_->setModel(pTreeModel_);
@@ -45,7 +35,7 @@ QWidget(parent) {
 	pTreeView_->setItemDelegate(pDelegate_);
 
 	// Expand all the items.
-	//pTreeView_->expandAll();
+	// pTreeView_->expandAll();
 
 	// Assign the tree view to a VBoxLayout
 	QVBoxLayout* centralLayout = new QVBoxLayout(this);
@@ -56,8 +46,8 @@ QWidget(parent) {
 
 	this->setLayout(centralLayout);
 
-	connect(pTreeView_->selectionModel(), &QItemSelectionModel::selectionChanged,
-			this, &TreeTab::updateActions);
+	// Connect all the required signals
+	connectSignals();
 
 	// Resize the window in order to show as much as possible
 	resize(500,500);
@@ -108,3 +98,35 @@ void TreeTab::updateActions() {
 		pTreeView_->resizeColumnToContents(iColumn);
 
 }
+
+// Connect all the required signals
+// todo dtrimarchi, this should be moved to
+// the view, that owns a ptr to the model
+void TreeTab::connectSignals() {
+
+	// Change in selection triggers an update
+	connect(pTreeView_->selectionModel(), &QItemSelectionModel::selectionChanged,
+			this, &TreeTab::updateActions);
+
+	// Changing data trigger columns resize
+	connect(
+			pTreeModel_,&SettingsModel::dataChanged,
+			pTreeView_,&SettingsWindowView::resizeColumnsToContents
+	);
+
+	// Expanding items triggers columns resize
+	connect(
+			pTreeView_,&SettingsWindowView::expanded,
+			pTreeView_,&SettingsWindowView::resizeColumnsToContents
+	);
+
+	// Expanding an item triggers the method that stores the item state
+	connect( pTreeView_,&SettingsWindowView::expanded,
+			pTreeModel_,&SettingsModel::setItemExpanded);
+
+	// Folding an item triggers the method that stores the item state
+	connect( pTreeView_,&SettingsWindowView::collapsed,
+			pTreeModel_,&SettingsModel::setItemCollapsed);
+
+}
+

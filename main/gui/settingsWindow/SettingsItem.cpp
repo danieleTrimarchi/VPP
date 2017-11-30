@@ -11,12 +11,12 @@ SettingsItemBase::SettingsItemBase() :
 					pParent_(0),
 					editable_(Qt::ItemIsEditable),
 					tooltip_(QVariant()),
-					path_(""){
+					path_(""),
+					expanded_(false){
 
 	columns_.push_back(new NameColumn);
 	columns_.push_back(new ValueColumn);
 	columns_.push_back(new UnitColumn);
-
 }
 
 // Copy Ctor
@@ -28,6 +28,7 @@ SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs) {
 	editable_= rhs.editable_;
 	tooltip_= rhs.tooltip_;
 	path_= rhs.path_;
+	expanded_ = rhs.expanded_;
 
 	// Deep copy the columns
 	columns_.clear();
@@ -60,6 +61,11 @@ void SettingsItemBase::setParentRecursive(SettingsItemBase* parentItem) {
 	for(size_t iChild=0; iChild<children_.size(); iChild++)
 		children_[iChild]->setParentRecursive(this);
 
+}
+
+// This slot is triggered when the item is expanded in the view
+void SettingsItemBase::setExpanded(bool expanded) {
+	expanded_ = expanded;
 }
 
 // Set the internal name of this item

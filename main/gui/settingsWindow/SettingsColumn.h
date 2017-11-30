@@ -20,7 +20,9 @@ class SettingsColumn {
 		virtual ~SettingsColumn();
 
 		/// Clone this item, which is basically equivalent to calling the copy ctor
-		virtual SettingsColumn* clone() const =0;
+		/// This must be pure virtual, because the class is abstract and I cannot call
+		/// the copy ctor from here. So I am obliged to issue the job to child classes
+		virtual SettingsColumn* clone() const=0;
 
 		/// Get the data stored in this column
 		QVariant getData(const int role=0) const;

@@ -139,6 +139,11 @@ public:
 	/// Recursively set the parent of this item and of all its children
 	void setParentRecursive(SettingsItemBase* parentItem);
 
+public slots:
+
+	/// This slot is triggered when the item is expanded in the view
+	void setExpanded(bool expanded);
+
 protected:
 
 	/// Ctor to be called from child classes
@@ -170,6 +175,9 @@ private:
 
 	/// Is this item editable?
 	Qt::ItemFlag editable_;
+
+	/// Is this item expanded in the view?
+	bool expanded_;
 
 };
 

@@ -70,6 +70,20 @@ class SettingsModel : public QAbstractItemModel {
 		/// Setup the data of this model
 		void setupModelData();
 
+	public slots:
+
+		/// The view notifies the model that an item has been expanded
+		/// The model will pass the information to the item itself
+		/// Required to remember the current state of the items when
+		/// cloning item trees
+		void setItemExpanded(const QModelIndex&);
+
+		/// The view notifies the model that an item has been folded
+		/// The model will pass the information to the item itself
+		/// Required to remember the current state of the items when
+		/// cloning item trees
+		void setItemCollapsed(const QModelIndex&);
+
 	private:
 
 		/// Get an item of this model

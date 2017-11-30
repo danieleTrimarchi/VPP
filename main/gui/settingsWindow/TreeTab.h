@@ -29,9 +29,14 @@ class TreeTab : public QWidget {
 		/// Save the
 	public slots:
 
-			void updateActions();
+		void updateActions();
 
 	private :
+
+		/// Connect all the required signals
+		/// todo dtrimarchi, this should be moved to
+		/// the view, that owns a ptr to the model
+		void connectSignals();
 
 		SettingsModel *pTreeReferenceModel_, *pTreeModel_;
 		SettingsWindowView* pTreeView_;
