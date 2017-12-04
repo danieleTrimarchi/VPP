@@ -7,6 +7,8 @@
 
 class SettingsWindowView : public QTreeView {
 
+		Q_OBJECT
+
 	public:
 
 		/// Ctor
@@ -15,10 +17,26 @@ class SettingsWindowView : public QTreeView {
 		/// Dtor
 		~SettingsWindowView();
 
+	Q_SIGNALS :
+
+		/// On copy, emit a signal that will notify the view that a
+		/// given item must be expanded
+		void mustExpand(const QModelIndex& );
+
+		/// On copy, emit a signal that will notify the view that a
+		/// given item must be collapsed
+		void mustCollapse(const QModelIndex& );
+
 	public slots:
 
 		/// Call the resizeColumnToContents of the view
 		void resizeColumnsToContents(const QModelIndex& );
+
+		/// Override expand signal from the base class
+    void doExpand(const QModelIndex &index);
+
+		/// Override collapse signal from the base class
+    void doCollapse(const QModelIndex &index);
 
 	private:
 

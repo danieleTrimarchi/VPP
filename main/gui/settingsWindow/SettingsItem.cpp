@@ -68,6 +68,11 @@ void SettingsItemBase::setExpanded(bool expanded) {
 	expanded_ = expanded;
 }
 
+// Return the flag 'expanded'
+bool SettingsItemBase::expanded() const {
+	return expanded_;
+}
+
 // Set the internal name of this item
 void SettingsItemBase::setInternalName(const QVariant& name) {
 

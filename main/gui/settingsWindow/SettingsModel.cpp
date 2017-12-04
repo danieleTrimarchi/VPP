@@ -167,8 +167,9 @@ void SettingsModel::setItemExpanded(const QModelIndex& index) {
 	if (!index.isValid())
 		return;
 
-	std::cout<<"Item expanded...\n";
+	std::cout<<"Item expanded..."<<index.internalPointer()<<"\n";
 	getItem(index)->setExpanded(true);
+
 }
 
 // The view notifies the model that an item has been folded
@@ -180,9 +181,8 @@ void SettingsModel::setItemCollapsed(const QModelIndex& index) {
 	if (!index.isValid())
 		return;
 
-	std::cout<<"Item collapsed...\n";
+	std::cout<<"Item collapsed..."<<index.internalPointer()<<"\n";
 	getItem(index)->setExpanded(false);
-
 }
 
 // Virtual Dtor
@@ -357,11 +357,30 @@ const SettingsModel& SettingsModel::operator=(const SettingsModel& rhs) {
 		pRootItem_->appendChild(rhs.getRoot()->child(iChild)->clone());
 		// Tell the child who's his parent
 		pRootItem_->child(iChild)->setParentRecursive(pRootItem_);
+
 	}
+	std::cout<<"End operator =! \n";
 
 	// Notify that the model has been reset!
 	endResetModel();
 
+	// Appeareance...
+	for(size_t iChild=0; iChild<rhs.getRoot()->childCount(); iChild++){
+		// Fold or collapse the item based on the 'expanded_' flag
+		// -> Create the index of this child. We assume there is
+		// only one level of items, which should be true for the
+		// current model but might not be always true in the future
+		for(size_t iCol=0; iCol<pRootItem_->columnCount();iCol++){
+			QModelIndex idx = createIndex(iChild,iCol,pRootItem_);
+			if(pRootItem_->child(iChild)->expanded()){
+				std::cout<<"operator = : emitting mustExpand...\n";
+				emit mustExpand(idx);
+			} else {
+				std::cout<<"operator = : emitting mustCollapse...\n";
+				emit mustCollapse(idx);
+			}
+		}
+	}
 	// Return me with the new data
 	return *this;
 }

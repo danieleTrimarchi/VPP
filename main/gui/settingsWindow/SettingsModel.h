@@ -70,6 +70,16 @@ class SettingsModel : public QAbstractItemModel {
 		/// Setup the data of this model
 		void setupModelData();
 
+	Q_SIGNALS:
+
+		/// On copy, emit a signal that will notify the view that a
+		/// given item must be expanded
+		void mustExpand(const QModelIndex& );
+
+		/// On copy, emit a signal that will notify the view that a
+		/// given item must be collapsed
+		void mustCollapse(const QModelIndex& );
+
 	public slots:
 
 		/// The view notifies the model that an item has been expanded

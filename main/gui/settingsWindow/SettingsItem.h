@@ -139,6 +139,9 @@ public:
 	/// Recursively set the parent of this item and of all its children
 	void setParentRecursive(SettingsItemBase* parentItem);
 
+	/// Return the flag 'expanded'
+	bool expanded() const;
+
 public slots:
 
 	/// This slot is triggered when the item is expanded in the view

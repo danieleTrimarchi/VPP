@@ -1,5 +1,6 @@
 #include "SettingsWindowView.h"
 #include <QtCore/QAbstractItemModel>
+#include <iostream>
 
 // Ctor
 SettingsWindowView::SettingsWindowView(SettingsModel* pModel, QWidget *parent) :
@@ -27,6 +28,19 @@ void SettingsWindowView::resizeColumnsToContents(const QModelIndex& index) {
 	// Take a chance to resize all columns
 	for(size_t iCol=0; iCol<pModel_->columnCount(); iCol++ )
 		resizeColumnToContents(iCol);
+}
+
+/// Override expand signal from the base class
+void SettingsWindowView::doExpand(const QModelIndex &index){
+
+	std::cout<<"SettingsWindowView::expand"<<std::endl;
+	QTreeView::expand(index);
+}
+
+/// Override collapse signal from the base class
+void SettingsWindowView::doCollapse(const QModelIndex &index) {
+	std::cout<<"SettingsWindowView::collapse"<<std::endl;
+	QTreeView::collapse(index);
 }
 
 

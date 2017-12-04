@@ -20,7 +20,6 @@ QWidget(parent) {
 	// Instantiate the model that will be visualized in the
 	// tab as a clone of the reference model
 	pTreeModel_= new SettingsModel; //(*pTreeReferenceModel_);
-	pTreeModel_->setupModelData();
 	pTreeModel_->setParent(this);
 
 	// Instantiate a view that will be used to visualize the model
@@ -49,6 +48,9 @@ QWidget(parent) {
 	// Connect all the required signals
 	connectSignals();
 
+	// Now populate the model with some items
+	pTreeModel_->setupModelData();
+
 	// Resize the window in order to show as much as possible
 	resize(500,500);
 
@@ -67,6 +69,7 @@ void TreeTab::save() {
 
 	// Dereference the ptr to make sure we are actually calling
 	// the operator= of SettingsModel
+	std::cout<<"Saving the model... \n";
 	*pTreeReferenceModel_ = *pTreeModel_;
 
 	// Make sure the view is up to date
@@ -80,6 +83,7 @@ void TreeTab::revert() {
 
 	// Dereference the ptr to make sure we are actually calling
 	// the operator= of SettingsModel
+	std::cout<<"Reverting the model... \n";
 	*pTreeModel_ = *pTreeReferenceModel_;
 
 	updateActions();
@@ -120,12 +124,40 @@ void TreeTab::connectSignals() {
 			pTreeView_,&SettingsWindowView::resizeColumnsToContents
 	);
 
+	// --
+
 	// Expanding an item triggers the method that stores the item state
 	connect( pTreeView_,&SettingsWindowView::expanded,
 			pTreeModel_,&SettingsModel::setItemExpanded);
 
 	// Folding an item triggers the method that stores the item state
 	connect( pTreeView_,&SettingsWindowView::collapsed,
+			pTreeModel_,&SettingsModel::setItemCollapsed);
+
+	// --
+
+	// An item, the state of which is expanded, must notify the view
+	connect( pTreeModel_,&SettingsModel::mustExpand,
+				pTreeView_,&SettingsWindowView::doExpand);
+
+	connect( pTreeReferenceModel_,&SettingsModel::mustExpand,
+				pTreeView_,&SettingsWindowView::doExpand);
+
+	// An item, the state of which is collapsed, must notify the view
+	connect( pTreeModel_,&SettingsModel::mustCollapse,
+ 			pTreeView_,&SettingsWindowView::doCollapse);
+
+	connect( pTreeReferenceModel_,&SettingsModel::mustCollapse,
+				pTreeView_,&SettingsWindowView::doCollapse);
+
+	// --
+
+	// Folding an item triggers the method that stores the item state
+	connect( pTreeView_,&SettingsWindowView::mustExpand,
+					pTreeModel_,&SettingsModel::setItemExpanded);
+
+	// Folding an item triggers the method that stores the item state
+	connect( pTreeView_,&SettingsWindowView::mustCollapse,
 			pTreeModel_,&SettingsModel::setItemCollapsed);
 
 }
