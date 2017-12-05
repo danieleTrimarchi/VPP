@@ -167,7 +167,6 @@ void SettingsModel::setItemExpanded(const QModelIndex& index) {
 	if (!index.isValid())
 		return;
 
-	std::cout<<"Item expanded..."<<index.internalPointer()<<"\n";
 	getItem(index)->setExpanded(true);
 
 }
@@ -181,7 +180,6 @@ void SettingsModel::setItemCollapsed(const QModelIndex& index) {
 	if (!index.isValid())
 		return;
 
-	std::cout<<"Item collapsed..."<<index.internalPointer()<<"\n";
 	getItem(index)->setExpanded(false);
 }
 
@@ -359,7 +357,6 @@ const SettingsModel& SettingsModel::operator=(const SettingsModel& rhs) {
 		pRootItem_->child(iChild)->setParentRecursive(pRootItem_);
 
 	}
-	std::cout<<"End operator =! \n";
 
 	// Notify that the model has been reset!
 	endResetModel();
@@ -373,10 +370,8 @@ const SettingsModel& SettingsModel::operator=(const SettingsModel& rhs) {
 		for(size_t iCol=0; iCol<pRootItem_->columnCount();iCol++){
 			QModelIndex idx = createIndex(iChild,iCol,pRootItem_);
 			if(pRootItem_->child(iChild)->expanded()){
-				std::cout<<"operator = : emitting mustExpand...\n";
 				emit mustExpand(idx);
 			} else {
-				std::cout<<"operator = : emitting mustCollapse...\n";
 				emit mustCollapse(idx);
 			}
 		}

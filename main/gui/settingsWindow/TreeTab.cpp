@@ -69,7 +69,6 @@ void TreeTab::save() {
 
 	// Dereference the ptr to make sure we are actually calling
 	// the operator= of SettingsModel
-	std::cout<<"Saving the model... \n";
 	*pTreeReferenceModel_ = *pTreeModel_;
 
 	// Make sure the view is up to date
@@ -83,7 +82,6 @@ void TreeTab::revert() {
 
 	// Dereference the ptr to make sure we are actually calling
 	// the operator= of SettingsModel
-	std::cout<<"Reverting the model... \n";
 	*pTreeModel_ = *pTreeReferenceModel_;
 
 	updateActions();
@@ -140,25 +138,9 @@ void TreeTab::connectSignals() {
 	connect( pTreeModel_,&SettingsModel::mustExpand,
 				pTreeView_,&SettingsWindowView::doExpand);
 
-	connect( pTreeReferenceModel_,&SettingsModel::mustExpand,
-				pTreeView_,&SettingsWindowView::doExpand);
-
 	// An item, the state of which is collapsed, must notify the view
 	connect( pTreeModel_,&SettingsModel::mustCollapse,
  			pTreeView_,&SettingsWindowView::doCollapse);
-
-	connect( pTreeReferenceModel_,&SettingsModel::mustCollapse,
-				pTreeView_,&SettingsWindowView::doCollapse);
-
-	// --
-
-	// Folding an item triggers the method that stores the item state
-	connect( pTreeView_,&SettingsWindowView::mustExpand,
-					pTreeModel_,&SettingsModel::setItemExpanded);
-
-	// Folding an item triggers the method that stores the item state
-	connect( pTreeView_,&SettingsWindowView::mustCollapse,
-			pTreeModel_,&SettingsModel::setItemCollapsed);
 
 }
 

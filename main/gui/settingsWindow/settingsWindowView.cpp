@@ -32,14 +32,11 @@ void SettingsWindowView::resizeColumnsToContents(const QModelIndex& index) {
 
 /// Override expand signal from the base class
 void SettingsWindowView::doExpand(const QModelIndex &index){
-
-	std::cout<<"SettingsWindowView::expand"<<std::endl;
 	QTreeView::expand(index);
 }
 
 /// Override collapse signal from the base class
 void SettingsWindowView::doCollapse(const QModelIndex &index) {
-	std::cout<<"SettingsWindowView::collapse"<<std::endl;
 	QTreeView::collapse(index);
 }
 
