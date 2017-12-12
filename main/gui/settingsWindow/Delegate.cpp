@@ -70,8 +70,13 @@ QWidget* QLineEditDelegate::createEditor(QWidget* parent,
 
 	if (index.isValid()) {
 		SettingsItemBase* pItem = static_cast<SettingsItemBase*>(index.internalPointer());
-		if(pItem)
-			return pItem->createEditor(parent);
+		if(pItem){
+			QWidget* editor= pItem->createEditor(parent);
+			// This **should** guarantee that the text is registered into the model while
+			// typed in. No need to close the editor. From MEMS+ LineEditDelegateHelper::createEditor
+			connect(editor, SIGNAL(textChanged(QString)), this, SLOT(textEdited()));
+			return editor;
+		}
 	}
 
 	// This should never happen!

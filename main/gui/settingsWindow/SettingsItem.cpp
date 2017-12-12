@@ -5,13 +5,13 @@
 #include <iostream>
 
 #include "GetSettingsItemVisitor.h"
+#include "VppSettingsXmlWriter.h"
 
 // Ctor
 SettingsItemBase::SettingsItemBase() :
 					pParent_(0),
 					editable_(Qt::ItemIsEditable),
 					tooltip_(QVariant()),
-					path_(""),
 					expanded_(false){
 
 	columns_.push_back(new NameColumn);
@@ -27,7 +27,6 @@ SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs) {
 	pParent_ = 0;
 	editable_= rhs.editable_;
 	tooltip_= rhs.tooltip_;
-	path_= rhs.path_;
 	expanded_ = rhs.expanded_;
 
 	// Deep copy the columns
@@ -73,20 +72,6 @@ bool SettingsItemBase::expanded() const {
 	return expanded_;
 }
 
-// Set the internal name of this item
-void SettingsItemBase::setInternalName(const QVariant& name) {
-
-	// Set the internal name of this item. This is in the format
-	// parentName.myName, where the "spaces" have been substituted
-	// by "_"
-	if(pParent_)
-		path_ = 	pParent_->getInternalName() +
-				QString(".") +
-				name.toString().replace(" ","_",Qt::CaseSensitive);
-	else
-		path_ = 	name.toString().replace(" ","_",Qt::CaseSensitive);
-}
-
 // Dtor
 SettingsItemBase::~SettingsItemBase() {
 	qDeleteAll(children_);
@@ -114,6 +99,11 @@ void SettingsItemBase::removeChild(size_t iChild) {
 
 // Get the i-th child
 SettingsItemBase* SettingsItemBase::child(int row) {
+	return children_.value(row);
+}
+
+// Get the i-th child - const variety
+SettingsItemBase* SettingsItemBase::child(int row) const{
 	return children_.value(row);
 }
 
@@ -175,6 +165,23 @@ int SettingsItemBase::row() const {
 // Returns the associated icon - in this case an empty QVariant
 QVariant SettingsItemBase::getIcon() {
 	return QVariant();
+}
+
+// Get the internal name of this item, used to locate it in the tree
+// This is in the format parentName.myName, where the "spaces" have
+// been substituted by "_"
+QString SettingsItemBase::getInternalName() const {
+
+	QString path;
+
+	// Get the parent internal name
+	if(pParent_)
+		path = pParent_->getInternalName() +  QString(".");
+
+	// And now add my own name. Replace spaces with '_'
+	path += getName().replace(" ","_",Qt::CaseSensitive);
+
+	return path;
 }
 
 bool SettingsItemBase::setData(int column, const QVariant& value) {
@@ -280,7 +287,7 @@ void SettingsItemBase::paint(QPainter* painter, const QStyleOptionViewItem &opti
 // return an item by path
 SettingsItemBase* SettingsItemBase::accept(const GetSettingsItemByPathVisitor& v, QString varName) {
 
-	if(path_ == varName )
+	if( getInternalName() == varName )
 		return this;
 
 	for(size_t iChild=0; iChild<childCount(); iChild++) {
@@ -309,10 +316,25 @@ SettingsItemBase* SettingsItemBase::accept(const GetSettingsItemByNameVisitor& v
 	return 0;
 }
 
+// Accept a visitor that will write this item to XML
+void SettingsItemBase::accept( VPPSettingsXmlWriterVisitor& v ) {
 
-// Get the internal name of this item, used to locate it in the tree
-QString SettingsItemBase::getInternalName() {
-	return path_;
+	// Visit me
+
+	v.visitBegin();
+	v.visit(this);
+
+	// And now visit my children
+	for(size_t iChild=0; iChild<childCount(); iChild++) {
+		this->child(iChild)->accept(v);
+	}
+
+    v.visitEnd();
+}
+
+// Get the display name of this item
+QString SettingsItemBase::getName() const {
+	return columns_[columnNames::name]->getData().toString();
 }
 
 // Only meaningful for the combo-box item, returns zero
@@ -334,7 +356,6 @@ const SettingsItemBase& SettingsItemBase::operator=(const SettingsItemBase& rhs)
 	pParent_= rhs.pParent_;
 	editable_= rhs.editable_;
 	tooltip_= rhs.tooltip_;
-	path_= rhs.path_;
 	columns_=rhs.columns_;
 
 	return *this;
@@ -346,8 +367,6 @@ const SettingsItemBase& SettingsItemBase::operator=(const SettingsItemBase& rhs)
 SettingsItemRoot::SettingsItemRoot():
 						SettingsItemBase() {
 
-	path_ = "/";
-
 	// Fill the columns with the name (intended as the 'dysplayName',
 	// the value and the unit
 	columns_[columnNames::name] ->setData( "Name" );
@@ -356,15 +375,40 @@ SettingsItemRoot::SettingsItemRoot():
 
 	// The root is not editable
 	setEditable(false);
+
+	// The root is always expanded
+	setExpanded(true);
 }
 
 SettingsItemRoot::~SettingsItemRoot() {
 
 }
 
+// Accept a visitor that will write this item to XML
+void SettingsItemRoot::accept( VPPSettingsXmlWriterVisitor& v ) {
+
+	// Visit me
+
+	v.visitBegin();
+	v.visit(this);
+
+	// And now visit my children
+	for(size_t iChild=0; iChild<childCount(); iChild++) {
+		this->child(iChild)->accept(v);
+	}
+
+    v.visitEnd();
+}
+
 // Clone this item, which is basically equivalent to calling the copy ctor
 SettingsItemRoot* SettingsItemRoot::clone() const {
 	return new SettingsItemRoot(*this);
+}
+
+/// Get the internal name of this item, used to locate it in the tree
+/// In this case the internal name is '/'
+QString SettingsItemRoot::getInternalName() const {
+	return QString("/");
 }
 
 /// Clone this item, which is basically equivalent to calling the copy ctor
@@ -380,10 +424,7 @@ SettingsItemGroup::SettingsItemGroup(const QVariant& name):
 						SettingsItemBase(){
 
 	// The group is not editable
-	columns_[0]->setData( name );
-
-	// Set the internal name for this group
-	setInternalName(name);
+	columns_[columnNames::name]->setData( name );
 
 	// The root is not editable
 	setEditable(false);
@@ -400,6 +441,22 @@ SettingsItemGroup::SettingsItemGroup(const SettingsItemGroup& rhs):
 // Dtor
 SettingsItemGroup::~SettingsItemGroup() {
 
+}
+
+// Accept a visitor that will write this item to XML
+void SettingsItemGroup::accept( VPPSettingsXmlWriterVisitor& v ) {
+
+	// Visit me
+
+	v.visitBegin();
+	v.visit(this);
+
+	// And now visit my children
+	for(size_t iChild=0; iChild<childCount(); iChild++) {
+		this->child(iChild)->accept(v);
+	}
+
+    v.visitEnd();
 }
 
 // Clone this item, which is basically equivalent to calling the copy ctor
@@ -422,9 +479,6 @@ QFont SettingsItemGroup::getFont() const {
 SettingsItemBounds::SettingsItemBounds(const QVariant& name,double min,double max,const QVariant& unit,const QVariant& tooltip) :
 				SettingsItemGroup(name){
 
-	// Set the internal name for this item
-	setInternalName(name);
-
 	appendChild( new SettingsItem("min",min,unit,"min value") );
 	appendChild( new SettingsItem("max",max,unit,"max value") );
 
@@ -445,7 +499,22 @@ SettingsItemBounds::~SettingsItemBounds() {
 
 }
 
-/// Clone this item, which is basically equivalent to calling the copy ctor
+// Accept a visitor that will write this item to XML
+void SettingsItemBounds::accept( VPPSettingsXmlWriterVisitor& v ) {
+
+	// Visit me
+	v.visitBegin();
+	v.visit(this);
+
+	// And now visit my children
+	for(size_t iChild=0; iChild<childCount(); iChild++) {
+		this->child(iChild)->accept(v);
+	}
+
+    v.visitEnd();
+}
+
+// Clone this item, which is basically equivalent to calling the copy ctor
 SettingsItemBounds* SettingsItemBounds::clone() const {
 	return new SettingsItemBounds(*this);
 }
@@ -491,9 +560,6 @@ SettingsItem::SettingsItem(	const QVariant& name,
 	columns_[1]->setData( value );
 	columns_[2]->setData( unit );
 
-	// Set the internal name for this item
-	setInternalName(name);
-
 	// Set the tooltip
 	tooltip_= tooltip;
 
@@ -511,6 +577,21 @@ SettingsItem::SettingsItem(const SettingsItem& rhs) :
 // Dtor
 SettingsItem::~SettingsItem(){
 
+}
+
+// Accept a visitor that will write this item to XML
+void SettingsItem::accept( VPPSettingsXmlWriterVisitor& v ) {
+
+	// Visit me
+	v.visitBegin();
+	v.visit(this);
+
+	// And now visit my children
+	for(size_t iChild=0; iChild<childCount(); iChild++) {
+		this->child(iChild)->accept(v);
+	}
+
+    v.visitEnd();
 }
 
 // Clone this item, which is basically equivalent to calling the copy ctor
@@ -632,6 +713,21 @@ SettingsItemInt::~SettingsItemInt() {
 	/* do nothing */
 }
 
+// Accept a visitor that will write this item to XML
+void SettingsItemInt::accept( VPPSettingsXmlWriterVisitor& v ) {
+
+	// Visit me
+	v.visitBegin();
+	v.visit(this);
+
+	// And now visit my children
+	for(size_t iChild=0; iChild<childCount(); iChild++) {
+		this->child(iChild)->accept(v);
+	}
+
+    v.visitEnd();
+}
+
 // Clone this item, which is basically equivalent to calling the copy ctor
 SettingsItemInt* SettingsItemInt::clone() const {
 	return new SettingsItemInt(*this);
@@ -701,6 +797,21 @@ SettingsItemComboBox::SettingsItemComboBox(const QVariant& name,
 // Dtor
 SettingsItemComboBox::~SettingsItemComboBox() {
 	/* do nothing */
+}
+
+// Accept a visitor that will write this item to XML
+void SettingsItemComboBox::accept( VPPSettingsXmlWriterVisitor& v ) {
+
+	// Visit me
+	v.visitBegin();
+	v.visit(this);
+
+	// And now visit my children
+	for(size_t iChild=0; iChild<childCount(); iChild++) {
+		this->child(iChild)->accept(v);
+	}
+
+    v.visitEnd();
 }
 
 /// Clone this item, which is basically equivalent to calling the copy ctor

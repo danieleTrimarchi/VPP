@@ -16,6 +16,7 @@
 /// Forward declarations
 class GetSettingsItemByPathVisitor;
 class GetSettingsItemByNameVisitor;
+class VPPSettingsXmlWriterVisitor;
 
 class SettingsItemBase {
 
@@ -32,6 +33,9 @@ public:
 	/// return an item by name
 	SettingsItemBase* accept(const GetSettingsItemByNameVisitor&, QString);
 
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VPPSettingsXmlWriterVisitor& );
+
 	/// Append a child under me
 	void appendChild(SettingsItemBase* child);
 
@@ -40,6 +44,9 @@ public:
 
 	/// Get the i-th child
 	SettingsItemBase* child(int row);
+
+	/// Get the i-th child - const variety
+	SettingsItemBase* child(int row) const;
 
 	/// Get a child by name
 	SettingsItemBase* child(QString& childName);
@@ -98,7 +105,10 @@ public:
 	QVariant getIcon();
 
 	/// Get the internal name of this item, used to locate it in the tree
-	QString getInternalName();
+	virtual QString getInternalName() const;
+
+	/// Get the display name of this item
+	QString getName() const;
 
 	/// Returns the tooltip for this item, if any
 	QVariant getToolTip();
@@ -155,15 +165,9 @@ protected:
 	/// Copy Ctor
 	SettingsItemBase(const 	SettingsItemBase&);
 
-	/// Set the internal name of this item
-	virtual void setInternalName(const QVariant&);
-
 	/// Columns the SettingsItem must be able to fill
 	/// The model is build on top of these columns
 	std::vector<SettingsColumn*> columns_;
-
-	/// Internal name of the Item, used to locate it in the tree
-	QString path_;
 
 	/// Stores the tooltip for this item
 	QVariant tooltip_;
@@ -196,8 +200,15 @@ public:
 	/// Dtor
 	virtual ~SettingsItemRoot();
 
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VPPSettingsXmlWriterVisitor& );
+
 	/// Clone this item, which is basically equivalent to calling the copy ctor
 	SettingsItemRoot* clone() const;
+
+	/// Get the internal name of this item, used to locate it in the tree
+	/// In this case the internal name is '/'
+	virtual QString getInternalName() const;
 
 private:
 
@@ -217,6 +228,9 @@ public:
 
 	/// Dtor
 	virtual ~SettingsItemGroup();
+
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VPPSettingsXmlWriterVisitor& );
 
 	/// Clone this item, which is basically equivalent to calling the copy ctor
 	virtual SettingsItemGroup* clone() const;
@@ -243,6 +257,9 @@ public:
 
 	/// Dtor
 	virtual ~SettingsItemBounds();
+
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VPPSettingsXmlWriterVisitor& );
 
 	/// Clone this item, which is basically equivalent to calling the copy ctor
 	virtual SettingsItemBounds* clone() const;
@@ -275,6 +292,9 @@ public:
 
 	/// Dtor
 	virtual ~SettingsItem();
+
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VPPSettingsXmlWriterVisitor& );
 
 	/// Clone this item, which is basically equivalent to calling the copy ctor
 	virtual SettingsItem* clone() const;
@@ -325,6 +345,9 @@ public:
 	/// Dtor
 	virtual ~SettingsItemInt();
 
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VPPSettingsXmlWriterVisitor& );
+
 	/// Clone this item, which is basically equivalent to calling the copy ctor
 	virtual SettingsItemInt* clone() const;
 
@@ -357,6 +380,9 @@ public:
 
 	/// Dtor
 	virtual ~SettingsItemComboBox();
+
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VPPSettingsXmlWriterVisitor& );
 
 	/// Clone this item, which is basically equivalent to calling the copy ctor
 	virtual SettingsItemComboBox* clone() const;

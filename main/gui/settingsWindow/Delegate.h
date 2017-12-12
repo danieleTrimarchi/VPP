@@ -1,9 +1,9 @@
 #ifndef DELEGATE_H
 #define DELEGATE_H
 
-#include <QStyledItemDelegate>
 #include <QtGui/QPainter>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QStyledItemDelegate>
 
 class SpinBoxDelegate : public QStyledItemDelegate {
 

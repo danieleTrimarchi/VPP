@@ -2,6 +2,9 @@
 #include <QtWidgets/QVBoxLayout>
 #include <iostream>
 #include "GetSettingsItemVisitor.h"
+#include "VppSettingsXmlWriter.h"
+#include <QtCore/QFile>
+#include <QtWidgets/QMessageBox>
 
 //---------------------------------------------------------------
 // This widget includes several setting trees, from which the
@@ -73,6 +76,23 @@ void TreeTab::save() {
 
 	// Make sure the view is up to date
 	updateActions();
+
+	// Test : write the tree to xml
+	QString fileName = "/Users/dtrimarchi/VPP/main/testxml.xml";
+	QFile file(fileName);
+	if (!file.open(QFile::WriteOnly | QFile::Text)) {
+		QMessageBox::warning(this, tr("QXmlStream Bookmarks"),
+															tr("Cannot write file %1:\n%2.")
+	                             .arg(fileName)
+	                             .arg(file.errorString()));
+	        return;
+	}
+//	VppSettingsXmlWriter xmlWriter(pTreeReferenceModel_);
+//	if(xmlWriter.writeFile(&file))
+//		std::cout<<"XML file saved!\n";
+
+	VPPSettingsXmlWriterVisitor v(pTreeReferenceModel_,&file);
+	pTreeReferenceModel_->getRoot()->accept(v);
 }
 
 // When the user hits 'cancel' in the main dialog, we
