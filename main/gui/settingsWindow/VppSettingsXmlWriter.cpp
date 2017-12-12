@@ -118,7 +118,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBase* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(*item).name());
+	pXml_->writeAttribute("ClassName","SettingsItemBase");
 
   visitEnd(item);
 
@@ -132,7 +132,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemRoot* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(*item).name());
+	pXml_->writeAttribute("ClassName","SettingsItemRoot");
 
   visitEnd(item);
 
@@ -146,7 +146,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemGroup* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(*item).name());
+	pXml_->writeAttribute("ClassName","SettingsItemGroup");
 
 	visitEnd(item);
 
@@ -160,7 +160,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBounds* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(*item).name());
+	pXml_->writeAttribute("ClassName","SettingsItemBounds");
 
   visitEnd(item);
 
@@ -174,7 +174,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItem* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(*item).name());
+	pXml_->writeAttribute("ClassName","SettingsItem");
 	// Write the data stored in this item.
 	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
 
@@ -190,7 +190,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemInt* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(*item).name());
+	pXml_->writeAttribute("ClassName","SettingsItemInt");
 	// Write the data stored in this item.
 	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
 
@@ -207,7 +207,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemComboBox* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(*item).name());
+	pXml_->writeAttribute("ClassName","SettingsItemComboBox");
 	// Write the active choice
 	pXml_->writeAttribute("Value",item->getActiveLabel());
 
