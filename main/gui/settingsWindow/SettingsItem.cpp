@@ -322,12 +322,6 @@ void SettingsItemBase::accept( VPPSettingsXmlWriterVisitor& v ) {
 	// Visit me
 	v.visit(this);
 
-	// And now visit my children
-	for(size_t iChild=0; iChild<childCount(); iChild++) {
-		this->child(iChild)->accept(v);
-	}
-
-    v.visitEnd();
 }
 
 // Get the display name of this item
@@ -387,13 +381,6 @@ void SettingsItemRoot::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
 	v.visit(this);
-
-	// And now visit my children
-	for(size_t iChild=0; iChild<childCount(); iChild++) {
-		this->child(iChild)->accept(v);
-	}
-
-    v.visitEnd();
 }
 
 // Clone this item, which is basically equivalent to calling the copy ctor
@@ -445,12 +432,6 @@ void SettingsItemGroup::accept( VPPSettingsXmlWriterVisitor& v ) {
 	// Visit me
 	v.visit(this);
 
-	// And now visit my children
-	for(size_t iChild=0; iChild<childCount(); iChild++) {
-		this->child(iChild)->accept(v);
-	}
-
-    v.visitEnd();
 }
 
 // Clone this item, which is basically equivalent to calling the copy ctor
@@ -498,13 +479,6 @@ void SettingsItemBounds::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
 	v.visit(this);
-
-	// And now visit my children
-	for(size_t iChild=0; iChild<childCount(); iChild++) {
-		this->child(iChild)->accept(v);
-	}
-
-    v.visitEnd();
 }
 
 // Clone this item, which is basically equivalent to calling the copy ctor
@@ -577,13 +551,6 @@ void SettingsItem::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
 	v.visit(this);
-
-	// And now visit my children
-	for(size_t iChild=0; iChild<childCount(); iChild++) {
-		this->child(iChild)->accept(v);
-	}
-
-    v.visitEnd();
 }
 
 // Clone this item, which is basically equivalent to calling the copy ctor
@@ -710,13 +677,6 @@ void SettingsItemInt::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
 	v.visit(this);
-
-	// And now visit my children
-	for(size_t iChild=0; iChild<childCount(); iChild++) {
-		this->child(iChild)->accept(v);
-	}
-
-    v.visitEnd();
 }
 
 // Clone this item, which is basically equivalent to calling the copy ctor
@@ -796,12 +756,6 @@ void SettingsItemComboBox::accept( VPPSettingsXmlWriterVisitor& v ) {
 	// Visit me
 	v.visit(this);
 
-	// And now visit my children
-	for(size_t iChild=0; iChild<childCount(); iChild++) {
-		this->child(iChild)->accept(v);
-	}
-
-    v.visitEnd();
 }
 
 /// Clone this item, which is basically equivalent to calling the copy ctor

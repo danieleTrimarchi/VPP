@@ -99,7 +99,12 @@ void VPPSettingsXmlWriterVisitor::visitBegin(SettingsItemBase* item) {
 
 }
 
-void VPPSettingsXmlWriterVisitor::visitEnd() {
+void VPPSettingsXmlWriterVisitor::visitEnd(SettingsItemBase* item) {
+
+	// And now visit my children
+	for(size_t iChild=0; iChild<item->childCount(); iChild++) {
+		item->child(iChild)->accept(*this);
+	}
 
 	// This item is finished
 	pXml_->writeEndElement();
@@ -114,6 +119,9 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBase* item ) {
 
 	// Write the class name
 	pXml_->writeAttribute("ClassName",typeid(item).name());
+
+  visitEnd(item);
+
 	return true;
 }
 
@@ -125,6 +133,9 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemRoot* item ) {
 
 	// Write the class name
 	pXml_->writeAttribute("ClassName",typeid(item).name());
+
+  visitEnd(item);
+
 	return true;
 }
 
@@ -136,6 +147,9 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemGroup* item ) {
 
 	// Write the class name
 	pXml_->writeAttribute("ClassName",typeid(item).name());
+
+	visitEnd(item);
+
 	return true;
 }
 
@@ -147,6 +161,9 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBounds* item ) {
 
 	// Write the class name
 	pXml_->writeAttribute("ClassName",typeid(item).name());
+
+  visitEnd(item);
+
 	return true;
 }
 
@@ -160,6 +177,9 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItem* item ) {
 	pXml_->writeAttribute("ClassName",typeid(item).name());
 	// Write the data stored in this item.
 	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
+
+  visitEnd(item);
+
 	return true;
 }
 
@@ -173,7 +193,10 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemInt* item ) {
 	pXml_->writeAttribute("ClassName",typeid(item).name());
 	// Write the data stored in this item.
 	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
-	return true;
+
+  visitEnd(item);
+
+  return true;
 
 }
 
@@ -187,6 +210,9 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemComboBox* item ) {
 	pXml_->writeAttribute("ClassName",typeid(item).name());
 	// Write the active choice
 	pXml_->writeAttribute("Value",item->getActiveLabel());
+
+  visitEnd(item);
+
 	return true;
 }
 

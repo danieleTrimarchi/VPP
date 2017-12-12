@@ -52,7 +52,7 @@ class VPPSettingsXmlWriterVisitor {
 		void visitBegin(SettingsItemBase* item);
 
 		/// End visiting an item
-		void visitEnd();
+		void visitEnd(SettingsItemBase* item);
 
 		/// Visit a SettingsItemBase
 		bool visit(SettingsItemBase*);
