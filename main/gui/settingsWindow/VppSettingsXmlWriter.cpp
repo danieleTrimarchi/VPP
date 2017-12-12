@@ -56,7 +56,7 @@ VppSettingsXmlWriter::~VppSettingsXmlWriter() {
 //	QString value = item->data(columnNames::value).toString();
 //	// Get the class name of the item. This is no good because it returns
 //	// the base class, which is not enough!
-//	QString className( typeid(item).name() );
+//	QString className( typeid(*item).name() );
 //
 //	// And now write this guy!
 //	writeStartElement(className);
@@ -118,7 +118,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBase* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(item).name());
+	pXml_->writeAttribute("ClassName",typeid(*item).name());
 
   visitEnd(item);
 
@@ -132,7 +132,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemRoot* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(item).name());
+	pXml_->writeAttribute("ClassName",typeid(*item).name());
 
   visitEnd(item);
 
@@ -146,7 +146,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemGroup* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(item).name());
+	pXml_->writeAttribute("ClassName",typeid(*item).name());
 
 	visitEnd(item);
 
@@ -160,7 +160,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBounds* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(item).name());
+	pXml_->writeAttribute("ClassName",typeid(*item).name());
 
   visitEnd(item);
 
@@ -174,7 +174,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItem* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(item).name());
+	pXml_->writeAttribute("ClassName",typeid(*item).name());
 	// Write the data stored in this item.
 	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
 
@@ -190,7 +190,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemInt* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(item).name());
+	pXml_->writeAttribute("ClassName",typeid(*item).name());
 	// Write the data stored in this item.
 	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
 
@@ -207,7 +207,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemComboBox* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName",typeid(item).name());
+	pXml_->writeAttribute("ClassName",typeid(*item).name());
 	// Write the active choice
 	pXml_->writeAttribute("Value",item->getActiveLabel());
 
