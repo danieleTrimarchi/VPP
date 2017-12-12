@@ -320,8 +320,6 @@ SettingsItemBase* SettingsItemBase::accept(const GetSettingsItemByNameVisitor& v
 void SettingsItemBase::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
-
-	v.visitBegin();
 	v.visit(this);
 
 	// And now visit my children
@@ -388,8 +386,6 @@ SettingsItemRoot::~SettingsItemRoot() {
 void SettingsItemRoot::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
-
-	v.visitBegin();
 	v.visit(this);
 
 	// And now visit my children
@@ -447,8 +443,6 @@ SettingsItemGroup::~SettingsItemGroup() {
 void SettingsItemGroup::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
-
-	v.visitBegin();
 	v.visit(this);
 
 	// And now visit my children
@@ -503,7 +497,6 @@ SettingsItemBounds::~SettingsItemBounds() {
 void SettingsItemBounds::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
-	v.visitBegin();
 	v.visit(this);
 
 	// And now visit my children
@@ -583,7 +576,6 @@ SettingsItem::~SettingsItem(){
 void SettingsItem::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
-	v.visitBegin();
 	v.visit(this);
 
 	// And now visit my children
@@ -717,7 +709,6 @@ SettingsItemInt::~SettingsItemInt() {
 void SettingsItemInt::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
-	v.visitBegin();
 	v.visit(this);
 
 	// And now visit my children
@@ -803,7 +794,6 @@ SettingsItemComboBox::~SettingsItemComboBox() {
 void SettingsItemComboBox::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
-	v.visitBegin();
 	v.visit(this);
 
 	// And now visit my children

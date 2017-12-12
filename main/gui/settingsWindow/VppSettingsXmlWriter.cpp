@@ -89,8 +89,14 @@ VPPSettingsXmlWriterVisitor::~VPPSettingsXmlWriterVisitor() {
 
 }
 
-void VPPSettingsXmlWriterVisitor::visitBegin() {
+void VPPSettingsXmlWriterVisitor::visitBegin(SettingsItemBase* item) {
 	pXml_->writeStartElement(QString("Item"));
+
+	// --Write the part common to all items--
+	pXml_->writeAttribute("InternalName",item->getInternalName());
+	pXml_->writeAttribute("Name",item->getName());
+	pXml_->writeAttribute("Expanded", item->expanded() ? "yes" : "no");
+
 }
 
 void VPPSettingsXmlWriterVisitor::visitEnd() {
@@ -103,109 +109,84 @@ void VPPSettingsXmlWriterVisitor::visitEnd() {
 // Visit a SettingsItemBase
 bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBase* item ) {
 
-	std::cout<<"Visit Base\n";
+	// Do all is common to all item
+	visitBegin(item);
 
-	// Get the internal name of this item (path)
-	QString internalName = item->getInternalName();
-	// Get the display name of this item
-	QString itemName = item->getName();
-	// Is this item expanded or folded?
-	bool expanded = item->expanded();
-	// Get the class name of the item. This is no good because it returns
-	// the base class, which is not enough!
-	//QString className( typeid(item).name() );
-	QString className("SettingsItemBase");
-
-	// And now write this guy!
-	// Write an header
-	pXml_->writeAttribute("InternalName",internalName);
-	pXml_->writeAttribute("Name",itemName);
-	pXml_->writeAttribute("ClassName",className);
-	pXml_->writeAttribute("Expanded", expanded ? "yes" : "no");
-
+	// Write the class name
+	pXml_->writeAttribute("ClassName",typeid(item).name());
 	return true;
 }
 
 // Visit a SettingsItemRoot
 bool VPPSettingsXmlWriterVisitor::visit(SettingsItemRoot* item ) {
 
-	std::cout<<"Visit Root\n";
+	// Do all is common to all item
+	visitBegin(item);
 
-	// Get the internal name of this item (path)
-	QString internalName = item->getInternalName();
-	// Get the display name of this item
-	QString itemName = item->getName();
-	// Is this item expanded or folded?
-	bool expanded = item->expanded();
-	// Get the class name of the item. This is no good because it returns
-	// the base class, which is not enough!
-	//QString className( typeid(item).name() );
-	QString className("SettingsItemRoot");
-
-	// And now write this guy!
-	// Write an header
-	pXml_->writeAttribute("InternalName",internalName);
-	pXml_->writeAttribute("Name",itemName);
-	pXml_->writeAttribute("ClassName",className);
-	pXml_->writeAttribute("Expanded", expanded ? "yes" : "no");
-
+	// Write the class name
+	pXml_->writeAttribute("ClassName",typeid(item).name());
 	return true;
 }
 
 // Visit a SettingsItemGroup
 bool VPPSettingsXmlWriterVisitor::visit(SettingsItemGroup* item ) {
 
-	std::cout<<"Visit Group\n";
+	// Do all is common to all item
+	visitBegin(item);
 
+	// Write the class name
+	pXml_->writeAttribute("ClassName",typeid(item).name());
 	return true;
 }
 
 /// Visit a SettingsItemBounds
 bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBounds* item ) {
 
-	std::cout<<"Visit Bounds\n";
-return true;
+	// Do all is common to all item
+	visitBegin(item);
+
+	// Write the class name
+	pXml_->writeAttribute("ClassName",typeid(item).name());
+	return true;
 }
 
 /// Visit a SettingsItem
 bool VPPSettingsXmlWriterVisitor::visit(SettingsItem* item ) {
-	std::cout<<"Visit SettingsItem\n";
+
+	// Do all is common to all item
+	visitBegin(item);
+
+	// Write the class name
+	pXml_->writeAttribute("ClassName",typeid(item).name());
+	// Write the data stored in this item.
+	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
 	return true;
 }
 
 /// Visit a SettingsItemInt
 bool VPPSettingsXmlWriterVisitor::visit(SettingsItemInt* item ) {
 
-	std::cout<<"Visit Int\n";
+	// Do all is common to all item
+	visitBegin(item);
 
-	// Get the internal name of this item (path)
-	QString internalName = item->getInternalName();
-	// Get the display name of this item
-	QString itemName = item->getName();
-	// Is this item expanded or folded?
-	bool expanded = item->expanded();
-	// Get the class name of the item. This is no good because it returns
-	// the base class, which is not enough!
-	//QString className( typeid(item).name() );
-	QString className("SettingsItemInt");
-	// Get the data stored in this item.
-	QString value = item->data(columnNames::value).toString();
-
-	// And now write this guy!
-	// Write an header
-	pXml_->writeAttribute("InternalName",internalName);
-	pXml_->writeAttribute("Name",itemName);
-	pXml_->writeAttribute("ClassName",className);
-	pXml_->writeAttribute("Expanded", expanded ? "yes" : "no");
-	pXml_->writeAttribute("Value", value );
-
+	// Write the class name
+	pXml_->writeAttribute("ClassName",typeid(item).name());
+	// Write the data stored in this item.
+	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
 	return true;
+
 }
 
 /// Visit a SettingsItemComboBox
 bool VPPSettingsXmlWriterVisitor::visit(SettingsItemComboBox* item ) {
 
-	std::cout<<"Visit ComboBox\n";
+	// Do all is common to all item
+	visitBegin(item);
+
+	// Write the class name
+	pXml_->writeAttribute("ClassName",typeid(item).name());
+	// Write the active choice
+	pXml_->writeAttribute("Value",item->getActiveLabel());
 	return true;
 }
 

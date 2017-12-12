@@ -49,7 +49,7 @@ class VPPSettingsXmlWriterVisitor {
 		~VPPSettingsXmlWriterVisitor();
 
 		/// Begin visiting an item
-		void visitBegin();
+		void visitBegin(SettingsItemBase* item);
 
 		/// End visiting an item
 		void visitEnd();
