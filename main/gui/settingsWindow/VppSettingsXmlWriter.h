@@ -20,13 +20,7 @@ class VppSettingsXmlWriter : public QXmlStreamWriter {
 		/// Dtor
 		~VppSettingsXmlWriter();
 
-		/// Write to a given file
-		//bool writeFile(QIODevice *device);
-
 	private:
-
-		/// Write a specific item
-		//void writeItem(SettingsItemBase* item);
 
 		/// Ptr to the file where the xml is to be written
 		QIODevice* pOutDevice_;

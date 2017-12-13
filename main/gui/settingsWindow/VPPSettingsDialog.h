@@ -18,7 +18,10 @@ class VPPSettingsDialog : public QDialog {
 	public:
 
 		/// Singleton-style constructor
-		static VPPSettingsDialog* getInstance(const QString &fileName, QWidget *parent = 0);
+		static VPPSettingsDialog* getInstance(QWidget *parent = 0);
+
+		/// Save the settings to file
+		void save(QFile& file);
 
 	public Q_SLOTS:
 
@@ -31,7 +34,7 @@ class VPPSettingsDialog : public QDialog {
 	private:
 
 		/// Private Ctor - instantiated by the getInstance -> this is a Singleton!
-		explicit VPPSettingsDialog(const QString &fileName, QWidget *parent = 0);
+		explicit VPPSettingsDialog(QWidget *parent = 0);
 
 		/// Disallow default constructor
 		VPPSettingsDialog();

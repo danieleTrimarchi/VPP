@@ -3,7 +3,6 @@
 #include <iostream>
 #include <QtWidgets>
 
-
 VppSettingsXmlWriter::VppSettingsXmlWriter(SettingsModel* pTreeModel, QIODevice *device) :
 		pTreeModel_(pTreeModel),
 			pOutDevice_(device) {
@@ -27,53 +26,6 @@ VppSettingsXmlWriter::~VppSettingsXmlWriter() {
 	writeEndDocument();
 
 }
-
-//bool VppSettingsXmlWriter::writeFile(QIODevice *device) {
-//	setDevice(device);
-//
-//	writeStartDocument();
-//	writeDTD("<!DOCTYPE vpp>");
-//	writeStartElement("vpp");
-//	writeAttribute("version", "1.0");
-//
-//	// Write from root. The call is recursive therefore it will write
-//	// all children in one go
-//	writeItem(pTreeModel_->getRoot());
-//
-//	writeEndDocument();
-//	return true;
-//}
-
-//void VppSettingsXmlWriter::writeItem(SettingsItemBase *item) {
-//
-//	// Get the internal name of this item (path)
-//	QString internalName = item->getInternalName();
-//	// Get the display name of this item
-//	QString itemName = item->getName();
-//	// Is this item expanded or folded?
-//	bool expanded = item-> expanded();
-//	// Get the data stored in this item.
-//	QString value = item->data(columnNames::value).toString();
-//	// Get the class name of the item. This is no good because it returns
-//	// the base class, which is not enough!
-//	QString className( typeid(*item).name() );
-//
-//	// And now write this guy!
-//	writeStartElement(className);
-//	writeAttribute("InternalName",internalName);
-//	writeAttribute("Name",itemName);
-//	writeAttribute("ClassName",className);
-//	writeAttribute("Expanded", expanded ? "yes" : "no");
-//	writeAttribute("Value", value );
-//
-//	// Recurse to write the children
-//	for (int i = 0; i < item->childCount(); ++i)
-//		writeItem(item->child(i));
-//
-//	// This item is finished
-//	writeEndElement();
-//
-//}
 
 //====================================================================
 

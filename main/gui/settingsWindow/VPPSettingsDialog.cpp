@@ -7,15 +7,22 @@
 VPPSettingsDialog* VPPSettingsDialog::pInstance_= 0;
 
 // Singleton-style constructor
-VPPSettingsDialog* VPPSettingsDialog::getInstance(const QString &fileName, QWidget *parent){
+VPPSettingsDialog* VPPSettingsDialog::getInstance(QWidget *parent){
 
 	if(!pInstance_)
-		pInstance_= new VPPSettingsDialog(fileName, parent);
+		pInstance_= new VPPSettingsDialog(parent);
 	return pInstance_;
 }
 
+// Save the settings to file
+void VPPSettingsDialog::save(QFile& file) {
+
+	// Save the content of the pTreeTab
+	pTreeTab_->save(file);
+}
+
 // Ctor
-VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
+VPPSettingsDialog::VPPSettingsDialog(QWidget *parent)
 : QDialog(parent) {
 
 	// Instantiate a widget that will contain tabs
@@ -29,7 +36,7 @@ VPPSettingsDialog::VPPSettingsDialog(const QString &fileName, QWidget *parent)
 	pTreeTab_ = new TreeTab(this);
 	pTabWidget_->addTab(pTreeTab_, tr("VPP Settings"));
 
-	// Add a general tab (a tab containing genreral settings, not sure if we'll keep this)
+	// Add a general tab (a tab containing general settings, not sure if we'll keep this)
 	pTabWidget_->addTab(new GeneralTab(this), tr("General"));
 
 	// Add the buttons 'OK' and "Cancel'

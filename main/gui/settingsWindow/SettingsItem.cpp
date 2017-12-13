@@ -346,9 +346,9 @@ QString SettingsItemBase::getActiveLabel() const {
 const SettingsItemBase& SettingsItemBase::operator=(const SettingsItemBase& rhs) {
 
 	pParent_= rhs.pParent_;
-	editable_= rhs.editable_;
+	editable_=rhs.editable_;
 	tooltip_= rhs.tooltip_;
-	columns_=rhs.columns_;
+	columns_= rhs.columns_;
 
 	return *this;
 }

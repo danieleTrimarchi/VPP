@@ -425,7 +425,7 @@ void MainWindow::import() {
 	try {
 
 		// Open up a VPP settings dialog
-		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance("VPP Settings",this);
+		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
 		pSd->exec();
 
 	}	catch(...) {}
@@ -497,6 +497,34 @@ void MainWindow::run() {
 void MainWindow::saveResults() {
 
 	try {
+
+		// Save the settings
+		QFileDialog dialog(this);
+		dialog.setWindowModality(Qt::WindowModal);
+		dialog.setAcceptMode(QFileDialog::AcceptSave);
+		dialog.setNameFilter(tr("VPP Settings File(*.xml)"));
+		dialog.setDefaultSuffix(".xml");
+		if (dialog.exec() != QDialog::Accepted)
+			return;
+
+		// Get the file selected by the user
+		QString fileName(dialog.selectedFiles().first());
+		QFile file(fileName);
+
+		if (!file.open(QFile::WriteOnly | QFile::Text)) {
+			QMessageBox::warning(this, tr("Saving Vpp Settings"),
+																tr("Cannot write file %1:\n%2.")
+		                             .arg(fileName)
+		                             .arg(file.errorString()));
+		        return;
+		}
+
+		// Get the settings dialog and save its content to file
+		VPPSettingsDialog::getInstance()->save(file);
+
+
+///////////////////////// now do the rest of the work
+
 		// Results must be available!
 		if(!pSolverFactory_ ||
 				!pSolverFactory_->get()->getResults() ) {
@@ -510,7 +538,6 @@ void MainWindow::saveResults() {
 		// todo dtrimarchi: improve the filtering to not grey out the
 		// *.vpp files! See what we do in MainWIndow::importResults where
 		// things work properly. Write a generic class for file selection?
-		QFileDialog dialog(this);
 		dialog.setWindowModality(Qt::WindowModal);
 		dialog.setAcceptMode(QFileDialog::AcceptSave);
 		dialog.setNameFilter(tr("VPP Result File(*.vpp)"));
@@ -519,15 +546,15 @@ void MainWindow::saveResults() {
 			return;
 
 		// Get the file selected by the user
-		const QString fileName(dialog.selectedFiles().first());
-		QFile file(fileName);
+		fileName= dialog.selectedFiles().first();
+		QFile file2(fileName);
 
 		// Check the file is writable and that is is a text file
-		if (!file.open(QFile::WriteOnly | QFile::Text)) {
+		if (!file2.open(QFile::WriteOnly | QFile::Text)) {
 			QMessageBox::warning(this, tr("Application"),
 					tr("Cannot write file %1:\n%2.")
 					.arg(QDir::toNativeSeparators(fileName),
-							file.errorString()));
+							file2.errorString()));
 			return;
 		}
 
