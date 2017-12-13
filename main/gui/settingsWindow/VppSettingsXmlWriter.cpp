@@ -14,8 +14,8 @@ VppSettingsXmlWriter::VppSettingsXmlWriter(SettingsModel* pTreeModel, QIODevice 
 	setAutoFormatting(true);
 
 	writeStartDocument();
-	writeDTD("<!DOCTYPE vpp>");
-	writeStartElement("vpp");
+	writeDTD("<!DOCTYPE vppSettings>");
+	writeStartElement("vppSettings");
 	writeAttribute("version", "1.0");
 
 }

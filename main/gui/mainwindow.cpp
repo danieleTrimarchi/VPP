@@ -37,6 +37,7 @@
 #include "VppPolarCustomPlotWidget.h"
 #include "VPPSailCoefficientIO.h"
 #include "VPPSettingsDialog.h"
+#include "VppSettingsXmlReader.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitly deleted in the destructor
@@ -569,8 +570,35 @@ void MainWindow::saveResults() {
 void MainWindow::importResults() {
 
 	try {
+
 		QString caption;
 		QString dir;
+
+		// try getting the settings from file
+		QString settingsFileName = QFileDialog::getOpenFileName(this,caption,dir,
+				tr("VPP Settings File(*.xml);; All Files (*.*)"));
+
+		if (!settingsFileName.isEmpty())
+			std::cout<<"attempting to import Vpp settings from : "<<settingsFileName.toStdString()<<std::endl;
+
+		// This is the file we are about to read
+		QFile settingsFile(settingsFileName);
+    if (!settingsFile.open(QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, tr("VppSettings Import"),
+                             tr("Cannot read file %1:\n%2.")
+                             .arg(settingsFileName)
+                             .arg(settingsFile.errorString()));
+        return;
+    }
+
+		// Instantiate a reader
+		VppSettingsXmlReader xmlReader;
+		xmlReader.read(&settingsFile);
+
+		throw VPPException(HERE,"Stop");
+
+///////////////////////// now do the rest of the work
+
 
 		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
 				tr("VPP Result File(*.vpp);; All Files (*.*)"));
