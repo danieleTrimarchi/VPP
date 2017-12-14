@@ -42,12 +42,13 @@ VPPSettingsXmlWriterVisitor::~VPPSettingsXmlWriterVisitor() {
 }
 
 void VPPSettingsXmlWriterVisitor::visitBegin(SettingsItemBase* item) {
+
 	pXml_->writeStartElement(QString("Item"));
 
 	// --Write the part common to all items--
+	pXml_->writeAttribute("Expanded", item->expanded() ? "yes" : "no");
 	pXml_->writeAttribute("InternalName",item->getInternalName());
 	pXml_->writeAttribute("Name",item->getName());
-	pXml_->writeAttribute("Expanded", item->expanded() ? "yes" : "no");
 
 }
 
