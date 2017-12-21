@@ -72,7 +72,7 @@ class VPPSettingsXmlWriterVisitor {
 	private:
 
 		/// Ptr to the xml writer
-		boost::shared_ptr<VppSettingsXmlWriter> pXml_;
+		boost::shared_ptr<VppSettingsXmlWriter> pXmlWriter_;
 
 };
 

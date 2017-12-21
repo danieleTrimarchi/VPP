@@ -37,7 +37,6 @@
 #include "VppPolarCustomPlotWidget.h"
 #include "VPPSailCoefficientIO.h"
 #include "VPPSettingsDialog.h"
-#include "VppSettingsXmlReader.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitly deleted in the destructor
@@ -591,9 +590,8 @@ void MainWindow::importResults() {
         return;
     }
 
-		// Instantiate a reader
-		VppSettingsXmlReader xmlReader;
-		xmlReader.read(&settingsFile);
+		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+		pSd->read(settingsFile);
 
 		throw VPPException(HERE,"Stop");
 

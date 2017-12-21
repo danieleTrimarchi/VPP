@@ -84,11 +84,13 @@ class VppSettingsXmlReader {
 	public:
 
 		/// Ctor
-		//VppSettingsXmlReader(QTreeWidget *treeWidget);
-		VppSettingsXmlReader();
+		VppSettingsXmlReader(QIODevice* pFile =Q_NULLPTR);
 
 		/// Read from file
-		bool read(QIODevice *device);
+		bool read(QIODevice *device =Q_NULLPTR);
+
+		/// Return the tree populated with the items from the xml
+		SettingsItemBase* get();
 
 		/// Produce an error string reporting the location of the failure
 		QString errorString() const;
@@ -96,23 +98,66 @@ class VppSettingsXmlReader {
 	private:
 
 		/// Read the content of the file
-		void read();
-
-
-//		/// Read items based on their name
-//		/// All this will be somehow taken into account by visitors
-//		void readTitle(QTreeWidgetItem *item);
-//		void readSeparator(QTreeWidgetItem *item);
-//		void readFolder(QTreeWidgetItem *item);
-//		void readBookmark(QTreeWidgetItem *item);
-
-		/// Create an item provided the info that have been read into
-		/// the xml
-//		QTreeWidgetItem* createChildItem(QTreeWidgetItem *item);
+		void read(SettingsItemBase*);
 
 		/// Underlying xml reader
 		boost::shared_ptr<QXmlStreamReader> pXml_;
-		//QTreeWidget* pTtreeWidget_;
+
+		/// Root for the settings item read from xml
+		SettingsItemBase* pRootItem_;
+
+		/// XML file the items should be read from
+		QIODevice* pFile_;
+};
+
+///======================================================
+
+/// XML writer visitor, visits the items and
+/// for each of them writes the xml file entries
+class VPPSettingsXmlReaderVisitor {
+
+	public:
+
+		/// Ctor
+		VPPSettingsXmlReaderVisitor(QIODevice *device);
+
+		/// Dtor
+		~VPPSettingsXmlReaderVisitor();
+
+		/// Visit a SettingsItemRoot. Appends all the children to the root
+		void visit(SettingsItemBase* item);
+
+//		/// Begin visiting an item
+//		void visitBegin(SettingsItemBase* item);
+//
+//		/// End visiting an item
+//		void visitEnd(SettingsItemBase* item);
+//
+//		/// Visit a SettingsItemBase
+//		bool visit(SettingsItemBase*);
+//
+//		/// Visit a SettingsItemBase
+//		bool visit(SettingsItemRoot*);
+//
+//		/// Visit a SettingsItemGroup
+//		bool visit(SettingsItemGroup*);
+//
+//		/// Visit a SettingsItemBounds
+//		bool visit(SettingsItemBounds*);
+//
+//		/// Visit a SettingsItem
+//		bool visit(SettingsItem*);
+//
+//		/// Visit a SettingsItemInt
+//		bool visit(SettingsItemInt*);
+//
+//		/// Visit a SettingsItemComboBox
+//		bool visit(SettingsItemComboBox*);
+
+	private:
+
+		/// Ptr to the xml writer
+		boost::shared_ptr<VppSettingsXmlReader> pXmlReader_;
 
 };
 

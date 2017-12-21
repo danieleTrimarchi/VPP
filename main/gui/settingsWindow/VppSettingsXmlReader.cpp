@@ -2,6 +2,7 @@
 #include "VppSettingsXmlReader.h"
 #include "VPPException.h"
 #include "SettingsItem.h"
+#include "VppSettingsXmlReader.h"
 #include <iostream>
 #include <set>
 
@@ -100,9 +101,10 @@ const XmlAttribute& XmlAttributeSet::operator [] (string varName) const {
 ////////////////////////////////////////////////////////////////////////
 
 // Ctor
-VppSettingsXmlReader::VppSettingsXmlReader() //QTreeWidget *treeWidget)
-//: pTtreeWidget_(treeWidget) {
-{
+VppSettingsXmlReader::VppSettingsXmlReader(QIODevice* pFile) :
+		pRootItem_(0),
+		pFile_(pFile) {
+
 	// Instantiate a xml reader. The device will be assigned later on
 	pXml_.reset(new QXmlStreamReader);
 
@@ -112,8 +114,12 @@ VppSettingsXmlReader::VppSettingsXmlReader() //QTreeWidget *treeWidget)
 
 bool VppSettingsXmlReader::read(QIODevice *device) {
 
+	// If there is a new source, use it
+	if(device)
+		pFile_ = device;
+
 	// who am I reading from?
-	pXml_->setDevice(device);
+	pXml_->setDevice(pFile_);
 
 	// Verify this is suitable file (vppSettings v.1.0). Otherwise throw
 	if (pXml_->readNextStartElement()) {
@@ -124,7 +130,7 @@ bool VppSettingsXmlReader::read(QIODevice *device) {
 
 		// If everything is fine, read the item
 		if (pXml_->name() == "vppSettings" && pXml_->attributes().value("version") == "1.0")
-			read();
+			read(pRootItem_);
 		else
 			pXml_->raiseError(QObject::tr("The file is not a VppSettings version 1.0 file."));
 	}
@@ -132,7 +138,12 @@ bool VppSettingsXmlReader::read(QIODevice *device) {
 	return !pXml_->error();
 }
 
-void VppSettingsXmlReader::read() {
+// Return the tree populated with the items from the xml
+SettingsItemBase* VppSettingsXmlReader::get() {
+	return pRootItem_;
+}
+
+void VppSettingsXmlReader::read(SettingsItemBase* parentItem) {
 
 	//Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "vppSettings");
 
@@ -155,8 +166,10 @@ void VppSettingsXmlReader::read() {
 
 		SettingsItemBase* pItem = SettingsItem::settingsItemFactory(attSet);
 
+		parentItem->appendChild(pItem);
+
 		// Recursive call to make sure we get all the children
-		read();
+		read(parentItem);
 	}
 }
 
@@ -168,72 +181,27 @@ QString VppSettingsXmlReader::errorString() const {
 	.arg(pXml_->columnNumber());
 }
 
-//void VppSettingsXmlReader::readTitle(QTreeWidgetItem* item) {
-//
-//	Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "title");
-//
-//	QString title = pXml_->readElementText();
-//	item->setText(0, title);
-//}
-//
-//void VppSettingsXmlReader::readSeparator(QTreeWidgetItem* item) {
-//
-//	Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "separator");
-//
-//	QTreeWidgetItem *separator = createChildItem(item);
-//	separator->setFlags(item->flags() & ~Qt::ItemIsSelectable);
-//	separator->setText(0, QString(30, 0xB7));
-//	pXml_->skipCurrentElement();
-//}
-//
-//void VppSettingsXmlReader::readFolder(QTreeWidgetItem *item) {
-//
-//	Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "folder");
-//
-//	QTreeWidgetItem *folder = createChildItem(item);
-//	bool folded = (pXml_->attributes().value("folded") != "no");
-//	pTtreeWidget_->setItemExpanded(folder, !folded);
-//
-//	while (pXml_->readNextStartElement()) {
-//		if (pXml_->name() == "title")
-//			readTitle(folder);
-//		else if (pXml_->name() == "folder")
-//			readFolder(folder);
-//		else if (pXml_->name() == "bookmark")
-//			readBookmark(folder);
-//		else if (pXml_->name() == "separator")
-//			readSeparator(folder);
-//		else
-//			pXml_->skipCurrentElement();
-//	}
-//}
-//
-//void VppSettingsXmlReader::readBookmark(QTreeWidgetItem *item) {
-//
-//	Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "bookmark");
-//
-//	QTreeWidgetItem *bookmark = createChildItem(item);
-//	bookmark->setFlags(bookmark->flags() | Qt::ItemIsEditable);
-//	bookmark->setIcon(0, bookmarkIcon);
-//	bookmark->setText(0, QObject::tr("Unknown title"));
-//	bookmark->setText(1, pXml_->attributes().value("href").toString());
-//
-//	while (pXml_->readNextStartElement()) {
-//		if (pXml_->name() == "title")
-//			readTitle(bookmark);
-//		else
-//			pXml_->skipCurrentElement();
-//	}
-//}
+//====================================================================
 
-//QTreeWidgetItem *VppSettingsXmlReader::createChildItem(QTreeWidgetItem *item) {
-//
-//	QTreeWidgetItem *childItem;
-//	if (item) {
-//		childItem = new QTreeWidgetItem(item);
-//	} else {
-//		childItem = new QTreeWidgetItem(pTtreeWidget_);
-//	}
-//	childItem->setData(0, Qt::UserRole, pXml_->name().toString());
-//	return childItem;
-//}
+// Ctor
+VPPSettingsXmlReaderVisitor::VPPSettingsXmlReaderVisitor(QIODevice* pFile) {
+
+	// Instantiate the xml reader
+	pXmlReader_.reset(new VppSettingsXmlReader(pFile));
+
+}
+
+// Dtor
+VPPSettingsXmlReaderVisitor::~VPPSettingsXmlReaderVisitor() {
+
+}
+
+void VPPSettingsXmlReaderVisitor::visit(SettingsItemBase* item) {
+
+	// Read the content of the xml file
+	if(pXmlReader_->read())
+		item->appendChild(pXmlReader_->get());
+
+}
+
+

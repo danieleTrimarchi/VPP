@@ -25,6 +25,9 @@ class TreeTab : public QWidget {
 		/// Save the settings to file
 		void save(QFile& file);
 
+		/// Read the settings to file
+		void read(QFile& file);
+
 		/// When the user hits 'cancel' in the main dialog, we
 		/// revert the model: so that any change the user has
 		/// done is erased.

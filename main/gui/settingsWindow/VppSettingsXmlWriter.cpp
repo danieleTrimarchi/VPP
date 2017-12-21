@@ -33,7 +33,7 @@ VppSettingsXmlWriter::~VppSettingsXmlWriter() {
 VPPSettingsXmlWriterVisitor::VPPSettingsXmlWriterVisitor(SettingsModel* pTreeModel,QIODevice*device) {
 
 	// Instantiate the xml writer
-	pXml_.reset(new VppSettingsXmlWriter(pTreeModel,device));
+	pXmlWriter_.reset(new VppSettingsXmlWriter(pTreeModel,device));
 }
 
 // Dtor
@@ -43,12 +43,12 @@ VPPSettingsXmlWriterVisitor::~VPPSettingsXmlWriterVisitor() {
 
 void VPPSettingsXmlWriterVisitor::visitBegin(SettingsItemBase* item) {
 
-	pXml_->writeStartElement(QString("Item"));
+	pXmlWriter_->writeStartElement(QString("Item"));
 
 	// --Write the part common to all items--
-	pXml_->writeAttribute("Expanded", item->expanded() ? "yes" : "no");
-	pXml_->writeAttribute("InternalName",item->getInternalName());
-	pXml_->writeAttribute("Name",item->getName());
+	pXmlWriter_->writeAttribute("Expanded", item->expanded() ? "yes" : "no");
+	pXmlWriter_->writeAttribute("InternalName",item->getInternalName());
+	pXmlWriter_->writeAttribute("Name",item->getName());
 
 }
 
@@ -60,7 +60,7 @@ void VPPSettingsXmlWriterVisitor::visitEnd(SettingsItemBase* item) {
 	}
 
 	// This item is finished
-	pXml_->writeEndElement();
+	pXmlWriter_->writeEndElement();
 
 }
 
@@ -71,7 +71,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBase* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName","SettingsItemBase");
+	pXmlWriter_->writeAttribute("ClassName","SettingsItemBase");
 
   visitEnd(item);
 
@@ -85,7 +85,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemRoot* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName","SettingsItemRoot");
+	pXmlWriter_->writeAttribute("ClassName","SettingsItemRoot");
 
   visitEnd(item);
 
@@ -99,7 +99,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemGroup* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName","SettingsItemGroup");
+	pXmlWriter_->writeAttribute("ClassName","SettingsItemGroup");
 
 	visitEnd(item);
 
@@ -113,7 +113,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBounds* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName","SettingsItemBounds");
+	pXmlWriter_->writeAttribute("ClassName","SettingsItemBounds");
 
   visitEnd(item);
 
@@ -127,13 +127,13 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItem* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName","SettingsItem");
+	pXmlWriter_->writeAttribute("ClassName","SettingsItem");
 	// Write the data stored in this item.
-	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
+	pXmlWriter_->writeAttribute("Value", item->data(columnNames::value).toString() );
 	// Write the data stored in this item.
-	pXml_->writeAttribute("Unit", item->data(columnNames::unit).toString() );
+	pXmlWriter_->writeAttribute("Unit", item->data(columnNames::unit).toString() );
 	// Write the tooltip for this item.
-	pXml_->writeAttribute("ToolTip", item->getToolTip().toString() );
+	pXmlWriter_->writeAttribute("ToolTip", item->getToolTip().toString() );
 
   visitEnd(item);
 
@@ -147,13 +147,13 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemInt* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName","SettingsItemInt");
+	pXmlWriter_->writeAttribute("ClassName","SettingsItemInt");
 	// Write the data stored in this item.
-	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
+	pXmlWriter_->writeAttribute("Value", item->data(columnNames::value).toString() );
 	// Write the unit for this item.
-	pXml_->writeAttribute("Unit", item->data(columnNames::unit).toString() );
+	pXmlWriter_->writeAttribute("Unit", item->data(columnNames::unit).toString() );
 	// Write the tooltip for this item.
-	pXml_->writeAttribute("ToolTip", item->getToolTip().toString() );
+	pXmlWriter_->writeAttribute("ToolTip", item->getToolTip().toString() );
 
   visitEnd(item);
 
@@ -168,23 +168,23 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemComboBox* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXml_->writeAttribute("ClassName","SettingsItemComboBox");
+	pXmlWriter_->writeAttribute("ClassName","SettingsItemComboBox");
 
 	// Write the number of options
-	pXml_->writeAttribute("numOpts",QString::number(item->getNumOpts()));
+	pXmlWriter_->writeAttribute("numOpts",QString::number(item->getNumOpts()));
 
 	// Write the available options
 	for(size_t i=0; i<item->getNumOpts(); i++)
-		pXml_->writeAttribute(QString("Option")+QString::number(i),item->getOption(i));
+		pXmlWriter_->writeAttribute(QString("Option")+QString::number(i),item->getOption(i));
 
 	// Write the active index
-	pXml_->writeAttribute("ActiveIndex",QString::number(item->getActiveIndex()));
+	pXmlWriter_->writeAttribute("ActiveIndex",QString::number(item->getActiveIndex()));
 
 	// Write the unit of this item.
-	pXml_->writeAttribute("Unit", item->data(columnNames::unit).toString() );
+	pXmlWriter_->writeAttribute("Unit", item->data(columnNames::unit).toString() );
 
 	// Write the tooltip for this item.
-	pXml_->writeAttribute("ToolTip", item->getToolTip().toString() );
+	pXmlWriter_->writeAttribute("ToolTip", item->getToolTip().toString() );
 
   visitEnd(item);
 

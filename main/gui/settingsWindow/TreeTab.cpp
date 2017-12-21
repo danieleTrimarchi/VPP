@@ -5,6 +5,7 @@
 #include "VppSettingsXmlWriter.h"
 #include <QtCore/QFile>
 #include <QtWidgets/QMessageBox>
+#include "VppSettingsXmlReader.h"
 
 //---------------------------------------------------------------
 // This widget includes several setting trees, from which the
@@ -85,6 +86,13 @@ void TreeTab::save(QFile& file) {
 	VPPSettingsXmlWriterVisitor v(pTreeReferenceModel_,&file);
 	pTreeReferenceModel_->getRoot()->accept(v);
 
+}
+
+// Read the settings to file
+void TreeTab::read(QFile& file){
+
+	VPPSettingsXmlReaderVisitor v(&file);
+	pTreeReferenceModel_->getRoot()->accept(v);
 }
 
 // When the user hits 'cancel' in the main dialog, we

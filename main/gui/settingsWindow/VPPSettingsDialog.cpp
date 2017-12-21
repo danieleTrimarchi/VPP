@@ -21,6 +21,14 @@ void VPPSettingsDialog::save(QFile& file) {
 	pTreeTab_->save(file);
 }
 
+// Read some settings from file
+void VPPSettingsDialog::read(QFile& file) {
+
+	// Save the content of the pTreeTab
+	pTreeTab_->read(file);
+
+}
+
 // Ctor
 VPPSettingsDialog::VPPSettingsDialog(QWidget *parent)
 : QDialog(parent) {

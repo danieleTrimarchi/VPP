@@ -23,6 +23,9 @@ class VPPSettingsDialog : public QDialog {
 		/// Save the settings to file
 		void save(QFile& file);
 
+		/// Read some settings from file
+		void read(QFile& file);
+
 	public Q_SLOTS:
 
 		/// Slot called when the user hits the button "Ok" in the bottom of the widget
