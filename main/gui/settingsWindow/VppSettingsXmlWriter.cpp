@@ -130,6 +130,10 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItem* item ) {
 	pXml_->writeAttribute("ClassName","SettingsItem");
 	// Write the data stored in this item.
 	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
+	// Write the data stored in this item.
+	pXml_->writeAttribute("Unit", item->data(columnNames::unit).toString() );
+	// Write the tooltip for this item.
+	pXml_->writeAttribute("ToolTip", item->getToolTip().toString() );
 
   visitEnd(item);
 
@@ -146,6 +150,10 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemInt* item ) {
 	pXml_->writeAttribute("ClassName","SettingsItemInt");
 	// Write the data stored in this item.
 	pXml_->writeAttribute("Value", item->data(columnNames::value).toString() );
+	// Write the unit for this item.
+	pXml_->writeAttribute("Unit", item->data(columnNames::unit).toString() );
+	// Write the tooltip for this item.
+	pXml_->writeAttribute("ToolTip", item->getToolTip().toString() );
 
   visitEnd(item);
 
@@ -161,8 +169,22 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemComboBox* item ) {
 
 	// Write the class name
 	pXml_->writeAttribute("ClassName","SettingsItemComboBox");
-	// Write the active choice
-	pXml_->writeAttribute("Value",item->getActiveLabel());
+
+	// Write the number of options
+	pXml_->writeAttribute("numOpts",QString::number(item->getNumOpts()));
+
+	// Write the available options
+	for(size_t i=0; i<item->getNumOpts(); i++)
+		pXml_->writeAttribute(QString("Option")+QString::number(i),item->getOption(i));
+
+	// Write the active index
+	pXml_->writeAttribute("ActiveIndex",QString::number(item->getActiveIndex()));
+
+	// Write the unit of this item.
+	pXml_->writeAttribute("Unit", item->data(columnNames::unit).toString() );
+
+	// Write the tooltip for this item.
+	pXml_->writeAttribute("ToolTip", item->getToolTip().toString() );
 
   visitEnd(item);
 

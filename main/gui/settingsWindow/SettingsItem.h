@@ -17,6 +17,8 @@
 class GetSettingsItemByPathVisitor;
 class GetSettingsItemByNameVisitor;
 class VPPSettingsXmlWriterVisitor;
+class XmlAttributeSet;
+class XmlAttribute;
 
 class SettingsItemBase {
 
@@ -152,6 +154,10 @@ public:
 	/// Return the flag 'expanded'
 	bool expanded() const;
 
+	/// Factory method - builds a SettingsItem from the attributes
+	/// read from xml and stored into an appropriate set
+	static SettingsItemBase* settingsItemFactory(const XmlAttributeSet&);
+
 public slots:
 
 	/// This slot is triggered when the item is expanded in the view
@@ -197,6 +203,9 @@ public:
 	/// Default Ctor
 	SettingsItemRoot();
 
+	/// Ctor from xml
+	SettingsItemRoot(const XmlAttributeSet&);
+
 	/// Dtor
 	virtual ~SettingsItemRoot();
 
@@ -226,6 +235,9 @@ public:
 	/// Ctor
 	SettingsItemGroup(const QVariant& name);
 
+	/// Ctor from xml
+	SettingsItemGroup(const XmlAttributeSet&);
+
 	/// Dtor
 	virtual ~SettingsItemGroup();
 
@@ -254,6 +266,9 @@ public:
 
 	/// Ctor
 	SettingsItemBounds(const QVariant& name,double min, double max, const QVariant& unit, const QVariant& tooltip);
+
+	/// Ctor from xml
+	SettingsItemBounds(const XmlAttributeSet&);
 
 	/// Dtor
 	virtual ~SettingsItemBounds();
@@ -289,6 +304,9 @@ public:
 
 	/// Ctor
 	SettingsItem(const QVariant&, const QVariant&, const QVariant&, const QVariant&);
+
+	/// Ctor from xml
+	SettingsItem(const XmlAttributeSet&);
 
 	/// Dtor
 	virtual ~SettingsItem();
@@ -342,6 +360,9 @@ public:
 	/// Ctor
 	SettingsItemInt(const QVariant&, const QVariant&, const QVariant&, const QVariant&);
 
+	/// Ctor from xml
+	SettingsItemInt(const XmlAttributeSet&);
+
 	/// Dtor
 	virtual ~SettingsItemInt();
 
@@ -378,6 +399,9 @@ public:
 	/// Ctor
 	SettingsItemComboBox(const QVariant&, const QVariant&, const QList<QString>&, const QVariant&);
 
+	/// Ctor from xml
+	SettingsItemComboBox(const XmlAttributeSet&);
+
 	/// Dtor
 	virtual ~SettingsItemComboBox();
 
@@ -405,6 +429,12 @@ public:
 	// Returns the label of the active (selected) item
 	virtual QString getActiveLabel() const;
 
+	/// How many options are available to this combo-box?
+	size_t getNumOpts() const;
+
+	/// Get the i-th option for this Combo-Box
+	QString getOption(size_t) const;
+
 	/// Assignment operator
 	virtual const SettingsItemComboBox& operator=(const SettingsItemComboBox& rhs);
 
@@ -420,5 +450,6 @@ private:
 	/// user when editing the combo-box editor
 	size_t activeIndex_;
 };
+
 
 #endif

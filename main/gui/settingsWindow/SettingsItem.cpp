@@ -6,6 +6,17 @@
 
 #include "GetSettingsItemVisitor.h"
 #include "VppSettingsXmlWriter.h"
+#include "VppSettingsXmlReader.h"
+
+//// Forward declarations
+//class SettingsItem;
+//class SettingsItemComboBox;
+//class SettingsItemInt;
+//class SettingsItemgroup;
+//class SettingsItemBounds;
+//class SettingsItemRoot;
+
+using namespace std;
 
 // Ctor
 SettingsItemBase::SettingsItemBase() :
@@ -70,6 +81,36 @@ void SettingsItemBase::setExpanded(bool expanded) {
 // Return the flag 'expanded'
 bool SettingsItemBase::expanded() const {
 	return expanded_;
+}
+
+// Static Factory method - builds a SettingsItem from the attributes
+// read from xml and stored into an appropriate set
+SettingsItemBase* SettingsItemBase::settingsItemFactory(const XmlAttributeSet& attSet){
+
+	// What class am I going to instantiate?
+	string className = attSet["ClassName"];
+
+	SettingsItemBase* pItem;
+	// Now instantiate the item based on its type
+	if(className == string("SettingsItemRoot") ){
+			pItem = new SettingsItemRoot;
+	} else if(className == string("SettingsItem")){
+			pItem = new SettingsItem(attSet);
+	} else if(className == string("SettingsItemComboBox")){
+			pItem = new SettingsItemComboBox(attSet);
+	} else if(className == string("SettingsItemInt")){
+		pItem = new SettingsItemInt(attSet);
+	} else if(className == string("SettingsItemGroup")){
+			pItem = new SettingsItemGroup(attSet);
+	} else if(className == string("SettingsItemBounds")){
+			pItem = new SettingsItemBounds(attSet);
+	} 	else {
+		char msg[256];
+		sprintf(msg,"The class name: \"%s\" is not supported",className.c_str());
+		throw std::logic_error(msg);
+	}
+
+	return pItem;
 }
 
 // Dtor
@@ -372,6 +413,13 @@ SettingsItemRoot::SettingsItemRoot():
 	setExpanded(true);
 }
 
+// Ctor from xml
+SettingsItemRoot::SettingsItemRoot(const XmlAttributeSet& xmlAttSet) :
+		SettingsItemRoot(){
+
+}
+
+
 SettingsItemRoot::~SettingsItemRoot() {
 
 }
@@ -411,6 +459,12 @@ SettingsItemGroup::SettingsItemGroup(const QVariant& name):
 
 	// The root is not editable
 	setEditable(false);
+
+}
+
+// Ctor from xml
+SettingsItemGroup::SettingsItemGroup(const XmlAttributeSet& xmlAttSet) :
+	SettingsItemGroup(xmlAttSet["Name"].toQString()){
 
 }
 
@@ -460,6 +514,14 @@ SettingsItemBounds::SettingsItemBounds(const QVariant& name,double min,double ma
 	// Set the tooltip
 	tooltip_= tooltip;
 
+}
+
+// Ctor from xml
+SettingsItemBounds::SettingsItemBounds(const XmlAttributeSet& xmlAttSet) :
+		SettingsItemGroup(xmlAttSet["Name"].toQString()){
+
+	// Do not instantiate children, if requested they are instantiated on
+	// the fly while reading the rest of the xml
 }
 
 // Copy Ctor, called by clone()
@@ -533,6 +595,14 @@ SettingsItem::SettingsItem(	const QVariant& name,
 	// The editable columns for the settings item are editable
 	setEditable(true);
 
+}
+
+// Ctor from xml. Just call the other constructor
+SettingsItem::SettingsItem(const XmlAttributeSet& xmlAttSet):
+		SettingsItem( 	xmlAttSet["Name"].toQString(),
+									xmlAttSet["Value"].toQString(),
+									xmlAttSet["Unit"].toQString(),
+									xmlAttSet["ToolTip"].toQString() ){
 }
 
 // Copy Ctor
@@ -667,6 +737,14 @@ SettingsItemInt::SettingsItemInt(const QVariant& name,
 
 }
 
+// Ctor from xml
+SettingsItemInt::SettingsItemInt(const XmlAttributeSet& xmlAttSet) :
+		SettingsItemInt(	xmlAttSet["Name"].toQString(),
+										xmlAttSet["Value"].toQString(),
+										xmlAttSet["Unit"].toQString(),
+										xmlAttSet["ToolTip"].toQString() ){
+}
+
 /// Dtor
 SettingsItemInt::~SettingsItemInt() {
 	/* do nothing */
@@ -745,6 +823,24 @@ SettingsItemComboBox::SettingsItemComboBox(const QVariant& name,
 
 }
 
+// Ctor from xml
+SettingsItemComboBox::SettingsItemComboBox(const XmlAttributeSet& xmlAttSet) :
+		SettingsItem(	xmlAttSet["Name"].toQString(),
+									xmlAttSet["Option0"].toQString(),
+									xmlAttSet["Unit"].toQString(),
+									xmlAttSet["ToolTip"].toQString() ){
+
+	// Populate the options
+	for(size_t i=0; i<xmlAttSet["numOpts"]; i++){
+		char msg[256];
+		sprintf(msg,"Option%zu",i);
+		opts_.push_back(xmlAttSet[string(msg)].toQString());
+	}
+
+	activeIndex_= xmlAttSet["ActiveIndex"];
+
+}
+
 // Dtor
 SettingsItemComboBox::~SettingsItemComboBox() {
 	/* do nothing */
@@ -806,6 +902,16 @@ void SettingsItemComboBox::setModelData(QWidget *editor, QAbstractItemModel *mod
 // Returns the label of the active (selected) item
 QString SettingsItemComboBox::getActiveLabel() const {
 	return opts_[activeIndex_];
+}
+
+// How many options are available to this combo-box?
+size_t SettingsItemComboBox::getNumOpts() const {
+	return opts_.size();
+}
+
+// Get the i-th option for this Combo-Box
+QString SettingsItemComboBox::getOption(size_t i) const {
+	return opts_[i];
 }
 
 // Only meaningful for the combo-box item, returns zero for all the
