@@ -27,30 +27,40 @@ class XmlAttribute {
 
 		/// Comparison operator - based on the alphabetic order
 		/// for the attributeName
-		bool operator < (const XmlAttribute& rhs);
+		bool operator < ( XmlAttribute& rhs) const;
+
+		/// Comparison operator - based on the alphabetic order
+		/// for the attributeName
+		bool operator < (const XmlAttribute& rhs) const;
 
 		/// Overload operator == to compare in set
-		bool operator==(const XmlAttribute& rhs) const;
+		bool operator == (const XmlAttribute& rhs) const;
 
 		/// Assignment operator
 		XmlAttribute& operator = ( string attVal );
 
 		/// Assignment operator
+		XmlAttribute& operator = ( const string& attVal );
+
+		/// Assignment operator
 		XmlAttribute& operator = ( const XmlAttribute& attVal );
 
 		/// Returns the underlying value
-		string get() const;
+		string getString() const;
+
+		/// Returns the underlying value
+		int getInt() const;
 
 		/// Returns the underlying value as a QString
 		QString toQString() const;
 
-		/// Self cast operator, returns the underlying value
-		/// See https://msdn.microsoft.com/en-us/library/wwywka61.aspx
-		operator string() const;
-
-		/// Self cast operator, returns the underlying value
-		/// See https://msdn.microsoft.com/en-us/library/wwywka61.aspx
-		operator double() const;
+//		/// Self cast operator, returns the underlying value
+//		/// See https://msdn.microsoft.com/en-us/library/wwywka61.aspx
+//		operator string() const;
+//
+//		/// Self cast operator, returns the underlying value
+//		/// See https://msdn.microsoft.com/en-us/library/wwywka61.aspx
+//		operator int() const;
 
 	private:
 

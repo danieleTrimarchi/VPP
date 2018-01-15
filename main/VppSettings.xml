@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE vppSettings>
+<vppSettings version="1.0">
+    <Item Expanded="yes" InternalName="/" Name="Name" ClassName="SettingsItemRoot">
+        <Item Expanded="no" InternalName="/.VPP_Settings" Name="VPP Settings" ClassName="SettingsItemGroup">
+            <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds" Name="Velocity bounds" ClassName="SettingsItemBounds">
+                <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.min" Name="min" ClassName="SettingsItem" Value="3" Unit="m/s" ToolTip="min value"/>
+                <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.max" Name="max" ClassName="SettingsItem" Value="20" Unit="m/s" ToolTip="max value"/>
+            </Item>
+        </Item>
+    </Item>
+</vppSettings>

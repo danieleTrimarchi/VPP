@@ -224,6 +224,9 @@ public:
 	/// In this case the internal name is '/'
 	virtual QString getInternalName() const;
 
+	/// Assignment operator
+	virtual const SettingsItemRoot& operator=(const SettingsItemRoot& rhs);
+
 private:
 
 	/// Clone this item, which is basically equivalent to calling the copy ctor

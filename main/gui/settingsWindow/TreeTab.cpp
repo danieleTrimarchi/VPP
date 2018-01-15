@@ -89,10 +89,21 @@ void TreeTab::save(QFile& file) {
 }
 
 // Read the settings to file
+
 void TreeTab::read(QFile& file){
 
+	// Cleanup the children of the reference model
+	pTreeReferenceModel_->getRoot()->clearChildren();
+
+	// Instantiate a file reader visitor
 	VPPSettingsXmlReaderVisitor v(&file);
+	// Ask the REFERENCE root to accept the visitor
+	// This will read the file and assign its content
+	// to root
 	pTreeReferenceModel_->getRoot()->accept(v);
+
+	// Copy the reference model to the current one
+	revert();
 }
 
 // When the user hits 'cancel' in the main dialog, we

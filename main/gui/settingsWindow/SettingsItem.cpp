@@ -7,6 +7,7 @@
 #include "GetSettingsItemVisitor.h"
 #include "VppSettingsXmlWriter.h"
 #include "VppSettingsXmlReader.h"
+#include "VPPException.h"
 
 //// Forward declarations
 //class SettingsItem;
@@ -88,21 +89,27 @@ bool SettingsItemBase::expanded() const {
 SettingsItemBase* SettingsItemBase::settingsItemFactory(const XmlAttributeSet& attSet){
 
 	// What class am I going to instantiate?
-	string className = attSet["ClassName"];
+	string className = (attSet["ClassName"]).getString();
 
 	SettingsItemBase* pItem;
 	// Now instantiate the item based on its type
 	if(className == string("SettingsItemRoot") ){
+			std::cout<<"  make a SettingsItemRoot\n";
 			pItem = new SettingsItemRoot;
 	} else if(className == string("SettingsItem")){
+		std::cout<<"  make a SettingsItem\n";
 			pItem = new SettingsItem(attSet);
 	} else if(className == string("SettingsItemComboBox")){
+		std::cout<<"  make a SettingsItemComboBox\n";
 			pItem = new SettingsItemComboBox(attSet);
 	} else if(className == string("SettingsItemInt")){
+		std::cout<<"  make a SettingsItemInt\n";
 		pItem = new SettingsItemInt(attSet);
 	} else if(className == string("SettingsItemGroup")){
+		std::cout<<"  make a SettingsItemGroup\n";
 			pItem = new SettingsItemGroup(attSet);
 	} else if(className == string("SettingsItemBounds")){
+		std::cout<<"  make a SettingsItemBounds\n";
 			pItem = new SettingsItemBounds(attSet);
 	} 	else {
 		char msg[256];
@@ -122,10 +129,13 @@ SettingsItemBase::~SettingsItemBase() {
 void SettingsItemBase::appendChild(SettingsItemBase* child) {
 
 	// Make sure the item knows who his parent is
-	child->setParent(this);
-	// Append the item to the child list
-	children_.append(child);
-
+    if(child) {
+        child->setParent(this);
+        // Append the item to the child list
+        children_.append(child);
+    }
+    else
+    		throw VPPException(HERE,"Not adding a single thing!");
 }
 
 // Remove all children under me
@@ -399,6 +409,7 @@ const SettingsItemBase& SettingsItemBase::operator=(const SettingsItemBase& rhs)
 	editable_=rhs.editable_;
 	tooltip_= rhs.tooltip_;
 	columns_= rhs.columns_;
+	expanded_=rhs.expanded_;
 
 	return *this;
 }
@@ -455,6 +466,15 @@ QString SettingsItemRoot::getInternalName() const {
 SettingsItemRoot::SettingsItemRoot(const SettingsItemRoot& rhs) :
 		SettingsItemBase(rhs){
 	// Do nothing because this class does not own members
+}
+
+// Assignment operator
+const SettingsItemRoot& SettingsItemRoot::operator=(const SettingsItemRoot& rhs) {
+
+	// Call mother-class operator
+	SettingsItemBase::operator=(rhs);
+
+	return *this;
 }
 
 // ----------------------------------------------------------------
@@ -840,13 +860,13 @@ SettingsItemComboBox::SettingsItemComboBox(const XmlAttributeSet& xmlAttSet) :
 									xmlAttSet["ToolTip"].toQString() ){
 
 	// Populate the options
-	for(size_t i=0; i<xmlAttSet["numOpts"]; i++){
+	for(size_t i=0; i<int((xmlAttSet["numOpts"]).getInt()); i++){
 		char msg[256];
 		sprintf(msg,"Option%zu",i);
 		opts_.push_back(xmlAttSet[string(msg)].toQString());
 	}
 
-	activeIndex_= xmlAttSet["ActiveIndex"];
+	activeIndex_= xmlAttSet["ActiveIndex"].getInt();
 
 }
 
