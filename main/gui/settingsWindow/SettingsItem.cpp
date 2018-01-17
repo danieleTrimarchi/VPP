@@ -375,15 +375,6 @@ void SettingsItemBase::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 }
 
-// Accept a visitor that will instantiate the items described in an
-// xml file and append them under me
-void SettingsItemBase::accept( VPPSettingsXmlReaderVisitor& v) {
-
-	// Visit me
-	v.visit(this);
-
-}
-
 // Get the display name of this item
 QString SettingsItemBase::getName() const {
 	return columns_[columnNames::name]->getData().toString();
@@ -394,7 +385,6 @@ QString SettingsItemBase::getName() const {
 size_t SettingsItemBase::getActiveIndex() const {
 	return 0;
 }
-
 
 // Only meaningful for the combo-box item,
 // returns an empty QString for the base-class
@@ -446,6 +436,13 @@ SettingsItemRoot::~SettingsItemRoot() {
 
 // Accept a visitor that will write this item to XML
 void SettingsItemRoot::accept( VPPSettingsXmlWriterVisitor& v ) {
+
+	// Visit me
+	v.visit(this);
+}
+
+// Accept a visitor that will write this item to XML
+void SettingsItemRoot::accept( VPPSettingsXmlReaderVisitor& v ) {
 
 	// Visit me
 	v.visit(this);

@@ -39,10 +39,6 @@ public:
 	/// Accept a visitor that will write this item to XML
 	virtual void accept( VPPSettingsXmlWriterVisitor& );
 
-	/// Accept a visitor that will instantiate the items described in an
-	/// xml file and append them under me
-	virtual void accept( VPPSettingsXmlReaderVisitor& );
-
 	/// Append a child under me
 	void appendChild(SettingsItemBase* child);
 
@@ -216,6 +212,9 @@ public:
 
 	/// Accept a visitor that will write this item to XML
 	virtual void accept( VPPSettingsXmlWriterVisitor& );
+
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VPPSettingsXmlReaderVisitor& );
 
 	/// Clone this item, which is basically equivalent to calling the copy ctor
 	SettingsItemRoot* clone() const;

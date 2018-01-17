@@ -36,7 +36,7 @@ class SettingsModel : public QAbstractItemModel {
 		virtual Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 		/// Returns a ptr to the root of this model
-		SettingsItemBase* getRoot() const;
+		SettingsItemRoot* getRoot() const;
 
 		/// Called by Qt, returns the header
 		virtual QVariant headerData(int section,
@@ -97,10 +97,10 @@ class SettingsModel : public QAbstractItemModel {
 	private:
 
 		/// Get an item of this model
-		SettingsItemBase *getItem(const QModelIndex &index) const;
+		SettingsItemBase* getItem(const QModelIndex &index) const;
 
 		/// Root of the model tree
-		SettingsItemBase* pRootItem_;
+		SettingsItemRoot* pRootItem_;
 
 };
 

@@ -10,8 +10,8 @@ using namespace std;
 
 // Ctor
 XmlAttribute::XmlAttribute(const string& attName, const string& attValue) :
-						attributeName_(attName),
-						attributeValue_(attValue){
+												attributeName_(attName),
+												attributeValue_(attValue){
 
 }
 
@@ -127,8 +127,8 @@ const XmlAttribute& XmlAttributeSet::operator [] (string varName) const {
 
 // Ctor
 VppSettingsXmlReader::VppSettingsXmlReader(QIODevice* pFile) :
-						pRootItem_(new SettingsItemRoot),
-						pFile_(pFile) {
+												pRootItem_(new SettingsItemRoot),
+												pFile_(pFile) {
 
 	// Instantiate a xml reader. The device will be assigned later on
 	pXml_.reset(new QXmlStreamReader);
@@ -154,8 +154,10 @@ bool VppSettingsXmlReader::read(QIODevice *device) {
 				" attributes="<<pXml_->attributes().value("version").toString().toStdString()<<std::endl;
 
 		// If everything is fine, read the item
-		if (pXml_->name() == "vppSettings" && pXml_->attributes().value("version") == "1.0")
+		if (pXml_->name() == "vppSettings" && pXml_->attributes().value("version") == "1.0"){
+			std::cout<<"pRootItem = "<<pRootItem_<<"  [read(QIODevice*)]\n";
 			read(pRootItem_);
+		}
 		else
 			pXml_->raiseError(QObject::tr("The file is not a VppSettings version 1.0 file."));
 	}
@@ -164,13 +166,14 @@ bool VppSettingsXmlReader::read(QIODevice *device) {
 }
 
 // Return the tree populated with the items from the xml
-SettingsItemBase* VppSettingsXmlReader::get() {
+SettingsItemBase* VppSettingsXmlReader::getRoot() {
 	return pRootItem_;
 }
 
 void VppSettingsXmlReader::read(SettingsItemBase* parentItem) {
 
 	//Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "vppSettings");
+	std::cout<<"parentItem = "<<parentItem<<"  [read(SettingsItemBase*)]\n";
 
 	while (pXml_->readNextStartElement()) {
 
@@ -198,13 +201,20 @@ void VppSettingsXmlReader::read(SettingsItemBase* parentItem) {
 
 		// todo dtrimarchi: need to be more strict here: if there is no parentItem
 		// AND item is a root!
-		if(parentItem)
-            parentItem->appendChild(pItem);
-		else
-            parentItem = pItem;
-        
-		// Recursive call to make sure we get all the children
-		read(parentItem);
+		if(dynamic_cast<SettingsItemRoot*>(pItem)){
+			// Substitute the root with the new brand new root we just created
+			std::cout<<"Substituting the root [read(SettingsItemBase*)]\n";
+			pRootItem_ = pItem;
+			parentItem = pItem;
+			std::cout<<"After the substitution : "<<pRootItem_<<" = "<<parentItem<<" = "<< pItem<<std::endl;
+			read(pRootItem_);
+		}	else {
+			std::cout<<"Appending child [read(SettingsItemBase*)] "<<pItem<<"\n";
+			// Append the child to its parent
+			parentItem->appendChild(pItem);
+			// Read all the children of the current item
+			read(parentItem->child(parentItem->childCount()-1));
+		}
 	}
 }
 
@@ -231,12 +241,16 @@ VPPSettingsXmlReaderVisitor::~VPPSettingsXmlReaderVisitor() {
 
 }
 
-void VPPSettingsXmlReaderVisitor::visit(SettingsItemBase* item) {
+void VPPSettingsXmlReaderVisitor::visit(SettingsItemRoot* pRoot) {
 
-	// Read the content of the xml file
-	if(pXmlReader_->read())
-		item->appendChild(pXmlReader_->get());
+	pRoot->clearChildren();
 
+	// Read the content of the xml file, generates some items and append
+	// them under the current item
+	if(pXmlReader_->read()){
+		for(size_t iChild=0; iChild<pXmlReader_->getRoot()->childCount(); iChild++)
+			pRoot->appendChild(pXmlReader_->getRoot()->child(iChild));
+	}
 }
 
 

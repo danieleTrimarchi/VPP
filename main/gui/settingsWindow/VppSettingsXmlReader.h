@@ -100,7 +100,7 @@ class VppSettingsXmlReader {
 		bool read(QIODevice *device =Q_NULLPTR);
 
 		/// Return the tree populated with the items from the xml
-		SettingsItemBase* get();
+		SettingsItemBase* getRoot();
 
 		/// Produce an error string reporting the location of the failure
 		QString errorString() const;
@@ -135,7 +135,7 @@ class VPPSettingsXmlReaderVisitor {
 		~VPPSettingsXmlReaderVisitor();
 
 		/// Visit a SettingsItemRoot. Appends all the children to the root
-		void visit(SettingsItemBase* item);
+		void visit(SettingsItemRoot* item);
 
 //		/// Begin visiting an item
 //		void visitBegin(SettingsItemBase* item);

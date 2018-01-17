@@ -92,9 +92,6 @@ void TreeTab::save(QFile& file) {
 
 void TreeTab::read(QFile& file){
 
-	// Cleanup the children of the reference model
-	pTreeReferenceModel_->getRoot()->clearChildren();
-
 	// Instantiate a file reader visitor
 	VPPSettingsXmlReaderVisitor v(&file);
 	// Ask the REFERENCE root to accept the visitor

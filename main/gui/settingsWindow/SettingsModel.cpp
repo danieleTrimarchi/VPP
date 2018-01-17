@@ -235,7 +235,7 @@ Qt::ItemFlags SettingsModel::flags(const QModelIndex &index) const {
 }
 
 // Returns a ptr to the root of this model
-SettingsItemBase* SettingsModel::getRoot() const {
+SettingsItemRoot* SettingsModel::getRoot() const {
 	return pRootItem_;
 }
 
