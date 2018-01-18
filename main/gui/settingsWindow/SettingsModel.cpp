@@ -18,7 +18,7 @@ SettingsModel::SettingsModel(const SettingsModel& rhs) :
 }
 
 
-/// Setup the data of this model
+// Setup the data of this model
 void SettingsModel::setupModelData() {
 
 	// Instantiate the SettingsItemGroups. These items are added under
@@ -29,20 +29,20 @@ void SettingsModel::setupModelData() {
 	pRootItem_->appendChild(pVPPSettings);
 
 	pVPPSettings->appendChild( new SettingsItemBounds("Velocity bounds",0,15,"m/s","Allowed boat speed bounds"));
-//	pVPPSettings->appendChild( new SettingsItemBounds("Heel angle bounds",-1e-5,85,"deg","Allowed boat heel angle bounds"));
-//	pVPPSettings->appendChild( new SettingsItemBounds("Crew position bounds",0,3,"[m]","Allowed boat heel angle bounds"));
-//	pVPPSettings->appendChild( new SettingsItemBounds("Flat bounds",0.4,1," ","Allowed boat heel angle bounds"));
-//
-//	//-- Wind
-//	SettingsItemGroup* pWindSettings = new SettingsItemGroup("Wind Settings");
-//	pWindSettings->setParent(pRootItem_);
-//	pRootItem_->appendChild(pWindSettings);
-//
-//	pWindSettings->appendChild( new SettingsItemBounds("Wind speed bounds",2,6,"[m/s]","Real Wind speed bounds"));
-//	pWindSettings->appendChild( new SettingsItemInt("n_twv",5," ","Number of wind speed points") );
-//	pWindSettings->appendChild( new SettingsItemBounds("Wind angle bounds",35,179,"[deg]","Real Wind angle bounds"));
-//	pWindSettings->appendChild( new SettingsItemInt("n_alpha_tw",10," ","Number of wind speed points") );
-//
+	pVPPSettings->appendChild( new SettingsItemBounds("Heel angle bounds",-1e-5,85,"deg","Allowed boat heel angle bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds("Crew position bounds",0,3,"[m]","Allowed boat heel angle bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds("Flat bounds",0.4,1," ","Allowed boat heel angle bounds"));
+
+	//-- Wind
+	SettingsItemGroup* pWindSettings = new SettingsItemGroup("Wind Settings");
+	pWindSettings->setParent(pRootItem_);
+	pRootItem_->appendChild(pWindSettings);
+
+	pWindSettings->appendChild( new SettingsItemBounds("Wind speed bounds",2,6,"[m/s]","Real Wind speed bounds"));
+	pWindSettings->appendChild( new SettingsItemInt("n_twv",5," ","Number of wind speed points") );
+	pWindSettings->appendChild( new SettingsItemBounds("Wind angle bounds",35,179,"[deg]","Real Wind angle bounds"));
+	pWindSettings->appendChild( new SettingsItemInt("n_alpha_tw",10," ","Number of wind speed points") );
+
 //	//-- Hull Settings...
 //	SettingsItemGroup* pHullSettings = new SettingsItemGroup("Hull Settings");
 //	pHullSettings->setParent(pRootItem_);

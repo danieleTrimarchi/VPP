@@ -100,7 +100,7 @@ class VppSettingsXmlReader {
 		bool read(QIODevice *device =Q_NULLPTR);
 
 		/// Return the tree populated with the items from the xml
-		SettingsItemBase* getRoot();
+		boost::shared_ptr<SettingsItemBase> getRoot();
 
 		/// Produce an error string reporting the location of the failure
 		QString errorString() const;
@@ -114,7 +114,7 @@ class VppSettingsXmlReader {
 		boost::shared_ptr<QXmlStreamReader> pXml_;
 
 		/// Root for the settings item read from xml
-		SettingsItemBase* pRootItem_;
+		boost::shared_ptr<SettingsItemBase> pRootItem_;
 
 		/// XML file the items should be read from
 		QIODevice* pFile_;

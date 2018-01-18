@@ -140,6 +140,14 @@ void SettingsItemBase::appendChild(SettingsItemBase* child) {
 
 // Remove all children under me
 void SettingsItemBase::clearChildren() {
+
+    // Todo : this segfaults, but why..?? 
+	// Delete the children
+	//for(size_t iChild=0; iChild<childCount(); iChild++)
+	//	if(child(iChild))
+	//		delete child(iChild);
+
+	// And reset the child list
 	children_.clear();
 }
 
