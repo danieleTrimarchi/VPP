@@ -12,6 +12,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include "SettingsColumn.h"
+#include <boost/shared_ptr.hpp>
 
 /// Forward declarations
 class GetSettingsItemByPathVisitor;
@@ -85,9 +86,8 @@ public:
 	/// returns zero for all the other items
 	virtual size_t getActiveIndex() const;
 
-	/// Only meaningful for the combo-box item,
-	/// returns an empty QString for the base-class
-	virtual QString getActiveLabel() const;
+	/// Returns the text that must be visualized
+	virtual QString getActiveText(const QModelIndex &index) const;
 
 	/// Return the backGround color for this item
 	/// The backGroundRole is grey for all, but white
@@ -433,8 +433,9 @@ public:
 	/// other items
 	virtual size_t getActiveIndex() const;
 
-	// Returns the label of the active (selected) item
-	virtual QString getActiveLabel() const;
+	///  Returns the label of the active (selected) item
+	/// Called by the parent 'paint' method
+	QString getActiveText(const QModelIndex &index) const;
 
 	/// How many options are available to this combo-box?
 	size_t getNumOpts() const;
@@ -455,7 +456,9 @@ private:
 
 	/// Store the index of the choice selected by the
 	/// user when editing the combo-box editor
-	size_t activeIndex_;
+	/// Declared mutable, as we need to set this inside
+	/// a const method setModelData
+	mutable size_t activeIndex_;
 };
 
 

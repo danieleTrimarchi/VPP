@@ -94,22 +94,16 @@ SettingsItemBase* SettingsItemBase::settingsItemFactory(const XmlAttributeSet& a
 	SettingsItemBase* pItem;
 	// Now instantiate the item based on its type
 	if(className == string("SettingsItemRoot") ){
-			std::cout<<"  make a SettingsItemRoot\n";
 			pItem = new SettingsItemRoot;
 	} else if(className == string("SettingsItem")){
-		std::cout<<"  make a SettingsItem\n";
 			pItem = new SettingsItem(attSet);
 	} else if(className == string("SettingsItemComboBox")){
-		std::cout<<"  make a SettingsItemComboBox\n";
 			pItem = new SettingsItemComboBox(attSet);
 	} else if(className == string("SettingsItemInt")){
-		std::cout<<"  make a SettingsItemInt\n";
 		pItem = new SettingsItemInt(attSet);
 	} else if(className == string("SettingsItemGroup")){
-		std::cout<<"  make a SettingsItemGroup\n";
 			pItem = new SettingsItemGroup(attSet);
 	} else if(className == string("SettingsItemBounds")){
-		std::cout<<"  make a SettingsItemBounds\n";
 			pItem = new SettingsItemBounds(attSet);
 	} 	else {
 		char msg[256];
@@ -123,6 +117,9 @@ SettingsItemBase* SettingsItemBase::settingsItemFactory(const XmlAttributeSet& a
 // Dtor
 SettingsItemBase::~SettingsItemBase() {
 	qDeleteAll(children_);
+	for(size_t i=0;i<columns_.size(); i++){
+		delete columns_[i];
+	}
 }
 
 // Append a child under me
@@ -135,7 +132,7 @@ void SettingsItemBase::appendChild(SettingsItemBase* child) {
         children_.append(child);
     }
     else
-    		throw VPPException(HERE,"Not adding a single thing!");
+    		throw VPPException(HERE,"The child cannot be appended because it does not exist!");
 }
 
 // Remove all children under me
@@ -146,6 +143,8 @@ void SettingsItemBase::clearChildren() {
 	//for(size_t iChild=0; iChild<childCount(); iChild++)
 	//	if(child(iChild))
 	//		delete child(iChild);
+	// This also segfaults...
+	//qDeleteAll(children_);
 
 	// And reset the child list
 	children_.clear();
@@ -338,7 +337,9 @@ void SettingsItemBase::paint(QPainter* painter, const QStyleOptionViewItem &opti
 	painter->setPen(index.data(Qt::ForegroundRole).value<QColor>());
 	painter->setFont(index.data(Qt::FontRole).value<QFont>());
 	QColor color = index.data(Qt::ForegroundRole).value<QColor>();
-	painter->drawText(textRect, index.data(Qt::TextAlignmentRole).toInt(), index.data().toString());
+
+	// Write the label of this item
+	painter->drawText(textRect, index.data(Qt::TextAlignmentRole).toInt(),getActiveText(index));
 
 }
 
@@ -394,10 +395,9 @@ size_t SettingsItemBase::getActiveIndex() const {
 	return 0;
 }
 
-// Only meaningful for the combo-box item,
-// returns an empty QString for the base-class
-QString SettingsItemBase::getActiveLabel() const {
-	return QString();
+// Returns the text that must be visualized
+QString SettingsItemBase::getActiveText(const QModelIndex &index) const {
+	return index.data().toString();
 }
 
 // Assignment operator
@@ -832,7 +832,7 @@ void SettingsItemInt::setModelData(	QWidget *editor,
 	spinBox->interpretText();
 	int value = spinBox->value();
 
-	std::cout<<"Setting \'"<<value<<"\' to item "<<this<<" ; model "<<model<<std::endl;
+	//std::cout<<"Setting \'"<<value<<"\' to item "<<this<<" ; model "<<model<<std::endl;
 	model->setData(index, value, Qt::EditRole);
 }
 
@@ -858,6 +858,8 @@ SettingsItemComboBox::SettingsItemComboBox(const QVariant& name,
 }
 
 // Ctor from xml
+// todo : the options are known by the visitor, not the item. All the
+// logics here should be displaced to the xmlreadvisitor!
 SettingsItemComboBox::SettingsItemComboBox(const XmlAttributeSet& xmlAttSet) :
 		SettingsItem(	xmlAttSet["Name"].toQString(),
 									xmlAttSet["Option0"].toQString(),
@@ -913,28 +915,33 @@ QWidget* SettingsItemComboBox::createEditor(QWidget *parent) {
 // Edit the data in the editor
 void SettingsItemComboBox::setEditorData(QWidget *editor,const QModelIndex& index) {
 
-	// I have stored in the model the index of the selected option
-	activeIndex_ = index.model()->data(index, Qt::EditRole).toInt();
-
+	// Set the data with the index of the selected option
 	QComboBox* pComboBox = static_cast<QComboBox*>(editor);
 	pComboBox->setCurrentIndex(activeIndex_);
-
 }
 
 // Set the data in the model - called by the Delegate
 void SettingsItemComboBox::setModelData(QWidget *editor, QAbstractItemModel *model,
 		const QModelIndex &index) const {
 
+	// Get a handle on the combo box
 	QComboBox* pComboBox = static_cast<QComboBox*>(editor);
 
+	// Get the selected text
 	QString value = pComboBox->currentText();
 
+	// Set the active index. Note that activeIndex_ is declared
+	// mutable, as we need to set this inside a const method
+	activeIndex_ = pComboBox->currentIndex();
+
+	// Set the underlying model
 	model->setData(index, value, Qt::EditRole);
 
 }
 
-// Returns the label of the active (selected) item
-QString SettingsItemComboBox::getActiveLabel() const {
+//  Returns the label of the active (selected) item
+// Called by the parent 'paint' method
+QString SettingsItemComboBox::getActiveText(const QModelIndex &index) const {
 	return opts_[activeIndex_];
 }
 

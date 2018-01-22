@@ -222,12 +222,15 @@ void VPPSettingsXmlReaderVisitor::visit(SettingsItemRoot* pRoot) {
 	// Delete the list of the children owned by root
 	pRoot->clearChildren();
 
-	// Read the content of the xml file, generates some items and append
+	// Read the content of the xml file, generate some items and append
 	// them under the current item
-	if(pXmlReader_->read()){
+	// TODO : is this the best way to assign the children?
+	// Wouldn't it be better to clone the xmlReader root and assign it to
+	// the current root? I did not manage to do this!
+	if(pXmlReader_->read())
 		for(size_t iChild=0; iChild<pXmlReader_->getRoot()->childCount(); iChild++)
 			pRoot->appendChild(pXmlReader_->getRoot()->child(iChild));
-	}
+
 }
 
 
