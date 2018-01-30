@@ -26,6 +26,9 @@ class VPPSettingsDialog : public QDialog {
 		/// Read some settings from file
 		void read(QFile& file);
 
+		/// Handle on the settingsTree tab
+		TreeTab* getSettingsTreeTab();
+
 	public Q_SLOTS:
 
 		/// Slot called when the user hits the button "Ok" in the bottom of the widget
@@ -49,7 +52,7 @@ class VPPSettingsDialog : public QDialog {
 		QTabWidget* pTabWidget_;
 
 		/// Ptr to the tree tab. This needs to be known for synchronization
-		TreeTab* pTreeTab_;
+		TreeTab* pSettingsTreeTab_;
 
 		/// The Dialog also has two buttons to save or cancel the editing
 		QDialogButtonBox* pButtonBox_;

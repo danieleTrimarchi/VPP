@@ -9,8 +9,51 @@
 
 #include "FileParserBase.h"
 #include "Variables.h"
+#include "SettingsItem.h"
 
 using namespace std;
+
+/// Forward declarations
+class VariableFileParser;
+class VPPSettingsDialog;
+
+/// Visitor used to retrieve the variables from the
+/// SettingsModel and store them in the VariableFileParser
+class VariableParserGetVisitor {
+
+	public:
+
+		/// Ctor
+		VariableParserGetVisitor(VariableFileParser*);
+
+		/// Dtor
+		~VariableParserGetVisitor();
+
+		/// Visit a SettingsItemBase
+		void visit(SettingsItemBase*);
+
+		/// Visit a SettingsItemRoot
+		void visit(SettingsItemRoot*);
+
+		/// Visit a SettingsItem
+		void visit(SettingsItem* pItem);
+
+		/// Visit a SettingsItem
+		void visit(SettingsItemComboBox* pItem);
+
+		/// Visit a SettingsItemBounds
+		void visit(SettingsItemBounds* pItem);
+
+	private:
+
+		/// Disallow default ctor
+		VariableParserGetVisitor();
+
+		/// Ptr to the parser
+		VariableFileParser* pParser_;
+};
+
+///---------------------------------------------------------
 
 /// File parser able to store the variables read
 /// into a file to a container set
@@ -20,6 +63,10 @@ class VariableFileParser : public FileParserBase {
 
 		/// Constructor
 		VariableFileParser();
+
+		/// Constructor - the settingsDialog is in charge for
+		/// populating the parser
+		VariableFileParser(VPPSettingsDialog*);
 
 		/// Destructor
 		virtual ~VariableFileParser();
@@ -36,6 +83,9 @@ class VariableFileParser : public FileParserBase {
 
 		/// Printout the list of all variables we have collected
 		void print(FILE* outStream=stdout);
+
+		/// Insert a new variable given its name and value
+		void insert(QString variableName, double variableValue);
 
 		/// Get the number of variables that have been read in
 		size_t getNumVars();

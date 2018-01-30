@@ -3,6 +3,7 @@
 #include "VppSettingsXmlReader.h"
 #include "VPPException.h"
 #include "VppSettingsXmlReader.h"
+#include "GetSettingsItemVisitor.h"
 #include <iostream>
 #include <set>
 
@@ -10,8 +11,8 @@ using namespace std;
 
 // Ctor
 XmlAttribute::XmlAttribute(const string& attName, const string& attValue) :
-														attributeName_(attName),
-														attributeValue_(attValue){
+																attributeName_(attName),
+																attributeValue_(attValue){
 
 }
 
@@ -115,7 +116,7 @@ const XmlAttribute& XmlAttributeSet::operator [] (string varName) const {
 
 // Ctor
 VppSettingsXmlReader::VppSettingsXmlReader(QIODevice* pFile) :
-														pFile_(pFile) {
+																pFile_(pFile) {
 
 	// Generate a new root that will be used to store the items
 	pRootItem_.reset(new SettingsItemRoot);
@@ -217,19 +218,20 @@ VPPSettingsXmlReaderVisitor::~VPPSettingsXmlReaderVisitor() {
 
 }
 
+// Visit a SettingsItemBase. Do nothing
+void VPPSettingsXmlReaderVisitor::visit(SettingsItemBase* item){
+	// Make nothing
+}
+
 void VPPSettingsXmlReaderVisitor::visit(SettingsItemRoot* pRoot) {
 
-	// Delete the list of the children owned by root
-	pRoot->clearChildren();
-
-	// Read the content of the xml file, generate some items and append
-	// them under the current item
-	// TODO : is this the best way to assign the children?
-	// Wouldn't it be better to clone the xmlReader root and assign it to
-	// the current root? I did not manage to do this!
+	// Assign the children of the xml reader root to the
+	// current root
 	if(pXmlReader_->read())
-		for(size_t iChild=0; iChild<pXmlReader_->getRoot()->childCount(); iChild++)
-			pRoot->appendChild(pXmlReader_->getRoot()->child(iChild));
+		pXmlReader_->getRoot()->assign(pRoot);
+
+	GetSettingsItemByNameVisitor vn(pRoot);
+	SettingsItemBase* pItem= vn.get("CPL");
 
 }
 

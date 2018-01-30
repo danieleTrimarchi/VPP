@@ -112,9 +112,17 @@ void TreeTab::revert() {
 	// the operator= of SettingsModel
 	*pTreeModel_ = *pTreeReferenceModel_;
 
+    GetSettingsItemByNameVisitor vn(pTreeReferenceModel_->getRoot());
+    SettingsItemBase* pItem= vn.get("CPL");
+
 	updateActions();
 }
 
+// Get the reference model. This is where the settings
+// are stored
+const SettingsModel* TreeTab::getReferenceSettingsModel() const {
+	return pTreeReferenceModel_;
+}
 
 void TreeTab::updateActions() {
 

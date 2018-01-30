@@ -4,6 +4,93 @@
 #include "Warning.h"
 #include "VPPException.h"
 #include "mathUtils.h"
+#include "TreeTab.h"
+#include "VPPSettingsDialog.h"
+#include "GetSettingsItemVisitor.h"
+
+// Ctor
+VariableParserGetVisitor::VariableParserGetVisitor(VariableFileParser* pParser):
+pParser_(pParser) {
+
+}
+
+// Dtor
+VariableParserGetVisitor::~VariableParserGetVisitor() {
+
+}
+
+// Disallow default ctor
+VariableParserGetVisitor::VariableParserGetVisitor():
+			pParser_(0) {
+
+}
+
+// Visit a 'Generic' SettingsItemBase
+void VariableParserGetVisitor::visit(SettingsItemBase* pRoot) {
+
+	// Do nothing special
+
+	// Loop on the tree
+	for(size_t iChild=0; iChild<pRoot->childCount(); iChild++){
+		pRoot->child(iChild)->accept(*this);
+	}
+}
+
+// Visit a 'Generic' SettingsItemBase
+void VariableParserGetVisitor::visit(SettingsItemRoot* pRoot) {
+
+	// Do nothing special
+
+	// Loop on the tree
+	for(size_t iChild=0; iChild<pRoot->childCount(); iChild++){
+		SettingsItemBase* child= pRoot->child(iChild);
+		child->accept(*this);
+	}
+}
+
+// Visit a SettingsItem
+void VariableParserGetVisitor::visit(SettingsItem* pItem) {
+
+	// Store the name and the value of this item in the parser
+	pParser_->insert(pItem->getName(), pItem->data(columnNames::value).toDouble());
+
+	// Loop on the tree
+	for(size_t iChild=0; iChild<pItem->childCount(); iChild++){
+		pItem->child(iChild)->accept(*this);
+	}
+}
+
+// Visit a SettingsItem
+void VariableParserGetVisitor::visit(SettingsItemComboBox* pItem) {
+
+	// Store the name and the value of this item in the parser.
+	// We use a convention here that maps the active index of the
+	// combo-box to the value specified in SailConfig - see SailSet.h
+	pParser_->insert(pItem->getName(), 2*pItem->getActiveIndex()+1);
+
+	// Loop on the tree
+	for(size_t iChild=0; iChild<pItem->childCount(); iChild++){
+		pItem->child(iChild)->accept(*this);
+	}
+}
+
+/// Visit a SettingsItemBounds
+void VariableParserGetVisitor::visit(SettingsItemBounds* pItem) {
+
+	// I will treat this item as a leaf, because I need to store min
+	// and max with different names.
+
+	// Get the min item in and store its value in the parser
+	SettingsItemBase* pMinItem = pItem->getItemMin();
+	pParser_->insert(pMinItem->getName()+QString("_MIN"), 2*pMinItem->data(columnNames::value).toDouble());
+
+	// Get the max item in and store its value in the parser
+	SettingsItemBase* pMaxItem = pItem->getItemMax();
+	pParser_->insert(pMaxItem->getName()+QString("_MAX"), 2*pMaxItem->data(columnNames::value).toDouble());
+
+}
+
+///---------------------------------------------------------
 
 // Constructor
 VariableFileParser::VariableFileParser() {
@@ -85,6 +172,27 @@ VariableFileParser::VariableFileParser() {
 	requiredVariables_.push_back("EMDC");			// [m]  Mast's average diameter
 	//%%%%%%% CREW %%%%%%%%%%
 	requiredVariables_.push_back("MMVBLCRW"); // [kg] Movable Crew Mass
+
+}
+
+// Constructor - the settingsDialog is in charge for
+// populating the parser
+VariableFileParser::VariableFileParser(VPPSettingsDialog* pSd) :
+				VariableFileParser(){
+
+	// Get a handle to the settings tree
+	TreeTab* pSettingsTreeTab( pSd->getSettingsTreeTab() );
+
+	// Get a handle to the reference model.
+	const SettingsModel* pSettingsModel = pSettingsTreeTab->getReferenceSettingsModel();
+
+	// Get the root of the reference settings model
+	SettingsItemBase* pModelRoot = pSettingsModel->getRoot();
+
+	// Instantiate a visitor that will visit root and fill the
+	// variables for the variableFileParser
+	VariableParserGetVisitor v(this);
+	pModelRoot->accept(v);
 
 }
 
@@ -218,6 +326,17 @@ void VariableFileParser::print(FILE* outStream/*=stdout*/) {
 // Get the number of variables that have been read in
 size_t VariableFileParser::getNumVars() {
 	return variables_.size();
+}
+
+// Insert a new variable given its name and value
+void VariableFileParser::insert(QString variableName, double variableValue) {
+
+	Variable newVariable;
+	newVariable.varName_= variableName.toStdString();
+	newVariable.val_= variableValue;
+
+	variables_.insert(newVariable);
+
 }
 
 

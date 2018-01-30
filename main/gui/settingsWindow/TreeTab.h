@@ -33,7 +33,10 @@ class TreeTab : public QWidget {
 		/// done is erased.
 		void revert();
 
-		/// Save the
+		/// Get the reference model. This is where the settings
+		/// are stored
+		const SettingsModel* getReferenceSettingsModel() const;
+
 	public slots:
 
 		void updateActions();

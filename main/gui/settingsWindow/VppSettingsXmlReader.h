@@ -134,8 +134,12 @@ class VPPSettingsXmlReaderVisitor {
 		/// Dtor
 		~VPPSettingsXmlReaderVisitor();
 
+		/// Visit a SettingsItemBase. Do nothing
+		void visit(SettingsItemBase* item);
+
 		/// Visit a SettingsItemRoot. Appends all the children to the root
 		void visit(SettingsItemRoot* item);
+
 
 //		/// Begin visiting an item
 //		void visitBegin(SettingsItemBase* item);

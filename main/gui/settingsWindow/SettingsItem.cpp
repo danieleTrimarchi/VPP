@@ -9,13 +9,7 @@
 #include "VppSettingsXmlReader.h"
 #include "VPPException.h"
 
-//// Forward declarations
-//class SettingsItem;
-//class SettingsItemComboBox;
-//class SettingsItemInt;
-//class SettingsItemgroup;
-//class SettingsItemBounds;
-//class SettingsItemRoot;
+#include "VariableFileParser.h"
 
 using namespace std;
 
@@ -384,6 +378,39 @@ void SettingsItemBase::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 }
 
+// Accept a visitor that will write this item to XML
+void SettingsItemBase::accept( VPPSettingsXmlReaderVisitor& v ){
+
+	// Visit me
+	v.visit(this);
+
+}
+
+
+// Accept a visitor that will write this item to XML
+void SettingsItemBase::accept( VariableParserGetVisitor& v) {
+
+	// Visit me
+	v.visit(this);
+}
+
+
+// Assign my children to dstParent, who will 'adopt'
+// my children. After this, I will have no more children
+void SettingsItemBase::assign(SettingsItemBase* dstParent) {
+
+	// Make sure the destination parent is empty
+	dstParent->clearChildren();
+
+	// Send my children to the new parent
+	for(size_t iChild=0; iChild<childCount(); iChild++)
+			dstParent->appendChild(child(iChild));
+
+	// Clear my children
+	clearChildren();
+
+}
+
 // Get the display name of this item
 QString SettingsItemBase::getName() const {
 	return columns_[columnNames::name]->getData().toString();
@@ -451,6 +478,13 @@ void SettingsItemRoot::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 // Accept a visitor that will write this item to XML
 void SettingsItemRoot::accept( VPPSettingsXmlReaderVisitor& v ) {
+
+	// Visit me
+	v.visit(this);
+}
+
+// Accept a visitor that will write this item to XML
+void SettingsItemRoot::accept( VariableParserGetVisitor& v) {
 
 	// Visit me
 	v.visit(this);
@@ -577,6 +611,13 @@ void SettingsItemBounds::accept( VPPSettingsXmlWriterVisitor& v ) {
 	v.visit(this);
 }
 
+// Accept a visitor that will write this item to the variableFileParser
+void SettingsItemBounds::accept( VariableParserGetVisitor& v) {
+
+	// Visit me
+	v.visit(this);
+}
+
 // Clone this item, which is basically equivalent to calling the copy ctor
 SettingsItemBounds* SettingsItemBounds::clone() const {
 	return new SettingsItemBounds(*this);
@@ -591,23 +632,28 @@ QFont SettingsItemBounds::getFont() const {
 	return myFont;
 }
 
-// Get the min value of this bound
-double SettingsItemBounds::getMin(){
-
-	// Just return the first item, that I know is 'min'
-	// return this->child(0)->data(columnNames::value).toDouble();
-	// Better strategy : instantiate a visitor and search the item by name
+// Returns a handle on the item that represents the min in this bound
+SettingsItemBase* SettingsItemBounds::getItemMin() {
+	// Instantiate a visitor and search the item by name
 	GetSettingsItemByNameVisitor v(this);
-	return v.get("min")->data(columnNames::value).toDouble();
+	return v.get("min");
+}
+
+// Returns a handle on the item that represents the max in this bound
+SettingsItemBase* SettingsItemBounds::getItemMax() {
+	// Instantiate a visitor and search the item by name
+	GetSettingsItemByNameVisitor v(this);
+	return v.get("max");
+}
+
+// Get the min value of this bound
+double SettingsItemBounds::getMin() {
+	return getItemMin()->data(columnNames::value).toDouble();
 }
 
 // Get the max value of this bound
 double SettingsItemBounds::getMax() {
-	// Just return the first item, that I know is 'max'
-	// return this->child(1)->data(columnNames::value).toDouble();
-	// Better strategy : instantiate a visitor and search the item by name
-	GetSettingsItemByNameVisitor v(this);
-	return v.get("max")->data(columnNames::value).toDouble();
+	return getItemMax()->data(columnNames::value).toDouble();
 }
 
 // ----------------------------------------------------------------
@@ -652,6 +698,13 @@ SettingsItem::~SettingsItem(){
 
 // Accept a visitor that will write this item to XML
 void SettingsItem::accept( VPPSettingsXmlWriterVisitor& v ) {
+
+	// Visit me
+	v.visit(this);
+}
+
+// Accept a visitor that will write this item to XML
+void SettingsItem::accept( VariableParserGetVisitor& v) {
 
 	// Visit me
 	v.visit(this);
@@ -791,6 +844,7 @@ void SettingsItemInt::accept( VPPSettingsXmlWriterVisitor& v ) {
 	v.visit(this);
 }
 
+
 // Clone this item, which is basically equivalent to calling the copy ctor
 SettingsItemInt* SettingsItemInt::clone() const {
 	return new SettingsItemInt(*this);
@@ -887,7 +941,13 @@ void SettingsItemComboBox::accept( VPPSettingsXmlWriterVisitor& v ) {
 
 	// Visit me
 	v.visit(this);
+}
 
+// Accept a visitor that will write this item to XML
+void SettingsItemComboBox::accept( VariableParserGetVisitor& v) {
+
+	// Visit me
+	v.visit(this);
 }
 
 /// Clone this item, which is basically equivalent to calling the copy ctor

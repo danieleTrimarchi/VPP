@@ -37,6 +37,7 @@
 #include "VppPolarCustomPlotWidget.h"
 #include "VPPSailCoefficientIO.h"
 #include "VPPSettingsDialog.h"
+#include "GetSettingsItemVisitor.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitly deleted in the destructor
@@ -593,20 +594,25 @@ void MainWindow::importResults() {
 		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
 		pSd->read(settingsFile);
 
+		// Instantiate a variableFileParser (and clear any previous one)
+		// on top of the VPP Settings Dialog. The parser will get populated
+		// with all the variables edited in the settings
+		pVariableFileParser_.reset( new VariableFileParser(pSd) );
+
+		// Check what do we have in the parser now...
+		pVariableFileParser_->print();
+
 		throw VPPException(HERE,"Stop");
 
-///////////////////////// now do the rest of the work
+		///////////////////////// now do the rest of the work
 
 
 		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
-				tr("VPP Result File(*.vpp);; All Files (*.*)"));
+			tr("VPP Result File(*.vpp);; All Files (*.*)"));
 
 		if (!fileName.isEmpty())
 			std::cout<<"attempting to import results from : "<<fileName.toStdString()<<std::endl;
 
-		// Instantiate an empty variableFileParser (and clear any previous one)
-		// Do not parse as the variables will be read directly from the result file
-		pVariableFileParser_.reset( new VariableFileParser );
 
 		// The variableFileParser can read its part in the result file
 		pVariableFileParser_->parse(fileName.toStdString());

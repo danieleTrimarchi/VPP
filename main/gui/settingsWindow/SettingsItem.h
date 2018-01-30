@@ -17,8 +17,11 @@
 /// Forward declarations
 class GetSettingsItemByPathVisitor;
 class GetSettingsItemByNameVisitor;
+
 class VPPSettingsXmlWriterVisitor;
 class VPPSettingsXmlReaderVisitor;
+class VariableParserGetVisitor;
+
 class XmlAttributeSet;
 class XmlAttribute;
 
@@ -39,6 +42,16 @@ public:
 
 	/// Accept a visitor that will write this item to XML
 	virtual void accept( VPPSettingsXmlWriterVisitor& );
+
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VPPSettingsXmlReaderVisitor& );
+
+	/// Accept a visitor that will write this item to the variableFileParser
+	virtual void accept( VariableParserGetVisitor& );
+
+	/// Assign my children to dstParent, who will 'adopt'
+	/// my children. After this, I will have no more children
+	void assign(SettingsItemBase* dstParent);
 
 	/// Append a child under me
 	void appendChild(SettingsItemBase* child);
@@ -216,6 +229,9 @@ public:
 	/// Accept a visitor that will write this item to XML
 	virtual void accept( VPPSettingsXmlReaderVisitor& );
 
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VariableParserGetVisitor& );
+
 	/// Clone this item, which is basically equivalent to calling the copy ctor
 	SettingsItemRoot* clone() const;
 
@@ -283,12 +299,21 @@ public:
 	/// Accept a visitor that will write this item to XML
 	virtual void accept( VPPSettingsXmlWriterVisitor& );
 
+	/// Accept a visitor that will write this item to the variableFileParser
+	virtual void accept( VariableParserGetVisitor& );
+
 	/// Clone this item, which is basically equivalent to calling the copy ctor
 	virtual SettingsItemBounds* clone() const;
 
 	/// Returns the font this item should be visualized
 	/// with in the item tree
 	virtual QFont getFont() const;
+
+	/// Returns a handle on the item that represents the min in this bound
+	SettingsItemBase* getItemMin();
+
+	/// Returns a handle on the item that represents the max in this bound
+	SettingsItemBase* getItemMax();
 
 	/// Get the min value of this bound
 	double getMin();
@@ -320,6 +345,9 @@ public:
 
 	/// Accept a visitor that will write this item to XML
 	virtual void accept( VPPSettingsXmlWriterVisitor& );
+
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VariableParserGetVisitor& );
 
 	/// Clone this item, which is basically equivalent to calling the copy ctor
 	virtual SettingsItem* clone() const;
@@ -414,6 +442,9 @@ public:
 
 	/// Accept a visitor that will write this item to XML
 	virtual void accept( VPPSettingsXmlWriterVisitor& );
+
+	/// Accept a visitor that will write this item to XML
+	virtual void accept( VariableParserGetVisitor& );
 
 	/// Clone this item, which is basically equivalent to calling the copy ctor
 	virtual SettingsItemComboBox* clone() const;
