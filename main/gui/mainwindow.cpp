@@ -26,7 +26,6 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QTextEdit>
 #include <QtCore>
-#include "VariableTreeModel.h"
 #include <QtGui/QScreen>
 #include "VPPItemFactory.h"
 #include "VppCustomPlotWidget.h"
@@ -38,13 +37,15 @@
 #include "VppPolarCustomPlotWidget.h"
 #include "VPPSailCoefficientIO.h"
 #include "VPPSettingsDialog.h"
+#include "GetSettingsItemVisitor.h"
+#include "VariableTreeModel.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitly deleted in the destructor
 // of MainWindow
 boost::shared_ptr<QDebugStream> pQstream;
 
-// Init static members
+// Init static members : sail coeffs browser used to define new sail coeffs
 boost::shared_ptr<VPPDefaultFileBrowser> MainWindow::pSailCoeffFileBrowser_= 0;
 
 Q_DECLARE_METATYPE(VppTabDockWidget::DockWidgetFeatures)
@@ -508,6 +509,34 @@ void MainWindow::run() {
 void MainWindow::saveResults() {
 
 	try {
+
+		// Save the settings
+		QFileDialog dialog(this);
+		dialog.setWindowModality(Qt::WindowModal);
+		dialog.setAcceptMode(QFileDialog::AcceptSave);
+		dialog.setNameFilter(tr("VPP Settings File(*.xml)"));
+		dialog.setDefaultSuffix(".xml");
+		if (dialog.exec() != QDialog::Accepted)
+			return;
+
+		// Get the file selected by the user
+		QString fileName(dialog.selectedFiles().first());
+		QFile file(fileName);
+
+		if (!file.open(QFile::WriteOnly | QFile::Text)) {
+			QMessageBox::warning(this, tr("Saving Vpp Settings"),
+																tr("Cannot write file %1:\n%2.")
+		                             .arg(fileName)
+		                             .arg(file.errorString()));
+		        return;
+		}
+
+		// Get the settings dialog and save its content to file
+		VPPSettingsDialog::getInstance()->save(file);
+
+
+///////////////////////// now do the rest of the work
+
 		// Results must be available!
 		if(!pSolverFactory_ ||
 				!pSolverFactory_->get()->getResults() ) {
@@ -521,7 +550,6 @@ void MainWindow::saveResults() {
 		// todo dtrimarchi: improve the filtering to not grey out the
 		// *.vpp files! See what we do in MainWIndow::importResults where
 		// things work properly. Write a generic class for file selection?
-		QFileDialog dialog(this);
 		dialog.setWindowModality(Qt::WindowModal);
 		dialog.setAcceptMode(QFileDialog::AcceptSave);
 		dialog.setNameFilter(tr("VPP Result File(*.vpp)"));
@@ -530,15 +558,15 @@ void MainWindow::saveResults() {
 			return;
 
 		// Get the file selected by the user
-		const QString fileName(dialog.selectedFiles().first());
-		QFile file(fileName);
+		fileName= dialog.selectedFiles().first();
+		QFile file2(fileName);
 
 		// Check the file is writable and that is is a text file
-		if (!file.open(QFile::WriteOnly | QFile::Text)) {
+		if (!file2.open(QFile::WriteOnly | QFile::Text)) {
 			QMessageBox::warning(this, tr("Application"),
 					tr("Cannot write file %1:\n%2.")
 					.arg(QDir::toNativeSeparators(fileName),
-							file.errorString()));
+							file2.errorString()));
 			return;
 		}
 
@@ -553,18 +581,60 @@ void MainWindow::saveResults() {
 void MainWindow::importResults() {
 
 	try {
+
 		QString caption;
 		QString dir;
 
+		// try getting the settings from file
+		QString settingsFileName = QFileDialog::getOpenFileName(this,caption,dir,
+				tr("VPP Settings File(*.xml);; All Files (*.*)"));
+
+		if (!settingsFileName.isEmpty())
+			std::cout<<"attempting to import Vpp settings from : "<<settingsFileName.toStdString()<<std::endl;
+
+		// This is the file we are about to read
+		QFile settingsFile(settingsFileName);
+    if (!settingsFile.open(QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, tr("VppSettings Import"),
+                             tr("Cannot read file %1:\n%2.")
+                             .arg(settingsFileName)
+                             .arg(settingsFile.errorString()));
+        return;
+    }
+
+		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+		pSd->read(settingsFile);
+
+		// Instantiate a variableFileParser (and clear any previous one)
+		// on top of the VPP Settings Dialog. The parser will get populated
+		// with all the variables edited in the settings
+		pVariableFileParser_.reset( new VariableFileParser(pSd) );
+
+		// Check what do we have in the parser now...
+		pVariableFileParser_->print();
+
+		// The variable file parser populates the variable item tree
+		pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
+
+		// SailSet also contains several variables. Append them to the bottom
+		// todo dtrimarchi
+		//pSails_->populate( pVariablesWidget_->getTreeModel() );
+
+		// Expand the items in the variable tree view, in order to see all the variables
+		pVariablesWidget_->getView()->expandAll();
+
+
+		throw VPPException(HERE,"Stop");
+
+		///////////////////////// now do the rest of the work
+
+
 		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
-				tr("VPP Result File(*.vpp);; All Files (*.*)"));
+			tr("VPP Result File(*.vpp);; All Files (*.*)"));
 
 		if (!fileName.isEmpty())
 			std::cout<<"attempting to import results from : "<<fileName.toStdString()<<std::endl;
 
-		// Instantiate an empty variableFileParser (and clear any previous one)
-		// Do not parse as the variables will be read directly from the result file
-		pVariableFileParser_.reset( new VariableFileParser );
 
 		// The variableFileParser can read its part in the result file
 		pVariableFileParser_->parse(fileName.toStdString());
@@ -574,15 +644,6 @@ void MainWindow::importResults() {
 
 		// Instantiate the items
 		pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
-
-		// Populate the variable item tree accordingly
-		pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
-
-		// SailSet also contains several variables. Append them to the bottom
-		pSails_->populate( pVariablesWidget_->getTreeModel() );
-
-		// Expand the items in the variable tree view, in order to see all the variables
-		pVariablesWidget_->getView()->expandAll();
 
 		// Instantiate a new solverFactory without vppItems_
 		pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );
