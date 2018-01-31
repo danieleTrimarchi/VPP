@@ -16,6 +16,7 @@ using namespace std;
 /// Forward declarations
 class VariableFileParser;
 class VPPSettingsDialog;
+class VariableTreeModel;
 
 /// Visitor used to retrieve the variables from the
 /// SettingsModel and store them in the VariableFileParser
@@ -89,6 +90,10 @@ class VariableFileParser : public FileParserBase {
 
 		/// Get the number of variables that have been read in
 		size_t getNumVars();
+
+		/// Populate the tree model that will be used to
+		/// visualize the variables in the UI
+		void populate(VariableTreeModel* pTreeModel);
 
 	protected:
 

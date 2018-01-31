@@ -1,8 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include <QtWidgets/QMainWindow>
-#include <QtWidgets/QToolbar>
+#include <QMainWindow>
+#include <QToolbar>
 #include "LogWindow.h"
+#include "VariablesDockWidget.h"
 #include "LogDockWidget.h"
 #include "MultiplePlotWidget.h"
 #include "ThreeDPlotWidget.h"
@@ -13,7 +14,6 @@
 #include "DebugStream.h"
 #include "VPPSolverFactoryBase.h"
 #include "VppCustomPlotWidget.h"
-#include "SettingsModel.h"
 
 class ToolBar;
 class VPPItemFactory;
@@ -179,6 +179,9 @@ private:
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<ThreeDPlotWidget> p3dPlotWidget_;
+
+	/// Variable Widget
+	boost::shared_ptr<VariablesDockWidget> pVariablesWidget_;
 
 	/// Menu with the actions to plot sail coeffs and resistance components
 	boost::shared_ptr<QMenu> pSailCoeffsMenu_, pPlotResultsMenu_;

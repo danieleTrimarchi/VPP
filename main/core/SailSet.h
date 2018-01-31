@@ -52,6 +52,10 @@ class SailSet {
 		/// this sailSet
 		virtual SailCoefficientItem* sailCoefficientItemFactory(WindItem*) =0;
 
+		/// Populate the tree model that will be used to
+		/// visualize the variables in the UI
+		void populate(VariableTreeModel* pTreeModel);
+
 	protected:
 
 		/// Parser storing all the variables read

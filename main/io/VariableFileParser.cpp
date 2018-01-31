@@ -7,6 +7,7 @@
 #include "TreeTab.h"
 #include "VPPSettingsDialog.h"
 #include "GetSettingsItemVisitor.h"
+#include "VariableTreeModel.h"
 
 // Ctor
 VariableParserGetVisitor::VariableParserGetVisitor(VariableFileParser* pParser):
@@ -326,6 +327,12 @@ void VariableFileParser::print(FILE* outStream/*=stdout*/) {
 // Get the number of variables that have been read in
 size_t VariableFileParser::getNumVars() {
 	return variables_.size();
+}
+
+// Populate the tree model that will be used to
+// visualize the variables in the UI
+void VariableFileParser::populate(VariableTreeModel* pTreeModel) {
+	variables_.populate(pTreeModel);
 }
 
 // Insert a new variable given its name and value

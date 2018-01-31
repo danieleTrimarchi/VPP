@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include "VariableTreeModel.h"
 
 using namespace std;
 
@@ -63,6 +64,10 @@ class VarSet : public set<Variable> {
 
 		/// Iterate in the set and printout the variables
 		void print(FILE* outStream=stdout);
+
+		/// Populate the tree model that will be used to
+		/// visualize the variables in the UI
+		void populate(VariableTreeModel*);
 
 		/// Header of variable section in an input or result file
 		static const string headerBegin_, headerEnd_;
