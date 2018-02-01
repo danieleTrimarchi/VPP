@@ -132,6 +132,11 @@ class xCode(object):
 
         line="DEFINES += QT_DEPRECATED_WARNINGS\n\n"
         self.__projectFile__.write(line)
+
+        # We compile debug mode because this is what we use 
+        # xCode for!
+        line="CONFIG += qt debug\n\n"
+        self.__projectFile__.write(line)
         
         line= "RESOURCES = gui/VPP.qrc \n\n"
         self.__projectFile__.write(line)
