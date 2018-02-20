@@ -83,11 +83,11 @@ void VariableParserGetVisitor::visit(SettingsItemBounds* pItem) {
 
 	// Get the min item in and store its value in the parser
 	SettingsItemBase* pMinItem = pItem->getItemMin();
-	pParser_->insert(pMinItem->getName()+QString("_MIN"), 2*pMinItem->data(columnNames::value).toDouble());
+	pParser_->insert(pMinItem->getName()+QString("_MIN"), pMinItem->data(columnNames::value).toDouble());
 
 	// Get the max item in and store its value in the parser
 	SettingsItemBase* pMaxItem = pItem->getItemMax();
-	pParser_->insert(pMaxItem->getName()+QString("_MAX"), 2*pMaxItem->data(columnNames::value).toDouble());
+	pParser_->insert(pMaxItem->getName()+QString("_MAX"), pMaxItem->data(columnNames::value).toDouble());
 
 }
 
