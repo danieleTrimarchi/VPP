@@ -24,7 +24,7 @@ using namespace Eigen;
 #include "VPPSolverFactoryBase.h"
 
 #include <QApplication>
-#include "MainWindow.h"
+#include "gui/MainWindow.h"
 
 // MAIN
 int main(int argc, char** argv) {

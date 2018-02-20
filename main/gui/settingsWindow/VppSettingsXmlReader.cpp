@@ -231,9 +231,6 @@ void VPPSettingsXmlReaderVisitor::visit(SettingsItemRoot* pRoot) {
 	if(pXmlReader_->read())
 		pXmlReader_->getRoot()->assign(pRoot);
 
-	GetSettingsItemByNameVisitor vn(pRoot);
-	SettingsItemBase* pItem= vn.get("CPL");
-
 }
 
 

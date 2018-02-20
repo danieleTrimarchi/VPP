@@ -7,7 +7,7 @@
 #include <QtWidgets/QGridLayout>
 #include "boost/shared_ptr.hpp"
 #include <Eigen/Core>
-#include "VppAeroItem.h"
+#include "VPPAeroItem.h"
 #include "SettingsModel.h"
 
 QT_BEGIN_NAMESPACE

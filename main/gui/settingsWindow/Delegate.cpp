@@ -3,7 +3,7 @@
 
     A delegate that allows the user to change integer values from the model
     using a spin box widget.*/
-#include "delegate.h"
+#include "Delegate.h"
 
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QLineEdit>

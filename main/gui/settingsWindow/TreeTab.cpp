@@ -112,9 +112,6 @@ void TreeTab::revert() {
 	// the operator= of SettingsModel
 	*pTreeModel_ = *pTreeReferenceModel_;
 
-    GetSettingsItemByNameVisitor vn(pTreeReferenceModel_->getRoot());
-    SettingsItemBase* pItem= vn.get("CPL");
-
 	updateActions();
 }
 

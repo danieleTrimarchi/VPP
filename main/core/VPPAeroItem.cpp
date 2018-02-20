@@ -3,7 +3,7 @@
 #include "IOUtils.h"
 #include "VPPException.h"
 #include "mathUtils.h"
-#include "multiplePlotWidget.h"
+#include "MultiplePlotWidget.h"
 #include "VppTabDockWidget.h"
 #include "VppXYCustomPlotWidget.h"
 #include "VPPDialogs.h"

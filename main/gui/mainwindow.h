@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include <QMainWindow>
-#include <QToolbar>
+#include <QToolBar>
 #include "LogWindow.h"
 #include "VariablesDockWidget.h"
 #include "LogDockWidget.h"
