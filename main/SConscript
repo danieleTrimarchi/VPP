@@ -44,6 +44,18 @@ subFolders= ['qcustomplot',
 
 # -- 
 
+if 'help' in COMMAND_LINE_TARGETS: 
+ 
+	print '=================================================='
+	print 'Available targets: '
+	print 'scons           : builds the program'
+	print 'scons makeDocs  : makes the Doxygen documentation' 
+	print 'scons makeXCode : makes the xCode debug project' 	
+	print '=================================================='
+	Exit(2)
+
+# -- 
+
 if 'makeDocs' in COMMAND_LINE_TARGETS:
 	print 'Generating doxygen documentation...'
 	p= subprocess.Popen(['doxygen', 'doxiConfig'], cwd='/Users/dtrimarchi/VPP/main')
