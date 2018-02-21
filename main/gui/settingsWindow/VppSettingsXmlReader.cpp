@@ -182,7 +182,7 @@ void VppSettingsXmlReader::read(SettingsItemBase* parentItem) {
 
 		// Build the item specified by this attribute set
 		SettingsItemBase* pItem = SettingsItem::settingsItemFactory(attSet);
-		std::cout<<"Instantiating a... "<<pItem->getName().toStdString()<<std::endl;
+		std::cout<<"Instantiating a... "<<pItem->getDisplayName().toStdString()<<std::endl;
 
 		if(dynamic_cast<SettingsItemRoot*>(pItem)){
 			// Substitute the root with the new brand new root we just created

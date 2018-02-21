@@ -28,7 +28,7 @@ void SettingsModel::setupModelData() {
 	pVPPSettings->setParent(pRootItem_);
 	pRootItem_->appendChild(pVPPSettings);
 
-	pVPPSettings->appendChild( new SettingsItemBounds("Velocity bounds",0,15,"m/s","Allowed boat speed bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds("Velocity bounds","V",0,15,"m/s","Allowed boat speed bounds"));
 //	pVPPSettings->appendChild( new SettingsItemBounds("Heel angle bounds",-1e-5,85,"deg","Allowed boat heel angle bounds"));
 //	pVPPSettings->appendChild( new SettingsItemBounds("Crew position bounds",0,3,"[m]","Allowed boat heel angle bounds"));
 //	pVPPSettings->appendChild( new SettingsItemBounds("Flat bounds",0.4,1," ","Allowed boat heel angle bounds"));

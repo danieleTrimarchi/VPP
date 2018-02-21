@@ -18,7 +18,8 @@ SettingsItemBase::SettingsItemBase() :
 					pParent_(0),
 					editable_(Qt::ItemIsEditable),
 					tooltip_(QVariant()),
-					expanded_(false){
+					expanded_(false),
+					variableName_(QString()){
 
 	columns_.push_back(new NameColumn);
 	columns_.push_back(new ValueColumn);
@@ -34,6 +35,9 @@ SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs) {
 	editable_= rhs.editable_;
 	tooltip_= rhs.tooltip_;
 	expanded_ = rhs.expanded_;
+
+	// Deep copy the variableName for the variableFileParser
+	variableName_ = rhs.variableName_;
 
 	// Deep copy the columns
 	columns_.clear();
@@ -231,9 +235,20 @@ QString SettingsItemBase::getInternalName() const {
 		path = pParent_->getInternalName() +  QString(".");
 
 	// And now add my own name. Replace spaces with '_'
-	path += getName().replace(" ","_",Qt::CaseSensitive);
+	path += getDisplayName().replace(" ","_",Qt::CaseSensitive);
 
 	return path;
+}
+
+// Get the name of the variable as this will be registered
+// in the VariableFileParser
+QString SettingsItemBase::getVariableName() const {
+	return variableName_;
+}
+
+// Get the display name of this item
+QString SettingsItemBase::getDisplayName() const {
+	return columns_[columnNames::name]->getData().toString();
 }
 
 bool SettingsItemBase::setData(int column, const QVariant& value) {
@@ -367,6 +382,9 @@ SettingsItemBase* SettingsItemBase::accept(const GetSettingsItemByNameVisitor& v
 			return pChild;
 	}
 
+	char msg[512];
+	sprintf(msg,"The item named %s was not found!", varName.toStdString().c_str());
+	throw VPPException(HERE,msg);
 	return 0;
 }
 
@@ -409,11 +427,6 @@ void SettingsItemBase::assign(SettingsItemBase* dstParent) {
 	// Clear my children
 	clearChildren();
 
-}
-
-// Get the display name of this item
-QString SettingsItemBase::getName() const {
-	return columns_[columnNames::name]->getData().toString();
 }
 
 // Only meaningful for the combo-box item, returns zero
@@ -501,6 +514,12 @@ QString SettingsItemRoot::getInternalName() const {
 	return QString("/");
 }
 
+/// Get the variable name of this item, used to locate it in the tree
+/// In this case the internal name is '/'
+QString SettingsItemRoot::getVariableName() const {
+	return getInternalName();
+}
+
 /// Clone this item, which is basically equivalent to calling the copy ctor
 SettingsItemRoot::SettingsItemRoot(const SettingsItemRoot& rhs) :
 		SettingsItemBase(rhs){
@@ -519,11 +538,11 @@ const SettingsItemRoot& SettingsItemRoot::operator=(const SettingsItemRoot& rhs)
 // ----------------------------------------------------------------
 
 // Ctor
-SettingsItemGroup::SettingsItemGroup(const QVariant& name):
+SettingsItemGroup::SettingsItemGroup(const QVariant& displayName):
 						SettingsItemBase(){
 
 	// The group is not editable
-	columns_[columnNames::name]->setData( name );
+	columns_[columnNames::name]->setData( displayName );
 
 	// The root is not editable
 	setEditable(false);
@@ -532,7 +551,7 @@ SettingsItemGroup::SettingsItemGroup(const QVariant& name):
 
 // Ctor from xml
 SettingsItemGroup::SettingsItemGroup(const XmlAttributeSet& xmlAttSet) :
-	SettingsItemGroup(xmlAttSet["Name"].toQString()){
+	SettingsItemGroup(xmlAttSet["DisplayName"].toQString()){
 
 }
 
@@ -573,20 +592,22 @@ QFont SettingsItemGroup::getFont() const {
 // ----------------------------------------------------------------
 
 // Ctor
-SettingsItemBounds::SettingsItemBounds(const QVariant& name,double min,double max,const QVariant& unit,const QVariant& tooltip) :
-				SettingsItemGroup(name){
+SettingsItemBounds::SettingsItemBounds(const QVariant& displayName,const QVariant& variableName,double min,double max,const QVariant& unit,const QVariant& tooltip) :
+				SettingsItemGroup(displayName){
 
-	appendChild( new SettingsItem("min",min,unit,"min value") );
-	appendChild( new SettingsItem("max",max,unit,"max value") );
+	appendChild( new SettingsItem(displayName.toString()+QString("_min"),variableName.toString()+QString("_MIN"),min,unit,"min value") );
+	appendChild( new SettingsItem(displayName.toString()+QString("_max"),variableName.toString()+QString("_MAX"),max,unit,"max value") );
 
 	// Set the tooltip
 	tooltip_= tooltip;
 
+	// Set the variable Name for this item
+	variableName_= variableName.toString();
 }
 
 // Ctor from xml
 SettingsItemBounds::SettingsItemBounds(const XmlAttributeSet& xmlAttSet) :
-		SettingsItemGroup(xmlAttSet["Name"].toQString()){
+		SettingsItemGroup(xmlAttSet["DisplayName"].toQString()){
 
 	// Do not instantiate children, if requested they are instantiated on
 	// the fly while reading the rest of the xml
@@ -634,16 +655,12 @@ QFont SettingsItemBounds::getFont() const {
 
 // Returns a handle on the item that represents the min in this bound
 SettingsItemBase* SettingsItemBounds::getItemMin() {
-	// Instantiate a visitor and search the item by name
-	GetSettingsItemByNameVisitor v(this);
-	return v.get("min");
+	return child(0);
 }
 
 // Returns a handle on the item that represents the max in this bound
 SettingsItemBase* SettingsItemBounds::getItemMax() {
-	// Instantiate a visitor and search the item by name
-	GetSettingsItemByNameVisitor v(this);
-	return v.get("max");
+	return child(1);
 }
 
 // Get the min value of this bound
@@ -659,13 +676,14 @@ double SettingsItemBounds::getMax() {
 // ----------------------------------------------------------------
 
 // Ctor
-SettingsItem::SettingsItem(	const QVariant& name,
+SettingsItem::SettingsItem(	const QVariant& displayName,
+		const QVariant& variableName,
 		const QVariant& value,
 		const QVariant& unit,
 		const QVariant& tooltip):
-						SettingsItemBase(){
+				SettingsItemBase(){
 
-	columns_[0]->setData( name );
+	columns_[0]->setData( displayName );
 	columns_[1]->setData( value );
 	columns_[2]->setData( unit );
 
@@ -675,11 +693,15 @@ SettingsItem::SettingsItem(	const QVariant& name,
 	// The editable columns for the settings item are editable
 	setEditable(true);
 
+	// Set the variable name that will be used to build
+	// the variable in the variableFileParser
+	variableName_= variableName.toString();
 }
 
 // Ctor from xml. Just call the other constructor
 SettingsItem::SettingsItem(const XmlAttributeSet& xmlAttSet):
-		SettingsItem( 	xmlAttSet["Name"].toQString(),
+		SettingsItem( 	xmlAttSet["DisplayName"].toQString(),
+									xmlAttSet["VariableName"].toQString(),
 									xmlAttSet["Value"].toQString(),
 									xmlAttSet["Unit"].toQString(),
 									xmlAttSet["ToolTip"].toQString() ){
@@ -816,17 +838,18 @@ void SettingsItem::paint(QPainter* painter, const QStyleOptionViewItem &option,
 // ---------------------------------------------------------------
 
 /// Ctor
-SettingsItemInt::SettingsItemInt(const QVariant& name,
+SettingsItemInt::SettingsItemInt(const QVariant& displayName,const QVariant& variableName,
 		const QVariant& value,
 		const QVariant& unit,
 		const QVariant& tooltip):
-				SettingsItem(name,value,unit,tooltip){
+				SettingsItem(displayName,variableName,value,unit,tooltip){
 
 }
 
 // Ctor from xml
 SettingsItemInt::SettingsItemInt(const XmlAttributeSet& xmlAttSet) :
-		SettingsItemInt(	xmlAttSet["Name"].toQString(),
+		SettingsItemInt(	xmlAttSet["DisplayName"].toQString(),
+										xmlAttSet["VariableName"].toQString(),
 										xmlAttSet["Value"].toQString(),
 										xmlAttSet["Unit"].toQString(),
 										xmlAttSet["ToolTip"].toQString() ){
@@ -901,13 +924,15 @@ SettingsItemInt::SettingsItemInt(const SettingsItemInt& rhs) :
 // ---------------------------------------------------------------
 
 // Ctor
-SettingsItemComboBox::SettingsItemComboBox(const QVariant& name,
+SettingsItemComboBox::SettingsItemComboBox(
+		const QVariant& displayName,
+		const QVariant& variableName,
 		const QVariant& unit,
 		const QList<QString>& options,
 		const QVariant& tooltip):
-				SettingsItem(name,options[0],unit,tooltip),
-				opts_(options),
-				activeIndex_(0) {
+					SettingsItem(displayName,variableName,options[0],unit,tooltip),
+					opts_(options),
+					activeIndex_(0) {
 
 }
 
@@ -915,7 +940,8 @@ SettingsItemComboBox::SettingsItemComboBox(const QVariant& name,
 // todo : the options are known by the visitor, not the item. All the
 // logics here should be displaced to the xmlreadvisitor!
 SettingsItemComboBox::SettingsItemComboBox(const XmlAttributeSet& xmlAttSet) :
-		SettingsItem(	xmlAttSet["Name"].toQString(),
+		SettingsItem(	xmlAttSet["DisplayName"].toQString(),
+									xmlAttSet["VariableName"].toQString(),
 									xmlAttSet["Option0"].toQString(),
 									xmlAttSet["Unit"].toQString(),
 									xmlAttSet["ToolTip"].toQString() ){

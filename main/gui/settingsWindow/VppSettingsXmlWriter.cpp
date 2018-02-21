@@ -48,7 +48,8 @@ void VPPSettingsXmlWriterVisitor::visitBegin(SettingsItemBase* item) {
 	// --Write the part common to all items--
 	pXmlWriter_->writeAttribute("Expanded", item->expanded() ? "yes" : "no");
 	pXmlWriter_->writeAttribute("InternalName",item->getInternalName());
-	pXmlWriter_->writeAttribute("Name",item->getName());
+	pXmlWriter_->writeAttribute("DisplayName",item->getDisplayName());
+	pXmlWriter_->writeAttribute("VariableName",item->getVariableName());
 
 }
 
