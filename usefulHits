@@ -23,3 +23,12 @@ extdiff =
 ——————————
 
 ################################
+
+
+Resolve std c++ Eclipse includes: 
+
+Project Properties-> C++ General -> Preprocessor Include Paths... -> Providers
+Select CDT Cross GCC Build-in Compiler Settings
+
+################################
+
