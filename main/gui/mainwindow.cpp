@@ -611,6 +611,8 @@ void MainWindow::importResults() {
 		pVariableFileParser_.reset( new VariableFileParser(pSd) );
 
 		// Check what do we have in the parser now...
+		// This won't work when the UI is up because it is re-directed to
+		// stdout, not to the log. Not sure how to fix this
 		pVariableFileParser_->print();
 
 		// The variable file parser populates the variable item tree

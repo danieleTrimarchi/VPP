@@ -83,11 +83,11 @@ void VariableParserGetVisitor::visit(SettingsItemBounds* pItem) {
 
 	// Get the min item in and store its value in the parser
 	SettingsItemBase* pMinItem = pItem->getItemMin();
-	pParser_->insert(pMinItem->getDisplayName()+QString("_MIN"), pMinItem->data(columnNames::value).toDouble());
+	pParser_->insert(pMinItem->getVariableName(), pMinItem->data(columnNames::value).toDouble());
 
 	// Get the max item in and store its value in the parser
 	SettingsItemBase* pMaxItem = pItem->getItemMax();
-	pParser_->insert(pMaxItem->getDisplayName()+QString("_MAX"), pMaxItem->data(columnNames::value).toDouble());
+	pParser_->insert(pMaxItem->getVariableName(), pMaxItem->data(columnNames::value).toDouble());
 
 }
 
@@ -332,6 +332,9 @@ size_t VariableFileParser::getNumVars() {
 // Populate the tree model that will be used to
 // visualize the variables in the UI
 void VariableFileParser::populate(VariableTreeModel* pTreeModel) {
+
+	// Now populate the variables_ container with the variables contained
+	// in the tree model
 	variables_.populate(pTreeModel);
 }
 

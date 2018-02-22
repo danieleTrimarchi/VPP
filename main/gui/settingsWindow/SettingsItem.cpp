@@ -677,10 +677,10 @@ double SettingsItemBounds::getMax() {
 
 // Ctor
 SettingsItem::SettingsItem(	const QVariant& displayName,
-		const QVariant& variableName,
-		const QVariant& value,
-		const QVariant& unit,
-		const QVariant& tooltip):
+													const QVariant& variableName,
+													const QVariant& value,
+													const QVariant& unit,
+													const QVariant& tooltip):
 				SettingsItemBase(){
 
 	columns_[0]->setData( displayName );

@@ -140,34 +140,6 @@ class VPPSettingsXmlReaderVisitor {
 		/// Visit a SettingsItemRoot. Appends all the children to the root
 		void visit(SettingsItemRoot* item);
 
-
-//		/// Begin visiting an item
-//		void visitBegin(SettingsItemBase* item);
-//
-//		/// End visiting an item
-//		void visitEnd(SettingsItemBase* item);
-//
-//		/// Visit a SettingsItemBase
-//		bool visit(SettingsItemBase*);
-//
-//		/// Visit a SettingsItemBase
-//		bool visit(SettingsItemRoot*);
-//
-//		/// Visit a SettingsItemGroup
-//		bool visit(SettingsItemGroup*);
-//
-//		/// Visit a SettingsItemBounds
-//		bool visit(SettingsItemBounds*);
-//
-//		/// Visit a SettingsItem
-//		bool visit(SettingsItem*);
-//
-//		/// Visit a SettingsItemInt
-//		bool visit(SettingsItemInt*);
-//
-//		/// Visit a SettingsItemComboBox
-//		bool visit(SettingsItemComboBox*);
-
 	private:
 
 		/// Ptr to the xml writer
