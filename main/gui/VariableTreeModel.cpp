@@ -61,8 +61,8 @@
 #include "VariableTreeItem.h"
 
 VariableTreeModel::VariableTreeModel(QObject *parent)
-: QAbstractItemModel(parent)
-{
+: QAbstractItemModel(parent) {
+
 	QList<QVariant> rootData;
 	rootData <<  "Name" << "Value";
 	rootItem_ = new VariableTreeItem(rootData);
@@ -72,19 +72,22 @@ VariableTreeModel::VariableTreeModel(QObject *parent)
 
 VariableTreeModel::~VariableTreeModel()
 {
+	// Destroy all of my children
+	clearChildren();
+	// Delete the root of the children
 	delete rootItem_;
 }
 
-int VariableTreeModel::columnCount(const QModelIndex &parent) const
-{
+int VariableTreeModel::columnCount(const QModelIndex &parent) const {
+
 	if (parent.isValid())
 		return static_cast<VariableTreeItemBase*>(parent.internalPointer())->columnCount();
 	else
 		return rootItem_->columnCount();
 }
 
-QVariant VariableTreeModel::data(const QModelIndex &index, int role) const
-{
+QVariant VariableTreeModel::data(const QModelIndex &index, int role) const {
+
 	if (!index.isValid()){
 		return QVariant();
 	}
@@ -105,8 +108,8 @@ QVariant VariableTreeModel::data(const QModelIndex &index, int role) const
 
 }
 
-Qt::ItemFlags VariableTreeModel::flags(const QModelIndex &index) const
-{
+Qt::ItemFlags VariableTreeModel::flags(const QModelIndex &index) const {
+
 	if (!index.isValid())
 		return 0;
 
@@ -117,8 +120,8 @@ Qt::ItemFlags VariableTreeModel::flags(const QModelIndex &index) const
 }
 
 QVariant VariableTreeModel::headerData(int section, Qt::Orientation orientation,
-		int role) const
-{
+		int role) const {
+
 	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
 		return rootItem_->data(section);
 
@@ -144,8 +147,8 @@ QModelIndex VariableTreeModel::index(int row, int column, const QModelIndex &par
 		return QModelIndex();
 }
 
-QModelIndex VariableTreeModel::parent(const QModelIndex &index) const
-{
+QModelIndex VariableTreeModel::parent(const QModelIndex &index) const {
+
 	if (!index.isValid())
 		return QModelIndex();
 
@@ -158,8 +161,8 @@ QModelIndex VariableTreeModel::parent(const QModelIndex &index) const
 	return createIndex(parentItem->row(), 0, parentItem);
 }
 
-int VariableTreeModel::rowCount(const QModelIndex &parent) const
-{
+int VariableTreeModel::rowCount(const QModelIndex &parent) const {
+
 	VariableTreeItemBase *parentItem;
 	if (parent.column() > 0)
 		return 0;
@@ -201,3 +204,21 @@ void VariableTreeModel::append( QList<QVariant>& columnData ) {
 	endInsertRows();
 
 }
+
+// Remove the children of this model
+void VariableTreeModel::clearChildren() {
+
+	// Get the index of the fake root item
+	QModelIndex fakeRootItemIndex= index(1,0);
+
+	size_t nchildren= rootItem_->child(0)->childCount();
+
+	beginRemoveRows(fakeRootItemIndex,0,nchildren);
+
+	// Actually delete the children
+	for(size_t iChild=0; iChild<nchildren; iChild++)
+		delete rootItem_->child(iChild);
+
+	endRemoveRows();
+}
+

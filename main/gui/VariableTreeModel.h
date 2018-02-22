@@ -52,6 +52,9 @@ class VariableTreeModel : public QAbstractItemModel {
 		/// Append a variable item to the tree
 		void append( QList<QVariant>& columnData );
 
+		/// Remove the children of this model
+		void clearChildren();
+
 	private:
 
 		/// Actually generate the item tree

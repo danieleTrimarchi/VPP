@@ -333,6 +333,9 @@ size_t VariableFileParser::getNumVars() {
 // visualize the variables in the UI
 void VariableFileParser::populate(VariableTreeModel* pTreeModel) {
 
+	// Cleanup : destroy the children of the variableTreeModel
+	pTreeModel->clearChildren();
+
 	// Now populate the variables_ container with the variables contained
 	// in the tree model
 	variables_.populate(pTreeModel);
