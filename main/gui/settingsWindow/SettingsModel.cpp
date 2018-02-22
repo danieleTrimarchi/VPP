@@ -33,7 +33,7 @@ void SettingsModel::setupModelData() {
 	pVPPSettings->appendChild( new SettingsItemBounds("Crew position bounds","B",0,3,"[m]","Allowed boat heel angle bounds"));
 	pVPPSettings->appendChild( new SettingsItemBounds("Flat bounds","F",0.4,1," ","Allowed boat heel angle bounds"));
 
-	//-- Wind
+//	//-- Wind
 	SettingsItemGroup* pWindSettings = new SettingsItemGroup("Wind Settings");
 	pWindSettings->setParent(pRootItem_);
 	pRootItem_->appendChild(pWindSettings);

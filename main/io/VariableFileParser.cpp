@@ -53,7 +53,7 @@ void VariableParserGetVisitor::visit(SettingsItemRoot* pRoot) {
 void VariableParserGetVisitor::visit(SettingsItem* pItem) {
 
 	// Store the name and the value of this item in the parser
-	pParser_->insert(pItem->getDisplayName(), pItem->data(columnNames::value).toDouble());
+	pParser_->insert(pItem->getVariableName(), pItem->data(columnNames::value).toDouble());
 
 	// Loop on the tree
 	for(size_t iChild=0; iChild<pItem->childCount(); iChild++){
@@ -67,7 +67,7 @@ void VariableParserGetVisitor::visit(SettingsItemComboBox* pItem) {
 	// Store the name and the value of this item in the parser.
 	// We use a convention here that maps the active index of the
 	// combo-box to the value specified in SailConfig - see SailSet.h
-	pParser_->insert(pItem->getDisplayName(), 2*pItem->getActiveIndex()+1);
+	pParser_->insert(pItem->getVariableName(), 2*pItem->getActiveIndex()+1);
 
 	// Loop on the tree
 	for(size_t iChild=0; iChild<pItem->childCount(); iChild++){
