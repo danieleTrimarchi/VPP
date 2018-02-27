@@ -60,51 +60,54 @@
 
 VariableTreeItemBase::VariableTreeItemBase(const QList<QVariant> &data, VariableTreeItemBase *parent) {
 
-	m_parentItem = parent;
-    m_itemData = data;
+	pParent_ = parent;
+    data_ = data;
 
 
 }
 
 VariableTreeItemBase::~VariableTreeItemBase()
 {
-    qDeleteAll(m_childItems);
+    qDeleteAll(children_);
 }
 
-void VariableTreeItemBase::appendChild(VariableTreeItemBase *item)
-{
-    m_childItems.append(item);
+void VariableTreeItemBase::appendChild(VariableTreeItemBase *item) {
+    children_.append(item);
+}
+
+void VariableTreeItemBase::deleteChildren() {
+  qDeleteAll(children_);
 }
 
 VariableTreeItemBase *VariableTreeItemBase::child(int row)
 {
-    return m_childItems.value(row);
+    return children_.value(row);
 }
 
 int VariableTreeItemBase::childCount() const
 {
-    return m_childItems.count();
+    return children_.count();
 }
 
 int VariableTreeItemBase::columnCount() const
 {
-    return m_itemData.count();
+    return data_.count();
 }
 
 QVariant VariableTreeItemBase::data(int column) const {
 
-	return m_itemData.value(column);
+	return data_.value(column);
 }
 
 VariableTreeItemBase *VariableTreeItemBase::parentItem()
 {
-    return m_parentItem;
+    return pParent_;
 }
 
 int VariableTreeItemBase::row() const
 {
-    if (m_parentItem)
-        return m_parentItem->m_childItems.indexOf(const_cast<VariableTreeItemBase*>(this));
+    if (pParent_)
+        return pParent_->children_.indexOf(const_cast<VariableTreeItemBase*>(this));
 
     return 0;
 }

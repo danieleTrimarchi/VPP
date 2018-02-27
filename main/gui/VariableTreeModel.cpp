@@ -72,9 +72,8 @@ VariableTreeModel::VariableTreeModel(QObject *parent)
 
 VariableTreeModel::~VariableTreeModel()
 {
-	// Destroy all of my children
-	clearChildren();
-	// Delete the root of the children
+	// Delete the root of the children. The destructor
+    // of the item cleans up the children
 	delete rootItem_;
 }
 
@@ -211,13 +210,13 @@ void VariableTreeModel::clearChildren() {
 	// Get the index of the fake root item
 	QModelIndex fakeRootItemIndex= index(1,0);
 
-	size_t nchildren= rootItem_->child(0)->childCount();
+	// Get a ptr to the fakeRootItem, which is the root we visualize
+	VariableTreeItemBase* fakeRootItem = rootItem_->child(0);
 
-	beginRemoveRows(fakeRootItemIndex,0,nchildren);
+	beginRemoveRows(fakeRootItemIndex,0,fakeRootItem->childCount());
 
 	// Actually delete the children
-	for(size_t iChild=0; iChild<nchildren; iChild++)
-		delete rootItem_->child(iChild);
+	fakeRootItem->deleteChildren();
 
 	endRemoveRows();
 }
