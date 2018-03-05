@@ -106,6 +106,21 @@ windowLabel_("V++") {
 
 	// Make sure the solver factory is empty
 	pSolverFactory_.reset();
+
+	// Instantiate a VPP settings dialog
+	VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+
+	// Instantiate a variableFileParser (and clear any previous one)
+	// on top of the VPP Settings Dialog. The parser will get populated
+	// with all the variables edited in the settings
+	pVariableFileParser_.reset( new VariableFileParser(pSd) );
+
+	// The variable file parser populates the variable item tree
+	pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
+
+	// Expand the items in the variable tree view, in order to see all the variables
+	pVariablesWidget_->getView()->expandAll();
+
 }
 
 // Virtual destructor
@@ -438,6 +453,18 @@ void MainWindow::import() {
 
 		// Open up a VPP settings dialog
 		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+
+		// Instantiate a variableFileParser (and clear any previous one)
+		// on top of the VPP Settings Dialog. The parser will get populated
+		// with all the variables edited in the settings
+		pVariableFileParser_.reset( new VariableFileParser(pSd) );
+
+		// The variable file parser populates the variable item tree
+		pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
+
+		// Expand the items in the variable tree view, in order to see all the variables
+		pVariablesWidget_->getView()->expandAll();
+
 		pSd->exec();
 
 	}	catch(...) {}

@@ -9,8 +9,8 @@ VariablesDockWidget::VariablesDockWidget( QMainWindow* parent/*=Q_NULLPTR*/, Qt:
     setWindowTitle("Variables");
 
     // Build the tree model and the TreeView this dock widget contains
-	pTreeModel_.reset( new VariableTreeModel );
-	pTreeView_.reset( new QTreeView );
+	pTreeModel_.reset( new VariableTreeModel(this) );
+	pTreeView_.reset( new QTreeView(this) );
 
 	pTreeView_->expandAll();
 

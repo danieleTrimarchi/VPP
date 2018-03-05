@@ -77,6 +77,7 @@ void VariableTreeItemBase::appendChild(VariableTreeItemBase *item) {
 
 void VariableTreeItemBase::deleteChildren() {
   qDeleteAll(children_);
+  children_.clear();
 }
 
 VariableTreeItemBase *VariableTreeItemBase::child(int row)

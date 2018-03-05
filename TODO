@@ -1,5 +1,12 @@
+-> When calling pVariablesWidget_->getView()->expandAll();
+	we segfaults. Why? 
+	A priori the view is not valid anymore, thus the removal/addition of
+	the new items was NOT successiful
+
 -> use the settings to populate the parser
 
+-> parser print should work!
+ 
 - Progression bar during runs…
 
 - Add a control to choose the solver NLOpt IPOpt NRSolver (2 dofs)
