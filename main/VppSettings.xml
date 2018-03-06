@@ -2,10 +2,10 @@
 <!DOCTYPE vppSettings>
 <vppSettings version="1.0">
     <Item Expanded="yes" InternalName="/" DisplayName="Name" VariableName="" ClassName="SettingsItemRoot">
-        <Item Expanded="no" InternalName="/.VPP_Settings" DisplayName="VPP Settings" VariableName="" ClassName="SettingsItemGroup">
-            <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds" DisplayName="Velocity bounds" VariableName="V" ClassName="SettingsItemBounds">
-                <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.Velocity_bounds_min" DisplayName="Velocity bounds_min" VariableName="V_MIN" ClassName="SettingsItem" Value="0" Unit="m/s" ToolTip="min value"/>
-                <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.Velocity_bounds_max" DisplayName="Velocity bounds_max" VariableName="V_MAX" ClassName="SettingsItem" Value="15" Unit="m/s" ToolTip="max value"/>
+        <Item Expanded="yes" InternalName="/.VPP_Settings" DisplayName="VPP Settings" VariableName="" ClassName="SettingsItemGroup">
+            <Item Expanded="yes" InternalName="/.VPP_Settings.Velocity_bounds" DisplayName="Velocity bounds" VariableName="V" ClassName="SettingsItemBounds">
+                <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.Velocity_bounds_min" DisplayName="Velocity bounds_min" VariableName="V_MIN" ClassName="SettingsItem" Value="5" Unit="m/s" ToolTip="min value"/>
+                <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.Velocity_bounds_max" DisplayName="Velocity bounds_max" VariableName="V_MAX" ClassName="SettingsItem" Value="4" Unit="m/s" ToolTip="max value"/>
             </Item>
             <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds" DisplayName="Heel angle bounds" VariableName="PHI" ClassName="SettingsItemBounds">
                 <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds.Heel_angle_bounds_min" DisplayName="Heel angle bounds_min" VariableName="PHI_MIN" ClassName="SettingsItem" Value="-1e-5" Unit="deg" ToolTip="min value"/>

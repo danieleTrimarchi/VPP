@@ -7,6 +7,12 @@
 #include "SettingsWindowView.h"
 #include "Delegate.h"
 
+/// Forward Declarations
+class MainWindow;
+
+/// This class represents a tab of a property widget. This
+/// Tab stores an item tree, the content of which are the
+/// settings to be used to drive the VPP
 class TreeTab : public QWidget {
 
 		Q_OBJECT

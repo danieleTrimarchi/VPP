@@ -6,6 +6,7 @@
 #include <QtCore/QFile>
 #include <QtWidgets/QMessageBox>
 #include "VppSettingsXmlReader.h"
+#include "MainWindow.h"
 
 //---------------------------------------------------------------
 // This widget includes several setting trees, from which the
@@ -175,5 +176,13 @@ void TreeTab::connectSignals() {
 	connect( pTreeModel_,&SettingsModel::mustCollapse,
  			pTreeView_,&SettingsWindowView::doCollapse);
 
+	// Get a ptr to the MainWindow. Connect any change of the tree model
+	// to an update of the variable item tree widget. This is a TreeTab,
+	// the parent of which is a VPPSettingsDialog. Parent of the
+	// VPPSettingsDialog is the MainWindow.
+	MainWindow* pMainWindow = qobject_cast<MainWindow*>(parent()->parent());
+	connect(
+			pTreeModel_,&SettingsModel::dataChanged,
+			pMainWindow, &MainWindow::udpateVariableTree);
 }
 

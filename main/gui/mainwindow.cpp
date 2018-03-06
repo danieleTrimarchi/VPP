@@ -106,20 +106,9 @@ windowLabel_("V++") {
 
 	// Make sure the solver factory is empty
 	pSolverFactory_.reset();
-
-	// Instantiate a VPP settings dialog
-	VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
-
-	// Instantiate a variableFileParser (and clear any previous one)
-	// on top of the VPP Settings Dialog. The parser will get populated
-	// with all the variables edited in the settings
-	pVariableFileParser_.reset( new VariableFileParser(pSd) );
-
-	// The variable file parser populates the variable item tree
-	pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
-
-	// Expand the items in the variable tree view, in order to see all the variables
-	pVariablesWidget_->getView()->expandAll();
+	// Instantiates a VppSettingsDialog (singleton) and
+	// sync the variableTree with the VppSettingsDialog
+	udpateVariableTree();
 
 }
 
@@ -135,13 +124,13 @@ void MainWindow::setupMenuBar() {
 	// Create 'Import boat description' action and associate an icon
 	actionVector_.push_back( boost::shared_ptr<QAction>(
 			new QAction(
-					QIcon::fromTheme("Import boat description", QIcon(":/icons/importBoatData.png")),
-					tr("&Import boat description..."), this)
+					QIcon::fromTheme("Settings", QIcon(":/icons/importBoatData.png")),
+					tr("&Settings..."), this)
 	) );
-	QAction* importBoatAction= actionVector_.back().get();
-	importBoatAction->setStatusTip(tr("Import boat description"));
-	connect(importBoatAction, &QAction::triggered, this, &MainWindow::import);
-	pToolBar_->addAction(importBoatAction);
+	QAction* openSettingsAction= actionVector_.back().get();
+	openSettingsAction->setStatusTip(tr("Import boat description"));
+	connect(openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
+	pToolBar_->addAction(openSettingsAction);
 
 	// Create 'run' action and associate an icon
 	actionVector_.push_back( boost::shared_ptr<QAction>(
@@ -447,27 +436,42 @@ void MainWindow::removeTabWidgetFromVector(VppTabDockWidget* pWidget) {
 	}
 }
 
-void MainWindow::import() {
+void MainWindow::openSettings() {
 
 	try {
 
 		// Open up a VPP settings dialog
 		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
 
-		// Instantiate a variableFileParser (and clear any previous one)
-		// on top of the VPP Settings Dialog. The parser will get populated
-		// with all the variables edited in the settings
-		pVariableFileParser_.reset( new VariableFileParser(pSd) );
+		// Sync the variable tree with the settings window
+		udpateVariableTree();
 
-		// The variable file parser populates the variable item tree
-		pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
-
-		// Expand the items in the variable tree view, in order to see all the variables
-		pVariablesWidget_->getView()->expandAll();
-
+		// show the SettingsDialog
 		pSd->exec();
 
 	}	catch(...) {}
+}
+
+
+// Updates the variable tree getting values from the
+// settingsWindow tree tab
+void MainWindow::udpateVariableTree() {
+
+	std::cout<<"Updating then variableTree...\n";
+	// Open up a VPP settings dialog
+	VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+
+	// Instantiate a variableFileParser (and clear any previous one)
+	// on top of the VPP Settings Dialog. The parser will get populated
+	// with all the variables edited in the settings
+	pVariableFileParser_.reset( new VariableFileParser(pSd) );
+
+	// The variable file parser populates the variable item tree
+	pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
+
+	// Expand the items in the variable tree view, in order to see all the variables
+	pVariablesWidget_->getView()->expandAll();
+
 }
 
 
@@ -632,26 +636,8 @@ void MainWindow::importResults() {
 		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
 		pSd->read(settingsFile);
 
-		// Instantiate a variableFileParser (and clear any previous one)
-		// on top of the VPP Settings Dialog. The parser will get populated
-		// with all the variables edited in the settings
-		pVariableFileParser_.reset( new VariableFileParser(pSd) );
-
-		// Check what do we have in the parser now...
-		// This won't work when the UI is up because it is re-directed to
-		// stdout, not to the log. Not sure how to fix this
-		pVariableFileParser_->print();
-
-		// The variable file parser populates the variable item tree
-		pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
-
-		// SailSet also contains several variables. Append them to the bottom
-		// todo dtrimarchi
-		//pSails_->populate( pVariablesWidget_->getTreeModel() );
-
-		// Expand the items in the variable tree view, in order to see all the variables
-		pVariablesWidget_->getView()->expandAll();
-
+		// Sync the variable tree with the vppSettingsDialog
+		udpateVariableTree();
 
 		throw VPPException(HERE,"Stop");
 

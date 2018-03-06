@@ -46,7 +46,7 @@ public:
 public slots:
 
 	/// Import the data from variableFile.txt
-	void import();
+	void openSettings();
 
 	/// Run the VPP analysis
 	void run();
@@ -121,6 +121,10 @@ public slots:
 	/// Slot called on deletion of a plotWidget. It assures
 	/// the sync of the tabbedWidgets_ vector
 	void updateTabbedWidgetsVector(const VppTabDockWidget*);
+
+	/// Updates the variable tree getting values from the
+	/// settingsWindow tree tab
+	void udpateVariableTree();
 
 private:
 

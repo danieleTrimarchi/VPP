@@ -180,7 +180,6 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemComboBox* item ) {
 
 	// Write the active index
 	pXmlWriter_->writeAttribute("ActiveIndex",QString::number(item->getActiveIndex()));
-	std::cout<<"Write Active Index for combo-box= "<<item->getActiveIndex()<<std::endl;
 
 	// Write the unit of this item.
 	pXmlWriter_->writeAttribute("Unit", item->data(columnNames::unit).toString() );

@@ -1,15 +1,17 @@
--> When calling pVariablesWidget_->getView()->expandAll();
-	we segfaults. Why? 
-	A priori the view is not valid anymore, thus the removal/addition of
-	the new items was NOT successiful
+-> Update the variable tree when modifying entries in the settings window
+	This must be done in TreeTab::connectSignals()
+	better get the mainwindow in the treetab with getParent()->getParent()
+	
+-> Unify the base class for the VariableTree and the SettingsTree
 
--> use the settings to populate the parser
+-> Set SettingsItem entries when loosing focus
 
 -> parser print should work!
  
 - Progression bar during runs…
 
-- Add a control to choose the solver NLOpt IPOpt NRSolver (2 dofs)
+- Add a control to choose the solver NLOpt IPOpt NRSolver (2 dofs). 
+	This should go in Settings/General
 - Exception in pathUtils if this is not MACOSX 
 - Hide Variable tree by default
 - Print df/dm in RELATIVE terms - the curves of df/dm are of the same color!
