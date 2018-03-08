@@ -43,6 +43,15 @@ class TreeTab : public QWidget {
 		/// are stored
 		const SettingsModel* getReferenceSettingsModel() const;
 
+		/// Update external dependencies, such as the VariableTreeModel
+		void updateDependencies();
+
+		//-------------
+		// Who calls these methods?
+		virtual void setParent(QWidget *);
+		virtual void setParent(QWidget *, QFlags<enum Qt::WindowType>);
+		//-------------
+
 	public slots:
 
 		void updateActions();

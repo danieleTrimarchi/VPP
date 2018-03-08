@@ -43,6 +43,10 @@ public:
 	/// Create a toolbar with some actions
 	void setupToolBar();
 
+	/// Updates the variable tree getting values from the
+	/// settingsWindow tree tab
+	void udpateVariableTree();
+
 public slots:
 
 	/// Import the data from variableFile.txt
@@ -121,10 +125,6 @@ public slots:
 	/// Slot called on deletion of a plotWidget. It assures
 	/// the sync of the tabbedWidgets_ vector
 	void updateTabbedWidgetsVector(const VppTabDockWidget*);
-
-	/// Updates the variable tree getting values from the
-	/// settingsWindow tree tab
-	void udpateVariableTree();
 
 private:
 

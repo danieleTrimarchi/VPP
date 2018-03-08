@@ -12,8 +12,13 @@
 // This widget includes several setting trees, from which the
 // individual settings can be expanded and visualized. To be
 // inserted in the VPPSettingsDialog
-TreeTab::TreeTab(QWidget* parent):
-QWidget(parent) {
+TreeTab::TreeTab(QWidget* myparent):
+QWidget(myparent) {
+
+	// test who's my parent
+    QObject* myParent = parent();
+    QObject* grandPa = myParent->parent();
+    MainWindow* pMainWindow = qobject_cast<MainWindow*>(parent()->parent());
 
 	//SettingsModel hullSettings(this);
 	pTreeReferenceModel_ = new SettingsModel;
@@ -63,6 +68,14 @@ QWidget(parent) {
 
 }
 
+void TreeTab::setParent(QWidget* parent ) {
+	QWidget::setParent(parent);
+}
+
+void TreeTab::setParent(QWidget* parent, QFlags<enum Qt::WindowType> flags) {
+	QWidget::setParent(parent,flags);
+}
+
 // Dtor
 TreeTab::~TreeTab() {
 	delete pTreeModel_;
@@ -78,6 +91,9 @@ void TreeTab::save() {
 
 	// Make sure the view is up to date
 	updateActions();
+
+	// Also update the external dependencies
+	updateDependencies();
 }
 
 // Save the settings to file
@@ -132,8 +148,27 @@ void TreeTab::updateActions() {
 	// Make sure the columns are wide enough for the text that must be contained
 	for (int iColumn = 0; iColumn < pTreeModel_->columnCount(); ++iColumn)
 		pTreeView_->resizeColumnToContents(iColumn);
+}
+
+// Update external dependencies, such as the VariableTreeModel
+void TreeTab::updateDependencies() {
+
+	// Get a ptr to the MainWindow. Connect any change of the tree model
+	// to an update of the variable item tree widget. This is a TreeTab,
+	// the parent of which is a VPPSettingsDialog. Parent of the
+	// VPPSettingsDialog is the MainWindow.
+	QObject* myAncestor=parent();
+	while(!qobject_cast<MainWindow*>(myAncestor)){
+		myAncestor = myAncestor->parent();
+		if(!myAncestor)
+			throw VPPException(HERE, "A ptr to MainWindow could not be found!");
+	}
+
+	MainWindow* pMainWindow = qobject_cast<MainWindow*>(myAncestor);
+	pMainWindow->udpateVariableTree();
 
 }
+
 
 // Connect all the required signals
 // todo dtrimarchi, this should be moved to
@@ -175,14 +210,5 @@ void TreeTab::connectSignals() {
 	// An item, the state of which is collapsed, must notify the view
 	connect( pTreeModel_,&SettingsModel::mustCollapse,
  			pTreeView_,&SettingsWindowView::doCollapse);
-
-	// Get a ptr to the MainWindow. Connect any change of the tree model
-	// to an update of the variable item tree widget. This is a TreeTab,
-	// the parent of which is a VPPSettingsDialog. Parent of the
-	// VPPSettingsDialog is the MainWindow.
-	MainWindow* pMainWindow = qobject_cast<MainWindow*>(parent()->parent());
-	connect(
-			pTreeModel_,&SettingsModel::dataChanged,
-			pMainWindow, &MainWindow::udpateVariableTree);
 }
 

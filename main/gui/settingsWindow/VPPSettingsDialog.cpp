@@ -35,8 +35,8 @@ TreeTab* VPPSettingsDialog::getSettingsTreeTab() {
 }
 
 // Ctor
-VPPSettingsDialog::VPPSettingsDialog(QWidget *parent)
-: QDialog(parent) {
+VPPSettingsDialog::VPPSettingsDialog(QWidget* myparent)
+: QDialog(myparent) {
 
 	// Instantiate a widget that will contain tabs
 	pTabWidget_ = new QTabWidget(this);
@@ -77,8 +77,14 @@ VPPSettingsDialog::VPPSettingsDialog(QWidget *parent)
 // Slot called when the user hits the button "Ok" in the bottom of the widget
 void VPPSettingsDialog::accept(){
 
+    QObject* myParent = parent();
+    QObject* grandpa= myParent->parent();
+
 	// Sync phase : store the 'floating' the user has just edited into the reference model
 	pSettingsTreeTab_->save();
+
+    myParent = parent();
+    grandpa= myParent->parent();
 
 	// Call mother class method
 	QDialog::accept();

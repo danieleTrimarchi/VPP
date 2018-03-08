@@ -106,8 +106,11 @@ windowLabel_("V++") {
 
 	// Make sure the solver factory is empty
 	pSolverFactory_.reset();
+
 	// Instantiates a VppSettingsDialog (singleton) and
 	// sync the variableTree with the VppSettingsDialog
+	VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+
 	udpateVariableTree();
 
 }
@@ -443,7 +446,7 @@ void MainWindow::openSettings() {
 		// Open up a VPP settings dialog
 		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
 
-		// Sync the variable tree with the settings window
+		// Sync the variable Ctree with the settings window
 		udpateVariableTree();
 
 		// show the SettingsDialog
