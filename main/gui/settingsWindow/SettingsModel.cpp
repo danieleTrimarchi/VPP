@@ -381,4 +381,27 @@ const SettingsModel& SettingsModel::operator=(const SettingsModel& rhs) {
 }
 
 
+// Comparison operator
+bool SettingsModel::operator==(const SettingsModel& rhs) {
+
+	// If the number of children is different the models are not
+	// comparable
+	if(getRoot()->childCount() != rhs.getRoot()->childCount())
+		return false;
+
+	for(size_t iChild=0; iChild<getRoot()->childCount(); iChild++)
+		if( *getRoot()->child(iChild) != *rhs.getRoot()->child(iChild) )
+			return false;
+
+	return true;
+
+}
+
+// Inverse Comparison operator
+bool SettingsModel::operator!=(const SettingsModel& rhs) {
+	return !(*this == rhs);
+}
+
+
+
 

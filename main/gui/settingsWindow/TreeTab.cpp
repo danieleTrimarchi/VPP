@@ -15,11 +15,6 @@
 TreeTab::TreeTab(QWidget* myparent):
 QWidget(myparent) {
 
-	// test who's my parent
-    QObject* myParent = parent();
-    QObject* grandPa = myParent->parent();
-    MainWindow* pMainWindow = qobject_cast<MainWindow*>(parent()->parent());
-
 	//SettingsModel hullSettings(this);
 	pTreeReferenceModel_ = new SettingsModel;
 
@@ -85,15 +80,20 @@ TreeTab::~TreeTab() {
 // Save the model the user has edited to the underlying (permanent) model
 void TreeTab::save() {
 
-	// Dereference the ptr to make sure we are actually calling
-	// the operator= of SettingsModel
-	*pTreeReferenceModel_ = *pTreeModel_;
+	// Save does something only if the current model has been
+	// edited. Otherwise do nothing and preserve the current state
+	if( *pTreeModel_ != *pTreeReferenceModel_ ){
 
-	// Make sure the view is up to date
-	updateActions();
+		// Dereference the ptr to make sure we are actually calling
+		// the operator= of SettingsModel
+		*pTreeReferenceModel_ = *pTreeModel_;
 
-	// Also update the external dependencies
-	updateDependencies();
+		// Make sure the view is up to date
+		updateActions();
+
+		// Also update the external dependencies (in this case: the VariableTreeWidget)
+		updateDependencies();
+	}
 }
 
 // Save the settings to file

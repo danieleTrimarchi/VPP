@@ -32,17 +32,31 @@ QColor SettingsColumn::getBackGroundColor() const {
 	return QColor(228,228,228);
 }
 
+// Comparison operator
+bool SettingsColumn::operator==(const SettingsColumn& rhs) {
+	if(data_ == rhs.data_)
+		return true;
+
+	return false;
+}
+
+// Inverse Comparison operator
+bool SettingsColumn::operator!=(const SettingsColumn& rhs){
+	return !(*this==rhs);
+}
+
+
 //-----------------------------------------
 
 // Ctor
 NameColumn::NameColumn() :
-	SettingsColumn() {
+			SettingsColumn() {
 
 }
 
 // Copy Ctor
 NameColumn::NameColumn(const NameColumn& rhs) :
-	SettingsColumn(rhs){
+			SettingsColumn(rhs){
 
 }
 
@@ -65,13 +79,13 @@ Qt::ItemFlag NameColumn::editable() const {
 
 // Ctor
 ValueColumn::ValueColumn() :
-	SettingsColumn() {
+			SettingsColumn() {
 
 }
 
 // Copy Ctor
 ValueColumn::ValueColumn(const ValueColumn& rhs):
-		SettingsColumn(rhs){
+				SettingsColumn(rhs){
 
 }
 
@@ -100,13 +114,13 @@ QColor ValueColumn::getBackGroundColor() const {
 
 // Ctor
 UnitColumn::UnitColumn() :
-	SettingsColumn() {
+			SettingsColumn() {
 
 }
 
 // Copy Ctor
 UnitColumn::UnitColumn(const UnitColumn& rhs) :
-		SettingsColumn(rhs) {
+				SettingsColumn(rhs) {
 
 }
 

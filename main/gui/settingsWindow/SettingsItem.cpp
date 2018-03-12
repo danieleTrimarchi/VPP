@@ -452,6 +452,31 @@ const SettingsItemBase& SettingsItemBase::operator=(const SettingsItemBase& rhs)
 	return *this;
 }
 
+// Comparison operator
+bool SettingsItemBase::operator==(const SettingsItemBase& rhs) {
+
+	// Compare the name
+	if( editable_==rhs.editable_&&
+			tooltip_== rhs.tooltip_ &&
+			expanded_==rhs.expanded_ &&
+			variableName_ == rhs.variableName_ &&
+			columns_.size() == rhs.columns_.size()){
+
+		// Loop on the columns, are the data equal?
+		for(size_t iCol=0; iCol<columns_.size(); iCol++)
+			if(*columns_[iCol] != *rhs.columns_[iCol])
+				return false;
+        return true;
+	}
+
+	return false;
+
+}
+
+// Inverse comparison operator
+bool SettingsItemBase::operator!=(const SettingsItemBase& rhs) {
+	return !(*this==rhs);
+}
 
 // ----------------------------------------------------------------
 

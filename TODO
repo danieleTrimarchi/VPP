@@ -1,10 +1,8 @@
--> Update the variable tree when modifying entries in the settings window
-	This must be done in TreeTab::connectSignals()
-	better get the mainwindow in the treetab with getParent()->getParent()
-	
+-> TO BE TESTED: Only save the SettingsModel to the ReferenceModel (and update the variableTree) if some  changes in the settings are detected	
+
 -> Unify the base class for the VariableTree and the SettingsTree
 
--> Set SettingsItem entries when loosing focus
+-> Set Settings values when loosing focus from the SettingsItemWindow cell
 
 -> parser print should work!
  

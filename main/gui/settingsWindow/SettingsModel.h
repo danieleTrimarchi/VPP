@@ -67,6 +67,12 @@ class SettingsModel : public QAbstractItemModel {
 		/// Assignment operator
 		const SettingsModel& operator=(const SettingsModel&);
 
+		/// Comparison operator
+		bool operator==(const SettingsModel&);
+
+		/// Inverse Comparison operator
+		bool operator!=(const SettingsModel&);
+
 		/// Setup the data of this model
 		void setupModelData();
 

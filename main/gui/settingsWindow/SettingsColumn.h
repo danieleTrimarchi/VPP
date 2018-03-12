@@ -37,6 +37,12 @@ class SettingsColumn {
 		/// column
 		virtual QColor getBackGroundColor() const;
 
+		/// Comparison operator
+		bool operator==(const SettingsColumn&);
+
+		/// Inverse Comparison operator
+		bool operator!=(const SettingsColumn&);
+
 	protected:
 
 		/// Copy Ctor

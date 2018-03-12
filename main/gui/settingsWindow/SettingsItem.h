@@ -163,6 +163,12 @@ class SettingsItemBase {
 		/// Assignment operator
 		virtual const SettingsItemBase& operator=(const SettingsItemBase& rhs);
 
+		/// Comparison operator
+		bool operator==(const SettingsItemBase& rhs);
+
+		/// Inverse comparison operator
+		bool operator!=(const SettingsItemBase& rhs);
+
 		/// Set the parent of this item
 		void setParent(SettingsItemBase* parentItem);
 

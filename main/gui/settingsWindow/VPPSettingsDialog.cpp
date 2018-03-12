@@ -45,8 +45,12 @@ VPPSettingsDialog::VPPSettingsDialog(QWidget* myparent)
 	pTabWidget_->setContentsMargins(0,0,0,0);
 	pTabWidget_->setTabShape(QTabWidget::TabShape::Triangular);
 
-	// Add a tree tab (a tab containing an item tree)
+	// Instantiate a tree tab (a tab containing an item tree)
 	pSettingsTreeTab_ = new TreeTab(this);
+
+	// Assign the treeTab to the tabWidget
+	// Warning : this changes the hierarchy for the treeTab. From now
+	// onward, the treeTab is a child of the tabWidget!
 	pTabWidget_->addTab(pSettingsTreeTab_, tr("VPP Settings"));
 
 	// Add a general tab (a tab containing general settings, not sure if we'll keep this)
@@ -63,6 +67,8 @@ VPPSettingsDialog::VPPSettingsDialog(QWidget* myparent)
 	// Instantiate a VBoxLayout, the tab are on top and the buttons on the bottom
 	// Set this layout for the Dialog
 	QVBoxLayout* mainLayout = new QVBoxLayout;
+	// Warning : this changes the hierarchy : from now onward the tabWidget
+	// is a child of the main layout!
 	mainLayout->addWidget(pTabWidget_);
 	mainLayout->addWidget(pButtonBox_);
 	setLayout(mainLayout);
@@ -77,14 +83,8 @@ VPPSettingsDialog::VPPSettingsDialog(QWidget* myparent)
 // Slot called when the user hits the button "Ok" in the bottom of the widget
 void VPPSettingsDialog::accept(){
 
-    QObject* myParent = parent();
-    QObject* grandpa= myParent->parent();
-
 	// Sync phase : store the 'floating' the user has just edited into the reference model
 	pSettingsTreeTab_->save();
-
-    myParent = parent();
-    grandpa= myParent->parent();
 
 	// Call mother class method
 	QDialog::accept();
