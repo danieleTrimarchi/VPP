@@ -9,20 +9,20 @@ enum columnNames {
 	unit
 };
 
-class SettingsColumn {
+class DataColumn {
 
 	public:
 
 		/// Ctor
-		SettingsColumn();
+		DataColumn();
 
 		/// Dtor
-		virtual ~SettingsColumn();
+		virtual ~DataColumn();
 
 		/// Clone this item, which is basically equivalent to calling the copy ctor
 		/// This must be pure virtual, because the class is abstract and I cannot call
 		/// the copy ctor from here. So I am obliged to issue the job to child classes
-		virtual SettingsColumn* clone() const=0;
+		virtual DataColumn* clone() const=0;
 
 		/// Get the data stored in this column
 		QVariant getData(const int role=0) const;
@@ -38,15 +38,15 @@ class SettingsColumn {
 		virtual QColor getBackGroundColor() const;
 
 		/// Comparison operator
-		bool operator==(const SettingsColumn&);
+		bool operator==(const DataColumn&);
 
 		/// Inverse Comparison operator
-		bool operator!=(const SettingsColumn&);
+		bool operator!=(const DataColumn&);
 
 	protected:
 
 		/// Copy Ctor
-		SettingsColumn(const SettingsColumn&);
+		DataColumn(const DataColumn&);
 
 		/// Container that stores the actual data to be visualized
 		QVariant data_;
@@ -59,12 +59,15 @@ class SettingsColumn {
 
 ///-----------------------------------------
 
-class NameColumn : public SettingsColumn {
+class NameColumn : public DataColumn {
 
 	public :
 
 		/// Ctor
 		NameColumn();
+
+		/// Value Ctor
+		NameColumn(QVariant value);
 
 		/// Dtor
 		virtual ~NameColumn();
@@ -85,12 +88,15 @@ class NameColumn : public SettingsColumn {
 
 ///-----------------------------------------
 
-class ValueColumn : public SettingsColumn {
+class ValueColumn : public DataColumn {
 
 	public :
 
-		/// Ctor
+		/// Default Ctor
 		ValueColumn();
+
+		/// Value Ctor
+		ValueColumn(QVariant value);
 
 		/// Dtor
 		virtual ~ValueColumn();
@@ -114,7 +120,7 @@ class ValueColumn : public SettingsColumn {
 
 ///-----------------------------------------
 
-class UnitColumn : public SettingsColumn {
+class UnitColumn : public DataColumn {
 
 	public :
 

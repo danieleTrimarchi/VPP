@@ -1,15 +1,15 @@
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
 
-#include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
+#include "VppItemModel.h"
 
 class VariableTreeItemBase;
 
 /// This class describes the item model for the variable tree
 /// The class directly derives from the Qt example
-class VariableTreeModel : public QAbstractItemModel {
+class VariableTreeModel : public VppItemModel {
 
 		Q_OBJECT
 
@@ -20,6 +20,15 @@ class VariableTreeModel : public QAbstractItemModel {
 
 		/// Virtual Dtor
 		virtual ~VariableTreeModel();
+
+		/// Append a variable item to the tree
+		void append( QList<QVariant>& columnData );
+
+		/// Remove the children of this model
+		void clearChildren();
+
+		/// How many cols?
+		int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
 		/// Called by Qt, this method returns the data to visualize or some
 		/// display options
@@ -46,20 +55,12 @@ class VariableTreeModel : public QAbstractItemModel {
 		/// How many rows?
 		int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
-		/// How many cols?
-		int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-
-		/// Append a variable item to the tree
-		void append( QList<QVariant>& columnData );
-
-		/// Remove the children of this model
-		void clearChildren();
-
 	private:
 
 		/// Actually generate the item tree
-		void setup();
+		void setupModelData();
 
+		/// Root item, to which all children are appended
 		VariableTreeItemBase *rootItem_;
 };
 

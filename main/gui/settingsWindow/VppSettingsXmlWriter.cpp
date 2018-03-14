@@ -2,6 +2,7 @@
 #include "SettingsItem.h"
 #include <iostream>
 #include <QtWidgets>
+#include "VPPException.h"
 
 VppSettingsXmlWriter::VppSettingsXmlWriter(SettingsModel* pTreeModel, QIODevice *device) :
 		pTreeModel_(pTreeModel),
@@ -57,7 +58,10 @@ void VPPSettingsXmlWriterVisitor::visitEnd(SettingsItemBase* item) {
 
 	// And now visit my children
 	for(size_t iChild=0; iChild<item->childCount(); iChild++) {
-		item->child(iChild)->accept(*this);
+		SettingsItemBase* pChild= dynamic_cast<SettingsItemBase*>(item->child(iChild));
+		if(!pChild)
+			throw VPPException(HERE,"Target for dynamic cast failed");
+		pChild->accept(*this);
 	}
 
 	// This item is finished

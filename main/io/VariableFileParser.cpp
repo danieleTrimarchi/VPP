@@ -1,12 +1,13 @@
 #include "VariableFileParser.h"
 #include <stdio.h>
 #include <cmath>
+
+#include "../gui/settingsWindow/GetItemVisitor.h"
 #include "Warning.h"
 #include "VPPException.h"
 #include "mathUtils.h"
 #include "TreeTab.h"
 #include "VPPSettingsDialog.h"
-#include "GetSettingsItemVisitor.h"
 #include "VariableTreeModel.h"
 
 // Ctor
@@ -33,7 +34,8 @@ void VariableParserGetVisitor::visit(SettingsItemBase* pRoot) {
 
 	// Loop on the tree
 	for(size_t iChild=0; iChild<pRoot->childCount(); iChild++){
-		pRoot->child(iChild)->accept(*this);
+		SettingsItemBase* pChild= dynamic_cast<SettingsItemBase*>(pRoot->child(iChild));
+		pChild->accept(*this);
 	}
 }
 
@@ -44,7 +46,7 @@ void VariableParserGetVisitor::visit(SettingsItemRoot* pRoot) {
 
 	// Loop on the tree
 	for(size_t iChild=0; iChild<pRoot->childCount(); iChild++){
-		SettingsItemBase* child= pRoot->child(iChild);
+		SettingsItemBase* child= dynamic_cast<SettingsItemBase*>(pRoot->child(iChild));
 		child->accept(*this);
 	}
 }
@@ -57,7 +59,8 @@ void VariableParserGetVisitor::visit(SettingsItem* pItem) {
 
 	// Loop on the tree
 	for(size_t iChild=0; iChild<pItem->childCount(); iChild++){
-		pItem->child(iChild)->accept(*this);
+		SettingsItemBase* pChild= dynamic_cast<SettingsItemBase*>(pItem->child(iChild));
+		pChild->accept(*this);
 	}
 }
 
@@ -71,7 +74,10 @@ void VariableParserGetVisitor::visit(SettingsItemComboBox* pItem) {
 
 	// Loop on the tree
 	for(size_t iChild=0; iChild<pItem->childCount(); iChild++){
-		pItem->child(iChild)->accept(*this);
+		SettingsItemBase* pChild = dynamic_cast<SettingsItemBase*>(pItem->child(iChild));
+		if(!pChild)
+			throw VPPException(HERE,"Target failed for dynamic_cast");
+		pChild->accept(*this);
 	}
 }
 

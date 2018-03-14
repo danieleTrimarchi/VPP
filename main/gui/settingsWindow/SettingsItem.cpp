@@ -1,40 +1,35 @@
 #include "SettingsItem.h"
-#include <QtWidgets/QLineEdit>
-#include <QtWidgets/QSpinBox>
-#include <QtGui/QColor>
+//#include <QtWidgets/QLineEdit>
+//#include <QtWidgets/QSpinBox>
+//#include <QtGui/QColor>
 #include <iostream>
-
-#include "GetSettingsItemVisitor.h"
 #include "VppSettingsXmlWriter.h"
 #include "VppSettingsXmlReader.h"
-#include "VPPException.h"
-
 #include "VariableFileParser.h"
 
 using namespace std;
 
 // Ctor
 SettingsItemBase::SettingsItemBase() :
-					pParent_(0),
-					editable_(Qt::ItemIsEditable),
+					Item(),
 					tooltip_(QVariant()),
-					expanded_(false),
 					variableName_(QString()){
 
+	// Instantiate the data columns
 	columns_.push_back(new NameColumn);
 	columns_.push_back(new ValueColumn);
 	columns_.push_back(new UnitColumn);
+
+	// Set this item as editable. Override the default
+	// value assigned in the parent class constructor
+	editable_ = Qt::ItemIsEditable;
 }
 
 // Copy Ctor
-SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs) {
-	// Do not copy the parent as the clone is not
-	// supposed to be under the original parent!
-	//pParent_=rhs.pParent_;
-	pParent_ = 0;
-	editable_= rhs.editable_;
+SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs):
+		Item(rhs){
+
 	tooltip_= rhs.tooltip_;
-	expanded_ = rhs.expanded_;
 
 	// Deep copy the variableName for the variableFileParser
 	variableName_ = rhs.variableName_;
@@ -53,33 +48,6 @@ SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs) {
 	// Make sure the children have knowledge of their parent
 	for(size_t iChild=0; iChild<children_.size(); iChild++)
 		children_[iChild]->setParent(this);
-}
-
-// Set the parent of this item
-void SettingsItemBase::setParent(SettingsItemBase* parentItem) {
-	pParent_= parentItem;
-}
-
-// Set the parent of this item
-void SettingsItemBase::setParentRecursive(SettingsItemBase* parentItem) {
-
-	// Give me a parent
-	pParent_= parentItem;
-
-	// Tell my children that I am their father
-	for(size_t iChild=0; iChild<children_.size(); iChild++)
-		children_[iChild]->setParentRecursive(this);
-
-}
-
-// This slot is triggered when the item is expanded in the view
-void SettingsItemBase::setExpanded(bool expanded) {
-	expanded_ = expanded;
-}
-
-// Return the flag 'expanded'
-bool SettingsItemBase::expanded() const {
-	return expanded_;
 }
 
 // Static Factory method - builds a SettingsItem from the attributes
@@ -114,80 +82,12 @@ SettingsItemBase* SettingsItemBase::settingsItemFactory(const XmlAttributeSet& a
 
 // Dtor
 SettingsItemBase::~SettingsItemBase() {
-	qDeleteAll(children_);
-	for(size_t i=0;i<columns_.size(); i++){
-		delete columns_[i];
-	}
-}
-
-// Append a child under me
-void SettingsItemBase::appendChild(SettingsItemBase* child) {
-
-	// Make sure the item knows who his parent is
-    if(child) {
-        child->setParent(this);
-        // Append the item to the child list
-        children_.append(child);
-    }
-    else
-    		throw VPPException(HERE,"The child cannot be appended because it does not exist!");
-}
-
-// Remove all children under me
-void SettingsItemBase::clearChildren() {
-
-    // Todo : this segfaults, but why..?? 
-	// Delete the children
-	//for(size_t iChild=0; iChild<childCount(); iChild++)
-	//	if(child(iChild))
-	//		delete child(iChild);
-	// This also segfaults...
-	//qDeleteAll(children_);
-
-	// And reset the child list
-	children_.clear();
-}
-
-// Remove a child by position
-void SettingsItemBase::removeChild(size_t iChild) {
-	children_.removeAt(iChild);
-}
-
-// Get the i-th child
-SettingsItemBase* SettingsItemBase::child(int row) {
-	return children_.value(row);
-}
-
-// Get the i-th child - const variety
-SettingsItemBase* SettingsItemBase::child(int row) const{
-	return children_.value(row);
-}
-
-// Get a child by name
-SettingsItemBase* SettingsItemBase::child(QString& childName) {
-
-	// Instantiate a visitor that will be searching for the item by name
-	GetSettingsItemByNameVisitor vn(this);
-	return vn.get(childName);
-}
-
-// Get a child by path - inclusive of the child name, of course
-SettingsItemBase* SettingsItemBase::childPath(QString& childPath) {
-
-	// Instantiate a visitor that will be searching for the item by name
-	GetSettingsItemByPathVisitor vp(this);
-	return vp.get(childPath);
-}
-
-// How many children do I have?
-int SettingsItemBase::childCount() const {
-	return children_.count();
 }
 
 // What child number am I?
 int SettingsItemBase::childNumber() const {
 	if (pParent_)
-		return pParent_->children_.indexOf(const_cast<SettingsItemBase*>(this));
+		return pParent_->getChildren().indexOf(const_cast<SettingsItemBase*>(this));
 
 	return 0;
 }
@@ -198,103 +98,10 @@ SettingsItemBase* SettingsItemBase::clone() const {
 	return new SettingsItemBase(*this);
 }
 
-// Number of rows required to the cols of this item.
-// i.e: the number of children. For the moment we
-// just return 1.
-int SettingsItemBase::columnCount() const {
-	return columns_.size();
-}
-
-// Return the parent item
-SettingsItemBase* SettingsItemBase::parentItem() {
-	return pParent_;
-}
-
-int SettingsItemBase::row() const {
-
-	if (pParent_)
-		return pParent_->children_.indexOf(const_cast<SettingsItemBase*>(this));
-
-	return 0;
-}
-
-// Returns the associated icon - in this case an empty QVariant
-QVariant SettingsItemBase::getIcon() {
-	return QVariant();
-}
-
-// Get the internal name of this item, used to locate it in the tree
-// This is in the format parentName.myName, where the "spaces" have
-// been substituted by "_"
-QString SettingsItemBase::getInternalName() const {
-
-	QString path;
-
-	// Get the parent internal name
-	if(pParent_)
-		path = pParent_->getInternalName() +  QString(".");
-
-	// And now add my own name. Replace spaces with '_'
-	path += getDisplayName().replace(" ","_",Qt::CaseSensitive);
-
-	return path;
-}
-
 // Get the name of the variable as this will be registered
 // in the VariableFileParser
 QString SettingsItemBase::getVariableName() const {
 	return variableName_;
-}
-
-// Get the display name of this item
-QString SettingsItemBase::getDisplayName() const {
-	return columns_[columnNames::name]->getData().toString();
-}
-
-bool SettingsItemBase::setData(int column, const QVariant& value) {
-
-	if (column < 0 || column >= columns_.size())
-		return false;
-
-	columns_[column]->setData( value );
-	return true;
-}
-
-// Return the data stored in the i-th column of
-// this item. In this case, either the label
-// or the numerical value
-QVariant SettingsItemBase::data(int iColumn) const {
-	return columns_[iColumn]->getData(iColumn);
-}
-
-// Set if this item is editable
-void SettingsItemBase::setEditable(bool editable) {
-	if(editable)
-		editable_ = Qt::ItemIsEditable;
-	else
-		editable_ = Qt::NoItemFlags;
-
-}
-
-// Is this item editable?
-Qt::ItemFlag SettingsItemBase::editable() const {
-	return editable_;
-}
-
-// Get a reference to the columns vector
-std::vector<SettingsColumn*>& SettingsItemBase::getColumnVector() {
-	return columns_;
-}
-
-// Get a reference to the i-th column in the vector
-SettingsColumn* SettingsItemBase::getColumn(const int iColumn) {
-	return getColumnVector()[iColumn];
-}
-
-// Returns the font this item should be visualized
-// with in the item tree
-QFont SettingsItemBase::getFont() const {
-	return QFont();
 }
 
 // Return the backGround color for this item based on the column
@@ -352,42 +159,6 @@ void SettingsItemBase::paint(QPainter* painter, const QStyleOptionViewItem &opti
 
 }
 
-// Accept a visitor, the role of which is to iterate and
-// return an item by path
-SettingsItemBase* SettingsItemBase::accept(const GetSettingsItemByPathVisitor& v, QString varName) {
-
-	if( getInternalName() == varName )
-		return this;
-
-	for(size_t iChild=0; iChild<childCount(); iChild++) {
-		SettingsItemBase* pChild = child(iChild)->accept(v,varName);
-		if(pChild)
-			return pChild;
-	}
-
-	return 0;
-}
-
-// Accept a visitor, the role of which is to iterate and
-// return an item by name
-SettingsItemBase* SettingsItemBase::accept(const GetSettingsItemByNameVisitor& v, QString varName) {
-
-	//std::cout << internalName_.toStdString() <<std::endl;
-	if(columns_[columnNames::name]->getData().toString() == varName )
-		return this;
-
-	for(size_t iChild=0; iChild<childCount(); iChild++) {
-		SettingsItemBase* pChild = child(iChild)->accept(v,varName);
-		if(pChild)
-			return pChild;
-	}
-
-	char msg[512];
-	sprintf(msg,"The item named %s was not found!", varName.toStdString().c_str());
-	throw VPPException(HERE,msg);
-	return 0;
-}
-
 // Accept a visitor that will write this item to XML
 void SettingsItemBase::accept( VPPSettingsXmlWriterVisitor& v ) {
 
@@ -404,8 +175,7 @@ void SettingsItemBase::accept( VPPSettingsXmlReaderVisitor& v ){
 
 }
 
-
-// Accept a visitor that will write this item to XML
+// Accept a visitor that will write this item to the variableFileParser
 void SettingsItemBase::accept( VariableParserGetVisitor& v) {
 
 	// Visit me
@@ -455,27 +225,17 @@ const SettingsItemBase& SettingsItemBase::operator=(const SettingsItemBase& rhs)
 // Comparison operator
 bool SettingsItemBase::operator==(const SettingsItemBase& rhs) {
 
-	// Compare the name
-	if( editable_==rhs.editable_&&
-			tooltip_== rhs.tooltip_ &&
-			expanded_==rhs.expanded_ &&
-			variableName_ == rhs.variableName_ &&
-			columns_.size() == rhs.columns_.size()){
+	// Call the parent class comparison
+	if(!Item::operator==(rhs))
+		return false;
 
-		// Loop on the columns, are the data equal?
-		for(size_t iCol=0; iCol<columns_.size(); iCol++)
-			if(*columns_[iCol] != *rhs.columns_[iCol])
-				return false;
+	// Parent class is fine, keep comparing own members
+	if( tooltip_== rhs.tooltip_ &&
+			variableName_ == rhs.variableName_ ){
         return true;
 	}
-
 	return false;
 
-}
-
-// Inverse comparison operator
-bool SettingsItemBase::operator!=(const SettingsItemBase& rhs) {
-	return !(*this==rhs);
 }
 
 // ----------------------------------------------------------------
@@ -680,12 +440,12 @@ QFont SettingsItemBounds::getFont() const {
 
 // Returns a handle on the item that represents the min in this bound
 SettingsItemBase* SettingsItemBounds::getItemMin() {
-	return child(0);
+	return dynamic_cast<SettingsItemBase*>(child(0));
 }
 
 // Returns a handle on the item that represents the max in this bound
 SettingsItemBase* SettingsItemBounds::getItemMax() {
-	return child(1);
+	return dynamic_cast<SettingsItemBase*>(child(1));
 }
 
 // Get the min value of this bound

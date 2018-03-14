@@ -1,10 +1,11 @@
 #include "TreeTab.h"
 #include <QtWidgets/QVBoxLayout>
 #include <iostream>
-#include "GetSettingsItemVisitor.h"
 #include "VppSettingsXmlWriter.h"
 #include <QtCore/QFile>
 #include <QtWidgets/QMessageBox>
+
+#include "GetItemVisitor.h"
 #include "VppSettingsXmlReader.h"
 #include "MainWindow.h"
 

@@ -1,39 +1,40 @@
-#include "SettingsColumn.h"
+#include "DataColumn.h"
+
 #include <QtWidgets/QLineEdit>
 
 // Ctor
-SettingsColumn::SettingsColumn() {
+DataColumn::DataColumn() {
 
 }
 
 // Copy Ctor
-SettingsColumn::SettingsColumn(const SettingsColumn& rhs) {
+DataColumn::DataColumn(const DataColumn& rhs) {
 	data_ = rhs.data_;
 }
 
 // Dtor
-SettingsColumn::~SettingsColumn() {
+DataColumn::~DataColumn() {
 
 }
 
 // Set the data stored in this column
-void SettingsColumn::setData(const QVariant& data){
+void DataColumn::setData(const QVariant& data){
 	data_ =	data;
 }
 
 // Get the data stored in this column
-QVariant SettingsColumn::getData(const int role /*=0*/) const {
+QVariant DataColumn::getData(const int role /*=0*/) const {
 	return data_;
 }
 
 // Get the backGround color for the items of this
 // column
-QColor SettingsColumn::getBackGroundColor() const {
+QColor DataColumn::getBackGroundColor() const {
 	return QColor(228,228,228);
 }
 
 // Comparison operator
-bool SettingsColumn::operator==(const SettingsColumn& rhs) {
+bool DataColumn::operator==(const DataColumn& rhs) {
 	if(data_ == rhs.data_)
 		return true;
 
@@ -41,7 +42,7 @@ bool SettingsColumn::operator==(const SettingsColumn& rhs) {
 }
 
 // Inverse Comparison operator
-bool SettingsColumn::operator!=(const SettingsColumn& rhs){
+bool DataColumn::operator!=(const DataColumn& rhs){
 	return !(*this==rhs);
 }
 
@@ -50,14 +51,20 @@ bool SettingsColumn::operator!=(const SettingsColumn& rhs){
 
 // Ctor
 NameColumn::NameColumn() :
-			SettingsColumn() {
+			DataColumn() {
+}
+
+// Value Ctor
+NameColumn::NameColumn(QVariant value) :
+					DataColumn() {
 
 }
 
+
 // Copy Ctor
 NameColumn::NameColumn(const NameColumn& rhs) :
-			SettingsColumn(rhs){
-
+			DataColumn(rhs){
+	data_=value;
 }
 
 // Dtor
@@ -79,13 +86,19 @@ Qt::ItemFlag NameColumn::editable() const {
 
 // Ctor
 ValueColumn::ValueColumn() :
-			SettingsColumn() {
-
+			DataColumn() {
 }
+
+// Value Ctor
+ValueColumn::ValueColumn(QVariant value):
+					DataColumn() {
+	data_=value;
+}
+
 
 // Copy Ctor
 ValueColumn::ValueColumn(const ValueColumn& rhs):
-				SettingsColumn(rhs){
+				DataColumn(rhs){
 
 }
 
@@ -114,13 +127,13 @@ QColor ValueColumn::getBackGroundColor() const {
 
 // Ctor
 UnitColumn::UnitColumn() :
-			SettingsColumn() {
+			DataColumn() {
 
 }
 
 // Copy Ctor
 UnitColumn::UnitColumn(const UnitColumn& rhs) :
-				SettingsColumn(rhs) {
+				DataColumn(rhs) {
 
 }
 

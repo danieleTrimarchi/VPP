@@ -5,15 +5,16 @@
  * creating the settings tree. This is composed by SettingsItems
  */
 
-#include <QtCore/QAbstractItemModel>
 #include <QtCore/QModelIndex>
 #include <QtCore/QVariant>
 #include <QtGui/QIcon>
 #include <QtGui/QDoubleValidator>
 #include <QtWidgets/QLineEdit>
+
+#include "VppItemModel.h"
 #include "SettingsItem.h"
 
-class SettingsModel : public QAbstractItemModel {
+class SettingsModel : public VppItemModel {
 
 		Q_OBJECT
 
@@ -27,6 +28,12 @@ class SettingsModel : public QAbstractItemModel {
 
 		/// Virtual Dtor
 		virtual ~SettingsModel();
+
+		/// Append a variable item to the tree
+		void append( QList<QVariant>& columnData );
+
+		/// How many cols?
+		virtual int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
 		/// Called by Qt, this method returns the data to visualize or some
 		/// display options
@@ -49,21 +56,6 @@ class SettingsModel : public QAbstractItemModel {
 														const QModelIndex& parent= QModelIndex()
 														) const Q_DECL_OVERRIDE;
 
-		/// Get my parent
-		QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
-
-		/// How many rows?
-		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-
-		/// How many cols?
-		virtual int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-
-		/// Append a variable item to the tree
-		void append( QList<QVariant>& columnData );
-
-		/// Set some data for a given item - i.e: edit some value
-		bool setData(const QModelIndex &index, const QVariant &value, int role) override;
-
 		/// Assignment operator
 		const SettingsModel& operator=(const SettingsModel&);
 
@@ -73,32 +65,41 @@ class SettingsModel : public QAbstractItemModel {
 		/// Inverse Comparison operator
 		bool operator!=(const SettingsModel&);
 
+		/// Get my parent
+		QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
+
+		/// How many rows?
+		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+
+		/// Set some data for a given item - i.e: edit some value
+		bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+
 		/// Setup the data of this model
 		void setupModelData();
 
 	Q_SIGNALS:
 
 		/// On copy, emit a signal that will notify the view that a
-		/// given item must be expanded
-		void mustExpand(const QModelIndex& );
-
-		/// On copy, emit a signal that will notify the view that a
 		/// given item must be collapsed
 		void mustCollapse(const QModelIndex& );
 
-	public slots:
+		/// On copy, emit a signal that will notify the view that a
+		/// given item must be expanded
+		void mustExpand(const QModelIndex& );
 
-		/// The view notifies the model that an item has been expanded
-		/// The model will pass the information to the item itself
-		/// Required to remember the current state of the items when
-		/// cloning item trees
-		void setItemExpanded(const QModelIndex&);
+	public slots:
 
 		/// The view notifies the model that an item has been folded
 		/// The model will pass the information to the item itself
 		/// Required to remember the current state of the items when
 		/// cloning item trees
 		void setItemCollapsed(const QModelIndex&);
+
+		/// The view notifies the model that an item has been expanded
+		/// The model will pass the information to the item itself
+		/// Required to remember the current state of the items when
+		/// cloning item trees
+		void setItemExpanded(const QModelIndex&);
 
 	private:
 

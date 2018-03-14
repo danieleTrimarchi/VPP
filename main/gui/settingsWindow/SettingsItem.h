@@ -2,21 +2,20 @@
 #define SETTINGS_ITEM_H
 
 /* This class implements the itemTree for the settings window */
-
-#include <QtCore/QLocale>
-#include <QtCore/QVariant>
-#include <QtCore/QString>
-#include <QtGui/QColor>
-#include <QtGui/QFont>
+//
+//#include <QtCore/QLocale>
+//#include <QtCore/QVariant>
+//#include <QtCore/QString>
+//#include <QtGui/QColor>
+//#include <QtGui/QFont>
 #include <QtGui/QPainter>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QComboBox>
-#include "SettingsColumn.h"
-#include <boost/shared_ptr.hpp>
+#include <QtWidgets>
+///QApplication>
+//#include <QtWidgets/QComboBox>
+//#include <boost/shared_ptr.hpp>
 
-/// Forward declarations
-class GetSettingsItemByPathVisitor;
-class GetSettingsItemByNameVisitor;
+#include "DataColumn.h"
+#include "Item.h"
 
 class VPPSettingsXmlWriterVisitor;
 class VPPSettingsXmlReaderVisitor;
@@ -25,20 +24,12 @@ class VariableParserGetVisitor;
 class XmlAttributeSet;
 class XmlAttribute;
 
-class SettingsItemBase {
+class SettingsItemBase : public Item {
 
 	public:
 
 		/// Dtor
 		virtual ~SettingsItemBase();
-
-		/// Accept a visitor, the role of which is to iterate and
-		/// return an item by path
-		SettingsItemBase* accept(const GetSettingsItemByPathVisitor&,QString);
-
-		/// Accept a visitor, the role of which is to iterate and
-		/// return an item by name
-		SettingsItemBase* accept(const GetSettingsItemByNameVisitor&, QString);
 
 		/// Accept a visitor that will write this item to XML
 		virtual void accept( VPPSettingsXmlWriterVisitor& );
@@ -53,47 +44,15 @@ class SettingsItemBase {
 		/// my children. After this, I will have no more children
 		void assign(SettingsItemBase* dstParent);
 
-		/// Append a child under me
-		void appendChild(SettingsItemBase* child);
-
-		/// Remove all children under me
-		void clearChildren();
-
-		/// Get the i-th child
-		SettingsItemBase* child(int row);
-
-		/// Get the i-th child - const variety
-		SettingsItemBase* child(int row) const;
-
-		/// Get a child by name
-		SettingsItemBase* child(QString& childName);
-
-		/// Get a child by path - inclusive of the child name, of course
-		SettingsItemBase* childPath(QString& childPath);
-
-		/// How many children do I have?
-		int childCount() const;
-
 		/// What child number am I?
 		int childNumber() const;
 
 		/// Clone this item, which is basically equivalent to calling the copy ctor
 		virtual SettingsItemBase* clone() const;
 
-		/// Number of cols required for this item.
-		int columnCount() const;
-
 		/// The item will create its editor. The delegate
 		/// is in charge to manage the brand new editor
 		virtual QWidget* createEditor(QWidget *parent);
-
-		/// Return the data stored in the i-th column of
-		/// this item. In this case, either the label
-		/// or the numerical value
-		QVariant data(int column) const;
-
-		/// Is this item editable?
-		Qt::ItemFlag editable() const;
 
 		/// Only meaningful for the combo-box item,
 		/// returns zero for all the other items
@@ -107,25 +66,6 @@ class SettingsItemBase {
 		/// for the editable entry of the editable items
 		virtual QColor getBackGroundColor(int iColumn) const;
 
-		/// Get a reference to the columns vector
-		std::vector<SettingsColumn*>& getColumnVector();
-
-		/// Get a reference to the i-th column in the vector
-		SettingsColumn* getColumn(const int);
-
-		/// Returns the font this item should be visualized
-		/// with in the item tree
-		virtual QFont getFont() const;
-
-		/// Returns the associated icon - in this case an empty QVariant
-		QVariant getIcon();
-
-		/// Get the internal name of this item, used to locate it in the tree
-		virtual QString getInternalName() const;
-
-		/// Get the display name of this item
-		QString getDisplayName() const;
-
 		/// Get the name of the variable as this will be registered
 		/// in the VariableFileParser
 		QString getVariableName() const;
@@ -136,21 +76,6 @@ class SettingsItemBase {
 		/// Visual options - requested by the Delegate
 		virtual void paint(QPainter* painter, const QStyleOptionViewItem &option,
 				const QModelIndex &index) const;
-
-		/// Return the parent item
-		SettingsItemBase* parentItem();
-
-		/// Remove a child by position
-		void removeChild(size_t iChild);
-
-		/// What child number am I for my parent?
-		int row() const;
-
-		/// Set the data for this item
-		bool setData(int column, const QVariant &value);
-
-		/// Set if this item is editable
-		void setEditable(bool);
 
 		/// Edit the data in the editor - requested by the Delegate
 		virtual void setEditorData(QWidget *editor,const QModelIndex&);
@@ -164,28 +89,11 @@ class SettingsItemBase {
 		virtual const SettingsItemBase& operator=(const SettingsItemBase& rhs);
 
 		/// Comparison operator
-		bool operator==(const SettingsItemBase& rhs);
-
-		/// Inverse comparison operator
-		bool operator!=(const SettingsItemBase& rhs);
-
-		/// Set the parent of this item
-		void setParent(SettingsItemBase* parentItem);
-
-		/// Recursively set the parent of this item and of all its children
-		void setParentRecursive(SettingsItemBase* parentItem);
-
-		/// Return the flag 'expanded'
-		bool expanded() const;
+		virtual bool operator==(const SettingsItemBase& rhs);
 
 		/// Factory method - builds a SettingsItem from the attributes
 		/// read from xml and stored into an appropriate set
 		static SettingsItemBase* settingsItemFactory(const XmlAttributeSet&);
-
-		public slots:
-
-		/// This slot is triggered when the item is expanded in the view
-		void setExpanded(bool expanded);
 
 		protected:
 
@@ -195,10 +103,6 @@ class SettingsItemBase {
 		/// Copy Ctor
 		SettingsItemBase(const 	SettingsItemBase&);
 
-		/// Columns the SettingsItem must be able to fill
-		/// The model is build on top of these columns
-		std::vector<SettingsColumn*> columns_;
-
 		/// Name of the variable when this is used to populate the
 		/// variableFileParser
 		QString variableName_;
@@ -206,19 +110,7 @@ class SettingsItemBase {
 		/// Stores the tooltip for this item
 		QVariant tooltip_;
 
-		/// Parent of this item
-		SettingsItemBase* pParent_;
-
 		private:
-
-		/// Children of this item
-		QList<SettingsItemBase*> children_;
-
-		/// Is this item editable?
-		Qt::ItemFlag editable_;
-
-		/// Is this item expanded in the view?
-		bool expanded_;
 
 };
 

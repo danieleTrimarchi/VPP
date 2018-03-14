@@ -27,6 +27,8 @@
 #include <QtWidgets/QTextEdit>
 #include <QtCore>
 #include <QtGui/QScreen>
+
+#include "settingsWindow/GetItemVisitor.h"
 #include "VPPItemFactory.h"
 #include "VppCustomPlotWidget.h"
 #include "VPPDialogs.h"
@@ -37,7 +39,6 @@
 #include "VppPolarCustomPlotWidget.h"
 #include "VPPSailCoefficientIO.h"
 #include "VPPSettingsDialog.h"
-#include "GetSettingsItemVisitor.h"
 #include "VariableTreeModel.h"
 
 // Stream used to redirect cout to the log window

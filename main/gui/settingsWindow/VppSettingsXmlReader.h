@@ -108,7 +108,7 @@ class VppSettingsXmlReader {
 	private:
 
 		/// Read the content of the file
-		void read(SettingsItemBase*);
+		void read(Item*);
 
 		/// Underlying xml reader
 		boost::shared_ptr<QXmlStreamReader> pXml_;

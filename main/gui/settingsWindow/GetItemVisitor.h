@@ -4,28 +4,28 @@
 #include "SettingsItem.h"
 
 /* This visitor is used to get and set values on the settings item tree */
-class GetSettingsItemVisitor {
+class GetItemVisitor {
 
 	public:
 
 		/// Ctor
-		GetSettingsItemVisitor(SettingsItemBase* root);
+		GetItemVisitor(Item* root);
 
 		/// Dtor
-		virtual ~GetSettingsItemVisitor();
+		virtual ~GetItemVisitor();
 
 		/// Items are accepting the visitor starting from root
-		virtual SettingsItemBase* get(QString varName) const =0;
+		virtual Item* get(QString varName) const =0;
 
 	protected:
 
 		/// Ptr on the root of the tree this item is iterating onto
-		SettingsItemBase* pRoot_;
+		Item* pRoot_;
 
 	private:
 
 		/// Disallowed default Ctor
-		GetSettingsItemVisitor();
+		GetItemVisitor();
 
 };
 
@@ -33,23 +33,23 @@ class GetSettingsItemVisitor {
 
 
 /* This visitor is used to get and set values on the settings item tree */
-class GetSettingsItemByPathVisitor : public GetSettingsItemVisitor {
+class GetItemByPathVisitor : public GetItemVisitor {
 
 	public:
 
 		/// Ctor
-		GetSettingsItemByPathVisitor(SettingsItemBase* root);
+		GetItemByPathVisitor(Item* root);
 
 		/// Dtor
-		~GetSettingsItemByPathVisitor();
+		~GetItemByPathVisitor();
 
 		/// Items are accepting the visitor starting from root
-		SettingsItemBase* get(QString varName) const;
+		Item* get(QString varName) const;
 
 	private:
 
 		/// Disallowed default Ctor
-		GetSettingsItemByPathVisitor();
+		GetItemByPathVisitor();
 
 };
 
@@ -58,23 +58,23 @@ class GetSettingsItemByPathVisitor : public GetSettingsItemVisitor {
 /// This visitor is basically a copy of the GetSettingsItemByPathVisitor, but the
 /// items will accept it differently - they will search a match with their name,
 /// instead of using the path
-class GetSettingsItemByNameVisitor : public GetSettingsItemVisitor {
+class GetItemByNameVisitor : public GetItemVisitor {
 
 	public :
 
 		/// Ctor
-		GetSettingsItemByNameVisitor(SettingsItemBase* root);
+		GetItemByNameVisitor(Item* root);
 
 		/// Dtor
-		~GetSettingsItemByNameVisitor();
+		~GetItemByNameVisitor();
 
 		/// Items are accepting the visitor starting from root
-		SettingsItemBase* get(QString varName) const;
+		Item* get(QString varName) const;
 
 	private:
 
 		/// Disallowed default Ctor
-		GetSettingsItemByNameVisitor();
+		GetItemByNameVisitor();
 
 };
 

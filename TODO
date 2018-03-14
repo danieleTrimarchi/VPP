@@ -1,8 +1,21 @@
--> TO BE TESTED: Only save the SettingsModel to the ReferenceModel (and update the variableTree) if some  changes in the settings are detected	
-
 -> Unify the base class for the VariableTree and the SettingsTree
+-> unify VariableTreeItem and SettingsItem(Root)
+
+Questions: 
+	See :
+		SettingsItemBase* SettingsItemBounds::getItemMin() {
+		return dynamic_cast<SettingsItemBase*>(child(0));
+		}
+	child is a method of Item, returning an Item. But the child is derived from
+	SettingsItemBase, thus it has other methods I want to use, See for instance
+	VariableParserGetVisitor::visit(SettingsItemBounds* pItem)
+	wher I need to call getVariableName. This is a method for SettingsItemBase,
+	not for Item. 
+	Is there a better structure than dynamic_cast? 
+
 
 -> Set Settings values when loosing focus from the SettingsItemWindow cell
+	This is supposedly already implemented --WHERE-- but it does not work!
 
 -> parser print should work!
  

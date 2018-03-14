@@ -1,10 +1,11 @@
 #include "SettingsModel.h"
 #include <iostream>
+
+#include "GetItemVisitor.h"
 #include "VPPException.h"
-#include "GetSettingsItemVisitor.h"
 
 SettingsModel::SettingsModel():
-QAbstractItemModel() {
+	VppItemModel() {
 
 	// Instantiate the root, which is invisible
 	pRootItem_ = new SettingsItemRoot;
@@ -13,10 +14,135 @@ QAbstractItemModel() {
 
 // Copy Ctor
 SettingsModel::SettingsModel(const SettingsModel& rhs) :
-									pRootItem_( rhs.pRootItem_->clone() ) {
+	VppItemModel(),
+	pRootItem_( rhs.pRootItem_->clone() ) {
 
 }
 
+// Virtual Dtor
+SettingsModel::~SettingsModel(){
+	delete pRootItem_;
+}
+
+// How many cols?
+int SettingsModel::columnCount(const QModelIndex &parent) const {
+
+	if (parent.isValid())
+		return static_cast<SettingsItemBase*>(parent.internalPointer())->columnCount();
+	else
+		return pRootItem_->columnCount();
+}
+
+QVariant SettingsModel::data(const QModelIndex &index, int role) const {
+
+	// Index not valid, just return
+	if (!index.isValid())
+		return QVariant();
+
+	// Display or edit...
+	if (role == Qt::DisplayRole || role == Qt::EditRole)
+		return getItem(index)->data(index.column());
+
+	if(role==Qt::FontRole)
+		return getItem(index)->getFont();
+
+	if(role==Qt::BackgroundColorRole)
+		return getItem(index)->getBackGroundColor(index.column());
+
+	if(role==Qt::ToolTipRole)
+		return getItem(index)->getToolTip();
+
+	// Decorate with an icon...
+	else if (role == Qt::DecorationRole )
+		return getItem(index)->getIcon();
+
+	// Default, that should never happen
+	return QVariant();
+
+}
+
+Qt::ItemFlags SettingsModel::flags(const QModelIndex &index) const {
+
+	if (!index.isValid())
+		return 0;
+
+	if(index.column()==0)
+		return VppItemModel::flags(index);
+
+	// We return editable IF the item AND the column are both editable
+	if( getItem(index)->editable() == Qt::ItemIsEditable &&
+			getItem(index)->getColumn(index.column())->editable() == Qt::ItemIsEditable )
+		return Qt::ItemIsEditable | VppItemModel::flags(index);
+	else
+		return Qt::NoItemFlags | VppItemModel::flags(index);
+
+}
+
+QVariant SettingsModel::headerData(	int section,
+		Qt::Orientation orientation,
+		int role) const {
+
+	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+		return pRootItem_->data(section);
+
+	return QVariant();
+}
+
+QModelIndex SettingsModel::index(int row, int column, const QModelIndex &parent) const {
+
+	if (!hasIndex(row, column, parent))
+		return QModelIndex();
+
+	SettingsItemBase* parentItem;
+
+	if (!parent.isValid())
+		parentItem = pRootItem_;
+	else
+		parentItem = static_cast<SettingsItemBase*>(parent.internalPointer());
+
+	Item* childItem = parentItem->child(row);
+	if (childItem)
+		return createIndex(row, column, childItem);
+	else
+		return QModelIndex();
+}
+
+// Get my parent
+QModelIndex SettingsModel::parent(const QModelIndex &index) const {
+
+	if (!index.isValid())
+		return QModelIndex();
+
+	Item* childItem = static_cast<SettingsItemBase*>(index.internalPointer());
+	Item* parentItem = childItem->parentItem();
+
+	if(!childItem)
+		throw VPPException(HERE,"index has no item associated!");
+
+	if(!parentItem)
+		return QModelIndex(); //throw VPPException(HERE,"item has no parent!");
+
+	if (parentItem == pRootItem_)
+		return QModelIndex();
+
+	return createIndex(parentItem->row(), 0, parentItem);
+
+}
+
+// How many rows?
+int SettingsModel::rowCount(const QModelIndex &parent) const {
+
+	SettingsItemBase* parentItem;
+	if (parent.column() > 0)
+		return 0;
+
+	if (!parent.isValid())
+		parentItem = pRootItem_;
+	else
+		parentItem = static_cast<SettingsItemBase*>(parent.internalPointer());
+
+	return parentItem->childCount();
+}
 
 // Setup the data of this model
 void SettingsModel::setupModelData() {
@@ -33,7 +159,7 @@ void SettingsModel::setupModelData() {
 	pVPPSettings->appendChild( new SettingsItemBounds("Crew position bounds","B",0,3,"[m]","Allowed boat heel angle bounds"));
 	pVPPSettings->appendChild( new SettingsItemBounds("Flat bounds","F",0.4,1," ","Allowed boat heel angle bounds"));
 
-//	//-- Wind
+	//	//-- Wind
 	SettingsItemGroup* pWindSettings = new SettingsItemGroup("Wind Settings");
 	pWindSettings->setParent(pRootItem_);
 	pRootItem_->appendChild(pWindSettings);
@@ -183,135 +309,9 @@ void SettingsModel::setItemCollapsed(const QModelIndex& index) {
 	getItem(index)->setExpanded(false);
 }
 
-// Virtual Dtor
-SettingsModel::~SettingsModel(){
-	delete pRootItem_;
-}
-
-
-QVariant SettingsModel::data(const QModelIndex &index, int role) const {
-
-	// Index not valid, just return
-	if (!index.isValid())
-		return QVariant();
-
-	// Display or edit...
-	if (role == Qt::DisplayRole || role == Qt::EditRole)
-		return getItem(index)->data(index.column());
-
-	if(role==Qt::FontRole)
-		return getItem(index)->getFont();
-
-	if(role==Qt::BackgroundColorRole)
-		return getItem(index)->getBackGroundColor(index.column());
-
-	if(role==Qt::ToolTipRole)
-		return getItem(index)->getToolTip();
-
-	// Decorate with an icon...
-	else if (role == Qt::DecorationRole )
-		return getItem(index)->getIcon();
-
-	// Default, that should never happen
-	return QVariant();
-
-}
-
-Qt::ItemFlags SettingsModel::flags(const QModelIndex &index) const {
-
-	if (!index.isValid())
-		return 0;
-
-	if(index.column()==0)
-		return QAbstractItemModel::flags(index);
-
-	// We return editable IF the item AND the column are both editable
-	if( getItem(index)->editable() == Qt::ItemIsEditable &&
-			getItem(index)->getColumn(index.column())->editable() == Qt::ItemIsEditable )
-		return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
-	else
-		return Qt::NoItemFlags | QAbstractItemModel::flags(index);
-
-}
-
 // Returns a ptr to the root of this model
 SettingsItemRoot* SettingsModel::getRoot() const {
 	return pRootItem_;
-}
-
-QVariant SettingsModel::headerData(	int section,
-		Qt::Orientation orientation,
-		int role) const {
-
-	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-		return pRootItem_->data(section);
-
-	return QVariant();
-}
-
-QModelIndex SettingsModel::index(int row, int column, const QModelIndex &parent) const {
-
-	if (!hasIndex(row, column, parent))
-		return QModelIndex();
-
-	SettingsItemBase* parentItem;
-
-	if (!parent.isValid())
-		parentItem = pRootItem_;
-	else
-		parentItem = static_cast<SettingsItemBase*>(parent.internalPointer());
-
-	SettingsItemBase *childItem = parentItem->child(row);
-	if (childItem)
-		return createIndex(row, column, childItem);
-	else
-		return QModelIndex();
-}
-
-/// Get my parent
-QModelIndex SettingsModel::parent(const QModelIndex &index) const {
-
-	if (!index.isValid())
-		return QModelIndex();
-
-	SettingsItemBase* childItem = static_cast<SettingsItemBase*>(index.internalPointer());
-	SettingsItemBase* parentItem = childItem->parentItem();
-
-	if(!childItem)
-		throw VPPException(HERE,"index has no item associated!");
-
-	if(!parentItem)
-		return QModelIndex(); //throw VPPException(HERE,"item has no parent!");
-
-	if (parentItem == pRootItem_)
-		return QModelIndex();
-
-	return createIndex(parentItem->row(), 0, parentItem);
-
-}
-
-// How many rows?
-int SettingsModel::rowCount(const QModelIndex &parent) const {
-
-	SettingsItemBase* parentItem;
-	if (parent.column() > 0)
-		return 0;
-
-	if (!parent.isValid())
-		parentItem = pRootItem_;
-	else
-		parentItem = static_cast<SettingsItemBase*>(parent.internalPointer());
-
-	return parentItem->childCount();
-}
-
-// How many cols?
-int SettingsModel::columnCount(const QModelIndex &parent) const {
-
-	if (parent.isValid())
-		return static_cast<SettingsItemBase*>(parent.internalPointer())->columnCount();
-	else
-		return pRootItem_->columnCount();
 }
 
 SettingsItemBase* SettingsModel::getItem(const QModelIndex &index) const {

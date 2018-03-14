@@ -3,9 +3,9 @@
 #include "VppSettingsXmlReader.h"
 #include "VPPException.h"
 #include "VppSettingsXmlReader.h"
-#include "GetSettingsItemVisitor.h"
 #include <iostream>
 #include <set>
+#include "GetItemVisitor.h"
 
 using namespace std;
 
@@ -156,7 +156,7 @@ boost::shared_ptr<SettingsItemBase> VppSettingsXmlReader::getRoot() {
 	return pRootItem_;
 }
 
-void VppSettingsXmlReader::read(SettingsItemBase* parentItem) {
+void VppSettingsXmlReader::read(Item* parentItem) {
 
 	//Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "vppSettings");
 
