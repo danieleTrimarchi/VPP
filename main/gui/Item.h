@@ -2,6 +2,7 @@
 #define ITEM_H
 
 #include <QtCore/QList>
+#include <QtGui/qfont.h>
 #include "DataColumn.h"
 
 /// Forward declarations

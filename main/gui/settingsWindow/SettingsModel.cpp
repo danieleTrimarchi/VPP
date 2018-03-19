@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "GetItemVisitor.h"
-#include "VPPException.h"
 
 SettingsModel::SettingsModel():
 	VppItemModel() {
@@ -21,129 +20,21 @@ SettingsModel::SettingsModel(const SettingsModel& rhs) :
 // Virtual Dtor
 SettingsModel::~SettingsModel(){}
 
-// How many cols?
-int SettingsModel::columnCount(const QModelIndex &parent) const {
-
-	if (parent.isValid())
-		return static_cast<SettingsItemBase*>(parent.internalPointer())->columnCount();
-	else
-		return pRootItem_->columnCount();
-}
-
-QVariant SettingsModel::data(const QModelIndex &index, int role) const {
-
-	// Index not valid, just return
-	if (!index.isValid())
-		return QVariant();
-
-	// Display or edit...
-	if (role == Qt::DisplayRole || role == Qt::EditRole)
-		return getItem(index)->data(index.column());
-
-	if(role==Qt::FontRole)
-		return getItem(index)->getFont();
-
-	if(role==Qt::BackgroundColorRole)
-		return getItem(index)->getBackGroundColor(index.column());
-
-	if(role==Qt::ToolTipRole)
-		return getItem(index)->getToolTip();
-
-	// Decorate with an icon...
-	else if (role == Qt::DecorationRole )
-		return getItem(index)->getIcon();
-
-	// Default, that should never happen
-	return QVariant();
-
-}
-
 Qt::ItemFlags SettingsModel::flags(const QModelIndex &index) const {
-
-	if (!index.isValid())
-		return 0;
-
-	if(index.column()==0)
-		return VppItemModel::flags(index);
 
 	// We return editable IF the item AND the column are both editable
 	if( getItem(index)->editable() == Qt::ItemIsEditable &&
 			getItem(index)->getColumn(index.column())->editable() == Qt::ItemIsEditable )
 		return Qt::ItemIsEditable | VppItemModel::flags(index);
-	else
-		return Qt::NoItemFlags | VppItemModel::flags(index);
+
+	// Or, we call the base-class method
+	else return VppItemModel::flags(index);
 
 }
 
 // Returns a ptr to the root of this model
 SettingsItemBase* SettingsModel::getRoot() const {
 	return dynamic_cast<SettingsItemBase*>(VppItemModel::getRoot());
-}
-
-QVariant SettingsModel::headerData(	int section,
-		Qt::Orientation orientation,
-		int role) const {
-
-	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-		return pRootItem_->data(section);
-
-	return QVariant();
-}
-
-QModelIndex SettingsModel::index(int row, int column, const QModelIndex &parent) const {
-
-	if (!hasIndex(row, column, parent))
-		return QModelIndex();
-
-	Item* parentItem;
-
-	if (!parent.isValid())
-		parentItem = pRootItem_.get();
-	else
-		parentItem = static_cast<SettingsItemBase*>(parent.internalPointer());
-
-	Item* childItem = parentItem->child(row);
-	if (childItem)
-		return createIndex(row, column, childItem);
-	else
-		return QModelIndex();
-}
-
-// Get my parent
-QModelIndex SettingsModel::parent(const QModelIndex &index) const {
-
-	if (!index.isValid())
-		return QModelIndex();
-
-	Item* childItem = static_cast<SettingsItemBase*>(index.internalPointer());
-	Item* parentItem = childItem->parentItem();
-
-	if(!childItem)
-		throw VPPException(HERE,"index has no item associated!");
-
-	if(!parentItem)
-		return QModelIndex(); //throw VPPException(HERE,"item has no parent!");
-
-	if (parentItem == pRootItem_.get())
-		return QModelIndex();
-
-	return createIndex(parentItem->row(), 0, parentItem);
-
-}
-
-// How many rows?
-int SettingsModel::rowCount(const QModelIndex &parent) const {
-
-	Item* parentItem;
-	if (parent.column() > 0)
-		return 0;
-
-	if (!parent.isValid())
-		parentItem = pRootItem_.get();
-	else
-		parentItem = static_cast<SettingsItemBase*>(parent.internalPointer());
-
-	return parentItem->childCount();
 }
 
 // Setup the data of this model
@@ -155,7 +46,6 @@ void SettingsModel::setupModelData() {
 	SettingsItemGroup* pVPPSettings = new SettingsItemGroup("VPP Settings");
 	pVPPSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pVPPSettings);
-
 	pVPPSettings->appendChild( new SettingsItemBounds("Velocity bounds","V",0,15,"m/s","Allowed boat speed bounds"));
 	pVPPSettings->appendChild( new SettingsItemBounds("Heel angle bounds","PHI",-1e-5,85,"deg","Allowed boat heel angle bounds"));
 	pVPPSettings->appendChild( new SettingsItemBounds("Crew position bounds","B",0,3,"[m]","Allowed boat heel angle bounds"));

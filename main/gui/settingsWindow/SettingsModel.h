@@ -29,32 +29,11 @@ class SettingsModel : public VppItemModel {
 		/// Virtual Dtor
 		virtual ~SettingsModel();
 
-		/// Append a variable item to the tree
-		void append( QList<QVariant>& columnData );
-
-		/// How many cols?
-		virtual int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-
-		/// Called by Qt, this method returns the data to visualize or some
-		/// display options
-		virtual QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
-
 		/// Called by Qt, returns specific flags
 		virtual Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 		// Returns a ptr to the root of this model
 		SettingsItemBase* getRoot() const;
-
-		/// Called by Qt, returns the header
-		virtual QVariant headerData(int section,
-															Qt::Orientation orientation,
-															int role = Qt::DisplayRole
-															) const Q_DECL_OVERRIDE;
-
-		/// Returns an index given row and column
-		virtual QModelIndex index(int row, int column,
-														const QModelIndex& parent= QModelIndex()
-														) const Q_DECL_OVERRIDE;
 
 		/// Assignment operator
 		const SettingsModel& operator=(const SettingsModel&);
@@ -64,12 +43,6 @@ class SettingsModel : public VppItemModel {
 
 		/// Inverse Comparison operator
 		bool operator!=(const SettingsModel&);
-
-		/// Get my parent
-		QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
-
-		/// How many rows?
-		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
 		/// Set some data for a given item - i.e: edit some value
 		bool setData(const QModelIndex &index, const QVariant &value, int role) override;
