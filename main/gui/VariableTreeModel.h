@@ -59,9 +59,6 @@ class VariableTreeModel : public VppItemModel {
 
 		/// Actually generate the item tree
 		void setupModelData();
-
-		/// Root item, to which all children are appended
-		VariableTreeItemBase *rootItem_;
 };
 
 #endif // TREEMODEL_H

@@ -2,42 +2,38 @@
 
 #include <QStringList>
 #include "VariableTreeItem.h"
+#include <iostream>
 
 VariableTreeModel::VariableTreeModel(QObject *parent)
 : VppItemModel(parent) {
 
 	QList<QVariant> rootData;
 	rootData <<  "Name" << "Value";
-	rootItem_ = new VariableTreeItem(rootData);
+	pRootItem_.reset( new VariableTreeItem(rootData) );
 	setupModelData();
 
 }
 
-VariableTreeModel::~VariableTreeModel()
-{
-	// Delete the root of the children. The destructor
-    // of the item cleans up the children
-	delete rootItem_;
-}
+VariableTreeModel::~VariableTreeModel() {}
 
 // Append a variable item to the tree
 void VariableTreeModel::append( QList<QVariant>& columnData ) {
 
 	// Check if we have a fakeRootItem; if not add it
-	if(!rootItem_->childCount())
-		rootItem_->appendChild(new VariableTreeFakeRoot(columnData, rootItem_));
+	if(!pRootItem_->childCount())
+		pRootItem_->appendChild(new VariableTreeFakeRoot(columnData, pRootItem_.get()));
 
   	// Get the index of the fake root item
   	QModelIndex fakeRootItemIndex= index(1,0);
 
-	size_t nchildren = rootItem_->child(0)->childCount();
+	size_t nchildren = pRootItem_->child(0)->childCount();
 
 	// Call this method to append ONE row under the fake root.
 	// The method emits the rowsAboutToBeInserted() signal that allows
 	// for a smooth connection with the view
 	beginInsertRows(fakeRootItemIndex, nchildren, nchildren);
 
-	rootItem_->child(0)->appendChild(new VariableTreeItem(columnData, rootItem_->child(0)));
+	pRootItem_->child(0)->appendChild(new VariableTreeItem(columnData, pRootItem_->child(0)));
 
 	endInsertRows();
 
@@ -49,7 +45,7 @@ void VariableTreeModel::clearChildren() {
 	beginResetModel();
 
 	// Actually delete the children
-	rootItem_->clearChildren();
+	pRootItem_->clearChildren();
 
 	endResetModel();
 }
@@ -57,10 +53,11 @@ void VariableTreeModel::clearChildren() {
 // How many cols?
 int VariableTreeModel::columnCount(const QModelIndex &parent) const {
 
-	if (parent.isValid())
+	if (parent.isValid()){
 		return static_cast<VariableTreeItemBase*>(parent.internalPointer())->columnCount();
-	else
-		return rootItem_->columnCount();
+	} else{
+		return pRootItem_->columnCount();
+	}
 }
 
 // Called by Qt, this method returns the data to visualize or some
@@ -104,7 +101,7 @@ QVariant VariableTreeModel::headerData(int section, Qt::Orientation orientation,
 		int role) const {
 
 	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-		return rootItem_->data(section);
+		return pRootItem_->data(section);
 
 	return QVariant();
 }
@@ -115,10 +112,10 @@ QModelIndex VariableTreeModel::index(int row, int column, const QModelIndex &par
 	if (!hasIndex(row, column, parent))
 		return QModelIndex();
 
-	VariableTreeItemBase *parentItem;
+	Item *parentItem;
 
 	if (!parent.isValid())
-		parentItem = rootItem_;
+		parentItem = pRootItem_.get();
 	else
 		parentItem = static_cast<VariableTreeItemBase*>(parent.internalPointer());
 
@@ -138,7 +135,7 @@ QModelIndex VariableTreeModel::parent(const QModelIndex &index) const {
 	VariableTreeItemBase *childItem = static_cast<VariableTreeItemBase*>(index.internalPointer());
 	Item* parentItem = childItem->parentItem();
 
-	if (parentItem == rootItem_)
+	if (parentItem == pRootItem_.get())
 		return QModelIndex();
 
 	return createIndex(parentItem->row(), 0, parentItem);
@@ -147,12 +144,12 @@ QModelIndex VariableTreeModel::parent(const QModelIndex &index) const {
 // How many rows?
 int VariableTreeModel::rowCount(const QModelIndex &parent) const {
 
-	VariableTreeItemBase *parentItem;
+	Item* parentItem;
 	if (parent.column() > 0)
 		return 0;
 
 	if (!parent.isValid())
-		parentItem = rootItem_;
+		parentItem = pRootItem_.get();
 	else
 		parentItem = static_cast<VariableTreeItemBase*>(parent.internalPointer());
 
@@ -167,7 +164,7 @@ void VariableTreeModel::setupModelData() {
 	columnData << "Variables"<<" ";
 
 	// Place the fake root under the real root
-	rootItem_->appendChild(new VariableTreeFakeRoot(columnData, rootItem_));
+	pRootItem_->appendChild(new VariableTreeFakeRoot(columnData, pRootItem_.get()));
 
 }
 

@@ -44,6 +44,9 @@ class Item {
 		/// How many children do I have
 		int childCount() const;
 
+		/// What child number am I?
+		int childNumber() const;
+
 		/// Remove all children under me
 		void clearChildren();
 
@@ -64,6 +67,10 @@ class Item {
 
 		/// Return the flag 'expanded'
 		bool expanded() const;
+
+		/// Return the backGround color for this item
+		/// The default value is white
+		virtual QColor getBackGroundColor(int iColumn) const;
 
 		/// Get a child by path - inclusive of the child name, of course
 		Item* getChildbyPath(QString& childPath);
@@ -90,6 +97,12 @@ class Item {
 
 		/// Get the internal name of this item, used to locate it in the tree
 		virtual QString getInternalName() const;
+
+		/// Returns the tooltip for this item, if any
+		virtual QVariant getToolTip();
+
+		/// Assignment operator
+		virtual const Item& operator=(const Item& rhs);
 
 		/// Comparison operator
 		virtual bool operator==(const Item& rhs);

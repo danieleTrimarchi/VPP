@@ -1,5 +1,4 @@
--> Unify the base class for the VariableTree and the SettingsTree
--> unify VariableTreeItem and SettingsItem(Root)
+Correct the viz of variableTreeItems 
 
 Questions: 
 	See :
@@ -13,6 +12,12 @@ Questions:
 	not for Item. 
 	Is there a better structure than dynamic_cast? 
 
+	Also: 
+		SettingsItemBase* SettingsModel::getRoot() const {
+		return dynamic_cast<SettingsItemBase*>(VppItemModel::getRoot());
+		}
+
+---
 
 -> Set Settings values when loosing focus from the SettingsItemWindow cell
 	This is supposedly already implemented --WHERE-- but it does not work!

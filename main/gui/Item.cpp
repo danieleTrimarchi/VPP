@@ -101,6 +101,14 @@ int Item::childCount() const {
 	return children_.count();
 }
 
+// What child number am I?
+int Item::childNumber() const {
+	if (pParent_)
+		return pParent_->getChildren().indexOf(const_cast<Item*>(this));
+
+	return 0;
+}
+
 // Remove all children under me
 void Item::clearChildren() {
 
@@ -146,6 +154,13 @@ Qt::ItemFlag Item::editable() const {
 // Return the flag 'expanded'
 bool Item::expanded() const {
 	return expanded_;
+}
+
+// Return the backGround color for this item based on the column
+QColor Item::getBackGroundColor(int iColumn) const {
+
+	return QColor(Qt::GlobalColor::white);
+
 }
 
 // Get a child by path - inclusive of the child name, of course
@@ -203,6 +218,22 @@ QString Item::getInternalName() const {
 	path += getDisplayName().replace(" ","_",Qt::CaseSensitive);
 
 	return path;
+}
+
+// Returns the tooltip for this item, if any
+QVariant Item::getToolTip() {
+	return QVariant();
+}
+
+// Assignment operator
+const Item& Item::operator=(const Item& rhs) {
+
+	pParent_= rhs.pParent_;
+	columns_= rhs.columns_;
+	editable_=rhs.editable_;
+	expanded_=rhs.expanded_;
+
+	return *this;
 }
 
 // Comparison operator

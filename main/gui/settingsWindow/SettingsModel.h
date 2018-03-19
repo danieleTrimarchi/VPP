@@ -42,8 +42,8 @@ class SettingsModel : public VppItemModel {
 		/// Called by Qt, returns specific flags
 		virtual Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
 
-		/// Returns a ptr to the root of this model
-		SettingsItemRoot* getRoot() const;
+		// Returns a ptr to the root of this model
+		SettingsItemBase* getRoot() const;
 
 		/// Called by Qt, returns the header
 		virtual QVariant headerData(int section,
@@ -102,12 +102,6 @@ class SettingsModel : public VppItemModel {
 		void setItemExpanded(const QModelIndex&);
 
 	private:
-
-		/// Get an item of this model
-		SettingsItemBase* getItem(const QModelIndex &index) const;
-
-		/// Root of the model tree
-		SettingsItemRoot* pRootItem_;
 
 };
 

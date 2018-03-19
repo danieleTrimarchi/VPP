@@ -3,12 +3,15 @@
 
 #include <QtCore/QVariant>
 
+/// Enum the columns types
 enum columnNames {
 	name,
 	value,
 	unit
 };
 
+/// Column storing the data of the item tree
+/// Base class for name, value and unit column
 class DataColumn {
 
 	public:
@@ -53,12 +56,11 @@ class DataColumn {
 
 	private:
 
-
-
 };
 
 ///-----------------------------------------
 
+/// Store the name related data for this item
 class NameColumn : public DataColumn {
 
 	public :
@@ -83,11 +85,11 @@ class NameColumn : public DataColumn {
 		/// Copy Ctor
 		NameColumn(const NameColumn&);
 
-
 };
 
 ///-----------------------------------------
 
+/// Store the value related data for this item
 class ValueColumn : public DataColumn {
 
 	public :
@@ -120,6 +122,7 @@ class ValueColumn : public DataColumn {
 
 ///-----------------------------------------
 
+/// Store the unit related data for this item
 class UnitColumn : public DataColumn {
 
 	public :

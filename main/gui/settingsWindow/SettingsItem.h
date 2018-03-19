@@ -44,9 +44,6 @@ class SettingsItemBase : public Item {
 		/// my children. After this, I will have no more children
 		void assign(SettingsItemBase* dstParent);
 
-		/// What child number am I?
-		int childNumber() const;
-
 		/// Clone this item, which is basically equivalent to calling the copy ctor
 		virtual SettingsItemBase* clone() const;
 

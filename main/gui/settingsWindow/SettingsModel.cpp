@@ -8,21 +8,18 @@ SettingsModel::SettingsModel():
 	VppItemModel() {
 
 	// Instantiate the root, which is invisible
-	pRootItem_ = new SettingsItemRoot;
+	pRootItem_.reset( new SettingsItemRoot );
 
 }
 
 // Copy Ctor
 SettingsModel::SettingsModel(const SettingsModel& rhs) :
-	VppItemModel(),
-	pRootItem_( rhs.pRootItem_->clone() ) {
+	VppItemModel(rhs) {
 
 }
 
 // Virtual Dtor
-SettingsModel::~SettingsModel(){
-	delete pRootItem_;
-}
+SettingsModel::~SettingsModel(){}
 
 // How many cols?
 int SettingsModel::columnCount(const QModelIndex &parent) const {
@@ -78,6 +75,11 @@ Qt::ItemFlags SettingsModel::flags(const QModelIndex &index) const {
 
 }
 
+// Returns a ptr to the root of this model
+SettingsItemBase* SettingsModel::getRoot() const {
+	return dynamic_cast<SettingsItemBase*>(VppItemModel::getRoot());
+}
+
 QVariant SettingsModel::headerData(	int section,
 		Qt::Orientation orientation,
 		int role) const {
@@ -93,10 +95,10 @@ QModelIndex SettingsModel::index(int row, int column, const QModelIndex &parent)
 	if (!hasIndex(row, column, parent))
 		return QModelIndex();
 
-	SettingsItemBase* parentItem;
+	Item* parentItem;
 
 	if (!parent.isValid())
-		parentItem = pRootItem_;
+		parentItem = pRootItem_.get();
 	else
 		parentItem = static_cast<SettingsItemBase*>(parent.internalPointer());
 
@@ -122,7 +124,7 @@ QModelIndex SettingsModel::parent(const QModelIndex &index) const {
 	if(!parentItem)
 		return QModelIndex(); //throw VPPException(HERE,"item has no parent!");
 
-	if (parentItem == pRootItem_)
+	if (parentItem == pRootItem_.get())
 		return QModelIndex();
 
 	return createIndex(parentItem->row(), 0, parentItem);
@@ -132,12 +134,12 @@ QModelIndex SettingsModel::parent(const QModelIndex &index) const {
 // How many rows?
 int SettingsModel::rowCount(const QModelIndex &parent) const {
 
-	SettingsItemBase* parentItem;
+	Item* parentItem;
 	if (parent.column() > 0)
 		return 0;
 
 	if (!parent.isValid())
-		parentItem = pRootItem_;
+		parentItem = pRootItem_.get();
 	else
 		parentItem = static_cast<SettingsItemBase*>(parent.internalPointer());
 
@@ -151,7 +153,7 @@ void SettingsModel::setupModelData() {
 	// the root. They are label and they have editable children
 	// composed by label and an editable value with validator
 	SettingsItemGroup* pVPPSettings = new SettingsItemGroup("VPP Settings");
-	pVPPSettings->setParent(pRootItem_);
+	pVPPSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pVPPSettings);
 
 	pVPPSettings->appendChild( new SettingsItemBounds("Velocity bounds","V",0,15,"m/s","Allowed boat speed bounds"));
@@ -161,7 +163,7 @@ void SettingsModel::setupModelData() {
 
 	//	//-- Wind
 	SettingsItemGroup* pWindSettings = new SettingsItemGroup("Wind Settings");
-	pWindSettings->setParent(pRootItem_);
+	pWindSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pWindSettings);
 
 	pWindSettings->appendChild( new SettingsItemBounds("Wind speed bounds","VTW",2,6,"[m/s]","Real Wind speed bounds"));
@@ -171,7 +173,7 @@ void SettingsModel::setupModelData() {
 
 	//-- Hull Settings...
 	SettingsItemGroup* pHullSettings = new SettingsItemGroup("Hull Settings");
-	pHullSettings->setParent(pRootItem_);
+	pHullSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pHullSettings);
 
 	pHullSettings->appendChild( new SettingsItem("LWL","LWL",0,"m","Design waterline length") 	);
@@ -193,14 +195,14 @@ void SettingsModel::setupModelData() {
 
 	//-- Crew Settings...
 	SettingsItemGroup* pCrewSettings = new SettingsItemGroup("Crew Settings");
-	pCrewSettings->setParent(pRootItem_);
+	pCrewSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pCrewSettings);
 
 	pCrewSettings->appendChild( new SettingsItem("MMVBLCRW","MMVBLCRW",0,"Kg","Movable Crew Mass") 	);
 
 	// Keel Settings...
 	SettingsItemGroup* pKeelSettings = new SettingsItemGroup("Keel Settings");
-	pKeelSettings->setParent(pRootItem_);
+	pKeelSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pKeelSettings);
 
 	pKeelSettings->appendChild( new SettingsItem("DVK","DVK",0,"m^3","Displaced volume of keel") );
@@ -217,7 +219,7 @@ void SettingsModel::setupModelData() {
 
 	// Rudder Settings...
 	SettingsItemGroup* pRudderSettings = new SettingsItemGroup("Rudder Settings");
-	pRudderSettings->setParent(pRootItem_);
+	pRudderSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pRudderSettings);
 
 	pRudderSettings->appendChild( new SettingsItem("DVR","DVR",0,"m^3","Rudder displaced volume") );
@@ -231,7 +233,7 @@ void SettingsModel::setupModelData() {
 
 	// Sail Settings...
 	SettingsItemGroup* pSailSettings = new SettingsItemGroup("Sail Settings");
-	pSailSettings->setParent(pRootItem_);
+	pSailSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pSailSettings);
 
 	pSailSettings->appendChild( new SettingsItem("P","P",0,"m","Main height") );
@@ -309,28 +311,12 @@ void SettingsModel::setItemCollapsed(const QModelIndex& index) {
 	getItem(index)->setExpanded(false);
 }
 
-// Returns a ptr to the root of this model
-SettingsItemRoot* SettingsModel::getRoot() const {
-	return pRootItem_;
-}
-
-SettingsItemBase* SettingsModel::getItem(const QModelIndex &index) const {
-
-	if (index.isValid()) {
-		SettingsItemBase* item = static_cast<SettingsItemBase*>(index.internalPointer());
-		if (item)
-			return item;
-	}
-	return pRootItem_;
-}
-
-
 bool SettingsModel::setData(const QModelIndex &index, const QVariant &value, int role) {
 
 	if (role != Qt::EditRole)
 		return false;
 
-	SettingsItemBase* item = getItem(index);
+	Item* item = getItem(index);
 	bool result = item->setData(index.column(), value);
 
 	if (result){
@@ -354,7 +340,7 @@ const SettingsModel& SettingsModel::operator=(const SettingsModel& rhs) {
 		// Add a clone of the child to the new root
 		pRootItem_->appendChild(rhs.getRoot()->child(iChild)->clone());
 		// Tell the child who's his parent
-		pRootItem_->child(iChild)->setParentRecursive(pRootItem_);
+		pRootItem_->child(iChild)->setParentRecursive(pRootItem_.get());
 
 	}
 
@@ -368,7 +354,7 @@ const SettingsModel& SettingsModel::operator=(const SettingsModel& rhs) {
 		// only one level of items, which should be true for the
 		// current model but might not be always true in the future
 		for(size_t iCol=0; iCol<pRootItem_->columnCount();iCol++){
-			QModelIndex idx = createIndex(iChild,iCol,pRootItem_);
+			QModelIndex idx = createIndex(iChild,iCol,pRootItem_.get());
 			if(pRootItem_->child(iChild)->expanded()){
 				emit mustExpand(idx);
 			} else {
