@@ -58,7 +58,7 @@ QVariant VppItemModel::data(const QModelIndex &index, int role) const {
 
 	// Decorate with an icon...
 	else if (role == Qt::DecorationRole )
-		return getItem(index)->getIcon();
+		return getItem(index)->getIcon(index.column());
 
 	// Default, that should never happen
 	return QVariant();
@@ -74,7 +74,7 @@ Qt::ItemFlags VppItemModel::flags(const QModelIndex &index) const {
 	if(index.column()==0)
 		return QAbstractItemModel::flags(index);
 
-	return Qt::NoItemFlags | VppItemModel::flags(index);
+	return Qt::NoItemFlags | QAbstractItemModel::flags(index);
 
 }
 

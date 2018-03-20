@@ -94,7 +94,7 @@ class Item {
 		virtual QFont getFont() const;
 
 		/// Returns the associated icon as a QVariant
-		virtual QVariant getIcon();
+		virtual QVariant getIcon(size_t row=0);
 
 		/// Get the internal name of this item, used to locate it in the tree
 		virtual QString getInternalName() const;

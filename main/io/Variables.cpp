@@ -93,13 +93,8 @@ void VarSet::print(FILE* outStream/*=stdout*/) {
 // visualize the variables in the UI
 void VarSet::populate(VariableTreeModel* pTreeModel) {
 
-	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it){
-
-		QList<QVariant> data;
-		data << it->varName_.c_str() << it->val_;
-
-		pTreeModel->append( data );
-	}
+	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it)
+		pTreeModel->append(it->varName_.c_str(),it->val_);
 
 }
 

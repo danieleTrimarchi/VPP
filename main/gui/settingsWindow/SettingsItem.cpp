@@ -462,9 +462,9 @@ SettingsItem::SettingsItem(	const QVariant& displayName,
 		const QVariant& tooltip):
 						SettingsItemBase(){
 
-	columns_[0]->setData( displayName );
-	columns_[1]->setData( value );
-	columns_[2]->setData( unit );
+	columns_[columnNames::name]->setData( displayName );
+	columns_[columnNames::value]->setData( value );
+	columns_[columnNames::unit]->setData( unit );
 
 	// Set the tooltip
 	tooltip_= tooltip;

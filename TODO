@@ -1,4 +1,6 @@
-Correct the viz of variableTreeItems 
+Why are we compiling moc for mainWIndow in the src tree???
+
+See the ctor of SettingsItem. there are all these strings that are not acceptable
 
 Questions: 
 	See :

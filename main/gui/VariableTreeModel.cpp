@@ -7,9 +7,7 @@
 VariableTreeModel::VariableTreeModel(QObject *parent)
 : VppItemModel(parent) {
 
-	QList<QVariant> rootData;
-	rootData <<  "Name" << "Value";
-	pRootItem_.reset( new VariableTreeItem(rootData) );
+	pRootItem_.reset( new VariableTreeRoot );
 	setupModelData();
 
 }
@@ -17,11 +15,12 @@ VariableTreeModel::VariableTreeModel(QObject *parent)
 VariableTreeModel::~VariableTreeModel() {}
 
 // Append a variable item to the tree
-void VariableTreeModel::append( QList<QVariant>& columnData ) {
+void VariableTreeModel::append(QVariant variableName, QVariant value) {
 
-	// Check if we have a fakeRootItem; if not add it
+	// Assume there is not fake root, instantiate one because we always
+	// want to see the "Variable" item by construction
 	if(!pRootItem_->childCount())
-		pRootItem_->appendChild(new VariableTreeFakeRoot(columnData, pRootItem_.get()));
+		setupModelData();
 
   	// Get the index of the fake root item
   	QModelIndex fakeRootItemIndex= index(1,0);
@@ -33,7 +32,7 @@ void VariableTreeModel::append( QList<QVariant>& columnData ) {
 	// for a smooth connection with the view
 	beginInsertRows(fakeRootItemIndex, nchildren, nchildren);
 
-	pRootItem_->child(0)->appendChild(new VariableTreeItem(columnData, pRootItem_->child(0)));
+	pRootItem_->child(0)->appendChild(new VariableTreeItem(variableName,value, pRootItem_.get()));
 
 	endInsertRows();
 
@@ -42,12 +41,8 @@ void VariableTreeModel::append( QList<QVariant>& columnData ) {
 // Actually generate the item tree
 void VariableTreeModel::setupModelData() {
 
-	// Append variables to the tree
-	QList<QVariant> columnData;
-	columnData << "Variables"<<" ";
-
 	// Place the fake root under the real root
-	pRootItem_->appendChild(new VariableTreeFakeRoot(columnData, pRootItem_.get()));
+	pRootItem_->appendChild(new VariableTreeItemGroup("Variables",pRootItem_.get()));
 
 }
 

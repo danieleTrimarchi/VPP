@@ -199,7 +199,7 @@ QFont Item::getFont() const {
 }
 
 // Returns the associated icon - in this case an empty QVariant
-QVariant Item::getIcon() {
+QVariant Item::getIcon(size_t row/*=0*/) {
 	return QVariant();
 }
 

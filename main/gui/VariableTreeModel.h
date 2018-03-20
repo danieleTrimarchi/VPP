@@ -22,7 +22,7 @@ class VariableTreeModel : public VppItemModel {
 		virtual ~VariableTreeModel();
 
 		/// Append a variable item to the tree
-		void append( QList<QVariant>& columnData );
+		void append( QVariant variableName, QVariant value );
 
 	private:
 

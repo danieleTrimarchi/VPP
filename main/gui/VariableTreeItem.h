@@ -10,7 +10,7 @@ class VariableTreeItemBase : public Item {
 	public:
 
 		/// Ctor
-		explicit VariableTreeItemBase(const QList<QVariant> &data, Item *parentItem = 0);
+		explicit VariableTreeItemBase(Item *parentItem = 0);
 
 		/// Dtor
 		virtual ~VariableTreeItemBase();
@@ -20,15 +20,20 @@ class VariableTreeItemBase : public Item {
 };
 
 ///////////////////////////////////////////////////////////////////////
-
-class VariableTreeFakeRoot : public VariableTreeItemBase {
+/// Root class for the variable items living under the variable
+/// tree model in the UI
+class VariableTreeRoot : public VariableTreeItemBase {
 
 	public:
-		explicit VariableTreeFakeRoot(const QList<QVariant> &data, Item *parentItem = 0);
-		~VariableTreeFakeRoot();
+
+		/// Ctor
+		explicit VariableTreeRoot(Item *parentItem = 0);
+
+		/// Dtor
+		~VariableTreeRoot();
 
 		/// Returns the icon associated with this variable tree item
-		virtual QVariant getIcon();
+		virtual QVariant getIcon(size_t row=0);
 
 	private:
 
@@ -36,17 +41,44 @@ class VariableTreeFakeRoot : public VariableTreeItemBase {
 
 ///////////////////////////////////////////////////////////////////////
 
+/// Item living under the variable tree. It visualizes the variableName,
+/// the variable value and some icons
 class VariableTreeItem : public VariableTreeItemBase {
 
 	public:
-		explicit VariableTreeItem(const QList<QVariant> &data, Item *parentItem = 0);
+
+		/// Ctor
+		explicit VariableTreeItem(const QVariant& variableName, const QVariant& value, Item *parentItem = 0);
+
+		/// Dtor
 		~VariableTreeItem();
 
 		/// Returns the icon associated with this variable tree item
-		virtual QVariant getIcon();
+		virtual QVariant getIcon(size_t row=0);
 
 	private:
 };
 
+///////////////////////////////////////////////////////////////////////
+
+/// Item living under the variable tree root. It is the visible placeHolder
+/// for the all the variables. It is not excluded in the future there could
+/// be several groups. For example, one group for hull-related variables, one
+/// for sail related variables...
+class VariableTreeItemGroup : public VariableTreeItemBase {
+
+	public:
+
+		/// Ctor
+		explicit VariableTreeItemGroup(const QVariant& grooupName, Item *parentItem = 0);
+
+		/// Dtor
+		~VariableTreeItemGroup();
+
+		/// Returns the icon associated with this variable tree item
+		virtual QVariant getIcon(size_t row=0);
+
+	private:
+};
 
 #endif // TREEITEM_H

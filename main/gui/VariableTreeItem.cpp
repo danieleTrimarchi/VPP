@@ -2,16 +2,12 @@
 //#include <QtCore/QStringList>
 #include "VariableTreeItem.h"
 
-VariableTreeItemBase::VariableTreeItemBase(const QList<QVariant> &data, Item *parent) :
-	Item(parent) {
+VariableTreeItemBase::VariableTreeItemBase(Item* parentItem /*=0*/) :
+	Item(parentItem) {
 
 	// The variable item is visualized by name and value
-	// WARNING!!
-	// todo dtrimarchi : the data are filled based on
-	// an intrinsic order name-value in the QList<> data.
-	// This is not acceptable and must be seriously improved!
-	columns_.push_back(new NameColumn(data.value(0)));
-	columns_.push_back(new ValueColumn(data.value(1)));
+	columns_.push_back(new NameColumn);
+	columns_.push_back(new ValueColumn);
 
 }
 
@@ -20,32 +16,73 @@ VariableTreeItemBase::~VariableTreeItemBase() {}
 
 ////////////////////////////////////////////////////////////
 
-VariableTreeFakeRoot::VariableTreeFakeRoot(const QList<QVariant>&data, Item *parentItem /*=0*/) :
-		VariableTreeItemBase(data, parentItem) {
+// Ctor
+VariableTreeRoot::VariableTreeRoot(Item* parentItem /*=0*/) :
+		VariableTreeItemBase(parentItem) {
+
+	// Fill the columns with the name (intended as the 'dysplayName',
+	// the value and the unit
+	columns_[columnNames::name] ->setData( "Name" );
+	columns_[columnNames::value]->setData( "Value");
 
 }
 
-QVariant VariableTreeFakeRoot::getIcon() {
-	return QIcon::fromTheme("Variable", QIcon(":/icons/variable_root.png"));
+// Dtor
+VariableTreeRoot::~VariableTreeRoot(){
+
 }
 
-
-VariableTreeFakeRoot::~VariableTreeFakeRoot(){
-
+QVariant VariableTreeRoot::getIcon(size_t row/*=0*/) {
+	return QVariant();
 }
 
 ////////////////////////////////////////////////////////////
 
-VariableTreeItem::VariableTreeItem(const QList<QVariant>&data, Item *parentItem /*=0*/) :
-		VariableTreeItemBase(data, parentItem) {
+/// Ctor
+VariableTreeItem::VariableTreeItem(const QVariant& variableName, const QVariant& value, Item *parentItem /*=0*/):
+		VariableTreeItemBase(parentItem) {
+
+	columns_[columnNames::name]->setData( variableName );
+	columns_[columnNames::value]->setData( value );
 
 }
 
-QVariant VariableTreeItem::getIcon() {
-	return QIcon::fromTheme("Variable", QIcon(":/icons/variable.png"));
+
+QVariant VariableTreeItem::getIcon(size_t row/*=0*/) {
+
+	// Only return the icon for col 0
+	if(row)
+		return QVariant();
+	else
+		return QIcon::fromTheme("Variable", QIcon(":/icons/variable.png"));
 }
 
 VariableTreeItem::~VariableTreeItem(){
 
 }
+
+///////////////////////////////////////////////////////////////////////
+
+// Ctor
+VariableTreeItemGroup::VariableTreeItemGroup(const QVariant& grooupName,Item *parentItem) :
+		VariableTreeItemBase(parentItem) {
+
+	columns_[columnNames::name]->setData( grooupName );
+	// Leave the data column empty
+}
+
+// Dtor
+VariableTreeItemGroup::~VariableTreeItemGroup() {
+
+}
+
+// Returns the icon associated with this variable tree item
+QVariant VariableTreeItemGroup::getIcon(size_t row/*=0*/) {
+	// Only return the icon for col 0
+	if(row)
+		return QVariant();
+	else
+		return QIcon::fromTheme("Variable", QIcon(":/icons/variable_root.png"));;
+}
+
 
