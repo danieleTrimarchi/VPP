@@ -2,6 +2,7 @@
 
 #include "GetItemVisitor.h"
 #include "VPPException.h"
+#include <iostream>
 
 // Default Ctor
 Item::Item(Item* pParent) :
@@ -239,7 +240,8 @@ const Item& Item::operator=(const Item& rhs) {
 // Comparison operator
 bool Item::operator==(const Item& rhs) {
 
-	// Compare the name
+	// Compare the name, if the item is expanded
+	// and the columns
 	if( editable_==rhs.editable_&&
 			expanded_==rhs.expanded_ &&
 			columns_.size() == rhs.columns_.size()){
@@ -252,7 +254,6 @@ bool Item::operator==(const Item& rhs) {
 	}
 
 	return false;
-
 }
 
 // Inverse comparison operator

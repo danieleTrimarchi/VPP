@@ -26,6 +26,9 @@ QWidget(myparent) {
 	// Instantiate the model that will be visualized in the
 	// tab as a clone of the reference model
 	pTreeModel_= new SettingsModel; //(*pTreeReferenceModel_);
+
+	// Now populate the model with some items
+	pTreeModel_->setupModelData();
 	pTreeModel_->setParent(this);
 
 	// Instantiate a view that will be used to visualize the model
@@ -53,9 +56,6 @@ QWidget(myparent) {
 
 	// Connect all the required signals
 	connectSignals();
-
-	// Now populate the model with some items
-	pTreeModel_->setupModelData();
 
 	// Resize the window in order to show as much as possible
 	resize(500,500);
@@ -126,11 +126,19 @@ void TreeTab::read(QFile& file){
 // done is erased.
 void TreeTab::revert() {
 
-	// Dereference the ptr to make sure we are actually calling
-	// the operator= of SettingsModel
-	*pTreeModel_ = *pTreeReferenceModel_;
+	// Do something only if the model is different to the
+	// reference model. Dereference the ptr to make sure
+	// we are actually calling the operator= of SettingsModel
+	if( *pTreeModel_ != *pTreeReferenceModel_ ){
 
-	updateActions();
+		*pTreeModel_ = *pTreeReferenceModel_;
+
+		updateActions();
+
+		// Also update the external dependencies (in this case: the VariableTreeWidget)
+		updateDependencies();
+
+	}
 }
 
 // Get the reference model. This is where the settings

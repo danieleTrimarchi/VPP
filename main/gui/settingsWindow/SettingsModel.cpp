@@ -46,7 +46,7 @@ void SettingsModel::setupModelData() {
 	SettingsItemGroup* pVPPSettings = new SettingsItemGroup("VPP Settings");
 	pVPPSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pVPPSettings);
-	pVPPSettings->appendChild( new SettingsItemBounds("Velocity bounds","V",0,15,"m/s","Allowed boat speed bounds"));
+  pVPPSettings->appendChild( new SettingsItemBounds("Velocity bounds","V",0,15,"m/s","Allowed boat speed bounds"));
 	pVPPSettings->appendChild( new SettingsItemBounds("Heel angle bounds","PHI",-1e-5,85,"deg","Allowed boat heel angle bounds"));
 	pVPPSettings->appendChild( new SettingsItemBounds("Crew position bounds","B",0,3,"[m]","Allowed boat heel angle bounds"));
 	pVPPSettings->appendChild( new SettingsItemBounds("Flat bounds","F",0.4,1," ","Allowed boat heel angle bounds"));

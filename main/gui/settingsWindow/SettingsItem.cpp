@@ -34,8 +34,13 @@ SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs):
 	// Deep copy the variableName for the variableFileParser
 	variableName_ = rhs.variableName_;
 
-	// Deep copy the columns
+	// Cleanup the current cols
+	for(size_t iCol=0; iCol<columns_.size(); iCol++){
+		delete columns_[iCol];
+	}
 	columns_.clear();
+
+	// Deep copy the columns
 	columns_.resize(rhs.columns_.size());
 	for(size_t i=0; i<columns_.size(); i++)
 		columns_[i] = rhs.columns_[i]->clone();
@@ -82,6 +87,13 @@ SettingsItemBase* SettingsItemBase::settingsItemFactory(const XmlAttributeSet& a
 
 // Dtor
 SettingsItemBase::~SettingsItemBase() {
+
+	// Cleanup the columns instantiated in the ctor
+	for(size_t iCol=0; iCol<columns_.size(); iCol++){
+		delete columns_[iCol];
+	}
+	columns_.clear();
+
 }
 
 // Clone this item, which is basically equivalent to calling the copy ctor

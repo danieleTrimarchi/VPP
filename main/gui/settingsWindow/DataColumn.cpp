@@ -64,7 +64,8 @@ NameColumn::NameColumn(QVariant value) :
 // Copy Ctor
 NameColumn::NameColumn(const NameColumn& rhs) :
 			DataColumn(rhs){
-	data_=value;
+	/* Do nothing as the name is copied over by
+	 * the base class */
 }
 
 // Dtor
