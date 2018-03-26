@@ -126,18 +126,17 @@ void TreeTab::read(QFile& file){
 // done is erased.
 void TreeTab::revert() {
 
-	// Do something only if the model is different to the
-	// reference model. Dereference the ptr to make sure
-	// we are actually calling the operator= of SettingsModel
 	if( *pTreeModel_ != *pTreeReferenceModel_ ){
 
+		// Do something only if the model is different to the
+		// reference model. Dereference the ptr to make sure
+		// we are actually calling the operator= of SettingsModel
 		*pTreeModel_ = *pTreeReferenceModel_;
 
 		updateActions();
 
 		// Also update the external dependencies (in this case: the VariableTreeWidget)
 		updateDependencies();
-
 	}
 }
 
@@ -214,10 +213,10 @@ void TreeTab::connectSignals() {
 
 	// An item, the state of which is expanded, must notify the view
 	connect( pTreeModel_,&SettingsModel::mustExpand,
-				pTreeView_,&SettingsWindowView::doExpand);
+			pTreeView_,&SettingsWindowView::doExpand);
 
 	// An item, the state of which is collapsed, must notify the view
 	connect( pTreeModel_,&SettingsModel::mustCollapse,
- 			pTreeView_,&SettingsWindowView::doCollapse);
+			pTreeView_,&SettingsWindowView::doCollapse);
 }
 

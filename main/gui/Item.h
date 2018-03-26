@@ -39,6 +39,9 @@ class Item {
 		/// Get a ptr to my i-th child
 		Item* child(int row);
 
+		/// Get a ptr to my i-th child - const variety
+		Item* child(int row) const;
+
 		/// Get a child by name
 		Item* child(QString& childName);
 
@@ -113,6 +116,9 @@ class Item {
 
 		/// Get a handle to my parent
 		Item* parentItem();
+
+		/// Diagnostic print
+		virtual void print();
 
 		/// Remove a child by position
 		void removeChild(size_t iChild);

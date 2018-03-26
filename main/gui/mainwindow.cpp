@@ -461,7 +461,6 @@ void MainWindow::openSettings() {
 // settingsWindow tree tab
 void MainWindow::udpateVariableTree() {
 
-	std::cout<<"Updating the variableTree...\n";
 	// Open up a VPP settings dialog
 	VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
 

@@ -44,6 +44,9 @@ class SettingsModel : public VppItemModel {
 		/// Inverse Comparison operator
 		bool operator!=(const SettingsModel&);
 
+		/// Diagnostics print
+		void print();
+
 		/// Set some data for a given item - i.e: edit some value
 		bool setData(const QModelIndex &index, const QVariant &value, int role) override;
 

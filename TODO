@@ -1,5 +1,3 @@
-Why are we compiling moc for mainWIndow in the src tree???
-
 See the ctor of SettingsItem. there are all these strings that are not acceptable
 
 remove locks and thus try setting and running an analysis!

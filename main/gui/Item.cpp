@@ -89,6 +89,12 @@ Item *Item::child(int row) {
 	return children_.value(row);
 }
 
+// Get a ptr to my i-th child - const variety
+Item *Item::child(int row) const {
+	return children_.value(row);
+}
+
+
 // Get a child by name
 Item* Item::child(QString& childName) {
 
@@ -250,7 +256,18 @@ bool Item::operator==(const Item& rhs) {
 		for(size_t iCol=0; iCol<columns_.size(); iCol++)
 			if(*columns_[iCol] != *rhs.columns_[iCol])
 				return false;
-        return true;
+
+		// Do I have the same number of children?
+		if(this->childCount()!=rhs.childCount())
+			return false;
+
+		// loop on children and return:
+		for (size_t iChild=0; iChild<childCount(); iChild++)
+			if( child(iChild) != rhs.child(iChild))
+				return false;
+
+		// All check passed, return true
+		return true;
 	}
 
 	return false;
@@ -264,6 +281,16 @@ bool Item::operator!=(const Item& rhs) {
 // Get a handle to my parent
 Item* Item::parentItem() {
     return pParent_;
+}
+
+// Diagnostic print
+void Item::print(){
+	std::cout<<"   "<<columns_[columnNames::name]->getData().toString().toStdString()<<
+			"  "<<columns_[columnNames::value]->getData().toString().toStdString()<<std::endl;
+	for(size_t iChild=0; iChild<childCount(); iChild++){
+		std::cout<<"   ";
+		child(iChild)->print();
+	}
 }
 
 // Remove a child by position

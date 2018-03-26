@@ -265,10 +265,12 @@ bool SettingsModel::operator==(const SettingsModel& rhs) {
 	if(getRoot()->childCount() != rhs.getRoot()->childCount())
 		return false;
 
+	// Compare child by child. Return if any difference is found
 	for(size_t iChild=0; iChild<getRoot()->childCount(); iChild++)
 		if( *getRoot()->child(iChild) != *rhs.getRoot()->child(iChild) )
 			return false;
 
+	// If we are here, no difference was found
 	return true;
 
 }
@@ -276,6 +278,11 @@ bool SettingsModel::operator==(const SettingsModel& rhs) {
 // Inverse Comparison operator
 bool SettingsModel::operator!=(const SettingsModel& rhs) {
 	return !(*this == rhs);
+}
+
+// Diagnostics print
+void SettingsModel::print() {
+	getRoot()->print();
 }
 
 

@@ -11,6 +11,7 @@ VPPSettingsDialog* VPPSettingsDialog::getInstance(QWidget *parent){
 
 	if(!pInstance_)
 		pInstance_= new VPPSettingsDialog(parent);
+
 	return pInstance_;
 }
 
