@@ -7,7 +7,8 @@
     <file>icons/sailCoeffs.png</file>
     <file>icons/d_sailCoeffs.png</file>
     <file>icons/d2_sailCoeffs.png</file>
-    <file>icons/importBoatData.png</file>
+    <file>icons/importSettings.png</file>
+    <file>icons/openSettings.png</file>
     <file>icons/variable.png</file>
     <file>icons/variable_root.png</file>
     <file>icons/tabularResults.png</file>

@@ -125,14 +125,25 @@ MainWindow::~MainWindow() {
 
 void MainWindow::setupMenuBar() {
 
-	// Create 'Import boat description' action and associate an icon
+	// Create 'Import Settings' action and associate an icon
 	actionVector_.push_back( boost::shared_ptr<QAction>(
 			new QAction(
-					QIcon::fromTheme("Settings", QIcon(":/icons/importBoatData.png")),
+					QIcon::fromTheme("Import Settings", QIcon(":/icons/importSettings.png")),
+					tr("&Import Settings..."), this)
+	) );
+	QAction* importSettingsAction= actionVector_.back().get();
+	importSettingsAction->setStatusTip(tr("Import Settings"));
+	connect(importSettingsAction, &QAction::triggered, this, &MainWindow::importSettings);
+	pToolBar_->addAction(importSettingsAction);
+
+	// Create 'Open Settings' action and associate an icon
+	actionVector_.push_back( boost::shared_ptr<QAction>(
+			new QAction(
+					QIcon::fromTheme("Settings", QIcon(":/icons/openSettings.png")),
 					tr("&Settings..."), this)
 	) );
 	QAction* openSettingsAction= actionVector_.back().get();
-	openSettingsAction->setStatusTip(tr("Import boat description"));
+	openSettingsAction->setStatusTip(tr("Open Settings"));
 	connect(openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
 	pToolBar_->addAction(openSettingsAction);
 
@@ -440,6 +451,41 @@ void MainWindow::removeTabWidgetFromVector(VppTabDockWidget* pWidget) {
 	}
 }
 
+// Import the settings from xml file
+void MainWindow::importSettings() {
+
+	try {
+
+		QString caption;
+		QString dir;
+
+		// try getting the settings from file
+		QString settingsFileName = QFileDialog::getOpenFileName(this,caption,dir,
+				tr("VPP Settings File(*.xml);; All Files (*.*)"));
+
+		if (!settingsFileName.isEmpty())
+			std::cout<<"attempting to import Vpp settings from : "<<settingsFileName.toStdString()<<std::endl;
+
+		// This is the file we are about to read
+		QFile settingsFile(settingsFileName);
+		if (!settingsFile.open(QFile::ReadOnly | QFile::Text)) {
+			QMessageBox::warning(this, tr("VppSettings Import"),
+					tr("Cannot read file %1:\n%2.")
+					.arg(settingsFileName)
+					.arg(settingsFile.errorString()));
+			return;
+		}
+
+		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+		pSd->read(settingsFile);
+
+		// Sync the variable tree with the vppSettingsDialog
+		udpateVariableTree();
+
+		// outer try-catch block
+	}	catch(...) {}
+}
+
 void MainWindow::openSettings() {
 
 	try {
@@ -559,17 +605,17 @@ void MainWindow::saveResults() {
 
 		if (!file.open(QFile::WriteOnly | QFile::Text)) {
 			QMessageBox::warning(this, tr("Saving Vpp Settings"),
-																tr("Cannot write file %1:\n%2.")
-		                             .arg(fileName)
-		                             .arg(file.errorString()));
-		        return;
+					tr("Cannot write file %1:\n%2.")
+					.arg(fileName)
+					.arg(file.errorString()));
+			return;
 		}
 
 		// Get the settings dialog and save its content to file
 		VPPSettingsDialog::getInstance()->save(file);
 
 
-///////////////////////// now do the rest of the work
+		///////////////////////// now do the rest of the work
 
 		// Results must be available!
 		if(!pSolverFactory_ ||
@@ -619,40 +665,11 @@ void MainWindow::importResults() {
 		QString caption;
 		QString dir;
 
-		// try getting the settings from file
-		QString settingsFileName = QFileDialog::getOpenFileName(this,caption,dir,
-				tr("VPP Settings File(*.xml);; All Files (*.*)"));
-
-		if (!settingsFileName.isEmpty())
-			std::cout<<"attempting to import Vpp settings from : "<<settingsFileName.toStdString()<<std::endl;
-
-		// This is the file we are about to read
-		QFile settingsFile(settingsFileName);
-    if (!settingsFile.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("VppSettings Import"),
-                             tr("Cannot read file %1:\n%2.")
-                             .arg(settingsFileName)
-                             .arg(settingsFile.errorString()));
-        return;
-    }
-
-		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
-		pSd->read(settingsFile);
-
-		// Sync the variable tree with the vppSettingsDialog
-		udpateVariableTree();
-
-		throw VPPException(HERE,"Stop");
-
-		///////////////////////// now do the rest of the work
-
-
 		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
-			tr("VPP Result File(*.vpp);; All Files (*.*)"));
+				tr("VPP Result File(*.vpp);; All Files (*.*)"));
 
 		if (!fileName.isEmpty())
 			std::cout<<"attempting to import results from : "<<fileName.toStdString()<<std::endl;
-
 
 		// The variableFileParser can read its part in the result file
 		pVariableFileParser_->parse(fileName.toStdString());

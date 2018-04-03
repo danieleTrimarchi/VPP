@@ -49,7 +49,10 @@ public:
 
 public slots:
 
-	/// Import the data from variableFile.txt
+	/// Import the settings from xml file
+ 	void importSettings();
+
+	/// Open the settings dialog
 	void openSettings();
 
 	/// Run the VPP analysis
