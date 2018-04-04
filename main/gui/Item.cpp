@@ -122,7 +122,7 @@ void Item::clearChildren() {
 	// Todo : this segfaults, but why..??
 	// Delete the children
 	//for(size_t iChild=0; iChild<childCount(); iChild++)
-	//	if(child(iChild))
+	//	if(child(iChild))C
 	//		delete child(iChild);
 	// This also segfaults...
 	qDeleteAll(children_);

@@ -11,9 +11,9 @@ using namespace std;
 
 // Ctor
 SettingsItemBase::SettingsItemBase() :
-							Item(),
-							tooltip_(QVariant()),
-							variableName_(QString()){
+									Item(),
+									tooltip_(QVariant()),
+									variableName_(QString()){
 
 	// Instantiate the data columns
 	columns_.push_back(new NameColumn);
@@ -27,7 +27,7 @@ SettingsItemBase::SettingsItemBase() :
 
 // Copy Ctor
 SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs):
-				Item(rhs){
+						Item(rhs){
 
 	tooltip_= rhs.tooltip_;
 
@@ -195,12 +195,15 @@ void SettingsItemBase::assign(SettingsItemBase* dstParent) {
 	// Make sure the destination parent is empty
 	dstParent->clearChildren();
 
-	// Send my children to the new parent
+	// Send a copy of my children to the new parent
 	for(size_t iChild=0; iChild<childCount(); iChild++)
 		dstParent->appendChild(child(iChild));
 
-	// Clear my children
-	clearChildren();
+	// And reset the current child list
+	// do NOT delete the children with clearChildren,
+	// because they are still alive, they simply changed
+	// their parent
+	children_.clear();
 
 }
 
@@ -247,7 +250,7 @@ bool SettingsItemBase::operator==(const SettingsItemBase& rhs) {
 // ----------------------------------------------------------------
 
 SettingsItemRoot::SettingsItemRoot():
-								SettingsItemBase() {
+										SettingsItemBase() {
 
 	// Fill the columns with the name (intended as the 'dysplayName',
 	// the value and the unit
@@ -264,7 +267,7 @@ SettingsItemRoot::SettingsItemRoot():
 
 // Ctor from xml
 SettingsItemRoot::SettingsItemRoot(const XmlAttributeSet& xmlAttSet) :
-				SettingsItemRoot(){
+						SettingsItemRoot(){
 
 }
 
@@ -313,7 +316,7 @@ QString SettingsItemRoot::getVariableName() const {
 
 /// Clone this item, which is basically equivalent to calling the copy ctor
 SettingsItemRoot::SettingsItemRoot(const SettingsItemRoot& rhs) :
-				SettingsItemBase(rhs){
+						SettingsItemBase(rhs){
 	// Do nothing because this class does not own members
 }
 
@@ -330,7 +333,7 @@ const SettingsItemRoot& SettingsItemRoot::operator=(const SettingsItemRoot& rhs)
 
 // Ctor
 SettingsItemGroup::SettingsItemGroup(const QVariant& displayName):
-								SettingsItemBase(){
+										SettingsItemBase(){
 
 	// The group is not editable
 	columns_[columnNames::name]->setData( displayName );
@@ -342,13 +345,13 @@ SettingsItemGroup::SettingsItemGroup(const QVariant& displayName):
 
 // Ctor from xml
 SettingsItemGroup::SettingsItemGroup(const XmlAttributeSet& xmlAttSet) :
-			SettingsItemGroup(xmlAttSet["DisplayName"].toQString()){
+					SettingsItemGroup(xmlAttSet["DisplayName"].toQString()){
 
 }
 
 // Copy Ctor, called by clone()
 SettingsItemGroup::SettingsItemGroup(const SettingsItemGroup& rhs):
-				SettingsItemBase(rhs){
+						SettingsItemBase(rhs){
 	// Do nothing as the class has no own members
 }
 
@@ -384,7 +387,7 @@ QFont SettingsItemGroup::getFont() const {
 
 // Ctor
 SettingsItemBounds::SettingsItemBounds(const QVariant& displayName,const QVariant& variableName,double min,double max,const QVariant& unit,const QVariant& tooltip) :
-						SettingsItemGroup(displayName){
+								SettingsItemGroup(displayName){
 
 	appendChild( new SettingsItem(displayName.toString()+QString("_min"),variableName.toString()+QString("_MIN"),min,unit,"min value") );
 	appendChild( new SettingsItem(displayName.toString()+QString("_max"),variableName.toString()+QString("_MAX"),max,unit,"max value") );
@@ -398,7 +401,7 @@ SettingsItemBounds::SettingsItemBounds(const QVariant& displayName,const QVarian
 
 // Ctor from xml
 SettingsItemBounds::SettingsItemBounds(const XmlAttributeSet& xmlAttSet) :
-				SettingsItemGroup(xmlAttSet["DisplayName"].toQString()){
+						SettingsItemGroup(xmlAttSet["DisplayName"].toQString()){
 
 	// Do not instantiate children, if requested they are instantiated on
 	// the fly while reading the rest of the xml
@@ -406,7 +409,7 @@ SettingsItemBounds::SettingsItemBounds(const XmlAttributeSet& xmlAttSet) :
 
 // Copy Ctor, called by clone()
 SettingsItemBounds::SettingsItemBounds(const SettingsItemBounds& rhs):
-				SettingsItemGroup(rhs){
+						SettingsItemGroup(rhs){
 
 	// Do nothing as SettingsItemBounds do not have own members
 }
@@ -472,7 +475,7 @@ SettingsItem::SettingsItem(	const QVariant& displayName,
 		const QVariant& value,
 		const QVariant& unit,
 		const QVariant& tooltip):
-						SettingsItemBase(){
+								SettingsItemBase(){
 
 	columns_[columnNames::name]->setData( displayName );
 	columns_[columnNames::value]->setData( value );
@@ -491,16 +494,16 @@ SettingsItem::SettingsItem(	const QVariant& displayName,
 
 // Ctor from xml. Just call the other constructor
 SettingsItem::SettingsItem(const XmlAttributeSet& xmlAttSet):
-				SettingsItem( 	xmlAttSet["DisplayName"].toQString(),
-						xmlAttSet["VariableName"].toQString(),
-						xmlAttSet["Value"].toQString(),
-						xmlAttSet["Unit"].toQString(),
-						xmlAttSet["ToolTip"].toQString() ){
+						SettingsItem( 	xmlAttSet["DisplayName"].toQString(),
+								xmlAttSet["VariableName"].toQString(),
+								xmlAttSet["Value"].toQString(),
+								xmlAttSet["Unit"].toQString(),
+								xmlAttSet["ToolTip"].toQString() ){
 }
 
 // Copy Ctor
 SettingsItem::SettingsItem(const SettingsItem& rhs) :
-			SettingsItemBase(rhs) {
+					SettingsItemBase(rhs) {
 
 }
 
@@ -633,17 +636,17 @@ SettingsItemInt::SettingsItemInt(const QVariant& displayName,const QVariant& var
 		const QVariant& value,
 		const QVariant& unit,
 		const QVariant& tooltip):
-						SettingsItem(displayName,variableName,value,unit,tooltip){
+								SettingsItem(displayName,variableName,value,unit,tooltip){
 
 }
 
 // Ctor from xml
 SettingsItemInt::SettingsItemInt(const XmlAttributeSet& xmlAttSet) :
-				SettingsItemInt(	xmlAttSet["DisplayName"].toQString(),
-						xmlAttSet["VariableName"].toQString(),
-						xmlAttSet["Value"].toQString(),
-						xmlAttSet["Unit"].toQString(),
-						xmlAttSet["ToolTip"].toQString() ){
+						SettingsItemInt(	xmlAttSet["DisplayName"].toQString(),
+								xmlAttSet["VariableName"].toQString(),
+								xmlAttSet["Value"].toQString(),
+								xmlAttSet["Unit"].toQString(),
+								xmlAttSet["ToolTip"].toQString() ){
 }
 
 /// Dtor
@@ -706,7 +709,7 @@ void SettingsItemInt::setModelData(	QWidget *editor,
 
 // Copy ctor, called by clone()
 SettingsItemInt::SettingsItemInt(const SettingsItemInt& rhs) :
-				SettingsItem(rhs) {
+						SettingsItem(rhs) {
 
 	// There is nothing else to do, as there are no owned class
 	// members
@@ -721,9 +724,9 @@ SettingsItemComboBox::SettingsItemComboBox(
 		const QVariant& unit,
 		const QList<QString>& options,
 		const QVariant& tooltip):
-							SettingsItem(displayName,variableName,options[0],unit,tooltip),
-							opts_(options),
-							activeIndex_(0) {
+									SettingsItem(displayName,variableName,options[0],unit,tooltip),
+									opts_(options),
+									activeIndex_(0) {
 
 }
 
@@ -731,11 +734,11 @@ SettingsItemComboBox::SettingsItemComboBox(
 // todo : the options are known by the visitor, not the item. All the
 // logics here should be displaced to the xmlreadvisitor!
 SettingsItemComboBox::SettingsItemComboBox(const XmlAttributeSet& xmlAttSet) :
-				SettingsItem(	xmlAttSet["DisplayName"].toQString(),
-						xmlAttSet["VariableName"].toQString(),
-						xmlAttSet["Option0"].toQString(),
-						xmlAttSet["Unit"].toQString(),
-						xmlAttSet["ToolTip"].toQString() ){
+						SettingsItem(	xmlAttSet["DisplayName"].toQString(),
+								xmlAttSet["VariableName"].toQString(),
+								xmlAttSet["Option0"].toQString(),
+								xmlAttSet["Unit"].toQString(),
+								xmlAttSet["ToolTip"].toQString() ){
 
 	// Populate the options
 	for(size_t i=0; i<int((xmlAttSet["numOpts"]).getInt()); i++){
@@ -853,9 +856,9 @@ const SettingsItemComboBox& SettingsItemComboBox::operator=(const SettingsItemCo
 
 // Copy Ctor
 SettingsItemComboBox::SettingsItemComboBox(const SettingsItemComboBox& rhs) :
-				SettingsItem(rhs),
-				opts_(rhs.opts_),
-				activeIndex_(rhs.activeIndex_){
+						SettingsItem(rhs),
+						opts_(rhs.opts_),
+						activeIndex_(rhs.activeIndex_){
 
 }
 

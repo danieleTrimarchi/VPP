@@ -464,7 +464,7 @@ void MainWindow::importSettings() {
 				tr("VPP Settings File(*.xml);; All Files (*.*)"));
 
 		if (!settingsFileName.isEmpty())
-			std::cout<<"attempting to import Vpp settings from : "<<settingsFileName.toStdString()<<std::endl;
+			std::cout<<"Importing Vpp settings from : "<<settingsFileName.toStdString()<<std::endl;
 
 		// This is the file we are about to read
 		QFile settingsFile(settingsFileName);
@@ -669,7 +669,7 @@ void MainWindow::importResults() {
 				tr("VPP Result File(*.vpp);; All Files (*.*)"));
 
 		if (!fileName.isEmpty())
-			std::cout<<"attempting to import results from : "<<fileName.toStdString()<<std::endl;
+			std::cout<<"Importing results from : "<<fileName.toStdString()<<std::endl;
 
 		// The variableFileParser can read its part in the result file
 		pVariableFileParser_->parse(fileName.toStdString());

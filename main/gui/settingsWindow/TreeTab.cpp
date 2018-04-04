@@ -110,12 +110,13 @@ void TreeTab::save(QFile& file) {
 
 void TreeTab::read(QFile& file){
 
+
 	// Instantiate a file reader visitor
 	VPPSettingsXmlReaderVisitor v(&file);
 	// Ask the REFERENCE root to accept the visitor
 	// This will read the file and assign its content
 	// to root
-	pTreeReferenceModel_->getRoot()->accept(v);
+    pTreeReferenceModel_->getRoot()->accept(v);
 
 	// Copy the reference model to the current one
 	revert();
