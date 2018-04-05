@@ -128,7 +128,7 @@ void MainWindow::setupMenuBar() {
 	// Create 'Import Settings' action and associate an icon
 	actionVector_.push_back( boost::shared_ptr<QAction>(
 			new QAction(
-					QIcon::fromTheme("Import Settings", QIcon(":/icons/importSettings.png")),
+					QIcon::fromTheme("Import Settings from file", QIcon(":/icons/importSettings.png")),
 					tr("&Import Settings..."), this)
 	) );
 	QAction* importSettingsAction= actionVector_.back().get();
@@ -527,12 +527,14 @@ void MainWindow::udpateVariableTree() {
 void MainWindow::run() {
 
 	try {
-		// If the boat description has not been imported we do not have the
-		// vppItems nor the coefficients to be plotted!
-		// If the boat description has not been imported we do not have the
-		// vppItems nor the coefficients to be plotted!
-		if(!hasBoatDescription())
-			return;
+
+		// Verify if the variable values are within the allowed ranges
+		pVariableFileParser_->check();
+
+		// before each run we rebuild the items with the latest settings
+		// entered by the user. Actually one should create new items each
+		// time the settings change. But this seems relatively heavy to do
+		updateVppItems();
 
 		// todo dtrimarchi : this should be selected by a switch in the UI!
 		// Instantiate a solver by default. This can be an optimizer (with opt vars)
@@ -548,8 +550,8 @@ void MainWindow::run() {
 		// count to update the bar progression
 		QProgressDialog progressDialog(this);
 		size_t maxVal=
-				pVariableFileParser_->get("N_ALPHA_TW")*
-				pVariableFileParser_->get("N_TWV");
+				pVariableFileParser_->get("N_TWA")*
+				pVariableFileParser_->get("NTW");
 		progressDialog.setRange(0,maxVal);
 		progressDialog.setCancelButtonText(tr("&Cancel"));
 		progressDialog.setWindowTitle(tr("Running VPP analysis..."));
@@ -557,13 +559,13 @@ void MainWindow::run() {
 		int statusProgress=0;
 
 		// Loop on the wind ANGLES and VELOCITIES
-		for(int aTW=0; aTW<pVariableFileParser_->get("N_ALPHA_TW"); aTW++) {
+		for(int aTW=0; aTW<pVariableFileParser_->get("N_TWA"); aTW++) {
 
 			// exit the outer loop if the user pressed the 'cancel' button
 			if (progressDialog.wasCanceled())
 				break;
 
-			for(int vTW=0; vTW<pVariableFileParser_->get("N_TWV"); vTW++){
+			for(int vTW=0; vTW<pVariableFileParser_->get("NTW"); vTW++){
 
 				try{
 
@@ -733,6 +735,22 @@ bool MainWindow::hasBoatDescription() {
 		return false;
 	}
 	return true;
+}
+
+
+// Given the settings, instantiates (refreshes) all of the
+// VPP items: sailItems, resistanceItems... All is required
+// to run an analysis
+void MainWindow::updateVppItems() {
+
+	// Instantiate the sailset
+	pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
+
+	// Instantiate the items
+	pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
+
+	// SailSet also contains several variables. Append them to the bottom
+	pSails_->populate( pVariablesWidget_->getTreeModel() );
 }
 
 // Make sure a solver is available. Otherwise

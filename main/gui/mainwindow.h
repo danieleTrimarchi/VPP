@@ -145,6 +145,11 @@ private:
 	/// warns the user with an error-like widget
 	bool hasBoatDescription();
 
+	/// Given the settings, instantiates (refreshes) all of the
+	/// VPP items: sailItems, resistanceItems... All is required
+	/// to run an analysis
+	void updateVppItems();
+
 	/// Make sure a solver is available. Otherwise
 	/// warns the user with an error-like widget
 	bool hasSolver();

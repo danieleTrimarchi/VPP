@@ -20,9 +20,9 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 								awv_(Eigen::Vector2d::Zero())   {
 
 	// Get the max/min wind velocities from the parser
-	v_tw_min_= pParser_->get("V_TW_MIN");
-	v_tw_max_= pParser_->get("V_TW_MAX");
-	n_twv_= pParser_->get("N_TWV");
+	v_tw_min_= pParser_->get("VTW_MIN");
+	v_tw_max_= pParser_->get("VTW_MAX");
+	n_twv_= pParser_->get("NTW");
 
 	// Fill the values of the wind true velocities
 	vTwv_.resize(n_twv_);
@@ -36,9 +36,9 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 		vTwv_[i]= v_tw_min_ + i * delta;
 
 	// Get the max/min wind angles [rad] from the parser
-	alpha_tw_min_= pParser_->get("ALPHA_TW_MIN");
-	alpha_tw_max_= pParser_->get("ALPHA_TW_MAX");
-	n_alpha_tw_= pParser_->get("N_ALPHA_TW");
+	alpha_tw_min_= pParser_->get("TWA_MIN");
+	alpha_tw_max_= pParser_->get("TWA_MAX");
+	n_alpha_tw_= pParser_->get("N_TWA");
 
 	// Fill the values of the wind true angles
 	vTwa_.resize(n_alpha_tw_);

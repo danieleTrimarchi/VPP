@@ -117,13 +117,13 @@ VariableFileParser::VariableFileParser() {
 	requiredVariables_.push_back("F_MAX");   // [-]   Constraint the max Flattening factor
 
 	// %%%%%%% WIND %%%%%%%%
-	requiredVariables_.push_back("V_TW_MIN");	// [m/s] Min true wind velocity
-	requiredVariables_.push_back("V_TW_MAX");	// [m/s] Max true wind velocity
-	requiredVariables_.push_back("N_TWV");		// [-]   Number of wind velocities in range
+	requiredVariables_.push_back("VTW_MIN");	// [m/s] Min true wind velocity
+	requiredVariables_.push_back("VTW_MAX");	// [m/s] Max true wind velocity
+	requiredVariables_.push_back("NTW");		// [-]   Number of wind velocities in range
 
-	requiredVariables_.push_back("ALPHA_TW_MIN"); // [deg] Min true wind angle
-	requiredVariables_.push_back("ALPHA_TW_MAX"); // [deg] Max true wind angle
-	requiredVariables_.push_back("N_ALPHA_TW"); 	// [-]   Number of wind angles in range
+	requiredVariables_.push_back("TWA_MIN"); // [deg] Min true wind angle
+	requiredVariables_.push_back("TWA_MAX"); // [deg] Max true wind angle
+	requiredVariables_.push_back("N_TWA"); 	// [-]   Number of wind angles in range
 
 	// %%%%%%% HULL %%%%%%%%
 	requiredVariables_.push_back("DIVCAN"); 	// [m^3] Displaced volume of canoe body
@@ -298,18 +298,18 @@ void VariableFileParser::check() {
 			variables_["AW"]/std::pow(variables_["DIVCAN"],2./3) >= 12.67 )
 		Warning("Loading Factor is out of valuable data");
 
-	if(variables_["V_TW_MAX"] <= variables_["V_TW_MIN"] )
-		throw VPPException(HERE,"V_TW_MIN is larger than V_TW_MAX!");
+	if(variables_["VTW_MAX"] <= variables_["VTW_MIN"] )
+		throw VPPException(HERE,"VTW_MIN is larger than VTW_MAX!");
 
-	if(variables_["ALPHA_TW_MAX"] <= variables_["ALPHA_TW_MIN"] )
-		throw VPPException(HERE,"ALPHA_TW_MIN is larger than ALPHA_TW_MAX!");
+	if(variables_["TWA_MAX"] <= variables_["TWA_MIN"] )
+		throw VPPException(HERE,"TWA_MIN is larger than TWA_MAX!");
 
 	// Convert ALL the angles from DEG to RAD
 	variables_["PHI_MIN"] = mathUtils::toRad( variables_["PHI_MIN"] );
 	variables_["PHI_MAX"] = mathUtils::toRad( variables_["PHI_MAX"] );
 
-	variables_["ALPHA_TW_MIN"] = mathUtils::toRad( variables_["ALPHA_TW_MIN"] );
-	variables_["ALPHA_TW_MAX"] = mathUtils::toRad( variables_["ALPHA_TW_MAX"] );
+	variables_["TWA_MIN"] = mathUtils::toRad( variables_["TWA_MIN"] );
+	variables_["TWA_MAX"] = mathUtils::toRad( variables_["TWA_MAX"] );
 
 }
 

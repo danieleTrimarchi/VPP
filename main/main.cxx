@@ -64,29 +64,3 @@ int main(int argc, char** argv) {
 
 }
 
-// ALLOW FOR I/O of QUANTITIES IN THE PREFERRED UNIT...
-// todo dtrimarchi
-//			else if(s == string("convertVelocityToFn")) {
-//				IOUtils io(pVppItems->getWind());
-//				std::cout<<"Fn= "<<
-//						pVppItems->getViscousResistanceItem()->convertToFn(
-//								io.askUserDouble("Please enter the value of the velocity...")
-//						)<<std::endl;
-//			}
-//
-// ALLOW FOR I/O of QUANTITIES IN THE PREFERRED UNIT...
-// todo dtrimarchi
-//			else if(s == string("convertFnToVelocity")) {
-//				IOUtils io(pVppItems->getWind());
-//				std::cout<<"Velocity= "<<
-//						pVppItems->getViscousResistanceItem()->convertToVelocity(
-//								io.askUserDouble("Please enter the value of the Fn...")
-//						)<<std::endl;
-//			}
-//
-// --
-//
-//			else if( s == string("bounds"))
-//				solverFactory.get()->printResultBounds();
-//
-

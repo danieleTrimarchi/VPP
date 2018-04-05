@@ -71,6 +71,7 @@ void SettingsModel::setupModelData() {
 		pHullSettings->appendChild( new SettingsItem("B","B",0,"m","Design maximum beam") );
 		pHullSettings->appendChild( new SettingsItem("T","T",0,"m","Total draft") );
 		pHullSettings->appendChild( new SettingsItem("DIVCAN","DIVCAN",0,"m^3","Displaced volume of canoe body") );
+		pHullSettings->appendChild( new SettingsItem("AVGFREB","AVGFREB",0,"m","Average freeboard") );
 		pHullSettings->appendChild( new SettingsItem("XFB","XFB",0,"m","Longitudinal center of buoyancy LCB from fpp") );
 		pHullSettings->appendChild( new SettingsItem("XFF","XFF",0,"m","Longitudinal center of flotation LCF from fpp") );
 		pHullSettings->appendChild( new SettingsItem("CPL","CPL",0," ","Longitudinal prismatic coefficient") );
@@ -100,9 +101,9 @@ void SettingsModel::setupModelData() {
 		pKeelSettings->appendChild( new SettingsItem("ASK","ASK",0,"m^2","Keel Aspect Ratio") );
 		pKeelSettings->appendChild( new SettingsItem("SK","SK",0,"m^2","Keel Wetted Surface") );
 		pKeelSettings->appendChild( new SettingsItem("ZCBK","ZCBK",0,"m","Keel Vertical Center of Buoyancy") );
-		pKeelSettings->appendChild( new SettingsItem("CMEK","CMEK",0,"m","Mean chord length") );
+		pKeelSettings->appendChild( new SettingsItem("CHMEK","CHMEK",0,"m","Mean chord length") );
 		pKeelSettings->appendChild( new SettingsItem("CHRTK","CHRTK",0,"m","Root chord length") );
-		pKeelSettings->appendChild( new SettingsItem("CHRTK","CHRTK",0,"m","Tip chord length") );
+		pKeelSettings->appendChild( new SettingsItem("CHTPK","CHTPK",0,"m","Tip chord length") );
 		pKeelSettings->appendChild( new SettingsItem("KEELFF","KEELFF",1,"m","Keel's form factor") );
 		pKeelSettings->appendChild( new SettingsItem("DELTTK","DELTTK",0," ","Mean thickness ratio of keel section") );
 		pKeelSettings->appendChild( new SettingsItem("TAK","TAK",0," ","Taper ratio of keel (CHRTK/CHTPK)") );
@@ -129,7 +130,6 @@ void SettingsModel::setupModelData() {
 		pSailSettings->appendChild( new SettingsItem("P","P",0,"m","Main height") );
 		pSailSettings->appendChild( new SettingsItem("E","E",0,"m","Main base") );
 		pSailSettings->appendChild( new SettingsItem("MROACH","MROACH",0," ","Correction for mainsail roach") );
-		pSailSettings->appendChild( new SettingsItem("MFLB","MFLB",0," ","Correction for mainsail roach") );
 		pSailSettings->appendChild( new SettingsItem("BAD","BAD",0,"m","Boom height above deck") );
 		pSailSettings->appendChild( new SettingsItem("I","I",0,"m","Fore Triangle height") );
 		pSailSettings->appendChild( new SettingsItem("J","J",0,"m","Fore Triangle base") );

@@ -1,8 +1,11 @@
-See the ctor of SettingsItem. there are all these strings that are not acceptable
-
-remove locks and thus try setting and running an analysis!
+Remove locks and thus try setting and running an analysis!
 
 Fix the tests <- prepare the xml and remove the old vppIn files
+
+See the ctor of SettingsItem. there are all these strings that are not acceptable
+	This is done, simply I put the commit on hold because I want to be able to 
+	run tests before modifying the code 
+
 
 Questions: 
 	See :

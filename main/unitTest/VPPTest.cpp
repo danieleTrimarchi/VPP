@@ -39,12 +39,12 @@ void TVPPTest::variableParseTest() {
 	CPPUNIT_ASSERT_EQUAL( parser.get("F_MAX"), 1. );
 
 	// WIND CONFIGURATION
-	CPPUNIT_ASSERT_EQUAL( parser.get("V_TW_MIN"), .5 );
-	CPPUNIT_ASSERT_EQUAL( parser.get("V_TW_MAX"), 10. );
-	CPPUNIT_ASSERT_EQUAL( parser.get("N_TWV"), 45. );
-	CPPUNIT_ASSERT_EQUAL( parser.get("ALPHA_TW_MIN"), mathUtils::toRad(35) );
-	CPPUNIT_ASSERT_EQUAL( parser.get("ALPHA_TW_MAX"), mathUtils::toRad(179) );
-	CPPUNIT_ASSERT_EQUAL( parser.get("N_ALPHA_TW"), 40. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("VTW_MIN"), .5 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("VTW_MAX"), 10. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("NTW"), 45. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MIN"), mathUtils::toRad(35) );
+	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MAX"), mathUtils::toRad(179) );
+	CPPUNIT_ASSERT_EQUAL( parser.get("N_TWA"), 40. );
 
 	// These data are measurements and estimates for a Freedom 25
 	CPPUNIT_ASSERT_EQUAL( parser.get("DIVCAN"), 1.549 );
@@ -1199,8 +1199,8 @@ void TVPPTest::ipOptFullRunTest() {
 	Optim::IppOptSolverFactory solverFactory(pVppItems);
 
 	// Loop on the wind ANGLES and VELOCITIES
-	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
-		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++){
+	for(size_t aTW=0; aTW<parser.get("N_TWA"); aTW++)
+		for(size_t vTW=0; vTW<parser.get("NTW"); vTW++){
 
 			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
 
