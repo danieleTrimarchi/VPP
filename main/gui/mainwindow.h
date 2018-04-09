@@ -40,12 +40,16 @@ public:
 	/// Virtual destructor
 	virtual ~MainWindow();
 
+	/// Get the toolbar with some shortcuts to actions
+	QToolBar* getToolBar();
+
 	/// Create a toolbar with some actions
 	void setupToolBar();
 
 	/// Updates the variable tree getting values from the
 	/// settingsWindow tree tab
 	void udpateVariableTree();
+
 
 public slots:
 
@@ -194,13 +198,6 @@ private:
 
 	/// Variable Widget
 	boost::shared_ptr<VariablesDockWidget> pVariablesWidget_;
-
-	/// Menu with the actions to plot sail coeffs and resistance components
-	boost::shared_ptr<QMenu> pSailCoeffsMenu_, pPlotResultsMenu_;
-
-	/// Vector storing all of the actions. Used to assure that the actions are deleted
-	/// on destruction, thus preventing leaks
-	std::vector<boost::shared_ptr<QAction> > actionVector_;
 
 	std::vector<VppTabDockWidget*> tabbedWidgets_;
 

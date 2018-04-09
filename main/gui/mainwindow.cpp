@@ -4,10 +4,7 @@
 #include <iostream>
 
 #include <QtWidgets/QDockWidget>
-
-#include <QtWidgets/QAction>
 #include <QtWidgets/QLayout>
-#include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTextEdit>
@@ -28,7 +25,7 @@
 #include <QtCore>
 #include <QtGui/QScreen>
 
-#include "settingsWindow/GetItemVisitor.h"
+#include "GetItemVisitor.h"
 #include "VPPItemFactory.h"
 #include "VppCustomPlotWidget.h"
 #include "VPPDialogs.h"
@@ -40,6 +37,7 @@
 #include "VPPSailCoefficientIO.h"
 #include "VPPSettingsDialog.h"
 #include "VariableTreeModel.h"
+#include "VppToolbarAction.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitly deleted in the destructor
@@ -125,267 +123,112 @@ MainWindow::~MainWindow() {
 
 void MainWindow::setupMenuBar() {
 
-	// Create 'Import Settings' action and associate an icon
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Import Settings from file", QIcon(":/icons/importSettings.png")),
-					tr("&Import Settings..."), this)
-	) );
-	QAction* importSettingsAction= actionVector_.back().get();
-	importSettingsAction->setStatusTip(tr("Import Settings"));
-	connect(importSettingsAction, &QAction::triggered, this, &MainWindow::importSettings);
-	pToolBar_->addAction(importSettingsAction);
+	// Generic handle for actions
+	VppToolbarAction* pAction= NULL;
 
-	// Create 'Open Settings' action and associate an icon
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Settings", QIcon(":/icons/openSettings.png")),
-					tr("&Settings..."), this)
-	) );
-	QAction* openSettingsAction= actionVector_.back().get();
-	openSettingsAction->setStatusTip(tr("Open Settings"));
-	connect(openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
-	pToolBar_->addAction(openSettingsAction);
+	// Create 'Import Settings' action. This object being child of 'this', it will
+	// be destroyed when MainWindows gets destroyed.
+	pAction = new VppToolbarAction("Import Settings",":/icons/importSettings.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::importSettings);
 
-	// Create 'run' action and associate an icon
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Run", QIcon(":/icons/run.png")),
-					tr("&Run"), this)
-	) );
-	QAction* runAction = actionVector_.back().get();
-	runAction->setStatusTip(tr("Run the VPP analysis"));
-	connect(runAction, &QAction::triggered, this, &MainWindow::run);
-	pToolBar_->addAction(runAction);
+	// Open Settings...
+	pAction = new VppToolbarAction("Settings",":/icons/openSettings.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::openSettings);
 
-	// Create 'tabular' action and associate an icon
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Result table", QIcon(":/icons/tabularResults.png")),
-					tr("&Result table"), this)
-	) );
-	QAction* tabResAction = actionVector_.back().get();
-	tabResAction->setStatusTip(tr("Show the result table"));
-	connect(tabResAction, &QAction::triggered, this, &MainWindow::tableResults);
-	pToolBar_->addAction(tabResAction);
+	// Run...
+	pAction = new VppToolbarAction("Run",":/icons/run.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::run);
 
-	// Create a 'Save Results'action and associate an icon
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("save Results", QIcon(":/icons/saveResults.png")),
-					tr("&Save Results"), this)
-	) );
-	QAction* saveResultsAction = actionVector_.back().get();
-	saveResultsAction->setStatusTip(tr("Save results"));
-	connect(saveResultsAction, &QAction::triggered, this, &MainWindow::saveResults);
+	// Get Result Table...
+	pAction = new VppToolbarAction("Result table",":/icons/tabularResults.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::tableResults);
 
-	// Create a 'Save Results'action and associate an icon
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Import Previous Results", QIcon(":/icons/importResults.png")),
-					tr("&Import Previous Results"), this)
-	) );
-	QAction* importResultsAction = actionVector_.back().get();
-	importResultsAction->setStatusTip(tr("Import Previous Results"));
-	connect(importResultsAction, &QAction::triggered, this, &MainWindow::importResults);
-
-	// ---
+	// --
 
 	// Add a menu in the toolbar. This is used to group polar and XY result plots
-	pPlotResultsMenu_.reset( new QMenu("Plot Results", this) );
-	pPlotResultsMenu_->setIcon( QIcon::fromTheme("Plot Results", QIcon(":/icons/plotPolars.png")) );
-	pToolBar_->addAction(pPlotResultsMenu_->menuAction());
+	VppToolbarMenu* pPlotResultsMenu(new VppToolbarMenu("Plot polars",":/icons/plotPolars.png",this));
 
-	// Create an action and associate an icon for plotting polars
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot polars", QIcon(":/icons/plotPolars.png")),
-					tr("&Polars"), this)
-	) );
-	QAction* plotPolarsAction = actionVector_.back().get();
-	plotPolarsAction->setStatusTip(tr("Plot polars"));
-	connect(plotPolarsAction, &QAction::triggered, this, &MainWindow::plotPolars);
-	pPlotResultsMenu_->addAction(plotPolarsAction);
+	// Plot Polars...
+	pAction = new VppToolbarAction("Plot polars",":/icons/plotPolars.png",pPlotResultsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotPolars);
 
-	// Create an action and associate an icon for XY plotting
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot XY", QIcon(":/icons/plotXY.png")),
-					tr("&XYPlot"), this)
-	) );
-	QAction* plotXYAction = actionVector_.back().get();
-	plotXYAction->setStatusTip(tr("Plot XY"));
-	connect(plotXYAction, &QAction::triggered, this, &MainWindow::plotXY);
-	pPlotResultsMenu_->addAction(plotXYAction);
-
-	// ---
-
-	// Add a menu in the toolbar. This is used to group plot coeffs, and their derivatives
-	pSailCoeffsMenu_.reset( new QMenu("Plot Sail Related Quantities", this) );
-	pSailCoeffsMenu_->setIcon( QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png")) );
-	pToolBar_->addAction(pSailCoeffsMenu_->menuAction());
-
-	// Plot sail coeffs
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png")),
-					tr("&Sail Coeffs"), this)
-	) );
-	QAction* plotSailCoeffsAction = actionVector_.back().get();
-	plotSailCoeffsAction->setStatusTip(tr("Plot Sail Coeffs"));
-	pSailCoeffsMenu_->addAction(plotSailCoeffsAction);
-	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
-
-	// Plot sail coeffs derivatives
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Sail Coeffs Derivatives", QIcon(":/icons/d_sailCoeffs.png")),
-					tr("&d(Sail Coeffs)"), this)
-	) );
-	QAction* plot_d_SailCoeffsAction= actionVector_.back().get();
-	plot_d_SailCoeffsAction->setStatusTip(tr("Plot d(Sail Coeffs)"));
-	pSailCoeffsMenu_->addAction(plot_d_SailCoeffsAction);
-	connect(plot_d_SailCoeffsAction, &QAction::triggered, this, &MainWindow::plot_d_SailCoeffs);
-
-	// Plot sail coeffs second derivatives
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Sail Coeffs Second Derivatives", QIcon(":/icons/d2_sailCoeffs.png")),
-					tr("&d2(Sail Coeffs)"), this)
-	) );
-	QAction* plot_d2_SailCoeffsAction = actionVector_.back().get();
-	plot_d2_SailCoeffsAction->setStatusTip(tr("Plot d2(Sail Coeffs)"));
-	pSailCoeffsMenu_->addAction(plot_d2_SailCoeffsAction);
-	connect(plot_d2_SailCoeffsAction, &QAction::triggered, this, &MainWindow::plot_d2_SailCoeffs);
-
-	// Plot sail force and moments
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Sail Force/Moments", QIcon(":/icons/sailForceMoment.png")),
-					tr("&Plot Sail Force/Moments"), this)
-	) );
-	QAction* plotSailForceMomentAction = actionVector_.back().get();
-	plotSailForceMomentAction->setStatusTip(tr("Plot Sail Force/Moments"));
-	pSailCoeffsMenu_->addAction(plotSailForceMomentAction);
-	connect(plotSailForceMomentAction, &QAction::triggered, this, &MainWindow::plotSailForceMoments);
+	// Plot XY...
+	pAction = new VppToolbarAction("Plot XY",":/icons/plotXY.png",pPlotResultsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotXY);
 
 	// --
 
-	// ---------------------------------------
-	// --- WARNING : for some reason this cannot be defined as member shared ptr, the program crashes..?? ---
-	// ---------------------------------------
-	QMenu* pResistanceMenu = new QMenu("Plot Resistance", this);
-	pResistanceMenu->setIcon( QIcon::fromTheme("Plot Resistance", QIcon(":/icons/resistanceComponent.png")) );
-	pToolBar_->addAction(pResistanceMenu->menuAction());
+	// Add a menu in the toolbar. This is used to group plots for plot coeffs, and their derivatives
+	VppToolbarMenu* pPlotSailCoeffsMenu(new VppToolbarMenu("Plot Sail Coeffs",":/icons/sailCoeffs.png",this));
 
-	// Plot total Resistance
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Total Resistance", QIcon(":/icons/totResistance.png")),
-					tr("&Total Resistance"), this)
-	) );
-	QAction* plotTotResAction = actionVector_.back().get();
-	plotTotResAction->setStatusTip(tr("Plot Total Resistance"));
-	pResistanceMenu->addAction(plotTotResAction);
-	connect(plotTotResAction, &QAction::triggered, this, &MainWindow::plotTotalResistance);
+	// Plot Sail Coeffs...
+	pAction = new VppToolbarAction("Plot Sail Coeffs",":/icons/sailCoeffs.png",pPlotSailCoeffsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
 
-	// Plot Viscous Resistance
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Viscous Resistance", QIcon(":/icons/viscousResistance.png")),
-					tr("&Viscous Resistance"), this)
-	) );
-	QAction* plotFrictResAction = actionVector_.back().get();
-	plotFrictResAction->setStatusTip(tr("Plot Viscous Resistance"));
-	pResistanceMenu->addAction(plotFrictResAction);
-	connect(plotFrictResAction, &QAction::triggered, this, &MainWindow::plotViscousResistance);
+	// Plot Sail Coeffs Derivatives...
+	pAction = new VppToolbarAction("Plot Sail Coeffs Derivatives",":/icons/d_sailCoeffs.png",pPlotSailCoeffsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plot_d_SailCoeffs);
 
-	// Plot Delta Viscous Resistance due to Heel
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Delta Viscous Resistance due to Heel", QIcon(":/icons/DeltaFrictRes_Heel.png")),
-					tr("&Delta Frict. Res. Heel"), this)
-	) );
-	QAction* plotDeltaFrictResHeelAction = actionVector_.back().get();
-	plotDeltaFrictResHeelAction->setStatusTip(tr("Plot Delta Viscous Resistance due to Heel"));
-	pResistanceMenu->addAction(plotDeltaFrictResHeelAction);
-	connect(plotDeltaFrictResHeelAction, &QAction::triggered, this, &MainWindow::plotDelta_ViscousResistance_Heel);
+	// Plot Sail Coeffs Second Derivatives...
+	pAction = new VppToolbarAction("Plot Sail Coeffs Second Derivatives",":/icons/d2_sailCoeffs.png",pPlotSailCoeffsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plot_d2_SailCoeffs);
 
-	// Plot Induced Resistance
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Induced Resistance", QIcon(":/icons/inducedResistance.png")),
-					tr("&Induced Resistance"), this)
-	) );
-	QAction* plotIndResAction = actionVector_.back().get();
-	plotIndResAction->setStatusTip(tr("Plot Induced Resistance"));
-	pResistanceMenu->addAction(plotIndResAction);
-	connect(plotIndResAction, &QAction::triggered, this, &MainWindow::plotInducedResistance);
-
-	// Plot Residuary Resistance
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Residuary Resistance", QIcon(":/icons/residuaryResistance.png")),
-					tr("&Residuary Resistance"), this)
-	) );
-	QAction* plotResiduaryResAction = actionVector_.back().get();
-	plotResiduaryResAction->setStatusTip(tr("Plot Residuary Resistance"));
-	pResistanceMenu->addAction(plotResiduaryResAction);
-	connect(plotResiduaryResAction, &QAction::triggered, this, &MainWindow::plotResiduaryResistance);
-
-	// Plot Negative Resistance
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Negative Resistance", QIcon(":/icons/negativeResistance.png")),
-					tr("&Negative Resistance"), this)
-	) );
-	QAction* plotNegativeResAction = actionVector_.back().get();
-	plotNegativeResAction->setStatusTip(tr("Plot Negative Resistance"));
-	pResistanceMenu->addAction(plotNegativeResAction);
-	connect(plotNegativeResAction, &QAction::triggered, this, &MainWindow::plotNegativeResistance);
+	// Plot Sail Forces...
+	pAction = new VppToolbarAction("Plot Sail Force/Moments",":/icons/sailForceMoment.png",pPlotSailCoeffsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotSailForceMoments);
 
 	// --
 
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Optimization Space", QIcon(":/icons/plot3d.png")),
-					tr("&Plot Optimization Space"), this)
-	) );
-	QAction* plot3dAction = actionVector_.back().get();
-	plot3dAction->setStatusTip(tr("Plot Optimization Space"));
-	connect(plot3dAction, &QAction::triggered, this, &MainWindow::plotOptimizationSpace);
-	pToolBar_->addAction(plot3dAction);
+	// Add a menu in the toolbar. This is used to group resistance plots
+	VppToolbarMenu* pPlotResistanceMenu(new VppToolbarMenu("Plot Resistance",":/icons/resistanceComponent.png",this));
+
+	// Plot Total Resistance...
+	pAction = new VppToolbarAction("Plot Total Resistance",":/icons/totResistance.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotTotalResistance);
+
+	// Plot Viscous Resistance...
+	pAction = new VppToolbarAction("Plot Viscous Resistance",":/icons/viscousResistance.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotViscousResistance);
+
+	// Plot Delta Viscous Resistance due to Heel...
+	pAction = new VppToolbarAction("Plot Delta Viscous Resistance due to Heel",":/icons/DeltaFrictRes_Heel.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotDelta_ViscousResistance_Heel);
+
+	// Plot Induced Resistance...
+	pAction = new VppToolbarAction("Plot Induced Resistance",":/icons/inducedResistance.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotInducedResistance);
+
+	// Plot Residuary Resistance...
+	pAction = new VppToolbarAction("Plot Residuary Resistance",":/icons/residuaryResistance.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotResiduaryResistance);
+
+	// Plot Negative Resistance...
+	pAction = new VppToolbarAction("Plot Negative Resistance",":/icons/negativeResistance.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotResiduaryResistance);
 
 	// --
 
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Gradient", QIcon(":/icons/plotGradient.png")),
-					tr("&Plot Graident"), this)
-	) );
+	// Plot the 3d optimization space...
+	pAction = new VppToolbarAction("Plot Optimization Space",":/icons/plot3d.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotOptimizationSpace);
 
-	QAction* plotGradientAction = actionVector_.back().get();
-	plotGradientAction->setStatusTip(tr("Plot Gradient"));
-	connect(plotGradientAction, &QAction::triggered, this, &MainWindow::plotGradient);
-	pToolBar_->addAction(plotGradientAction);
+	//	 Plot the gradient of the solution...
+	pAction = new VppToolbarAction("Plot Gradient",":/icons/plotGradient.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotGradient);
 
-	// --
-
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Jacobian", QIcon(":/icons/plotJacobian.png")),
-					tr("&Plot Jacobian"), this)
-	) );
-
-	QAction* plotJacobianAction = actionVector_.back().get();
-	plotJacobianAction->setStatusTip(tr("Plot Jacobian"));
-	connect(plotJacobianAction, &QAction::triggered, this, &MainWindow::plotJacobian);
-	pToolBar_->addAction(plotJacobianAction);
+	// Plot the Jacobian of the solution
+	pAction = new VppToolbarAction("Plot Jacobian",":/icons/plotJacobian.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotJacobian);
 
 	// --
 
-	pToolBar_->addAction(saveResultsAction);
-	pToolBar_->addAction(importResultsAction);
+	// Save Results...
+	pAction = new VppToolbarAction("Save results",":/icons/saveResults.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::saveResults);
+
+	// Import Results...
+	pAction = new VppToolbarAction("Import previous results",":/icons/importResults.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::importResults);
 
 	// ---
 
@@ -1433,6 +1276,11 @@ void MainWindow::about() {
 
 void MainWindow::actionTriggered(QAction *action) {
 	qDebug("action '%s' triggered", action->text().toLocal8Bit().data());
+}
+
+// Get the toolbar with some shortcuts to actions
+QToolBar* MainWindow::getToolBar() {
+	return pToolBar_;
 }
 
 void MainWindow::setupToolBar() {

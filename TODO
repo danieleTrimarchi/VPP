@@ -1,11 +1,18 @@
-Remove locks and thus try setting and running an analysis!
-
 Fix the tests <- prepare the xml and remove the old vppIn files
 
 See the ctor of SettingsItem. there are all these strings that are not acceptable
 	This is done, simply I put the commit on hold because I want to be able to 
 	run tests before modifying the code 
 
+
+TreeTab is fine, while the General Tab is unused and this is a petty. 
+Populate this tab with settings such as the choice of the solver
+
+Export results to excel format
+
+Didn't I solve the combo-box appeareance? The settingswindow is not what I would like!
+
+---
 
 Questions: 
 	See :
