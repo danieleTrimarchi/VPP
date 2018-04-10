@@ -135,6 +135,9 @@ public slots:
 
 private:
 
+	/// Import either settings either results from xml file
+	QString importData(string);
+
 	/// Set the menu bar
 	void setupMenuBar();
 

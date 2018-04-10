@@ -299,34 +299,41 @@ void MainWindow::importSettings() {
 
 	try {
 
-		QString caption;
-		QString dir;
-
-		// try getting the settings from file
-		QString settingsFileName = QFileDialog::getOpenFileName(this,caption,dir,
-				tr("VPP Settings File(*.xml);; All Files (*.*)"));
-
-		if (!settingsFileName.isEmpty())
-			std::cout<<"Importing Vpp settings from : "<<settingsFileName.toStdString()<<std::endl;
-
-		// This is the file we are about to read
-		QFile settingsFile(settingsFileName);
-		if (!settingsFile.open(QFile::ReadOnly | QFile::Text)) {
-			QMessageBox::warning(this, tr("VppSettings Import"),
-					tr("Cannot read file %1:\n%2.")
-					.arg(settingsFileName)
-					.arg(settingsFile.errorString()));
-			return;
-		}
-
-		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
-		pSd->read(settingsFile);
-
-		// Sync the variable tree with the vppSettingsDialog
-		udpateVariableTree();
+		importData("VPP Settings File(*.xml);; All Files (*.*)");
 
 		// outer try-catch block
 	}	catch(...) {}
+}
+
+QString MainWindow::importData(string filter) {
+
+	QString caption;
+	QString dir;
+
+	// try getting the settings from file
+	QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
+			tr(filter.c_str()));
+
+	if (!fileName.isEmpty())
+		std::cout<<"Importing data from : "<<fileName.toStdString()<<std::endl;
+
+	// This is the file we are about to read
+	QFile sourceFile(fileName);
+	if (!sourceFile.open(QFile::ReadOnly | QFile::Text)) {
+		QMessageBox::warning(this, tr("VppSettings Import"),
+				tr("Cannot read file %1:\n%2.")
+				.arg(fileName)
+				.arg(sourceFile.errorString()));
+		return QString();
+	}
+
+	VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+	pSd->read(sourceFile);
+
+	// Sync the variable tree with the vppSettingsDialog
+	udpateVariableTree();
+
+	return fileName;
 }
 
 void MainWindow::openSettings() {
@@ -449,7 +456,7 @@ void MainWindow::saveResults() {
 		QFileDialog dialog(this);
 		dialog.setWindowModality(Qt::WindowModal);
 		dialog.setAcceptMode(QFileDialog::AcceptSave);
-		dialog.setNameFilter(tr("VPP Settings File(*.xml)"));
+		dialog.setNameFilter(tr("VPP Result File(*.xml)"));
 		dialog.setDefaultSuffix(".xml");
 		if (dialog.exec() != QDialog::Accepted)
 			return;
@@ -492,19 +499,10 @@ void MainWindow::importResults() {
 
 	try {
 
-		QString caption;
-		QString dir;
+		QString fileName= importData("VPP Result File(*.xml);; All Files (*.*)");
 
-		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
-				tr("VPP Result File(*.vpp);; All Files (*.*)"));
-
-		if (!fileName.isEmpty())
-			std::cout<<"Importing results from : "<<fileName.toStdString()<<std::endl;
-
-		// The variableFileParser can read its part in the result file
-		pVariableFileParser_->parse(fileName.toStdString());
-
-		// Instantiate the sailset
+		// Instantiate the sailset. Note that the variableFileParser has already
+		// been updated while importin the settings
 		pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
 
 		// Instantiate the items
@@ -513,6 +511,7 @@ void MainWindow::importResults() {
 		// Instantiate a new solverFactory without vppItems_
 		pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );
 
+		// And now import the results from the file
 		pSolverFactory_->get()->importResults(fileName.toStdString());
 
 		// outer try-catch block
