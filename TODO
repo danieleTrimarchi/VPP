@@ -1,3 +1,9 @@
+See how to store results in the new XML framework. Shall I have the settings in XML format, or reference the settings XML? 
+ -having the settings XML is a lot better actually. This way I do not get in troubles with sync! 
+
+Also fix the result import
+
+
 Fix the tests <- prepare the xml and remove the old vppIn files
 
 See the ctor of SettingsItem. there are all these strings that are not acceptable

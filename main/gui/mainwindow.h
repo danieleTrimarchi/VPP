@@ -121,7 +121,7 @@ public slots:
 	/// J = | dF/du dF/dPhi |
 	///	   | dM/du dM/dPhi |
 	/// so that 	|dF| = J 	|du  |
-	///					|dM|			|dPhi|
+	///					|dM|			  |dPhi|
 	void plotJacobian();
 
 	/// print out the software info
@@ -172,11 +172,6 @@ private:
 	/// Toolbar with some shortcuts to actions
 	QToolBar* pToolBar_;
 
-	/// Widget that contains the tabular view of the results
-	boost::shared_ptr<VppTableDockWidget> pTableWidget_;
-
-	boost::shared_ptr<VppCustomPlotWidget> pCustomPlotWidget_;
-
 	/// Multi-plot widget used to plot sail coeffs
 	MultiplePlotWidget	*pSailCoeffPlotWidget_,
 											*p_d_SailCoeffPlotWidget_,
@@ -192,6 +187,11 @@ private:
 											*pGradientPlotWidget_,
 											*pPolarPlotWidget_,
 											*pXYPlotWidget_;
+
+	/// Widget that contains the tabular view of the results
+	boost::shared_ptr<VppTableDockWidget> pTableWidget_;
+
+	boost::shared_ptr<VppCustomPlotWidget> pCustomPlotWidget_;
 
 	/// Three dimensional plot widget
 	boost::shared_ptr<ThreeDPlotWidget> p3dPlotWidget_;

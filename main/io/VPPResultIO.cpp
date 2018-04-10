@@ -19,11 +19,12 @@ void VPPResultIO::write(string fileName/*=string("vppResults.vpp")*/){
 
 	std::cout<<"Saving the analysis results to file "<<fileName<<std::endl;
 
-	// Open a file
-	FILE* outFile= fopen(fileName.c_str(), "w");
+	// Open a file and append to the end
+	FILE* outFile= fopen(fileName.c_str(), "a");
 
+	// Obsolete. We now save the xml with the settings tree!
 	// Ask the parser to print the variables to the file
-	pParser_->print(outFile);
+	// pParser_->print(outFile);
 
 	// Ask the results to print to the file
 	pResults_->print(outFile);

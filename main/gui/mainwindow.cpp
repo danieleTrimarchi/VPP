@@ -435,7 +435,17 @@ void MainWindow::saveResults() {
 
 	try {
 
-		// Save the settings
+		//-- Some results must be available!
+		if(!pSolverFactory_ ||
+				!pSolverFactory_->get()->getResults() ) {
+			QMessageBox msgBox;
+			msgBox.setText("Please run the analysis or import results first");
+			msgBox.setIcon(QMessageBox::Critical);
+			msgBox.exec();
+			return;
+		}
+
+		//-- Save the UI settings
 		QFileDialog dialog(this);
 		dialog.setWindowModality(Qt::WindowModal);
 		dialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -446,55 +456,30 @@ void MainWindow::saveResults() {
 
 		// Get the file selected by the user
 		QString fileName(dialog.selectedFiles().first());
-		QFile file(fileName);
 
-		if (!file.open(QFile::WriteOnly | QFile::Text)) {
-			QMessageBox::warning(this, tr("Saving Vpp Settings"),
-					tr("Cannot write file %1:\n%2.")
-					.arg(fileName)
-					.arg(file.errorString()));
-			return;
+		// Introduce a scope because the settings are saved to
+		// QFile when the file is closed : at the destruction
+		// of the QFile. Neglecting to do so implies that the
+		// settings data are written at the very end of the method.
+		// Since the settings write clear the file, this must be
+		// done as first. Otherwise any other data will be destroyed
+		{
+			QFile file(fileName);
+
+			if (!file.open(QFile::WriteOnly | QFile::Text)) {
+				QMessageBox::warning(this, tr("Saving Vpp Settings"),
+						tr("Cannot write file %1:\n%2.")
+						.arg(fileName)
+						.arg(file.errorString()));
+				return;
+			}
+
+			// Get the settings tree and save it to xml file
+			VPPSettingsDialog::getInstance()->save(file);
 		}
 
-		// Get the settings dialog and save its content to file
-		VPPSettingsDialog::getInstance()->save(file);
-
-
-		///////////////////////// now do the rest of the work
-
-		// Results must be available!
-		if(!pSolverFactory_ ||
-				!pSolverFactory_->get()->getResults() ) {
-			QMessageBox msgBox;
-			msgBox.setText("Please run the analysis or import results first");
-			msgBox.setIcon(QMessageBox::Critical);
-			msgBox.exec();
-			return;
-		}
-
-		// todo dtrimarchi: improve the filtering to not grey out the
-		// *.vpp files! See what we do in MainWIndow::importResults where
-		// things work properly. Write a generic class for file selection?
-		dialog.setWindowModality(Qt::WindowModal);
-		dialog.setAcceptMode(QFileDialog::AcceptSave);
-		dialog.setNameFilter(tr("VPP Result File(*.vpp)"));
-		dialog.setDefaultSuffix(".vpp");
-		if (dialog.exec() != QDialog::Accepted)
-			return;
-
-		// Get the file selected by the user
-		fileName= dialog.selectedFiles().first();
-		QFile file2(fileName);
-
-		// Check the file is writable and that is is a text file
-		if (!file2.open(QFile::WriteOnly | QFile::Text)) {
-			QMessageBox::warning(this, tr("Application"),
-					tr("Cannot write file %1:\n%2.")
-					.arg(QDir::toNativeSeparators(fileName),
-							file2.errorString()));
-			return;
-		}
-
+		//-- Now save the results using the old interface. There is no need
+		// to store results in xml format
 		pSolverFactory_->get()->saveResults(fileName.toStdString());
 
 		// outer try-catch block
