@@ -2,11 +2,17 @@
 #define VPP_SETTINGS_XML_WRITER_H
 
 #include <QtCore/QXmlStreamWriter>
-#include "SettingsModel.h"
 #include "boost/shared_ptr.hpp"
 
 /// Forward declarations
 class SettingsItemBase;
+class SettingsItemRoot;
+class SettingsItemGroup;
+class SettingsItemBounds;
+class SettingsItem;
+class SettingsItemInt;
+class SettingsItemComboBox;
+class SettingsModel;
 
 /// XML writer class, contains a QXmlStreamWriter that
 /// actually does the job of writing the XML file

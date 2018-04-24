@@ -13,6 +13,10 @@ QT_END_NAMESPACE
 
 using namespace std;
 
+class Item;
+class SettingsItemBase;
+class SettingsItemRoot;
+
 /// Container class for key, value of the attributes we read from
 /// the xml
 class XmlAttribute {

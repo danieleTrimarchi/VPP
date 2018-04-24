@@ -9,7 +9,6 @@
 
 #include "FileParserBase.h"
 #include "Variables.h"
-#include "SettingsItem.h"
 
 using namespace std;
 
@@ -17,6 +16,11 @@ using namespace std;
 class VariableFileParser;
 class VPPSettingsDialog;
 class VariableTreeModel;
+class SettingsItem;
+class SettingsItemBase;
+class SettingsItemRoot;
+class SettingsItemComboBox;
+class SettingsItemBounds;
 
 /// Visitor used to retrieve the variables from the
 /// SettingsModel and store them in the VariableFileParser

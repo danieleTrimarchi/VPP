@@ -2,24 +2,15 @@
 #define SETTINGS_ITEM_H
 
 /* This class implements the itemTree for the settings window */
-//
-//#include <QtCore/QLocale>
-//#include <QtCore/QVariant>
-//#include <QtCore/QString>
-//#include <QtGui/QColor>
-//#include <QtGui/QFont>
 #include <QtGui/QPainter>
 #include <QtWidgets>
-///QApplication>
-//#include <QtWidgets/QComboBox>
-//#include <boost/shared_ptr.hpp>
 
 #include "DataColumn.h"
 #include "Item.h"
 
-class VPPSettingsXmlWriterVisitor;
-class VPPSettingsXmlReaderVisitor;
-class VariableParserGetVisitor;
+#include "VppSettingsXmlWriter.h"
+#include "VppSettingsXmlReader.h"
+#include "VariableFileParser.h"
 
 class XmlAttributeSet;
 class XmlAttribute;
