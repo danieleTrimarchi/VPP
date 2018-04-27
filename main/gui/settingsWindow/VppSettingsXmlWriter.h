@@ -8,9 +8,13 @@
 class SettingsItemBase;
 class SettingsItemRoot;
 class SettingsItemGroup;
+template <class TUnit>
 class SettingsItemBounds;
+template <class TUnit>
 class SettingsItem;
+template <class TUnit>
 class SettingsItemInt;
+template <class TUnit>
 class SettingsItemComboBox;
 class SettingsModel;
 
@@ -64,16 +68,20 @@ class VPPSettingsXmlWriterVisitor {
 		bool visit(SettingsItemGroup*);
 
 		/// Visit a SettingsItemBounds
-		bool visit(SettingsItemBounds*);
+		template <class TUnit>
+		bool visit(SettingsItemBounds<TUnit>*);
 
 		/// Visit a SettingsItem
-		bool visit(SettingsItem*);
+		template <class TUnit>
+		bool visit(SettingsItem<TUnit>*);
 
 		/// Visit a SettingsItemInt
-		bool visit(SettingsItemInt*);
+		template <class TUnit>
+		bool visit(SettingsItemInt<TUnit>*);
 
 		/// Visit a SettingsItemComboBox
-		bool visit(SettingsItemComboBox*);
+		template <class TUnit>
+		bool visit(SettingsItemComboBox<TUnit>*);
 
 	private:
 
@@ -81,5 +89,7 @@ class VPPSettingsXmlWriterVisitor {
 		boost::shared_ptr<VppSettingsXmlWriter> pXmlWriter_;
 
 };
+
+#include "VppSettingsXmlWriter_tpl.h"
 
 #endif

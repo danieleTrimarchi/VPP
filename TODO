@@ -1,8 +1,7 @@
 See how to store results in the new XML framework. Shall I have the settings in XML format, or reference the settings XML? 
  -having the settings XML is a lot better actually. This way I do not get in troubles with sync! 
 
-Also fix the result import
-
+Also fix the result import <- doing this by templatizing the units. The problem is a dirty trick in variableFileParser::check that must be removed. The idea is to know the unit of the items, and systematically convert to the right unit while pushing the values to the variableFileParser. 
 
 Fix the tests <- prepare the xml and remove the old vppIn files
 
@@ -37,6 +36,9 @@ Questions:
 		return dynamic_cast<SettingsItemBase*>(VppItemModel::getRoot());
 		}
 
+	Also: 
+		SettingsItemBase::settingsItemFactory
+		I need to learn how to do a reasonable factory, this code is crap!
 ---
 
 -> Set Settings values when loosing focus from the SettingsItemWindow cell

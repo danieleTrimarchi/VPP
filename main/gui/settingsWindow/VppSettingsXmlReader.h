@@ -66,6 +66,10 @@ class XmlAttribute {
 //		/// See https://msdn.microsoft.com/en-us/library/wwywka61.aspx
 //		operator int() const;
 
+		/// Self cast operator, returns the underlying value
+		/// See https://msdn.microsoft.com/en-us/library/wwywka61.aspx
+		operator double() const;
+
 	private:
 
 		/// Name of this attribute

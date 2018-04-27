@@ -10,8 +10,9 @@
 
 #include "VppSettingsXmlWriter.h"
 #include "VppSettingsXmlReader.h"
-#include "VariableFileParser.h"
 
+class VariableFileParser;
+class VariableParserGetVisitor;
 class XmlAttributeSet;
 class XmlAttribute;
 
@@ -181,6 +182,7 @@ class SettingsItemGroup : public SettingsItemBase {
 
 /// ---------------------------------------------------------
 
+template <class TUnit>
 class SettingsItemBounds : public SettingsItemGroup {
 
 	public:
@@ -190,7 +192,6 @@ class SettingsItemBounds : public SettingsItemGroup {
 				const QVariant& variableName,	//<	Name of the variable instantiated int the VariableFileParser
 				double min,									//<	Min value of this variable bound
 				double max,									//<	Max value of this variable bound
-				const QVariant& unit,					//< Physical unit of this variable
 				const QVariant& tooltip);			//< Tooltip
 
 		/// Ctor from xml
@@ -229,20 +230,23 @@ class SettingsItemBounds : public SettingsItemGroup {
 		/// Copy Ctor, called by clone()
 		SettingsItemBounds(const SettingsItemBounds&);
 
+		/// Unit of this item
+		boost::shared_ptr<TUnit> pUnit_;
+
 };
 
 /// ---------------------------------------------------------
 
+template <class TUnit>
 class SettingsItem : public SettingsItemBase {
 
 	public:
 
-		/// Ctor
-		SettingsItem(const QVariant& displayName,	//< Name visualized in the UI
-				const QVariant& variableName, //<	Name of the variable instantiated int the VariableFileParser
-				const QVariant&value, 				//<	Value of this variable
-				const QVariant&unit,					//< Physical unit of this variable
-				const QVariant& tooltip);			//< Tooltip
+		/// Ctor by values
+		SettingsItem(const QString& displayName,	//< Name visualized in the UI
+				const QString& variableName, //<	Name of the variable instantiated int the VariableFileParser
+				const QVariant& value, 				//<	Value of this variable
+				const QString& tooltip);			//< Tooltip
 
 		/// Ctor from xml
 		SettingsItem(const XmlAttributeSet&);
@@ -290,21 +294,23 @@ class SettingsItem : public SettingsItemBase {
 
 	private:
 
+		/// Unit of this item
+		boost::shared_ptr<TUnit> pUnit_;
 };
 
 
 /// ---------------------------------------------------------
 
-class SettingsItemInt : public SettingsItem {
+template <class TUnit>
+class SettingsItemInt : public SettingsItem<TUnit> {
 
 	public:
 
 		/// Ctor
-		SettingsItemInt(	const QVariant& displayName, 	//< Name visualized in the UI
-				const QVariant& varName,			//<	Name of the variable instantiated int the VariableFileParser
+		SettingsItemInt(	const QString& displayName, 	//< Name visualized in the UI
+				const QString& varName,			//<	Name of the variable instantiated int the VariableFileParser
 				const QVariant& value,				//<	Value of this variable
-				const QVariant& unit,					//< Physical unit of this variable
-				const QVariant& tooltip);			//< Tooltip
+				const QString& tooltip);			//< Tooltip
 
 		/// Ctor from xml
 		SettingsItemInt(const XmlAttributeSet&);
@@ -316,7 +322,7 @@ class SettingsItemInt : public SettingsItem {
 		virtual void accept( VPPSettingsXmlWriterVisitor& );
 
 		/// Clone this item, which is basically equivalent to calling the copy ctor
-		virtual SettingsItemInt* clone() const;
+		virtual SettingsItemInt<TUnit>* clone() const;
 
 		/// The item will give the Delegate the editor
 		/// to be properly edited - in this case a spinbox
@@ -332,22 +338,22 @@ class SettingsItemInt : public SettingsItem {
 	private:
 
 		/// Copy ctor, called by clone()
-		SettingsItemInt(const SettingsItemInt&);
+		SettingsItemInt(const SettingsItemInt<TUnit>&);
 
 };
 
 /// ---------------------------------------------------------
 
-class SettingsItemComboBox : public SettingsItem {
+template <class TUnit>
+class SettingsItemComboBox : public SettingsItem<TUnit> {
 
 	public:
 
 		/// Ctor
-		SettingsItemComboBox(const QVariant& displayName,	//< Name visualized in the UI
-				const QVariant& variableName,	//<	Name of the variable instantiated int the VariableFileParser
-				const QVariant& unit,					//<	Physical unit of this variable
+		SettingsItemComboBox(const QString& displayName,	//< Name visualized in the UI
+				const QString& variableName,	//<	Name of the variable instantiated int the VariableFileParser
 				const QList<QString>& options,//<	List of options available in this combo-box
-				const QVariant& tooltip);			//< ToolTip
+				const QString& tooltip);			//< ToolTip
 
 		/// Ctor from xml
 		SettingsItemComboBox(const XmlAttributeSet&);
@@ -395,7 +401,7 @@ class SettingsItemComboBox : public SettingsItem {
 	private:
 
 		/// Copy Ctor
-		SettingsItemComboBox(const SettingsItemComboBox& rhs);
+		SettingsItemComboBox(const SettingsItemComboBox<TUnit>& rhs);
 
 		/// Options shown in this combo box
 		QList<QString> opts_;
@@ -407,5 +413,7 @@ class SettingsItemComboBox : public SettingsItem {
 		mutable size_t activeIndex_;
 };
 
+/// Include the template class definitions
+#include "SettingsItem_tpl.h"
 
 #endif

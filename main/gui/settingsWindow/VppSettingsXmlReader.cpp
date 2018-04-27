@@ -1,11 +1,12 @@
-#include "SettingsItem.h"
-#include <QtWidgets/QStyle>
 #include "VppSettingsXmlReader.h"
+
+#include <QtWidgets/QStyle>
 #include "VPPException.h"
 #include "VppSettingsXmlReader.h"
 #include <iostream>
 #include <set>
 #include "GetItemVisitor.h"
+#include "SettingsItem.h"
 
 using namespace std;
 
@@ -80,6 +81,20 @@ int XmlAttribute::getInt() const {
 QString XmlAttribute::toQString() const {
 	return QString(attributeValue_.c_str());
 }
+
+// Self cast operator, returns the underlying value
+XmlAttribute::operator double() const {
+	// Try to convert the string to a double.
+	// Return the double if the conversion was successful
+	try{
+		return stod(attributeValue_);
+	}catch(invalid_argument& e ){
+		char msg[256];
+		sprintf(msg,"Invalid argument when attempting to convert \'%s\' to double",attributeValue_.c_str());
+		throw VPPException(HERE,msg);
+	}
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -181,7 +196,7 @@ void VppSettingsXmlReader::read(Item* parentItem) {
 		}
 
 		// Build the item specified by this attribute set
-		SettingsItemBase* pItem = SettingsItem::settingsItemFactory(attSet);
+		SettingsItemBase* pItem = SettingsItemBase::settingsItemFactory(attSet);
 //		std::cout<<"Instantiating a... "<<pItem->getDisplayName().toStdString()<<std::endl;
 //		std::cout<<"   variableName... "<<pItem->getVariableName().toStdString()<<std::endl;
 

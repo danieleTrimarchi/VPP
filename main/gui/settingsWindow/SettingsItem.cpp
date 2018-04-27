@@ -6,14 +6,15 @@
 #include "VppSettingsXmlWriter.h"
 #include "VppSettingsXmlReader.h"
 #include "VariableFileParser.h"
+#include "Units.h"
 
 using namespace std;
 
 // Ctor
 SettingsItemBase::SettingsItemBase() :
-									Item(),
-									tooltip_(QVariant()),
-									variableName_(QString()){
+											Item(),
+											tooltip_(QVariant()),
+											variableName_(QString()){
 
 	// Instantiate the data columns
 	columns_.push_back(new NameColumn);
@@ -27,7 +28,7 @@ SettingsItemBase::SettingsItemBase() :
 
 // Copy Ctor
 SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs):
-						Item(rhs){
+								Item(rhs){
 
 	tooltip_= rhs.tooltip_;
 
@@ -61,21 +62,88 @@ SettingsItemBase* SettingsItemBase::settingsItemFactory(const XmlAttributeSet& a
 
 	// What class am I going to instantiate?
 	string className = (attSet["ClassName"]).getString();
+	string unit = (attSet["Unit"]).getString();
 
 	SettingsItemBase* pItem;
 	// Now instantiate the item based on its type
 	if(className == string("SettingsItemRoot") ){
 		pItem = new SettingsItemRoot;
+
 	} else if(className == string("SettingsItem")){
-		pItem = new SettingsItem(attSet);
+		if(unit == "m")
+			pItem = new SettingsItem<Meters>(attSet);
+		else if (unit == "m/s")
+			pItem = new SettingsItem<MetersPerSec>(attSet);
+		else if (unit == "m/s")
+			pItem = new SettingsItem<MetersPerSec>(attSet);
+		else if (unit == "deg")
+			pItem = new SettingsItem<Degrees>(attSet);
+		else if (unit == "m^2")
+			pItem = new SettingsItem<SquareMeters>(attSet);
+		else if (unit == "m^3")
+			pItem = new SettingsItem<CubeMeters>(attSet);
+		else if (unit == "Kg")
+			pItem = new SettingsItem<Kilograms>(attSet);
+		else if (unit == " ")
+			pItem = new SettingsItem<NoUnit>(attSet);
+
 	} else if(className == string("SettingsItemComboBox")){
-		pItem = new SettingsItemComboBox(attSet);
+		if(unit == "m")
+			pItem = new SettingsItemComboBox<Meters>(attSet);
+		else if (unit == "m/s")
+			pItem = new SettingsItemComboBox<MetersPerSec>(attSet);
+		else if (unit == "m/s")
+			pItem = new SettingsItemComboBox<MetersPerSec>(attSet);
+		else if (unit == "deg")
+			pItem = new SettingsItemComboBox<Degrees>(attSet);
+		else if (unit == "m^2")
+			pItem = new SettingsItemComboBox<SquareMeters>(attSet);
+		else if (unit == "m^3")
+			pItem = new SettingsItemComboBox<CubeMeters>(attSet);
+		else if (unit == "Kg")
+			pItem = new SettingsItemComboBox<Kilograms>(attSet);
+		else if (unit == " ")
+			pItem = new SettingsItemComboBox<NoUnit>(attSet);
+
 	} else if(className == string("SettingsItemInt")){
-		pItem = new SettingsItemInt(attSet);
+		if(unit == "m")
+			pItem = new SettingsItemInt<Meters>(attSet);
+		else if (unit == "m/s")
+			pItem = new SettingsItemInt<MetersPerSec>(attSet);
+		else if (unit == "m/s")
+			pItem = new SettingsItemInt<MetersPerSec>(attSet);
+		else if (unit == "deg")
+			pItem = new SettingsItemInt<Degrees>(attSet);
+		else if (unit == "m^2")
+					pItem = new SettingsItemInt<SquareMeters>(attSet);
+		else if (unit == "m^3")
+					pItem = new SettingsItemInt<CubeMeters>(attSet);
+		else if (unit == "Kg")
+					pItem = new SettingsItemInt<Kilograms>(attSet);
+		else if (unit == " ")
+			pItem = new SettingsItemInt<NoUnit>(attSet);
+
 	} else if(className == string("SettingsItemGroup")){
 		pItem = new SettingsItemGroup(attSet);
+
 	} else if(className == string("SettingsItemBounds")){
-		pItem = new SettingsItemBounds(attSet);
+		if(unit == "m")
+			pItem = new SettingsItemBounds<Meters>(attSet);
+		else if (unit == "m/s")
+			pItem = new SettingsItemBounds<MetersPerSec>(attSet);
+		else if (unit == "m/s")
+			pItem = new SettingsItemBounds<MetersPerSec>(attSet);
+		else if (unit == "deg")
+			pItem = new SettingsItemBounds<Degrees>(attSet);
+		else if (unit == "m^2")
+					pItem = new SettingsItemBounds<SquareMeters>(attSet);
+		else if (unit == "m^3")
+					pItem = new SettingsItemBounds<CubeMeters>(attSet);
+		else if (unit == "Kg")
+					pItem = new SettingsItemBounds<Kilograms>(attSet);
+		else if (unit == " ")
+			pItem = new SettingsItemBounds<NoUnit>(attSet);
+
 	} 	else {
 		char msg[256];
 		sprintf(msg,"The class name: \"%s\" is not supported",className.c_str());
@@ -250,7 +318,7 @@ bool SettingsItemBase::operator==(const SettingsItemBase& rhs) {
 // ----------------------------------------------------------------
 
 SettingsItemRoot::SettingsItemRoot():
-										SettingsItemBase() {
+												SettingsItemBase() {
 
 	// Fill the columns with the name (intended as the 'dysplayName',
 	// the value and the unit
@@ -267,7 +335,7 @@ SettingsItemRoot::SettingsItemRoot():
 
 // Ctor from xml
 SettingsItemRoot::SettingsItemRoot(const XmlAttributeSet& xmlAttSet) :
-						SettingsItemRoot(){
+								SettingsItemRoot(){
 
 }
 
@@ -316,7 +384,7 @@ QString SettingsItemRoot::getVariableName() const {
 
 /// Clone this item, which is basically equivalent to calling the copy ctor
 SettingsItemRoot::SettingsItemRoot(const SettingsItemRoot& rhs) :
-						SettingsItemBase(rhs){
+								SettingsItemBase(rhs){
 	// Do nothing because this class does not own members
 }
 
@@ -333,7 +401,7 @@ const SettingsItemRoot& SettingsItemRoot::operator=(const SettingsItemRoot& rhs)
 
 // Ctor
 SettingsItemGroup::SettingsItemGroup(const QVariant& displayName):
-										SettingsItemBase(){
+												SettingsItemBase(){
 
 	// The group is not editable
 	columns_[columnNames::name]->setData( displayName );
@@ -345,13 +413,13 @@ SettingsItemGroup::SettingsItemGroup(const QVariant& displayName):
 
 // Ctor from xml
 SettingsItemGroup::SettingsItemGroup(const XmlAttributeSet& xmlAttSet) :
-					SettingsItemGroup(xmlAttSet["DisplayName"].toQString()){
+							SettingsItemGroup(xmlAttSet["DisplayName"].toQString()){
 
 }
 
 // Copy Ctor, called by clone()
 SettingsItemGroup::SettingsItemGroup(const SettingsItemGroup& rhs):
-						SettingsItemBase(rhs){
+								SettingsItemBase(rhs){
 	// Do nothing as the class has no own members
 }
 
@@ -383,482 +451,5 @@ QFont SettingsItemGroup::getFont() const {
 	return myFont;
 }
 
-// ----------------------------------------------------------------
 
-// Ctor
-SettingsItemBounds::SettingsItemBounds(const QVariant& displayName,const QVariant& variableName,double min,double max,const QVariant& unit,const QVariant& tooltip) :
-								SettingsItemGroup(displayName){
-
-	appendChild( new SettingsItem(displayName.toString()+QString("_min"),variableName.toString()+QString("_MIN"),min,unit,"min value") );
-	appendChild( new SettingsItem(displayName.toString()+QString("_max"),variableName.toString()+QString("_MAX"),max,unit,"max value") );
-
-	// Set the tooltip
-	tooltip_= tooltip;
-
-	// Set the variable Name for this item
-	variableName_= variableName.toString();
-}
-
-// Ctor from xml
-SettingsItemBounds::SettingsItemBounds(const XmlAttributeSet& xmlAttSet) :
-						SettingsItemGroup(xmlAttSet["DisplayName"].toQString()){
-
-	// Do not instantiate children, if requested they are instantiated on
-	// the fly while reading the rest of the xml
-}
-
-// Copy Ctor, called by clone()
-SettingsItemBounds::SettingsItemBounds(const SettingsItemBounds& rhs):
-						SettingsItemGroup(rhs){
-
-	// Do nothing as SettingsItemBounds do not have own members
-}
-
-// Dtor
-SettingsItemBounds::~SettingsItemBounds() {
-
-}
-
-// Accept a visitor that will write this item to XML
-void SettingsItemBounds::accept( VPPSettingsXmlWriterVisitor& v ) {
-
-	// Visit me
-	v.visit(this);
-}
-
-// Accept a visitor that will write this item to the variableFileParser
-void SettingsItemBounds::accept( VariableParserGetVisitor& v) {
-
-	// Visit me
-	v.visit(this);
-}
-
-// Clone this item, which is basically equivalent to calling the copy ctor
-SettingsItemBounds* SettingsItemBounds::clone() const {
-	return new SettingsItemBounds(*this);
-}
-
-QFont SettingsItemBounds::getFont() const {
-	QFont myFont;
-	myFont.setBold(true);
-	myFont.setUnderline(false);
-	int fontSize = myFont.pointSize();
-	myFont.setPointSize(fontSize-2);
-	return myFont;
-}
-
-// Returns a handle on the item that represents the min in this bound
-SettingsItemBase* SettingsItemBounds::getItemMin() {
-	return dynamic_cast<SettingsItemBase*>(child(0));
-}
-
-// Returns a handle on the item that represents the max in this bound
-SettingsItemBase* SettingsItemBounds::getItemMax() {
-	return dynamic_cast<SettingsItemBase*>(child(1));
-}
-
-// Get the min value of this bound
-double SettingsItemBounds::getMin() {
-	return getItemMin()->data(columnNames::value).toDouble();
-}
-
-// Get the max value of this bound
-double SettingsItemBounds::getMax() {
-	return getItemMax()->data(columnNames::value).toDouble();
-}
-
-// ----------------------------------------------------------------
-
-// Ctor
-SettingsItem::SettingsItem(	const QVariant& displayName,
-		const QVariant& variableName,
-		const QVariant& value,
-		const QVariant& unit,
-		const QVariant& tooltip):
-								SettingsItemBase(){
-
-	columns_[columnNames::name]->setData( displayName );
-	columns_[columnNames::value]->setData( value );
-	columns_[columnNames::unit]->setData( unit );
-
-	// Set the tooltip
-	tooltip_= tooltip;
-
-	// The editable columns for the settings item are editable
-	setEditable(true);
-
-	// Set the variable name that will be used to build
-	// the variable in the variableFileParser
-	variableName_= variableName.toString();
-}
-
-// Ctor from xml. Just call the other constructor
-SettingsItem::SettingsItem(const XmlAttributeSet& xmlAttSet):
-						SettingsItem( 	xmlAttSet["DisplayName"].toQString(),
-								xmlAttSet["VariableName"].toQString(),
-								xmlAttSet["Value"].toQString(),
-								xmlAttSet["Unit"].toQString(),
-								xmlAttSet["ToolTip"].toQString() ){
-}
-
-// Copy Ctor
-SettingsItem::SettingsItem(const SettingsItem& rhs) :
-					SettingsItemBase(rhs) {
-
-}
-
-// Dtor
-SettingsItem::~SettingsItem(){
-
-}
-
-// Accept a visitor that will write this item to XML
-void SettingsItem::accept( VPPSettingsXmlWriterVisitor& v ) {
-
-	// Visit me
-	v.visit(this);
-}
-
-// Accept a visitor that will write this item to XML
-void SettingsItem::accept( VariableParserGetVisitor& v) {
-
-	// Visit me
-	v.visit(this);
-}
-
-// Clone this item, which is basically equivalent to calling the copy ctor
-SettingsItem* SettingsItem::clone() const {
-	return new SettingsItem(*this);
-}
-
-// Return the backGround color for this item based on the column
-QColor SettingsItem::getBackGroundColor(int iColumn) const {
-
-	return columns_[iColumn]->getBackGroundColor();
-
-}
-
-// The item will give the Delegate the editor
-// to be properly edited - in this case a QLineEdit with
-// double validator
-QWidget* SettingsItem::createEditor(QWidget *parent) {
-
-	// Set local settings for the validators
-	QLocale localSettings = QLocale::c();
-	localSettings.setNumberOptions(QLocale::RejectGroupSeparator | QLocale::OmitGroupSeparator);
-
-	QLineEdit *editor = new QLineEdit(parent);
-	QDoubleValidator* doubleValidator= new QDoubleValidator(0.000, 999999.000, 3, editor);
-	doubleValidator->setLocale(localSettings);
-
-	editor->setStyleSheet(	"background-color: white;"
-			"selection-color: orange;" );
-
-	editor->setValidator(doubleValidator);
-	editor->setFrame(false);
-	editor->setText( QString::number(0.000) );
-
-	return editor;
-
-}
-
-// Edit the data in the editor
-void SettingsItem::setEditorData(QWidget *editor,const QModelIndex& index) {
-
-	double value = index.model()->data(index, Qt::EditRole).toDouble();
-
-	// Set local settings for the validators
-	QLocale localSettings = QLocale::c();
-	localSettings.setNumberOptions(QLocale::RejectGroupSeparator | QLocale::OmitGroupSeparator);
-
-	QDoubleValidator* doubleValidator= new QDoubleValidator(0.000, 999999.000, 3, editor);
-	doubleValidator->setLocale(localSettings);
-
-	QLineEdit* pLineEdit = static_cast<QLineEdit*>(editor);
-
-	pLineEdit->setValidator(doubleValidator);
-	pLineEdit->setFrame(false);
-	pLineEdit->setText( QString::number(value) );
-
-}
-
-// Set the data in the model
-void SettingsItem::setModelData(	QWidget* editor,
-		QAbstractItemModel* model,
-		const QModelIndex& index) const {
-
-	QLineEdit* pQLineEdit = static_cast<QLineEdit*>(editor);
-
-	model->setData(index, pQLineEdit->text(), Qt::EditRole);
-
-}
-
-// Visual options - requested by the Delegate - this directly derives from MEMS+
-// Decorates the base class method paint
-void SettingsItem::paint(QPainter* painter, const QStyleOptionViewItem &option,
-		const QModelIndex &index) const {
-
-	painter->save();
-
-	// If the element is editable we draw a background and a box around the text
-	if (index.model()->flags(index).testFlag(Qt::ItemIsEditable)) {
-
-		// Gets a rectangle to draw the background and adjust it
-		QRect boxRect(option.rect);
-		boxRect.adjust(1, 1, -1, -1);
-
-		// Sets the color of the border depending on the selected or hovered state
-		if ( (option.state & QStyle::State_Selected) || (option.state & QStyle::State_MouseOver) )
-			painter->setPen(QApplication::palette().highlight().color());
-		else
-			painter->setPen(QPen(Qt::lightGray));
-
-		// Sets the brush depending on the selected state
-		if (option.state & QStyle::State_Selected)
-			painter->setBrush(QBrush(QApplication::palette().highlight().color(), Qt::Dense6Pattern));
-		else
-			painter->setBrush(QColor("white"));
-
-		// Draws the rectangle around the text
-		painter->drawRect(boxRect);
-	}
-
-	// Call base-class method
-	SettingsItemBase::paint(painter,option,index);
-
-	painter->restore();
-}
-
-// ---------------------------------------------------------------
-
-/// Ctor
-SettingsItemInt::SettingsItemInt(const QVariant& displayName,const QVariant& variableName,
-		const QVariant& value,
-		const QVariant& unit,
-		const QVariant& tooltip):
-								SettingsItem(displayName,variableName,value,unit,tooltip){
-
-}
-
-// Ctor from xml
-SettingsItemInt::SettingsItemInt(const XmlAttributeSet& xmlAttSet) :
-						SettingsItemInt(	xmlAttSet["DisplayName"].toQString(),
-								xmlAttSet["VariableName"].toQString(),
-								xmlAttSet["Value"].toQString(),
-								xmlAttSet["Unit"].toQString(),
-								xmlAttSet["ToolTip"].toQString() ){
-}
-
-/// Dtor
-SettingsItemInt::~SettingsItemInt() {
-	/* do nothing */
-}
-
-// Accept a visitor that will write this item to XML
-void SettingsItemInt::accept( VPPSettingsXmlWriterVisitor& v ) {
-
-	// Visit me
-	v.visit(this);
-}
-
-
-// Clone this item, which is basically equivalent to calling the copy ctor
-SettingsItemInt* SettingsItemInt::clone() const {
-	return new SettingsItemInt(*this);
-}
-
-/// The item will give the Delegate the editor
-/// to be properly edited - in this case a spinbox
-QWidget* SettingsItemInt::createEditor(QWidget *parent) {
-
-	QSpinBox* editor = new QSpinBox(parent);
-	editor->setFrame(false);
-	editor->setMinimum(0);
-	editor->setMaximum(1000);
-
-	editor->setStyleSheet(	"background-color: white;"
-			"selection-color: orange;");
-
-	return editor;
-
-}
-
-
-// Edit the data in the editor
-void SettingsItemInt::setEditorData(QWidget *editor,const QModelIndex& index) {
-
-	// Get the value stored in the model for this object
-	int value = index.model()->data(index, Qt::EditRole).toInt();
-
-	QSpinBox* pSpinBox = static_cast<QSpinBox*>(editor);
-	pSpinBox->setValue(value);
-
-}
-
-void SettingsItemInt::setModelData(	QWidget *editor,
-		QAbstractItemModel *model,
-		const QModelIndex &index) const {
-
-	QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
-	spinBox->interpretText();
-	int value = spinBox->value();
-
-	//std::cout<<"Setting \'"<<value<<"\' to item "<<this<<" ; model "<<model<<std::endl;
-	model->setData(index, value, Qt::EditRole);
-}
-
-// Copy ctor, called by clone()
-SettingsItemInt::SettingsItemInt(const SettingsItemInt& rhs) :
-						SettingsItem(rhs) {
-
-	// There is nothing else to do, as there are no owned class
-	// members
-}
-
-// ---------------------------------------------------------------
-
-// Ctor
-SettingsItemComboBox::SettingsItemComboBox(
-		const QVariant& displayName,
-		const QVariant& variableName,
-		const QVariant& unit,
-		const QList<QString>& options,
-		const QVariant& tooltip):
-									SettingsItem(displayName,variableName,options[0],unit,tooltip),
-									opts_(options),
-									activeIndex_(0) {
-
-}
-
-// Ctor from xml
-// todo : the options are known by the visitor, not the item. All the
-// logics here should be displaced to the xmlreadvisitor!
-SettingsItemComboBox::SettingsItemComboBox(const XmlAttributeSet& xmlAttSet) :
-						SettingsItem(	xmlAttSet["DisplayName"].toQString(),
-								xmlAttSet["VariableName"].toQString(),
-								xmlAttSet["Option0"].toQString(),
-								xmlAttSet["Unit"].toQString(),
-								xmlAttSet["ToolTip"].toQString() ){
-
-	// Populate the options
-	for(size_t i=0; i<int((xmlAttSet["numOpts"]).getInt()); i++){
-		char msg[256];
-		sprintf(msg,"Option%zu",i);
-		opts_.push_back(xmlAttSet[string(msg)].toQString());
-	}
-
-	activeIndex_= xmlAttSet["ActiveIndex"].getInt();
-
-}
-
-// Dtor
-SettingsItemComboBox::~SettingsItemComboBox() {
-	/* do nothing */
-}
-
-// Accept a visitor that will write this item to XML
-void SettingsItemComboBox::accept( VPPSettingsXmlWriterVisitor& v ) {
-
-	// Visit me
-	v.visit(this);
-}
-
-// Accept a visitor that will write this item to XML
-void SettingsItemComboBox::accept( VariableParserGetVisitor& v) {
-
-	// Visit me
-	v.visit(this);
-}
-
-/// Clone this item, which is basically equivalent to calling the copy ctor
-SettingsItemComboBox* SettingsItemComboBox::clone() const {
-	return new SettingsItemComboBox(*this);
-}
-
-// The item will give the Delegate the editor
-// to be properly edited - in this case a spinbox
-QWidget* SettingsItemComboBox::createEditor(QWidget *parent) {
-
-	QComboBox* editor = new QComboBox(parent);
-
-	for(size_t i=0; i<opts_.size(); i++)
-		editor->addItem(opts_[i]);
-
-	editor->setCurrentIndex(activeIndex_);
-
-	editor->setStyleSheet(	"background-color: white;"
-			"selection-color: orange;");
-
-	return editor;
-}
-
-// Edit the data in the editor
-void SettingsItemComboBox::setEditorData(QWidget *editor,const QModelIndex& index) {
-
-	// Set the data with the index of the selected option
-	QComboBox* pComboBox = static_cast<QComboBox*>(editor);
-	pComboBox->setCurrentIndex(activeIndex_);
-}
-
-// Set the data in the model - called by the Delegate
-void SettingsItemComboBox::setModelData(QWidget *editor, QAbstractItemModel *model,
-		const QModelIndex &index) const {
-
-	// Get a handle on the combo box
-	QComboBox* pComboBox = static_cast<QComboBox*>(editor);
-
-	// Get the selected text
-	QString value = pComboBox->currentText();
-
-	// Set the active index. Note that activeIndex_ is declared
-	// mutable, as we need to set this inside a const method
-	activeIndex_ = pComboBox->currentIndex();
-
-	// Set the underlying model
-	model->setData(index, value, Qt::EditRole);
-
-}
-
-//  Returns the label of the active (selected) item
-// Called by the parent 'paint' method
-QString SettingsItemComboBox::getActiveText(const QModelIndex &index) const {
-	return opts_[activeIndex_];
-}
-
-// How many options are available to this combo-box?
-size_t SettingsItemComboBox::getNumOpts() const {
-	return opts_.size();
-}
-
-// Get the i-th option for this Combo-Box
-QString SettingsItemComboBox::getOption(size_t i) const {
-	return opts_[i];
-}
-
-// Only meaningful for the combo-box item, returns zero for all the
-// other items
-size_t SettingsItemComboBox::getActiveIndex() const {
-	return activeIndex_;
-}
-
-// Assignment operator
-const SettingsItemComboBox& SettingsItemComboBox::operator=(const SettingsItemComboBox& rhs) {
-
-	// Call the parent operator=
-	SettingsItem::operator=(rhs);
-
-	// Now copy own members
-	opts_= rhs.opts_;
-	activeIndex_= rhs.activeIndex_;
-
-	return *this;
-}
-
-// Copy Ctor
-SettingsItemComboBox::SettingsItemComboBox(const SettingsItemComboBox& rhs) :
-						SettingsItem(rhs),
-						opts_(rhs.opts_),
-						activeIndex_(rhs.activeIndex_){
-
-}
 

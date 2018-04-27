@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "GetItemVisitor.h"
+#include "Units.h"
 
 SettingsModel::SettingsModel():
 VppItemModel() {
@@ -46,103 +47,103 @@ void SettingsModel::setupModelData() {
 	SettingsItemGroup* pVPPSettings = new SettingsItemGroup("VPP Settings");
 	pVPPSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pVPPSettings);
-	pVPPSettings->appendChild( new SettingsItemBounds("Velocity bounds","V",0,15,"m/s","Allowed boat speed bounds"));
-	pVPPSettings->appendChild( new SettingsItemBounds("Heel angle bounds","PHI",-1e-5,85,"deg","Allowed boat heel angle bounds"));
-	pVPPSettings->appendChild( new SettingsItemBounds("Crew position bounds","B",0,3,"[m]","Allowed boat heel angle bounds"));
-	pVPPSettings->appendChild( new SettingsItemBounds("Flat bounds","F",0.4,1," ","Allowed boat heel angle bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds<MetersPerSec>("Velocity bounds","V",0,15,"Allowed boat speed bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds<Degrees>("Heel angle bounds","PHI",-1e-5,85,"Allowed boat heel angle bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds<Meters>("Crew position bounds","B",0,3,"Allowed boat heel angle bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds<NoUnit>("Flat bounds","F",0.4,1,"Allowed boat heel angle bounds"));
 
 	//	//-- Wind
 	SettingsItemGroup* pWindSettings = new SettingsItemGroup("Wind Settings");
 	pWindSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pWindSettings);
 
-	pWindSettings->appendChild( new SettingsItemBounds("Wind speed bounds","VTW",2,6,"[m/s]","Real Wind speed bounds"));
-	pWindSettings->appendChild( new SettingsItemInt("n_twv","NTW",5," ","Number of wind speed points") );
-	pWindSettings->appendChild( new SettingsItemBounds("Wind angle bounds","TWA",35,179,"[deg]","Real Wind angle bounds"));
-	pWindSettings->appendChild( new SettingsItemInt("n_alpha_tw","N_TWA",10," ","Number of wind speed points") );
+	pWindSettings->appendChild( new SettingsItemBounds<MetersPerSec>("Wind speed bounds","VTW",2,6,"Real Wind speed bounds"));
+	pWindSettings->appendChild( new SettingsItemInt<NoUnit>("n_twv","NTW",5,"Number of wind speed points") );
+	pWindSettings->appendChild( new SettingsItemBounds<Degrees>("Wind angle bounds","TWA",35,179,"Real Wind angle bounds"));
+	pWindSettings->appendChild( new SettingsItemInt<NoUnit>("n_alpha_tw","N_TWA",10,"Number of wind speed points") );
 
 	//-- Hull Settings...
 	SettingsItemGroup* pHullSettings = new SettingsItemGroup("Hull Settings");
 	pHullSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pHullSettings);
 
-	pHullSettings->appendChild( new SettingsItem("LWL","LWL",0,"m","Design waterline length") 	);
-	pHullSettings->appendChild( new SettingsItem("BWL","BWL",0,"m","Design waterline beam") );
-	pHullSettings->appendChild( new SettingsItem("B","B",0,"m","Design maximum beam") );
-	pHullSettings->appendChild( new SettingsItem("T","T",0,"m","Total draft") );
-	pHullSettings->appendChild( new SettingsItem("DIVCAN","DIVCAN",0,"m^3","Displaced volume of canoe body") );
-	pHullSettings->appendChild( new SettingsItem("AVGFREB","AVGFREB",0,"m","Average freeboard") );
-	pHullSettings->appendChild( new SettingsItem("XFB","XFB",0,"m","Longitudinal center of buoyancy LCB from fpp") );
-	pHullSettings->appendChild( new SettingsItem("XFF","XFF",0,"m","Longitudinal center of flotation LCF from fpp") );
-	pHullSettings->appendChild( new SettingsItem("CPL","CPL",0," ","Longitudinal prismatic coefficient") );
-	pHullSettings->appendChild( new SettingsItem("HULLFF","HULLFF",0," ","Hull form factor") );
-	pHullSettings->appendChild( new SettingsItem("AW","AW",0,"m^2","Design waterplane area") );
-	pHullSettings->appendChild( new SettingsItem("SC","SC",0,"m^2","Wetted surface area of canoe body") );
-	pHullSettings->appendChild( new SettingsItem("CMS","CMS",0," ","Midship section coefficient") );
-	pHullSettings->appendChild( new SettingsItem("TCAN","TCAN",0,"m","Draft of canoe body") );
-	pHullSettings->appendChild( new SettingsItem("ALT","ALT",0,"m^2","Total lateral area of yacht") );
-	pHullSettings->appendChild( new SettingsItem("KG","KG",0,"m","Center of gravity above moulded base or keel") );
-	pHullSettings->appendChild( new SettingsItem("KM","KM",0,"m","Transverse metacentre above moulded base or keel") );
+	pHullSettings->appendChild( new SettingsItem<Meters>("LWL","LWL",0,"Design waterline length") 	);
+	pHullSettings->appendChild( new SettingsItem<Meters>("BWL","BWL",0,"Design waterline beam") );
+	pHullSettings->appendChild( new SettingsItem<Meters>("B","B",0,"Design maximum beam") );
+	pHullSettings->appendChild( new SettingsItem<Meters>("T","T",0,"Total draft") );
+	pHullSettings->appendChild( new SettingsItem<CubeMeters>("DIVCAN","DIVCAN",0,"Displaced volume of canoe body") );
+	pHullSettings->appendChild( new SettingsItem<Meters>("AVGFREB","AVGFREB",0,"Average freeboard") );
+	pHullSettings->appendChild( new SettingsItem<Meters>("XFB","XFB",0,"Longitudinal center of buoyancy LCB from fpp") );
+	pHullSettings->appendChild( new SettingsItem<Meters>("XFF","XFF",0,"Longitudinal center of flotation LCF from fpp") );
+	pHullSettings->appendChild( new SettingsItem<NoUnit>("CPL","CPL",0,"Longitudinal prismatic coefficient") );
+	pHullSettings->appendChild( new SettingsItem<NoUnit>("HULLFF","HULLFF",1,"Hull form factor") );
+	pHullSettings->appendChild( new SettingsItem<SquareMeters>("AW","AW",0,"Design waterplane area") );
+	pHullSettings->appendChild( new SettingsItem<SquareMeters>("SC","SC",0,"Wetted surface area of canoe body") );
+	pHullSettings->appendChild( new SettingsItem<NoUnit>("CMS","CMS",0,"Midship section coefficient") );
+	pHullSettings->appendChild( new SettingsItem<Meters>("TCAN","TCAN",0,"Draft of canoe body") );
+	pHullSettings->appendChild( new SettingsItem<SquareMeters>("ALT","ALT",0,"Total lateral area of yacht") );
+	pHullSettings->appendChild( new SettingsItem<Meters>("KG","KG",0,"Center of gravity above moulded base or keel") );
+	pHullSettings->appendChild( new SettingsItem<Meters>("KM","KM",0,"Transverse metacentre above moulded base or keel") );
 
 	//-- Crew Settings...
 	SettingsItemGroup* pCrewSettings = new SettingsItemGroup("Crew Settings");
 	pCrewSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pCrewSettings);
 
-	pCrewSettings->appendChild( new SettingsItem("MMVBLCRW","MMVBLCRW",0,"Kg","Movable Crew Mass") 	);
+	pCrewSettings->appendChild( new SettingsItem<Kilograms>("MMVBLCRW","MMVBLCRW",0,"Movable Crew Mass") 	);
 
 	// Keel Settings...
 	SettingsItemGroup* pKeelSettings = new SettingsItemGroup("Keel Settings");
 	pKeelSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pKeelSettings);
 
-	pKeelSettings->appendChild( new SettingsItem("DVK","DVK",0,"m^3","Displaced volume of keel") );
-	pKeelSettings->appendChild( new SettingsItem("APK","APK",0,"m^2","Keel planform area") );
-	pKeelSettings->appendChild( new SettingsItem("ASK","ASK",0,"m^2","Keel Aspect Ratio") );
-	pKeelSettings->appendChild( new SettingsItem("SK","SK",0,"m^2","Keel Wetted Surface") );
-	pKeelSettings->appendChild( new SettingsItem("ZCBK","ZCBK",0,"m","Keel Vertical Center of Buoyancy") );
-	pKeelSettings->appendChild( new SettingsItem("CHMEK","CHMEK",0,"m","Mean chord length") );
-	pKeelSettings->appendChild( new SettingsItem("CHRTK","CHRTK",0,"m","Root chord length") );
-	pKeelSettings->appendChild( new SettingsItem("CHTPK","CHTPK",0,"m","Tip chord length") );
-	pKeelSettings->appendChild( new SettingsItem("KEELFF","KEELFF",1,"m","Keel's form factor") );
-	pKeelSettings->appendChild( new SettingsItem("DELTTK","DELTTK",0," ","Mean thickness ratio of keel section") );
-	pKeelSettings->appendChild( new SettingsItem("TAK","TAK",0," ","Taper ratio of keel (CHRTK/CHTPK)") );
+	pKeelSettings->appendChild( new SettingsItem<CubeMeters>("DVK","DVK",0,"Displaced volume of keel") );
+	pKeelSettings->appendChild( new SettingsItem<SquareMeters>("APK","APK",0,"Keel planform area") );
+	pKeelSettings->appendChild( new SettingsItem<SquareMeters>("ASK","ASK",0,"Keel Aspect Ratio") );
+	pKeelSettings->appendChild( new SettingsItem<SquareMeters>("SK","SK",0,"Keel Wetted Surface") );
+	pKeelSettings->appendChild( new SettingsItem<Meters>("ZCBK","ZCBK",0,"Keel Vertical Center of Buoyancy") );
+	pKeelSettings->appendChild( new SettingsItem<Meters>("CHMEK","CHMEK",0,"Mean chord length") );
+	pKeelSettings->appendChild( new SettingsItem<Meters>("CHRTK","CHRTK",0,"Root chord length") );
+	pKeelSettings->appendChild( new SettingsItem<Meters>("CHTPK","CHTPK",0,"Tip chord length") );
+	pKeelSettings->appendChild( new SettingsItem<Meters>("KEELFF","KEELFF",1,"Keel's form factor") );
+	pKeelSettings->appendChild( new SettingsItem<NoUnit>("DELTTK","DELTTK",0,"Mean thickness ratio of keel section") );
+	pKeelSettings->appendChild( new SettingsItem<NoUnit>("TAK","TAK",0,"Taper ratio of keel (CHRTK/CHTPK)") );
 
 	// Rudder Settings...
 	SettingsItemGroup* pRudderSettings = new SettingsItemGroup("Rudder Settings");
 	pRudderSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pRudderSettings);
 
-	pRudderSettings->appendChild( new SettingsItem("DVR","DVR",0,"m^3","Rudder displaced volume") );
-	pRudderSettings->appendChild( new SettingsItem("APR","APR",0,"m^2","Rudder planform area") );
-	pRudderSettings->appendChild( new SettingsItem("SR","SR",0,"m^2","Rudder wetted surface") );
-	pRudderSettings->appendChild( new SettingsItem("CHMER","CHMER",0,"m","Mean chord length") );
-	pRudderSettings->appendChild( new SettingsItem("CHRTR","CHRTR",0,"m","Root chord length") );
-	pRudderSettings->appendChild( new SettingsItem("CHTPR","CHTPR",0,"m","Tip chord length") );
-	pRudderSettings->appendChild( new SettingsItem("DELTTR","DELTTR",0,"m","Mean thickness ratio of rudder section") );
-	pRudderSettings->appendChild( new SettingsItem("RUDDFF","RUDDFF",1," ","Rudder form factor") );
+	pRudderSettings->appendChild( new SettingsItem<CubeMeters>("DVR","DVR",0,"Rudder displaced volume") );
+	pRudderSettings->appendChild( new SettingsItem<SquareMeters>("APR","APR",0,"Rudder planform area") );
+	pRudderSettings->appendChild( new SettingsItem<SquareMeters>("SR","SR",0,"Rudder wetted surface") );
+	pRudderSettings->appendChild( new SettingsItem<Meters>("CHMER","CHMER",0,"Mean chord length") );
+	pRudderSettings->appendChild( new SettingsItem<Meters>("CHRTR","CHRTR",0,"Root chord length") );
+	pRudderSettings->appendChild( new SettingsItem<Meters>("CHTPR","CHTPR",0,"Tip chord length") );
+	pRudderSettings->appendChild( new SettingsItem<Meters>("DELTTR","DELTTR",0,"Mean thickness ratio of rudder section") );
+	pRudderSettings->appendChild( new SettingsItem<NoUnit>("RUDDFF","RUDDFF",1,"Rudder form factor") );
 
 	// Sail Settings...
 	SettingsItemGroup* pSailSettings = new SettingsItemGroup("Sail Settings");
 	pSailSettings->setParent(pRootItem_.get());
 	pRootItem_->appendChild(pSailSettings);
 
-	pSailSettings->appendChild( new SettingsItem("P","P",0,"m","Main height") );
-	pSailSettings->appendChild( new SettingsItem("E","E",0,"m","Main base") );
-	pSailSettings->appendChild( new SettingsItem("MROACH","MROACH",0," ","Correction for mainsail roach") );
-	pSailSettings->appendChild( new SettingsItem("BAD","BAD",0,"m","Boom height above deck") );
-	pSailSettings->appendChild( new SettingsItem("I","I",0,"m","Fore Triangle height") );
-	pSailSettings->appendChild( new SettingsItem("J","J",0,"m","Fore Triangle base") );
-	pSailSettings->appendChild( new SettingsItem("LPG","LPG",0,"m","Perpendicular of longest jib") );
-	pSailSettings->appendChild( new SettingsItem("SL","SL",0,"m","Spinnaker length") );
-	pSailSettings->appendChild( new SettingsItem("EHM","EHM",0,"m","Mast height above deck") );
-	pSailSettings->appendChild( new SettingsItem("EMDC","EMDC",0,"m","Mast average diameter") );
+	pSailSettings->appendChild( new SettingsItem<Meters>("P","P",0,"Main height") );
+	pSailSettings->appendChild( new SettingsItem<Meters>("E","E",0,"Main base") );
+	pSailSettings->appendChild( new SettingsItem<NoUnit>("MROACH","MROACH",0,"Correction for mainsail roach") );
+	pSailSettings->appendChild( new SettingsItem<Meters>("BAD","BAD",0,"Boom height above deck") );
+	pSailSettings->appendChild( new SettingsItem<Meters>("I","I",0,"Fore Triangle height") );
+	pSailSettings->appendChild( new SettingsItem<Meters>("J","J",0,"Fore Triangle base") );
+	pSailSettings->appendChild( new SettingsItem<Meters>("LPG","LPG",0,"Perpendicular of longest jib") );
+	pSailSettings->appendChild( new SettingsItem<Meters>("SL","SL",0,"Spinnaker length") );
+	pSailSettings->appendChild( new SettingsItem<Meters>("EHM","EHM",0,"Mast height above deck") );
+	pSailSettings->appendChild( new SettingsItem<Meters>("EMDC","EMDC",0,"Mast average diameter") );
 
 	// Define combo-box opts for the SailSet
 	QList<QString> options;
 	options.append("Standard battens");
 	options.append("Full battens");
-	SettingsItemComboBox* pBattensCombo = new SettingsItemComboBox("MainBattens","MFLB"," ",options,"Battens configuration");
+	SettingsItemComboBox<NoUnit>* pBattensCombo = new SettingsItemComboBox<NoUnit>("MainBattens","MFLB",options,"Battens configuration");
 	pSailSettings->appendChild( pBattensCombo );
 
 	options.clear();
@@ -150,7 +151,7 @@ void SettingsModel::setupModelData() {
 	options.append("Main and jib");
 	options.append("Main and spinnaker");
 	options.append("Main, jib and spinnaker");
-	SettingsItemComboBox* pSettingsCombo = new SettingsItemComboBox("SailSet","SAILSET"," ",options,"Sail configuration");
+	SettingsItemComboBox<NoUnit>* pSettingsCombo = new SettingsItemComboBox<NoUnit>("SailSet","SAILSET",options,"Sail configuration");
 	pSailSettings->appendChild( pSettingsCombo );
 
 	////////////////////////////////////////////////

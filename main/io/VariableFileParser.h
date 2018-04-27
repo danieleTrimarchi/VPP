@@ -16,10 +16,14 @@ using namespace std;
 class VariableFileParser;
 class VPPSettingsDialog;
 class VariableTreeModel;
-class SettingsItem;
+
 class SettingsItemBase;
 class SettingsItemRoot;
+template <class TUnit>
+class SettingsItem;
+template <class TUnit>
 class SettingsItemComboBox;
+template <class TUnit>
 class SettingsItemBounds;
 
 /// Visitor used to retrieve the variables from the
@@ -41,13 +45,16 @@ class VariableParserGetVisitor {
 		void visit(SettingsItemRoot*);
 
 		/// Visit a SettingsItem
-		void visit(SettingsItem* pItem);
+		template <class TUnit>
+		void visit(SettingsItem<TUnit>* pItem);
 
 		/// Visit a SettingsItem
-		void visit(SettingsItemComboBox* pItem);
+		template <class TUnit>
+		void visit(SettingsItemComboBox<TUnit>* pItem);
 
 		/// Visit a SettingsItemBounds
-		void visit(SettingsItemBounds* pItem);
+		template <class TUnit>
+		void visit(SettingsItemBounds<TUnit>* pItem);
 
 	private:
 
@@ -126,6 +133,8 @@ class VariableFileParser : public FileParserBase {
 		std::vector<std::string> requiredVariables_;
 
 };
+
+#include "VariableFileParser_tpl.h"
 
 #endif
 
