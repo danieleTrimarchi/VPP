@@ -442,16 +442,6 @@ void MainWindow::saveResults() {
 
 	try {
 
-		//-- Some results must be available!
-		if(!pSolverFactory_ ||
-				!pSolverFactory_->get()->getResults() ) {
-			QMessageBox msgBox;
-			msgBox.setText("Please run the analysis or import results first");
-			msgBox.setIcon(QMessageBox::Critical);
-			msgBox.exec();
-			return;
-		}
-
 		//-- Save the UI settings
 		QFileDialog dialog(this);
 		dialog.setWindowModality(Qt::WindowModal);
@@ -485,10 +475,13 @@ void MainWindow::saveResults() {
 			VPPSettingsDialog::getInstance()->save(file);
 		}
 
-		//-- Now save the results using the old interface. There is no need
-		// to store results in xml format
-		pSolverFactory_->get()->saveResults(fileName.toStdString());
-
+		// If some results are available, save them
+		if(pSolverFactory_)
+			if(pSolverFactory_->get()->getResults() ) {
+				//-- Now save the results using the old interface. There is no need
+				// to store results in xml format
+				pSolverFactory_->get()->saveResults(fileName.toStdString());
+			}
 		// outer try-catch block
 	}	catch(...) {}
 

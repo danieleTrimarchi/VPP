@@ -10,6 +10,11 @@
 
 using namespace std;
 
+// Init static members
+const string SettingsItemBase::className_("SettingsItemBase");
+const string SettingsItemRoot::className_("SettingsItemRoot");
+const string SettingsItemGroup::className_("SettingsItemGroup");
+
 // Ctor
 SettingsItemBase::SettingsItemBase() :
 											Item(),
@@ -64,84 +69,85 @@ SettingsItemBase* SettingsItemBase::settingsItemFactory(const XmlAttributeSet& a
 	string className = (attSet["ClassName"]).getString();
 	string unit = (attSet["Unit"]).getString();
 
-	SettingsItemBase* pItem;
+	// Instantiate the units to get their signature
+	NoUnit noUnit;
+	Meters meters;
+	MetersPerSec metersPerSec;
+	Degrees degrees;
+	SquareMeters squareMeters;
+	CubeMeters cubeMeters;
+	Kilograms kilograms;
+
+	SettingsItemBase* pItem=0;
 	// Now instantiate the item based on its type
-	if(className == string("SettingsItemRoot") ){
+	if(className == SettingsItemRoot::className_){
 		pItem = new SettingsItemRoot;
 
-	} else if(className == string("SettingsItem")){
-		if(unit == "m")
+	} else if(className == SettingsItem<NoUnit>::className_){
+		if(unit == meters.getUnitName())
 			pItem = new SettingsItem<Meters>(attSet);
-		else if (unit == "m/s")
+		else if (unit == metersPerSec.getUnitName())
 			pItem = new SettingsItem<MetersPerSec>(attSet);
-		else if (unit == "m/s")
-			pItem = new SettingsItem<MetersPerSec>(attSet);
-		else if (unit == "deg")
+		else if (unit == degrees.getUnitName())
 			pItem = new SettingsItem<Degrees>(attSet);
-		else if (unit == "m^2")
+		else if (unit == squareMeters.getUnitName())
 			pItem = new SettingsItem<SquareMeters>(attSet);
-		else if (unit == "m^3")
+		else if (unit == cubeMeters.getUnitName())
 			pItem = new SettingsItem<CubeMeters>(attSet);
-		else if (unit == "Kg")
+		else if (unit == kilograms.getUnitName())
 			pItem = new SettingsItem<Kilograms>(attSet);
-		else if (unit == " ")
+		else if (unit == noUnit.getUnitName())
 			pItem = new SettingsItem<NoUnit>(attSet);
 
-	} else if(className == string("SettingsItemComboBox")){
-		if(unit == "m")
+	} else if(className == SettingsItemComboBox<NoUnit>::className_){
+		if(unit == meters.getUnitName())
 			pItem = new SettingsItemComboBox<Meters>(attSet);
-		else if (unit == "m/s")
+		else if (unit == metersPerSec.getUnitName())
 			pItem = new SettingsItemComboBox<MetersPerSec>(attSet);
-		else if (unit == "m/s")
-			pItem = new SettingsItemComboBox<MetersPerSec>(attSet);
-		else if (unit == "deg")
+		else if (unit == degrees.getUnitName())
 			pItem = new SettingsItemComboBox<Degrees>(attSet);
-		else if (unit == "m^2")
+		else if (unit == squareMeters.getUnitName())
 			pItem = new SettingsItemComboBox<SquareMeters>(attSet);
-		else if (unit == "m^3")
+		else if (unit == cubeMeters.getUnitName())
 			pItem = new SettingsItemComboBox<CubeMeters>(attSet);
-		else if (unit == "Kg")
+		else if (unit == kilograms.getUnitName())
 			pItem = new SettingsItemComboBox<Kilograms>(attSet);
-		else if (unit == " ")
+		else if (unit == noUnit.getUnitName())
 			pItem = new SettingsItemComboBox<NoUnit>(attSet);
 
-	} else if(className == string("SettingsItemInt")){
-		if(unit == "m")
+	} else if(className == SettingsItemInt<NoUnit>::className_){
+		if(unit == meters.getUnitName())
 			pItem = new SettingsItemInt<Meters>(attSet);
-		else if (unit == "m/s")
+		else if (unit == metersPerSec.getUnitName())
 			pItem = new SettingsItemInt<MetersPerSec>(attSet);
-		else if (unit == "m/s")
-			pItem = new SettingsItemInt<MetersPerSec>(attSet);
-		else if (unit == "deg")
+		else if (unit == degrees.getUnitName())
 			pItem = new SettingsItemInt<Degrees>(attSet);
-		else if (unit == "m^2")
+		else if (unit == squareMeters.getUnitName())
 					pItem = new SettingsItemInt<SquareMeters>(attSet);
-		else if (unit == "m^3")
+		else if (unit == cubeMeters.getUnitName())
 					pItem = new SettingsItemInt<CubeMeters>(attSet);
-		else if (unit == "Kg")
+		else if (unit == kilograms.getUnitName())
 					pItem = new SettingsItemInt<Kilograms>(attSet);
-		else if (unit == " ")
+		else if (unit == noUnit.getUnitName())
 			pItem = new SettingsItemInt<NoUnit>(attSet);
 
-	} else if(className == string("SettingsItemGroup")){
+	} else if(className == SettingsItemGroup::className_){
 		pItem = new SettingsItemGroup(attSet);
 
-	} else if(className == string("SettingsItemBounds")){
-		if(unit == "m")
+	} else if(className == SettingsItemBounds<NoUnit>::className_){
+		if(unit == meters.getUnitName())
 			pItem = new SettingsItemBounds<Meters>(attSet);
-		else if (unit == "m/s")
+		else if (unit == metersPerSec.getUnitName())
 			pItem = new SettingsItemBounds<MetersPerSec>(attSet);
-		else if (unit == "m/s")
-			pItem = new SettingsItemBounds<MetersPerSec>(attSet);
-		else if (unit == "deg")
+		else if (unit == degrees.getUnitName())
 			pItem = new SettingsItemBounds<Degrees>(attSet);
-		else if (unit == "m^2")
+		else if (unit == squareMeters.getUnitName())
 					pItem = new SettingsItemBounds<SquareMeters>(attSet);
-		else if (unit == "m^3")
+		else if (unit == cubeMeters.getUnitName())
 					pItem = new SettingsItemBounds<CubeMeters>(attSet);
-		else if (unit == "Kg")
+		else if (unit == kilograms.getUnitName())
 					pItem = new SettingsItemBounds<Kilograms>(attSet);
-		else if (unit == " ")
+		else if (unit == noUnit.getUnitName())
 			pItem = new SettingsItemBounds<NoUnit>(attSet);
 
 	} 	else {

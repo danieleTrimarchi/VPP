@@ -4,6 +4,7 @@
 #include "VPPException.h"
 #include "VppSettingsXmlReader.h"
 #include <iostream>
+#include <sstream>
 #include <set>
 #include "GetItemVisitor.h"
 #include "SettingsItem.h"
@@ -184,6 +185,7 @@ void VppSettingsXmlReader::read(Item* parentItem) {
 
 			string attName= pXml_->attributes().at(i).name().toString().toStdString();
 			string attValue= pXml_->attributes().at(i).value().toString().toStdString();
+			//std::cout<<"Reading attName: "<<attName<<" and attValue: "<<attValue<<std::endl;
 
 			// Insert the attribute into the attribute set
 			try{
@@ -199,6 +201,11 @@ void VppSettingsXmlReader::read(Item* parentItem) {
 		SettingsItemBase* pItem = SettingsItemBase::settingsItemFactory(attSet);
 //		std::cout<<"Instantiating a... "<<pItem->getDisplayName().toStdString()<<std::endl;
 //		std::cout<<"   variableName... "<<pItem->getVariableName().toStdString()<<std::endl;
+		if(!pItem){
+			string msg;
+			msg += "Item named " + pItem->getDisplayName().toStdString() + " not recognized";
+			throw VPPException(HERE,msg.c_str());
+		}
 
 		if(dynamic_cast<SettingsItemRoot*>(pItem)){
 			// Substitute the root with the new brand new root we just created

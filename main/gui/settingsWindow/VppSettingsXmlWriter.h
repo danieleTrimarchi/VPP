@@ -18,6 +18,8 @@ template <class TUnit>
 class SettingsItemComboBox;
 class SettingsModel;
 
+using namespace std;
+
 /// XML writer class, contains a QXmlStreamWriter that
 /// actually does the job of writing the XML file
 class VppSettingsXmlWriter : public QXmlStreamWriter {

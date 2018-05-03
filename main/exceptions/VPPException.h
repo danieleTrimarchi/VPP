@@ -4,6 +4,8 @@
 #include <exception>
 #include <string>
 
+using namespace std;
+
 /// Define the macro here used to identify the function that throws
 #define HERE __FILE__, __LINE__, __PRETTY_FUNCTION__
 
@@ -12,6 +14,9 @@ class VPPException : public std::exception {
 	public:
 
 		// Constructor
+		VPPException(const char* inFile, int inLine, const char* inFunction, ostringstream message );
+
+		// Constructor using c_str
 		VPPException(const char* inFile, int inLine, const char* inFunction, const char* message );
 
 		// Destructor
@@ -22,7 +27,7 @@ class VPPException : public std::exception {
 
 	protected:
 
-		std::string msg;
+		std::string msg_;
 
 };
 
@@ -44,7 +49,7 @@ class NonConvergedException : public std::exception {
 
 	protected:
 
-		std::string msg;
+		std::string msg_;
 
 };
 
@@ -68,7 +73,7 @@ class NoPreviousConvergedException : public std::exception {
 
 	protected:
 
-		std::string msg;
+		std::string msg_;
 
 };
 

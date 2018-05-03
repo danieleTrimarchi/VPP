@@ -3,6 +3,7 @@
 #include <iostream>
 #include <QtWidgets>
 #include "VPPException.h"
+#include "Units.h"
 
 VppSettingsXmlWriter::VppSettingsXmlWriter(SettingsModel* pTreeModel, QIODevice *device) :
 		pTreeModel_(pTreeModel),
@@ -76,7 +77,11 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBase* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXmlWriter_->writeAttribute("ClassName","SettingsItemBase");
+	pXmlWriter_->writeAttribute("ClassName",SettingsItemBase::className_.c_str());
+
+	// Instantiate some NoUnits just to get the name string
+	NoUnit myUnit;
+	pXmlWriter_->writeAttribute("Unit", myUnit.getUnitName().c_str());
 
   visitEnd(item);
 
@@ -92,6 +97,10 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemRoot* item ) {
 	// Write the class name
 	pXmlWriter_->writeAttribute("ClassName","SettingsItemRoot");
 
+	// Instantiate some NoUnits just to get the name string
+	NoUnit myUnit;
+	pXmlWriter_->writeAttribute("Unit", myUnit.getUnitName().c_str());
+
   visitEnd(item);
 
 	return true;
@@ -105,6 +114,10 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemGroup* item ) {
 
 	// Write the class name
 	pXmlWriter_->writeAttribute("ClassName","SettingsItemGroup");
+
+	// Instantiate some NoUnits just to get the name string
+	NoUnit myUnit;
+	pXmlWriter_->writeAttribute("Unit", myUnit.getUnitName().c_str());
 
 	visitEnd(item);
 

@@ -3,6 +3,9 @@
 #include "VariableFileParser.h"
 #include <QString>
 
+template <class TUnit>
+const string SettingsItem<TUnit>::className_("SettingsItem");
+
 // Ctor
 template <class TUnit>
 SettingsItem<TUnit>::SettingsItem(	const QString& displayName,
@@ -179,6 +182,9 @@ SettingsItem<TUnit>::~SettingsItem(){
 
 ////////////////////////////////////////////////////////////////
 
+template <class TUnit>
+const string SettingsItemInt<TUnit>::className_("SettingsItemInt");
+
 /// Ctor
 template <class TUnit>
 SettingsItemInt<TUnit>::SettingsItemInt(
@@ -269,6 +275,9 @@ SettingsItemInt<TUnit>* SettingsItemInt<TUnit>::clone() const {
 
 ////////////////////////////////////////////////////////////////
 
+template <class TUnit>
+const string SettingsItemComboBox<TUnit>::className_("SettingsItemComboBox");
+
 // Ctor
 template <class TUnit>
 SettingsItemComboBox<TUnit>::SettingsItemComboBox(
@@ -284,10 +293,13 @@ SettingsItemComboBox<TUnit>::SettingsItemComboBox(
 
 // Ctor from xml
 // todo : the options are known by the visitor, not the item. All the
-// logics here should be displaced to the xmlreadvisitor!
+// logics here should be displaced to the XmlReadVisitor!
 template <class TUnit>
 SettingsItemComboBox<TUnit>::SettingsItemComboBox(const XmlAttributeSet& xmlAttSet) :
-						SettingsItem<TUnit>(xmlAttSet){
+	SettingsItem<TUnit>(	xmlAttSet["DisplayName"].toQString(),
+											xmlAttSet["VariableName"].toQString(),
+											xmlAttSet["Option0"].toQString(),
+											xmlAttSet["ToolTip"].toQString() ){
 
 	// Populate the options
 	for(size_t i=0; i<int((xmlAttSet["numOpts"]).getInt()); i++){
@@ -425,6 +437,9 @@ SettingsItemComboBox<TUnit>::SettingsItemComboBox(const SettingsItemComboBox<TUn
 }
 
 ////////////////////////////////////////////////////////////////
+
+template <class TUnit>
+const string SettingsItemBounds<TUnit>::className_("SettingsItemBounds");
 
 // Ctor
 template <class TUnit>

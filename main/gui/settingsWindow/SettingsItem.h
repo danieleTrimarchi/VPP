@@ -84,6 +84,9 @@ class SettingsItemBase : public Item {
 		/// read from xml and stored into an appropriate set
 		static SettingsItemBase* settingsItemFactory(const XmlAttributeSet&);
 
+		/// Name of the class as a string. Used for XML i/o.
+		static const string className_;
+
 		protected:
 
 		/// Ctor to be called from child classes
@@ -141,6 +144,9 @@ class SettingsItemRoot : public SettingsItemBase {
 		/// Assignment operator
 		virtual const SettingsItemRoot& operator=(const SettingsItemRoot& rhs);
 
+		/// Name of the class as a string. Used for XML i/o.
+		static const string className_;
+
 	private:
 
 		/// Clone this item, which is basically equivalent to calling the copy ctor
@@ -172,6 +178,9 @@ class SettingsItemGroup : public SettingsItemBase {
 		/// Returns the font this item should be visualized
 		/// with in the item tree
 		virtual QFont getFont() const;
+
+		/// Name of the class as a string. Used for XML i/o.
+		static const string className_;
 
 	protected:
 
@@ -224,6 +233,9 @@ class SettingsItemBounds : public SettingsItemGroup {
 
 		/// Get the max value of this bound
 		double getMax();
+
+		/// Name of the class as a string. Used for XML i/o.
+		static const string className_;
 
 	private:
 
@@ -287,6 +299,9 @@ class SettingsItem : public SettingsItemBase {
 				const QStyleOptionViewItem &option,
 				const QModelIndex &index) const;
 
+		/// Name of the class as a string. Used for XML i/o.
+		static const string className_;
+
 	protected:
 
 		/// Copy Ctor, called by clone()
@@ -334,6 +349,9 @@ class SettingsItemInt : public SettingsItem<TUnit> {
 		/// Set the data in the model
 		virtual void setModelData(QWidget *editor, QAbstractItemModel *model,
 				const QModelIndex &index) const override;
+
+		/// Name of the class as a string. Used for XML i/o.
+		static const string className_;
 
 	private:
 
@@ -397,6 +415,9 @@ class SettingsItemComboBox : public SettingsItem<TUnit> {
 
 		/// Assignment operator
 		virtual const SettingsItemComboBox& operator=(const SettingsItemComboBox& rhs);
+
+		/// Name of the class as a string. Used for XML i/o.
+		static const string className_;
 
 	private:
 

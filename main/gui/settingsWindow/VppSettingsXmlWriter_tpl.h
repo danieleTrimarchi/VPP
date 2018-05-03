@@ -1,6 +1,7 @@
 #include "DataColumn.h"
+#include "Units.h"
 
-/// Visit a SettingsItem
+// Visit a SettingsItem
 template <class TUnit>
 bool VPPSettingsXmlWriterVisitor::visit(SettingsItem<TUnit>* item ) {
 
@@ -43,7 +44,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemInt<TUnit>* item ) {
 
 }
 
-/// Visit a SettingsItemComboBox
+// Visit a SettingsItemComboBox
 template <class TUnit>
 bool VPPSettingsXmlWriterVisitor::visit(SettingsItemComboBox<TUnit>* item ) {
 
@@ -74,7 +75,7 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemComboBox<TUnit>* item ) {
 	return true;
 }
 
-/// Visit a SettingsItemBounds
+// Visit a SettingsItemBounds
 template <class TUnit>
 bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBounds<TUnit>* item ) {
 
@@ -83,6 +84,10 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBounds<TUnit>* item ) {
 
 	// Write the class name
 	pXmlWriter_->writeAttribute("ClassName","SettingsItemBounds");
+
+	// Write the unit of this item.
+	NoUnit noUnit;
+	pXmlWriter_->writeAttribute("Unit", noUnit.getUnitName().c_str() );
 
   visitEnd(item);
 
