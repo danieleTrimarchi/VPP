@@ -6,8 +6,11 @@
 template <class TUnit>
 void VariableParserGetVisitor::visit(SettingsItem<TUnit>* pItem) {
 
+	// Convert the value of this item to SI unit (actually, we only convert deg -> rad)
+	boost::shared_ptr<SettingsItemBase> SIItem( pItem->convertToSI() );
+
 	// Store the name and the value of this item in the parser
-	pParser_->insert(pItem->getVariableName(), pItem->data(columnNames::value).toDouble());
+	pParser_->insert(SIItem->getVariableName(), SIItem->data(columnNames::value).toDouble());
 
 	// Loop on the tree
 	for(size_t iChild=0; iChild<pItem->childCount(); iChild++){
@@ -27,7 +30,9 @@ void VariableParserGetVisitor::visit(SettingsItemComboBox<TUnit>* pItem) {
 	// Store the name and the value of this item in the parser.
 	// We use a convention here that maps the active index of the
 	// combo-box to the value specified in SailConfig - see SailSet.h
-	pParser_->insert(pItem->getVariableName(), 2*pItem->getActiveIndex()+1);
+	boost::shared_ptr<SettingsItemBase> SIItem( pItem->convertToSI() );
+
+	pParser_->insert(SIItem->getVariableName(), 2*SIItem->getActiveIndex()+1);
 
 	// Loop on the tree
 	for(size_t iChild=0; iChild<pItem->childCount(); iChild++){
@@ -48,11 +53,11 @@ void VariableParserGetVisitor::visit(SettingsItemBounds<TUnit>* pItem) {
 	// and max with different names.
 
 	// Get the min item in and store its value in the parser
-	SettingsItemBase* pMinItem = pItem->getItemMin();
+	boost::shared_ptr<SettingsItemBase> pMinItem( pItem->getItemMin()->convertToSI() );
 	pParser_->insert(pMinItem->getVariableName(), pMinItem->data(columnNames::value).toDouble());
 
 	// Get the max item in and store its value in the parser
-	SettingsItemBase* pMaxItem = pItem->getItemMax();
+	boost::shared_ptr<SettingsItemBase> pMaxItem( pItem->getItemMax()->convertToSI() );
 	pParser_->insert(pMaxItem->getVariableName(), pMaxItem->data(columnNames::value).toDouble());
 
 }

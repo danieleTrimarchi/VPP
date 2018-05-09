@@ -223,10 +223,10 @@ class SettingsItemBounds : public SettingsItemGroup {
 		virtual QFont getFont() const;
 
 		/// Returns a handle on the item that represents the min in this bound
-		SettingsItemBase* getItemMin();
+		SettingsItem<TUnit>* getItemMin();
 
 		/// Returns a handle on the item that represents the max in this bound
-		SettingsItemBase* getItemMax();
+		SettingsItem<TUnit>* getItemMax();
 
 		/// Get the min value of this bound
 		double getMin();
@@ -274,6 +274,11 @@ class SettingsItem : public SettingsItemBase {
 
 		/// Clone this item, which is basically equivalent to calling the copy ctor
 		virtual SettingsItem* clone() const;
+
+		/// Returns a copy of this item, the value of which
+		/// has been converted to SI units. Warning : this is
+		/// specialized for Degrees!
+		SettingsItemBase* convertToSI();
 
 		/// Return the backGround color for this item
 		/// The backGroundRole is grey for all, but white

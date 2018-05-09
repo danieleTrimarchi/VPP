@@ -282,5 +282,4 @@ class Kilograms : public WeightUnit {
 
 };
 
-
 #endif

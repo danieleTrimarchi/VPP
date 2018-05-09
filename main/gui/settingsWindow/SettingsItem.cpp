@@ -323,6 +323,27 @@ bool SettingsItemBase::operator==(const SettingsItemBase& rhs) {
 
 // ----------------------------------------------------------------
 
+// Template specialization : in the case of deg, convert
+// to radians
+template <>
+SettingsItemBase* SettingsItem<Degrees>::convertToSI() {
+
+	// Instantiate the new unit
+	Radians radians;
+
+	// Construct an item in the SI unit system
+	SettingsItem<Radians>* pSIItem= new SettingsItem<Radians>(
+			this->columns_[columnNames::name]->getData().toString(),
+			this->variableName_,
+			this->data(columnNames::value).toDouble() * M_PI / 180.0,
+			radians.getUnitName().c_str()
+			);
+
+	return pSIItem;
+}
+
+// ----------------------------------------------------------------
+
 SettingsItemRoot::SettingsItemRoot():
 												SettingsItemBase() {
 

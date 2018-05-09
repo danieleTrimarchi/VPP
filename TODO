@@ -1,7 +1,6 @@
-I broke the settings import... cannot find unit. I guess this is expected? 
-
 Also fix the result import <- doing this by templatizing the units. The problem is a dirty trick in variableFileParser::check that must be removed. The idea is to know the unit of the items, and systematically convert to the right unit while pushing the values to the 
-variableFileParser. 
+variableFileParser. -> done, but this is not the right way to go. the items own the unit, but they are not templatized on the unit. 
+The current scheme is particoularly stupid, as it forces a clone of the items - implying a  clone of the item AND the children... This is not an option!
 
 Enhance the 'saveResults' action. If there are no results to be saved, only save the settings
  
@@ -46,6 +45,13 @@ Questions:
 		Refactor the factory!
 		I need to learn how to do a reasonable factory, this code is crap!
 		
+	Also: 
+		I have chosen to templatize the items on their unit. This creates a lot 
+		of problems when trying to convert the unit of an item. To do so I need 
+		to instantiate a new item, which is akward. See for instance 
+		SettingsItemBase* SettingsItem<Degrees>::convertToSI()
+		Can I make a lighter design, with a non template item holding any unit?
+
 ---
 
 -> Set Settings values when loosing focus from the SettingsItemWindow cell

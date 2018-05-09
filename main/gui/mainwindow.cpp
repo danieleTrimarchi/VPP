@@ -495,7 +495,7 @@ void MainWindow::importResults() {
 		QString fileName= importData("VPP Result File(*.xml);; All Files (*.*)");
 
 		// Instantiate the sailset. Note that the variableFileParser has already
-		// been updated while importin the settings
+		// been updated while importing the settings
 		pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
 
 		// Instantiate the items

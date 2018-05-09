@@ -156,6 +156,16 @@ SettingsItem<TUnit>* SettingsItem<TUnit>::clone() const {
 	return new SettingsItem<TUnit>(*this);
 }
 
+// Returns a copy of this item, the value of which
+// has been converted to SI units. The default behavior
+// is to return a clone of myself, because I am already
+// in the correct unit. Warning : this is specialized for
+// Degrees!
+template <class TUnit>
+SettingsItemBase* SettingsItem<TUnit>::convertToSI() {
+		return this->clone();
+}
+
 // Return the backGround color for this item based on the column
 template <class TUnit>
 QColor SettingsItem<TUnit>::getBackGroundColor(int iColumn) const {
@@ -519,14 +529,14 @@ QFont SettingsItemBounds<TUnit>::getFont() const {
 
 // Returns a handle on the item that represents the min in this bound
 template <class TUnit>
-SettingsItemBase* SettingsItemBounds<TUnit>::getItemMin() {
-		return dynamic_cast<SettingsItemBase*>(child(0));
+SettingsItem<TUnit>* SettingsItemBounds<TUnit>::getItemMin() {
+		return dynamic_cast<SettingsItem<TUnit> * >(child(0));
 }
 
 // Returns a handle on the item that represents the max in this bound
 template <class TUnit>
-SettingsItemBase* SettingsItemBounds<TUnit>::getItemMax() {
-		return dynamic_cast<SettingsItemBase*>(child(1));
+SettingsItem<TUnit>* SettingsItemBounds<TUnit>::getItemMax() {
+		return dynamic_cast<SettingsItem<TUnit> * >(child(1));
 }
 
 // Get the min value of this bound
