@@ -86,8 +86,8 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBounds<TUnit>* item ) {
 	pXmlWriter_->writeAttribute("ClassName","SettingsItemBounds");
 
 	// Write the unit of this item.
-	NoUnit noUnit;
-	pXmlWriter_->writeAttribute("Unit", noUnit.getUnitName().c_str() );
+	TUnit myUnit;
+	pXmlWriter_->writeAttribute("Unit", myUnit.getUnitName().c_str() );
 
   visitEnd(item);
 
