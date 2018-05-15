@@ -257,14 +257,7 @@ void VariableFileParser::check() {
 
 	if(variables_["TWA_MAX"] <= variables_["TWA_MIN"] )
 		throw VPPException(HERE,"TWA_MIN is larger than TWA_MAX!");
-
-	// Convert ALL the angles from DEG to RAD
-	variables_["PHI_MIN"] = mathUtils::toRad( variables_["PHI_MIN"] );
-	variables_["PHI_MAX"] = mathUtils::toRad( variables_["PHI_MAX"] );
-
-	variables_["TWA_MIN"] = mathUtils::toRad( variables_["TWA_MIN"] );
-	variables_["TWA_MAX"] = mathUtils::toRad( variables_["TWA_MAX"] );
-
+    
 }
 
 /// Get the value of a variable

@@ -378,7 +378,7 @@ void MainWindow::run() {
 
 	try {
 
-		// Verify if the variable values are within the allowed ranges
+		// Verify if the variable values aCre within the allowed ranges
 		pVariableFileParser_->check();
 
 		// before each run we rebuild the items with the latest settings

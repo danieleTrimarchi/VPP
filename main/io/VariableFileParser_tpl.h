@@ -56,9 +56,6 @@ void VariableParserGetVisitor::visit(SettingsItemBounds<TUnit>* pItem) {
 	// I will treat this item as a leaf, because I need to store min
 	// and max with different names.
 
-	SettingsItem<TUnit>* pMin=	pItem->getItemMin();
-	SettingsItem<TUnit>* pMinClone= pMin->clone();
-
     // Get the min item in and store its value in the parser
 	SettingsItemBase* pMinItem( pItem->getItemMin()->convertToSI() );
 	pParser_->insert(pMinItem->getVariableName(), pMinItem->data(columnNames::value).toDouble());
