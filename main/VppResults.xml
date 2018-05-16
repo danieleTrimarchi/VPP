@@ -2,37 +2,37 @@
 <!DOCTYPE vppSettings>
 <vppSettings version="1.0">
     <Item Expanded="yes" InternalName="/" DisplayName="Name" VariableName="" ClassName="SettingsItemRoot" Unit="">
-        <Item Expanded="yes" InternalName="/.VPP_Settings" DisplayName="VPP Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
-            <Item Expanded="yes" InternalName="/.VPP_Settings.Velocity_bounds" DisplayName="Velocity bounds" VariableName="" ClassName="SettingsItemBounds" Unit="">
+        <Item Expanded="no" InternalName="/.VPP_Settings" DisplayName="VPP Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+            <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds" DisplayName="Velocity bounds" VariableName="" ClassName="SettingsItemBounds" Unit="m/s">
                 <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.Velocity_bounds_min" DisplayName="Velocity bounds_min" VariableName="V_MIN" ClassName="SettingsItem" Value="0" Unit="m/s" ToolTip="min value"/>
                 <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.Velocity_bounds_max" DisplayName="Velocity bounds_max" VariableName="V_MAX" ClassName="SettingsItem" Value="15" Unit="m/s" ToolTip="max value"/>
             </Item>
-            <Item Expanded="yes" InternalName="/.VPP_Settings.Heel_angle_bounds" DisplayName="Heel angle bounds" VariableName="" ClassName="SettingsItemBounds" Unit="">
+            <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds" DisplayName="Heel angle bounds" VariableName="" ClassName="SettingsItemBounds" Unit="deg">
                 <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds.Heel_angle_bounds_min" DisplayName="Heel angle bounds_min" VariableName="PHI_MIN" ClassName="SettingsItem" Value="-1e-5" Unit="deg" ToolTip="min value"/>
                 <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds.Heel_angle_bounds_max" DisplayName="Heel angle bounds_max" VariableName="PHI_MAX" ClassName="SettingsItem" Value="85" Unit="deg" ToolTip="max value"/>
             </Item>
-            <Item Expanded="yes" InternalName="/.VPP_Settings.Crew_position_bounds" DisplayName="Crew position bounds" VariableName="" ClassName="SettingsItemBounds" Unit="">
+            <Item Expanded="no" InternalName="/.VPP_Settings.Crew_position_bounds" DisplayName="Crew position bounds" VariableName="" ClassName="SettingsItemBounds" Unit="m">
                 <Item Expanded="no" InternalName="/.VPP_Settings.Crew_position_bounds.Crew_position_bounds_min" DisplayName="Crew position bounds_min" VariableName="B_MIN" ClassName="SettingsItem" Value="0" Unit="m" ToolTip="min value"/>
                 <Item Expanded="no" InternalName="/.VPP_Settings.Crew_position_bounds.Crew_position_bounds_max" DisplayName="Crew position bounds_max" VariableName="B_MAX" ClassName="SettingsItem" Value="3" Unit="m" ToolTip="max value"/>
             </Item>
-            <Item Expanded="yes" InternalName="/.VPP_Settings.Flat_bounds" DisplayName="Flat bounds" VariableName="" ClassName="SettingsItemBounds" Unit="">
+            <Item Expanded="no" InternalName="/.VPP_Settings.Flat_bounds" DisplayName="Flat bounds" VariableName="" ClassName="SettingsItemBounds" Unit="">
                 <Item Expanded="no" InternalName="/.VPP_Settings.Flat_bounds.Flat_bounds_min" DisplayName="Flat bounds_min" VariableName="F_MIN" ClassName="SettingsItem" Value="0.4" Unit="" ToolTip="min value"/>
                 <Item Expanded="no" InternalName="/.VPP_Settings.Flat_bounds.Flat_bounds_max" DisplayName="Flat bounds_max" VariableName="F_MAX" ClassName="SettingsItem" Value="1" Unit="" ToolTip="max value"/>
             </Item>
         </Item>
         <Item Expanded="yes" InternalName="/.Wind_Settings" DisplayName="Wind Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
-            <Item Expanded="yes" InternalName="/.Wind_Settings.Wind_speed_bounds" DisplayName="Wind speed bounds" VariableName="" ClassName="SettingsItemBounds" Unit="">
-                <Item Expanded="no" InternalName="/.Wind_Settings.Wind_speed_bounds.Wind_speed_bounds_min" DisplayName="Wind speed bounds_min" VariableName="VTW_MIN" ClassName="SettingsItem" Value="2" Unit="m/s" ToolTip="min value"/>
-                <Item Expanded="no" InternalName="/.Wind_Settings.Wind_speed_bounds.Wind_speed_bounds_max" DisplayName="Wind speed bounds_max" VariableName="VTW_MAX" ClassName="SettingsItem" Value="6" Unit="m/s" ToolTip="max value"/>
+            <Item Expanded="yes" InternalName="/.Wind_Settings.Wind_speed_bounds" DisplayName="Wind speed bounds" VariableName="" ClassName="SettingsItemBounds" Unit="m/s">
+                <Item Expanded="no" InternalName="/.Wind_Settings.Wind_speed_bounds.Wind_speed_bounds_min" DisplayName="Wind speed bounds_min" VariableName="VTW_MIN" ClassName="SettingsItem" Value="5" Unit="m/s" ToolTip="min value"/>
+                <Item Expanded="no" InternalName="/.Wind_Settings.Wind_speed_bounds.Wind_speed_bounds_max" DisplayName="Wind speed bounds_max" VariableName="VTW_MAX" ClassName="SettingsItem" Value="10" Unit="m/s" ToolTip="max value"/>
             </Item>
-            <Item Expanded="no" InternalName="/.Wind_Settings.n_twv" DisplayName="n_twv" VariableName="NTW" ClassName="SettingsItemInt" Value="5" Unit="" ToolTip="Number of wind speed points"/>
-            <Item Expanded="yes" InternalName="/.Wind_Settings.Wind_angle_bounds" DisplayName="Wind angle bounds" VariableName="" ClassName="SettingsItemBounds" Unit="">
+            <Item Expanded="no" InternalName="/.Wind_Settings.n_twv" DisplayName="n_twv" VariableName="NTW" ClassName="SettingsItemInt" Value="4" Unit="" ToolTip="Number of wind speed points"/>
+            <Item Expanded="yes" InternalName="/.Wind_Settings.Wind_angle_bounds" DisplayName="Wind angle bounds" VariableName="" ClassName="SettingsItemBounds" Unit="deg">
                 <Item Expanded="no" InternalName="/.Wind_Settings.Wind_angle_bounds.Wind_angle_bounds_min" DisplayName="Wind angle bounds_min" VariableName="TWA_MIN" ClassName="SettingsItem" Value="35" Unit="deg" ToolTip="min value"/>
                 <Item Expanded="no" InternalName="/.Wind_Settings.Wind_angle_bounds.Wind_angle_bounds_max" DisplayName="Wind angle bounds_max" VariableName="TWA_MAX" ClassName="SettingsItem" Value="179" Unit="deg" ToolTip="max value"/>
             </Item>
-            <Item Expanded="no" InternalName="/.Wind_Settings.n_alpha_tw" DisplayName="n_alpha_tw" VariableName="N_TWA" ClassName="SettingsItemInt" Value="10" Unit="" ToolTip="Number of wind speed points"/>
+            <Item Expanded="no" InternalName="/.Wind_Settings.n_alpha_tw" DisplayName="n_alpha_tw" VariableName="N_TWA" ClassName="SettingsItemInt" Value="25" Unit="" ToolTip="Number of wind speed points"/>
         </Item>
-        <Item Expanded="yes" InternalName="/.Hull_Settings" DisplayName="Hull Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+        <Item Expanded="no" InternalName="/.Hull_Settings" DisplayName="Hull Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
             <Item Expanded="no" InternalName="/.Hull_Settings.LWL" DisplayName="LWL" VariableName="LWL" ClassName="SettingsItem" Value="6.096" Unit="m" ToolTip="Design waterline length"/>
             <Item Expanded="no" InternalName="/.Hull_Settings.BWL" DisplayName="BWL" VariableName="BWL" ClassName="SettingsItem" Value="1.737" Unit="m" ToolTip="Design waterline beam"/>
             <Item Expanded="no" InternalName="/.Hull_Settings.B" DisplayName="B" VariableName="B" ClassName="SettingsItem" Value="2.591" Unit="m" ToolTip="Design maximum beam"/>
@@ -45,16 +45,16 @@
             <Item Expanded="no" InternalName="/.Hull_Settings.HULLFF" DisplayName="HULLFF" VariableName="HULLFF" ClassName="SettingsItem" Value="1" Unit="" ToolTip="Hull form factor"/>
             <Item Expanded="no" InternalName="/.Hull_Settings.AW" DisplayName="AW" VariableName="AW" ClassName="SettingsItem" Value="6.503" Unit="m^2" ToolTip="Design waterplane area"/>
             <Item Expanded="no" InternalName="/.Hull_Settings.SC" DisplayName="SC" VariableName="SC" ClassName="SettingsItem" Value="7.432" Unit="m^2" ToolTip="Wetted surface area of canoe body"/>
-            <Item Expanded="no" InternalName="/.Hull_Settings.CMS" DisplayName="CMS" VariableName="CMS" ClassName="SettingsItem" Value="0.71" Unit="" ToolTip="Midship section coefficient"/>
+            <Item Expanded="no" InternalName="/.Hull_Settings.CMS" DisplayName="CMS" VariableName="CMS" ClassName="SettingsItem" Value="0.710" Unit="" ToolTip="Midship section coefficient"/>
             <Item Expanded="no" InternalName="/.Hull_Settings.TCAN" DisplayName="TCAN" VariableName="TCAN" ClassName="SettingsItem" Value="0.305" Unit="m" ToolTip="Draft of canoe body"/>
             <Item Expanded="no" InternalName="/.Hull_Settings.ALT" DisplayName="ALT" VariableName="ALT" ClassName="SettingsItem" Value="5.528" Unit="m^2" ToolTip="Total lateral area of yacht"/>
             <Item Expanded="no" InternalName="/.Hull_Settings.KG" DisplayName="KG" VariableName="KG" ClassName="SettingsItem" Value="0.305" Unit="m" ToolTip="Center of gravity above moulded base or keel"/>
             <Item Expanded="no" InternalName="/.Hull_Settings.KM" DisplayName="KM" VariableName="KM" ClassName="SettingsItem" Value="2.511" Unit="m" ToolTip="Transverse metacentre above moulded base or keel"/>
         </Item>
-        <Item Expanded="yes" InternalName="/.Crew_Settings" DisplayName="Crew Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+        <Item Expanded="no" InternalName="/.Crew_Settings" DisplayName="Crew Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
             <Item Expanded="no" InternalName="/.Crew_Settings.MMVBLCRW" DisplayName="MMVBLCRW" VariableName="MMVBLCRW" ClassName="SettingsItem" Value="228" Unit="Kg" ToolTip="Movable Crew Mass"/>
         </Item>
-        <Item Expanded="yes" InternalName="/.Keel_Settings" DisplayName="Keel Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+        <Item Expanded="no" InternalName="/.Keel_Settings" DisplayName="Keel Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
             <Item Expanded="no" InternalName="/.Keel_Settings.DVK" DisplayName="DVK" VariableName="DVK" ClassName="SettingsItem" Value="0.046" Unit="m^3" ToolTip="Displaced volume of keel"/>
             <Item Expanded="no" InternalName="/.Keel_Settings.APK" DisplayName="APK" VariableName="APK" ClassName="SettingsItem" Value="1.007" Unit="m^2" ToolTip="Keel planform area"/>
             <Item Expanded="no" InternalName="/.Keel_Settings.ASK" DisplayName="ASK" VariableName="ASK" ClassName="SettingsItem" Value="0.850" Unit="m^2" ToolTip="Keel Aspect Ratio"/>
@@ -67,29 +67,29 @@
             <Item Expanded="no" InternalName="/.Keel_Settings.DELTTK" DisplayName="DELTTK" VariableName="DELTTK" ClassName="SettingsItem" Value="0" Unit="" ToolTip="Mean thickness ratio of keel section"/>
             <Item Expanded="no" InternalName="/.Keel_Settings.TAK" DisplayName="TAK" VariableName="TAK" ClassName="SettingsItem" Value="0.545" Unit="" ToolTip="Taper ratio of keel (CHRTK/CHTPK)"/>
         </Item>
-        <Item Expanded="yes" InternalName="/.Rudder_Settings" DisplayName="Rudder Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+        <Item Expanded="no" InternalName="/.Rudder_Settings" DisplayName="Rudder Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
             <Item Expanded="no" InternalName="/.Rudder_Settings.DVR" DisplayName="DVR" VariableName="DVR" ClassName="SettingsItem" Value="0" Unit="m^3" ToolTip="Rudder displaced volume"/>
-            <Item Expanded="no" InternalName="/.Rudder_Settings.APR" DisplayName="APR" VariableName="APR" ClassName="SettingsItem" Value="0.48" Unit="m^2" ToolTip="Rudder planform area"/>
-            <Item Expanded="no" InternalName="/.Rudder_Settings.SR" DisplayName="SR" VariableName="SR" ClassName="SettingsItem" Value="0.96" Unit="m^2" ToolTip="Rudder wetted surface"/>
-            <Item Expanded="no" InternalName="/.Rudder_Settings.CHMER" DisplayName="CHMER" VariableName="CHMER" ClassName="SettingsItem" Value=".49" Unit="m" ToolTip="Mean chord length"/>
-            <Item Expanded="no" InternalName="/.Rudder_Settings.CHRTR" DisplayName="CHRTR" VariableName="CHRTR" ClassName="SettingsItem" Value=".544" Unit="m" ToolTip="Root chord length"/>
-            <Item Expanded="no" InternalName="/.Rudder_Settings.CHTPR" DisplayName="CHTPR" VariableName="CHTPR" ClassName="SettingsItem" Value=".435" Unit="m" ToolTip="Tip chord length"/>
+            <Item Expanded="no" InternalName="/.Rudder_Settings.APR" DisplayName="APR" VariableName="APR" ClassName="SettingsItem" Value="0.480" Unit="m^2" ToolTip="Rudder planform area"/>
+            <Item Expanded="no" InternalName="/.Rudder_Settings.SR" DisplayName="SR" VariableName="SR" ClassName="SettingsItem" Value="0.960" Unit="m^2" ToolTip="Rudder wetted surface"/>
+            <Item Expanded="no" InternalName="/.Rudder_Settings.CHMER" DisplayName="CHMER" VariableName="CHMER" ClassName="SettingsItem" Value="0.490" Unit="m" ToolTip="Mean chord length"/>
+            <Item Expanded="no" InternalName="/.Rudder_Settings.CHRTR" DisplayName="CHRTR" VariableName="CHRTR" ClassName="SettingsItem" Value="0.544" Unit="m" ToolTip="Root chord length"/>
+            <Item Expanded="no" InternalName="/.Rudder_Settings.CHTPR" DisplayName="CHTPR" VariableName="CHTPR" ClassName="SettingsItem" Value="0.435" Unit="m" ToolTip="Tip chord length"/>
             <Item Expanded="no" InternalName="/.Rudder_Settings.DELTTR" DisplayName="DELTTR" VariableName="DELTTR" ClassName="SettingsItem" Value="0" Unit="m" ToolTip="Mean thickness ratio of rudder section"/>
             <Item Expanded="no" InternalName="/.Rudder_Settings.RUDDFF" DisplayName="RUDDFF" VariableName="RUDDFF" ClassName="SettingsItem" Value="1" Unit="" ToolTip="Rudder form factor"/>
         </Item>
-        <Item Expanded="yes" InternalName="/.Sail_Settings" DisplayName="Sail Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
-            <Item Expanded="no" InternalName="/.Sail_Settings.P" DisplayName="P" VariableName="P" ClassName="SettingsItem" Value="8.9" Unit="m" ToolTip="Main height"/>
+        <Item Expanded="no" InternalName="/.Sail_Settings" DisplayName="Sail Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+            <Item Expanded="no" InternalName="/.Sail_Settings.P" DisplayName="P" VariableName="P" ClassName="SettingsItem" Value="8.900" Unit="m" ToolTip="Main height"/>
             <Item Expanded="no" InternalName="/.Sail_Settings.E" DisplayName="E" VariableName="E" ClassName="SettingsItem" Value="4.084" Unit="m" ToolTip="Main base"/>
             <Item Expanded="no" InternalName="/.Sail_Settings.MROACH" DisplayName="MROACH" VariableName="MROACH" ClassName="SettingsItem" Value="1.3" Unit="" ToolTip="Correction for mainsail roach"/>
-            <Item Expanded="no" InternalName="/.Sail_Settings.BAD" DisplayName="BAD" VariableName="BAD" ClassName="SettingsItem" Value="0.61" Unit="m" ToolTip="Boom height above deck"/>
+            <Item Expanded="no" InternalName="/.Sail_Settings.BAD" DisplayName="BAD" VariableName="BAD" ClassName="SettingsItem" Value="0.610" Unit="m" ToolTip="Boom height above deck"/>
             <Item Expanded="no" InternalName="/.Sail_Settings.I" DisplayName="I" VariableName="I" ClassName="SettingsItem" Value="8.626" Unit="m" ToolTip="Fore Triangle height"/>
-            <Item Expanded="no" InternalName="/.Sail_Settings.J" DisplayName="J" VariableName="J" ClassName="SettingsItem" Value="1.89" Unit="m" ToolTip="Fore Triangle base"/>
+            <Item Expanded="no" InternalName="/.Sail_Settings.J" DisplayName="J" VariableName="J" ClassName="SettingsItem" Value="1.890" Unit="m" ToolTip="Fore Triangle base"/>
             <Item Expanded="no" InternalName="/.Sail_Settings.LPG" DisplayName="LPG" VariableName="LPG" ClassName="SettingsItem" Value="4.115" Unit="m" ToolTip="Perpendicular of longest jib"/>
             <Item Expanded="no" InternalName="/.Sail_Settings.SL" DisplayName="SL" VariableName="SL" ClassName="SettingsItem" Value="8.077" Unit="m" ToolTip="Spinnaker length"/>
             <Item Expanded="no" InternalName="/.Sail_Settings.EHM" DisplayName="EHM" VariableName="EHM" ClassName="SettingsItem" Value="9.754" Unit="m" ToolTip="Mast height above deck"/>
-            <Item Expanded="no" InternalName="/.Sail_Settings.EMDC" DisplayName="EMDC" VariableName="EMDC" ClassName="SettingsItem" Value=".254" Unit="m" ToolTip="Mast average diameter"/>
+            <Item Expanded="no" InternalName="/.Sail_Settings.EMDC" DisplayName="EMDC" VariableName="EMDC" ClassName="SettingsItem" Value="0.254" Unit="m" ToolTip="Mast average diameter"/>
             <Item Expanded="no" InternalName="/.Sail_Settings.MainBattens" DisplayName="MainBattens" VariableName="MFLB" ClassName="SettingsItemComboBox" numOpts="2" Option0="Standard battens" Option1="Full battens" ActiveIndex="0" Unit="" ToolTip="Battens configuration"/>
-            <Item Expanded="no" InternalName="/.Sail_Settings.SailSet" DisplayName="SailSet" VariableName="SAILSET" ClassName="SettingsItemComboBox" numOpts="4" Option0="Main only" Option1="Main and jib" Option2="Main and spinnaker" Option3="Main, jib and spinnaker" ActiveIndex="0" Unit="" ToolTip="Sail configuration"/>
+            <Item Expanded="no" InternalName="/.Sail_Settings.SailSet" DisplayName="SailSet" VariableName="SAILSET" ClassName="SettingsItemComboBox" numOpts="4" Option0="Main only" Option1="Main and jib" Option2="Main and spinnaker" Option3="Main, jib and spinnaker" ActiveIndex="1" Unit="" ToolTip="Sail configuration"/>
         </Item>
     </Item>
 </vppSettings>
@@ -99,54 +99,104 @@
 %  [-]    [m/s]    [-]    [º]  -- [m/s] [rad] [m]  [-] --  [N]  [N*m]  --         
 %----------------------------------------------------------------------------------
 ==RESULTS==
-0 2.000000 0 35.000000  --   1.034752e+00  -1.745329e-07  4.334850e-01  1.000000e+00  --    3.429412e-08  8.545259e-07  --  0
-0 2.000000 1 51.000000  --   1.579402e+00  -1.745329e-07  6.193552e-01  1.000000e+00  --    -1.882938e-12  6.139089e-12  --  0
-0 2.000000 2 67.000000  --   1.915895e+00  1.171456e-05  6.399715e-01  9.999966e-01  --    -1.032792e-05  7.993705e-05  --  0
-0 2.000000 3 83.000000  --   1.947464e+00  -1.745329e-07  4.670754e-01  1.000000e+00  --    -4.263256e-14  -4.547474e-13  --  0
-0 2.000000 4 99.000000  --   1.511728e+00  -1.745329e-07  2.140315e-01  1.000000e+00  --    2.565059e-12  9.777068e-12  --  0
-0 2.000000 5 115.000000  --   1.209871e+00  -1.745329e-07  1.385365e-01  1.000000e+00  --    1.683986e-12  4.246203e-11  --  0
-0 2.000000 6 131.000000  --   1.165010e+00  -1.234017e-07  8.819700e-02  1.000000e+00  --    -2.379367e-07  -5.831209e-07  --  0
-0 2.000000 7 147.000000  --   1.039301e+00  -8.165889e-08  4.225941e-02  9.999999e-01  --    -7.662256e-08  2.798042e-08  --  0
-0 2.000000 8 163.000000  --   9.325423e-01  -1.745329e-07  2.174136e-02  1.000000e+00  --    1.483791e-08  2.503727e-08  --  0
-0 2.000000 9 179.000000  --   9.197917e-01  6.220993e-05  3.692221e-04  9.771613e-01  --    2.370449e-09  -2.583582e-10  --  0
-1 3.000000 0 35.000000  --   1.446571e+00  -1.745329e-07  9.523497e-01  1.000000e+00  --    6.392042e-11  -7.248673e-10  --  0
-1 3.000000 1 51.000000  --   2.196885e+00  -1.745329e-07  1.323095e+00  1.000000e+00  --    -5.684342e-14  0.000000e+00  --  0
-1 3.000000 2 67.000000  --   2.559527e+00  -1.745329e-07  1.267977e+00  1.000000e+00  --    -5.684342e-14  4.547474e-13  --  0
-1 3.000000 3 83.000000  --   2.527948e+00  -1.745329e-07  8.495256e-01  1.000000e+00  --    1.267495e-09  1.799617e-08  --  0
-1 3.000000 4 99.000000  --   2.086931e+00  -1.745329e-07  4.500777e-01  1.000000e+00  --    1.989520e-12  -2.955858e-12  --  0
-1 3.000000 5 115.000000  --   1.787652e+00  -1.745329e-07  3.109601e-01  1.000000e+00  --    -1.802604e-09  2.218485e-09  --  0
-1 3.000000 6 131.000000  --   1.725430e+00  -1.745329e-07  1.977290e-01  1.000000e+00  --    -1.978218e-08  -8.956533e-09  --  0
-1 3.000000 7 147.000000  --   1.516268e+00  -1.745329e-07  9.562147e-02  1.000000e+00  --    -5.400125e-13  -8.810730e-13  --  0
-1 3.000000 8 163.000000  --   1.355854e+00  -1.745329e-07  5.017403e-02  1.000000e+00  --    1.492140e-13  -1.278977e-13  --  0
-1 3.000000 9 179.000000  --   1.338569e+00  1.343659e-04  9.972407e-04  9.728516e-01  --    -1.397310e-08  1.621534e-09  --  0
-2 4.000000 0 35.000000  --   1.838908e+00  -1.745329e-07  1.666400e+00  1.000000e+00  --    -2.074785e-12  -2.696652e-10  --  0
-2 4.000000 1 51.000000  --   2.690197e+00  -1.745329e-07  2.216470e+00  1.000000e+00  --    -8.640200e-12  2.728484e-11  --  0
-2 4.000000 2 67.000000  --   2.934807e+00  6.500271e-07  1.907850e+00  9.999998e-01  --    -6.838570e-08  4.120548e-07  --  0
-2 4.000000 3 83.000000  --   2.860643e+00  -1.745329e-07  1.217489e+00  1.000000e+00  --    0.000000e+00  0.000000e+00  --  0
-2 4.000000 4 99.000000  --   2.506496e+00  -1.745329e-07  7.499950e-01  1.000000e+00  --    -6.598989e-08  -6.098389e-09  --  0
-2 4.000000 5 115.000000  --   2.240879e+00  -1.745329e-07  5.477322e-01  1.000000e+00  --    -1.631406e-11  1.184617e-10  --  0
-2 4.000000 6 131.000000  --   2.196522e+00  -1.745329e-07  3.470148e-01  1.000000e+00  --    -2.842171e-14  -1.136868e-13  --  0
-2 4.000000 7 147.000000  --   1.988269e+00  -1.745329e-07  1.706417e-01  1.000000e+00  --    1.026024e-11  -1.397211e-10  --  0
-2 4.000000 8 163.000000  --   1.804189e+00  6.698113e-07  8.932436e-02  9.999907e-01  --    -3.082107e-09  -2.069104e-07  --  0
-2 4.000000 9 179.000000  --   1.781801e+00  5.086025e-05  4.764682e-03  9.326000e-01  --    3.320220e-08  -3.058119e-08  --  0
-3 5.000000 0 35.000000  --   2.121144e+00  -1.745329e-07  2.536224e+00  1.000000e+00  --    -2.907541e-11  4.456524e-11  --  0
-3 5.000000 1 51.000000  --   2.971109e+00  1.101386e-02  2.999996e+00  9.999998e-01  --    -1.364046e-06  3.567287e-06  --  0
-3 5.000000 2 67.000000  --   3.140733e+00  -1.745329e-07  2.522565e+00  1.000000e+00  --    -1.136868e-13  9.094947e-13  --  0
-3 5.000000 3 83.000000  --   3.040646e+00  2.784622e-03  1.560772e+00  9.994652e-01  --    -1.802380e-06  -8.794928e-06  --  0
-3 5.000000 4 99.000000  --   2.802138e+00  -1.745329e-07  1.116229e+00  1.000000e+00  --    -9.168730e-09  -4.270714e-08  --  0
-3 5.000000 5 115.000000  --   2.660419e+00  -1.745329e-07  8.495197e-01  1.000000e+00  --    -4.073684e-09  -1.959165e-07  --  0
-3 5.000000 6 131.000000  --   2.626021e+00  3.325320e-07  5.358063e-01  9.999999e-01  --    -7.618956e-08  1.733429e-06  --  0
-3 5.000000 7 147.000000  --   2.371062e+00  -1.745329e-07  2.699159e-01  1.000000e+00  --    -2.538059e-11  3.342393e-11  --  0
-3 5.000000 8 163.000000  --   2.179194e+00  -1.745329e-07  1.433261e-01  1.000000e+00  --    5.891820e-11  -1.188596e-10  --  0
-3 5.000000 9 179.000000  --   2.159370e+00  4.751154e-05  8.176207e-03  8.920705e-01  --    2.273509e-08  -2.180884e-08  --  0
-4 6.000000 0 35.000000  --   2.338793e+00  3.487577e-02  2.999996e+00  9.999991e-01  --    -5.908337e-06  8.199217e-06  --  0
-4 6.000000 1 51.000000  --   3.138164e+00  7.382792e-02  3.000000e+00  1.000000e+00  --    -3.298157e-08  1.098197e-07  --  0
-4 6.000000 2 67.000000  --   3.295610e+00  1.080459e-02  3.000000e+00  9.999998e-01  --    -1.720772e-07  7.589570e-07  --  0
-4 6.000000 3 83.000000  --   3.176307e+00  -1.745329e-07  2.068905e+00  1.000000e+00  --    -1.536625e-08  -8.962797e-08  --  0
-4 6.000000 4 99.000000  --   2.989917e+00  4.670343e-07  1.553255e+00  1.000000e+00  --    2.118815e-06  2.639690e-06  --  0
-4 6.000000 5 115.000000  --   2.935427e+00  -1.745329e-07  1.208783e+00  1.000000e+00  --    7.685230e-10  -9.536052e-10  --  0
-4 6.000000 6 131.000000  --   2.915145e+00  -1.745329e-07  7.572794e-01  1.000000e+00  --    3.724352e-08  6.752680e-08  --  0
-4 6.000000 7 147.000000  --   2.719071e+00  -1.745329e-07  3.939566e-01  1.000000e+00  --    9.962349e-09  -3.270657e-09  --  0
-4 6.000000 8 163.000000  --   2.542072e+00  -1.745329e-07  2.107118e-01  1.000000e+00  --    -1.426628e-09  1.528008e-09  --  0
-4 6.000000 9 179.000000  --   2.522035e+00  -1.745329e-07  1.313744e-02  8.551447e-01  --    1.116121e-10  7.872814e-12  --  0
+0 5.000000 0 35.000000  --   2.189515e+00  4.175731e-03  3.000000e+00  7.520209e-01  --    -4.999418e-07  3.999166e-07  --  0
+0 5.000000 1 41.000000  --   2.651771e+00  4.109467e-02  2.999995e+00  7.739339e-01  --    -6.779087e-05  4.138187e-05  --  0
+0 5.000000 2 47.000000  --   2.914389e+00  7.011852e-02  2.999979e+00  8.295151e-01  --    -1.355785e-05  -5.209980e-05  --  0
+0 5.000000 3 53.000000  --   3.078566e+00  9.389577e-02  3.000000e+00  9.293038e-01  --    -2.852678e-06  8.265852e-07  --  0
+0 5.000000 4 59.000000  --   3.192973e+00  9.077877e-02  3.000000e+00  1.000000e+00  --    -2.626873e-07  2.735942e-07  --  0
+0 5.000000 5 65.000000  --   3.246037e+00  5.310689e-02  2.999999e+00  1.000000e+00  --    -3.595096e-08  1.968128e-07  --  0
+0 5.000000 6 71.000000  --   3.237323e+00  9.066364e-03  2.999780e+00  9.999122e-01  --    -1.600124e-05  -3.120551e-05  --  0
+0 5.000000 7 77.000000  --   3.173996e+00  -1.745329e-07  2.490804e+00  1.000000e+00  --    -1.136868e-13  0.000000e+00  --  0
+0 5.000000 8 83.000000  --   3.101674e+00  -1.745329e-07  2.035570e+00  1.000000e+00  --    0.000000e+00  0.000000e+00  --  0
+0 5.000000 9 89.000000  --   3.046017e+00  -1.745329e-07  1.744205e+00  1.000000e+00  --    1.818989e-12  1.045919e-11  --  0
+0 5.000000 10 95.000000  --   2.994525e+00  -1.745329e-07  1.516690e+00  1.000000e+00  --    5.684342e-13  0.000000e+00  --  0
+0 5.000000 11 101.000000  --   2.937635e+00  7.057841e-06  1.315279e+00  9.999993e-01  --    -1.684423e-05  8.769885e-07  --  0
+0 5.000000 12 107.000000  --   2.880243e+00  -1.745329e-07  1.135998e+00  1.000000e+00  --    -1.545629e-09  4.683898e-09  --  0
+0 5.000000 13 113.000000  --   2.828134e+00  8.494821e-05  9.708690e-01  9.999729e-01  --    -3.236072e-05  -6.618106e-05  --  0
+0 5.000000 14 119.000000  --   2.784038e+00  7.631369e-05  8.154556e-01  9.999720e-01  --    -4.251152e-05  -6.889580e-05  --  0
+0 5.000000 15 125.000000  --   2.739555e+00  1.613804e-06  6.665115e-01  9.999874e-01  --    -5.734524e-05  -8.875604e-05  --  0
+0 5.000000 16 131.000000  --   2.681217e+00  3.511843e-06  5.248166e-01  9.999761e-01  --    -7.218519e-05  -7.790070e-05  --  0
+0 5.000000 17 137.000000  --   2.593526e+00  9.433184e-07  4.000188e-01  9.999997e-01  --    -1.501920e-08  8.740249e-07  --  0
+0 5.000000 18 143.000000  --   2.475324e+00  -1.745329e-07  3.015053e-01  1.000000e+00  --    -1.250555e-12  5.343281e-12  --  0
+0 5.000000 19 149.000000  --   2.351112e+00  -1.691712e-07  2.319615e-01  1.000000e+00  --    2.407504e-07  5.956385e-07  --  0
+0 5.000000 20 155.000000  --   2.257036e+00  -1.745329e-07  1.828364e-01  1.000000e+00  --    -1.932676e-12  3.353762e-12  --  0
+0 5.000000 21 161.000000  --   2.202917e+00  -1.745329e-07  1.406512e-01  1.000000e+00  --    -3.356888e-09  -4.219260e-09  --  0
+0 5.000000 22 167.000000  --   2.176530e+00  6.699014e-04  8.756751e-02  9.931830e-01  --    7.789540e-06  3.375250e-05  --  0
+0 5.000000 23 173.000000  --   2.164898e+00  6.739566e-04  4.310004e-02  9.696215e-01  --    -4.156286e-07  8.039298e-08  --  0
+0 5.000000 24 179.000000  --   2.159602e+00  3.405446e-04  2.315178e-03  9.595786e-01  --    -6.750801e-08  -1.124497e-08  --  0
+1 6.666667 0 35.000000  --   2.411699e+00  7.118672e-02  2.999998e+00  6.085637e-01  --    -1.519376e-05  -1.648093e-05  --  0
+1 6.666667 1 41.000000  --   2.867066e+00  1.115101e-01  2.999999e+00  6.356399e-01  --    -6.117060e-07  -1.633372e-06  --  0
+1 6.666667 2 47.000000  --   3.091856e+00  1.433819e-01  2.999999e+00  7.072745e-01  --    -6.071836e-07  -1.001761e-06  --  0
+1 6.666667 3 53.000000  --   3.248437e+00  1.703974e-01  3.000000e+00  8.257622e-01  --    -1.546675e-08  -3.451169e-08  --  0
+1 6.666667 4 59.000000  --   3.383095e+00  1.935485e-01  3.000000e+00  9.987446e-01  --    -2.035612e-05  -1.451864e-05  --  0
+1 6.666667 5 65.000000  --   3.447620e+00  1.359901e-01  3.000000e+00  1.000000e+00  --    -5.891138e-08  2.492270e-07  --  0
+1 6.666667 6 71.000000  --   3.426135e+00  7.582320e-02  3.000000e+00  1.000000e+00  --    -2.622755e-09  8.893039e-09  --  0
+1 6.666667 7 77.000000  --   3.371116e+00  3.138433e-02  2.999995e+00  9.999999e-01  --    -1.214471e-07  9.449850e-07  --  0
+1 6.666667 8 83.000000  --   3.329685e+00  3.335714e-03  2.999929e+00  9.999957e-01  --    -1.493930e-05  7.816633e-05  --  0
+1 6.666667 9 89.000000  --   3.291708e+00  -1.745329e-07  2.708918e+00  1.000000e+00  --    0.000000e+00  0.000000e+00  --  0
+1 6.666667 10 95.000000  --   3.251919e+00  -1.745329e-07  2.403858e+00  1.000000e+00  --    -5.684342e-13  -1.818989e-12  --  0
+1 6.666667 11 101.000000  --   3.215717e+00  -1.745329e-07  2.128547e+00  1.000000e+00  --    4.540652e-10  1.131530e-07  --  0
+1 6.666667 12 107.000000  --   3.186952e+00  -1.745329e-07  1.870861e+00  1.000000e+00  --    6.750042e-08  2.447841e-07  --  0
+1 6.666667 13 113.000000  --   3.166314e+00  -1.745329e-07  1.617814e+00  1.000000e+00  --    5.684342e-14  0.000000e+00  --  0
+1 6.666667 14 119.000000  --   3.147173e+00  -1.745329e-07  1.365024e+00  1.000000e+00  --    -1.325020e-10  2.410161e-11  --  0
+1 6.666667 15 125.000000  --   3.120919e+00  -1.745329e-07  1.117876e+00  1.000000e+00  --    2.954152e-10  -1.919034e-10  --  0
+1 6.666667 16 131.000000  --   3.079412e+00  -1.745329e-07  8.892430e-01  1.000000e+00  --    -5.684342e-14  4.547474e-13  --  0
+1 6.666667 17 137.000000  --   3.020365e+00  -1.695192e-07  6.938773e-01  1.000000e+00  --    -1.237324e-07  1.518247e-07  --  0
+1 6.666667 18 143.000000  --   2.948304e+00  -1.745329e-07  5.397423e-01  1.000000e+00  --    6.303304e-08  8.504458e-08  --  0
+1 6.666667 19 149.000000  --   2.872437e+00  -1.745329e-07  4.252919e-01  1.000000e+00  --    2.324896e-11  4.843059e-11  --  0
+1 6.666667 20 155.000000  --   2.807203e+00  -1.745329e-07  3.383087e-01  1.000000e+00  --    1.136868e-13  0.000000e+00  --  0
+1 6.666667 21 161.000000  --   2.765315e+00  6.807307e-06  2.602625e-01  9.999978e-01  --    -3.084913e-05  -6.346890e-06  --  0
+1 6.666667 22 167.000000  --   2.743779e+00  1.275648e-05  1.811684e-01  9.999876e-01  --    -9.536256e-05  -4.326893e-05  --  0
+1 6.666667 23 173.000000  --   2.734026e+00  -1.745329e-07  9.895420e-02  1.000000e+00  --    -1.421085e-13  2.842171e-14  --  0
+1 6.666667 24 179.000000  --   2.729126e+00  -1.745329e-07  1.417025e-02  1.000000e+00  --    0.000000e+00  -4.440892e-13  --  0
+2 8.333333 0 35.000000  --   2.422112e+00  1.203575e-01  3.000000e+00  4.977457e-01  --    -6.206665e-08  -1.917215e-08  --  0
+2 8.333333 1 41.000000  --   2.924318e+00  1.647947e-01  2.999597e+00  5.320736e-01  --    -1.592000e-05  -6.857580e-05  --  0
+2 8.333333 2 47.000000  --   3.157002e+00  2.011069e-01  2.999997e+00  6.126249e-01  --    -2.159232e-05  2.078062e-05  --  0
+2 8.333333 3 53.000000  --   3.325236e+00  2.313773e-01  2.999968e+00  7.383968e-01  --    -6.983555e-08  2.528177e-07  --  0
+2 8.333333 4 59.000000  --   3.476511e+00  2.568224e-01  2.999999e+00  9.184448e-01  --    -1.195572e-06  -2.928473e-06  --  0
+2 8.333333 5 65.000000  --   3.578722e+00  2.207024e-01  2.999994e+00  9.999981e-01  --    -3.247773e-05  6.176116e-05  --  0
+2 8.333333 6 71.000000  --   3.578178e+00  1.571797e-01  2.999998e+00  9.999999e-01  --    -3.627156e-07  1.110933e-06  --  0
+2 8.333333 7 77.000000  --   3.554780e+00  1.148224e-01  2.999999e+00  1.000000e+00  --    -1.979924e-08  2.292236e-07  --  0
+2 8.333333 8 83.000000  --   3.534071e+00  8.452507e-02  2.999996e+00  9.999999e-01  --    -1.092862e-07  9.925825e-07  --  0
+2 8.333333 9 89.000000  --   3.506162e+00  5.760400e-02  2.999944e+00  9.999939e-01  --    -5.658819e-05  4.536578e-06  --  0
+2 8.333333 10 95.000000  --   3.477640e+00  3.298363e-02  2.999905e+00  9.999978e-01  --    -6.036708e-06  5.450888e-05  --  0
+2 8.333333 11 101.000000  --   3.455604e+00  9.799129e-03  2.999996e+00  9.999999e-01  --    -6.049925e-08  -3.684545e-08  --  0
+2 8.333333 12 107.000000  --   3.441872e+00  -1.745329e-07  2.791225e+00  1.000000e+00  --    -3.410605e-13  -9.094947e-13  --  0
+2 8.333333 13 113.000000  --   3.432504e+00  -1.745329e-07  2.418988e+00  1.000000e+00  --    2.094412e-07  6.175324e-07  --  0
+2 8.333333 14 119.000000  --   3.418312e+00  -1.745329e-07  2.042461e+00  1.000000e+00  --    9.908945e-10  -4.040885e-09  --  0
+2 8.333333 15 125.000000  --   3.390363e+00  1.722388e-05  1.677621e+00  9.999963e-01  --    -1.016248e-05  5.474764e-05  --  0
+2 8.333333 16 131.000000  --   3.344876e+00  -1.745329e-07  1.349758e+00  1.000000e+00  --    0.000000e+00  0.000000e+00  --  0
+2 8.333333 17 137.000000  --   3.287410e+00  -1.745329e-07  1.075612e+00  1.000000e+00  --    -1.136868e-13  0.000000e+00  --  0
+2 8.333333 18 143.000000  --   3.225976e+00  -1.745329e-07  8.605598e-01  1.000000e+00  --    2.501110e-12  7.048584e-12  --  0
+2 8.333333 19 149.000000  --   3.169577e+00  -1.745329e-07  6.961041e-01  1.000000e+00  --    -1.986223e-09  1.929720e-08  --  0
+2 8.333333 20 155.000000  --   3.127105e+00  -1.745329e-07  5.616734e-01  1.000000e+00  --    -4.099428e-08  1.377921e-07  --  0
+2 8.333333 21 161.000000  --   3.102454e+00  -1.745329e-07  4.338797e-01  1.000000e+00  --    1.046487e-10  1.001126e-09  --  0
+2 8.333333 22 167.000000  --   3.090570e+00  -1.745329e-07  3.024302e-01  1.000000e+00  --    -6.035066e-09  -2.328341e-08  --  0
+2 8.333333 23 173.000000  --   3.085436e+00  -1.745329e-07  1.649646e-01  1.000000e+00  --    1.819785e-09  1.419721e-09  --  0
+2 8.333333 24 179.000000  --   3.082458e+00  2.294538e-06  2.368348e-02  9.664865e-01  --    2.063757e-07  7.352272e-08  --  0
+3 10.000000 0 35.000000  --   2.185881e+00  1.563956e-01  3.000000e+00  4.199547e-01  --    -6.639311e-11  -3.037712e-10  --  0
+3 10.000000 1 41.000000  --   2.872502e+00  2.069513e-01  2.999997e+00  4.542429e-01  --    -5.844193e-05  -5.866580e-05  --  0
+3 10.000000 2 47.000000  --   3.144385e+00  2.467262e-01  3.000000e+00  5.348370e-01  --    -1.213724e-06  -2.170073e-06  --  0
+3 10.000000 3 53.000000  --   3.328059e+00  2.795008e-01  3.000000e+00  6.600410e-01  --    -1.322929e-06  -2.168517e-06  --  0
+3 10.000000 4 59.000000  --   3.492869e+00  3.075202e-01  2.999997e+00  8.386934e-01  --    -9.193429e-06  6.206146e-05  --  0
+3 10.000000 5 65.000000  --   3.638380e+00  3.054026e-01  3.000000e+00  1.000000e+00  --    -2.378601e-08  -7.530616e-10  --  0
+3 10.000000 6 71.000000  --   3.682135e+00  2.480187e-01  2.999989e+00  9.999885e-01  --    9.718672e-07  -2.467102e-05  --  0
+3 10.000000 7 77.000000  --   3.698582e+00  2.086885e-01  3.000000e+00  1.000000e+00  --    -1.563217e-08  4.509639e-08  --  0
+3 10.000000 8 83.000000  --   3.702258e+00  1.759354e-01  2.999995e+00  9.999991e-01  --    -3.669529e-07  3.675907e-06  --  0
+3 10.000000 9 89.000000  --   3.694531e+00  1.451698e-01  2.999990e+00  9.999995e-01  --    -1.755314e-06  9.149901e-06  --  0
+3 10.000000 10 95.000000  --   3.686845e+00  1.159235e-01  2.999950e+00  9.999981e-01  --    -7.608328e-06  5.072493e-05  --  0
+3 10.000000 11 101.000000  --   3.687174e+00  8.689517e-02  2.999933e+00  9.999977e-01  --    -6.532314e-06  5.575029e-05  --  0
+3 10.000000 12 107.000000  --   3.696270e+00  5.648895e-02  2.999950e+00  9.999987e-01  --    -1.682328e-06  1.507037e-05  --  0
+3 10.000000 13 113.000000  --   3.702681e+00  2.430028e-02  2.999993e+00  9.999999e-01  --    -4.601793e-08  2.707302e-07  --  0
+3 10.000000 14 119.000000  --   3.693044e+00  -1.745329e-07  2.861915e+00  1.000000e+00  --    3.144578e-10  7.366907e-11  --  0
+3 10.000000 15 125.000000  --   3.658055e+00  -1.745329e-07  2.360692e+00  1.000000e+00  --    -1.318767e-11  -5.456968e-12  --  0
+3 10.000000 16 131.000000  --   3.602179e+00  6.064614e-07  1.917542e+00  9.999989e-01  --    -1.417279e-06  1.303381e-05  --  0
+3 10.000000 17 137.000000  --   3.535192e+00  -1.745329e-07  1.552397e+00  1.000000e+00  --    2.273737e-13  0.000000e+00  --  0
+3 10.000000 18 143.000000  --   3.468312e+00  -1.745329e-07  1.266574e+00  1.000000e+00  --    -7.528229e-08  1.716890e-07  --  0
+3 10.000000 19 149.000000  --   3.412051e+00  2.585641e-08  1.042864e+00  1.000000e+00  --    -1.712306e-07  -1.471117e-07  --  0
+3 10.000000 20 155.000000  --   3.374043e+00  5.514592e-09  8.498556e-01  1.000000e+00  --    -3.346941e-10  -4.905132e-09  --  0
+3 10.000000 21 161.000000  --   3.354016e+00  9.749649e-05  6.580897e-01  9.965720e-01  --    -1.229861e-07  6.320965e-08  --  0
+3 10.000000 22 167.000000  --   3.345501e+00  1.179008e-05  4.598901e-01  9.999400e-01  --    -4.957257e-05  -2.923563e-05  --  0
+3 10.000000 23 173.000000  --   3.342151e+00  6.563989e-07  2.510241e-01  9.999955e-01  --    -1.024600e-07  4.086655e-07  --  0
+3 10.000000 24 179.000000  --   3.339712e+00  4.596308e-04  2.901277e-02  9.273184e-01  --    -3.174334e-06  -2.435197e-07  --  0
 ==END RESULTS==

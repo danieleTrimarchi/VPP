@@ -1,3 +1,7 @@
+Before getting back on the template desing: 
+- plot viscous resistance is broken
+- plot total resistance is broken
+
 Also fix the result import <- doing this by templatizing the units. The problem is a dirty trick in variableFileParser::check that must be removed. The idea is to know the unit of the items, and systematically convert to the right unit while pushing the values to the 
 variableFileParser. -> done, but this is not the right way to go. the items own the unit, but they are not templatized on the unit. 
 The current scheme is particoularly stupid, as it forces a clone of the items - implying a  clone of the item AND the children... This is not an option!

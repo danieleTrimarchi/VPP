@@ -53,9 +53,6 @@ public:
 
 public slots:
 
-	/// Import the settings from xml file
- 	void importSettings();
-
 	/// Open the settings dialog
 	void openSettings();
 

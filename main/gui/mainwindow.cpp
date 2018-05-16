@@ -128,8 +128,8 @@ void MainWindow::setupMenuBar() {
 
 	// Create 'Import Settings' action. This object being child of 'this', it will
 	// be destroyed when MainWindows gets destroyed.
-	pAction = new VppToolbarAction("Import Settings",":/icons/importSettings.png",this);
-	connect(pAction, &QAction::triggered, this, &MainWindow::importSettings);
+	pAction = new VppToolbarAction("Import Settings and previous results",":/icons/importSettings.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::importResults);
 
 	// Open Settings...
 	pAction = new VppToolbarAction("Settings",":/icons/openSettings.png",this);
@@ -226,10 +226,6 @@ void MainWindow::setupMenuBar() {
 	pAction = new VppToolbarAction("Save results",":/icons/saveResults.png",this);
 	connect(pAction, &QAction::triggered, this, &MainWindow::saveResults);
 
-	// Import Results...
-	pAction = new VppToolbarAction("Import previous results",":/icons/importResults.png",this);
-	connect(pAction, &QAction::triggered, this, &MainWindow::importResults);
-
 	// ---
 
 	pPreferencesMenu_.reset( menuBar()->addMenu(tr("&VPP Settings")) );
@@ -292,17 +288,6 @@ void MainWindow::removeTabWidgetFromVector(VppTabDockWidget* pWidget) {
 		if(*it == pWidget)
 			tabbedWidgets_.erase(it);
 	}
-}
-
-// Import the settings from xml file
-void MainWindow::importSettings() {
-
-	try {
-
-		importData("VPP Settings File(*.xml);; All Files (*.*)");
-
-		// outer try-catch block
-	}	catch(...) {}
 }
 
 QString MainWindow::importData(string filter) {
