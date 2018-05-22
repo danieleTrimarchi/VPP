@@ -13,9 +13,16 @@ class TVPPTest : public CppUnit::TestFixture{
 
   CPPUNIT_TEST_SUITE(TVPPTest);
 
-//  /// Test the variables parsed in the variablefile
-//  CPPUNIT_TEST(variableParseTest);
-//
+  /// Test the variables parsed in the variablefile
+  CPPUNIT_TEST(variableParseTest);
+
+  /// Instantiate some items, write to xml, read them
+  /// back and verify consistency
+  CPPUNIT_TEST(xmlIOTest);
+
+  /// Test the variables we get when reading xml in the variablefile
+
+  //
 //  /// Resistance and aero force components test
 //  CPPUNIT_TEST(itemComponentTest);
 //
@@ -50,11 +57,11 @@ class TVPPTest : public CppUnit::TestFixture{
 //
 //  /// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
 //  CPPUNIT_TEST(vppPointTest);
-
-  /// Make a full run of ipOpt, and compare the full results with a baseline
-  /// Warning : this is a relatively long test
-  CPPUNIT_TEST(ipOptFullRunTest);
-
+//
+//  /// Make a full run of ipOpt, and compare the full results with a baseline
+//  /// Warning : this is a relatively long test
+//  CPPUNIT_TEST(ipOptFullRunTest);
+//
 //  /// Test the SmoothedStepFunction values
 //  CPPUNIT_TEST(smoothedTestFunctionTest);
 //
@@ -68,6 +75,12 @@ public:
 
   /// Test the variables parsed in the variable file
   void variableParseTest();
+
+  /// Instantiate some items, write to xml, read them
+  /// back and verify consistency
+  void xmlIOTest();
+
+  /// Test the variables we get when reading xml in the variablefile
 
   /// Resistance and aero force components test
   void itemComponentTest();

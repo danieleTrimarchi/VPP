@@ -5,8 +5,7 @@
 #include "VPPException.h"
 #include "Units.h"
 
-VppSettingsXmlWriter::VppSettingsXmlWriter(SettingsModel* pTreeModel, QIODevice *device) :
-		pTreeModel_(pTreeModel),
+VppSettingsXmlWriter::VppSettingsXmlWriter(QIODevice *device) :
 			pOutDevice_(device) {
 
 	// Where am I writing to?
@@ -32,10 +31,10 @@ VppSettingsXmlWriter::~VppSettingsXmlWriter() {
 //====================================================================
 
 // Ctor
-VPPSettingsXmlWriterVisitor::VPPSettingsXmlWriterVisitor(SettingsModel* pTreeModel,QIODevice*device) {
+VPPSettingsXmlWriterVisitor::VPPSettingsXmlWriterVisitor(QIODevice*device) {
 
 	// Instantiate the xml writer
-	pXmlWriter_.reset(new VppSettingsXmlWriter(pTreeModel,device));
+	pXmlWriter_.reset(new VppSettingsXmlWriter(device));
 }
 
 // Dtor

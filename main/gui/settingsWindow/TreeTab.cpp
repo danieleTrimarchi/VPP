@@ -101,7 +101,7 @@ void TreeTab::save() {
 void TreeTab::save(QFile& file) {
 
 	// Get the settings
-	VPPSettingsXmlWriterVisitor v(pTreeReferenceModel_,&file);
+	VPPSettingsXmlWriterVisitor v(&file);
 	pTreeReferenceModel_->getRoot()->accept(v);
 
 }

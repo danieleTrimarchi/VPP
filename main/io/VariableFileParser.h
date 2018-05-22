@@ -80,6 +80,9 @@ class VariableFileParser : public FileParserBase {
 		/// populating the parser
 		VariableFileParser(VPPSettingsDialog*);
 
+		/// Constructor using directly the root of the variableTreeModel
+		VariableFileParser(SettingsItemBase*);
+
 		/// Destructor
 		virtual ~VariableFileParser();
 
@@ -105,6 +108,10 @@ class VariableFileParser : public FileParserBase {
 		/// Populate the tree model that will be used to
 		/// visualize the variables in the UI
 		void populate(VariableTreeModel* pTreeModel);
+
+		/// Comparison operator. Are the variables contained into
+		/// this parser equal to the variables of another parser?
+		bool operator == (const VariableFileParser&);
 
 	protected:
 

@@ -148,14 +148,25 @@ VariableFileParser::VariableFileParser(VPPSettingsDialog* pSd) :
 	const SettingsModel* pSettingsModel = pSettingsTreeTab->getReferenceSettingsModel();
 
 	// Get the root of the reference settings model
-	SettingsItemBase* pModelRoot = pSettingsModel->getRoot();
+	SettingsItemBase* pSettingsModelRoot = pSettingsModel->getRoot();
 
 	// Instantiate a visitor that will visit root and fill the
 	// variables for the variableFileParser
 	VariableParserGetVisitor v(this);
-	pModelRoot->accept(v);
+	pSettingsModelRoot->accept(v);
 
 }
+
+// Constructor using directly the root of the variableTreeModel
+VariableFileParser::VariableFileParser(SettingsItemBase* pSettingsModelRoot) {
+
+	// Instantiate a visitor that will visit root and fill the
+	// variables for the variableFileParser
+	VariableParserGetVisitor v(this);
+	pSettingsModelRoot->accept(v);
+
+}
+
 
 // Destructor
 VariableFileParser::~VariableFileParser() {
@@ -292,6 +303,12 @@ void VariableFileParser::populate(VariableTreeModel* pTreeModel) {
 	// Now populate the variables_ container with the variables contained
 	// in the tree model
 	variables_.populate(pTreeModel);
+}
+
+// Comparison operator. Are the variables contained into
+// this parser equal to the variables of another parser?
+bool VariableFileParser::operator == (const VariableFileParser& rhs) {
+	return (variables_ == rhs.variables_);
 }
 
 // Insert a new variable given its name and value

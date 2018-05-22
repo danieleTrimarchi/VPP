@@ -27,7 +27,7 @@ class VppSettingsXmlWriter : public QXmlStreamWriter {
 	public:
 
 		/// Ctor
-		VppSettingsXmlWriter(SettingsModel* pModel,QIODevice *device);
+		VppSettingsXmlWriter(QIODevice *device);
 
 		/// Dtor
 		~VppSettingsXmlWriter();
@@ -37,7 +37,6 @@ class VppSettingsXmlWriter : public QXmlStreamWriter {
 		/// Ptr to the file where the xml is to be written
 		QIODevice* pOutDevice_;
 
-		SettingsModel* pTreeModel_;
 };
 
 ///======================================================
@@ -49,7 +48,7 @@ class VPPSettingsXmlWriterVisitor {
 	public:
 
 		/// Ctor
-		VPPSettingsXmlWriterVisitor(SettingsModel* pModel,QIODevice *device);
+		VPPSettingsXmlWriterVisitor(QIODevice *device);
 
 		/// Dtor
 		~VPPSettingsXmlWriterVisitor();

@@ -28,11 +28,13 @@ void TVPPTest::variableParseTest() {
 	// Parse the variables file
 	parser.parse("testFiles/variableFile_test.txt");
 
+	parser.print();
+
 	// VPP CONFIGURATION
 	CPPUNIT_ASSERT_EQUAL( parser.get("V_MIN"), 0. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("V_MAX"), 15. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("PHI_MIN"), 0. );
-	CPPUNIT_ASSERT_EQUAL( parser.get("PHI_MAX"), mathUtils::toRad(85) );
+	CPPUNIT_ASSERT_EQUAL( parser.get("PHI_MAX"), 85.);
 	CPPUNIT_ASSERT_EQUAL( parser.get("B_MIN"), 0. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("B_MAX"), 3. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("F_MIN"), 0.4 );
@@ -42,8 +44,8 @@ void TVPPTest::variableParseTest() {
 	CPPUNIT_ASSERT_EQUAL( parser.get("VTW_MIN"), .5 );
 	CPPUNIT_ASSERT_EQUAL( parser.get("VTW_MAX"), 10. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("NTW"), 45. );
-	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MIN"), mathUtils::toRad(35) );
-	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MAX"), mathUtils::toRad(179) );
+	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MIN"), 35. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MAX"), 179. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("N_TWA"), 40. );
 
 	// These data are measurements and estimates for a Freedom 25
@@ -106,6 +108,54 @@ void TVPPTest::variableParseTest() {
 	CPPUNIT_ASSERT_EQUAL( parser.get("MMVBLCRW"), 228. );
 
 }
+
+// Instantiate some items, write to xml, read them
+// back and verify consistency
+void TVPPTest::xmlIOTest() {
+
+	// Root of the model tree
+	boost::shared_ptr<SettingsItemRoot> pRootItem(new SettingsItemRoot);
+
+	// Instantiate some VppSettingItems
+	SettingsItemGroup* pVPPSettings = new SettingsItemGroup("VPP Settings");
+	pVPPSettings->setParent(pRootItem.get());
+	pRootItem->appendChild(pVPPSettings);
+	pVPPSettings->appendChild( new SettingsItemBounds<MetersPerSec>("Velocity bounds","V",0,15,"Allowed boat speed bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds<Degrees>("Heel angle bounds","PHI",-1e-5,85,"Allowed boat heel angle bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds<Meters>("Crew position bounds","B",0,3,"Allowed boat heel angle bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds<NoUnit>("Flat bounds","F",0.4,1,"Allowed boat heel angle bounds"));
+
+	// Instantiate and populate a VariableFileParser
+	boost::shared_ptr<VariableFileParser> pVariableFileParser(new VariableFileParser(pRootItem.get()));
+
+	QString xmlFileName("vppSettingsTest.xml");
+
+	// Write the items to xml
+	QFile outXml(xmlFileName);
+	VPPSettingsXmlWriterVisitor vw(&outXml);
+	pRootItem->accept(vw);
+	outXml.close();
+
+	// Instantiate a new root
+	boost::shared_ptr<SettingsItemRoot> pRootItemTwo(new SettingsItemRoot);
+
+	// Read the items back in from the xml and assign them to
+	// the brand new root
+	QFile inXml(xmlFileName);
+	VPPSettingsXmlReaderVisitor vr(&inXml);
+	pRootItemTwo->accept(vr);
+
+	// Get the variables to a new VariableFileParser
+	boost::shared_ptr<VariableFileParser> pVariableFileParserTwo(new VariableFileParser(pRootItemTwo.get()));
+
+	// Compare the old and the new tree - they must match
+	CPPUNIT_ASSERT(pRootItem == pRootItemTwo);
+
+	// compare the variables contained in the two parsers
+
+}
+
+/// Test the variables we get when reading xml in the variablefile
 
 // Test the resistance components
 void TVPPTest::itemComponentTest() {

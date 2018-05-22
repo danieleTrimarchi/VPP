@@ -1,25 +1,20 @@
+Fix the tests <- prepare the xmls and remove the old vppIn files
+
+=RE-Templetisation= 
 Also fix the result import <- doing this by templatizing the units. The problem is a dirty trick in variableFileParser::check that must be removed. The idea is to know the unit of the items, and systematically convert to the right unit while pushing the values to the 
 variableFileParser. -> done, but this is not the right way to go. the items own the unit, but they are not templatized on the unit. 
 The current scheme is particoularly stupid, as it forces a clone of the items - implying a  clone of the item AND the children... This is not an option!
-
-Enhance the 'saveResults' action. If there are no results to be saved, only save the settings
  
-See how to store results in the new XML framework. Shall I have the settings in XML format, or reference the settings XML? 
- -having the settings XML is a lot better actually. This way I do not get in troubles with sync! 
-
-Fix the tests <- prepare the xml and remove the old vppIn files
-
 See the ctor of SettingsItem. there are all these strings that are not acceptable
 	This is done, simply I put the commit on hold because I want to be able to 
 	run tests before modifying the code 
-
 
 TreeTab is fine, while the General Tab is unused and this is a petty. 
 Populate this tab with settings such as the choice of the solver
 
 Export results to excel format
 
-Didn't I solve the combo-box appeareance? The settingswindow is not what I would like!
+Didn't I solve the combo-box appeareance? The settingswindow is not what I would like! See for instance the battens type in the Sail settings
 
 ---
 

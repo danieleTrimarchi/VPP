@@ -14,12 +14,12 @@ F_MIN	0.4		% [-] 	Min allowed flat
 F_MAX	1		% [-] 	Max allowed flat
 
 %%%% WIND CONFIGURATION
-V_TW_MIN		0.5   % [m/s] Min true wind speed 
-V_TW_MAX 		10   % [m/s] Max true wind speed
-N_TWV 			45     % [-]   Number of wind speeds to be computed
-ALPHA_TW_MIN		35    % [deg] Min true wind angle
-ALPHA_TW_MAX 		179    % [deg] Max true wind angle
-N_ALPHA_TW		40     % [-]   Number of wind angles to be computed
+VTW_MIN			0.5   % [m/s] Min true wind speed 
+VTW_MAX 		10   % [m/s] Max true wind speed
+NTW 			45     % [-]   Number of wind speeds to be computed
+TWA_MIN			35    % [deg] Min true wind angle
+TWA_MAX 		179    % [deg] Max true wind angle
+N_TWA			40     % [-]   Number of wind angles to be computed
 
 % These data are measurements and estimates for a Freedom 25
 %%%%%% HULL %%%%%%%

@@ -21,6 +21,14 @@ releaseEnv.Append( variant_dir = 'build/release' )
 releaseEnv.VariantDir( releaseEnv['variant_dir'], 'main', duplicate=0)
 
 #----------------------------------------------------------------
+# Static utility method
+def error(msg):
+    print "\n--------------------------------------------------\n"
+    print  msg
+    print "\n--------------------------------------------------\n"
+    Exit(2)
+    
+#----------------------------------------------------------------
 
 # Returns the absolute path of the Main folder, the root of the source tree
 # # /Users/dtrimarchi/VPP/main
@@ -164,11 +172,9 @@ def fixDynamicLibPath(self,source,target,env):
 
     # Modify the executable in order to change @rpath -> @executable_path thus making 
     # it executable. Not sure why @rpath would not work though... 
-    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
-    QtFrameworkList= self['THIRDPARTYDICT']['Qt'].getFrameworks()
-    
+        
     # Loop on the frameworks
-    for iFramework in QtFrameworkList: 
+    for iFramework in self['THIRDPARTYDICT']['Qt'].getFrameworks(): 
 
         print "RUNNING : "
         print ('install_name_tool -change '
@@ -204,7 +210,18 @@ def fixDynamicLibPathTest(self,source,target,env):
     # Modify the executable in order to change @rpath -> @executable_path thus making 
     # it executable. Not sure why @rpath would not work though... 
     testExecutablePath= self['TEST_EXE_PATH']
-    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
+    
+    
+    print '==>>' , self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
+    
+    # Not ideal, but it does the job by now. getFrameworkRoot returns a list, 
+    # because potentially we have mutliple paths. I do not know how to behave in 
+    # that case, which is only theoretical by now. So if this is the case I stop
+    # the execution. So I am simply post-poning the problem to later on...
+    if(len(self['THIRDPARTYDICT']['Qt'].getFrameworkRoot())>1):
+        error("Too many framework roots, this is not implemented!")
+    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()[0]
+
     QtFrameworkList= self['THIRDPARTYDICT']['Qt'].getFrameworks()
 
     # Loop on the frameworks
