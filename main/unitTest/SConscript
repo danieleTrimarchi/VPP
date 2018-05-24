@@ -30,10 +30,8 @@ fixDynamicLibPath_commandTest = Command('fixDynamicLibPathTest', [], localEnv.fi
 Depends( fixDynamicLibPath_commandTest, autotestsProgram )
 Default( fixDynamicLibPath_commandTest )
 
-#autotestLaunch = Alias([autotestsProgram],'--stop')
-
 # Add a target 'runTest' that will ensure that it's built before running the test suite
-test_alias = Alias('runTest', [autotestsProgram], autotestsProgram[0].path)
+test_alias = Alias('runTest', [autotestsProgram], str(autotestsProgram[0].path) + " --stop")
 Depends( test_alias, fixDynamicLibPath_commandTest) 
 
 # Simply required.  Without it, 'test' is never considered out of date.
