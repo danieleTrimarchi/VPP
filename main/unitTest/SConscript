@@ -8,10 +8,6 @@ localEnv=testEnv.Clone()
 # make the VPP
 allObjects= localEnv['objList']
 
-#Compile Debug mode
-#env.Append(CCFLAGS= '-g')
-#env.Append(CPPFLAGS ='-Wc++11-extensions')
-
 # Warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]
 
@@ -33,6 +29,8 @@ localEnv.Append( TEST_EXE_PATH=autotestsProgram[0].abspath )
 fixDynamicLibPath_commandTest = Command('fixDynamicLibPathTest', [], localEnv.fixDynamicLibPathTest)
 Depends( fixDynamicLibPath_commandTest, autotestsProgram )
 Default( fixDynamicLibPath_commandTest )
+
+#autotestLaunch = Alias([autotestsProgram],'--stop')
 
 # Add a target 'runTest' that will ensure that it's built before running the test suite
 test_alias = Alias('runTest', [autotestsProgram], autotestsProgram[0].path)

@@ -14,7 +14,7 @@ class TVPPTest : public CppUnit::TestFixture{
   CPPUNIT_TEST_SUITE(TVPPTest);
 
   /// Test the variables parsed in the variablefile
-  CPPUNIT_TEST(variableParseTest);
+//  CPPUNIT_TEST(variableParseTest);
 
   /// Instantiate some items, write to xml, read them
   /// back and verify consistency

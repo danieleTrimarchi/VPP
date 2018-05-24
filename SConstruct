@@ -11,11 +11,23 @@ common_env = Environment()
 # Our release build is derived from the common build environment...
 releaseEnv = common_env.Clone()
 
-# ... and adds a RELEASE preprocessor symbol ...
-releaseEnv.Append( CPPDEFINES=['RELEASE'] )
+# Call scons -Q debug 1
+debug= ARGUMENTS.get('debug',0)
+if int(debug) :    
+    releaseEnv.Append( CPPDEFINES=['DEBUG'] )
+    releaseEnv.Append( CCFLAGS='-g' )
+    releaseEnv.Append( variant_dir = 'build/debug' )
+    buildMode='debug'
+    print "==>> building debug mode "
+
+else:
+    releaseEnv.Append( CPPDEFINES=['RELEASE'] )
+    releaseEnv.Append( variant_dir = 'build/release' )
+    buildMode='release'
+    print "==>> building release mode "
+
 
 releaseEnv.Append( root_dir = Dir('.').srcnode().abspath )
-releaseEnv.Append( variant_dir = 'build/release' )
 
 # ... and release builds end up in the "build/release" dir
 releaseEnv.VariantDir( releaseEnv['variant_dir'], 'main', duplicate=0)
@@ -279,6 +291,5 @@ releaseEnv.AddMethod(copyInputFileToFolderStructure, 'copyInputFileToFolderStruc
 # print 'Mode= ', mode,'  env = ', env
 # env.SConscript('build/%s/SConscript' % mode, {'env': env})
  
-mode = 'release'
-releaseEnv.SConscript('build/%s/SConscript' % mode,{'releaseEnv': releaseEnv} )
+releaseEnv.SConscript('build/%s/SConscript' % buildMode,{'releaseEnv': releaseEnv} )
 

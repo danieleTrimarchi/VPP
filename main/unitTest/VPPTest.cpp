@@ -128,22 +128,30 @@ void TVPPTest::xmlIOTest() {
 	// Instantiate and populate a VariableFileParser
 	boost::shared_ptr<VariableFileParser> pVariableFileParser(new VariableFileParser(pRootItem.get()));
 
-	QString xmlFileName("vppSettingsTest.xml");
+	// Define the buffer file
+	QString xmlFileName("testFiles/vppSettingsTest.xml");
 
-	// Write the items to xml
-	QFile outXml(xmlFileName);
-	VPPSettingsXmlWriterVisitor vw(&outXml);
-	pRootItem->accept(vw);
-	outXml.close();
+	// Introduce a scope to make sure the file is closed at destruction
+	{
+		QFile outXml(xmlFileName);
+		if(!outXml.open(QFile::WriteOnly | QFile::Text))
+			std::cout<<"Cannot create output file: "<<xmlFileName.toStdString()<<std::endl;
+		VPPSettingsXmlWriterVisitor vw(&outXml);
+		pRootItem->accept(vw);
+	}
 
 	// Instantiate a new root
 	boost::shared_ptr<SettingsItemRoot> pRootItemTwo(new SettingsItemRoot);
 
 	// Read the items back in from the xml and assign them to
 	// the brand new root
-	QFile inXml(xmlFileName);
-	VPPSettingsXmlReaderVisitor vr(&inXml);
-	pRootItemTwo->accept(vr);
+	{
+		QFile inXml(xmlFileName);
+		if(!inXml.open(QFile::ReadOnly | QFile::Text))
+			std::cout<<"Cannot read input file: "<<xmlFileName.toStdString()<<std::endl;
+		VPPSettingsXmlReaderVisitor vr(&inXml);
+		pRootItemTwo->accept(vr);
+	}
 
 	// Get the variables to a new VariableFileParser
 	boost::shared_ptr<VariableFileParser> pVariableFileParserTwo(new VariableFileParser(pRootItemTwo.get()));
@@ -152,7 +160,6 @@ void TVPPTest::xmlIOTest() {
 	CPPUNIT_ASSERT(pRootItem == pRootItemTwo);
 
 	// compare the variables contained in the two parsers
-
 }
 
 /// Test the variables we get when reading xml in the variablefile
