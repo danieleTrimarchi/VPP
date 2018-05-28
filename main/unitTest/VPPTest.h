@@ -13,18 +13,17 @@ class TVPPTest : public CppUnit::TestFixture{
 
   CPPUNIT_TEST_SUITE(TVPPTest);
 
-  /// Test the variables parsed in the variablefile
+//  /// Test the variables parsed in the variablefile
 //  CPPUNIT_TEST(variableParseTest);
-
-  /// Instantiate some items, write to xml, read them
-  /// back and verify consistency
-  CPPUNIT_TEST(xmlIOTest);
+//
+//  /// Instantiate some items, write to xml, read them
+//  /// back and verify consistency
+//  CPPUNIT_TEST(xmlIOTest);
 
   /// Test the variables we get when reading xml in the variablefile
 
-  //
-//  /// Resistance and aero force components test
-//  CPPUNIT_TEST(itemComponentTest);
+  //  /// Resistance and aero force components test
+  CPPUNIT_TEST(itemComponentTest);
 //
 //  /// Test the regression algorithm
 //  CPPUNIT_TEST(regressionTest);
