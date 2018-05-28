@@ -298,12 +298,12 @@ class System( thirdParty ) :
         
         self.__libpath__= [
                            "/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
-                           "/opt/local/lib",
-                           "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+                           "/opt/local/lib"#,
+                           #"/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
                           ]
         
         self.__frameworksPaths__= [
-                                  "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+                                # "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
                                   ]
         self.__addTo__(env)
 

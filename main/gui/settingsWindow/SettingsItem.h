@@ -144,6 +144,9 @@ class SettingsItemRoot : public SettingsItemBase {
 		/// Assignment operator
 		virtual const SettingsItemRoot& operator=(const SettingsItemRoot& rhs);
 
+		/// Comparison operator
+		virtual bool operator==(const SettingsItemRoot& rhs);
+
 		/// Name of the class as a string. Used for XML i/o.
 		static const string className_;
 

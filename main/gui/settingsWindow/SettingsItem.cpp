@@ -424,6 +424,21 @@ const SettingsItemRoot& SettingsItemRoot::operator=(const SettingsItemRoot& rhs)
 	return *this;
 }
 
+// Comparison operator
+bool SettingsItemRoot::operator==(const SettingsItemRoot& rhs) {
+
+	// Call the parent class comparison
+	if(!SettingsItemBase::operator==(rhs))
+		return false;
+
+	// Parent class is fine, keep comparing own members
+	if( className_== rhs.className_ ){
+		return true;
+	}
+	return false;
+
+}
+
 // ----------------------------------------------------------------
 
 // Ctor

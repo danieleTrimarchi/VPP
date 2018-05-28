@@ -262,10 +262,12 @@ bool Item::operator==(const Item& rhs) {
 			return false;
 
 		// loop on children and return:
-		for (size_t iChild=0; iChild<childCount(); iChild++)
-			if( child(iChild) != rhs.child(iChild))
+		for (size_t iChild=0; iChild<childCount(); iChild++){
+			child(iChild)->print();
+			rhs.child(iChild)->print();
+			if( *child(iChild) != *rhs.child(iChild))
 				return false;
-
+		}
 		// All check passed, return true
 		return true;
 	}

@@ -157,7 +157,7 @@ void TVPPTest::xmlIOTest() {
 	boost::shared_ptr<VariableFileParser> pVariableFileParserTwo(new VariableFileParser(pRootItemTwo.get()));
 
 	// Compare the old and the new tree - they must match
-	CPPUNIT_ASSERT(pRootItem == pRootItemTwo);
+	CPPUNIT_ASSERT( *pRootItem == *pRootItemTwo );
 
 	// compare the variables contained in the two parsers
 }
