@@ -18,7 +18,7 @@ VTW_MIN			0.5   % [m/s] Min true wind speed
 VTW_MAX 		10   % [m/s] Max true wind speed
 NTW 			45     % [-]   Number of wind speeds to be computed
 TWA_MIN			0.610865238198015    % [rad] Min true wind angle 35[deg]
-TWA_MAX 		3,12413936106985    % [rad] Max true wind angle 179[deg]
+TWA_MAX 		3.12413936106985    % [rad] Max true wind angle 179[deg]
 N_TWA			40     % [-]   Number of wind angles to be computed
 
 % These data are measurements and estimates for a Freedom 25
