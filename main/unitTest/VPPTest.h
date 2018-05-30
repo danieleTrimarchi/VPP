@@ -19,11 +19,11 @@ class TVPPTest : public CppUnit::TestFixture{
 //  /// Instantiate some items, write to xml, read them
 //  /// back and verify consistency
 //  CPPUNIT_TEST(xmlIOTest);
-
-  /// Test the variables we get when reading xml in the variablefile
-
-  //  /// Resistance and aero force components test
-  CPPUNIT_TEST(itemComponentTest);
+//
+//  /// Test the variables we get when reading xml in the variablefile
+//
+//  //  /// Resistance and aero force components test
+//  CPPUNIT_TEST(itemComponentTest);
 //
 //  /// Test the regression algorithm
 //  CPPUNIT_TEST(regressionTest);
@@ -54,9 +54,9 @@ class TVPPTest : public CppUnit::TestFixture{
 //  /// Test ipOpt -- from example HS071_NLP
 //  CPPUNIT_TEST(ipOptTest);
 //
-//  /// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
-//  CPPUNIT_TEST(vppPointTest);
-//
+  /// Test a run on a complete computation point : initial guess, NR and solution with NLOpt
+  CPPUNIT_TEST(vppPointTest);
+
 //  /// Make a full run of ipOpt, and compare the full results with a baseline
 //  /// Warning : this is a relatively long test
 //  CPPUNIT_TEST(ipOptFullRunTest);

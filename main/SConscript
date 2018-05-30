@@ -43,6 +43,9 @@ subFolders= ['qcustomplot',
 			 'versioning' ] 
 
 # -- 
+if 'test' in COMMAND_LINE_TARGETS:
+	print "Appcontentdir= ",localEnv.getAppContentsDir()
+	Exit(2)
 
 if 'help' in COMMAND_LINE_TARGETS: 
  
@@ -132,7 +135,9 @@ for subdir in subFolders :
 vppExe= localEnv.Program(localEnv.getExecutableName(), ['main.cxx'] + allObj )
 
 # Send the build to a convenient apple-style bundle folder structure 
-localEnv.makeAppFolderStructure(thirdPartyDict)
+# The target depends on the executable : make sure this is executed 
+# whenever it is necessary!!
+Depends( localEnv.makeAppFolderStructure(thirdPartyDict), vppExe )
 
 # The VPP program is to be installed in the app folder structure, at least for MAC
 installedExe= localEnv.Install( localEnv.getAppInstallDir(), vppExe )

@@ -34,7 +34,7 @@ void TVPPTest::variableParseTest() {
 	CPPUNIT_ASSERT_EQUAL( parser.get("V_MIN"), 0. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("V_MAX"), 15. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("PHI_MIN"), 0. );
-	CPPUNIT_ASSERT_EQUAL( parser.get("PHI_MAX"), 85.);
+	CPPUNIT_ASSERT_EQUAL( parser.get("PHI_MAX"), 1.48352986419518);
 	CPPUNIT_ASSERT_EQUAL( parser.get("B_MIN"), 0. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("B_MAX"), 3. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("F_MIN"), 0.4 );
@@ -44,8 +44,8 @@ void TVPPTest::variableParseTest() {
 	CPPUNIT_ASSERT_EQUAL( parser.get("VTW_MIN"), .5 );
 	CPPUNIT_ASSERT_EQUAL( parser.get("VTW_MAX"), 10. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("NTW"), 45. );
-	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MIN"), 35. );
-	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MAX"), 179. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MIN"), 0.610865238198015 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MAX"), 3.12413936106985 );
 	CPPUNIT_ASSERT_EQUAL( parser.get("N_TWA"), 40. );
 
 	// These data are measurements and estimates for a Freedom 25
@@ -534,7 +534,7 @@ void TVPPTest::jacobianTest() {
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( -171.797570228577, J(0,0), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(  340.33544921875, J(1,0), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( -29.4818544387817,  J(0,1), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( -31634.528503418, J(1,1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -31634.5288085938, J(1,1), 1.e-6);
 
 }
 
@@ -578,7 +578,7 @@ void TVPPTest::gradientTest() {
 	//		printf("%d --  %8.12f\n",i,G(i));
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0,                 G(0), 1.e-6);
-	CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.289655178785324,   G(1), 1.e-6);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.289656668901443,   G(1), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.000798352062702179,G(2), 1.e-6);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.396439217858844,   G(3), 1.e-6);
 
