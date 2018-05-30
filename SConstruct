@@ -11,18 +11,27 @@ common_env = Environment()
 # Our release build is derived from the common build environment...
 releaseEnv = common_env.Clone()
 
+# Get the name of the active mercurial branch? 
+#p = subprocess.Popen('hg branch', shell=True)
+#p.wait()        
+#print "BRANCH= ", p.communicate()
+
+p = subprocess.Popen('hg branch', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+branch= p.stdout.read().strip()
+print "Current Mercurial branch: ", branch
+
 # Call scons -Q debug 1
 debug= ARGUMENTS.get('debug',0)
 if int(debug) :    
     releaseEnv.Append( CPPDEFINES=['DEBUG'] )
     releaseEnv.Append( CCFLAGS='-g' )
-    releaseEnv.Append( variant_dir = 'build/debug' )
+    releaseEnv.Append( variant_dir = 'build/{}/debug'.format(branch) )
     buildMode='debug'
     print "==>> building debug mode "
 
 else:
     releaseEnv.Append( CPPDEFINES=['RELEASE'] )
-    releaseEnv.Append( variant_dir = 'build/release' )
+    releaseEnv.Append( variant_dir = 'build/{}/release'.format(branch) )
     buildMode='release'
     print "==>> building release mode "
 
@@ -290,6 +299,5 @@ releaseEnv.AddMethod(copyInputFileToFolderStructure, 'copyInputFileToFolderStruc
 #                   debug=debug_env).iteritems():
 # print 'Mode= ', mode,'  env = ', env
 # env.SConscript('build/%s/SConscript' % mode, {'env': env})
- 
-releaseEnv.SConscript('build/%s/SConscript' % buildMode,{'releaseEnv': releaseEnv} )
+releaseEnv.SConscript(os.path.join("build",branch,buildMode,"SConscript"),{'releaseEnv': releaseEnv} )
 
