@@ -1,8 +1,65 @@
+!!Create an XCode project for the test suite!!
+
+Fix the tests <- prepare the xmls and remove the old vppIn files
+
+=RE-Templetisation= 
+Also fix the result import <- doing this by templatizing the units. The problem is a dirty trick in variableFileParser::check that must be removed. The idea is to know the unit of the items, and systematically convert to the right unit while pushing the values to the 
+variableFileParser. -> done, but this is not the right way to go. the items own the unit, but they are not templatized on the unit. 
+The current scheme is particoularly stupid, as it forces a clone of the items - implying a  clone of the item AND the children... This is not an option!
+ 
+See the ctor of SettingsItem. there are all these strings that are not acceptable
+	This is done, simply I put the commit on hold because I want to be able to 
+	run tests before modifying the code 
+
+TreeTab is fine, while the General Tab is unused and this is a petty. 
+Populate this tab with settings such as the choice of the solver
+
+Export results to excel format
+
+Didn't I solve the combo-box appeareance? The settingswindow is not what I would like! See for instance the battens type in the Sail settings
+
+---
+
+Questions: 
+	See :
+		SettingsItemBase* SettingsItemBounds::getItemMin() {
+		return dynamic_cast<SettingsItemBase*>(child(0));
+		}
+	child is a method of Item, returning an Item. But the child is derived from
+	SettingsItemBase, thus it has other methods I want to use, See for instance
+	VariableParserGetVisitor::visit(SettingsItemBounds* pItem)
+	wher I need to call getVariableName. This is a method for SettingsItemBase,
+	not for Item. 
+	Is there a better structure than dynamic_cast? 
+
+	Also: 
+		SettingsItemBase* SettingsModel::getRoot() const {
+		return dynamic_cast<SettingsItemBase*>(VppItemModel::getRoot());
+		}
+
+	Also: 
+		SettingsItemBase::settingsItemFactory
+		Refactor the factory!
+		I need to learn how to do a reasonable factory, this code is crap!
+		
+	Also: 
+		I have chosen to templatize the items on their unit. This creates a lot 
+		of problems when trying to convert the unit of an item. To do so I need 
+		to instantiate a new item, which is akward. See for instance 
+		SettingsItemBase* SettingsItem<Degrees>::convertToSI()
+		Can I make a lighter design, with a non template item holding any unit?
+
+---
+
+-> Set Settings values when loosing focus from the SettingsItemWindow cell
+	This is supposedly already implemented --WHERE-- but it does not work!
+
+-> parser print should work!
+ 
 - Progression bar during runs…
 
-- Add a control to choose the solver NLOpt IPOpt NRSolver (2 dofs)
-- Add a tabbed widget to interactively fill all of the VPP input. This can be 
-	automatically filled from file ; or be saved to a VPPin file
+- Add a control to choose the solver NLOpt IPOpt NRSolver (2 dofs). 
+	This should go in Settings/General
 - Exception in pathUtils if this is not MACOSX 
 - Hide Variable tree by default
 - Print df/dm in RELATIVE terms - the curves of df/dm are of the same color!

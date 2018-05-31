@@ -1,14 +1,21 @@
 #ifndef STATEVECTORDIALOG_H
 #define STATEVECTORDIALOG_H
 
-#include <QDialog>
-#include <QDialogButtonBox>
-#include <QLineEdit>
-#include <QGridLayout>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QGridLayout>
 #include "boost/shared_ptr.hpp"
 #include <Eigen/Core>
-#include "VppAeroItem.h"
+#include "VPPAeroItem.h"
+#include "SettingsModel.h"
 
+QT_BEGIN_NAMESPACE
+class QTabWidget;
+class QTreeView;
+QT_END_NAMESPACE
+
+/// Base class for widget dialog used to prompt values
 class DialogBase : public QDialog {
 
 		Q_OBJECT
@@ -30,6 +37,8 @@ class DialogBase : public QDialog {
 
 //---------------------------------------------------------------
 
+/// Base class used to prompt the values for the VPP state vector:
+/// V, Phi, Crew, Flat. Used mainly for plotting purposes
 class StateVectorDialog : public DialogBase {
 
 		Q_OBJECT
@@ -60,8 +69,8 @@ class StateVectorDialog : public DialogBase {
 
 };
 
-//---------------------------------------------------------------
-
+///---------------------------------------------------------------
+/// Prompt the full state vector : V, Phi, Crew, Flat
 class FullStateVectorDialog : public StateVectorDialog {
 
 		Q_OBJECT
@@ -73,8 +82,8 @@ class FullStateVectorDialog : public StateVectorDialog {
 
 };
 
-//---------------------------------------------------------------
-
+///---------------------------------------------------------------
+/// Prompt the optimization variables of the state vector : Crew, Flat
 class OptimVarsStateVectorDialog : public StateVectorDialog {
 
 		Q_OBJECT
@@ -87,7 +96,7 @@ class OptimVarsStateVectorDialog : public StateVectorDialog {
 };
 
 //---------------------------------------------------------------
-
+/// Prompts the wind indexes : TWA, TWV
 class WindIndicesDialog : public DialogBase {
 
 		Q_OBJECT
@@ -115,7 +124,7 @@ class WindIndicesDialog : public DialogBase {
 
 };
 
-//---------------------------------------------------------------
+///---------------------------------------------------------------
 /// Class that implements a dialog with a button.
 /// The button label is initially set to 'default'
 /// Pressing the button opens a file browser. Once
@@ -129,19 +138,19 @@ class VPPDefaultFileBrowser : public DialogBase {
 
 		/// Ctor
 		VPPDefaultFileBrowser(QString title,
-													QString fileExtension,
-													QWidget *parent = Q_NULLPTR);
+				QString fileExtension,
+				QWidget *parent = Q_NULLPTR);
 
 		/// Returns the name (with abs path) of the file selected
 		/// by the user
 		string getSelectedFileName() const;
 
-	private slots:
+		private slots:
 
 		/// Opens a file browser to select a file
 		void selectFile();
 
-	private:
+		private:
 
 		/// File type and name
 		QString fileExtensionFilter_, selectedFileName_;

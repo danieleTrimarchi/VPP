@@ -28,23 +28,25 @@ void TVPPTest::variableParseTest() {
 	// Parse the variables file
 	parser.parse("testFiles/variableFile_test.txt");
 
+	parser.print();
+
 	// VPP CONFIGURATION
 	CPPUNIT_ASSERT_EQUAL( parser.get("V_MIN"), 0. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("V_MAX"), 15. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("PHI_MIN"), 0. );
-	CPPUNIT_ASSERT_EQUAL( parser.get("PHI_MAX"), mathUtils::toRad(85) );
+	CPPUNIT_ASSERT_EQUAL( parser.get("PHI_MAX"),1.4835298641951802);
 	CPPUNIT_ASSERT_EQUAL( parser.get("B_MIN"), 0. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("B_MAX"), 3. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("F_MIN"), 0.4 );
 	CPPUNIT_ASSERT_EQUAL( parser.get("F_MAX"), 1. );
 
 	// WIND CONFIGURATION
-	CPPUNIT_ASSERT_EQUAL( parser.get("V_TW_MIN"), .5 );
-	CPPUNIT_ASSERT_EQUAL( parser.get("V_TW_MAX"), 10. );
-	CPPUNIT_ASSERT_EQUAL( parser.get("N_TWV"), 45. );
-	CPPUNIT_ASSERT_EQUAL( parser.get("ALPHA_TW_MIN"), mathUtils::toRad(35) );
-	CPPUNIT_ASSERT_EQUAL( parser.get("ALPHA_TW_MAX"), mathUtils::toRad(179) );
-	CPPUNIT_ASSERT_EQUAL( parser.get("N_ALPHA_TW"), 40. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("VTW_MIN"), .5 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("VTW_MAX"), 10. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("NTW"), 45. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MIN"), 0.6108652381980153 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("TWA_MAX"), 3.12413936106985 );
+	CPPUNIT_ASSERT_EQUAL( parser.get("N_TWA"), 40. );
 
 	// These data are measurements and estimates for a Freedom 25
 	CPPUNIT_ASSERT_EQUAL( parser.get("DIVCAN"), 1.549 );
@@ -107,6 +109,61 @@ void TVPPTest::variableParseTest() {
 
 }
 
+// Instantiate some items, write to xml, read them
+// back and verify consistency
+void TVPPTest::xmlIOTest() {
+
+	// Root of the model tree
+	boost::shared_ptr<SettingsItemRoot> pRootItem(new SettingsItemRoot);
+
+	// Instantiate some VppSettingItems
+	SettingsItemGroup* pVPPSettings = new SettingsItemGroup("VPP Settings");
+	pVPPSettings->setParent(pRootItem.get());
+	pRootItem->appendChild(pVPPSettings);
+	pVPPSettings->appendChild( new SettingsItemBounds<MetersPerSec>("Velocity bounds","V",0,15,"Allowed boat speed bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds<Degrees>("Heel angle bounds","PHI",-1e-5,85,"Allowed boat heel angle bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds<Meters>("Crew position bounds","B",0,3,"Allowed boat heel angle bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds<NoUnit>("Flat bounds","F",0.4,1,"Allowed boat heel angle bounds"));
+
+	// Instantiate and populate a VariableFileParser
+	boost::shared_ptr<VariableFileParser> pVariableFileParser(new VariableFileParser(pRootItem.get()));
+
+	// Define the buffer file
+	QString xmlFileName("testFiles/vppSettingsTest.xml");
+
+	// Introduce a scope to make sure the file is closed at destruction
+	{
+		QFile outXml(xmlFileName);
+		if(!outXml.open(QFile::WriteOnly | QFile::Text))
+			std::cout<<"Cannot create output file: "<<xmlFileName.toStdString()<<std::endl;
+		VPPSettingsXmlWriterVisitor vw(&outXml);
+		pRootItem->accept(vw);
+	}
+
+	// Instantiate a new root
+	boost::shared_ptr<SettingsItemRoot> pRootItemTwo(new SettingsItemRoot);
+
+	// Read the items back in from the xml and assign them to
+	// the brand new root
+	{
+		QFile inXml(xmlFileName);
+		if(!inXml.open(QFile::ReadOnly | QFile::Text))
+			std::cout<<"Cannot read input file: "<<xmlFileName.toStdString()<<std::endl;
+		VPPSettingsXmlReaderVisitor vr(&inXml);
+		pRootItemTwo->accept(vr);
+	}
+
+	// Get the variables to a new VariableFileParser
+	boost::shared_ptr<VariableFileParser> pVariableFileParserTwo(new VariableFileParser(pRootItemTwo.get()));
+
+	// Compare the old and the new tree - they must match
+	CPPUNIT_ASSERT( *pRootItem == *pRootItemTwo );
+
+	// compare the variables contained in the two parsers
+}
+
+/// Test the variables we get when reading xml in the variablefile
+
 // Test the resistance components
 void TVPPTest::itemComponentTest() {
 	std::cout<<"=== Running item component (resistance, sailForce) tests === \n"<<std::endl;
@@ -147,43 +204,43 @@ void TVPPTest::itemComponentTest() {
 
 	// ==== Compute and compare to baseline viscous resistance
 	// std::cout<<"VISCOUS= "<<pVppItems->getViscousResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getViscousResistanceItem()->get(), baseLines(0), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(0), pVppItems->getViscousResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline residual resistance
 	//std::cout<<"RESID= "<<pVppItems->getResiduaryResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResiduaryResistanceItem()->get(), baseLines(1), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(1), pVppItems->getResiduaryResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline induced resistance
 	//std::cout<<"INDUC= "<<pVppItems->getInducedResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getInducedResistanceItem()->get(), baseLines(2), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(2), pVppItems->getInducedResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline Delta_FrictRes_Heel resistance
 	//std::cout<<"dVISCOUS_HEEL= "<<pVppItems->getDelta_FrictionalResistance_HeelItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getDelta_ViscousResistance_HeelItem()->get(), baseLines(3), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(3), pVppItems->getDelta_ViscousResistance_HeelItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline Delta_ResidRes_Heel resistance
 	//std::cout<<"dRESID_HEEL= "<<pVppItems->getDelta_ResiduaryResistance_HeelItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getDelta_ResiduaryResistance_HeelItem()->get(), baseLines(4), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(4), pVppItems->getDelta_ResiduaryResistance_HeelItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline ViscousRes_Keel resistance
 	//std::cout<<"VISCOUS_KEEL= "<<pVppItems->getViscousResistanceKeelItem()->get()<<std::endl; //-> this does not plot
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getViscousResistanceKeelItem()->get(), baseLines(5), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(5), pVppItems->getViscousResistanceKeelItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline ViscousRes_Rudder resistance
 	//std::cout<<"VISCOUS_RUDDER= "<<pVppItems->getViscousResistanceRudderItem()->get()<<std::endl; //-> this does not plot
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getViscousResistanceRudderItem()->get(), baseLines(6), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(6), pVppItems->getViscousResistanceRudderItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline ResidRes_Keel resistance
 	//std::cout<<"RESID KEEL= "<<pVppItems->getResiduaryResistanceKeelItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResiduaryResistanceKeelItem()->get(), baseLines(7), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(7), pVppItems->getResiduaryResistanceKeelItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline NegativeResistance resistance
 	//std::cout<<"NEGATIVE= "<<pVppItems->getNegativeResistanceItem()->get()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getNegativeResistanceItem()->get(), baseLines(8), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(8), pVppItems->getNegativeResistanceItem()->get(), 1.e-6 );
 
 	// ==== Compute and compare to baseline TOTAL resistance
 	//std::cout<<"TOTAL= "<<pVppItems->getResistance()<<std::endl;
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( pVppItems->getResistance(), baseLines(9), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( baseLines(9), pVppItems->getResistance(), 1.e-6 );
 
 	//==>> TEST AEREO FORCE-MOMENT COMPONENTS
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 278.192490911082, pVppItems->getAeroForcesItem()->getLift(), 1.e-6 );
@@ -1199,8 +1256,8 @@ void TVPPTest::ipOptFullRunTest() {
 	Optim::IppOptSolverFactory solverFactory(pVppItems);
 
 	// Loop on the wind ANGLES and VELOCITIES
-	for(size_t aTW=0; aTW<parser.get("N_ALPHA_TW"); aTW++)
-		for(size_t vTW=0; vTW<parser.get("N_TWV"); vTW++){
+	for(size_t aTW=0; aTW<parser.get("N_TWA"); aTW++)
+		for(size_t vTW=0; vTW<parser.get("NTW"); vTW++){
 
 			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
 

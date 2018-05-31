@@ -7,7 +7,7 @@ syntax: glob
 .sconsign.dblite
 .DS_Store
 build/*
-EclipseWorkSpace/*
+EclipseWorkSpace_VPP/*
 *.settings*
 *.xcworkspacedata
 *.xcuserstate
@@ -17,6 +17,7 @@ EclipseWorkSpace/*
 *~
 *.out
 *.pdf
+*.pro
 */gvpp/*
 *.gcx
 *docs/*

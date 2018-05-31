@@ -1,8 +1,7 @@
 #include "MultiplePlotWidget.h"
 #include <QtCore/QDebug>
 #include <QtCore/QTime>
-#include <QScreen>
-#include <QtGui>
+#include <QtGui/QScreen>
 #include "VppCustomPlotWidgetBase.h"
 
 MultiplePlotWidget::MultiplePlotWidget(QMainWindow* parent/*=Q_NULLPTR*/, QString title /*=0*/) :

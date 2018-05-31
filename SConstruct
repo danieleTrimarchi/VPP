@@ -11,15 +11,48 @@ common_env = Environment()
 # Our release build is derived from the common build environment...
 releaseEnv = common_env.Clone()
 
-# ... and adds a RELEASE preprocessor symbol ...
-releaseEnv.Append( CPPDEFINES=['RELEASE'] )
+# Get the name of the active mercurial branch? 
+#p = subprocess.Popen('hg branch', shell=True)
+#p.wait()        
+#print "BRANCH= ", p.communicate()
+
+p = subprocess.Popen('hg branch', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+branch= p.stdout.read().strip()
+print "Current Mercurial branch: ", branch
+
+# Call scons -Q debug 1
+debug= ARGUMENTS.get('debug',0)
+if int(debug) :    
+    releaseEnv.Append( CPPDEFINES=['DEBUG'] )
+    releaseEnv.Append( CCFLAGS='-g' )
+    releaseEnv.Append( variant_dir = 'build/{}/debug'.format(branch) )
+    buildMode='debug'
+    print "==>> building debug mode "
+
+else:
+    releaseEnv.Append( CPPDEFINES=['RELEASE'] )
+    releaseEnv.Append( variant_dir = 'build/{}/release'.format(branch) )
+    buildMode='release'
+    print "==>> building release mode "
+
+# Set the terminal title to reflect the branch / buildType
+msg="Branch={}; build_type={}".format(branch,buildMode)
+pt = subprocess.Popen('echo -n -e \"\033]0;{}\007\"'.format(msg), shell=True)
 
 releaseEnv.Append( root_dir = Dir('.').srcnode().abspath )
-releaseEnv.Append( variant_dir = 'build/release' )
+releaseEnv.Append( variantDirAbsPath = os.path.join( releaseEnv['root_dir' ],releaseEnv['variant_dir']) )
 
 # ... and release builds end up in the "build/release" dir
 releaseEnv.VariantDir( releaseEnv['variant_dir'], 'main', duplicate=0)
 
+#----------------------------------------------------------------
+# Static utility method
+def error(msg):
+    print "\n--------------------------------------------------\n"
+    print  msg
+    print "\n--------------------------------------------------\n"
+    Exit(2)
+    
 #----------------------------------------------------------------
 
 # Returns the absolute path of the Main folder, the root of the source tree
@@ -39,11 +72,21 @@ releaseEnv.AddMethod(getExecutableName, 'getExecutableName')
 
 # --
 
+# Returns the absolute path of the app bundle
+# /Users/dtrimarchi/VPP/VPP.app
+def getAppPath(self):
+    
+    return os.path.join(releaseEnv['variantDirAbsPath'],"VPP.app")
+
+releaseEnv.AddMethod(getAppPath, 'getAppPath')
+
+#-- 
+
 # Returns the absolute path of the Contents folder in the app bundle
 # /Users/dtrimarchi/VPP/VPP.app/Contents
 def getAppContentsDir(self):
-
-    return os.path.join( self['root_dir'], "VPP.app/Contents" )
+    
+    return os.path.join(releaseEnv.getAppPath(),"Contents")
 
 releaseEnv.AddMethod(getAppContentsDir, 'getAppContentsDir')
 
@@ -164,11 +207,9 @@ def fixDynamicLibPath(self,source,target,env):
 
     # Modify the executable in order to change @rpath -> @executable_path thus making 
     # it executable. Not sure why @rpath would not work though... 
-    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
-    QtFrameworkList= self['THIRDPARTYDICT']['Qt'].getFrameworks()
-    
+        
     # Loop on the frameworks
-    for iFramework in QtFrameworkList: 
+    for iFramework in self['THIRDPARTYDICT']['Qt'].getFrameworks(): 
 
         print "RUNNING : "
         print ('install_name_tool -change '
@@ -204,7 +245,18 @@ def fixDynamicLibPathTest(self,source,target,env):
     # Modify the executable in order to change @rpath -> @executable_path thus making 
     # it executable. Not sure why @rpath would not work though... 
     testExecutablePath= self['TEST_EXE_PATH']
-    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
+    
+    
+    print '==>>' , self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
+    
+    # Not ideal, but it does the job by now. getFrameworkRoot returns a list, 
+    # because potentially we have mutliple paths. I do not know how to behave in 
+    # that case, which is only theoretical by now. So if this is the case I stop
+    # the execution. So I am simply post-poning the problem to later on...
+    if(len(self['THIRDPARTYDICT']['Qt'].getFrameworkRoot())>1):
+        error("Too many framework roots, this is not implemented!")
+    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()[0]
+
     QtFrameworkList= self['THIRDPARTYDICT']['Qt'].getFrameworks()
 
     # Loop on the frameworks
@@ -261,7 +313,5 @@ releaseEnv.AddMethod(copyInputFileToFolderStructure, 'copyInputFileToFolderStruc
 #                   debug=debug_env).iteritems():
 # print 'Mode= ', mode,'  env = ', env
 # env.SConscript('build/%s/SConscript' % mode, {'env': env})
- 
-mode = 'release'
-releaseEnv.SConscript('build/%s/SConscript' % mode,{'releaseEnv': releaseEnv} )
+releaseEnv.SConscript(os.path.join("build",branch,buildMode,"SConscript"),{'releaseEnv': releaseEnv} )
 

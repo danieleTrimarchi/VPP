@@ -8,10 +8,6 @@ localEnv=testEnv.Clone()
 # make the VPP
 allObjects= localEnv['objList']
 
-#Compile Debug mode
-#env.Append(CCFLAGS= '-g')
-#env.Append(CPPFLAGS ='-Wc++11-extensions')
-
 # Warning: use of enumeration in a nested name specifier is a
 #      C++11 extension [-Wc++11-extensions]
 
@@ -35,7 +31,13 @@ Depends( fixDynamicLibPath_commandTest, autotestsProgram )
 Default( fixDynamicLibPath_commandTest )
 
 # Add a target 'runTest' that will ensure that it's built before running the test suite
-test_alias = Alias('runTest', [autotestsProgram], autotestsProgram[0].path)
+# add the --stop flag in the case of debug build to stop the execution of the program while 
+# triggering an infinite loop. We will be able to attach a debugger then 
+if ARGUMENTS.get('debug',0):
+	test_alias = Alias('runTest', [autotestsProgram], str(autotestsProgram[0].path) + " --stop")
+else:
+	test_alias = Alias('runTest', [autotestsProgram], str(autotestsProgram[0].path) )
+
 Depends( test_alias, fixDynamicLibPath_commandTest) 
 
 # Simply required.  Without it, 'test' is never considered out of date.

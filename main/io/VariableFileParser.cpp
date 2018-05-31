@@ -1,10 +1,57 @@
 #include "VariableFileParser.h"
 #include <stdio.h>
 #include <cmath>
+
+#include "../gui/settingsWindow/GetItemVisitor.h"
 #include "Warning.h"
 #include "VPPException.h"
 #include "mathUtils.h"
+#include "TreeTab.h"
+#include "VPPSettingsDialog.h"
 #include "VariableTreeModel.h"
+
+// Ctor
+VariableParserGetVisitor::VariableParserGetVisitor(VariableFileParser* pParser):
+pParser_(pParser) {
+
+}
+
+// Dtor
+VariableParserGetVisitor::~VariableParserGetVisitor() {
+
+}
+
+// Disallow default ctor
+VariableParserGetVisitor::VariableParserGetVisitor():
+			pParser_(0) {
+
+}
+
+// Visit a 'Generic' SettingsItemBase
+void VariableParserGetVisitor::visit(SettingsItemBase* pRoot) {
+
+	// Do nothing special
+
+	// Loop on the tree
+	for(size_t iChild=0; iChild<pRoot->childCount(); iChild++){
+		SettingsItemBase* pChild= dynamic_cast<SettingsItemBase*>(pRoot->child(iChild));
+		pChild->accept(*this);
+	}
+}
+
+// Visit a 'Generic' SettingsItemBase
+void VariableParserGetVisitor::visit(SettingsItemRoot* pRoot) {
+
+	// Do nothing special
+
+	// Loop on the tree
+	for(size_t iChild=0; iChild<pRoot->childCount(); iChild++){
+		SettingsItemBase* child= dynamic_cast<SettingsItemBase*>(pRoot->child(iChild));
+		child->accept(*this);
+	}
+}
+
+//---------------------------------------------------------
 
 // Constructor
 VariableFileParser::VariableFileParser() {
@@ -24,13 +71,13 @@ VariableFileParser::VariableFileParser() {
 	requiredVariables_.push_back("F_MAX");   // [-]   Constraint the max Flattening factor
 
 	// %%%%%%% WIND %%%%%%%%
-	requiredVariables_.push_back("V_TW_MIN");	// [m/s] Min true wind velocity
-	requiredVariables_.push_back("V_TW_MAX");	// [m/s] Max true wind velocity
-	requiredVariables_.push_back("N_TWV");		// [-]   Number of wind velocities in range
+	requiredVariables_.push_back("VTW_MIN");	// [m/s] Min true wind velocity
+	requiredVariables_.push_back("VTW_MAX");	// [m/s] Max true wind velocity
+	requiredVariables_.push_back("NTW");		// [-]   Number of wind velocities in range
 
-	requiredVariables_.push_back("ALPHA_TW_MIN"); // [deg] Min true wind angle
-	requiredVariables_.push_back("ALPHA_TW_MAX"); // [deg] Max true wind angle
-	requiredVariables_.push_back("N_ALPHA_TW"); 	// [-]   Number of wind angles in range
+	requiredVariables_.push_back("TWA_MIN"); // [deg] Min true wind angle
+	requiredVariables_.push_back("TWA_MAX"); // [deg] Max true wind angle
+	requiredVariables_.push_back("N_TWA"); 	// [-]   Number of wind angles in range
 
 	// %%%%%%% HULL %%%%%%%%
 	requiredVariables_.push_back("DIVCAN"); 	// [m^3] Displaced volume of canoe body
@@ -88,6 +135,38 @@ VariableFileParser::VariableFileParser() {
 	requiredVariables_.push_back("MMVBLCRW"); // [kg] Movable Crew Mass
 
 }
+
+// Constructor - the settingsDialog is in charge for
+// populating the parser
+VariableFileParser::VariableFileParser(VPPSettingsDialog* pSd) :
+				VariableFileParser(){
+
+	// Get a handle to the settings tree
+	TreeTab* pSettingsTreeTab( pSd->getSettingsTreeTab() );
+
+	// Get a handle to the reference model.
+	const SettingsModel* pSettingsModel = pSettingsTreeTab->getReferenceSettingsModel();
+
+	// Get the root of the reference settings model
+	SettingsItemBase* pSettingsModelRoot = pSettingsModel->getRoot();
+
+	// Instantiate a visitor that will visit root and fill the
+	// variables for the variableFileParser
+	VariableParserGetVisitor v(this);
+	pSettingsModelRoot->accept(v);
+
+}
+
+// Constructor using directly the root of the variableTreeModel
+VariableFileParser::VariableFileParser(SettingsItemBase* pSettingsModelRoot) {
+
+	// Instantiate a visitor that will visit root and fill the
+	// variables for the variableFileParser
+	VariableParserGetVisitor v(this);
+	pSettingsModelRoot->accept(v);
+
+}
+
 
 // Destructor
 VariableFileParser::~VariableFileParser() {
@@ -184,19 +263,12 @@ void VariableFileParser::check() {
 			variables_["AW"]/std::pow(variables_["DIVCAN"],2./3) >= 12.67 )
 		Warning("Loading Factor is out of valuable data");
 
-	if(variables_["V_TW_MAX"] <= variables_["V_TW_MIN"] )
-		throw VPPException(HERE,"V_TW_MIN is larger than V_TW_MAX!");
+	if(variables_["VTW_MAX"] <= variables_["VTW_MIN"] )
+		throw VPPException(HERE,"VTW_MIN is larger than VTW_MAX!");
 
-	if(variables_["ALPHA_TW_MAX"] <= variables_["ALPHA_TW_MIN"] )
-		throw VPPException(HERE,"ALPHA_TW_MIN is larger than ALPHA_TW_MAX!");
-
-	// Convert ALL the angles from DEG to RAD
-	variables_["PHI_MIN"] = mathUtils::toRad( variables_["PHI_MIN"] );
-	variables_["PHI_MAX"] = mathUtils::toRad( variables_["PHI_MAX"] );
-
-	variables_["ALPHA_TW_MIN"] = mathUtils::toRad( variables_["ALPHA_TW_MIN"] );
-	variables_["ALPHA_TW_MAX"] = mathUtils::toRad( variables_["ALPHA_TW_MAX"] );
-
+	if(variables_["TWA_MAX"] <= variables_["TWA_MIN"] )
+		throw VPPException(HERE,"TWA_MIN is larger than TWA_MAX!");
+    
 }
 
 /// Get the value of a variable
@@ -224,7 +296,30 @@ size_t VariableFileParser::getNumVars() {
 // Populate the tree model that will be used to
 // visualize the variables in the UI
 void VariableFileParser::populate(VariableTreeModel* pTreeModel) {
+
+	// Cleanup : destroy the children of the variableTreeModel
+	pTreeModel->clearChildren();
+
+	// Now populate the variables_ container with the variables contained
+	// in the tree model
 	variables_.populate(pTreeModel);
+}
+
+// Comparison operator. Are the variables contained into
+// this parser equal to the variables of another parser?
+bool VariableFileParser::operator == (const VariableFileParser& rhs) {
+	return (variables_ == rhs.variables_);
+}
+
+// Insert a new variable given its name and value
+void VariableFileParser::insert(QString variableName, double variableValue) {
+
+	Variable newVariable;
+	newVariable.varName_= variableName.toStdString();
+	newVariable.val_= variableValue;
+
+	variables_.insert(newVariable);
+
 }
 
 

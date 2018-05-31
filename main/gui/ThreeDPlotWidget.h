@@ -2,7 +2,7 @@
 #define THREEDPLOTWIDGET_H
 
 #include "VppTabDockWidget.h"
-#include "Surfacegraph.h"
+#include "SurfaceGraph.h"
 
 class ThreeDPlotWidget : public VppTabDockWidget {
 

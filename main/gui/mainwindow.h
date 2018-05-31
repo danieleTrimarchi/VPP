@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include <QMainWindow>
-#include <QToolbar>
+#include <QToolBar>
 #include "LogWindow.h"
 #include "VariablesDockWidget.h"
 #include "LogDockWidget.h"
@@ -40,13 +40,21 @@ public:
 	/// Virtual destructor
 	virtual ~MainWindow();
 
+	/// Get the toolbar with some shortcuts to actions
+	QToolBar* getToolBar();
+
 	/// Create a toolbar with some actions
 	void setupToolBar();
 
+	/// Updates the variable tree getting values from the
+	/// settingsWindow tree tab
+	void udpateVariableTree();
+
+
 public slots:
 
-	/// Import the data from variableFile.txt
-	void import();
+	/// Open the settings dialog
+	void openSettings();
 
 	/// Run the VPP analysis
 	void run();
@@ -110,7 +118,7 @@ public slots:
 	/// J = | dF/du dF/dPhi |
 	///	   | dM/du dM/dPhi |
 	/// so that 	|dF| = J 	|du  |
-	///					|dM|			|dPhi|
+	///					|dM|			  |dPhi|
 	void plotJacobian();
 
 	/// print out the software info
@@ -124,6 +132,9 @@ public slots:
 
 private:
 
+	/// Import either settings either results from xml file
+	QString importData(string);
+
 	/// Set the menu bar
 	void setupMenuBar();
 
@@ -132,11 +143,16 @@ private:
 
 	// Remove a widget from the buffer vector. This should be called from the
 	// as a slot from the delete of the QDockWidget right before the destruction
-	void removeWidgetFromVector(VppTabDockWidget* pWidget);
+	void removeTabWidgetFromVector(VppTabDockWidget* pWidget);
 
 	/// Make sure a boat description has been imported. Otherwise
 	/// warns the user with an error-like widget
 	bool hasBoatDescription();
+
+	/// Given the settings, instantiates (refreshes) all of the
+	/// VPP items: sailItems, resistanceItems... All is required
+	/// to run an analysis
+	void updateVppItems();
 
 	/// Make sure a solver is available. Otherwise
 	/// warns the user with an error-like widget
@@ -156,11 +172,6 @@ private:
 	/// Toolbar with some shortcuts to actions
 	QToolBar* pToolBar_;
 
-	/// Widget that contains the tabular view of the results
-	boost::shared_ptr<VppTableDockWidget> pTableWidget_;
-
-	boost::shared_ptr<VppCustomPlotWidget> pCustomPlotWidget_;
-
 	/// Multi-plot widget used to plot sail coeffs
 	MultiplePlotWidget	*pSailCoeffPlotWidget_,
 											*p_d_SailCoeffPlotWidget_,
@@ -177,18 +188,16 @@ private:
 											*pPolarPlotWidget_,
 											*pXYPlotWidget_;
 
+	/// Widget that contains the tabular view of the results
+	boost::shared_ptr<VppTableDockWidget> pTableWidget_;
+
+	boost::shared_ptr<VppCustomPlotWidget> pCustomPlotWidget_;
+
 	/// Three dimensional plot widget
 	boost::shared_ptr<ThreeDPlotWidget> p3dPlotWidget_;
 
 	/// Variable Widget
 	boost::shared_ptr<VariablesDockWidget> pVariablesWidget_;
-
-	/// Menu with the actions to plot sail coeffs and resistance components
-	boost::shared_ptr<QMenu> pSailCoeffsMenu_, pPlotResultsMenu_;
-
-	/// Vector storing all of the actions. Used to assure that the actions are deleted
-	/// on destruction, thus preventing leaks
-	std::vector<boost::shared_ptr<QAction> > actionVector_;
 
 	std::vector<VppTabDockWidget*> tabbedWidgets_;
 

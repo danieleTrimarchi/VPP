@@ -32,6 +32,9 @@ class Variable {
 		/// Overload operator == to compare in set
 		bool operator==(const Variable& rhs) const;
 
+		/// Inverse comparison operator
+		bool operator!=(const Variable& rhs) const;
+
 		/// Self cast operator, returns the underlying value
 		/// See https://msdn.microsoft.com/en-us/library/wwywka61.aspx
 		operator double() const;
@@ -68,6 +71,12 @@ class VarSet : public set<Variable> {
 		/// Populate the tree model that will be used to
 		/// visualize the variables in the UI
 		void populate(VariableTreeModel*);
+
+		/// Comparison operator
+		bool operator == (const VarSet&);
+
+		/// Inverse comparison operator
+		bool operator != (const VarSet&);
 
 		/// Header of variable section in an input or result file
 		static const string headerBegin_, headerEnd_;

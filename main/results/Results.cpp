@@ -310,8 +310,8 @@ ResultContainer::ResultContainer(WindItem* pWindItem):
 	VariableFileParser* pParser = pWind_->getParser();
 
 	// Set the variables
-	nWv_= pParser->get("N_TWV");
-	nWa_= pParser->get("N_ALPHA_TW");
+	nWv_= pParser->get("NTW");
+	nWa_= pParser->get("N_TWA");
 
 	// Make sure the resMat is empty and correctly resized
 	initResultMatrix();

@@ -3,31 +3,29 @@
 #include <stdio.h>
 #include <iostream>
 
-#include <QDockWidget>
-
-#include <QAction>
-#include <QLayout>
-#include <QMenu>
-#include <QMenuBar>
-#include <QStatusBar>
-#include <QTextEdit>
-#include <QFile>
-#include <QDataStream>
-#include <QFileDialog>
-#include <QDialogButtonBox>
-#include <QMessageBox>
-#include <QSignalMapper>
-#include <QApplication>
-#include <QPainter>
-#include <QMouseEvent>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QLabel>
-#include <QPushButton>
-#include <QTextEdit>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QLayout>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTextEdit>
+#include <QtCore/QFile>
+#include <QtCore/QDataStream>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QMessageBox>
+#include <QtCore/QSignalMapper>
+#include <QtWidgets/QApplication>
+#include <QtGui/QPainter>
+#include <QtGui/QMouseEvent>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextEdit>
 #include <QtCore>
-#include "VariableTreeModel.h"
-#include <QScreen>
+#include <QtGui/QScreen>
+
+#include "GetItemVisitor.h"
 #include "VPPItemFactory.h"
 #include "VppCustomPlotWidget.h"
 #include "VPPDialogs.h"
@@ -37,13 +35,16 @@
 #include "Version.h"
 #include "VppPolarCustomPlotWidget.h"
 #include "VPPSailCoefficientIO.h"
+#include "VPPSettingsDialog.h"
+#include "VariableTreeModel.h"
+#include "VppToolbarAction.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitly deleted in the destructor
 // of MainWindow
 boost::shared_ptr<QDebugStream> pQstream;
 
-// Init static members
+// Init static members : sail coeffs browser used to define new sail coeffs
 boost::shared_ptr<VPPDefaultFileBrowser> MainWindow::pSailCoeffFileBrowser_= 0;
 
 Q_DECLARE_METATYPE(VppTabDockWidget::DockWidgetFeatures)
@@ -88,12 +89,12 @@ windowLabel_("V++") {
 	// Add the variable view to the right of the app window
 	addDockWidget(Qt::RightDockWidgetArea, pVariablesWidget_.get());
 
-	// Add the menubar item for the variable widget
+	// Add the menu-bar item for the variable widget
 	pWidgetMenu_->addAction(pVariablesWidget_->getMenuToggleViewAction());
 
 	// --
 
-	// Set the toolbars. In this case NO horizontal toolbars.
+	// Set the toolbar. In this case NO horizontal toolbar.
 	setupToolBar();
 
 	// Message that will appear in the status (lower) bar
@@ -104,6 +105,13 @@ windowLabel_("V++") {
 
 	// Make sure the solver factory is empty
 	pSolverFactory_.reset();
+
+	// Instantiates a VppSettingsDialog (singleton) and
+	// sync the variableTree with the VppSettingsDialog
+	VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+
+	udpateVariableTree();
+
 }
 
 // Virtual destructor
@@ -115,256 +123,108 @@ MainWindow::~MainWindow() {
 
 void MainWindow::setupMenuBar() {
 
-	// Create 'Import boat description' action and associate an icon
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Import boat description", QIcon(":/icons/importBoatData.png")),
-					tr("&Import boat description..."), this)
-	) );
-	QAction* importBoatAction= actionVector_.back().get();
-	importBoatAction->setStatusTip(tr("Import boat description"));
-	connect(importBoatAction, &QAction::triggered, this, &MainWindow::import);
-	pToolBar_->addAction(importBoatAction);
+	// Generic handle for actions
+	VppToolbarAction* pAction= NULL;
 
-	// Create 'run' action and associate an icon
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Run", QIcon(":/icons/run.png")),
-					tr("&Run"), this)
-	) );
-	QAction* runAction = actionVector_.back().get();
-	runAction->setStatusTip(tr("Run the VPP analysis"));
-	connect(runAction, &QAction::triggered, this, &MainWindow::run);
-	pToolBar_->addAction(runAction);
+	// Create 'Import Settings' action. This object being child of 'this', it will
+	// be destroyed when MainWindows gets destroyed.
+	pAction = new VppToolbarAction("Import Settings and previous results",":/icons/importSettings.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::importResults);
 
-	// Create 'tabular' action and associate an icon
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Result table", QIcon(":/icons/tabularResults.png")),
-					tr("&Result table"), this)
-	) );
-	QAction* tabResAction = actionVector_.back().get();
-	tabResAction->setStatusTip(tr("Show the result table"));
-	connect(tabResAction, &QAction::triggered, this, &MainWindow::tableResults);
-	pToolBar_->addAction(tabResAction);
+	// Open Settings...
+	pAction = new VppToolbarAction("Settings",":/icons/openSettings.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::openSettings);
 
-	// Create a 'Save Results'action and associate an icon
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("save Results", QIcon(":/icons/saveResults.png")),
-					tr("&Save Results"), this)
-	) );
-	QAction* saveResultsAction = actionVector_.back().get();
-	saveResultsAction->setStatusTip(tr("Save results"));
-	connect(saveResultsAction, &QAction::triggered, this, &MainWindow::saveResults);
+	// Run...
+	pAction = new VppToolbarAction("Run",":/icons/run.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::run);
 
-	// Create a 'Save Results'action and associate an icon
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Import Previous Results", QIcon(":/icons/importResults.png")),
-					tr("&Import Previous Results"), this)
-	) );
-	QAction* importResultsAction = actionVector_.back().get();
-	importResultsAction->setStatusTip(tr("Import Previous Results"));
-	connect(importResultsAction, &QAction::triggered, this, &MainWindow::importResults);
+	// Get Result Table...
+	pAction = new VppToolbarAction("Result table",":/icons/tabularResults.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::tableResults);
 
-	// ---
+	// --
 
 	// Add a menu in the toolbar. This is used to group polar and XY result plots
-	pPlotResultsMenu_.reset( new QMenu("Plot Results", this) );
-	pPlotResultsMenu_->setIcon( QIcon::fromTheme("Plot Results", QIcon(":/icons/plotPolars.png")) );
-	pToolBar_->addAction(pPlotResultsMenu_->menuAction());
+	VppToolbarMenu* pPlotResultsMenu(new VppToolbarMenu("Plot polars",":/icons/plotPolars.png",this));
 
-	// Create an action and associate an icon for plotting polars
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot polars", QIcon(":/icons/plotPolars.png")),
-					tr("&Polars"), this)
-	) );
-	QAction* plotPolarsAction = actionVector_.back().get();
-	plotPolarsAction->setStatusTip(tr("Plot polars"));
-	connect(plotPolarsAction, &QAction::triggered, this, &MainWindow::plotPolars);
-	pPlotResultsMenu_->addAction(plotPolarsAction);
+	// Plot Polars...
+	pAction = new VppToolbarAction("Plot polars",":/icons/plotPolars.png",pPlotResultsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotPolars);
 
-	// Create an action and associate an icon for XY plotting
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot XY", QIcon(":/icons/plotXY.png")),
-					tr("&XYPlot"), this)
-	) );
-	QAction* plotXYAction = actionVector_.back().get();
-	plotXYAction->setStatusTip(tr("Plot XY"));
-	connect(plotXYAction, &QAction::triggered, this, &MainWindow::plotXY);
-	pPlotResultsMenu_->addAction(plotXYAction);
-
-	// ---
-
-	// Add a menu in the toolbar. This is used to group plot coeffs, and their derivatives
-	pSailCoeffsMenu_.reset( new QMenu("Plot Sail Related Quantities", this) );
-	pSailCoeffsMenu_->setIcon( QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png")) );
-	pToolBar_->addAction(pSailCoeffsMenu_->menuAction());
-
-	// Plot sail coeffs
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Sail Coeffs", QIcon(":/icons/sailCoeffs.png")),
-					tr("&Sail Coeffs"), this)
-	) );
-	QAction* plotSailCoeffsAction = actionVector_.back().get();
-	plotSailCoeffsAction->setStatusTip(tr("Plot Sail Coeffs"));
-	pSailCoeffsMenu_->addAction(plotSailCoeffsAction);
-	connect(plotSailCoeffsAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
-
-	// Plot sail coeffs derivatives
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Sail Coeffs Derivatives", QIcon(":/icons/d_sailCoeffs.png")),
-					tr("&d(Sail Coeffs)"), this)
-	) );
-	QAction* plot_d_SailCoeffsAction= actionVector_.back().get();
-	plot_d_SailCoeffsAction->setStatusTip(tr("Plot d(Sail Coeffs)"));
-	pSailCoeffsMenu_->addAction(plot_d_SailCoeffsAction);
-	connect(plot_d_SailCoeffsAction, &QAction::triggered, this, &MainWindow::plot_d_SailCoeffs);
-
-	// Plot sail coeffs second derivatives
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Sail Coeffs Second Derivatives", QIcon(":/icons/d2_sailCoeffs.png")),
-					tr("&d2(Sail Coeffs)"), this)
-	) );
-	QAction* plot_d2_SailCoeffsAction = actionVector_.back().get();
-	plot_d2_SailCoeffsAction->setStatusTip(tr("Plot d2(Sail Coeffs)"));
-	pSailCoeffsMenu_->addAction(plot_d2_SailCoeffsAction);
-	connect(plot_d2_SailCoeffsAction, &QAction::triggered, this, &MainWindow::plot_d2_SailCoeffs);
-
-	// Plot sail force and moments
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Sail Force/Moments", QIcon(":/icons/sailForceMoment.png")),
-					tr("&Plot Sail Force/Moments"), this)
-	) );
-	QAction* plotSailForceMomentAction = actionVector_.back().get();
-	plotSailForceMomentAction->setStatusTip(tr("Plot Sail Force/Moments"));
-	pSailCoeffsMenu_->addAction(plotSailForceMomentAction);
-	connect(plotSailForceMomentAction, &QAction::triggered, this, &MainWindow::plotSailForceMoments);
+	// Plot XY...
+	pAction = new VppToolbarAction("Plot XY",":/icons/plotXY.png",pPlotResultsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotXY);
 
 	// --
 
-	// ---------------------------------------
-	// --- WARNING : for some reason this cannot be defined as member shared ptr, the program crashes..?? ---
-	// ---------------------------------------
-	QMenu* pResistanceMenu = new QMenu("Plot Resistance", this);
-	pResistanceMenu->setIcon( QIcon::fromTheme("Plot Resistance", QIcon(":/icons/resistanceComponent.png")) );
-	pToolBar_->addAction(pResistanceMenu->menuAction());
+	// Add a menu in the toolbar. This is used to group plots for plot coeffs, and their derivatives
+	VppToolbarMenu* pPlotSailCoeffsMenu(new VppToolbarMenu("Plot Sail Coeffs",":/icons/sailCoeffs.png",this));
 
-	// Plot total Resistance
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Total Resistance", QIcon(":/icons/totResistance.png")),
-					tr("&Total Resistance"), this)
-	) );
-	QAction* plotTotResAction = actionVector_.back().get();
-	plotTotResAction->setStatusTip(tr("Plot Total Resistance"));
-	pResistanceMenu->addAction(plotTotResAction);
-	connect(plotTotResAction, &QAction::triggered, this, &MainWindow::plotTotalResistance);
+	// Plot Sail Coeffs...
+	pAction = new VppToolbarAction("Plot Sail Coeffs",":/icons/sailCoeffs.png",pPlotSailCoeffsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotSailCoeffs);
 
-	// Plot Viscous Resistance
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Viscous Resistance", QIcon(":/icons/viscousResistance.png")),
-					tr("&Viscous Resistance"), this)
-	) );
-	QAction* plotFrictResAction = actionVector_.back().get();
-	plotFrictResAction->setStatusTip(tr("Plot Viscous Resistance"));
-	pResistanceMenu->addAction(plotFrictResAction);
-	connect(plotFrictResAction, &QAction::triggered, this, &MainWindow::plotViscousResistance);
+	// Plot Sail Coeffs Derivatives...
+	pAction = new VppToolbarAction("Plot Sail Coeffs Derivatives",":/icons/d_sailCoeffs.png",pPlotSailCoeffsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plot_d_SailCoeffs);
 
-	// Plot Delta Viscous Resistance due to Heel
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Delta Viscous Resistance due to Heel", QIcon(":/icons/DeltaFrictRes_Heel.png")),
-					tr("&Delta Frict. Res. Heel"), this)
-	) );
-	QAction* plotDeltaFrictResHeelAction = actionVector_.back().get();
-	plotDeltaFrictResHeelAction->setStatusTip(tr("Plot Delta Viscous Resistance due to Heel"));
-	pResistanceMenu->addAction(plotDeltaFrictResHeelAction);
-	connect(plotDeltaFrictResHeelAction, &QAction::triggered, this, &MainWindow::plotDelta_ViscousResistance_Heel);
+	// Plot Sail Coeffs Second Derivatives...
+	pAction = new VppToolbarAction("Plot Sail Coeffs Second Derivatives",":/icons/d2_sailCoeffs.png",pPlotSailCoeffsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plot_d2_SailCoeffs);
 
-	// Plot Induced Resistance
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Induced Resistance", QIcon(":/icons/inducedResistance.png")),
-					tr("&Induced Resistance"), this)
-	) );
-	QAction* plotIndResAction = actionVector_.back().get();
-	plotIndResAction->setStatusTip(tr("Plot Induced Resistance"));
-	pResistanceMenu->addAction(plotIndResAction);
-	connect(plotIndResAction, &QAction::triggered, this, &MainWindow::plotInducedResistance);
-
-	// Plot Residuary Resistance
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Residuary Resistance", QIcon(":/icons/residuaryResistance.png")),
-					tr("&Residuary Resistance"), this)
-	) );
-	QAction* plotResiduaryResAction = actionVector_.back().get();
-	plotResiduaryResAction->setStatusTip(tr("Plot Residuary Resistance"));
-	pResistanceMenu->addAction(plotResiduaryResAction);
-	connect(plotResiduaryResAction, &QAction::triggered, this, &MainWindow::plotResiduaryResistance);
-
-	// Plot Negative Resistance
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Negative Resistance", QIcon(":/icons/negativeResistance.png")),
-					tr("&Negative Resistance"), this)
-	) );
-	QAction* plotNegativeResAction = actionVector_.back().get();
-	plotNegativeResAction->setStatusTip(tr("Plot Negative Resistance"));
-	pResistanceMenu->addAction(plotNegativeResAction);
-	connect(plotNegativeResAction, &QAction::triggered, this, &MainWindow::plotNegativeResistance);
+	// Plot Sail Forces...
+	pAction = new VppToolbarAction("Plot Sail Force/Moments",":/icons/sailForceMoment.png",pPlotSailCoeffsMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotSailForceMoments);
 
 	// --
 
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Optimization Space", QIcon(":/icons/plot3d.png")),
-					tr("&Plot Optimization Space"), this)
-	) );
-	QAction* plot3dAction = actionVector_.back().get();
-	plot3dAction->setStatusTip(tr("Plot Optimization Space"));
-	connect(plot3dAction, &QAction::triggered, this, &MainWindow::plotOptimizationSpace);
-	pToolBar_->addAction(plot3dAction);
+	// Add a menu in the toolbar. This is used to group resistance plots
+	VppToolbarMenu* pPlotResistanceMenu(new VppToolbarMenu("Plot Resistance",":/icons/resistanceComponent.png",this));
+
+	// Plot Total Resistance...
+	pAction = new VppToolbarAction("Plot Total Resistance",":/icons/totResistance.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotTotalResistance);
+
+	// Plot Viscous Resistance...
+	pAction = new VppToolbarAction("Plot Viscous Resistance",":/icons/viscousResistance.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotViscousResistance);
+
+	// Plot Delta Viscous Resistance due to Heel...
+	pAction = new VppToolbarAction("Plot Delta Viscous Resistance due to Heel",":/icons/DeltaFrictRes_Heel.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotDelta_ViscousResistance_Heel);
+
+	// Plot Induced Resistance...
+	pAction = new VppToolbarAction("Plot Induced Resistance",":/icons/inducedResistance.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotInducedResistance);
+
+	// Plot Residuary Resistance...
+	pAction = new VppToolbarAction("Plot Residuary Resistance",":/icons/residuaryResistance.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotResiduaryResistance);
+
+	// Plot Negative Resistance...
+	pAction = new VppToolbarAction("Plot Negative Resistance",":/icons/negativeResistance.png",pPlotResistanceMenu);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotResiduaryResistance);
 
 	// --
 
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Gradient", QIcon(":/icons/plotGradient.png")),
-					tr("&Plot Graident"), this)
-	) );
+	// Plot the 3d optimization space...
+	pAction = new VppToolbarAction("Plot Optimization Space",":/icons/plot3d.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotOptimizationSpace);
 
-	QAction* plotGradientAction = actionVector_.back().get();
-	plotGradientAction->setStatusTip(tr("Plot Gradient"));
-	connect(plotGradientAction, &QAction::triggered, this, &MainWindow::plotGradient);
-	pToolBar_->addAction(plotGradientAction);
+	//	 Plot the gradient of the solution...
+	pAction = new VppToolbarAction("Plot Gradient",":/icons/plotGradient.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotGradient);
 
-	// --
-
-	actionVector_.push_back( boost::shared_ptr<QAction>(
-			new QAction(
-					QIcon::fromTheme("Plot Jacobian", QIcon(":/icons/plotJacobian.png")),
-					tr("&Plot Jacobian"), this)
-	) );
-
-	QAction* plotJacobianAction = actionVector_.back().get();
-	plotJacobianAction->setStatusTip(tr("Plot Jacobian"));
-	connect(plotJacobianAction, &QAction::triggered, this, &MainWindow::plotJacobian);
-	pToolBar_->addAction(plotJacobianAction);
+	// Plot the Jacobian of the solution
+	pAction = new VppToolbarAction("Plot Jacobian",":/icons/plotJacobian.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::plotJacobian);
 
 	// --
 
-	pToolBar_->addAction(saveResultsAction);
-	pToolBar_->addAction(importResultsAction);
+	// Save Results...
+	pAction = new VppToolbarAction("Save results",":/icons/saveResults.png",this);
+	connect(pAction, &QAction::triggered, this, &MainWindow::saveResults);
 
 	// ---
 
@@ -420,7 +280,7 @@ void MainWindow::updateTabbedWidgetsVector(const VppTabDockWidget* deleteWidget)
 
 
 // Make sure the vector is in sync
-void MainWindow::removeWidgetFromVector(VppTabDockWidget* pWidget) {
+void MainWindow::removeTabWidgetFromVector(VppTabDockWidget* pWidget) {
 
 	for(std::vector<VppTabDockWidget*>::iterator it=tabbedWidgets_.begin(); it!=tabbedWidgets_.end(); it++){
 
@@ -430,57 +290,86 @@ void MainWindow::removeWidgetFromVector(VppTabDockWidget* pWidget) {
 	}
 }
 
-void MainWindow::import() {
+QString MainWindow::importData(string filter) {
+
+	QString caption;
+	QString dir;
+
+	// try getting the settings from file
+	QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
+			tr(filter.c_str()));
+
+	if (!fileName.isEmpty())
+		std::cout<<"Importing data from : "<<fileName.toStdString()<<std::endl;
+
+	// This is the file we are about to read
+	QFile sourceFile(fileName);
+	if (!sourceFile.open(QFile::ReadOnly | QFile::Text)) {
+		QMessageBox::warning(this, tr("VppSettings Import"),
+				tr("Cannot read file %1:\n%2.")
+				.arg(fileName)
+				.arg(sourceFile.errorString()));
+		return QString();
+	}
+
+	VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+	pSd->read(sourceFile);
+
+	// Sync the variable tree with the vppSettingsDialog
+	udpateVariableTree();
+
+	return fileName;
+}
+
+void MainWindow::openSettings() {
 
 	try {
 
-		QString caption;
-		QString dir;
+		// Open up a VPP settings dialog
+		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
 
-		// Launch a file selector
-		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
-				tr("VPP Input File(*.vppIn);; All Files (*.*)"));
+		// Sync the variable Ctree with the settings window
+		udpateVariableTree();
 
-		if (!fileName.isEmpty()) {
-
-			std::cout<<string("Opening the vpp input file... ") << fileName.toStdString() <<std::endl;
-
-			// Instantiate a variableFileParser (and clear any previous one)
-			pVariableFileParser_.reset( new VariableFileParser );
-
-			// Parse the variables file
-			pVariableFileParser_->parse(fileName.toStdString());
-
-			// Instantiate the sailset
-			pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
-
-			// Instantiate the items
-			pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
-
-			// Populate the variable item tree accordingly
-			pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
-
-			// SailSet also contains several variables. Append them to the bottom
-			pSails_->populate( pVariablesWidget_->getTreeModel() );
-
-			// Expand the items in the variable tree view, in order to see all the variables
-			pVariablesWidget_->getView()->expandAll();
-
-		}
+		// show the SettingsDialog
+		pSd->exec();
 
 	}	catch(...) {}
+}
+
+
+// Updates the variable tree getting values from the
+// settingsWindow tree tab
+void MainWindow::udpateVariableTree() {
+
+	// Open up a VPP settings dialog
+	VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+
+	// Instantiate a variableFileParser (and clear any previous one)
+	// on top of the VPP Settings Dialog. The parser will get populated
+	// with all the variables edited in the settings
+	pVariableFileParser_.reset( new VariableFileParser(pSd) );
+
+	// The variable file parser populates the variable item tree
+	pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
+
+	// Expand the items in the variable tree view, in order to see all the variables
+	pVariablesWidget_->getView()->expandAll();
+
 }
 
 
 void MainWindow::run() {
 
 	try {
-		// If the boat description has not been imported we do not have the
-		// vppItems nor the coefficients to be plotted!
-		// If the boat description has not been imported we do not have the
-		// vppItems nor the coefficients to be plotted!
-		if(!hasBoatDescription())
-			return;
+
+		// Verify if the variable values aCre within the allowed ranges
+		pVariableFileParser_->check();
+
+		// before each run we rebuild the items with the latest settings
+		// entered by the user. Actually one should create new items each
+		// time the settings change. But this seems relatively heavy to do
+		updateVppItems();
 
 		// todo dtrimarchi : this should be selected by a switch in the UI!
 		// Instantiate a solver by default. This can be an optimizer (with opt vars)
@@ -496,8 +385,8 @@ void MainWindow::run() {
 		// count to update the bar progression
 		QProgressDialog progressDialog(this);
 		size_t maxVal=
-				pVariableFileParser_->get("N_ALPHA_TW")*
-				pVariableFileParser_->get("N_TWV");
+				pVariableFileParser_->get("N_TWA")*
+				pVariableFileParser_->get("NTW");
 		progressDialog.setRange(0,maxVal);
 		progressDialog.setCancelButtonText(tr("&Cancel"));
 		progressDialog.setWindowTitle(tr("Running VPP analysis..."));
@@ -505,13 +394,13 @@ void MainWindow::run() {
 		int statusProgress=0;
 
 		// Loop on the wind ANGLES and VELOCITIES
-		for(int aTW=0; aTW<pVariableFileParser_->get("N_ALPHA_TW"); aTW++) {
+		for(int aTW=0; aTW<pVariableFileParser_->get("N_TWA"); aTW++) {
 
 			// exit the outer loop if the user pressed the 'cancel' button
 			if (progressDialog.wasCanceled())
 				break;
 
-			for(int vTW=0; vTW<pVariableFileParser_->get("N_TWV"); vTW++){
+			for(int vTW=0; vTW<pVariableFileParser_->get("NTW"); vTW++){
 
 				try{
 
@@ -537,42 +426,47 @@ void MainWindow::run() {
 void MainWindow::saveResults() {
 
 	try {
-		// Results must be available!
-		if(!pSolverFactory_ ||
-				!pSolverFactory_->get()->getResults() ) {
-			QMessageBox msgBox;
-			msgBox.setText("Please run the analysis or import results first");
-			msgBox.setIcon(QMessageBox::Critical);
-			msgBox.exec();
-			return;
-		}
 
-		// todo dtrimarchi: improve the filtering to not grey out the
-		// *.vpp files! See what we do in MainWIndow::importResults where
-		// things work properly. Write a generic class for file selection?
+		//-- Save the UI settings
 		QFileDialog dialog(this);
 		dialog.setWindowModality(Qt::WindowModal);
 		dialog.setAcceptMode(QFileDialog::AcceptSave);
-		dialog.setNameFilter(tr("VPP Result File(*.vpp)"));
-		dialog.setDefaultSuffix(".vpp");
+		dialog.setNameFilter(tr("VPP Result File(*.xml)"));
+		dialog.setDefaultSuffix(".xml");
 		if (dialog.exec() != QDialog::Accepted)
 			return;
 
 		// Get the file selected by the user
-		const QString fileName(dialog.selectedFiles().first());
-		QFile file(fileName);
+		QString fileName(dialog.selectedFiles().first());
 
-		// Check the file is writable and that is is a text file
-		if (!file.open(QFile::WriteOnly | QFile::Text)) {
-			QMessageBox::warning(this, tr("Application"),
-					tr("Cannot write file %1:\n%2.")
-					.arg(QDir::toNativeSeparators(fileName),
-							file.errorString()));
-			return;
+		// Introduce a scope because the settings are saved to
+		// QFile when the file is closed : at the destruction
+		// of the QFile. Neglecting to do so implies that the
+		// settings data are written at the very end of the method.
+		// Since the settings write clear the file, this must be
+		// done as first. Otherwise any other data will be destroyed
+		{
+			QFile file(fileName);
+
+			if (!file.open(QFile::WriteOnly | QFile::Text)) {
+				QMessageBox::warning(this, tr("Saving Vpp Settings"),
+						tr("Cannot write file %1:\n%2.")
+						.arg(fileName)
+						.arg(file.errorString()));
+				return;
+			}
+
+			// Get the settings tree and save it to xml file
+			VPPSettingsDialog::getInstance()->save(file);
 		}
 
-		pSolverFactory_->get()->saveResults(fileName.toStdString());
-
+		// If some results are available, save them
+		if(pSolverFactory_)
+			if(pSolverFactory_->get()->getResults() ) {
+				//-- Now save the results using the old interface. There is no need
+				// to store results in xml format
+				pSolverFactory_->get()->saveResults(fileName.toStdString());
+			}
 		// outer try-catch block
 	}	catch(...) {}
 
@@ -582,40 +476,20 @@ void MainWindow::saveResults() {
 void MainWindow::importResults() {
 
 	try {
-		QString caption;
-		QString dir;
 
-		QString fileName = QFileDialog::getOpenFileName(this,caption,dir,
-				tr("VPP Result File(*.vpp);; All Files (*.*)"));
+		QString fileName= importData("VPP Result File(*.xml);; All Files (*.*)");
 
-		if (!fileName.isEmpty())
-			std::cout<<"attempting to import results from : "<<fileName.toStdString()<<std::endl;
-
-		// Instantiate an empty variableFileParser (and clear any previous one)
-		// Do not parse as the variables will be read directly from the result file
-		pVariableFileParser_.reset( new VariableFileParser );
-
-		// The variableFileParser can read its part in the result file
-		pVariableFileParser_->parse(fileName.toStdString());
-
-		// Instantiate the sailset
+		// Instantiate the sailset. Note that the variableFileParser has already
+		// been updated while importing the settings
 		pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
 
 		// Instantiate the items
 		pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
 
-		// Populate the variable item tree accordingly
-		pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
-
-		// SailSet also contains several variables. Append them to the bottom
-		pSails_->populate( pVariablesWidget_->getTreeModel() );
-
-		// Expand the items in the variable tree view, in order to see all the variables
-		pVariablesWidget_->getView()->expandAll();
-
 		// Instantiate a new solverFactory without vppItems_
 		pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );
 
+		// And now import the results from the file
 		pSolverFactory_->get()->importResults(fileName.toStdString());
 
 		// outer try-catch block
@@ -666,6 +540,22 @@ bool MainWindow::hasBoatDescription() {
 		return false;
 	}
 	return true;
+}
+
+
+// Given the settings, instantiates (refreshes) all of the
+// VPP items: sailItems, resistanceItems... All is required
+// to run an analysis
+void MainWindow::updateVppItems() {
+
+	// Instantiate the sailset
+	pSails_.reset( SailSet::SailSetFactory( *pVariableFileParser_ ) );
+
+	// Instantiate the items
+	pVppItems_.reset( new VPPItemFactory(pVariableFileParser_.get(),pSails_) );
+
+	// SailSet also contains several variables. Append them to the bottom
+	pSails_->populate( pVariablesWidget_->getTreeModel() );
 }
 
 // Make sure a solver is available. Otherwise
@@ -1348,6 +1238,11 @@ void MainWindow::about() {
 
 void MainWindow::actionTriggered(QAction *action) {
 	qDebug("action '%s' triggered", action->text().toLocal8Bit().data());
+}
+
+// Get the toolbar with some shortcuts to actions
+QToolBar* MainWindow::getToolBar() {
+	return pToolBar_;
 }
 
 void MainWindow::setupToolBar() {

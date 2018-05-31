@@ -32,7 +32,13 @@ bool Variable::operator < (const Variable& rhs) const {
 
 // Overload operator == to compare in set
 bool Variable::operator==(const Variable& rhs) const {
-	return varName_ == rhs.varName_;
+	return (varName_ == rhs.varName_ &&
+			val_==rhs.val_);
+}
+
+// Inverse comparison operator
+bool Variable::operator!=(const Variable& rhs) const {
+	return !(*this==rhs);
 }
 
 // Self cast operator, returns the underlying value
@@ -93,14 +99,33 @@ void VarSet::print(FILE* outStream/*=stdout*/) {
 // visualize the variables in the UI
 void VarSet::populate(VariableTreeModel* pTreeModel) {
 
-	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it){
-
-		QList<QVariant> data;
-		data << it->varName_.c_str() << it->val_;
-
-		pTreeModel->append( data );
-	}
+	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it)
+		pTreeModel->append(it->varName_.c_str(),it->val_);
 
 }
 
+// Comparison operator
+bool VarSet::operator == (const VarSet& rhs) {
+
+	// First comparison on the size of the set
+	if(size() != rhs.size())
+		return false;
+
+	// Compare value by value. Return false if any item is found to be
+	// different
+	for(std::set<Variable>::iterator it= begin(), itrhs= rhs.begin();
+			it!=end(),itrhs!=end();
+			++it, ++itrhs){
+		if(it!=itrhs)
+			return false;
+	}
+
+	// No differences found: return true
+	return true;
+}
+
+// Inverse comparison operator
+bool VarSet::operator != (const VarSet& rhs) {
+	return !(*this==rhs);
+}
 

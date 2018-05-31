@@ -22,7 +22,7 @@ public:
 	/// virtual Dtor
 	virtual ~VppTableDockWidget();
 
-	/// Get the toggle view action to be added to the menubar
+	/// Get the toggle view action to be added to the menu-bar
 	QAction* getMenuToggleViewAction();
 
 	/// Returns the underlying table model

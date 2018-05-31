@@ -1,5 +1,5 @@
 #include "VppPolarCustomPlotWidget.h"
-#include "VppException.h"
+#include "VPPException.h"
 #include "mathUtils.h"
 
 VppPolarCustomPlotWidget::VppPolarCustomPlotWidget(

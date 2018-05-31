@@ -132,6 +132,11 @@ class xCode(object):
 
         line="DEFINES += QT_DEPRECATED_WARNINGS\n\n"
         self.__projectFile__.write(line)
+
+        # We compile debug mode because this is what we use 
+        # xCode for!
+        line="CONFIG += qt debug\n\n"
+        self.__projectFile__.write(line)
         
         line= "RESOURCES = gui/VPP.qrc \n\n"
         self.__projectFile__.write(line)
@@ -293,12 +298,12 @@ class System( thirdParty ) :
         
         self.__libpath__= [
                            "/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/Versions/A",
-                           "/opt/local/lib",
-                           "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+                           "/opt/local/lib"#,
+                           #"/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
                           ]
         
         self.__frameworksPaths__= [
-                                  "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+                                # "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
                                   ]
         self.__addTo__(env)
 
@@ -472,7 +477,7 @@ class Qt( thirdParty ) :
                                ]
         
         # Returns the absolute path of the Qt Framework folder
-        self.__libpath__= [ os.path.join(self.__rootDir__, 'lib') ]
+        self.__libpath__= []
 
         self.__addTo__(env)
         

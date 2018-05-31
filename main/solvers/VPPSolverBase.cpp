@@ -276,12 +276,14 @@ void VPPSolverBase::plotXY(MultiplePlotWidget* pMultiPlotWidget, WindIndicesDial
 
 	// Assigns to a vector of shared_ptrs, so this won't leak because
 	// the possession is taken by the MultiplePlotWidget
-	pMultiPlotWidget->addChart( chartVec[0],0,0 );
-	pMultiPlotWidget->addChart( chartVec[1],1,0 );
-	pMultiPlotWidget->addChart( chartVec[2],0,1 );
-	pMultiPlotWidget->addChart( chartVec[3],1,1 );
-	pMultiPlotWidget->addChart( chartVec[4],2,0 );
-
+	size_t iv=0;
+	for(int iChart=0,ih=0; iChart<chartVec.size(); iChart++, ih++){
+		pMultiPlotWidget->addChart( chartVec[iChart],ih,iv);
+        if(ih==1){
+    		ih=-1;
+    		iv++;
+        }
+    }
 }
 
 // Returns the dimensionality of this problem (the size of the state vector)
