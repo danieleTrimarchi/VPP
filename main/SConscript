@@ -43,8 +43,11 @@ subFolders= ['qcustomplot',
 			 'versioning' ] 
 
 # -- 
-if 'test' in COMMAND_LINE_TARGETS:
-	print "Appcontentdir= ",localEnv.getAppContentsDir()
+if 'run' in COMMAND_LINE_TARGETS:
+	
+	print "==>> localEnv.getAppPath(): ",localEnv.getAppPath()
+	p = subprocess.Popen("open {}".format(localEnv.getAppPath()),shell=True) 
+	p.wait()
 	Exit(2)
 
 if 'help' in COMMAND_LINE_TARGETS: 
@@ -52,8 +55,13 @@ if 'help' in COMMAND_LINE_TARGETS:
 	print '=================================================='
 	print 'Available targets: '
 	print 'scons           : builds the program'
+	print 'scons run       : runs the executable' 		
+	print 'scons runTest   : runs the autotest'
 	print 'scons makeDocs  : makes the Doxygen documentation' 
 	print 'scons makeXCode : makes the xCode debug project' 	
+	print ' '
+	print 'Options: '
+	print 'scons <target> -Q debug=1 : compiles/executes debug' 		
 	print '=================================================='
 	Exit(2)
 

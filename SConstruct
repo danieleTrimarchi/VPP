@@ -69,15 +69,21 @@ releaseEnv.AddMethod(getExecutableName, 'getExecutableName')
 
 # --
 
+# Returns the absolute path of the app bundle
+# /Users/dtrimarchi/VPP/VPP.app
+def getAppPath(self):
+    
+    return os.path.join(releaseEnv['variantDirAbsPath'],"VPP.app")
+
+releaseEnv.AddMethod(getAppPath, 'getAppPath')
+
+#-- 
+
 # Returns the absolute path of the Contents folder in the app bundle
 # /Users/dtrimarchi/VPP/VPP.app/Contents
 def getAppContentsDir(self):
     
-    # getcwd returns the src root  
-    # Then we need to add releaseEnv['variant_dir'], which returns the 
-    #     relative build-type path 
-    # And finally the Content folder within the VPP.app
-    return os.path.join(releaseEnv['variantDirAbsPath'],"VPP.app","Contents")
+    return os.path.join(releaseEnv.getAppPath(),"Contents")
 
 releaseEnv.AddMethod(getAppContentsDir, 'getAppContentsDir')
 
