@@ -35,6 +35,9 @@ else:
     buildMode='release'
     print "==>> building release mode "
 
+# Set the terminal title to reflect the branch / buildType
+msg="Branch={}; build_type={}".format(branch,buildMode)
+pt = subprocess.Popen('echo -n -e \"\033]0;{}\007\"'.format(msg), shell=True)
 
 releaseEnv.Append( root_dir = Dir('.').srcnode().abspath )
 releaseEnv.Append( variantDirAbsPath = os.path.join( releaseEnv['root_dir' ],releaseEnv['variant_dir']) )
