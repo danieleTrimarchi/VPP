@@ -365,7 +365,7 @@ class Eigen( thirdParty ) :
         
         self.__name__= "Eigen"
 
-        self.__version__ = "3.2.7"
+        self.__version__ = "3.2.8"
         # Declare class members, to be filled by the children
         self.__includePath__= [ os.path.join(self.__rootDir__, 'eigen-' + self.__version__) ]
     
