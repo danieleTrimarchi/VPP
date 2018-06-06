@@ -1,9 +1,3 @@
-IOXmltest: build items with the new signature using var::...
-
-See the ctor of SettingsItem. there are all these strings that are not acceptable
-	This is done, simply I put the commit on hold because I want to be able to 
-	run tests before modifying the code 
-
 =RE-Templetisation= 
 Also fix the result import <- doing this by templatizing the units. The problem is a dirty trick in variableFileParser::check that must be removed. The idea is to know the unit of the items, and systematically convert to the right unit while pushing the values to the 
 variableFileParser. -> done, but this is not the right way to go. the items own the unit, but they are not templatized on the unit. 

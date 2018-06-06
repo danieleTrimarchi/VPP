@@ -120,10 +120,10 @@ void TVPPTest::xmlIOTest() {
 	SettingsItemGroup* pVPPSettings = new SettingsItemGroup("VPP Settings");
 	pVPPSettings->setParent(pRootItem.get());
 	pRootItem->appendChild(pVPPSettings);
-	pVPPSettings->appendChild( new SettingsItemBounds<MetersPerSec>("Velocity bounds","V",0,15,"Allowed boat speed bounds"));
-	pVPPSettings->appendChild( new SettingsItemBounds<Degrees>("Heel angle bounds","PHI",-1e-5,85,"Allowed boat heel angle bounds"));
-	pVPPSettings->appendChild( new SettingsItemBounds<Meters>("Crew position bounds","B",0,3,"Allowed boat heel angle bounds"));
-	pVPPSettings->appendChild( new SettingsItemBounds<NoUnit>("Flat bounds","F",0.4,1,"Allowed boat heel angle bounds"));
+	pVPPSettings->appendChild( new SettingsItemBounds<MetersPerSec>(Var::vBounds_,0,15));
+	pVPPSettings->appendChild( new SettingsItemBounds<Degrees>(Var::heelBounds_,-1e-5,85));
+	pVPPSettings->appendChild( new SettingsItemBounds<Meters>(Var::crewBounds_,0,3));
+	pVPPSettings->appendChild( new SettingsItemBounds<NoUnit>(Var::flatBounds_,0.4,1));
 
 	// Instantiate and populate a VariableFileParser
 	boost::shared_ptr<VariableFileParser> pVariableFileParser(new VariableFileParser(pRootItem.get()));
