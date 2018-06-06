@@ -80,9 +80,9 @@ if 'makeXCode' in COMMAND_LINE_TARGETS:
 	
 	# Remember where we start and need to go back
 	intialDir= os.getcwd()
-		
-	# 1_ cd to main and call qmake to generate a new xcode project
-	os.chdir('../../main')
+
+	# 1_ cd to main and call qmake to generate a new xcode project	
+	os.chdir(os.path.join(localEnv['root_dir' ],'main'))
   
 	# 2_ Cleanup. Add try-except block in case the files are not present 
 	try: 
