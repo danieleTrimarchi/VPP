@@ -112,7 +112,7 @@ const Eigen::ArrayXXd* VPPSailCoefficientIO::getCoefficientMatrix() const {
 //---------------------------------------------------------------------
 
 VPP_CL_IO::VPP_CL_IO(VariableFileParser* pParser) :
-						fullBattens_(pParser->get("MFLB")){
+						fullBattens_(pParser->get(Var::mflb_)){
 
 	// Pick the lift coefficient for this main (full batten or not)
 	if( fullBattens_ ) {

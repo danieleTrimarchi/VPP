@@ -389,13 +389,13 @@ std::vector<VppXYCustomPlotWidget*> VPPItemFactory::plotTotalResistance(WindIndi
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			stateVector(0)= ( -0.1 + ( 1./nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			stateVector(0)= ( -0.1 + ( 1./nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
 			update(wd->getTWV(),wd->getTWA(),stateVector);
 
 			// Fill the vectors to be plot
-			fn.push_back( stateVector(0)/sqrt(Physic::g * pParser_->get("LWL") ) );
+			fn.push_back( stateVector(0)/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
 			res.push_back( getResistance() );
 
 		}
@@ -443,8 +443,8 @@ vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDia
 	Eigen::VectorXd x( sd.getStateVector() );
 
 	// Get the bounds for crew and flat
-	double dCrew= ( pParser_->get("B_MAX")-pParser_->get("B_MIN") ) / (nCrew-1);
-	double dFlat= ( pParser_->get("F_MAX")-pParser_->get("F_MIN") ) / (nFlat-1);
+	double dCrew= ( pParser_->get(Var::crewBounds_.max_)-pParser_->get(Var::crewBounds_.min_) ) / (nCrew-1);
+	double dFlat= ( pParser_->get(Var::flatBounds_.max_)-pParser_->get(Var::flatBounds_.min_) ) / (nFlat-1);
 
   double uMin=1E20, uMax=-1E20,
   		phiMin=1E20, phiMax=-1E20;
@@ -459,7 +459,7 @@ vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDia
 	for(int iFlat=0; iFlat<nFlat; iFlat++){
 
 		// set this flat
-		flat(iFlat)= pParser_->get("F_MIN")  + dFlat * iFlat;
+		flat(iFlat)= pParser_->get(Var::flatBounds_.min_)  + dFlat * iFlat;
 
     QSurfaceDataRow* uRow = new QSurfaceDataRow(nCrew);
     QSurfaceDataRow* phiRow = new QSurfaceDataRow(nCrew);
@@ -470,7 +470,7 @@ vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDia
 		for(int iCrew=0; iCrew<nCrew; iCrew++){
 
 			// set this crew
-			crew(iCrew)= pParser_->get("B_MIN")  + dCrew * iCrew;
+			crew(iCrew)= pParser_->get(Var::crewBounds_.min_)  + dCrew * iCrew;
 
 			//			set flat, crew in the state vector
 			x(2) = crew(iCrew);
@@ -505,12 +505,12 @@ vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDia
 
 	v.push_back( ThreeDDataContainer(uArray) ) ;
 
-  v[0].setXrange(pParser_->get("B_MIN") ,
-  		pParser_->get("B_MIN")  + dCrew * (nCrew-1));
+  v[0].setXrange(pParser_->get(Var::crewBounds_.min_) ,
+  		pParser_->get(Var::crewBounds_.min_)  + dCrew * (nCrew-1));
   v[0].setDx(dCrew);
 
-  v[0].setZrange(pParser_->get("F_MIN") ,
-  		pParser_->get("F_MIN")  + dFlat * (nFlat-1));
+  v[0].setZrange(pParser_->get(Var::flatBounds_.min_) ,
+  		pParser_->get(Var::flatBounds_.min_)  + dFlat * (nFlat-1));
   v[0].setDz(dFlat);
 
   v[0].setYrange(uMin,uMax);
@@ -523,12 +523,12 @@ vector<ThreeDDataContainer> VPPItemFactory::plotOptimizationSpace(WindIndicesDia
 
 	v.push_back( ThreeDDataContainer(phiArray) ) ;
 
-  v[1].setXrange(pParser_->get("B_MIN") ,
-  		pParser_->get("B_MIN")  + dCrew * (nCrew-1));
+  v[1].setXrange(pParser_->get(Var::crewBounds_.min_) ,
+  		pParser_->get(Var::crewBounds_.min_)  + dCrew * (nCrew-1));
   v[1].setDx(dCrew);
 
-  v[1].setZrange(pParser_->get("F_MIN") ,
-  		pParser_->get("F_MIN")  + dFlat * (nFlat-1));
+  v[1].setZrange(pParser_->get(Var::flatBounds_.min_) ,
+  		pParser_->get(Var::flatBounds_.min_)  + dFlat * (nFlat-1));
   v[1].setDz(dFlat);
 
   v[1].setYrange(phiMin,phiMax);

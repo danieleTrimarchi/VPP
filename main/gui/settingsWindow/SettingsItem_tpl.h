@@ -16,9 +16,9 @@ SettingsItem<TUnit>::SettingsItem(	const QString& displayName,
 
 		// Instantiates the unit for this item
 		pUnit_.reset(new TUnit);
-		columns_[columnNames::name]->setData( displayName );
-		columns_[columnNames::value]->setData( value );
-		columns_[columnNames::unit]->setData( pUnit_->getUnitName().c_str() );
+		columns_[colNames::name_.idx_]->setData( displayName );
+		columns_[colNames::value_.idx_]->setData( value );
+		columns_[colNames::unit_.idx_]->setData( pUnit_->getUnitName().c_str() );
 
 		// Set the tooltip
 		tooltip_= tooltip;
@@ -31,12 +31,28 @@ SettingsItem<TUnit>::SettingsItem(	const QString& displayName,
 		variableName_= variableName;
 }
 
+// Ctor from xml. Just call the other constructor
+template <class TUnit>
+SettingsItem<TUnit>::SettingsItem(const XmlAttributeSet& xmlAttSet):
+				SettingsItem<TUnit>(
+						xmlAttSet["DisplayName"].toQString(),
+						xmlAttSet["VariableName"].toQString(),
+						xmlAttSet["Value"].toQString(),
+						xmlAttSet["ToolTip"].toQString() ){
+}
+
 // Copy Ctor
 template <class TUnit>
 SettingsItem<TUnit>::SettingsItem(const SettingsItem<TUnit>& rhs) :
 					SettingsItemBase(rhs) {
 
 }
+
+// Ctor
+template <class TUnit>
+SettingsItem<TUnit>::SettingsItem(const varData& data,	//< Variable data
+		const QVariant&value): 				//<	Value of this variable
+		SettingsItem<TUnit>(data.display_,data.name_,value,data.tootip_) {}
 
 // The item will give the Delegate the editor
 // to be properly edited - in this case a QLineEdit with
@@ -174,16 +190,6 @@ QColor SettingsItem<TUnit>::getBackGroundColor(int iColumn) const {
 
 }
 
-// Ctor from xml. Just call the other constructor
-template <class TUnit>
-SettingsItem<TUnit>::SettingsItem(const XmlAttributeSet& xmlAttSet):
-SettingsItem<TUnit>(
-		xmlAttSet["DisplayName"].toQString(),
-		xmlAttSet["VariableName"].toQString(),
-		xmlAttSet["Value"].toQString(),
-		xmlAttSet["ToolTip"].toQString() ){
-}
-
 // Dtor
 template <class TUnit>
 SettingsItem<TUnit>::~SettingsItem(){
@@ -212,11 +218,17 @@ SettingsItemInt<TUnit>::SettingsItemInt(const XmlAttributeSet& xmlAttSet):
 
 }
 
+// Ctor
+template <class TUnit>
+SettingsItemInt<TUnit>::SettingsItemInt(	const varData& data, 	//< Name visualized in the UI
+		const QVariant& value):				//<	Value of this variable
+		SettingsItem<TUnit>(data.display_, data.name_,value, data.tootip_)	{}
+
+
 // Copy ctor, called by clone()
 template <class TUnit>
 SettingsItemInt<TUnit>::SettingsItemInt(const SettingsItemInt<TUnit>& rhs) :
 						SettingsItem<TUnit>(rhs) {
-
 	// There is nothing else to do, as there are no owned class
 	// members
 }
@@ -321,6 +333,14 @@ SettingsItemComboBox<TUnit>::SettingsItemComboBox(const XmlAttributeSet& xmlAttS
 	activeIndex_= xmlAttSet["ActiveIndex"].getInt();
 
 }
+
+// Ctor
+template <class TUnit>
+SettingsItemComboBox<TUnit>::SettingsItemComboBox(const varData& data,	//< Data of the variable
+		const QList<QString>& options)://<	List of options available in this combo-box
+		SettingsItemComboBox<TUnit>(data.display_,data.name_,options,data.tootip_) {
+		activeIndex_=0;
+};
 
 // The item will give the Delegate the editor
 // to be properly edited - in this case a spinbox
@@ -471,6 +491,13 @@ SettingsItemBounds<TUnit>::SettingsItemBounds(
 		variableName_= variableName.toString();
 }
 
+template <class TUnit>
+SettingsItemBounds<TUnit>::SettingsItemBounds(const varData& data,	//< Data of the variable
+		double min,									//<	Min value of this variable bound
+		double max):									//<	Max value of this variable bound
+SettingsItemBounds(data.display_,data.name_,min,max,data.tootip_){
+
+}
 
 // Ctor from xml
 template <class TUnit>
@@ -542,13 +569,13 @@ SettingsItem<TUnit>* SettingsItemBounds<TUnit>::getItemMax() {
 // Get the min value of this bound
 template <class TUnit>
 double SettingsItemBounds<TUnit>::getMin() {
-		return getItemMin()->data(columnNames::value).toDouble();
+		return getItemMin()->data(colNames::value_.idx_).toDouble();
 }
 
 // Get the max value of this bound
 template <class TUnit>
 double SettingsItemBounds<TUnit>::getMax() {
-		return getItemMax()->data(columnNames::value).toDouble();
+		return getItemMax()->data(colNames::value_.idx_).toDouble();
 }
 
 

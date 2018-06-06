@@ -10,7 +10,7 @@ void VariableParserGetVisitor::visit(SettingsItem<TUnit>* pItem) {
 	SettingsItemBase* SIItem( pItem->convertToSI() );
 
 	// Store the name and the value of this item in the parser
-	pParser_->insert(SIItem->getVariableName(), SIItem->data(columnNames::value).toDouble());
+	pParser_->insert(SIItem->getVariableName(), SIItem->data(colNames::value_.idx_).toDouble());
 
 	// Loop on the tree
 	for(size_t iChild=0; iChild<pItem->childCount(); iChild++){
@@ -58,11 +58,11 @@ void VariableParserGetVisitor::visit(SettingsItemBounds<TUnit>* pItem) {
 
     // Get the min item in and store its value in the parser
 	SettingsItemBase* pMinItem( pItem->getItemMin()->convertToSI() );
-	pParser_->insert(pMinItem->getVariableName(), pMinItem->data(columnNames::value).toDouble());
+	pParser_->insert(pMinItem->getVariableName(), pMinItem->data(colNames::value_.idx_).toDouble());
 	delete pMinItem;
 
 	// Get the max item in and store its value in the parser
 	SettingsItemBase* pMaxItem( pItem->getItemMax()->convertToSI() );
-	pParser_->insert(pMaxItem->getVariableName(), pMaxItem->data(columnNames::value).toDouble());
+	pParser_->insert(pMaxItem->getVariableName(), pMaxItem->data(colNames::value_.idx_).toDouble());
 	delete pMaxItem;
 }

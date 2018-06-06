@@ -10,27 +10,27 @@ pParser_(&parser) {
 	const VarSet& v = *(pParser_->getVariables());
 
 	// Compute the mainSail area AM =  0.5 * P * E * MROACH
-	sailVariables_.insert( Variable("AM", 0.5 * v["P"] * v["E"] * v["MROACH"] ) );
+	sailVariables_.insert( Variable(Var::am_, 0.5 * v[Var::p_] * v[Var::e_] * v[Var::mroach_] ) );
 
 	// Compute the Jib area AJ =  0.5 * sqrt( I^2 + J^2) * LPG
-	sailVariables_.insert( Variable("AJ", 0.5 * std::sqrt( v["I"] * v["I"] + v["J"] * v["J"] ) * v["LPG"] ) );
+	sailVariables_.insert( Variable(Var::aj_, 0.5 * std::sqrt( v[Var::i_] * v[Var::i_] + v[Var::j_] * v[Var::j_] ) * v["LPG"] ) );
 
 	// Compute the Spinnaker area AS = 1.15 * SL * J;
-	sailVariables_.insert( Variable("AS", 1.15 * v["SL"] * v["J"] ) );
+	sailVariables_.insert( Variable(Var::as_, 1.15 * v[Var::sl_] * v[Var::sl_] ) );
 
 	// Compute the Fore Triangle area AF =  0.5 * I * J
-	sailVariables_.insert( Variable("AF", 0.5 * v["I"] * v["J"] ) );
+	sailVariables_.insert( Variable(Var::af_, 0.5 * v[Var::i_] * v[Var::j_] ) );
 
 	// Compute heights :
 
 	// Compute the MainSail center's height ZCEM = 0.39 * P + BAD
-	sailVariables_.insert( Variable("ZCEM", 0.39 * v["P"] + v["BAD"] ) );
+	sailVariables_.insert( Variable(Var::zcem_, 0.39 * v[Var::p_] + v[Var::bad_] ) );
 
 	// Compute the Jib center's height ZCEJ = 0.39 .* geom.I;
-	sailVariables_.insert( Variable("ZCEJ", 0.39 * v["I"] ) );
+	sailVariables_.insert( Variable(Var::zcej_, 0.39 * v[Var::i_] ) );
 
 	// Compute the Spinnaker center's height ZCES = 0.59 * I;
-	sailVariables_.insert( Variable("ZCES", 0.59 * v["I"] ) );
+	sailVariables_.insert( Variable(Var::zces_, 0.59 * v[Var::i_] ) );
 
 }
 
@@ -38,7 +38,7 @@ pParser_(&parser) {
 SailSet* SailSet::SailSetFactory(VariableFileParser& parser){
 
 	// SAILSET VALUES: 1: main only; 3 - main & jib; 5 - main & spi; 7 - main, jib, & spinnaker;
-	switch( int(parser.get("SAILSET")) )
+	switch( int(parser.get(Var::sailSet_)) )
 	{
 	case sailConfig::mainOnly :
 		return new MainOnlySailSet(parser);
@@ -54,7 +54,7 @@ SailSet* SailSet::SailSetFactory(VariableFileParser& parser){
 
 	default:
 		char msg[256];
-		sprintf(msg,"The value of SAILSET: \"%d\" is not supported",int(parser.get("SAILSET")));
+		sprintf(msg,"The value of SAILSET: \"%d\" is not supported",int(parser.get(Var::sailSet_)));
 		throw std::logic_error(msg);
 	}
 }
@@ -83,10 +83,10 @@ MainOnlySailSet::MainOnlySailSet(const VariableFileParser& parser) :
 			SailSet(parser) {
 
 	// Compute the Sail Nominal Area AN = AM
-	sailVariables_.insert( Variable("AN", sailVariables_["AM"] ) );
+	sailVariables_.insert( Variable(Var::an_, sailVariables_[Var::am_] ) );
 
 	// Compute the Sail Nominal Height ZCE = ZCEM
-	sailVariables_.insert( Variable("ZCE", sailVariables_["ZCEM"] ) );
+	sailVariables_.insert( Variable(Var::zce_, sailVariables_[Var::zcem_] ) );
 
 }
 
@@ -111,11 +111,11 @@ MainAndJibSailSet::MainAndJibSailSet(const VariableFileParser& parser) :
 	VarSet& sv = sailVariables_;
 
 	// Compute the Sail Nominal Area AN = AF + AM
-	sailVariables_.insert( Variable("AN", sv["AF"] + sv["AM"] ) );
+	sailVariables_.insert( Variable(Var::an_, sv[Var::af_] + sv[Var::am_] ) );
 
 	// Compute the Sail Nominal Height ZCE = (ZCEM .* AM + ZCEJ .* AJ) ./ (AM + AJ);
-	sailVariables_.insert( Variable("ZCE",
-			( sv["ZCEM"] * sv["AM"] + sv["ZCEJ"] * sv["AJ"] ) / ( sv["AM"] + sv["AJ"] ) ) );
+	sailVariables_.insert( Variable(Var::zce_,
+			( sv[Var::zcem_] * sv[Var::am_] + sv[Var::zcej_] * sv[Var::aj_] ) / ( sv[Var::am_] + sv[Var::aj_] ) ) );
 
 }
 
@@ -140,11 +140,11 @@ MainAndSpiSailSet::MainAndSpiSailSet(const VariableFileParser& parser):
 	VarSet& sv = sailVariables_;
 
 	// Compute the Sail Nominal Area AN = AS + AM
-	sailVariables_.insert( Variable("AN", sv["AS"] + sv["AM"] ) );
+	sailVariables_.insert( Variable(Var::an_, sv[Var::as_] + sv[Var::am_] ) );
 
 	// Compute the Sail Nominal Height ZCE = (ZCEM .* AM + ZCES .* AS) ./ (AM + AS)
-	sailVariables_.insert( Variable("ZCE",
-			(sv["ZCEM"] * sv["AM"] + sv["ZCES"] * sv["AS"] ) / ( sv["AM"] + sv["AS"] ) ) );
+	sailVariables_.insert( Variable(Var::zce_,
+			(sv[Var::zcem_] * sv[Var::am_] + sv[Var::zces_] * sv[Var::as_] ) / ( sv[Var::am_] + sv[Var::as_] ) ) );
 
 }
 
@@ -169,12 +169,12 @@ MainJibAndSpiSailSet::MainJibAndSpiSailSet(const VariableFileParser& parser):
 	VarSet& sv = sailVariables_;
 
 	// Compute the Sail Nominal Area AN = AF + AS + AM
-	sailVariables_.insert( Variable("AN", sv["AF"] + sv["AS"] + sv["AM"] ) );
+	sailVariables_.insert( Variable(Var::an_, sv[Var::af_] + sv[Var::as_] + sv[Var::am_] ) );
 
 	// Compute the Sail Nominal Height ZCE = (ZCEM .* AM + ZCEJ .* AJ + ZCES .* AS) ./ (AM + AJ + AS)
-	sailVariables_.insert( Variable("ZCE",
-			(sv["ZCEM"] * sv["AM"] + sv["ZCEJ"] * sv["AJ"] + sv["ZCES"] * sv["AS"] ) /
-			( sv["AM"] + sv["AJ"] + sv["AS"] ) ) );
+	sailVariables_.insert( Variable(Var::zce_,
+			(sv[Var::zcem_] * sv[Var::am_] + sv[Var::zcej_] * sv[Var::aj_] + sv[Var::zces_] * sv[Var::as_] ) /
+			( sv[Var::am_] + sv[Var::aj_] + sv[Var::as_] ) ) );
 
 }
 

@@ -2,13 +2,11 @@
 #define SETTINGS_COLUMN_H
 
 #include <QtCore/QVariant>
+#include <string>
 
-/// Enum the columns types
-enum columnNames {
-	name,
-	value,
-	unit
-};
+#include "EnumData.h"
+
+using namespace std;
 
 /// Column storing the data of the item tree
 /// Base class for name, value and unit column

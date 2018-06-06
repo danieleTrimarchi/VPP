@@ -7,6 +7,7 @@
 #include "VppSettingsXmlReader.h"
 #include "VariableFileParser.h"
 #include "Units.h"
+#include "EnumData.h"
 
 using namespace std;
 
@@ -333,9 +334,9 @@ SettingsItemBase* SettingsItem<Degrees>::convertToSI() {
 
 	// Construct an item in the SI unit system
 	SettingsItem<Radians>* pSIItem= new SettingsItem<Radians>(
-			this->columns_[columnNames::name]->getData().toString(),
+			this->columns_[colNames::value_.idx_]->getData().toString(),
 			this->variableName_,
-			this->data(columnNames::value).toDouble() * M_PI / 180.0,
+			this->data(colNames::value_.idx_).toDouble() * M_PI / 180.0,
 			radians.getUnitName().c_str()
 			);
 
@@ -349,9 +350,9 @@ SettingsItemRoot::SettingsItemRoot():
 
 	// Fill the columns with the name (intended as the 'dysplayName',
 	// the value and the unit
-	columns_[columnNames::name] ->setData( "Name" );
-	columns_[columnNames::value]->setData( "Value");
-	columns_[columnNames::unit] ->setData( "Unit" );
+	columns_[colNames::name_.idx_ ] ->setData( colNames::name_.label_ );
+	columns_[colNames::value_.idx_ ]->setData( colNames::value_.label_);
+	columns_[colNames::unit_.idx_ ] ->setData( colNames::unit_.label_ );
 
 	// The root is not editable
 	setEditable(false);
@@ -446,7 +447,7 @@ SettingsItemGroup::SettingsItemGroup(const QVariant& displayName):
 												SettingsItemBase(){
 
 	// The group is not editable
-	columns_[columnNames::name]->setData( displayName );
+	columns_[colNames::name_.idx_]->setData( displayName );
 
 	// The root is not editable
 	setEditable(false);

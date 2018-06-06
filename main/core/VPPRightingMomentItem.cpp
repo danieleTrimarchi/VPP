@@ -10,11 +10,11 @@ RightingMomentItem::RightingMomentItem(VariableFileParser* pParser, boost::share
 				val_(0) {
 
 	m10_= Physic::rho_w * Physic::g *
-			(pParser_->get("KM") - pParser_->get("KG")) *
-			(pParser_->get("DIVCAN") + pParser_->get("DVK"));
+			(pParser_->get(Var::km_) - pParser_->get(Var::kg_)) *
+			(pParser_->get(Var::divCan_) + pParser_->get(Var::dvk_));
 
 	// MMVBLCRW is the mass of the movable crew
-	m20_= pParser_->get("MMVBLCRW") * Physic::g;
+	m20_= pParser_->get(Var::mmvblcrw_) * Physic::g;
 }
 
 // Destructor

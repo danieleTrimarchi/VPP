@@ -36,10 +36,10 @@ it_(0){
 	lowerBounds_.resize(dimension_);
 	upperBounds_.resize(dimension_);
 
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI converted to rad
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI converted to rad
+	lowerBounds_[0] = pParser_->get(Var::vBounds_.min_);   // Lower velocity
+	upperBounds_[0] = pParser_->get(Var::vBounds_.max_); ;	// Upper velocity
+	lowerBounds_[1] = pParser_->get(Var::heelBounds_.min_); // Lower PHI converted to rad
+	upperBounds_[1] = pParser_->get(Var::heelBounds_.max_); // Upper PHI converted to rad
 
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run
@@ -63,10 +63,10 @@ void NRSolver::reset(VPPItemFactory* pVPPItemFactory) {
 	// Set the parser
 	pParser_= pVppItemsContainer_->getParser();
 
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI in radians
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI in radians
+	lowerBounds_[0] = pParser_->get(Var::vBounds_.min_);   // Lower velocity
+	upperBounds_[0] = pParser_->get(Var::vBounds_.max_); ;	// Upper velocity
+	lowerBounds_[1] = pParser_->get(Var::heelBounds_.min_); // Lower PHI in radians
+	upperBounds_[1] = pParser_->get(Var::heelBounds_.max_); // Upper PHI in radians
 
 	// Also get a reference to the WindItem that has computed the
 	// real wind velocity/angle for the current run

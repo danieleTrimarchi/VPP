@@ -47,14 +47,14 @@ VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
 	lowerBounds_.resize(dimension_);
 	upperBounds_.resize(dimension_);
 
-	lowerBounds_[0] = pParser_->get("V_MIN");   // Lower velocity
-	upperBounds_[0] = pParser_->get("V_MAX"); ;	// Upper velocity
-	lowerBounds_[1] = pParser_->get("PHI_MIN"); // Lower PHI
-	upperBounds_[1] = pParser_->get("PHI_MAX"); // Upper PHI
-	lowerBounds_[2] = pParser_->get("B_MIN"); ;	// lower reef
-	upperBounds_[2] = pParser_->get("B_MAX"); ;	// upper reef
-	lowerBounds_[3] = pParser_->get("F_MIN"); ;	// lower FLAT
-	upperBounds_[3] = pParser_->get("F_MAX"); ;	// upper FLAT
+	lowerBounds_[0] = pParser_->get(Var::vBounds_.min_);   // Lower velocity
+	upperBounds_[0] = pParser_->get(Var::vBounds_.max_); ;	// Upper velocity
+	lowerBounds_[1] = pParser_->get(Var::heelBounds_.min_); // Lower PHI
+	upperBounds_[1] = pParser_->get(Var::heelBounds_.max_); // Upper PHI
+	lowerBounds_[2] = pParser_->get(Var::crewBounds_.min_); ;	// lower reef
+	upperBounds_[2] = pParser_->get(Var::crewBounds_.max_); ;	// upper reef
+	lowerBounds_[3] = pParser_->get(Var::flatBounds_.min_); ;	// lower FLAT
+	upperBounds_[3] = pParser_->get(Var::flatBounds_.max_); ;	// upper FLAT
 
 }
 

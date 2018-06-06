@@ -55,7 +55,7 @@ Item* Item::accept(const GetItemByPathVisitor& v, QString varName) {
 Item* Item::accept(const GetItemByNameVisitor& v, QString varName) {
 
 	//std::cout << internalName_.toStdString() <<std::endl;
-	if(columns_[columnNames::name]->getData().toString() == varName )
+	if(columns_[colNames::name_.idx_]->getData().toString() == varName )
 		return this;
 
 	for(size_t iChild=0; iChild<childCount(); iChild++) {
@@ -122,7 +122,7 @@ void Item::clearChildren() {
 	// Todo : this segfaults, but why..??
 	// Delete the children
 	//for(size_t iChild=0; iChild<childCount(); iChild++)
-	//	if(child(iChild))C
+	//	if(child(iChild))
 	//		delete child(iChild);
 	// This also segfaults...
 	qDeleteAll(children_);
@@ -196,7 +196,7 @@ DataColumn* Item::getColumn(const int iColumn) {
 
 // Get the display name of this item
 QString Item::getDisplayName() const {
-	return columns_[columnNames::name]->getData().toString();
+	return columns_[colNames::name_.idx_]->getData().toString();
 }
 
 // Returns the font this item should be visualized
@@ -262,12 +262,10 @@ bool Item::operator==(const Item& rhs) {
 			return false;
 
 		// loop on children and return:
-		for (size_t iChild=0; iChild<childCount(); iChild++){
-			child(iChild)->print();
-			rhs.child(iChild)->print();
-			if( *child(iChild) != *rhs.child(iChild))
+		for (size_t iChild=0; iChild<childCount(); iChild++)
+			if( *(child(iChild)) != *(rhs.child(iChild)) )
 				return false;
-		}
+
 		// All check passed, return true
 		return true;
 	}
@@ -287,8 +285,8 @@ Item* Item::parentItem() {
 
 // Diagnostic print
 void Item::print(){
-	std::cout<<"   "<<columns_[columnNames::name]->getData().toString().toStdString()<<
-			"  "<<columns_[columnNames::value]->getData().toString().toStdString()<<std::endl;
+	std::cout<<"   "<<columns_[colNames::name_.idx_]->getData().toString().toStdString()<<
+			"  "<<columns_[colNames::value_.idx_]->getData().toString().toStdString()<<std::endl;
 	for(size_t iChild=0; iChild<childCount(); iChild++){
 		std::cout<<"   ";
 		child(iChild)->print();

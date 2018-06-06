@@ -206,6 +206,10 @@ class SettingsItemBounds : public SettingsItemGroup {
 				double max,									//<	Max value of this variable bound
 				const QVariant& tooltip);			//< Tooltip
 
+		SettingsItemBounds(const varData& data,	//< Data of the variable
+						double min,									//<	Min value of this variable bound
+						double max);
+
 		/// Ctor from xml
 		SettingsItemBounds(const XmlAttributeSet&);
 
@@ -265,6 +269,10 @@ class SettingsItem : public SettingsItemBase {
 
 		/// Ctor from xml
 		SettingsItem(const XmlAttributeSet&);
+
+		/// Ctor from varData and value
+		SettingsItem(const varData& data,		//< Variable data
+								const QVariant&value);	//<	Value of this variable
 
 		/// Dtor
 		virtual ~SettingsItem();
@@ -338,6 +346,10 @@ class SettingsItemInt : public SettingsItem<TUnit> {
 		/// Ctor from xml
 		SettingsItemInt(const XmlAttributeSet&);
 
+		/// Ctor from varData
+		SettingsItemInt(	const varData& data, 	//< Name visualized in the UI
+										const QVariant& value);			//<	Value of this variable
+
 		/// Dtor
 		virtual ~SettingsItemInt();
 
@@ -383,6 +395,10 @@ class SettingsItemComboBox : public SettingsItem<TUnit> {
 
 		/// Ctor from xml
 		SettingsItemComboBox(const XmlAttributeSet&);
+
+		/// Ctor from varData and options
+		SettingsItemComboBox(const varData& data,						//< Data of the variable
+												const QList<QString>& options); //<	List of options available in this combo-box
 
 		/// Dtor
 		virtual ~SettingsItemComboBox();

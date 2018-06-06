@@ -22,8 +22,8 @@ VariableTreeRoot::VariableTreeRoot(Item* parentItem /*=0*/) :
 
 	// Fill the columns with the name (intended as the 'dysplayName',
 	// the value and the unit
-	columns_[columnNames::name] ->setData( "Name" );
-	columns_[columnNames::value]->setData( "Value");
+	columns_[colNames::name_.idx_] ->setData(colNames::name_.label_);
+	columns_[colNames::value_.idx_]->setData(colNames::value_.label_);
 
 }
 
@@ -42,8 +42,8 @@ QVariant VariableTreeRoot::getIcon(size_t row/*=0*/) {
 VariableTreeItem::VariableTreeItem(const QVariant& variableName, const QVariant& value, Item *parentItem /*=0*/):
 		VariableTreeItemBase(parentItem) {
 
-	columns_[columnNames::name]->setData( variableName );
-	columns_[columnNames::value]->setData( value );
+	columns_[colNames::name_.idx_]->setData( variableName );
+	columns_[colNames::value_.idx_]->setData( value );
 
 }
 
@@ -67,7 +67,7 @@ VariableTreeItem::~VariableTreeItem(){
 VariableTreeItemGroup::VariableTreeItemGroup(const QVariant& grooupName,Item *parentItem) :
 		VariableTreeItemBase(parentItem) {
 
-	columns_[columnNames::name]->setData( grooupName );
+	columns_[colNames::name_.idx_]->setData( grooupName );
 	// Leave the data column empty
 }
 

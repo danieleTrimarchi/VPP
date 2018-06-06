@@ -385,8 +385,8 @@ void MainWindow::run() {
 		// count to update the bar progression
 		QProgressDialog progressDialog(this);
 		size_t maxVal=
-				pVariableFileParser_->get("N_TWA")*
-				pVariableFileParser_->get("NTW");
+				pVariableFileParser_->get(Var::nta_);
+				pVariableFileParser_->get(Var::ntw_);
 		progressDialog.setRange(0,maxVal);
 		progressDialog.setCancelButtonText(tr("&Cancel"));
 		progressDialog.setWindowTitle(tr("Running VPP analysis..."));
@@ -394,13 +394,13 @@ void MainWindow::run() {
 		int statusProgress=0;
 
 		// Loop on the wind ANGLES and VELOCITIES
-		for(int aTW=0; aTW<pVariableFileParser_->get("N_TWA"); aTW++) {
+		for(int aTW=0; aTW<pVariableFileParser_->get(Var::nta_); aTW++) {
 
 			// exit the outer loop if the user pressed the 'cancel' button
 			if (progressDialog.wasCanceled())
 				break;
 
-			for(int vTW=0; vTW<pVariableFileParser_->get("NTW"); vTW++){
+			for(int vTW=0; vTW<pVariableFileParser_->get(Var::ntw_); vTW++){
 
 				try{
 

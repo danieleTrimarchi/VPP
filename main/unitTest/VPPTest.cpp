@@ -159,7 +159,8 @@ void TVPPTest::xmlIOTest() {
 	// Compare the old and the new tree - they must match
 	CPPUNIT_ASSERT( *pRootItem == *pRootItemTwo );
 
-	// compare the variables contained in the two parsers
+    // TODO! compare the variables contained in the two parsers
+
 }
 
 /// Test the variables we get when reading xml in the variablefile

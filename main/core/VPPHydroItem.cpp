@@ -42,13 +42,13 @@ const double ResistanceItem::get() const {
 // Convert a velocity [m/s] to a Fn[-]
 double ResistanceItem::convertToFn( double velocity ){
 
-	return velocity / sqrt(Physic::g * pParser_->get("LWL"));
+	return velocity / sqrt(Physic::g * pParser_->get(Var::lwl_));
 }
 
 // Convert a Fn[-] to a velocity [m/s]
 double ResistanceItem::convertToVelocity( double fN ) {
 
-	return fN * sqrt(Physic::g * pParser_->get("LWL"));
+	return fN * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 }
 
@@ -58,7 +58,7 @@ double ResistanceItem::convertToVelocity( double fN ) {
 InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 						ResistanceItem(pAeroForcesItem->getParser(), pAeroForcesItem->getSailSet()),
 						pAeroForcesItem_(pAeroForcesItem),
-						vf_(0.4 * sqrt(Physic::g * pParser_->get("LWL") )),
+						vf_(0.4 * sqrt(Physic::g * pParser_->get(Var::lwl_) )),
 						a_(1./(2*vf_)),
 						c_(vf_/2),
 						v_(0) {
@@ -81,15 +81,15 @@ InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 	phiD_ *= ( M_PI / 180.0);
 
 	// Draft of the canoe body
-	double tCan = pParser_->get("TCAN");
+	double tCan = pParser_->get(Var::tcan_);
 	// Total Draft
-	double t= 		pParser_->get("T");
+	double t= 		pParser_->get(Var::t_);
 	// Waterline Beam
-	double bwl = 	pParser_->get("BWL");
+	double bwl = 	pParser_->get(Var::bwl_);
 	// Keel tip chord length
-	double chtpk=	pParser_->get("CHTPK");
+	double chtpk=	pParser_->get(Var::chtpk_);
 	// Keel root chord length
-	double chrtk= pParser_->get("CHRTK");
+	double chrtk= pParser_->get(Var::chrtk_);
 
 	//geom.TCAN./geom.T (geom.TCAN./geom.T).^2 geom.BWL./geom.TCAN geom.CHTPK./geom.CHRTK;
 	vectA_.resize(4);
@@ -121,7 +121,7 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	Eigen::ArrayXd TeFn = coeffB_ * vectB;
 
 	// Note that this is a coefficient-wise operation Tegeo(4x1) * TeFn(4x1) -> Teffective(4x1)
-	Eigen::ArrayXd Teffective = pParser_->get("T") * Tegeo_ * TeFn;
+	Eigen::ArrayXd Teffective = pParser_->get(Var::t_) * Tegeo_ * TeFn;
 
 	//std::cout<<"Teffective= \n"<<Teffective<<std::endl;
 
@@ -209,7 +209,7 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			V_= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			V_= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 			Eigen::VectorXd x(pbSize_);
 			x << V_, PHI_, b_, f_;
@@ -272,7 +272,7 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 		for(size_t v=0; v<nVelocities-7; v++){
 
 			// Set a fictitious velocity (Fn=0-1)
-			V_= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			V_= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 			Eigen::VectorXd x(pbSize_);
 			x << V_, PHI_, b_, f_;
@@ -346,7 +346,7 @@ void InducedResistanceItem::plotTe(int twv, int twa) {
 	Eigen::ArrayXd TeFn = coeffB_ * vectB;
 
 	// Note that this is a coefficient-wise operation Tegeo(4x1) * TeFn(4x1) -> Teffective(4x1)
-	Eigen::ArrayXd Teffective = pParser_->get("T") * Tegeo_ * TeFn;
+	Eigen::ArrayXd Teffective = pParser_->get(Var::t_) * Tegeo_ * TeFn;
 
 	// Properly interpolate then values of TeD for the current value
 	// of the state variable PHI_ (heeling angle)
@@ -391,21 +391,21 @@ ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, bo
 	//   				(geom.XFB./geom.LWL).^2,
 	//   				geom.CPL.^2]';
 	Eigen::VectorXd vect(9);
-	vect << pParser_->get("LWL") / std::pow(pParser_->get("DIVCAN"),1./3),
-			pParser_->get("XFB") / pParser_->get("LWL") ,
-			pParser_->get("CPL"),
-			std::pow(pParser_->get("DIVCAN"),2./3) / pParser_->get("AW"),
-			pParser_->get("BWL") / pParser_->get("LWL"),
-			std::pow(pParser_->get("DIVCAN"),2./3) / pParser_->get("SC"),
-			pParser_->get("XFB") / pParser_->get("XFF"),
-			std::pow(pParser_->get("XFB") / pParser_->get("LWL"),2),
-			std::pow(pParser_->get("CPL"),2);
+	vect << pParser_->get(Var::lwl_) / std::pow(pParser_->get(Var::divCan_),1./3),
+			pParser_->get(Var::xfb_) / pParser_->get(Var::lwl_) ,
+			pParser_->get(Var::cpl_),
+			std::pow(pParser_->get(Var::divCan_),2./3) / pParser_->get(Var::aw_),
+			pParser_->get(Var::bwl_) / pParser_->get(Var::lwl_),
+			std::pow(pParser_->get(Var::divCan_),2./3) / pParser_->get(Var::sc_),
+			pParser_->get(Var::xfb_) / pParser_->get(Var::xff_),
+			std::pow(pParser_->get(Var::xfb_) / pParser_->get(Var::lwl_),2),
+			std::pow(pParser_->get(Var::cpl_),2);
 
 	// Compute the the residuary resistance for each Froude numbers
 	//  RrhD = (geom.DIVCAN.*phys.g.*phys.rho_w) .* ( coeff * vect' ) .* (geom.DIVCAN.^(1/3)./geom.LWL);
 	//  12x1        SCALAR                            12x9  *  9x1            SCALAR
-	Eigen::VectorXd RrhD = 	(pParser_->get("DIVCAN") * Physic::g * Physic::rho_w) *
-			( std::pow(pParser_->get("DIVCAN"),1./3) / pParser_->get("LWL") ) *
+	Eigen::VectorXd RrhD = 	(pParser_->get(Var::divCan_) * Physic::g * Physic::rho_w) *
+			( std::pow(pParser_->get(Var::divCan_),1./3) / pParser_->get(Var::lwl_) ) *
 			coeff * vect ;
 
 	// Values of the froude number on which the coefficients of the
@@ -484,16 +484,16 @@ Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 	//					(geom.XFB/ geom.BWL ).^2];  // todo WARNING : is this term correct?
 	Eigen::VectorXd vect(6);
 	vect << 1,
-			pParser_->get("LWL") / pParser_->get("BWL"),
-			pParser_->get("BWL") / pParser_->get("TCAN"),
-			std::pow(pParser_->get("BWL") / pParser_->get("TCAN"),2),
-			pParser_->get("XFB")/pParser_->get("LWL"),
-			std::pow(pParser_->get("XFB")/pParser_->get("LWL"),2);
+			pParser_->get(Var::lwl_) / pParser_->get(Var::bwl_),
+			pParser_->get(Var::bwl_) / pParser_->get(Var::tcan_),
+			std::pow(pParser_->get(Var::bwl_) / pParser_->get(Var::tcan_),2),
+			pParser_->get(Var::xfb_)/pParser_->get(Var::lwl_),
+			std::pow(pParser_->get(Var::xfb_)/pParser_->get(Var::lwl_),2);
 
 	// Compute the resistance @PHI=20deg for each Fn
 	// RrhH20D = (geom.DIVCAN.*phys.g.*phys.rho_w) .* coeff*vect';
 	Eigen::ArrayXd RrhH20D=
-			pParser_->get("DIVCAN") * Physic::g * Physic::rho_w *
+			pParser_->get(Var::divCan_) * Physic::g * Physic::rho_w *
 			coeff * vect;
 
 	// Values of the froude number on which the coefficients of the
@@ -564,13 +564,13 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistance_HeelItem::plot(Win
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			V_= ( 0 + ( .6 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			V_= ( 0 + ( .6 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
 			update(wd->getTWV(),wd->getTWA());
 
 			// Fill the vectors to be plot
-			fn.push_back( V_/sqrt(Physic::g * pParser_->get("LWL") ) );
+			fn.push_back( V_/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
 			res.push_back( get() );
 
 		}
@@ -630,14 +630,14 @@ ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pPa
 	//					geom.DIVCAN./geom.DVK];
 	Eigen::VectorXd vect(4);
 	vect << 1,
-			pParser_->get("T")/pParser_->get("BWL"),
-			(pParser_->get("T")-pParser_->get("ZCBK")) / std::pow(pParser_->get("DVK"),1./3),
-			pParser_->get("DIVCAN")/pParser_->get("DVK");
+			pParser_->get(Var::t_)/pParser_->get(Var::bwl_),
+			(pParser_->get(Var::t_)-pParser_->get(Var::zcbk_)) / std::pow(pParser_->get(Var::dvk_),1./3),
+			pParser_->get(Var::divCan_)/pParser_->get(Var::dvk_);
 
 	// Compute the Keel Residuary Resistance / Fn vector
 	// RrkD = (geom.DVK.*phys.rho_w.*phys.g).* coeff*vect;
 	Eigen::ArrayXd RrkD=
-			pParser_->get("DVK") * Physic::rho_w * Physic::g *
+			pParser_->get(Var::dvk_) * Physic::rho_w * Physic::g *
 			coeff * vect;
 
 	// Values of the froude number on which the coefficients of the
@@ -701,17 +701,17 @@ Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
 	//				(geom.BWL.*geom.TCAN)./(geom.T.*geom.TCAN)
 	//				geom.LWL./geom.DIVCAN.^1/3 ];
 	Eigen::VectorXd vect(4);
-	vect << pParser_->get("TCAN")/pParser_->get("T"),
-			pParser_->get("BWL")/pParser_->get("TCAN"),
-			pParser_->get("BWL")/pParser_->get("T"),
-			pParser_->get("LWL")/(std::pow(pParser_->get("DIVCAN"),1./3));
+	vect << pParser_->get(Var::tcan_)/pParser_->get(Var::t_),
+			pParser_->get(Var::bwl_)/pParser_->get(Var::tcan_),
+			pParser_->get(Var::bwl_)/pParser_->get(Var::t_),
+			pParser_->get(Var::lwl_)/(std::pow(pParser_->get(Var::divCan_),1./3));
 
 	// Express the resistance coefficient
 	Ch_ = coeff.transpose() * vect;
 
 	// And multiply for the const coefficients :
 	// Ch_ = Ch_ *  (geom.DVK.*phys.rho_w.*phys.g.*Ch.)
-	Ch_ *= pParser_->get("DVK") * Physic::rho_w * Physic::g;
+	Ch_ *= pParser_->get(Var::dvk_) * Physic::rho_w * Physic::g;
 
 }
 
@@ -761,13 +761,13 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistanceKeel_HeelItem::plot
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			V_= ( ( 0.7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			V_= ( ( 0.7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
 			update(wd->getTWV(),wd->getTWA());
 
 			// Fill the vectors to be plot
-			fn.push_back( V_/sqrt(Physic::g * pParser_->get("LWL") ) );
+			fn.push_back( V_/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
 			res.push_back( get() );
 
 		}
@@ -805,10 +805,10 @@ ViscousResistanceItem::ViscousResistanceItem(VariableFileParser* pParser, boost:
 						ResistanceItem(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_
-	rN0_= pParser->get("LWL") * 0.7 / Physic::ni_w;
+	rN0_= pParser->get(Var::lwl_) * 0.7 / Physic::ni_w;
 
 	// Pre-compute the velocity independent part of rF_
-	rfh0_= 0.5 * Physic::rho_w * pParser_->get("SC");
+	rfh0_= 0.5 * Physic::rho_w * pParser_->get(Var::sc_);
 
 }
 
@@ -841,7 +841,7 @@ void ViscousResistanceItem::update(int vTW, int aTW) {
 	double rfh = rfh0_ * V_ * V_ * cF;
 
 	// Compute the frictional resistance
-	res_ = rfh * pParser_->get("HULLFF");
+	res_ = rfh * pParser_->get(Var::hullff_);
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
@@ -860,7 +860,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceItem::plot(WindIndicesDialo
 	for(size_t i=0; i<nVals; i++) {
 
 		// Set a fictitious velocity (Fn=0-1)
-		V_= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
+		V_= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 		// Update the item
 		update(0,0);
@@ -897,7 +897,7 @@ Delta_ViscousResistance_HeelItem::Delta_ViscousResistance_HeelItem(
 
 	// Pre-compute the velocity independent part of rN_. The definition of the Rn
 	// is given by DSYHS99, p109. 0.7 is an arbitrary factor used to reduce the lwl
-	rN0_= pParser->get("LWL") * 0.7 / Physic::ni_w;
+	rN0_= pParser->get(Var::lwl_) * 0.7 / Physic::ni_w;
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(7,4);
@@ -918,9 +918,9 @@ Delta_ViscousResistance_HeelItem::Delta_ViscousResistance_HeelItem(
 	//				geom.CMS];
 	Eigen::VectorXd vect(4);
 	vect << 1,
-			pParser_->get("BWL")/pParser_->get("TCAN"),
-			std::pow( (pParser_->get("BWL") / pParser_->get("TCAN")),2),
-			pParser_->get("CMS");
+			pParser_->get(Var::bwl_)/pParser_->get(Var::tcan_),
+			std::pow( (pParser_->get(Var::bwl_) / pParser_->get(Var::tcan_)),2),
+			pParser_->get(Var::cms_);
 
 	// Values of the heel angle on which the coefficients and convert to radians
 	Eigen::ArrayXd phiD(7);
@@ -928,7 +928,7 @@ Delta_ViscousResistance_HeelItem::Delta_ViscousResistance_HeelItem(
 	phiD *= ( M_PI / 180.0);
 
 	// Compute the coefficients for the current geometry
-	Eigen::ArrayXd SCphiDArr = pParser_->get("SC") *
+	Eigen::ArrayXd SCphiDArr = pParser_->get(Var::sc_) *
 			( 1 + 1./100. * (coeff * vect).array() );
 
 	// generate the cubic spline values for the coefficients
@@ -971,11 +971,11 @@ void Delta_ViscousResistance_HeelItem::update(int vTW, int aTW) {
 	// Apart for the def. of the surface, the viscous resistance uses the std definition
 	// see DSYHS99 3.2.1.1 p119
 	// Rfh = 1/2 .* phys.rho_w .* V.^2 .* Cf .* ( S - S0 );
-	double rfhH = 0.5 * Physic::rho_w * V_ * V_ * cF * ( SCphi - pParser_->get("SC") );
+	double rfhH = 0.5 * Physic::rho_w * V_ * V_ * cF * ( SCphi - pParser_->get(Var::sc_) );
 
 	// todo dtrimarchi: does it make sense to use the same hull form factor both for the upright and the heeled hull?
 	// See DSYHS99 p119, where the form factor is also defined. Here we ask the user to prompt a value
-	res_ = rfhH * pParser_->get("HULLFF");
+	res_ = rfhH * pParser_->get(Var::hullff_);
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
@@ -1016,12 +1016,12 @@ std::vector<VppXYCustomPlotWidget*> Delta_ViscousResistance_HeelItem::plot(WindI
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.-0.7)
-			V_= ( ( .7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get("LWL"));
+			V_= ( ( .7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 			update(wd->getTWV(),wd->getTWA());
 
 			// Fill the vectors to be plot
-			fn.push_back( V_/sqrt(Physic::g * pParser_->get("LWL") ) );
+			fn.push_back( V_/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
 			res.push_back( get() );
 
 		}
@@ -1080,13 +1080,13 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 	// Define the Reynolds number using the mean chord length of the keel,
 	// this is a value provided by the user. The viscous resistance is
 	// defined in the std way, see DSYHS99 3.2.1.1 p 119
-	double rN = pParser_->get("CHMEK") * V_ / Physic::ni_w;
+	double rN = pParser_->get(Var::chmek_) * V_ / Physic::ni_w;
 	double cf = 0.075 / std::pow((std::log10(rN) - 2),2);
-	double rfk= 0.5 * Physic::rho_w * V_ * V_ * pParser_->get("SK") * cf;
+	double rfk= 0.5 * Physic::rho_w * V_ * V_ * pParser_->get(Var::sk_) * cf;
 
 	// todo dtrimarchi : this form factor can be computed from the
 	// Keel geometry (see DSYHS99) Ch.3.2.11
-	res_ = rfk * pParser_->get("KEELFF");
+	res_ = rfk * pParser_->get(Var::keelff_);
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
@@ -1105,7 +1105,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceKeelItem::plot(WindIndicesD
 	for(size_t i=0; i<nVals; i++) {
 
 		// Set a fictitious velocity
-		V_= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
+		V_= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 		// Update the item
 		update(0,0);
@@ -1158,13 +1158,13 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 	// Define the Reynolds number using the mean chord length of the rudder,
 	// this is a value provided by the user. The viscous resistance is
 	// defined in the std way, see DSYHS99 3.2.1.1 p 119
-	double rN = pParser_->get("CHMER") * V_ / Physic::ni_w;
+	double rN = pParser_->get(Var::chmer_) * V_ / Physic::ni_w;
 	double cf = 0.075 / std::pow((std::log10(rN) - 2),2);
-	double rfr= 0.5 * Physic::rho_w * V_ * V_ * pParser_->get("SR") * cf;
+	double rfr= 0.5 * Physic::rho_w * V_ * V_ * pParser_->get(Var::sr_) * cf;
 
 	// todo dtrimarchi : this form factor can be computed from the
 	// Rudder geometry (see DSYHS99) Ch.3.2.11
-	res_ = rfr * pParser_->get("RUDDFF");
+	res_ = rfr * pParser_->get(Var::ruddff_);
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
@@ -1183,7 +1183,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceRudderItem::plot(WindIndice
 	for(size_t i=0; i<nVals; i++) {
 
 		// Set a fictitious velocity
-		V_= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
+		V_= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 		// Update the item
 		update(0,0);
@@ -1250,7 +1250,7 @@ std::vector<VppXYCustomPlotWidget*> NegativeResistanceItem::plot(WindIndicesDial
 	for(size_t i=0; i<nVals; i++) {
 
 		// Set a fictitious -negative- velocity
-		V_= - ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get("LWL"));
+		V_= - ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 		// Update the item
 		update(0,0);

@@ -22,7 +22,7 @@ class TVPPTest : public CppUnit::TestFixture{
 
   /// Test the variables we get when reading xml in the variablefile
 
-  //  /// Resistance and aero force components test
+  /// Resistance and aero force components test
   CPPUNIT_TEST(itemComponentTest);
 
   /// Test the regression algorithm

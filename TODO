@@ -1,3 +1,5 @@
+IOXmltest: build items with the new signature using var::...
+
 See the ctor of SettingsItem. there are all these strings that are not acceptable
 	This is done, simply I put the commit on hold because I want to be able to 
 	run tests before modifying the code 

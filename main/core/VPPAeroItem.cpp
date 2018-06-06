@@ -20,9 +20,9 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 								awv_(Eigen::Vector2d::Zero())   {
 
 	// Get the max/min wind velocities from the parser
-	v_tw_min_= pParser_->get("VTW_MIN");
-	v_tw_max_= pParser_->get("VTW_MAX");
-	n_twv_= pParser_->get("NTW");
+	v_tw_min_= pParser_->get(Var::vtwBounds_.min_);
+	v_tw_max_= pParser_->get(Var::vtwBounds_.max_);
+	n_twv_= pParser_->get(Var::ntw_);
 
 	// Fill the values of the wind true velocities
 	vTwv_.resize(n_twv_);
@@ -36,9 +36,9 @@ WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSail
 		vTwv_[i]= v_tw_min_ + i * delta;
 
 	// Get the max/min wind angles [rad] from the parser
-	alpha_tw_min_= pParser_->get("TWA_MIN");
-	alpha_tw_max_= pParser_->get("TWA_MAX");
-	n_alpha_tw_= pParser_->get("N_TWA");
+	alpha_tw_min_= pParser_->get(Var::atwBounds_.min_);
+	alpha_tw_max_= pParser_->get(Var::atwBounds_.max_);
+	n_alpha_tw_= pParser_->get(Var::nta_);
 
 	// Fill the values of the wind true angles
 	vTwa_.resize(n_alpha_tw_);
@@ -194,23 +194,23 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 	if(mathUtils::isNotValid(awa_)) throw VPPException(HERE,"awa_ is NaN");
 
 	// Update the Aspect Ratio
-	double h= pParser_->get("EHM") + pParser_->get("AVGFREB");
+	double h= pParser_->get(Var::ehm_) + pParser_->get(Var::avgfreb_);
 
 //	// TODO: restore this and introduce a proper smoothing function
 //	if(awa_ < toRad(45))
 //		// h = mast height above deck + Average freeboard
-//		h= pParser_->get("EHM") + pParser_->get("AVGFREB");
+//		h= pParser_->get(Var::ehm_) + pParser_->get(Var::avgfreb_);
 //	else
 //		// h = mast height above deck
-//		h= pParser_->get("EHM");
+//		h= pParser_->get(Var::ehm_);
 
 	// Compute the aspect ratio for this awa_
-	ar_ = 1.1 * h * h / pSailSet_->get("AN");
+	ar_ = 1.1 * h * h / pSailSet_->get(Var::an_);
 
 	// Compute cd0, see the Hazen's model Larsson p.148
-	cd0_= 1.13 * ( 	(pParser_->get("B") * pParser_->get("AVGFREB")) +
-									(pParser_->get("EHM")*pParser_->get("EMDC") ) ) /
-											pSailSet_->get("AN");
+	cd0_= 1.13 * ( 	(pParser_->get(Var::b_) * pParser_->get(Var::avgfreb_)) +
+									(pParser_->get(Var::ehm_)*pParser_->get(Var::emdc_) ) ) /
+											pSailSet_->get(Var::an_);
 
 	// Compute the coefficients based on the sail configuration
 	compute();
@@ -435,8 +435,8 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 	boost::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
-	cl_ = ( allCl_(activeSail::mainSail)  * ps->get("AM") + allCl_(activeSail::jib)  *  ps->get("AJ") ) /  ps->get("AN");
-	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get("AM") + allCd_(activeSail::jib)  *  ps->get("AJ") ) /  ps->get("AN");
+	cl_ = ( allCl_(activeSail::mainSail)  * ps->get(Var::am_) + allCl_(activeSail::jib)  *  ps->get(Var::aj_) ) /  ps->get(Var::an_);
+	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get(Var::am_) + allCd_(activeSail::jib)  *  ps->get(Var::aj_) ) /  ps->get(Var::an_);
 
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
@@ -557,8 +557,8 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 	boost::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
-	cl_ = ( allCl_(activeSail::mainSail)  * ps->get("AM") + allCl_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
-	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get("AM") + allCd_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
+	cl_ = ( allCl_(activeSail::mainSail)  * ps->get(Var::am_) + allCl_(activeSail::spi) *  ps->get(Var::as_) ) /  ps->get(Var::an_);
+	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get(Var::am_) + allCd_(activeSail::spi) *  ps->get(Var::as_) ) /  ps->get(Var::an_);
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
@@ -678,8 +678,8 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 	boost::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
-	cl_ = ( allCl_(activeSail::mainSail)  * ps->get("AM") + allCl_(activeSail::jib)  *  ps->get("AJ") + allCl_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
-	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get("AM") + allCd_(activeSail::jib)  *  ps->get("AJ") + allCd_(activeSail::spi) *  ps->get("AS") ) /  ps->get("AN");
+	cl_ = ( allCl_(activeSail::mainSail)  * ps->get(Var::am_) + allCl_(activeSail::jib)  *  ps->get(Var::aj_) + allCl_(activeSail::spi) *  ps->get(Var::as_) ) /  ps->get(Var::an_);
+	cdp_ = ( allCd_(activeSail::mainSail)  * ps->get(Var::am_) + allCd_(activeSail::jib)  *  ps->get(Var::aj_) + allCd_(activeSail::spi) *  ps->get(Var::as_) ) /  ps->get(Var::an_);
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 	if(mathUtils::isNotValid(cdp_)) throw VPPException(HERE,"cdp_ is nan");
 
@@ -827,13 +827,13 @@ void AeroForcesItem::update(int vTW, int aTW) {
 	// Updates Lift = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cl;
 	// Note that the nominal area AN was scaled with cos( PHI ) and it
 	// takes the meaning of a projected surface
-	lift_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * cos( PHI_ ) * pSailCoeffs_->getCl();
+	lift_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get(Var::an_) * cos( PHI_ ) * pSailCoeffs_->getCl();
 	if(mathUtils::isNotValid(lift_)) throw VPPException(HERE,"lift_ is NAN!");
 
 	// Updates Drag = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cd;
 	// Note that the nominal area AN was scaled with cos( PHI ) and it
 	// takes the meaning of a projected surface
-	drag_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get("AN") * cos( PHI_ ) * pSailCoeffs_->getCd();
+	drag_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get(Var::an_) * cos( PHI_ ) * pSailCoeffs_->getCd();
 	if(mathUtils::isNotValid(drag_)) throw VPPException(HERE,"drag_ is NAN!");
 
 	// Updates Fdrive = lift_ * sin(awa) - D * cos(awa);
@@ -846,7 +846,7 @@ void AeroForcesItem::update(int vTW, int aTW) {
 
 	// The righting moment arm is set as the distance between the center of sail effort and
 	// the hydrodynamic center, scaled with cos(PHI)
-	mHeel_ = fSide_ * ( 0.45 * pParser_->get("T") + pParser_->get("AVGFREB") + pSailSet_->get("ZCE") ) * cos( PHI_ );
+	mHeel_ = fSide_ * ( 0.45 * pParser_->get(Var::t_) + pParser_->get(Var::avgfreb_) + pSailSet_->get(Var::zce_) ) * cos( PHI_ );
 	if(mathUtils::isNotValid(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
 
 }
@@ -913,7 +913,7 @@ void AeroForcesItem::plot(MultiplePlotWidget* pMultiPlotWidget ) {
 			update(dg.getTWV(), dg.getTWA());
 
 			// Store velocity-wise data:
-			x_fN[iTwv]= V_ / sqrt( Physic::g * pParser_->get("LWL") );	// Fn...
+			x_fN[iTwv]= V_ / sqrt( Physic::g * pParser_->get(Var::lwl_) );	// Fn...
 
 			if(iTwv==0)
 				fNmin=x_fN[iTwv];
