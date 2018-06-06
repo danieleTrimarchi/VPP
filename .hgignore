@@ -15,6 +15,7 @@ EclipseWorkSpace_VPP/*
 *.xcscheme
 *.plist
 *~
+*.o
 *.out
 *.pdf
 *.pro
