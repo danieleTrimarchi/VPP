@@ -1,16 +1,16 @@
-What's wrong with AF (again) when importing the VPPSettings.xml?
+Plot3d : remove the custom gradient dialog. Assign the red-green by default
+	Same per the Theme. Assign Qt by default
 
-=RE-Templetisation= 
-Also fix the result import <- doing this by templatizing the units. The problem is a dirty trick in variableFileParser::check that must be removed. The idea is to know the unit of the items, and systematically convert to the right unit while pushing the values to the 
-variableFileParser. -> done, but this is not the right way to go. the items own the unit, but they are not templatized on the unit. 
-The current scheme is particoularly stupid, as it forces a clone of the items - implying a  clone of the item AND the children... This is not an option! 
+Add a SailCoefficientFileReadTest. this is no different than the variableFileParserTest
 
 TreeTab is fine, while the General Tab is unused and this is a petty. 
-Populate this tab with settings such as the choice of the solver
+Populate this tab with settings : 
+	- choice of the solver
+	- ...
 
 Export results to excel format
 
-Didn't I solve the combo-box appeareance? The settingswindow is not what I would like! See for instance the battens type in the Sail settings
+Didn't I solve the combo-box appeareance. The settingswindow is not what I would like! See for instance the battens type in the Sail settings. Why? 
 
 ---
 

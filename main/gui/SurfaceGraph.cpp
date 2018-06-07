@@ -8,36 +8,36 @@
 using namespace QtDataVisualization;
 
 SurfaceGraph::SurfaceGraph(Q3DSurface *surface):
-		m_graph(surface),
-		m_rangeMinX(0),
-		m_rangeMinZ(0),
-		m_stepX(0),
-		m_stepZ(0),
-		m_axisMinSliderX(0),
-		m_axisMaxSliderX(0),
-		m_axisMinSliderZ(0),
-		m_axisMaxSliderZ(0) {
+		pGraph_(surface),
+		rangeMinX_(0),
+		rangeMinZ_(0),
+		stepX_(0),
+		stepZ_(0),
+		pAxisMinSliderX_(0),
+		pAxisMaxSliderX_(0),
+		pAxisMinSliderZ_(0),
+		pAxisMaxSliderZ_(0) {
 
-	m_graph->setAxisX(new QValue3DAxis);
-	m_graph->setAxisY(new QValue3DAxis);
-	m_graph->setAxisZ(new QValue3DAxis);
+	pGraph_->setAxisX(new QValue3DAxis);
+	pGraph_->setAxisY(new QValue3DAxis);
+	pGraph_->setAxisZ(new QValue3DAxis);
 
-	m_graph->axisX()->setLabelFormat("%.3f");
-	m_graph->axisY()->setLabelFormat("%.4f");
-	m_graph->axisZ()->setLabelFormat("%.3f");
+	pGraph_->axisX()->setLabelFormat("%.3f");
+	pGraph_->axisY()->setLabelFormat("%.4f");
+	pGraph_->axisZ()->setLabelFormat("%.3f");
 
-	m_graph->axisX()->setTitleVisible(true);
-	m_graph->axisY()->setTitleVisible(true);
-	m_graph->axisZ()->setTitleVisible(true);
+	pGraph_->axisX()->setTitleVisible(true);
+	pGraph_->axisY()->setTitleVisible(true);
+	pGraph_->axisZ()->setTitleVisible(true);
 
-	m_graph->axisX()->setLabelAutoRotation(30);
-	m_graph->axisY()->setLabelAutoRotation(90);
-	m_graph->axisZ()->setLabelAutoRotation(30);
+	pGraph_->axisX()->setLabelAutoRotation(30);
+	pGraph_->axisY()->setLabelAutoRotation(90);
+	pGraph_->axisZ()->setLabelAutoRotation(30);
 
 }
 
 SurfaceGraph::~SurfaceGraph() {
-	delete m_graph;
+	delete pGraph_;
 }
 
 // Show the i-th data (and provide all operations requested
@@ -49,41 +49,43 @@ void SurfaceGraph::show( int iDataSet ) {
 
 	// Remove any previous series (if any) and plot the current series
 	// WARNING : can I remove a non-active series from mGraph?
-	for(size_t iSeries=0; iSeries<m_graph->seriesList().size(); iSeries++){
-		m_graph->removeSeries(m_graph->seriesList().at(iSeries));
+	for(size_t iSeries=0; iSeries<pGraph_->seriesList().size(); iSeries++){
+		pGraph_->removeSeries(pGraph_->seriesList().at(iSeries));
 	}
 
 	// Add the selected series to the 3d plot
-	m_graph->addSeries(vDataSeries_[iDataSet]);
+	pGraph_->addSeries(vDataSeries_[iDataSet]);
 
 	ThreeDDataContainer* pData= &(vThreeDDataContainer_[iDataSet]);
 
-	m_graph->axisX()->setTitle(pData->xAxisLabel_);
-	m_graph->axisY()->setTitle(pData->yAxisLabel_);
-	m_graph->axisZ()->setTitle(pData->zAxisLabel_);
+	pGraph_->axisX()->setTitle(pData->xAxisLabel_);
+	pGraph_->axisY()->setTitle(pData->yAxisLabel_);
+	pGraph_->axisZ()->setTitle(pData->zAxisLabel_);
 
-	m_graph->axisX()->setRange(pData->getXRange()(0), pData->getXRange()(1));
-	m_graph->axisZ()->setRange(pData->getZRange()(0), pData->getZRange()(1));
-	m_graph->axisY()->setRange(pData->getYRange()(0), pData->getYRange()(1));
+	pGraph_->axisX()->setRange(pData->getXRange()(0), pData->getXRange()(1));
+	pGraph_->axisZ()->setRange(pData->getZRange()(0), pData->getZRange()(1));
+	pGraph_->axisY()->setRange(pData->getYRange()(0), pData->getYRange()(1));
 
 	// Reset range sliders for this series
-	m_rangeMinX = pData->getXRange()(0);
-	m_rangeMinZ = pData->getZRange()(0);
-	m_stepX = pData->getDx();
-	m_stepZ = pData->getDz();
+	rangeMinX_ = pData->getXRange()(0);
+	rangeMinZ_ = pData->getZRange()(0);
+	stepX_ = pData->getDx();
+	stepZ_ = pData->getDz();
 
 	int sampleCountX = pData->get()->size();
 	int sampleCountZ = pData->get()->at(0)->size();
 
-	m_axisMinSliderX->setMaximum( sampleCountX - 2);
-	m_axisMinSliderX->setValue(0);
-	m_axisMaxSliderX->setMaximum(sampleCountX - 1);
-	m_axisMaxSliderX->setValue(sampleCountX - 1);
-	m_axisMinSliderZ->setMaximum(sampleCountZ - 2);
-	m_axisMinSliderZ->setValue(0);
-	m_axisMaxSliderZ->setMaximum(sampleCountZ - 1);
-	m_axisMaxSliderZ->setValue(sampleCountZ - 1);
+	pAxisMinSliderX_->setMaximum( sampleCountX - 2);
+	pAxisMinSliderX_->setValue(0);
+	pAxisMaxSliderX_->setMaximum(sampleCountX - 1);
+	pAxisMaxSliderX_->setValue(sampleCountX - 1);
+	pAxisMinSliderZ_->setMaximum(sampleCountZ - 2);
+	pAxisMinSliderZ_->setValue(0);
+	pAxisMaxSliderZ_->setMaximum(sampleCountZ - 1);
+	pAxisMaxSliderZ_->setValue(sampleCountZ - 1);
 
+	// Update the colormap to span the values of this chart
+	setGreenToRedGradient();
 }
 
 void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
@@ -102,92 +104,92 @@ void SurfaceGraph::fillData( ThreeDDataContainer& data ) {
 }
 
 void SurfaceGraph::toggleModeNone() {
-	m_graph->setSelectionMode(QAbstract3DGraph::SelectionNone);
+	pGraph_->setSelectionMode(QAbstract3DGraph::SelectionNone);
 }
 
 void SurfaceGraph::toggleModeItem() {
-	m_graph->setSelectionMode(QAbstract3DGraph::SelectionItem);
+	pGraph_->setSelectionMode(QAbstract3DGraph::SelectionItem);
 }
 
 void SurfaceGraph::toggleModeSliceRow() {
-	m_graph->setSelectionMode(QAbstract3DGraph::SelectionItemAndRow
+	pGraph_->setSelectionMode(QAbstract3DGraph::SelectionItemAndRow
 			| QAbstract3DGraph::SelectionSlice);
 }
 
 void SurfaceGraph::toggleModeSliceColumn() {
-	m_graph->setSelectionMode(QAbstract3DGraph::SelectionItemAndColumn
+	pGraph_->setSelectionMode(QAbstract3DGraph::SelectionItemAndColumn
 			| QAbstract3DGraph::SelectionSlice);
 }
 
 void SurfaceGraph::adjustXMin(int min)
 {
-	float minX = m_stepX * float(min) + m_rangeMinX;
+	float minX = stepX_ * float(min) + rangeMinX_;
 
-	int max = m_axisMaxSliderX->value();
+	int max = pAxisMaxSliderX_->value();
 	if (min >= max) {
 		max = min + 1;
-		m_axisMaxSliderX->setValue(max);
+		pAxisMaxSliderX_->setValue(max);
 	}
-	float maxX = m_stepX * max + m_rangeMinX;
+	float maxX = stepX_ * max + rangeMinX_;
 
 	setAxisXRange(minX, maxX);
 }
 
 void SurfaceGraph::adjustXMax(int max)
 {
-	float maxX = m_stepX * float(max) + m_rangeMinX;
+	float maxX = stepX_ * float(max) + rangeMinX_;
 
-	int min = m_axisMinSliderX->value();
+	int min = pAxisMinSliderX_->value();
 	if (max <= min) {
 		min = max - 1;
-		m_axisMinSliderX->setValue(min);
+		pAxisMinSliderX_->setValue(min);
 	}
-	float minX = m_stepX * min + m_rangeMinX;
+	float minX = stepX_ * min + rangeMinX_;
 
 	setAxisXRange(minX, maxX);
 }
 
 void SurfaceGraph::adjustZMin(int min)
 {
-	float minZ = m_stepZ * float(min) + m_rangeMinZ;
+	float minZ = stepZ_ * float(min) + rangeMinZ_;
 
-	int max = m_axisMaxSliderZ->value();
+	int max = pAxisMaxSliderZ_->value();
 	if (min >= max) {
 		max = min + 1;
-		m_axisMaxSliderZ->setValue(max);
+		pAxisMaxSliderZ_->setValue(max);
 	}
-	float maxZ = m_stepZ * max + m_rangeMinZ;
+	float maxZ = stepZ_ * max + rangeMinZ_;
 
 	setAxisZRange(minZ, maxZ);
 }
 
 void SurfaceGraph::adjustZMax(int max)
 {
-	float maxZ = m_stepZ * float(max) + m_rangeMinZ;
+	float maxZ = stepZ_ * float(max) + rangeMinZ_;
 
-	int min = m_axisMinSliderZ->value();
+	int min = pAxisMinSliderZ_->value();
 	if (max <= min) {
 		min = max - 1;
-		m_axisMinSliderZ->setValue(min);
+		pAxisMinSliderZ_->setValue(min);
 	}
-	float minZ = m_stepZ * min + m_rangeMinZ;
+	float minZ = stepZ_ * min + rangeMinZ_;
 
 	setAxisZRange(minZ, maxZ);
 }
 
 void SurfaceGraph::setAxisXRange(float min, float max)
 {
-	m_graph->axisX()->setRange(min, max);
+	pGraph_->axisX()->setRange(min, max);
 }
 
 void SurfaceGraph::setAxisZRange(float min, float max)
 {
-	m_graph->axisZ()->setRange(min, max);
+	pGraph_->axisZ()->setRange(min, max);
 }
 
 void SurfaceGraph::changeTheme(int theme)
 {
-	m_graph->activeTheme()->setType(Q3DTheme::Theme(theme));
+	pGraph_->activeTheme()->setType(Q3DTheme::Theme(theme));
 }
 
 void SurfaceGraph::setBlackToYellowGradient()
@@ -198,9 +200,9 @@ void SurfaceGraph::setBlackToYellowGradient()
 	gr.setColorAt(0.67, Qt::red);
 	gr.setColorAt(1.0, Qt::yellow);
 
-	for(size_t i=0; i<m_graph->seriesList().size(); i++) {
-		m_graph->seriesList().at(i)->setBaseGradient(gr);
-		m_graph->seriesList().at(i)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
+	for(size_t i=0; i<pGraph_->seriesList().size(); i++) {
+		pGraph_->seriesList().at(i)->setBaseGradient(gr);
+		pGraph_->seriesList().at(i)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
 	}
 }
 
@@ -212,24 +214,24 @@ void SurfaceGraph::setGreenToRedGradient()
 	gr.setColorAt(0.8, Qt::red);
 	gr.setColorAt(1.0, Qt::darkRed);
 
-	for(size_t i=0; i<m_graph->seriesList().size(); i++) {
-		m_graph->seriesList().at(i)->setBaseGradient(gr);
-		m_graph->seriesList().at(i)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
+	for(size_t i=0; i<pGraph_->seriesList().size(); i++) {
+		pGraph_->seriesList().at(i)->setBaseGradient(gr);
+		pGraph_->seriesList().at(i)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
 	}
 }
 
 void SurfaceGraph::setAxisMinSliderX(QSlider *slider) {
-	m_axisMinSliderX = slider;
+	pAxisMinSliderX_ = slider;
 }
 
 void SurfaceGraph::setAxisMaxSliderX(QSlider *slider) {
-	m_axisMaxSliderX = slider;
+	pAxisMaxSliderX_ = slider;
 }
 
 void SurfaceGraph::setAxisMinSliderZ(QSlider *slider) {
-	m_axisMinSliderZ = slider;
+	pAxisMinSliderZ_ = slider;
 }
 
 void SurfaceGraph::setAxisMaxSliderZ(QSlider *slider) {
-	m_axisMaxSliderZ = slider;
+	pAxisMaxSliderZ_ = slider;
 }

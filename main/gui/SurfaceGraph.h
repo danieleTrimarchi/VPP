@@ -52,19 +52,19 @@ class SurfaceGraph : public QObject {
 		void show( int iDataSet );
 
 		private:
-		Q3DSurface *m_graph;
+		Q3DSurface *pGraph_;
 		vector<QSurfaceDataProxy*> vDataProxy_;
 		vector<QSurface3DSeries*> vDataSeries_;
 		vector<ThreeDDataContainer> vThreeDDataContainer_;
 
-		QSlider *m_axisMinSliderX;
-		QSlider *m_axisMaxSliderX;
-		QSlider *m_axisMinSliderZ;
-		QSlider *m_axisMaxSliderZ;
-		float m_rangeMinX;
-		float m_rangeMinZ;
-		float m_stepX;
-		float m_stepZ;
+		QSlider *pAxisMinSliderX_;
+		QSlider *pAxisMaxSliderX_;
+		QSlider *pAxisMinSliderZ_;
+		QSlider *pAxisMaxSliderZ_;
+		float rangeMinX_;
+		float rangeMinZ_;
+		float stepX_;
+		float stepZ_;
 
 		void setAxisXRange(float min, float max);
 		void setAxisZRange(float min, float max);
