@@ -31,8 +31,13 @@ void VPPSettingsDialog::read(QFile& file) {
 }
 
 // Handle on the settingsTree tab
-TreeTab* VPPSettingsDialog::getSettingsTreeTab() {
+TreeTab* VPPSettingsDialog::getSettingsTreeTab() const {
 	return pSettingsTreeTab_;
+}
+
+// Handle on the settingsTree tab
+GeneralTab* VPPSettingsDialog::getGeneralTab() const {
+	return pGeneralTab_;
 }
 
 // Ctor
@@ -54,8 +59,10 @@ VPPSettingsDialog::VPPSettingsDialog(QWidget* myparent)
 	// onward, the treeTab is a child of the tabWidget!
 	pTabWidget_->addTab(pSettingsTreeTab_, tr("VPP Settings"));
 
+	pGeneralTab_ = new GeneralTab(this);
+
 	// Add a general tab (a tab containing general settings, not sure if we'll keep this)
-	pTabWidget_->addTab(new GeneralTab(this), tr("General"));
+	pTabWidget_->addTab(pGeneralTab_, tr("General"));
 
 	// Add the buttons 'OK' and "Cancel'
 	pButtonBox_ = new QDialogButtonBox(	QDialogButtonBox::Ok |
@@ -107,6 +114,7 @@ void VPPSettingsDialog::reject() {
 VPPSettingsDialog::VPPSettingsDialog() :
 		pTabWidget_(0),
 		pSettingsTreeTab_(0),
+		pGeneralTab_(0),
 		pButtonBox_(0){
 
 }

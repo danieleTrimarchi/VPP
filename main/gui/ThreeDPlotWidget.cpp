@@ -151,7 +151,6 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	pSelectionVLayout->addWidget(pModeSliceColumnSelection);
 	pSelectionModeGroupBox->setLayout(pSelectionVLayout);
 
-
 	// --
 
 	// Define the sliders (used to hide part of the surface)
@@ -171,51 +170,6 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	axisMaxSliderZ->setMinimum(1);
 	axisMaxSliderZ->setTickInterval(1);
 	axisMaxSliderZ->setEnabled(true);
-
-//	// Define a combo-box for the background theme
-//	QComboBox* themeList = new QComboBox(pWidget_);
-//	themeList->addItem(QStringLiteral("Qt"));
-//	themeList->addItem(QStringLiteral("Primary Colors"));
-//	themeList->addItem(QStringLiteral("Digia"));
-//	themeList->addItem(QStringLiteral("Stone Moss"));
-//	themeList->addItem(QStringLiteral("Army Blue"));
-//	themeList->addItem(QStringLiteral("Retro"));
-//	themeList->addItem(QStringLiteral("Ebony"));
-//	themeList->addItem(QStringLiteral("Isabelle"));
-//	font = themeList->font();
-//	font.setPointSizeF(fontSize_);
-//	themeList->setFont(font);
-
-	// Finally define a container for the color-maps to be applied to the 3d surface
-//	QGroupBox* colorGroupBox = new QGroupBox(QStringLiteral("Custom gradient"));
-//	font = colorGroupBox->font();
-//	font.setPointSizeF(fontSize_);
-//	colorGroupBox->setFont(font);
-
-//	// Define a color gradient and assign it to a button.
-//	QLinearGradient grGtoR(0, 0, 1, 100);
-//	grGtoR.setColorAt(1.0, Qt::darkGreen);
-//	grGtoR.setColorAt(0.5, Qt::yellow);
-//	grGtoR.setColorAt(0.2, Qt::red);
-//	grGtoR.setColorAt(0.0, Qt::darkRed);
-//	QPixmap pm(12, 100);
-//	QPainter pmp(&pm);
-//	pmp.setBrush(QBrush(grGtoR));
-//	pmp.drawRect(0, 0, 12, 100);
-//	QPushButton *gradientGtoRPB = new QPushButton(pWidget_);
-//	gradientGtoRPB->setIcon(QIcon(pm));
-//	gradientGtoRPB->setIconSize(QSize(12, 100));
-
-	// Define a layout and assign it to the container
-//	QHBoxLayout *colorHBox = new QHBoxLayout;
-//	colorHBox->addWidget(gradientBtoYPB);
-//	colorHBox->addWidget(gradientGtoRPB);
-//	colorGroupBox->setLayout(colorHBox);
-
-//	gradientBtoYPB->setMinimumWidth(6);
-//	gradientGtoRPB->setMinimumWidth(6);
-//	colorGroupBox->setMinimumWidth(12);
-	//colorHBox->setMargin(0);
 
 	//--
 
@@ -242,15 +196,6 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 	vLayout->addWidget(axisMinSliderZ);
 	vLayout->addWidget(axisMaxSliderZ);
 
-//	QWidget* pThemeWidget= new QLabel(QStringLiteral("Theme"));
-//	font = pThemeWidget->font();
-//	font.setPointSizeF(fontSize_);
-//	pThemeWidget->setFont(font);
-//	vLayout->addWidget(pThemeWidget);
-
-	//vLayout->addWidget(themeList);
-	//vLayout->addWidget(colorGroupBox);
-
 	pWidget_->show();
 
 	//----------------------------------------------------------------------------------
@@ -275,12 +220,6 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 			surfaceGraph_, &SurfaceGraph::adjustZMin);
 	QObject::connect(axisMaxSliderZ, &QSlider::valueChanged,
 			surfaceGraph_, &SurfaceGraph::adjustZMax);
-//	QObject::connect(	themeList, 		SIGNAL(currentIndexChanged(int)),
-//										surfaceGraph_,SLOT(changeTheme(int)));
-//	QObject::connect(gradientBtoYPB, &QPushButton::pressed,
-//			surfaceGraph_, &SurfaceGraph::setBlackToYellowGradient);
-//	QObject::connect(gradientGtoRPB, &QPushButton::pressed,
-//			surfaceGraph_, &SurfaceGraph::setGreenToRedGradient);
 	// Connect the choice of the surface to plot
 	QObject::connect(	surfaceList_,  SIGNAL(currentIndexChanged(int)),
 										surfaceGraph_, SLOT(show(int)) );

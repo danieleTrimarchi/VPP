@@ -38,6 +38,7 @@
 #include "VPPSettingsDialog.h"
 #include "VariableTreeModel.h"
 #include "VppToolbarAction.h"
+#include "GeneralTab.h"
 
 // Stream used to redirect cout to the log window
 // This object is explicitly deleted in the destructor
@@ -371,13 +372,30 @@ void MainWindow::run() {
 		// time the settings change. But this seems relatively heavy to do
 		updateVppItems();
 
-		// todo dtrimarchi : this should be selected by a switch in the UI!
-		// Instantiate a solver by default. This can be an optimizer (with opt vars)
+		// Get the settings dialog
+		VPPSettingsDialog* pSd = VPPSettingsDialog::getInstance(this);
+
+		// Instantiate a solver. This can be an optimizer (with opt vars)
 		// or a simple solver that will keep fixed the values of the optimization vars
-		//pSolverFactory_.reset( new Optim::SolverFactory(pVppItems_) );
-		//pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );
-		//pSolverFactory_.reset( 	new Optim::SAOASolverFactory(pVppItems_) );
-		pSolverFactory_.reset( new Optim::IppOptSolverFactory(pVppItems_) );
+
+		switch(pSd->getGeneralTab()->getSolver()){
+		case solverChoice::nlOpt :
+			pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );
+			break;
+		case solverChoice::ipOpt :
+			pSolverFactory_.reset( new Optim::IppOptSolverFactory(pVppItems_) );
+			break;
+		case solverChoice::noOpt :
+			pSolverFactory_.reset( new Optim::SolverFactory(pVppItems_) );
+			break;
+		case solverChoice::saoa :
+			pSolverFactory_.reset( 	new Optim::SAOASolverFactory(pVppItems_) );
+			break;
+		default:
+			char msg[256];
+			sprintf(msg,"The value of solver: \"%d\" is not supported",pSd->getGeneralTab()->getSolver());
+			throw std::logic_error(msg);
+		}
 
 		std::cout<<"Running the VPP analysis... "<<std::endl;
 

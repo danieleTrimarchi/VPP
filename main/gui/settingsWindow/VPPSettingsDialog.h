@@ -8,6 +8,9 @@
 #include <QtWidgets/QTabWidget>
 #include "TreeTab.h"
 
+/// Forward declarations
+class GeneralTab;
+
 /// Implements the VPP Settings Dialog, or the settings window where it is
 /// possible to edit all properties requested to run the VPP
 /// Implements a singleton
@@ -27,7 +30,10 @@ class VPPSettingsDialog : public QDialog {
 		void read(QFile& file);
 
 		/// Handle on the settingsTree tab
-		TreeTab* getSettingsTreeTab();
+		TreeTab* getSettingsTreeTab() const;
+
+		/// Handle on the settingsTree tab
+		GeneralTab* getGeneralTab() const;
 
 	public Q_SLOTS:
 
@@ -53,6 +59,9 @@ class VPPSettingsDialog : public QDialog {
 
 		/// Ptr to the tree tab. This needs to be known for synchronization
 		TreeTab* pSettingsTreeTab_;
+
+		/// Ptr to the general tab.
+		GeneralTab* pGeneralTab_;
 
 		/// The Dialog also has two buttons to save or cancel the editing
 		QDialogButtonBox* pButtonBox_;

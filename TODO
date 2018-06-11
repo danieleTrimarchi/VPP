@@ -1,12 +1,13 @@
-Plot3d : remove the custom gradient dialog. Assign the red-green by default
-	Same per the Theme. Assign Qt by default
-
-Add a SailCoefficientFileReadTest. this is no different than the variableFileParserTest
-
 TreeTab is fine, while the General Tab is unused and this is a petty. 
 Populate this tab with settings : 
 	- choice of the solver
 	- ...
+
+Refactor the combo-boxes - see ctor of GeneralTab
+
+I have nice combo-box in the 3d plot window. Can't I insert these in the item tree? 
+
+Add a SailCoefficientFileReadTest. this is no different than the variableFileParserTest
 
 Export results to excel format
 
