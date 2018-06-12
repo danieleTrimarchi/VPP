@@ -1,7 +1,4 @@
-TreeTab is fine, while the General Tab is unused and this is a petty. 
-Populate this tab with settings : 
-	- choice of the solver
-	- ...
+the solver choice in the General Tab should also be saved with the settings!
 
 Refactor the combo-boxes - see ctor of GeneralTab
 

@@ -114,7 +114,7 @@ class VPPSolverBase {
 	private:
 
 		/// Declare a static const initial guess state vector
-		static Eigen::VectorXd xp0_;
+		static const Eigen::VectorXd xp0_;
 
 
 };

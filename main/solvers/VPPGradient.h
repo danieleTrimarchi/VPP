@@ -22,7 +22,7 @@ class VPPGradient : public Eigen::VectorXd {
 	public:
 
 		/// Constructor
-		VPPGradient(VectorXd& x,VPPItemFactory* pVppItemsContainer );
+		VPPGradient(const VectorXd& x,VPPItemFactory* pVppItemsContainer );
 
 		/// Set the operation point and run to compute the derivatives
 		void run(const VectorXd& x, int twv, int twa);
@@ -40,7 +40,7 @@ class VPPGradient : public Eigen::VectorXd {
 	private:
 
 		/// Const reference to the VPP state vector
-		VectorXd& x_;
+		VectorXd x_;
 
 		/// Vector with the very first initial guess for the current configuration
 		/// Used to debug when the solver cannot produce a solution

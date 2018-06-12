@@ -3,7 +3,7 @@
 #include "math.h"
 
 // Constructor - square pb
-VPPGradient::VPPGradient(VectorXd& x,VPPItemFactory* pVppItemsContainer):
+VPPGradient::VPPGradient(const VectorXd& x,VPPItemFactory* pVppItemsContainer):
 x_(x),
 xp0_(x),
 pVppItemsContainer_(pVppItemsContainer),

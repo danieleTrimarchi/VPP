@@ -10,7 +10,7 @@ using namespace mathUtils;
 //// VPPSolverBase class  //////////////////////////////////////////////
 // Init static member
 boost::shared_ptr<VPPItemFactory> VPPSolverBase::pVppItemsContainer_;
-Eigen::VectorXd VPPSolverBase::xp0_((Eigen::VectorXd(4) << .5, 0., 0., 1.).finished());
+const Eigen::VectorXd VPPSolverBase::xp0_((Eigen::VectorXd(4) << .5, 0., 0., 1.).finished());
 
 // Constructor
 VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
@@ -98,9 +98,10 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 
 		// This is the very first solution, so we must guess a solution
 		// but have nothing to establish our guess
-		if(TWA==0)
+		if(TWA==0){
+			std::cout<<"==>> RE-INIT the solution to xp0_= "<<xp0_.transpose()<<std::endl;
 			xp_= xp0_;
-
+		}
 		else
 
 			if(!pResults_->get(TWV,TWA-1).discard())// In this case we have a solution at a previous angle we can use
@@ -173,14 +174,14 @@ void VPPSolverBase::resetInitialGuess(int TWV, int TWA) {
 				//std::cout<<"Resetting xp_["<<i<<"]= "<< xp_[i]<<" to the lower bound "<<lowerBounds_[i]<<std::endl;
 				xp_[i]=lowerBounds_[i];
 			}
-			if(xp_[i]>upperBounds_[i]){
+			if(xp_[i]>upperBounds_[i]) {
 				//std::cout<<"Resetting xp_["<<i<<"]= "<< xp_[i]<<" to the upper bound "<<upperBounds_[i]<<std::endl;
 				xp_[i]=upperBounds_[i];
 			}
 		}
 	}
 
-	//std::cout<<"-->> solver first guess: "<<xp_.transpose()<<std::endl;
+	std::cout<<"-->> solver first guess: "<<xp_.transpose()<<std::endl;
 
 }
 
