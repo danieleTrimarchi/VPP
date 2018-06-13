@@ -1,8 +1,12 @@
 the solver choice in the General Tab should also be saved with the settings!
+Refactor VppSettingsXmlReader/Writer and VppGeneralTabXmlReader/Writer
+
+Restore the xmlIOTest
 
 Refactor the combo-boxes - see ctor of GeneralTab
 
 I have nice combo-box in the 3d plot window. Can't I insert these in the item tree? 
+
 
 Add a SailCoefficientFileReadTest. this is no different than the variableFileParserTest
 

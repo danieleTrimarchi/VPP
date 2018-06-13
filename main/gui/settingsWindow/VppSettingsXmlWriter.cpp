@@ -18,28 +18,27 @@ VppSettingsXmlWriter::VppSettingsXmlWriter(QIODevice *device) :
 	writeDTD("<!DOCTYPE vppSettings>");
 	writeStartElement("vppSettings");
 	writeAttribute("version", "1.0");
-
 }
 
 // Dtor
 VppSettingsXmlWriter::~VppSettingsXmlWriter() {
 
 	writeEndDocument();
-
 }
 
 //====================================================================
 
 // Ctor
-VPPSettingsXmlWriterVisitor::VPPSettingsXmlWriterVisitor(QIODevice*device) {
+VPPSettingsXmlWriterVisitor::VPPSettingsXmlWriterVisitor(VppSettingsXmlWriter* pWriter) :
+		pXmlWriter_(pWriter){
 
-	// Instantiate the xml writer
-	pXmlWriter_.reset(new VppSettingsXmlWriter(device));
+	// Write the header for this section of the xml document
+	pXmlWriter_->writeStartElement("vppSettingTree");
 }
 
 // Dtor
 VPPSettingsXmlWriterVisitor::~VPPSettingsXmlWriterVisitor() {
-
+	pXmlWriter_->writeEndElement();
 }
 
 void VPPSettingsXmlWriterVisitor::visitBegin(SettingsItemBase* item) {

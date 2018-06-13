@@ -48,7 +48,7 @@ class VPPSettingsXmlWriterVisitor {
 	public:
 
 		/// Ctor
-		VPPSettingsXmlWriterVisitor(QIODevice *device);
+		VPPSettingsXmlWriterVisitor(VppSettingsXmlWriter* pWriter);
 
 		/// Dtor
 		~VPPSettingsXmlWriterVisitor();
@@ -87,7 +87,7 @@ class VPPSettingsXmlWriterVisitor {
 	private:
 
 		/// Ptr to the xml writer
-		boost::shared_ptr<VppSettingsXmlWriter> pXmlWriter_;
+		VppSettingsXmlWriter* pXmlWriter_;
 
 };
 

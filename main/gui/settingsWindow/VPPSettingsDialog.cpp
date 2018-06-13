@@ -18,15 +18,31 @@ VPPSettingsDialog* VPPSettingsDialog::getInstance(QWidget *parent){
 // Save the settings to file
 void VPPSettingsDialog::save(QFile& file) {
 
-	// Save the content of the pTreeTab
-	pSettingsTreeTab_->save(file);
+//	// Save the content of the Settings Tree tab
+//	pSettingsTreeTab_->save(file);
+//	// Save the content of the settings General tab
+//	pGeneralTab_->save(file);
+
+	// NEW DESIGN:
+	//	 1_ Instantiate a VppXmlWriter
+	boost::shared_ptr<VppSettingsXmlWriter> pXmlWriter(new VppSettingsXmlWriter(&file));
+
+	// 2_ Save the content of the settings tree tab
+	pSettingsTreeTab_->save(pXmlWriter.get());
+
+	// 2_ Save the content of the general tab
+	pGeneralTab_->save(pXmlWriter.get());
+
 }
 
 // Read some settings from file
 void VPPSettingsDialog::read(QFile& file) {
 
-	// Save the content of the pTreeTab
+	// Read and populate the Settings Tree Tab
 	pSettingsTreeTab_->read(file);
+
+	// Read and populate the General Tab
+	pGeneralTab_->read(file);
 
 }
 

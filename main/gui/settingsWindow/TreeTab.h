@@ -28,10 +28,10 @@ class TreeTab : public QWidget {
 		/// Save the model the user has edited to the underlying (permanent) model
 		void save();
 
-		/// Save the settings to file
-		void save(QFile& file);
+		/// Save the settings to xml file
+		void save(VppSettingsXmlWriter* pWriter);
 
-		/// Read the settings to file
+		/// Read the settings from xml file
 		void read(QFile& file);
 
 		/// When the user hits 'cancel' in the main dialog, we

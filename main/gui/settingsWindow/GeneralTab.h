@@ -1,8 +1,18 @@
 #ifndef GENERAL_TAB_H
 #define GENERAL_TAB_H
 
+#include <string>
 #include <QWidget>
 #include <QtWidgets/QComboBox>
+#include <QtCore/QXmlStreamWriter>
+#include "boost/shared_ptr.hpp"
+#include "VppSettingsXmlWriter.h"
+
+using namespace std;
+
+/// Forward declarations
+class QFile;
+class GeneralTab;
 
 /// Enum expressing the solver choice made by the user
 enum solverChoice {
@@ -11,6 +21,59 @@ enum solverChoice {
 	noOpt,
 	saoa
 };
+
+/// XML writer class, contains a QXmlStreamWriter that
+/// actually does the job of writing the XML file.
+/// See similitude with VppSettingsXmlWriter, from which
+/// this class derives
+class VppGeneralTabXmlWriter {
+
+	public:
+
+		/// Ctor
+		VppGeneralTabXmlWriter(VppSettingsXmlWriter* pWriter);
+
+		/// Dtor
+		~VppGeneralTabXmlWriter();
+
+		/// Write the content of the general tab to xml
+		void write(const GeneralTab*);
+
+	private:
+
+		/// Ptr to the xml writer
+		VppSettingsXmlWriter* pXmlWriter_;
+
+};
+
+
+class VppGeneralTabXmlReader {
+
+	public:
+
+		/// Ctor
+		VppGeneralTabXmlReader(QIODevice* pFile =Q_NULLPTR);
+
+		/// Read from file
+		bool read(const GeneralTab* pGenTab, QIODevice *device =Q_NULLPTR);
+
+	private:
+
+		/// Test : recursively read the xml
+		void readRecursive();
+
+		/// Read the content of the file
+		void readItems();
+
+		/// XML file the items should be read from
+		QIODevice* pFile_;
+
+		/// Underlying xml reader
+		boost::shared_ptr<QXmlStreamReader> pXml_;
+
+};
+
+//====================================================================
 
 /// Base Class for the tabs to be inserted into the VPPSettingsDialog
 /// Directly derived from the Qt tab dialog example
@@ -22,7 +85,19 @@ class GeneralTab : public QWidget {
 
 		explicit GeneralTab(QWidget *parent = 0);
 
+		/// Returns the index of the solver currently being
+		/// selected in the solver combo box
 		int getSolver() const;
+
+		/// Returns the name of the solver currently being
+		/// selected in the solver combo box
+		QString getSolverName() const;
+
+		/// Save the settings to xml file
+		void save(VppSettingsXmlWriter* pWriter);
+
+		/// Read the settings from xml file
+		void read(QFile& file);
 
 	private:
 

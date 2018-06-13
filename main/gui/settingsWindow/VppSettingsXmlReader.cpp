@@ -158,7 +158,7 @@ bool VppSettingsXmlReader::read(QIODevice *device) {
 
 		// If everything is fine, read the item
 		if (pXml_->name() == "vppSettings" && pXml_->attributes().value("version") == "1.0")
-			read(pRootItem_.get());
+			readItems(pRootItem_.get());
 
 		else
 			pXml_->raiseError(QObject::tr("The file is not a VppSettings version 1.0 file."));
@@ -172,7 +172,7 @@ boost::shared_ptr<SettingsItemBase> VppSettingsXmlReader::getRoot() {
 	return pRootItem_;
 }
 
-void VppSettingsXmlReader::read(Item* parentItem) {
+void VppSettingsXmlReader::readItems(Item* parentItem) {
 
 	//Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "vppSettings");
 
@@ -209,12 +209,12 @@ void VppSettingsXmlReader::read(Item* parentItem) {
 
 		if(dynamic_cast<SettingsItemRoot*>(pItem)){
 			// Substitute the root with the new brand new root we just created
-			read(pRootItem_.get());
+			readItems(pRootItem_.get());
 		}	else {
 			// Append the child to its parent
 			parentItem->appendChild(pItem);
 			// Read all the children of the current item
-			read(parentItem->child(parentItem->childCount()-1));
+			readItems(parentItem->child(parentItem->childCount()-1));
 		}
 	}
 }
