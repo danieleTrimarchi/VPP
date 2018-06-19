@@ -72,7 +72,7 @@ bool VPP_NLP::get_nlp_info(int& dimension, int& nEqualityConstraints, int& nnz_j
 	// hessian_approximation","limited-memory"
 	nnz_h_lag = 10;
 
-	// Use the C style indexing (0-based)
+	// Use the C style Ipopt::Indexing (0-based)
 	int_style = TNLP::C_STYLE;
 
 	return true;
@@ -118,9 +118,9 @@ bool VPP_NLP::get_bounds_info(int n, double* x_l, double* x_u,
 // typically of the order 0.1   10.
 // -----
 bool VPP_NLP::get_scaling_parameters(double& obj_scaling,
-                                    bool& use_x_scaling, Index n,
+                                    bool& use_x_scaling, Ipopt::Index n,
 																		double* x_scaling,
-                                    bool& use_g_scaling, Index m,
+                                    bool& use_g_scaling, Ipopt::Index m,
 																		double* g_scaling) {
 
 	assert(n == dimension_);

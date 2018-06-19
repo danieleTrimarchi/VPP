@@ -6,8 +6,10 @@
 #include <iostream>
 #include <sstream>
 #include <set>
+#include <string>
 #include "GetItemVisitor.h"
 #include "SettingsItem.h"
+#include "VppTags.h"
 
 using namespace std;
 
@@ -137,8 +139,17 @@ VppSettingsXmlReader::VppSettingsXmlReader(QIODevice* pFile) :
 	// Generate a new root that will be used to store the items
 	pRootItem_.reset(new SettingsItemRoot);
 
-	// Instantiate a xml reader. The device will be assigned later on
-	pXml_.reset(new QXmlStreamReader);
+	// who am I reading from?
+	setDevice(pFile_);
+
+	// Verify this is suitable file (vppSettings v.1.0). Otherwise throw
+	if (readNextStartElement()) {
+
+		// If everything is fine, read the item
+		if (!(name() == "vppSettings" && attributes().value("version") == "1.0"))
+			raiseError(QObject::tr("The file is not a VppSettings version 1.0 file."));
+
+	}
 
 	// One could assign icons here (see xbelReader example) but I do not
 	// need icons for the vpp settings
@@ -147,24 +158,34 @@ VppSettingsXmlReader::VppSettingsXmlReader(QIODevice* pFile) :
 bool VppSettingsXmlReader::read(QIODevice *device) {
 
 	// If there is a new source, use it
-	if(device)
+    if(device) {
 		pFile_ = device;
-
-	// who am I reading from?
-	pXml_->setDevice(pFile_);
+        setDevice(pFile_);
+    }
 
 	// Verify this is suitable file (vppSettings v.1.0). Otherwise throw
-	if (pXml_->readNextStartElement()) {
+	if (readNextStartElement()) {
+
+		string name(QXmlStreamReader::name().toString().toStdString());
 
 		// If everything is fine, read the item
-		if (pXml_->name() == "vppSettings" && pXml_->attributes().value("version") == "1.0")
+		if ( QXmlStreamReader::name() == vppSettingTreeTag.c_str())
 			readItems(pRootItem_.get());
 
 		else
-			pXml_->raiseError(QObject::tr("The file is not a VppSettings version 1.0 file."));
+			raiseError(QObject::tr("The file is not a VppSettings version 1.0 file."));
 	}
 
-	return !pXml_->error();
+	// Verify this is suitable file (vppSettings v.1.0). Otherwise throw
+	if (readNextStartElement()) {
+
+		string name(QXmlStreamReader::name().toString().toStdString());
+		// If everything is fine, read the item
+		if ( QXmlStreamReader::name() == vppGeneralSettingTag.c_str())
+			std::cout<<"Getting into the General tab section\n";
+	}
+
+	return !error();
 }
 
 // Return the tree populated with the items from the xml
@@ -176,15 +197,15 @@ void VppSettingsXmlReader::readItems(Item* parentItem) {
 
 	//Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "vppSettings");
 
-	while (pXml_->readNextStartElement()) {
+	while (readNextStartElement()) {
 
 		// Instantiate a xmlAttributeSet and push all the attributes
 		XmlAttributeSet attSet;
 
-		for(size_t i=0; i<pXml_->attributes().size(); i++){
+		for(size_t i=0; i<attributes().size(); i++){
 
-			string attName= pXml_->attributes().at(i).name().toString().toStdString();
-			string attValue= pXml_->attributes().at(i).value().toString().toStdString();
+			string attName= attributes().at(i).name().toString().toStdString();
+			string attValue= attributes().at(i).value().toString().toStdString();
 			//std::cout<<"Reading attName: "<<attName<<" and attValue: "<<attValue<<std::endl;
 
 			// Insert the attribute into the attribute set
@@ -222,18 +243,16 @@ void VppSettingsXmlReader::readItems(Item* parentItem) {
 QString VppSettingsXmlReader::errorString() const {
 
 	return QObject::tr("%1\nLine %2, column %3")
-	.arg(pXml_->errorString())
-	.arg(pXml_->lineNumber())
-	.arg(pXml_->columnNumber());
+	.arg(errorString())
+	.arg(lineNumber())
+	.arg(columnNumber());
 }
 
 //====================================================================
 
 // Ctor
-VPPSettingsXmlReaderVisitor::VPPSettingsXmlReaderVisitor(QIODevice* pFile) {
-
-	// Instantiate the xml reader
-	pXmlReader_.reset(new VppSettingsXmlReader(pFile));
+VPPSettingsXmlReaderVisitor::VPPSettingsXmlReaderVisitor(VppSettingsXmlReader* pReader) :
+	pXmlReader_(pReader) {
 
 }
 

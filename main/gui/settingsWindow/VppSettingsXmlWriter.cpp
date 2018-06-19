@@ -4,6 +4,7 @@
 #include <QtWidgets>
 #include "VPPException.h"
 #include "Units.h"
+#include "VppTags.h"
 
 VppSettingsXmlWriter::VppSettingsXmlWriter(QIODevice *device) :
 			pOutDevice_(device) {
@@ -33,7 +34,7 @@ VPPSettingsXmlWriterVisitor::VPPSettingsXmlWriterVisitor(VppSettingsXmlWriter* p
 		pXmlWriter_(pWriter){
 
 	// Write the header for this section of the xml document
-	pXmlWriter_->writeStartElement("vppSettingTree");
+	pXmlWriter_->writeStartElement(vppSettingTreeTag.c_str());
 }
 
 // Dtor

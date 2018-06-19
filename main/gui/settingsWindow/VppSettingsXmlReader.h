@@ -97,7 +97,7 @@ class XmlAttributeSet : public set<XmlAttribute> {
 
 //====================================================================
 
-class VppSettingsXmlReader {
+class VppSettingsXmlReader : public QXmlStreamReader {
 
 	public:
 
@@ -118,9 +118,6 @@ class VppSettingsXmlReader {
 		/// Read the content of the file
 		void readItems(Item*);
 
-		/// Underlying xml reader
-		boost::shared_ptr<QXmlStreamReader> pXml_;
-
 		/// Root for the settings item read from xml
 		boost::shared_ptr<SettingsItemBase> pRootItem_;
 
@@ -137,7 +134,7 @@ class VPPSettingsXmlReaderVisitor {
 	public:
 
 		/// Ctor
-		VPPSettingsXmlReaderVisitor(QIODevice *device);
+		VPPSettingsXmlReaderVisitor(VppSettingsXmlReader* pReader);
 
 		/// Dtor
 		~VPPSettingsXmlReaderVisitor();

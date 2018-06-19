@@ -47,12 +47,12 @@ class VPP_NLP : public TNLP, public VPPSolverBase {
 		virtual ~VPP_NLP();
 
 		/// Method to return some info about the nlp
-		virtual bool get_nlp_info(Index& n, Index& m, Index& nnz_jac_g,
-				Index& nnz_h_lag, IndexStyleEnum& index_style);
+		virtual bool get_nlp_info(Ipopt::Index& n, Ipopt::Index& m, Ipopt::Index& nnz_jac_g,
+				Ipopt::Index& nnz_h_lag, IndexStyleEnum& Index_style);
 
 		/// Method to return the bounds for my problem
-		virtual bool get_bounds_info(Index n, Number* x_l, Number* x_u,
-				Index m, Number* g_l, Number* g_u);
+		virtual bool get_bounds_info(Ipopt::Index n, Number* x_l, Number* x_u,
+				Ipopt::Index m, Number* g_l, Number* g_u);
 
 		/// Overrides Ipopt::TPNLP get_scaling_parameters. Provide scaling
 		/// factors for the objective function as well as for the optimization
@@ -67,45 +67,45 @@ class VPP_NLP : public TNLP, public VPPSolverBase {
 		/// typically of the order 0.1   10.
 		/// -----
 		virtual bool get_scaling_parameters(Number& obj_scaling,
-				bool& use_x_scaling, Index n,
+				bool& use_x_scaling, Ipopt::Index n,
 				Number* x_scaling,
-				bool& use_g_scaling, Index m,
+				bool& use_g_scaling, Ipopt::Index m,
 				Number* g_scaling);
 
 		/// Method to return the starting point for the algorithm
-		virtual bool get_starting_point(Index n, bool init_x, Number* x,
+		virtual bool get_starting_point(Ipopt::Index n, bool init_x, Number* x,
 				bool init_z, Number* z_L, Number* z_U,
-				Index m, bool init_lambda,
+				Ipopt::Index m, bool init_lambda,
 				Number* lambda);
 
 		/// Method to return the objective value
-		virtual bool eval_f(Index n, const Number* x, bool new_x, Number& obj_value);
+		virtual bool eval_f(Ipopt::Index n, const Number* x, bool new_x, Number& obj_value);
 
 		/// Method to return the gradient of the objective
-		virtual bool eval_grad_f(Index n, const Number* x, bool new_x, Number* grad_f);
+		virtual bool eval_grad_f(Ipopt::Index n, const Number* x, bool new_x, Number* grad_f);
 
 		/// Method to return the constraint residuals
-		virtual bool eval_g(Index n, const Number* x, bool new_x, Index m, Number* g);
+		virtual bool eval_g(Ipopt::Index n, const Number* x, bool new_x, Ipopt::Index m, Number* g);
 
 		/// Method to return:
 		///  1) The structure of the jacobian (if "values" is NULL)
 		///  2) The values of the jacobian (if "values" is not NULL)
-		virtual bool eval_jac_g(Index n, const Number* x, bool new_x,
-				Index m, Index nele_jac, Index* iRow, Index *jCol,
+		virtual bool eval_jac_g(Ipopt::Index n, const Number* x, bool new_x,
+				Ipopt::Index m, Ipopt::Index nele_jac, Ipopt::Index* iRow, Ipopt::Index *jCol,
 				Number* values);
 
 		/// Method to return:
 		///   1) The structure of the hessian of the lagrangian (if "values" is NULL)
 		///   2) The values of the hessian of the lagrangian (if "values" is not NULL)
-		virtual bool eval_h(Index n, const Number* x, bool new_x,
-				Number obj_factor, Index m, const Number* lambda,
-				bool new_lambda, Index nele_hess, Index* iRow,
-				Index* jCol, Number* values);
+		virtual bool eval_h(Ipopt::Index n, const Number* x, bool new_x,
+				Number obj_factor, Ipopt::Index m, const Number* lambda,
+				bool new_lambda, Ipopt::Index nele_hess, Ipopt::Index* iRow,
+				Ipopt::Index* jCol, Number* values);
 
 		/// This method is called when the algorithm is complete so the TNLP can store/write the solution
 		virtual void finalize_solution(SolverReturn status,
-				Index n, const Number* x, const Number* z_L, const Number* z_U,
-				Index m, const Number* g, const Number* lambda,
+				Ipopt::Index n, const Number* x, const Number* z_L, const Number* z_U,
+				Ipopt::Index m, const Number* g, const Number* lambda,
 				Number obj_value,
 				const IpoptData* ip_data,
 				IpoptCalculatedQuantities* ip_cq);
@@ -141,7 +141,7 @@ class VPP_NLP : public TNLP, public VPPSolverBase {
 		/// Number of equality constraints: dF=0, dM=0
 		const size_t nEqualityConstraints_; // --> v, phi
 
-		/// Wind angle and velocity indexes. Set with setWind(size_t, size_t)
+		/// Wind angle and velocity Ipopt::Indexes. Set with setWind(size_t, size_t)
 		static size_t twa_, twv_;
 
 };

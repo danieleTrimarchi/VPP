@@ -108,15 +108,17 @@ void TreeTab::save(VppSettingsXmlWriter* pWriter) {
 
 // Read the settings to file
 
-void TreeTab::read(QFile& file){
-
+void TreeTab::read(VppSettingsXmlReader* pReader){
 
 	// Instantiate a file reader visitor
-	VPPSettingsXmlReaderVisitor v(&file);
+	VPPSettingsXmlReaderVisitor v(pReader);
 	// Ask the REFERENCE root to accept the visitor
 	// This will read the file and assign its content
 	// to root
-	pTreeReferenceModel_->getRoot()->accept(v);
+    if(pTreeReferenceModel_->getRoot())
+        pTreeReferenceModel_->getRoot()->accept(v);
+    else
+        throw VPPException(HERE,"Reference model root not found");
 
 	// Copy the reference model to the current one
 	revert();

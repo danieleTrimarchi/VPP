@@ -7,6 +7,7 @@
 #include <QtCore/QXmlStreamWriter>
 #include "boost/shared_ptr.hpp"
 #include "VppSettingsXmlWriter.h"
+#include "VppSettingsXmlReader.h"
 
 using namespace std;
 
@@ -52,7 +53,7 @@ class VppGeneralTabXmlReader {
 	public:
 
 		/// Ctor
-		VppGeneralTabXmlReader(QIODevice* pFile =Q_NULLPTR);
+		VppGeneralTabXmlReader(VppSettingsXmlReader* pReader);
 
 		/// Read from file
 		bool read(const GeneralTab* pGenTab, QIODevice *device =Q_NULLPTR);
@@ -65,11 +66,8 @@ class VppGeneralTabXmlReader {
 		/// Read the content of the file
 		void readItems();
 
-		/// XML file the items should be read from
-		QIODevice* pFile_;
-
-		/// Underlying xml reader
-		boost::shared_ptr<QXmlStreamReader> pXml_;
+		/// Ptr to the xml reader
+		VppSettingsXmlReader* pXmlReader_;
 
 };
 
@@ -97,7 +95,7 @@ class GeneralTab : public QWidget {
 		void save(VppSettingsXmlWriter* pWriter);
 
 		/// Read the settings from xml file
-		void read(QFile& file);
+		void read(VppSettingsXmlReader* pReader);
 
 	private:
 

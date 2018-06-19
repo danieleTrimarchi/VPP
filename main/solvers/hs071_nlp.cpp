@@ -28,9 +28,9 @@ HS071_NLP::~HS071_NLP()
 {}
 
 // returns the size of the problem
-bool HS071_NLP::get_nlp_info(Index& n, Index& m, Index& nnz_jac_g,
-                             Index& nnz_h_lag, IndexStyleEnum& index_style)
-{
+bool HS071_NLP::get_nlp_info(Ipopt::Index& n, Ipopt::Index& m, Ipopt::Index& nnz_jac_g,
+                             Ipopt::Index& nnz_h_lag, IndexStyleEnum& index_style) {
+
   // The problem described in HS071_NLP.hpp has 4 variables, x[0] through x[3]
   n = dimension_;
 
@@ -53,8 +53,8 @@ bool HS071_NLP::get_nlp_info(Index& n, Index& m, Index& nnz_jac_g,
 }
 
 // returns the variable bounds
-bool HS071_NLP::get_bounds_info(Index n, Number* x_l, Number* x_u,
-                                Index m, Number* g_l, Number* g_u)
+bool HS071_NLP::get_bounds_info(Ipopt::Index n, Number* x_l, Number* x_u,
+                                Ipopt::Index m, Number* g_l, Number* g_u)
 {
   // here, the n and m we gave IPOPT in get_nlp_info are passed back to us.
   // If desired, we could assert to make sure they are what we think they are.
@@ -62,12 +62,12 @@ bool HS071_NLP::get_bounds_info(Index n, Number* x_l, Number* x_u,
   assert(m == nEqualityConstraints_);
 
   // the variables have lower bounds of 1
-  for (Index i=0; i<4; i++) {
+  for (Ipopt::Index i=0; i<4; i++) {
     x_l[i] = 1.0;
   }
 
   // the variables have upper bounds of 5
-  for (Index i=0; i<4; i++) {
+  for (Ipopt::Index i=0; i<4; i++) {
     x_u[i] = 5.0;
   }
 
@@ -87,9 +87,9 @@ bool HS071_NLP::get_bounds_info(Index n, Number* x_l, Number* x_u,
 }
 
 // returns the initial point for the problem
-bool HS071_NLP::get_starting_point(Index n, bool init_x, Number* x,
+bool HS071_NLP::get_starting_point(Ipopt::Index n, bool init_x, Number* x,
                                    bool init_z, Number* z_L, Number* z_U,
-                                   Index m, bool init_lambda,
+                                   Ipopt::Index m, bool init_lambda,
                                    Number* lambda)
 {
   // Here, we assume we only have starting values for x, if you code
@@ -109,7 +109,7 @@ bool HS071_NLP::get_starting_point(Index n, bool init_x, Number* x,
 }
 
 // returns the value of the objective function
-bool HS071_NLP::eval_f(Index n, const Number* x, bool new_x, Number& obj_value)
+bool HS071_NLP::eval_f(Ipopt::Index n, const Number* x, bool new_x, Number& obj_value)
 {
   assert(n == dimension_);
 
@@ -119,7 +119,7 @@ bool HS071_NLP::eval_f(Index n, const Number* x, bool new_x, Number& obj_value)
 }
 
 // return the gradient of the objective function grad_{x} f(x)
-bool HS071_NLP::eval_grad_f(Index n, const Number* x, bool new_x, Number* grad_f)
+bool HS071_NLP::eval_grad_f(Ipopt::Index n, const Number* x, bool new_x, Number* grad_f)
 {
   assert(n == dimension_);
 
@@ -132,7 +132,7 @@ bool HS071_NLP::eval_grad_f(Index n, const Number* x, bool new_x, Number* grad_f
 }
 
 // return the value of the constraints: g(x)
-bool HS071_NLP::eval_g(Index n, const Number* x, bool new_x, Index m, Number* g)
+bool HS071_NLP::eval_g(Ipopt::Index n, const Number* x, bool new_x, Ipopt::Index m, Number* g)
 {
   assert(n == dimension_);
   assert(m == nEqualityConstraints_);
@@ -144,8 +144,8 @@ bool HS071_NLP::eval_g(Index n, const Number* x, bool new_x, Index m, Number* g)
 }
 
 // return the structure or values of the jacobian
-bool HS071_NLP::eval_jac_g(Index n, const Number* x, bool new_x,
-                           Index m, Index nele_jac, Index* iRow, Index *jCol,
+bool HS071_NLP::eval_jac_g(Ipopt::Index n, const Number* x, bool new_x,
+                           Ipopt::Index m, Ipopt::Index nele_jac, Ipopt::Index* iRow, Ipopt::Index *jCol,
                            Number* values)
 {
   if (values == NULL) {
@@ -187,19 +187,19 @@ bool HS071_NLP::eval_jac_g(Index n, const Number* x, bool new_x,
 }
 
 //return the structure or values of the hessian
-bool HS071_NLP::eval_h(Index n, const Number* x, bool new_x,
-                       Number obj_factor, Index m, const Number* lambda,
-                       bool new_lambda, Index nele_hess, Index* iRow,
-                       Index* jCol, Number* values)
+bool HS071_NLP::eval_h(Ipopt::Index n, const Number* x, bool new_x,
+                       Number obj_factor, Ipopt::Index m, const Number* lambda,
+                       bool new_lambda, Ipopt::Index nele_hess, Ipopt::Index* iRow,
+                       Ipopt::Index* jCol, Number* values)
 {
   if (values == NULL) {
     // return the structure. This is a symmetric matrix, fill the lower left
     // triangle only.
 
     // the hessian for this problem is actually dense
-    Index idx=0;
-    for (Index row = 0; row < 4; row++) {
-      for (Index col = 0; col <= row; col++) {
+    Ipopt::Index idx=0;
+    for (Ipopt::Index row = 0; row < 4; row++) {
+      for (Ipopt::Index col = 0; col <= row; col++) {
         iRow[idx] = row;
         jCol[idx] = col;
         idx++;
@@ -252,8 +252,8 @@ bool HS071_NLP::eval_h(Index n, const Number* x, bool new_x,
 }
 
 void HS071_NLP::finalize_solution(SolverReturn status,
-                                  Index n, const Number* x, const Number* z_L, const Number* z_U,
-                                  Index m, const Number* g, const Number* lambda,
+                                  Ipopt::Index n, const Number* x, const Number* z_L, const Number* z_U,
+                                  Ipopt::Index m, const Number* g, const Number* lambda,
                                   Number obj_value,
 				  const IpoptData* ip_data,
 				  IpoptCalculatedQuantities* ip_cq)
@@ -274,15 +274,15 @@ void HS071_NLP::finalize_solution(SolverReturn status,
 
   // For this example, we write the solution to the console
 //  std::cout << std::endl << std::endl << "Solution of the primal variables, x" << std::endl;
-//  for (Index i=0; i<n; i++) {
+//  for (Ipopt::Index i=0; i<n; i++) {
 //     std::cout << "x[" << i << "] = " << x[i] << std::endl;
 //  }
 //
 //  std::cout << std::endl << std::endl << "Solution of the bound multipliers, z_L and z_U" << std::endl;
-//  for (Index i=0; i<n; i++) {
+//  for (Ipopt::Index i=0; i<n; i++) {
 //    std::cout << "z_L[" << i << "] = " << z_L[i] << std::endl;
 //  }
-//  for (Index i=0; i<n; i++) {
+//  for (Ipopt::Index i=0; i<n; i++) {
 //    std::cout << "z_U[" << i << "] = " << z_U[i] << std::endl;
 //  }
 //
@@ -290,7 +290,7 @@ void HS071_NLP::finalize_solution(SolverReturn status,
 //  std::cout << "f(x*) = " << obj_value << std::endl;
 //
 //  std::cout << std::endl << "Final value of the constraints:" << std::endl;
-//  for (Index i=0; i<m ;i++) {
+//  for (Ipopt::Index i=0; i<m ;i++) {
 //    std::cout << "g(" << i << ") = " << g[i] << std::endl;
 //  }
 }

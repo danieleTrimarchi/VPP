@@ -32,7 +32,7 @@ class TreeTab : public QWidget {
 		void save(VppSettingsXmlWriter* pWriter);
 
 		/// Read the settings from xml file
-		void read(QFile& file);
+		void read(VppSettingsXmlReader* pReader);
 
 		/// When the user hits 'cancel' in the main dialog, we
 		/// revert the model: so that any change the user has

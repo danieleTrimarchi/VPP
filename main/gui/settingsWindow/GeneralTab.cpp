@@ -5,12 +5,13 @@
 #include <QtWidgets/QGroupBox>
 #include <QtCore/QFile>
 #include <iostream>
+#include "VppTags.h"
 
 VppGeneralTabXmlWriter::VppGeneralTabXmlWriter(VppSettingsXmlWriter* pWriter) :
 pXmlWriter_(pWriter) {
 
 	// Write the header for this section of the xml document
-	pXmlWriter_->writeStartElement("vppGeneralSettings");
+	pXmlWriter_->writeStartElement(vppGeneralSettingTag.c_str());
 
 }
 
@@ -37,26 +38,17 @@ void VppGeneralTabXmlWriter::write(const GeneralTab* pGenTab) {
 //====================================================================
 
 /// Ctor
-VppGeneralTabXmlReader::VppGeneralTabXmlReader(QIODevice* pFile) :
-																				pFile_(pFile) {
-	// Instantiate a xml reader. The device will be assigned later on
-	pXml_.reset(new QXmlStreamReader);
+VppGeneralTabXmlReader::VppGeneralTabXmlReader(VppSettingsXmlReader* pReader) :
+		pXmlReader_(pReader) {
 }
 
 /// Read from file
 bool VppGeneralTabXmlReader::read(const GeneralTab* pGenTab,QIODevice* device ) {
 
-	// If there is a new source, use it
-	if(device)
-		pFile_ = device;
-
-	// who am I reading from?
-	pXml_->setDevice(pFile_);
-
 	// Verify this is suitable file (vppSettings v.1.0). Otherwise throw
-	while (pXml_->readNextStartElement()) {
+	while (pXmlReader_->readNextStartElement()) {
 
-		std::cout<<"pXml_->name()= "<<pXml_->name().toString().toStdString() <<std::endl;
+		std::cout<<"pXml_->name()= "<<pXmlReader_->name().toString().toStdString() <<std::endl;
 		readRecursive();
 		//        if(!(pXml_->attributes().value("version") == "1.0"))
 		//            pXml_->raiseError(QObject::tr("The file is not a VppSettings version 1.0 file."));
@@ -68,14 +60,14 @@ bool VppGeneralTabXmlReader::read(const GeneralTab* pGenTab,QIODevice* device ) 
 		//			readItems();
 	}
 
-	return !pXml_->error();
+	return !pXmlReader_->error();
 
 }
 
 void VppGeneralTabXmlReader::readRecursive(){
-	while (pXml_->readNextStartElement()) {
+	while (pXmlReader_->readNextStartElement()) {
 
-		std::cout<<"pXml_->name()= "<<pXml_->name().toString().toStdString() <<std::endl;
+		std::cout<<"pXml_->name()= "<<pXmlReader_->name().toString().toStdString() <<std::endl;
 		readRecursive();
 	}
 }
@@ -84,12 +76,12 @@ void VppGeneralTabXmlReader::readItems() {
 
 	//Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "vppSettings");
 
-	while (pXml_->readNextStartElement()) {
+	while (pXmlReader_->readNextStartElement()) {
 
-		for(size_t i=0; i<pXml_->attributes().size(); i++){
+		for(size_t i=0; i<pXmlReader_->attributes().size(); i++){
 
-			string attName= pXml_->attributes().at(i).name().toString().toStdString();
-			string attValue= pXml_->attributes().at(i).value().toString().toStdString();
+			string attName= pXmlReader_->attributes().at(i).name().toString().toStdString();
+			string attValue= pXmlReader_->attributes().at(i).value().toString().toStdString();
 
 			std::cout<<"Reading : "<<attName<<"  with a value of : "<<attValue<<std::endl;
 			//pGenTab->setSolver(strtoi(attValue.c_str()));
@@ -165,9 +157,9 @@ void GeneralTab::save(VppSettingsXmlWriter* pWriter) {
 }
 
 // Read the settings from xml file
-void GeneralTab::read(QFile& file) {
+void GeneralTab::read(VppSettingsXmlReader* pReader) {
 
-	VppGeneralTabXmlReader r(&file);
+	VppGeneralTabXmlReader r(pReader);
 	r.read(this);
 }
 
