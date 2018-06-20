@@ -148,20 +148,13 @@ VppSettingsXmlReader::VppSettingsXmlReader(QIODevice* pFile) :
 		// If everything is fine, read the item
 		if (!(name() == "vppSettings" && attributes().value("version") == "1.0"))
 			raiseError(QObject::tr("The file is not a VppSettings version 1.0 file."));
-
 	}
 
 	// One could assign icons here (see xbelReader example) but I do not
 	// need icons for the vpp settings
 }
 
-bool VppSettingsXmlReader::read(QIODevice *device) {
-
-	// If there is a new source, use it
-    if(device) {
-		pFile_ = device;
-        setDevice(pFile_);
-    }
+bool VppSettingsXmlReader::readSubSection(string& sectionHeader) {
 
 	// Verify this is suitable file (vppSettings v.1.0). Otherwise throw
 	if (readNextStartElement()) {
@@ -169,23 +162,17 @@ bool VppSettingsXmlReader::read(QIODevice *device) {
 		string name(QXmlStreamReader::name().toString().toStdString());
 
 		// If everything is fine, read the item
-		if ( QXmlStreamReader::name() == vppSettingTreeTag.c_str())
-			readItems(pRootItem_.get());
+		if ( QXmlStreamReader::name() == sectionHeader.c_str())
+			readTreeItems(pRootItem_.get());
 
-		else
-			raiseError(QObject::tr("The file is not a VppSettings version 1.0 file."));
 	}
+	// Test to be removed
+	//if (readNextStartElement()) {
+	//	if ( QXmlStreamReader::name() == vppGeneralSettingTag.c_str())
+	//		std::coCut<<"Getting into the General tab section\n";
+	//}
 
-	// Verify this is suitable file (vppSettings v.1.0). Otherwise throw
-	if (readNextStartElement()) {
-
-		string name(QXmlStreamReader::name().toString().toStdString());
-		// If everything is fine, read the item
-		if ( QXmlStreamReader::name() == vppGeneralSettingTag.c_str())
-			std::cout<<"Getting into the General tab section\n";
-	}
-
-	return !error();
+	return true; //!error();
 }
 
 // Return the tree populated with the items from the xml
@@ -193,7 +180,7 @@ boost::shared_ptr<SettingsItemBase> VppSettingsXmlReader::getRoot() {
 	return pRootItem_;
 }
 
-void VppSettingsXmlReader::readItems(Item* parentItem) {
+void VppSettingsXmlReader::readTreeItems(Item* parentItem) {
 
 	//Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "vppSettings");
 
@@ -230,12 +217,12 @@ void VppSettingsXmlReader::readItems(Item* parentItem) {
 
 		if(dynamic_cast<SettingsItemRoot*>(pItem)){
 			// Substitute the root with the new brand new root we just created
-			readItems(pRootItem_.get());
+			readTreeItems(pRootItem_.get());
 		}	else {
 			// Append the child to its parent
 			parentItem->appendChild(pItem);
 			// Read all the children of the current item
-			readItems(parentItem->child(parentItem->childCount()-1));
+			readTreeItems(parentItem->child(parentItem->childCount()-1));
 		}
 	}
 }
@@ -270,8 +257,10 @@ void VPPSettingsXmlReaderVisitor::visit(SettingsItemRoot* pRoot) {
 
 	// Assign the children of the xml reader root to the
 	// current root
-	if(pXmlReader_->read())
-		pXmlReader_->getRoot()->assign(pRoot);
+	pXmlReader_->readSubSection(vppSettingTreeTag);
+// Restore this code!
+//	if(pXmlReader_->readSubSection(vppSettingTreeTag))
+//		pXmlReader_->getRoot()->assign(pRoot);
 
 }
 

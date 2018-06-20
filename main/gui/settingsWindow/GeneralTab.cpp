@@ -48,28 +48,15 @@ bool VppGeneralTabXmlReader::read(const GeneralTab* pGenTab,QIODevice* device ) 
 	// Verify this is suitable file (vppSettings v.1.0). Otherwise throw
 	while (pXmlReader_->readNextStartElement()) {
 
-		std::cout<<"pXml_->name()= "<<pXmlReader_->name().toString().toStdString() <<std::endl;
-		readRecursive();
-		//        if(!(pXml_->attributes().value("version") == "1.0"))
-		//            pXml_->raiseError(QObject::tr("The file is not a VppSettings version 1.0 file."));
+		if(pXmlReader_->name()== vppGeneralSettingTag.c_str()){
 
-		std::cout<<"before the second readRecursive "<<std::endl;
-		readRecursive();
-		// If everything is fine, read the item
-		//	if( pXml_->name() == "generalSettings" )
-		//			readItems();
+			std::cout<<"pXml_->name()= "<<pXmlReader_->name().toString().toStdString() <<std::endl;
+			readItems();
+		}
 	}
 
 	return !pXmlReader_->error();
 
-}
-
-void VppGeneralTabXmlReader::readRecursive(){
-	while (pXmlReader_->readNextStartElement()) {
-
-		std::cout<<"pXml_->name()= "<<pXmlReader_->name().toString().toStdString() <<std::endl;
-		readRecursive();
-	}
 }
 
 void VppGeneralTabXmlReader::readItems() {
@@ -159,6 +146,8 @@ void GeneralTab::save(VppSettingsXmlWriter* pWriter) {
 // Read the settings from xml file
 void GeneralTab::read(VppSettingsXmlReader* pReader) {
 
+	// Ask the reader to read the section pertaining
+	// to this tab
 	VppGeneralTabXmlReader r(pReader);
 	r.read(this);
 }

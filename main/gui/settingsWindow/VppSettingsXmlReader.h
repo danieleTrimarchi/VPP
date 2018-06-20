@@ -104,8 +104,8 @@ class VppSettingsXmlReader : public QXmlStreamReader {
 		/// Ctor
 		VppSettingsXmlReader(QIODevice* pFile =Q_NULLPTR);
 
-		/// Read from file
-		bool read(QIODevice *device =Q_NULLPTR);
+		/// Read from file a sub-section of the xml file
+		bool readSubSection(string& sectionHeader);
 
 		/// Return the tree populated with the items from the xml
 		boost::shared_ptr<SettingsItemBase> getRoot();
@@ -116,7 +116,7 @@ class VppSettingsXmlReader : public QXmlStreamReader {
 	private:
 
 		/// Read the content of the file
-		void readItems(Item*);
+		void readTreeItems(Item*);
 
 		/// Root for the settings item read from xml
 		boost::shared_ptr<SettingsItemBase> pRootItem_;
@@ -147,8 +147,9 @@ class VPPSettingsXmlReaderVisitor {
 
 	private:
 
-		/// Ptr to the xml writer
-		boost::shared_ptr<VppSettingsXmlReader> pXmlReader_;
+		/// Row ptr to the xml writer. The writer is
+		/// not owned by this visitor
+		VppSettingsXmlReader* pXmlReader_;
 
 };
 

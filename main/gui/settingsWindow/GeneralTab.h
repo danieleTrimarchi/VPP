@@ -42,7 +42,7 @@ class VppGeneralTabXmlWriter {
 
 	private:
 
-		/// Ptr to the xml writer
+		/// Ptr to the xml writer, not owned by me
 		VppSettingsXmlWriter* pXmlWriter_;
 
 };
@@ -59,9 +59,6 @@ class VppGeneralTabXmlReader {
 		bool read(const GeneralTab* pGenTab, QIODevice *device =Q_NULLPTR);
 
 	private:
-
-		/// Test : recursively read the xml
-		void readRecursive();
 
 		/// Read the content of the file
 		void readItems();

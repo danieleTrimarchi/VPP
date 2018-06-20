@@ -8,6 +8,7 @@
 #include "GetItemVisitor.h"
 #include "VppSettingsXmlReader.h"
 #include "MainWindow.h"
+#include "VppTags.h"
 
 //---------------------------------------------------------------
 // This widget includes several setting trees, from which the
@@ -110,17 +111,21 @@ void TreeTab::save(VppSettingsXmlWriter* pWriter) {
 
 void TreeTab::read(VppSettingsXmlReader* pReader){
 
-	// Instantiate a file reader visitor
+	// Instantiate a file reader visitor. This asks
+	// the reader to read the xml file and construct
+	// a settingsTree. Then, this settingsTree will
+	// be assigned to the reference model tree root
 	VPPSettingsXmlReaderVisitor v(pReader);
-	// Ask the REFERENCE root to accept the visitor
-	// This will read the file and assign its content
-	// to root
-    if(pTreeReferenceModel_->getRoot())
-        pTreeReferenceModel_->getRoot()->accept(v);
-    else
-        throw VPPException(HERE,"Reference model root not found");
+
+	// Assign the tree model instantiated by the reader
+	// to the reference tree root
+	if(pTreeReferenceModel_->getRoot())
+		pTreeReferenceModel_->getRoot()->accept(v);
+	else
+		throw VPPException(HERE,"Reference model root not found");
 
 	// Copy the reference model to the current one
+	// Restore this code!
 	revert();
 }
 

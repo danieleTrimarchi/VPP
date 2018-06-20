@@ -34,7 +34,6 @@ void VPPSettingsDialog::read(QFile& file) {
 
 	//	 1_ Instantiate a VppXmlReader
 	boost::shared_ptr<VppSettingsXmlReader> pXmlReader(new VppSettingsXmlReader(&file));
-	pXmlReader->read();
 
 	// 2_ 	Read and populate the Settings Tree tab
 	pSettingsTreeTab_->read(pXmlReader.get());
