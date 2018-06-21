@@ -66,14 +66,29 @@ void VppGeneralTabXmlReader::readItems() {
 
 	while (pXmlReader_->readNextStartElement()) {
 
+		// Instantiate a xmlAttributeSet and push all the attributes
+		XmlAttributeSet attSet;
+
 		for(size_t i=0; i<pXmlReader_->attributes().size(); i++){
 
 			string attName= pXmlReader_->attributes().at(i).name().toString().toStdString();
 			string attValue= pXmlReader_->attributes().at(i).value().toString().toStdString();
 
 			std::cout<<"Reading : "<<attName<<"  with a value of : "<<attValue<<std::endl;
-			pGenTab_->setSolver(std::stoi(attValue.c_str()));
+
+			// Insert the attribute into the attribute set
+			try{
+				XmlAttribute myAtt(attName,attValue);
+				attSet.insert(myAtt);
+
+			} catch (...) {
+				std::cout<<"Something went wrong when inserting attribute "<<attName<<" in set"<<std::endl;
+			}
 		}
+
+		// Set the active index for the Combo-box
+		pGenTab_->setSolver(attSet["ActiveIndex"].getInt());
+
 	}
 }
 
@@ -130,6 +145,7 @@ int GeneralTab::getSolver() const {
 // Sets the index of the solver to be
 // selected in the solver combo box
 void GeneralTab::setSolver(int index) const {
+	std::cout<<"GeneralTab setSolver "<<index<<std::endl;
 	pSolverComboBox_->setCurrentIndex(index);
 }
 // Returns the name of the solver currently being
