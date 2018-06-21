@@ -1,5 +1,6 @@
 #include "DataColumn.h"
 #include "Units.h"
+#include "VppTags.h"
 
 // Visit a SettingsItem
 template <class TUnit>
@@ -9,13 +10,13 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItem<TUnit>* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXmlWriter_->writeAttribute("ClassName","SettingsItem");
+	pXmlWriter_->writeAttribute(classNameTag.c_str(),SettingsItem<TUnit>::className_.c_str());
 	// Write the data stored in this item.
-	pXmlWriter_->writeAttribute("Value", item->data(colNames::value_.idx_).toString() );
+	pXmlWriter_->writeAttribute(valueTag.c_str(), item->data(colNames::value_.idx_).toString() );
 	// Write the data stored in this item.
-	pXmlWriter_->writeAttribute("Unit", item->data(colNames::unit_.idx_).toString() );
+	pXmlWriter_->writeAttribute(unitTag.c_str(), item->data(colNames::unit_.idx_).toString() );
 	// Write the tooltip for this item.
-	pXmlWriter_->writeAttribute("ToolTip", item->getToolTip().toString() );
+	pXmlWriter_->writeAttribute(tooltipTag.c_str(), item->getToolTip().toString() );
 
   visitEnd(item);
 
@@ -30,13 +31,13 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemInt<TUnit>* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXmlWriter_->writeAttribute("ClassName","SettingsItemInt");
+	pXmlWriter_->writeAttribute(classNameTag.c_str(),SettingsItemInt<TUnit>::className_.c_str());
 	// Write the data stored in this item.
-	pXmlWriter_->writeAttribute("Value", item->data(colNames::value_.idx_).toString() );
+	pXmlWriter_->writeAttribute(valueTag.c_str(), item->data(colNames::value_.idx_).toString() );
 	// Write the unit for this item.
-	pXmlWriter_->writeAttribute("Unit", item->data(colNames::unit_.idx_).toString() );
+	pXmlWriter_->writeAttribute(unitTag.c_str(), item->data(colNames::unit_.idx_).toString() );
 	// Write the tooltip for this item.
-	pXmlWriter_->writeAttribute("ToolTip", item->getToolTip().toString() );
+	pXmlWriter_->writeAttribute(tooltipTag.c_str(), item->getToolTip().toString() );
 
   visitEnd(item);
 
@@ -52,23 +53,23 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemComboBox<TUnit>* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXmlWriter_->writeAttribute("ClassName","SettingsItemComboBox");
+	pXmlWriter_->writeAttribute(classNameTag.c_str(),SettingsItemComboBox<TUnit>::className_.c_str());
 
 	// Write the number of options
-	pXmlWriter_->writeAttribute("numOpts",QString::number(item->getNumOpts()));
+	pXmlWriter_->writeAttribute(comboBoxNumOpts.c_str(),QString::number(item->getNumOpts()));
 
 	// Write the available options
 	for(size_t i=0; i<item->getNumOpts(); i++)
 		pXmlWriter_->writeAttribute(QString("Option")+QString::number(i),item->getOption(i));
 
 	// Write the active index
-	pXmlWriter_->writeAttribute("ActiveIndex",QString::number(item->getActiveIndex()));
+	pXmlWriter_->writeAttribute(comboBoxActiveIndex.c_str(),QString::number(item->getActiveIndex()));
 
 	// Write the unit of this item.
-	pXmlWriter_->writeAttribute("Unit", item->data(colNames::unit_.idx_).toString() );
+	pXmlWriter_->writeAttribute(unitTag.c_str(), item->data(colNames::unit_.idx_).toString() );
 
 	// Write the tooltip for this item.
-	pXmlWriter_->writeAttribute("ToolTip", item->getToolTip().toString() );
+	pXmlWriter_->writeAttribute(tooltipTag.c_str(), item->getToolTip().toString() );
 
   visitEnd(item);
 
@@ -83,11 +84,11 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBounds<TUnit>* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXmlWriter_->writeAttribute("ClassName","SettingsItemBounds");
+	pXmlWriter_->writeAttribute(classNameTag.c_str(),SettingsItemBounds<TUnit>::className_.c_str());
 
 	// Write the unit of this item.
 	TUnit myUnit;
-	pXmlWriter_->writeAttribute("Unit", myUnit.getUnitName().c_str() );
+	pXmlWriter_->writeAttribute(unitTag.c_str(), myUnit.getUnitName().c_str() );
 
   visitEnd(item);
 

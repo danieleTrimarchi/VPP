@@ -146,7 +146,7 @@ VppSettingsXmlReader::VppSettingsXmlReader(QIODevice* pFile) :
 	if (readNextStartElement()) {
 
 		// If everything is fine, read the item
-		if (!(name() == "vppSettings" && attributes().value("version") == "1.0"))
+		if (!(name() == vppSettingsTag.c_str() && attributes().value(vppSettingsVersionTag.c_str()) == vppSettingsVersion.c_str()))
 			raiseError(QObject::tr("The file is not a VppSettings version 1.0 file."));
 	}
 
@@ -177,7 +177,7 @@ boost::shared_ptr<SettingsItemBase> VppSettingsXmlReader::getRoot() {
 
 void VppSettingsXmlReader::readTreeItems(Item* parentItem) {
 
-	//Q_ASSERT(pXml_->isStartElement() && pXml_->name() == "vppSettings");
+	//Q_ASSERT(pXml_->isStartElement() && pXml_->name() == vppSettingsTag.c_str());
 
 	while (readNextStartElement()) {
 

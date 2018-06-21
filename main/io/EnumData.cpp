@@ -1,9 +1,10 @@
 #include "EnumData.h"
+#include "VppTags.h"
 
 // Init static data
-enumData colNames::name_= enumData(0,"Name");
-enumData colNames::value_=enumData(1,"Value");
-enumData colNames::unit_= enumData(2,"Unit");
+enumData colNames::name_= enumData(0,nameTag.c_str());
+enumData colNames::value_=enumData(1,valueTag.c_str());
+enumData colNames::unit_= enumData(2,unitTag.c_str());
 
 //////////////////////////////////////////////////////
 

@@ -17,8 +17,8 @@ VppSettingsXmlWriter::VppSettingsXmlWriter(QIODevice *device) :
 
 	writeStartDocument();
 	writeDTD("<!DOCTYPE vppSettings>");
-	writeStartElement("vppSettings");
-	writeAttribute("version", "1.0");
+	writeStartElement(vppSettingsTag.c_str());
+	writeAttribute(vppSettingsVersionTag.c_str(), vppSettingsVersion.c_str());
 }
 
 // Dtor
@@ -44,13 +44,13 @@ VPPSettingsXmlWriterVisitor::~VPPSettingsXmlWriterVisitor() {
 
 void VPPSettingsXmlWriterVisitor::visitBegin(SettingsItemBase* item) {
 
-	pXmlWriter_->writeStartElement(QString("Item"));
+	pXmlWriter_->writeStartElement(QString(ItemTag));
 
 	// --Write the part common to all items--
-	pXmlWriter_->writeAttribute("Expanded", item->expanded() ? "yes" : "no");
-	pXmlWriter_->writeAttribute("InternalName",item->getInternalName());
-	pXmlWriter_->writeAttribute("DisplayName",item->getDisplayName());
-	pXmlWriter_->writeAttribute("VariableName",item->getVariableName());
+	pXmlWriter_->writeAttribute(ExpandedTag.c_str(), item->expanded() ? "yes" : "no");
+	pXmlWriter_->writeAttribute(internalNameTag.c_str(),item->getInternalName());
+	pXmlWriter_->writeAttribute(displayNameTag.c_str(),item->getDisplayName());
+	pXmlWriter_->writeAttribute(variableNameTag.c_str(),item->getVariableName());
 
 }
 
@@ -76,11 +76,11 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemBase* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXmlWriter_->writeAttribute("ClassName",SettingsItemBase::className_.c_str());
+	pXmlWriter_->writeAttribute(classNameTag.c_str(),SettingsItemBase::className_.c_str());
 
 	// Instantiate some NoUnits just to get the name string
 	NoUnit myUnit;
-	pXmlWriter_->writeAttribute("Unit", myUnit.getUnitName().c_str());
+	pXmlWriter_->writeAttribute(unitTag.c_str(), myUnit.getUnitName().c_str());
 
   visitEnd(item);
 
@@ -94,11 +94,11 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemRoot* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXmlWriter_->writeAttribute("ClassName","SettingsItemRoot");
+	pXmlWriter_->writeAttribute(classNameTag.c_str(),SettingsItemRoot::className_.c_str());
 
 	// Instantiate some NoUnits just to get the name string
 	NoUnit myUnit;
-	pXmlWriter_->writeAttribute("Unit", myUnit.getUnitName().c_str());
+	pXmlWriter_->writeAttribute(unitTag.c_str(), myUnit.getUnitName().c_str());
 
   visitEnd(item);
 
@@ -112,11 +112,11 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemGroup* item ) {
 	visitBegin(item);
 
 	// Write the class name
-	pXmlWriter_->writeAttribute("ClassName","SettingsItemGroup");
+	pXmlWriter_->writeAttribute(classNameTag.c_str(),SettingsItemGroup::className_.c_str());
 
 	// Instantiate some NoUnits just to get the name string
 	NoUnit myUnit;
-	pXmlWriter_->writeAttribute("Unit", myUnit.getUnitName().c_str());
+	pXmlWriter_->writeAttribute(unitTag.c_str(), myUnit.getUnitName().c_str());
 
 	visitEnd(item);
 

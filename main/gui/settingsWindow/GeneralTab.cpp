@@ -23,12 +23,12 @@ VppGeneralTabXmlWriter::~VppGeneralTabXmlWriter() {
 // Write the content of the general tab to xml
 void VppGeneralTabXmlWriter::write(const GeneralTab* pGenTab) {
 
-	pXmlWriter_->writeStartElement(QString("Item"));
+	pXmlWriter_->writeStartElement(QString(ItemTag));
 
 	// Simply write the index of the choice selected by the user for
 	// the solver combo-box
-	pXmlWriter_->writeAttribute("Solver",pGenTab->getSolverName());
-	pXmlWriter_->writeAttribute("ActiveIndex",QString::number(pGenTab->getSolver()));
+	pXmlWriter_->writeAttribute(comboBoxActiveIndex.c_str(),pGenTab->getSolverName());
+	pXmlWriter_->writeAttribute(comboBoxActiveIndex.c_str(),QString::number(pGenTab->getSolver()));
 
 	// This item is finished
 	pXmlWriter_->writeEndElement();
@@ -39,8 +39,8 @@ void VppGeneralTabXmlWriter::write(const GeneralTab* pGenTab) {
 
 /// Ctor
 VppGeneralTabXmlReader::VppGeneralTabXmlReader(VppSettingsXmlReader* pReader,const GeneralTab* parentTab) :
-		pXmlReader_(pReader),
-		pGenTab_(parentTab) {
+				pXmlReader_(pReader),
+				pGenTab_(parentTab) {
 }
 
 /// Read from file
@@ -68,35 +68,34 @@ void VppGeneralTabXmlReader::readItems() {
 
 		// Instantiate a xmlAttributeSet and push all the attributes
 		XmlAttributeSet attSet;
+		string attName, attValue;
+		try{
 
-		for(size_t i=0; i<pXmlReader_->attributes().size(); i++){
+			for(size_t i=0; i<pXmlReader_->attributes().size(); i++){
 
-			string attName= pXmlReader_->attributes().at(i).name().toString().toStdString();
-			string attValue= pXmlReader_->attributes().at(i).value().toString().toStdString();
+				attName = pXmlReader_->attributes().at(i).name().toString().toStdString();
+				attValue= pXmlReader_->attributes().at(i).value().toString().toStdString();
+				//std::cout<<"Reading : "<<attName<<"  with a value of : "<<attValue<<std::endl;
 
-			std::cout<<"Reading : "<<attName<<"  with a value of : "<<attValue<<std::endl;
-
-			// Insert the attribute into the attribute set
-			try{
+				// Insert the attribute into the attribute set
 				XmlAttribute myAtt(attName,attValue);
 				attSet.insert(myAtt);
-
-			} catch (...) {
-				std::cout<<"Something went wrong when inserting attribute "<<attName<<" in set"<<std::endl;
 			}
+
+			// Set the active index for the Combo-box
+			pGenTab_->setSolver(attSet[comboBoxActiveIndex.c_str()].getInt());
+
+		} catch (...) {
+			std::cout<<"Something went wrong when inserting attribute "<<attName<<" in set"<<std::endl;
 		}
-
-		// Set the active index for the Combo-box
-		pGenTab_->setSolver(attSet["ActiveIndex"].getInt());
-
 	}
 }
 
 //====================================================================
 
 GeneralTab::GeneralTab(QWidget *parent) :
-								QWidget(parent),
-								fontSize_(12) {
+										QWidget(parent),
+										fontSize_(12) {
 
 	setStyleSheet("QLabel { background-color: rgb(228,228,228); "
 			" selection-color: yellow; }"

@@ -2,6 +2,7 @@
 #include "VppSettingsXmlWriter.h"
 #include "VariableFileParser.h"
 #include <QString>
+#include "VppTags.h"
 
 template <class TUnit>
 const string SettingsItem<TUnit>::className_("SettingsItem");
@@ -35,10 +36,10 @@ SettingsItem<TUnit>::SettingsItem(	const QString& displayName,
 template <class TUnit>
 SettingsItem<TUnit>::SettingsItem(const XmlAttributeSet& xmlAttSet):
 				SettingsItem<TUnit>(
-						xmlAttSet["DisplayName"].toQString(),
-						xmlAttSet["VariableName"].toQString(),
-						xmlAttSet["Value"].toQString(),
-						xmlAttSet["ToolTip"].toQString() ){
+						xmlAttSet[displayNameTag.c_str()].toQString(),
+						xmlAttSet[variableNameTag.c_str()].toQString(),
+						xmlAttSet[valueTag.c_str()].toQString(),
+						xmlAttSet[tooltipTag.c_str()].toQString() ){
 }
 
 // Copy Ctor
@@ -318,19 +319,19 @@ SettingsItemComboBox<TUnit>::SettingsItemComboBox(
 // logics here should be displaced to the XmlReadVisitor!
 template <class TUnit>
 SettingsItemComboBox<TUnit>::SettingsItemComboBox(const XmlAttributeSet& xmlAttSet) :
-	SettingsItem<TUnit>(	xmlAttSet["DisplayName"].toQString(),
-											xmlAttSet["VariableName"].toQString(),
+	SettingsItem<TUnit>(	xmlAttSet[displayNameTag.c_str()].toQString(),
+											xmlAttSet[variableNameTag.c_str()].toQString(),
 											xmlAttSet["Option0"].toQString(),
-											xmlAttSet["ToolTip"].toQString() ){
+											xmlAttSet[tooltipTag.c_str()].toQString() ){
 
 	// Populate the options
-	for(size_t i=0; i<int((xmlAttSet["numOpts"]).getInt()); i++){
+	for(size_t i=0; i<int((xmlAttSet[comboBoxNumOpts.c_str()]).getInt()); i++){
 		char msg[256];
 		sprintf(msg,"Option%zu",i);
 		opts_.push_back(xmlAttSet[string(msg)].toQString());
 	}
 
-	activeIndex_= xmlAttSet["ActiveIndex"].getInt();
+	activeIndex_= xmlAttSet[comboBoxActiveIndex.c_str()].getInt();
 
 }
 

@@ -8,6 +8,7 @@
 #include "VariableFileParser.h"
 #include "Units.h"
 #include "EnumData.h"
+#include "VppTags.h"
 
 using namespace std;
 
@@ -67,8 +68,8 @@ SettingsItemBase::SettingsItemBase(const SettingsItemBase& rhs):
 SettingsItemBase* SettingsItemBase::settingsItemFactory(const XmlAttributeSet& attSet){
 
 	// What class am I going to instantiate?
-	string className = (attSet["ClassName"]).getString();
-	string unit = (attSet["Unit"]).getString();
+	string className = (attSet[classNameTag.c_str()]).getString();
+	string unit = (attSet[unitTag.c_str()]).getString();
 
 	// Instantiate the units to get their signature
 	NoUnit noUnit;
@@ -456,7 +457,7 @@ SettingsItemGroup::SettingsItemGroup(const QVariant& displayName):
 
 // Ctor from xml
 SettingsItemGroup::SettingsItemGroup(const XmlAttributeSet& xmlAttSet) :
-							SettingsItemGroup(xmlAttSet["DisplayName"].toQString()){
+							SettingsItemGroup(xmlAttSet[displayNameTag.c_str()].toQString()){
 
 }
 

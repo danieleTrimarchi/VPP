@@ -119,7 +119,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 
 	// Define radio button...
 	QRadioButton* pModeItemSelection = new QRadioButton(pWidget_);
-	pModeItemSelection->setText(QStringLiteral("Item"));
+	pModeItemSelection->setText(QStringLiteral(ItemTag));
 	pModeItemSelection->setChecked(false);
 	font = pModeItemSelection->font();
 	font.setPointSizeF(fontSize_);
