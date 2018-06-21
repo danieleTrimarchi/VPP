@@ -166,13 +166,8 @@ bool VppSettingsXmlReader::readSubSection(string& sectionHeader) {
 			readTreeItems(pRootItem_.get());
 
 	}
-	// Test to be removed
-	//if (readNextStartElement()) {
-	//	if ( QXmlStreamReader::name() == vppGeneralSettingTag.c_str())
-	//		std::coCut<<"Getting into the General tab section\n";
-	//}
 
-	return true; //!error();
+	return !error();
 }
 
 // Return the tree populated with the items from the xml
@@ -200,15 +195,15 @@ void VppSettingsXmlReader::readTreeItems(Item* parentItem) {
 				XmlAttribute myAtt(attName,attValue);
 				attSet.insert(myAtt);
 
-			} catch (...){
+			} catch (...) {
 				std::cout<<"Something went wrong when inserting attribute "<<attName<<" in set"<<std::endl;
 			}
 		}
 
 		// Build the item specified by this attribute set
 		SettingsItemBase* pItem = SettingsItemBase::settingsItemFactory(attSet);
-		//std::cout<<"Instantiating a... "<<pItem->getDisplayName().toStdString()<<std::endl;
-		//std::cout<<"   variableName... "<<pItem->getVariableName().toStdString()<<std::endl;
+		std::cout<<"Instantiating a... "<<pItem->getDisplayName().toStdString()<<std::endl;
+		std::cout<<"   variableName... "<<pItem->getVariableName().toStdString()<<std::endl;
 		if(!pItem){
 			string msg;
 			msg += "Item named " + pItem->getDisplayName().toStdString() + " not recognized";
@@ -257,10 +252,8 @@ void VPPSettingsXmlReaderVisitor::visit(SettingsItemRoot* pRoot) {
 
 	// Assign the children of the xml reader root to the
 	// current root
-	pXmlReader_->readSubSection(vppSettingTreeTag);
-// Restore this code!
-//	if(pXmlReader_->readSubSection(vppSettingTreeTag))
-//		pXmlReader_->getRoot()->assign(pRoot);
+	if(pXmlReader_->readSubSection(vppSettingTreeTag))
+		pXmlReader_->getRoot()->assign(pRoot);
 
 }
 

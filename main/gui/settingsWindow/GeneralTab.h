@@ -53,10 +53,10 @@ class VppGeneralTabXmlReader {
 	public:
 
 		/// Ctor
-		VppGeneralTabXmlReader(VppSettingsXmlReader* pReader);
+		VppGeneralTabXmlReader(VppSettingsXmlReader* pReader,const GeneralTab* parentTab);
 
 		/// Read from file
-		bool read(const GeneralTab* pGenTab, QIODevice *device =Q_NULLPTR);
+		bool read();
 
 	private:
 
@@ -66,6 +66,8 @@ class VppGeneralTabXmlReader {
 		/// Ptr to the xml reader
 		VppSettingsXmlReader* pXmlReader_;
 
+		/// Ptr to my parent
+		const GeneralTab* pGenTab_;
 };
 
 //====================================================================
@@ -83,6 +85,10 @@ class GeneralTab : public QWidget {
 		/// Returns the index of the solver currently being
 		/// selected in the solver combo box
 		int getSolver() const;
+
+		/// Sets the index of the solver to be
+		/// selected in the solver combo box
+		void setSolver(int index) const;
 
 		/// Returns the name of the solver currently being
 		/// selected in the solver combo box

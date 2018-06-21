@@ -38,12 +38,13 @@ void VppGeneralTabXmlWriter::write(const GeneralTab* pGenTab) {
 //====================================================================
 
 /// Ctor
-VppGeneralTabXmlReader::VppGeneralTabXmlReader(VppSettingsXmlReader* pReader) :
-		pXmlReader_(pReader) {
+VppGeneralTabXmlReader::VppGeneralTabXmlReader(VppSettingsXmlReader* pReader,const GeneralTab* parentTab) :
+		pXmlReader_(pReader),
+		pGenTab_(parentTab) {
 }
 
 /// Read from file
-bool VppGeneralTabXmlReader::read(const GeneralTab* pGenTab,QIODevice* device ) {
+bool VppGeneralTabXmlReader::read() {
 
 	// Verify this is suitable file (vppSettings v.1.0). Otherwise throw
 	while (pXmlReader_->readNextStartElement()) {
@@ -71,7 +72,7 @@ void VppGeneralTabXmlReader::readItems() {
 			string attValue= pXmlReader_->attributes().at(i).value().toString().toStdString();
 
 			std::cout<<"Reading : "<<attName<<"  with a value of : "<<attValue<<std::endl;
-			//pGenTab->setSolver(strtoi(attValue.c_str()));
+			pGenTab_->setSolver(std::stoi(attValue.c_str()));
 		}
 	}
 }
@@ -126,6 +127,11 @@ int GeneralTab::getSolver() const {
 	return	pSolverComboBox_->currentIndex();
 }
 
+// Sets the index of the solver to be
+// selected in the solver combo box
+void GeneralTab::setSolver(int index) const {
+	pSolverComboBox_->setCurrentIndex(index);
+}
 // Returns the name of the solver currently being
 // selected in the solver combo box
 QString GeneralTab::getSolverName() const {
@@ -148,8 +154,8 @@ void GeneralTab::read(VppSettingsXmlReader* pReader) {
 
 	// Ask the reader to read the section pertaining
 	// to this tab
-	VppGeneralTabXmlReader r(pReader);
-	r.read(this);
+	VppGeneralTabXmlReader r(pReader,this);
+	r.read();
 }
 
 

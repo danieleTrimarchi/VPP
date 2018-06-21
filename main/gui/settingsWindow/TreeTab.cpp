@@ -134,6 +134,9 @@ void TreeTab::read(VppSettingsXmlReader* pReader){
 // done is erased.
 void TreeTab::revert() {
 
+    pTreeModel_->print();
+    pTreeReferenceModel_->print();
+    
 	if( *pTreeModel_ != *pTreeReferenceModel_ ){
 
 		// Do something only if the model is different to the
