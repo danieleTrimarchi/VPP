@@ -443,6 +443,12 @@ class SettingsItemComboBox : public SettingsItem<TUnit> {
 		/// Name of the class as a string. Used for XML i/o.
 		static const string className_;
 
+		/// XML tag to describe the number of options
+		static const string numOptsTag_;
+
+		/// XML tag to describe the active index for this combobox
+		static const string activeIndexTag_;
+
 	private:
 
 		/// Copy Ctor

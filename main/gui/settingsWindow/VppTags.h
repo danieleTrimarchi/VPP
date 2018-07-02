@@ -42,12 +42,6 @@ static std::string classNameTag("ClassName");
 /// XML tag used to describe the tooltip of an item
 static std::string tooltipTag("ToolTip");
 
-/// XML tag used to identify the number of options for a combo-box
-static std::string comboBoxNumOpts("numOpts");
-
-/// XML tag used to identify the active index of a combo-box
-static std::string comboBoxActiveIndex("ActiveIndex");
-
 /// XML tag used for identifying the begin of the settings tree section
 static std::string vppSettingTreeTag("vppSettingTree");
 
@@ -55,7 +49,7 @@ static std::string vppSettingTreeTag("vppSettingTree");
 static std::string vppGeneralSettingTag("vppGeneralSettings");
 
 /// XML tag used to identify the solver index of a combo-box
-static std::string comboBoxActiveIndex("Solver");
+static std::string comboBoxActiveSolver("Solver");
 
 
 

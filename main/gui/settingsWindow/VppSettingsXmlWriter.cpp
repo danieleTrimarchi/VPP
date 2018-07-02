@@ -44,7 +44,7 @@ VPPSettingsXmlWriterVisitor::~VPPSettingsXmlWriterVisitor() {
 
 void VPPSettingsXmlWriterVisitor::visitBegin(SettingsItemBase* item) {
 
-	pXmlWriter_->writeStartElement(QString(ItemTag));
+	pXmlWriter_->writeStartElement(QString(ItemTag.c_str()));
 
 	// --Write the part common to all items--
 	pXmlWriter_->writeAttribute(ExpandedTag.c_str(), item->expanded() ? "yes" : "no");

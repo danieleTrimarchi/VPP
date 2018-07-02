@@ -56,14 +56,16 @@ bool VPPSettingsXmlWriterVisitor::visit(SettingsItemComboBox<TUnit>* item ) {
 	pXmlWriter_->writeAttribute(classNameTag.c_str(),SettingsItemComboBox<TUnit>::className_.c_str());
 
 	// Write the number of options
-	pXmlWriter_->writeAttribute(comboBoxNumOpts.c_str(),QString::number(item->getNumOpts()));
+	pXmlWriter_->writeAttribute(SettingsItemComboBox<TUnit>::numOptsTag_.c_str(),QString::number(item->getNumOpts()));
 
 	// Write the available options
 	for(size_t i=0; i<item->getNumOpts(); i++)
 		pXmlWriter_->writeAttribute(QString("Option")+QString::number(i),item->getOption(i));
 
 	// Write the active index
-	pXmlWriter_->writeAttribute(comboBoxActiveIndex.c_str(),QString::number(item->getActiveIndex()));
+	pXmlWriter_->writeAttribute(
+			SettingsItemComboBox<TUnit>::activeIndexTag_.c_str(),
+			QString::number(item->getActiveIndex()));
 
 	// Write the unit of this item.
 	pXmlWriter_->writeAttribute(unitTag.c_str(), item->data(colNames::unit_.idx_).toString() );

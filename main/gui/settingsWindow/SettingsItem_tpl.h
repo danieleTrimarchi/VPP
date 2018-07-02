@@ -300,6 +300,11 @@ SettingsItemInt<TUnit>* SettingsItemInt<TUnit>::clone() const {
 
 template <class TUnit>
 const string SettingsItemComboBox<TUnit>::className_("SettingsItemComboBox");
+template <class TUnit>
+const string SettingsItemComboBox<TUnit>::numOptsTag_("numOpts");
+template <class TUnit>
+const string SettingsItemComboBox<TUnit>::activeIndexTag_("ActiveIndex");
+
 
 // Ctor
 template <class TUnit>
@@ -325,13 +330,13 @@ SettingsItemComboBox<TUnit>::SettingsItemComboBox(const XmlAttributeSet& xmlAttS
 											xmlAttSet[tooltipTag.c_str()].toQString() ){
 
 	// Populate the options
-	for(size_t i=0; i<int((xmlAttSet[comboBoxNumOpts.c_str()]).getInt()); i++){
+	for(size_t i=0; i<int((xmlAttSet[SettingsItemComboBox<TUnit>::numOptsTag_.c_str()]).getInt()); i++){
 		char msg[256];
 		sprintf(msg,"Option%zu",i);
 		opts_.push_back(xmlAttSet[string(msg)].toQString());
 	}
 
-	activeIndex_= xmlAttSet[comboBoxActiveIndex.c_str()].getInt();
+	activeIndex_= xmlAttSet[activeIndexTag_.c_str()].getInt();
 
 }
 

@@ -6,6 +6,7 @@
 #include <QtCore/QFile>
 #include <iostream>
 #include "VppTags.h"
+#include "SettingsItem.h"
 
 VppGeneralTabXmlWriter::VppGeneralTabXmlWriter(VppSettingsXmlWriter* pWriter) :
 pXmlWriter_(pWriter) {
@@ -23,12 +24,12 @@ VppGeneralTabXmlWriter::~VppGeneralTabXmlWriter() {
 // Write the content of the general tab to xml
 void VppGeneralTabXmlWriter::write(const GeneralTab* pGenTab) {
 
-	pXmlWriter_->writeStartElement(QString(ItemTag));
+	pXmlWriter_->writeStartElement(QString(ItemTag.c_str()));
 
 	// Simply write the index of the choice selected by the user for
 	// the solver combo-box
-	pXmlWriter_->writeAttribute(comboBoxActiveIndex.c_str(),pGenTab->getSolverName());
-	pXmlWriter_->writeAttribute(comboBoxActiveIndex.c_str(),QString::number(pGenTab->getSolver()));
+	pXmlWriter_->writeAttribute("Solver",pGenTab->getSolverName());
+	pXmlWriter_->writeAttribute("ActiveIndex",QString::number(pGenTab->getSolver()));
 
 	// This item is finished
 	pXmlWriter_->writeEndElement();
@@ -83,7 +84,7 @@ void VppGeneralTabXmlReader::readItems() {
 			}
 
 			// Set the active index for the Combo-box
-			pGenTab_->setSolver(attSet[comboBoxActiveIndex.c_str()].getInt());
+			pGenTab_->setSolver(attSet[SettingsItemComboBox<NoUnit>::activeIndexTag_.c_str()].getInt());
 
 		} catch (...) {
 			std::cout<<"Something went wrong when inserting attribute "<<attName<<" in set"<<std::endl;
