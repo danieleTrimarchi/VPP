@@ -25,14 +25,14 @@ class SpinBoxDelegate : public QStyledItemDelegate {
 
 /// ---------------------------------------------------------------
 
-class QLineEditDelegate : public QStyledItemDelegate {
+class VPPSettingsDelegate : public QStyledItemDelegate {
 
 		Q_OBJECT
 
 	public:
 
 		/// Ctor
-		QLineEditDelegate(QObject *parent = 0);
+		VPPSettingsDelegate(QObject *parent = 0);
 
 		/// Create an editor for editing the data in the model
 		QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,

@@ -40,7 +40,7 @@ QWidget(myparent) {
 	pTreeView_->setWindowTitle(QObject::tr("Dialog Tree Model"));
 
 	// Adding a delegate...
-	pDelegate_ = new QLineEditDelegate(this);
+	pDelegate_ = new VPPSettingsDelegate(this);
 	pTreeView_->setItemDelegate(pDelegate_);
 
 	// Expand all the items.

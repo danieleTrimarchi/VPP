@@ -131,7 +131,7 @@ GeneralTab::GeneralTab(QWidget *parent) :
 	pSolverComboBox_->setFont(font);
 	pSolverVBox->addWidget(pSolverComboBox_);
 
-	QVBoxLayout* mainLayout = new QVBoxLayout;
+	QVBoxLayout* mainLayout = new QVBoxLayout(this);
 	mainLayout->addWidget(pSolverGroupBox,0,Qt::AlignTop);
 	setLayout(mainLayout);
 }
@@ -145,7 +145,6 @@ int GeneralTab::getSolver() const {
 // Sets the index of the solver to be
 // selected in the solver combo box
 void GeneralTab::setSolver(int index) const {
-	std::cout<<"GeneralTab setSolver "<<index<<std::endl;
 	pSolverComboBox_->setCurrentIndex(index);
 }
 // Returns the name of the solver currently being

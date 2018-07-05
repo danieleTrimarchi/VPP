@@ -58,13 +58,13 @@ void SpinBoxDelegate::updateEditorGeometry(QWidget *editor,
 // -----------------------------------------------------------------
 
 
-QLineEditDelegate::QLineEditDelegate(QObject *parent)
+VPPSettingsDelegate::VPPSettingsDelegate(QObject *parent)
 : QStyledItemDelegate(parent){
 
 }
 
 
-QWidget* QLineEditDelegate::createEditor(QWidget* parent,
+QWidget* VPPSettingsDelegate::createEditor(QWidget* parent,
 		const QStyleOptionViewItem& option,
 		const QModelIndex& index) const {
 
@@ -83,7 +83,7 @@ QWidget* QLineEditDelegate::createEditor(QWidget* parent,
 	return new QWidget(parent);
 }
 
-void QLineEditDelegate::setEditorData(QWidget *editor,const QModelIndex& index) const {
+void VPPSettingsDelegate::setEditorData(QWidget *editor,const QModelIndex& index) const {
 
 	if (index.isValid()) {
 		SettingsItemBase* pItem = static_cast<SettingsItemBase*>(index.internalPointer());
@@ -93,7 +93,7 @@ void QLineEditDelegate::setEditorData(QWidget *editor,const QModelIndex& index) 
 }
 
 // Set the data in the model
-void QLineEditDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
+void VPPSettingsDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
 		const QModelIndex &index) const {
 
 	if (index.isValid()) {
@@ -104,7 +104,7 @@ void QLineEditDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
 	}
 }
 
-void QLineEditDelegate::updateEditorGeometry(QWidget *editor,
+void VPPSettingsDelegate::updateEditorGeometry(QWidget *editor,
 		const QStyleOptionViewItem &option, const QModelIndex &/* index */) const {
 
 	editor->setGeometry(option.rect);
@@ -112,7 +112,7 @@ void QLineEditDelegate::updateEditorGeometry(QWidget *editor,
 }
 
 // Visual options - requests the item what to do
-void QLineEditDelegate::paint(QPainter* painter, const QStyleOptionViewItem &option,
+void VPPSettingsDelegate::paint(QPainter* painter, const QStyleOptionViewItem &option,
 		const QModelIndex &index) const{
 
 	if (index.isValid()) {
