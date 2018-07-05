@@ -202,8 +202,8 @@ void VppSettingsXmlReader::readTreeItems(Item* parentItem) {
 
 		// Build the item specified by this attribute set
 		SettingsItemBase* pItem = SettingsItemBase::settingsItemFactory(attSet);
-		std::cout<<"Instantiating a... "<<pItem->getDisplayName().toStdString()<<std::endl;
-		std::cout<<"   variableName... "<<pItem->getVariableName().toStdString()<<std::endl;
+		//std::cout<<"Instantiating a... "<<pItem->getDisplayName().toStdString()<<std::endl;
+		//std::cout<<"   variableName... "<<pItem->getVariableName().toStdString()<<std::endl;
 		if(!pItem){
 			string msg;
 			msg += "Item named " + pItem->getDisplayName().toStdString() + " not recognized";

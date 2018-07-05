@@ -1,14 +1,3 @@
-XML reading is broken: 
-Error in function: virtual size_t VPPResultIO::preParse()
- in file: main/io/VPPResultIO.cpp line: 43
- Message: VariableFileName not defined! 
-
-
-the solver choice in the General Tab should also be saved with the settings!
-Refactor VppSettingsXmlReader/Writer and VppGeneralTabXmlReader/Writer
-
-Restore the xmlIOTest
-
 Remove shared ptr in favor of std::shared_ptr
 
 Refactor the combo-boxes - see ctor of GeneralTab

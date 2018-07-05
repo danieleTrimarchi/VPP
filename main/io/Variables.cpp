@@ -2,6 +2,10 @@
 #include "VPPException.h"
 #include "utility"
 
+// Init static members
+// XML tag used to describe the internal name of an item
+std::string Variable::variableNameTag_("VariableName");
+
 // Implicit copy constructor used to cast a variable to its name
 Variable::Variable(const string& varName, const double& val)
 : varName_(varName),
@@ -32,6 +36,9 @@ bool Variable::operator < (const Variable& rhs) const {
 
 // Overload operator == to compare in set
 bool Variable::operator==(const Variable& rhs) const {
+
+	//std::cout<<"\tNAME= "<<varName_<<"  "<<rhs.varName_<<std::endl;
+	//std::cout<<"\tVALUE= "<<val_<<"  "<<rhs.val_<<std::endl;
 	return (varName_ == rhs.varName_ &&
 			val_==rhs.val_);
 }
@@ -87,7 +94,7 @@ void VarSet::print(FILE* outStream/*=stdout*/) {
 	fprintf( outStream, "%s\n", headerBegin_.c_str() );
 
 	// Print the variables
-	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it)
+	for(std::set<Variable>::iterator it= begin(); it==end(); it++)
 		fprintf(outStream, "%s  %8.6f \n", it->varName_.c_str(), it->val_ );
 
 	// Print the header end
@@ -99,7 +106,7 @@ void VarSet::print(FILE* outStream/*=stdout*/) {
 // visualize the variables in the UI
 void VarSet::populate(VariableTreeModel* pTreeModel) {
 
-	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it)
+	for(std::set<Variable>::iterator it= begin(); it==end(); it++)
 		pTreeModel->append(it->varName_.c_str(),it->val_);
 
 }
@@ -113,11 +120,12 @@ bool VarSet::operator == (const VarSet& rhs) {
 
 	// Compare value by value. Return false if any item is found to be
 	// different
-	for(std::set<Variable>::iterator it= begin(), itrhs= rhs.begin();
-			it!=end(),itrhs!=end();
-			++it, ++itrhs){
-		if(it!=itrhs)
+	for(std::set<Variable>::iterator 	it= begin(), itrhs= rhs.begin();
+																	it==end(),		itrhs==end();
+																	it++, 				itrhs++){
+		if(*it!=*itrhs){
 			return false;
+		}
 	}
 
 	// No differences found: return true

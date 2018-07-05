@@ -57,7 +57,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 
 	// Create a widget and set its title
 	pWidget_ = new QWidget;
-	pWidget_->setWindowTitle(QStringLiteral("Surface example"));
+	pWidget_->setWindowTitle(QStringLiteral("Surface plot"));
 
 	// Assign the widget to the current dockable widget
 	setWidget(pWidget_);
@@ -119,7 +119,7 @@ ThreeDPlotWidget::ThreeDPlotWidget(QWidget* parent /*=Q_NULLPTR*/, Qt::WindowFla
 
 	// Define radio button...
 	QRadioButton* pModeItemSelection = new QRadioButton(pWidget_);
-	pModeItemSelection->setText(QString(ItemTag.c_str()));
+	pModeItemSelection->setText(QString(Item::itemTag_.c_str()));
 	pModeItemSelection->setChecked(false);
 	font = pModeItemSelection->font();
 	font.setPointSizeF(fontSize_);

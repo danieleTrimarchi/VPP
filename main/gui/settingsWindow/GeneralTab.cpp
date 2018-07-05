@@ -24,7 +24,7 @@ VppGeneralTabXmlWriter::~VppGeneralTabXmlWriter() {
 // Write the content of the general tab to xml
 void VppGeneralTabXmlWriter::write(const GeneralTab* pGenTab) {
 
-	pXmlWriter_->writeStartElement(QString(ItemTag.c_str()));
+	pXmlWriter_->writeStartElement(QString(Item::itemTag_.c_str()));
 
 	// Simply write the index of the choice selected by the user for
 	// the solver combo-box

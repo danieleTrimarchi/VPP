@@ -37,7 +37,7 @@ template <class TUnit>
 SettingsItem<TUnit>::SettingsItem(const XmlAttributeSet& xmlAttSet):
 				SettingsItem<TUnit>(
 						xmlAttSet[displayNameTag.c_str()].toQString(),
-						xmlAttSet[variableNameTag.c_str()].toQString(),
+						xmlAttSet[Variable::variableNameTag_.c_str()].toQString(),
 						xmlAttSet[valueTag.c_str()].toQString(),
 						xmlAttSet[tooltipTag.c_str()].toQString() ){
 }
@@ -325,7 +325,7 @@ SettingsItemComboBox<TUnit>::SettingsItemComboBox(
 template <class TUnit>
 SettingsItemComboBox<TUnit>::SettingsItemComboBox(const XmlAttributeSet& xmlAttSet) :
 	SettingsItem<TUnit>(	xmlAttSet[displayNameTag.c_str()].toQString(),
-											xmlAttSet[variableNameTag.c_str()].toQString(),
+											xmlAttSet[Variable::variableNameTag_.c_str()].toQString(),
 											xmlAttSet["Option0"].toQString(),
 											xmlAttSet[tooltipTag.c_str()].toQString() ){
 

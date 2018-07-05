@@ -4,6 +4,10 @@
 #include "VPPException.h"
 #include <iostream>
 
+// Init static members
+string Item::itemTag_("Item");
+
+
 // Default Ctor
 Item::Item(Item* pParent) :
 pParent_(pParent),

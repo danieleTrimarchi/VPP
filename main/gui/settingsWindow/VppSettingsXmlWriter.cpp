@@ -44,13 +44,13 @@ VPPSettingsXmlWriterVisitor::~VPPSettingsXmlWriterVisitor() {
 
 void VPPSettingsXmlWriterVisitor::visitBegin(SettingsItemBase* item) {
 
-	pXmlWriter_->writeStartElement(QString(ItemTag.c_str()));
+	pXmlWriter_->writeStartElement(QString(Item::itemTag_.c_str()));
 
 	// --Write the part common to all items--
 	pXmlWriter_->writeAttribute(ExpandedTag.c_str(), item->expanded() ? "yes" : "no");
 	pXmlWriter_->writeAttribute(internalNameTag.c_str(),item->getInternalName());
 	pXmlWriter_->writeAttribute(displayNameTag.c_str(),item->getDisplayName());
-	pXmlWriter_->writeAttribute(variableNameTag.c_str(),item->getVariableName());
+	pXmlWriter_->writeAttribute(Variable::variableNameTag_.c_str(),item->getVariableName());
 
 }
 

@@ -51,6 +51,9 @@ class Variable {
 		/// Value of this variable
 		double val_;
 
+		/// XML tag used to describe the internal name of an item
+		static std::string variableNameTag_;
+
 };
 
 /// Utility class that derives from set and overloads the

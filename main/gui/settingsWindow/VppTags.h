@@ -12,9 +12,6 @@ static std::string vppSettingsVersionTag("version");
 /// XML tag used to identify the version of the vpp settings
 static std::string vppSettingsVersion("1.0");
 
-/// XML tag used to identify the items
-static std::string ItemTag("Item");
-
 /// XML tag used to describe if an item is expanded
 static std::string ExpandedTag("Expanded");
 
@@ -23,9 +20,6 @@ static std::string internalNameTag("InternalName");
 
 /// XML tag used to describe the internal name of an item
 static std::string displayNameTag("DisplayName");
-
-/// XML tag used to describe the internal name of an item
-static std::string variableNameTag("VariableName");
 
 /// XML tag used to describe the value of an item
 static std::string valueTag("Value");

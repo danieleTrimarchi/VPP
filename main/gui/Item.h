@@ -143,6 +143,9 @@ class Item {
 		/// This slot is triggered when the item is expanded in the view
 		void setExpanded(bool expanded);
 
+		/// XML tag used to identify the items
+		static string itemTag_;
+
 	protected :
 
 		/// Parent of this (composite) item
