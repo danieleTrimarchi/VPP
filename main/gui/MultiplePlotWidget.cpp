@@ -37,7 +37,7 @@ void MultiplePlotWidget::addChart(VppCustomPlotWidgetBase* chart, size_t px, siz
 
 	// Add the widget to the multiple plot
 	pGridLayout_->addWidget(chart, px, py);
-	customPlotList_ << boost::shared_ptr<VppCustomPlotWidgetBase>(chart);
+	customPlotList_ << std::shared_ptr<VppCustomPlotWidgetBase>(chart);
 
 	// Connect the charts in the multiple plot in order to being able to
 	// magnify one chart on double click
@@ -60,7 +60,7 @@ int MultiplePlotWidget::rowCount() const {
 void MultiplePlotWidget::connectFullScreenSignals() {
 
 	// Connect the widget to the function that handles the widget visibility in the layout
-	foreach (boost::shared_ptr<VppCustomPlotWidgetBase> pChart, customPlotList_) {
+	foreach (std::shared_ptr<VppCustomPlotWidgetBase> pChart, customPlotList_) {
 		QObject::disconnect(pChart.get(), SIGNAL(requestFullScreen(const VppCustomPlotWidgetBase*)), this, SLOT(toggleFullScreen(const VppCustomPlotWidgetBase*)));
 		QObject::connect(pChart.get(), SIGNAL(requestFullScreen(const VppCustomPlotWidgetBase*)), this, SLOT(toggleFullScreen(const VppCustomPlotWidgetBase*)));
 	}
@@ -71,7 +71,7 @@ void MultiplePlotWidget::toggleFullScreen(const VppCustomPlotWidgetBase* pClicke
 
 	// Loop on the list of chart view and reverse the visibility of all,
 	// except the one that was clicked
-	foreach (boost::shared_ptr<VppCustomPlotWidgetBase> pChart, customPlotList_) {
+	foreach (std::shared_ptr<VppCustomPlotWidgetBase> pChart, customPlotList_) {
 
 		if(pChart.get()!=pClickedView)
 			pChart->setVisible( !pChart->isVisible() );

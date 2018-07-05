@@ -6,7 +6,7 @@
 #include "VPPDialogs.h"
 
 // Constructor
-ResistanceItem::ResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
+ResistanceItem::ResistanceItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet) :
 VPPItem(pParser,pSailSet),
 fN_(0),
 res_(0){
@@ -361,7 +361,7 @@ void InducedResistanceItem::plotTe(int twv, int twa) {
 //=================================================================
 // Residuary Resistance: see DSYHS99 3.1.1.2 p112
 // Constructor
-ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
 						ResistanceItem(pParser, pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
@@ -458,7 +458,7 @@ std::vector<VppXYCustomPlotWidget*> ResiduaryResistanceItem::plot(WindIndicesDia
 // For the change in Residuary Resistance due to heel see DSYHS99 ch3.1.2.2 p116
 // Constructor
 Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
-		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
+		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet) :
 						ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
@@ -605,7 +605,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistance_HeelItem::plot(Win
 //=================================================================
 // For the definition of the Residuary Resistance of the Keel see DSYHS99 3.2.1.2 p.120 and following
 // Constructor
-ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
 						ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
@@ -686,7 +686,7 @@ std::vector<VppXYCustomPlotWidget*> ResiduaryResistanceKeelItem::plot(WindIndice
 // See DSYHS99 3.2.2 p 126
 // Constructor
 Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
-		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
 						ResistanceItem(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
@@ -801,7 +801,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistanceKeel_HeelItem::plot
 //=================================================================
 // For the definition of the Frictional Resistance see DSYHS99 2.1 p108
 // Constructor
-ViscousResistanceItem::ViscousResistanceItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+ViscousResistanceItem::ViscousResistanceItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
 						ResistanceItem(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_
@@ -892,7 +892,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceItem::plot(WindIndicesDialo
 
 // Constructor
 Delta_ViscousResistance_HeelItem::Delta_ViscousResistance_HeelItem(
-		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
 								ResistanceItem(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_. The definition of the Rn
@@ -1056,7 +1056,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_ViscousResistance_HeelItem::plot(WindI
 
 // Constructor
 ViscousResistanceKeelItem::ViscousResistanceKeelItem(
-		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
 												ResistanceItem(pParser,pSailSet) {
 }
 
@@ -1134,7 +1134,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceKeelItem::plot(WindIndicesD
 
 // Constructor
 ViscousResistanceRudderItem::ViscousResistanceRudderItem(
-		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
 																		ResistanceItem(pParser,pSailSet) {
 }
 
@@ -1212,7 +1212,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceRudderItem::plot(WindIndice
 
 // Constructor
 NegativeResistanceItem::NegativeResistanceItem(
-		VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
 																		ResistanceItem(pParser,pSailSet) {
 }
 

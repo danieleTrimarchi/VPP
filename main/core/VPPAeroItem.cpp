@@ -12,7 +12,7 @@
 using namespace mathUtils;
 
 /// Constructor
-WindItem::WindItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
+WindItem::WindItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet) :
 								VPPItem(pParser,pSailSet),
 								twv_(0),
 								twa_(0),
@@ -168,13 +168,13 @@ void SailCoefficientItem::interpolateCoeffs() {
 	// Interpolate the values of the sail coefficients for the MainSail
 	for(size_t i=1; i<4; i++){
 		y=pCl_->getCoefficientMatrix()->col(i);
-		interpClVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y) ) );
+		interpClVec_.push_back( std::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y) ) );
 	}
 	x=pCd_->getCoefficientMatrix()->col(0);
 	// Interpolate the values of the sail coefficients for the MainSail
 	for(size_t i=1; i<4; i++){
 		y=pCd_->getCoefficientMatrix()->col(i);
-		interpCdVec_.push_back( boost::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
+		interpCdVec_.push_back( std::shared_ptr<SplineInterpolator>( new SplineInterpolator(x,y)) );
 	}
 
 	// resize and init cl_ and cd_ for storing the interpolated values
@@ -432,7 +432,7 @@ void MainAndJibCoefficientItem::update(int vTW, int aTW) {
 	SailCoefficientItem::update(vTW,aTW);
 
 	// create an alias for code readability
-	boost::shared_ptr<SailSet> ps= pSailSet_;
+	std::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(activeSail::mainSail)  * ps->get(Var::am_) + allCl_(activeSail::jib)  *  ps->get(Var::aj_) ) /  ps->get(Var::an_);
@@ -554,7 +554,7 @@ void MainAndSpiCoefficientItem::update(int vTW, int aTW) {
 	SailCoefficientItem::update(vTW,aTW);
 
 	// create an alias for code readability
-	boost::shared_ptr<SailSet> ps= pSailSet_;
+	std::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(activeSail::mainSail)  * ps->get(Var::am_) + allCl_(activeSail::spi) *  ps->get(Var::as_) ) /  ps->get(Var::an_);
@@ -675,7 +675,7 @@ void MainJibAndSpiCoefficientItem::update(int vTW, int aTW) {
 	SailCoefficientItem::update(vTW,aTW);
 
 	// create an alias for code readability
-	boost::shared_ptr<SailSet> ps= pSailSet_;
+	std::shared_ptr<SailSet> ps= pSailSet_;
 
 	// 	Cl = ( Cl_M * AM + Cl_J * AJ ) / AN
 	cl_ = ( allCl_(activeSail::mainSail)  * ps->get(Var::am_) + allCl_(activeSail::jib)  *  ps->get(Var::aj_) + allCl_(activeSail::spi) *  ps->get(Var::as_) ) /  ps->get(Var::an_);

@@ -171,7 +171,7 @@ bool VppSettingsXmlReader::readSubSection(string& sectionHeader) {
 }
 
 // Return the tree populated with the items from the xml
-boost::shared_ptr<SettingsItemBase> VppSettingsXmlReader::getRoot() {
+std::shared_ptr<SettingsItemBase> VppSettingsXmlReader::getRoot() {
 	return pRootItem_;
 }
 

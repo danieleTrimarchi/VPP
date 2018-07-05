@@ -2,7 +2,6 @@
 #define VPPITEM_H
 
 #include <vector>
-#include "boost/shared_ptr.hpp"
 #include <Eigen/Core>
 
 #include "VariableFileParser.h"
@@ -21,7 +20,7 @@ class VPPItem {
 	public:
 
 		/// Constructor
-		VPPItem(VariableFileParser*, boost::shared_ptr<SailSet> );
+		VPPItem(VariableFileParser*, std::shared_ptr<SailSet> );
 
 		/// Destructor
 		virtual ~VPPItem();
@@ -40,7 +39,7 @@ class VPPItem {
 		VariableFileParser* getParser() const;
 
 		/// Returns a ptr to the SailSet
-		boost::shared_ptr<SailSet> getSailSet() const;
+		std::shared_ptr<SailSet> getSailSet() const;
 
 	protected:
 
@@ -63,7 +62,7 @@ class VPPItem {
 		VariableFileParser* pParser_;
 
 		/// Ptr to the SailSet with the sail related variables
-		boost::shared_ptr<SailSet> pSailSet_;
+		std::shared_ptr<SailSet> pSailSet_;
 
 	private:
 

@@ -42,7 +42,7 @@ class ResistanceItem : public VPPItem {
 	protected:
 
 		/// Protected constructor (Avoid the instantiation of this class)
-		ResistanceItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		ResistanceItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// drag the pure virtual method of the parent class one step down
 		virtual void update(int vTW, int aTW);
@@ -94,7 +94,7 @@ class InducedResistanceItem : public ResistanceItem {
 
 		/// Smoothed step function used to smooth the values of the induced
 		/// resistance in the neighborhood of 0
-		boost::shared_ptr<SmoothedStepFunction> pSf_;
+		std::shared_ptr<SmoothedStepFunction> pSf_;
 
 };
 
@@ -105,7 +105,7 @@ class ResiduaryResistanceItem : public ResistanceItem {
 	public:
 
 		/// Constructor
-		ResiduaryResistanceItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		ResiduaryResistanceItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		~ResiduaryResistanceItem();
@@ -121,7 +121,7 @@ class ResiduaryResistanceItem : public ResistanceItem {
 		virtual void update(int vTW, int aTW);
 
 		/// Interpolator that stores the residuary resistance curve for all froude numbers
-		boost::shared_ptr<SplineInterpolator> pInterpolator_;
+		std::shared_ptr<SplineInterpolator> pInterpolator_;
 };
 
 /// =================================================================
@@ -132,7 +132,7 @@ class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 	public:
 
 		/// Constructor
-		Delta_ResiduaryResistance_HeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		Delta_ResiduaryResistance_HeelItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		~Delta_ResiduaryResistance_HeelItem();
@@ -148,7 +148,7 @@ class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 		virtual void update(int vTW, int aTW);
 
 		/// Interpolator that stores the residuary resistance curve for all froude numbers
-		boost::shared_ptr<SplineInterpolator> pInterpolator_;
+		std::shared_ptr<SplineInterpolator> pInterpolator_;
 
 };
 
@@ -161,7 +161,7 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 	public:
 
 		/// Constructor
-		ResiduaryResistanceKeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		ResiduaryResistanceKeelItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		~ResiduaryResistanceKeelItem();
@@ -177,7 +177,7 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 		virtual void update(int vTW, int aTW);
 
 		/// Interpolator that stores the residuary resistance curve for all froude numbers
-		boost::shared_ptr<SplineInterpolator> pInterpolator_;
+		std::shared_ptr<SplineInterpolator> pInterpolator_;
 
 };
 
@@ -190,7 +190,7 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 	public:
 
 		/// Constructor
-		Delta_ResiduaryResistanceKeel_HeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		Delta_ResiduaryResistanceKeel_HeelItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		~Delta_ResiduaryResistanceKeel_HeelItem();
@@ -218,7 +218,7 @@ class ViscousResistanceItem : public ResistanceItem {
 	public:
 
 		/// Constructor
-		ViscousResistanceItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		ViscousResistanceItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		~ViscousResistanceItem();
@@ -247,7 +247,7 @@ class Delta_ViscousResistance_HeelItem : public ResistanceItem {
 	public:
 
 		/// Constructor
-		Delta_ViscousResistance_HeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		Delta_ViscousResistance_HeelItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		~Delta_ViscousResistance_HeelItem();
@@ -269,7 +269,7 @@ class Delta_ViscousResistance_HeelItem : public ResistanceItem {
 		double 	rN0_;
 
 		/// Interpolator that stores the residuary resistance curve for all froude numbers
-		boost::shared_ptr<SplineInterpolator> pInterpolator_;
+		std::shared_ptr<SplineInterpolator> pInterpolator_;
 
 };
 
@@ -280,7 +280,7 @@ class ViscousResistanceKeelItem : public ResistanceItem {
 	public:
 
 		/// Constructor
-		ViscousResistanceKeelItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		ViscousResistanceKeelItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		~ViscousResistanceKeelItem();
@@ -304,7 +304,7 @@ class ViscousResistanceRudderItem : public ResistanceItem {
 	public:
 
 		/// Constructor
-		ViscousResistanceRudderItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		ViscousResistanceRudderItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		~ViscousResistanceRudderItem();
@@ -329,7 +329,7 @@ class NegativeResistanceItem : public ResistanceItem {
 	public:
 
 		/// Constructor
-	NegativeResistanceItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+	NegativeResistanceItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		~NegativeResistanceItem();

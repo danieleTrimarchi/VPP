@@ -5,7 +5,7 @@ using namespace mathUtils;
 #include "VPPException.h"
 
 // Constructor
-RightingMomentItem::RightingMomentItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> sailSet):
+RightingMomentItem::RightingMomentItem(VariableFileParser* pParser, std::shared_ptr<SailSet> sailSet):
 				VPPItem(pParser, sailSet),
 				val_(0) {
 

@@ -10,7 +10,6 @@
 #include "VppTableDockWidget.h"
 #include "VariableFileParser.h"
 #include "SailSet.h"
-#include "boost/shared_ptr.hpp"
 #include "DebugStream.h"
 #include "VPPSolverFactoryBase.h"
 #include "VppCustomPlotWidget.h"
@@ -164,10 +163,10 @@ private:
 
 	/// Log widget - This must be declared at the very beginning as we want to
 	/// make sure it is the last item to be removed on destruction
-	boost::shared_ptr<QTextEdit> pLogWidget_;
+	std::shared_ptr<QTextEdit> pLogWidget_;
 
 	/// Menus available to the menu bar
-	boost::shared_ptr<QMenu> pPreferencesMenu_, pWidgetMenu_, pHelpMenu_;
+	std::shared_ptr<QMenu> pPreferencesMenu_, pWidgetMenu_, pHelpMenu_;
 
 	/// Toolbar with some shortcuts to actions
 	QToolBar* pToolBar_;
@@ -189,39 +188,39 @@ private:
 											*pXYPlotWidget_;
 
 	/// Widget that contains the tabular view of the results
-	boost::shared_ptr<VppTableDockWidget> pTableWidget_;
+	std::shared_ptr<VppTableDockWidget> pTableWidget_;
 
-	boost::shared_ptr<VppCustomPlotWidget> pCustomPlotWidget_;
+	std::shared_ptr<VppCustomPlotWidget> pCustomPlotWidget_;
 
 	/// Three dimensional plot widget
-	boost::shared_ptr<ThreeDPlotWidget> p3dPlotWidget_;
+	std::shared_ptr<ThreeDPlotWidget> p3dPlotWidget_;
 
 	/// Variable Widget
-	boost::shared_ptr<VariablesDockWidget> pVariablesWidget_;
+	std::shared_ptr<VariablesDockWidget> pVariablesWidget_;
 
 	std::vector<VppTabDockWidget*> tabbedWidgets_;
 
 	/// Singleton
 	/// File browser used to choose sail coeffs file. This becomes member to
 	/// report the previous file chosen - in the case of multiple calls
-	static boost::shared_ptr<VPPDefaultFileBrowser> pSailCoeffFileBrowser_;
+	static std::shared_ptr<VPPDefaultFileBrowser> pSailCoeffFileBrowser_;
 
 	/// Main window label
 	const QString windowLabel_;
 
 	/// Variable file parser, used to import a boat description and store the variables
-	boost::shared_ptr<VariableFileParser> pVariableFileParser_;
+	std::shared_ptr<VariableFileParser> pVariableFileParser_;
 
 	/// Sail configuration, based on the variables that have been read in
-	boost::shared_ptr<SailSet> pSails_;
+	std::shared_ptr<SailSet> pSails_;
 
 	/// Declare a container for all the items that
 	/// constitute the VPP components (Wind, Resistance, RightingMoment...)
-	boost::shared_ptr<VPPItemFactory> pVppItems_;
+	std::shared_ptr<VPPItemFactory> pVppItems_;
 
 	/// Ptr to the solver factory - we want to keep this alive to
 	/// recover a handle to the results after  run
-	boost::shared_ptr<Optim::VPPSolverFactoryBase> pSolverFactory_;
+	std::shared_ptr<Optim::VPPSolverFactoryBase> pSolverFactory_;
 
 };
 

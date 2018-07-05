@@ -4,7 +4,6 @@
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QMenu>
-#include "boost/shared_ptr.hpp"
 #include "LogWindow.h"
 
 class LogDockWidget : public QDockWidget {
@@ -28,11 +27,11 @@ public:
 private:
 
 	/// Log window contained in this widget
-	boost::shared_ptr<LogWindow> pLogWindow_;
+	std::shared_ptr<LogWindow> pLogWindow_;
 
 	/// Menu in the menu-bar that drives the appeareance of this widget
 	/// and all other actions related to the log widget
-    boost::shared_ptr<QMenu> pMenu_;
+    std::shared_ptr<QMenu> pMenu_;
 
     const QString widgetTitle_;
 };

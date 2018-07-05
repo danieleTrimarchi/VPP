@@ -2,7 +2,6 @@
 #define VPP_SOLVER_FACTORY
 
 #include "VPPItemFactory.h"
-#include "boost/shared_ptr.hpp"
 
 #include "VPPSolver.h"
 
@@ -32,7 +31,7 @@ class VPPSolverFactoryBase {
 	public:
 
 		/// Ctor
-		VPPSolverFactoryBase(boost::shared_ptr<VPPItemFactory>);
+		VPPSolverFactoryBase(std::shared_ptr<VPPItemFactory>);
 
 		/// Virtual Dtor
 		virtual ~VPPSolverFactoryBase();
@@ -49,7 +48,7 @@ class VPPSolverFactoryBase {
 		VPPSolverFactoryBase();
 
 		/// Ptr to the item factory
-		boost::shared_ptr<VPPItemFactory> pVppItems_;
+		std::shared_ptr<VPPItemFactory> pVppItems_;
 
 };
 
@@ -61,7 +60,7 @@ class SolverFactory : public VPPSolverFactoryBase {
 	public:
 
 		/// Ctor
-		SolverFactory(boost::shared_ptr<VPPItemFactory>);
+		SolverFactory(std::shared_ptr<VPPItemFactory>);
 
 		/// Virtual Dtor
 		virtual ~SolverFactory();
@@ -76,7 +75,7 @@ class SolverFactory : public VPPSolverFactoryBase {
 	private:
 
 		/// Ptr to the problem representation
-		boost::shared_ptr<VPPSolver> pSolver_;
+		std::shared_ptr<VPPSolver> pSolver_;
 
 };
 
@@ -88,7 +87,7 @@ class NLOptSolverFactory : public VPPSolverFactoryBase {
 	public:
 
 		/// Ctor
-		NLOptSolverFactory(boost::shared_ptr<VPPItemFactory>);
+		NLOptSolverFactory(std::shared_ptr<VPPItemFactory>);
 
 		/// Virtual Dtor
 		virtual ~NLOptSolverFactory();
@@ -103,7 +102,7 @@ class NLOptSolverFactory : public VPPSolverFactoryBase {
 	private:
 
 		/// Ptr to the problem representation
-		boost::shared_ptr<NLOptSolver> pSolver_;
+		std::shared_ptr<NLOptSolver> pSolver_;
 
 };
 
@@ -116,7 +115,7 @@ class SAOASolverFactory : public VPPSolverFactoryBase {
 	public:
 
 		/// Ctor
-		SAOASolverFactory(boost::shared_ptr<VPPItemFactory>);
+		SAOASolverFactory(std::shared_ptr<VPPItemFactory>);
 
 		/// Virtual Dtor
 		virtual ~SAOASolverFactory();
@@ -131,7 +130,7 @@ class SAOASolverFactory : public VPPSolverFactoryBase {
 	private:
 
 		/// Ptr to the problem representation
-		boost::shared_ptr<SemiAnalyticalOptimizer> pSolver_;
+		std::shared_ptr<SemiAnalyticalOptimizer> pSolver_;
 
 };
 
@@ -143,7 +142,7 @@ class IppOptSolverFactory : public VPPSolverFactoryBase {
 	public:
 
 		/// Ctor
-		IppOptSolverFactory(boost::shared_ptr<VPPItemFactory>);
+		IppOptSolverFactory(std::shared_ptr<VPPItemFactory>);
 
 		/// Virtual Dtor
 		virtual ~IppOptSolverFactory();

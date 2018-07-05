@@ -10,7 +10,7 @@ class RightingMomentItem : public VPPItem {
 	public:
 
 		/// Constructor
-		RightingMomentItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		RightingMomentItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		~RightingMomentItem();

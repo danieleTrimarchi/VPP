@@ -35,7 +35,6 @@
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGraphicsGridLayout>
 #include <QMainWindow>
-#include "boost/shared_ptr.hpp"
 #include "VppTabDockWidget.h"
 
 typedef QPair<QPointF, QString> Data;
@@ -78,7 +77,7 @@ private:
 	void connectFullScreenSignals();
 
 	/// List with all the qCustomPlot-style plots that will be visualized
-	QList<boost::shared_ptr<VppCustomPlotWidgetBase> > customPlotList_;
+	QList<std::shared_ptr<VppCustomPlotWidgetBase> > customPlotList_;
 
 	/// Grid layout of the multiple plot. Raw ptr, the ownership is taken by the widget
 	QGridLayout* pGridLayout_;

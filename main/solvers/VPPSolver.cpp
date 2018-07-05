@@ -12,7 +12,7 @@ namespace Optim {
 //// VPPSolver class  //////////////////////////////////////////////
 
 // Constructor
-VPPSolver::VPPSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
+VPPSolver::VPPSolver(std::shared_ptr<VPPItemFactory> VPPItemFactory):
 						VPPSolverBase(VPPItemFactory),
 						fixedB_(0.),
 						fixedF_(1.){
@@ -25,7 +25,7 @@ VPPSolver::~VPPSolver() {
 }
 
 // Reset the VPPSolver when reloading the initial data
-void VPPSolver::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
+void VPPSolver::reset(std::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Decorator for the mother class method reset
 	VPPSolverBase::reset(VPPItemFactory);

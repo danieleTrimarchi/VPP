@@ -5,7 +5,6 @@
 #include <Eigen/Dense>
 using namespace Eigen;
 
-#include "boost/shared_ptr.hpp"
 #include "VPPItemFactory.h"
 #include "NRSolver.h"
 
@@ -57,7 +56,7 @@ class VPPGradient : public Eigen::VectorXd {
 		/// and finding u s.t. dF=0.
 		/// In all of the other cases, the state vars u,Phi are free while the
 		/// optimization variables are infinitesimally incremented or decremented
-		boost::shared_ptr<NRSolver> pSolver_;
+		std::shared_ptr<NRSolver> pSolver_;
 
 		/// Size of the complete optimization problem : u, phi, b, f.
 		size_t size_;

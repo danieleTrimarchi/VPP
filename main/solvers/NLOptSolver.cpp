@@ -17,7 +17,7 @@ int NLOptSolver::optIterations_;
 //// Optimizer class  //////////////////////////////////////////////
 
 // Constructor
-NLOptSolver::NLOptSolver(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
+NLOptSolver::NLOptSolver(std::shared_ptr<VPPItemFactory> VPPItemFactory):
 								VPPSolverBase(VPPItemFactory){
 
 	// Instantiate a NLOpobject and set the COBYLA algorithm for
@@ -52,7 +52,7 @@ NLOptSolver::~NLOptSolver() {
 }
 
 // Reset the Optimizer when reloading the initial data
-void NLOptSolver::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
+void NLOptSolver::reset(std::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Decorator for the mother class method reset
 	VPPSolverBase::reset(VPPItemFactory);

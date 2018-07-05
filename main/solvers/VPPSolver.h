@@ -21,7 +21,7 @@ class VPPSolver : public VPPSolverBase {
 		virtual ~VPPSolver();
 
 		/// Reset the VPPSolver when reloading the initial data
-		virtual void reset(boost::shared_ptr<VPPItemFactory>);
+		virtual void reset(std::shared_ptr<VPPItemFactory>);
 
 		/// Execute a VPP-like analysis. Implements pure virtual defined
 		/// in the abstract base class
@@ -35,7 +35,7 @@ class VPPSolver : public VPPSolverBase {
 
 		/// Private constructor - the class can only be instantiated using
 		/// a VPPSolverFactory
-		VPPSolver(boost::shared_ptr<VPPItemFactory>);
+		VPPSolver(std::shared_ptr<VPPItemFactory>);
 
 		/// Set the initial guess for the state variable vector
 		virtual void resetInitialGuess(int TWV, int TWA);

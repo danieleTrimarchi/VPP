@@ -81,7 +81,7 @@ class VPPItemFactory {
 	public:
 
 		/// Constructor
-		VPPItemFactory(VariableFileParser*, boost::shared_ptr<SailSet>);
+		VPPItemFactory(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		~VPPItemFactory();
@@ -175,52 +175,52 @@ class VPPItemFactory {
 		VariableFileParser* pParser_;
 
 		/// Ptr to the SailCoefficientItem
-		boost::shared_ptr<SailCoefficientItem> pSailCoeffItem_;
+		std::shared_ptr<SailCoefficientItem> pSailCoeffItem_;
 
 		/// Vector storing all the Children of VPPItem
-		std::vector<boost::shared_ptr<VPPItem> > vppAeroItems_;
+		std::vector<std::shared_ptr<VPPItem> > vppAeroItems_;
 
 		/// Pointer to the resistance item
-		std::vector<boost::shared_ptr<ResistanceItem> > vppHydroItems_;
+		std::vector<std::shared_ptr<ResistanceItem> > vppHydroItems_;
 
 		/// Pointer to the Wind Item, owned by pAeroForcesItem_
-		boost::shared_ptr<WindItem> pWind_;
+		std::shared_ptr<WindItem> pWind_;
 
 		/// Pointer to the Aero forces Item
-		boost::shared_ptr<AeroForcesItem> pAeroForcesItem_;
+		std::shared_ptr<AeroForcesItem> pAeroForcesItem_;
 
 		/// Pointer to the Residuary Resistance Item
-		boost::shared_ptr<ResiduaryResistanceItem> pResiduaryResistanceItem_;
+		std::shared_ptr<ResiduaryResistanceItem> pResiduaryResistanceItem_;
 
 		/// Pointer to the Residuary Resistance of the Keel Item
-		boost::shared_ptr<ResiduaryResistanceKeelItem> pResiduaryResistanceKeelItem_;
+		std::shared_ptr<ResiduaryResistanceKeelItem> pResiduaryResistanceKeelItem_;
 
 		/// Pointer to the Induced Resistance Item
-		boost::shared_ptr<InducedResistanceItem> pInducedResistanceItem_;
+		std::shared_ptr<InducedResistanceItem> pInducedResistanceItem_;
 
 		/// Pointer to the Viscous Resistance Item
-		boost::shared_ptr<ViscousResistanceItem> pViscousResistanceItem_;
+		std::shared_ptr<ViscousResistanceItem> pViscousResistanceItem_;
 
 		/// Pointer to the Viscous Resistance of the keel Item
-		boost::shared_ptr<ViscousResistanceKeelItem> pViscousResistanceKeelItem_;
+		std::shared_ptr<ViscousResistanceKeelItem> pViscousResistanceKeelItem_;
 
 		/// Pointer to the Viscous Resistance of the rudder Item
-		boost::shared_ptr<ViscousResistanceRudderItem> pViscousResistanceRudderItem_;
+		std::shared_ptr<ViscousResistanceRudderItem> pViscousResistanceRudderItem_;
 
 		/// Pointer to the Viscous Resistance due to Heel Item
-		boost::shared_ptr<Delta_ViscousResistance_HeelItem> pDelta_ViscousResistance_HeelItem_;
+		std::shared_ptr<Delta_ViscousResistance_HeelItem> pDelta_ViscousResistance_HeelItem_;
 
 		/// Pointer to the Delta Residuary Resistance due to Heel Item
-		boost::shared_ptr<Delta_ResiduaryResistance_HeelItem> pDelta_ResiduaryResistance_HeelItem_;
+		std::shared_ptr<Delta_ResiduaryResistance_HeelItem> pDelta_ResiduaryResistance_HeelItem_;
 
 		/// Pointer to the Delta Residuary Resistance of the keel due to Heel Item
-		boost::shared_ptr<Delta_ResiduaryResistanceKeel_HeelItem> pDelta_ResiduaryResistanceKeel_HeelItem_;
+		std::shared_ptr<Delta_ResiduaryResistanceKeel_HeelItem> pDelta_ResiduaryResistanceKeel_HeelItem_;
 
 		/// Pointer to the Negative Resistance
-		boost::shared_ptr<NegativeResistanceItem> pNegativeResistance_;
+		std::shared_ptr<NegativeResistanceItem> pNegativeResistance_;
 
 		/// Pointer to the Righting moment Item
-		boost::shared_ptr<RightingMomentItem> pRightingMomentItem_;
+		std::shared_ptr<RightingMomentItem> pRightingMomentItem_;
 
 		/// Residuals on the residuals : dF, dM, c1 and c2
 		double dF_, dM_;

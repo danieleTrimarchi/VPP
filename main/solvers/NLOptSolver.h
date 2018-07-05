@@ -20,7 +20,7 @@ class NLOptSolver : public VPPSolverBase {
 		virtual ~NLOptSolver();
 
 		/// Reset the Optimizer when reloading the initial data
-		virtual void reset(boost::shared_ptr<VPPItemFactory>);
+		virtual void reset(std::shared_ptr<VPPItemFactory>);
 
 		/// Execute a VPP-like analysis. Implements pure virtual defined
 		/// in the abstract base class
@@ -34,7 +34,7 @@ class NLOptSolver : public VPPSolverBase {
 
 		/// Private constructor - the class can only be instantiated using
 		/// a VPPSolverFactory
-		NLOptSolver(boost::shared_ptr<VPPItemFactory>);
+		NLOptSolver(std::shared_ptr<VPPItemFactory>);
 
 		/// Boat velocity objective function
 		static double VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data);
@@ -48,7 +48,7 @@ class NLOptSolver : public VPPSolverBase {
 		} Loop_data;
 
 		/// Shared ptr holding the underlying optimizer
-		boost::shared_ptr<nlopt::opt> opt_;
+		std::shared_ptr<nlopt::opt> opt_;
 
 		/// max iters allowed for the optimizer
 		static size_t maxIters_;

@@ -19,7 +19,7 @@ VPPSettingsDialog* VPPSettingsDialog::getInstance(QWidget *parent){
 void VPPSettingsDialog::save(QFile& file) {
 
 	//	 1_ Instantiate a VppXmlWriter
-	boost::shared_ptr<VppSettingsXmlWriter> pXmlWriter(new VppSettingsXmlWriter(&file));
+	std::shared_ptr<VppSettingsXmlWriter> pXmlWriter(new VppSettingsXmlWriter(&file));
 
 	// 2_ Save the content of the settings tree tab
 	pSettingsTreeTab_->save(pXmlWriter.get());
@@ -33,7 +33,7 @@ void VPPSettingsDialog::save(QFile& file) {
 void VPPSettingsDialog::read(QFile& file) {
 
 	//	 1_ Instantiate a VppXmlReader
-	boost::shared_ptr<VppSettingsXmlReader> pXmlReader(new VppSettingsXmlReader(&file));
+	std::shared_ptr<VppSettingsXmlReader> pXmlReader(new VppSettingsXmlReader(&file));
 
 	// 2_ 	Read and populate the Settings Tree tab
 	pSettingsTreeTab_->read(pXmlReader.get());

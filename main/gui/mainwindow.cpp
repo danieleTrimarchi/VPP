@@ -43,10 +43,10 @@
 // Stream used to redirect cout to the log window
 // This object is explicitly deleted in the destructor
 // of MainWindow
-boost::shared_ptr<QDebugStream> pQstream;
+std::shared_ptr<QDebugStream> pQstream;
 
 // Init static members : sail coeffs browser used to define new sail coeffs
-boost::shared_ptr<VPPDefaultFileBrowser> MainWindow::pSailCoeffFileBrowser_= 0;
+std::shared_ptr<VPPDefaultFileBrowser> MainWindow::pSailCoeffFileBrowser_= 0;
 
 Q_DECLARE_METATYPE(VppTabDockWidget::DockWidgetFeatures)
 

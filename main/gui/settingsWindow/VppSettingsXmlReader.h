@@ -2,7 +2,7 @@
 #define VPP_SETTINGS_XML_READER_H
 
 #include <QtCore/QXmlStreamReader>
-#include "boost/shared_ptr.hpp"
+
 #include <string>
 #include <set>
 
@@ -108,7 +108,7 @@ class VppSettingsXmlReader : public QXmlStreamReader {
 		bool readSubSection(string& sectionHeader);
 
 		/// Return the tree populated with the items from the xml
-		boost::shared_ptr<SettingsItemBase> getRoot();
+		std::shared_ptr<SettingsItemBase> getRoot();
 
 		/// Produce an error string reporting the location of the failure
 		QString errorString() const;
@@ -119,7 +119,7 @@ class VppSettingsXmlReader : public QXmlStreamReader {
 		void readTreeItems(Item*);
 
 		/// Root for the settings item read from xml
-		boost::shared_ptr<SettingsItemBase> pRootItem_;
+		std::shared_ptr<SettingsItemBase> pRootItem_;
 
 		/// XML file the items should be read from
 		QIODevice* pFile_;

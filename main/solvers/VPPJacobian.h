@@ -5,7 +5,6 @@
 #include <Eigen/Dense>
 using namespace Eigen;
 
-#include "boost/shared_ptr.hpp"
 #include "VPPItemFactory.h"
 
 /// Compute the Jacobian matrix:

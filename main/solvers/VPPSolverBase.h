@@ -22,7 +22,7 @@ class VPPSolverBase {
 		virtual ~VPPSolverBase();
 
 		/// Reset the optimizer when reloading the initial data
-		virtual void reset(boost::shared_ptr<VPPItemFactory>);
+		virtual void reset(std::shared_ptr<VPPItemFactory>);
 
 		/// Pure virtual used to execute a VPP-like analysis
 		virtual void run(int TWV, int TWA) =0;
@@ -60,7 +60,7 @@ class VPPSolverBase {
 	protected:
 
 		/// Protected constructor
-		VPPSolverBase(boost::shared_ptr<VPPItemFactory>);
+		VPPSolverBase(std::shared_ptr<VPPItemFactory>);
 
 		/// Set the initial guess for the state variable vector
 		virtual void resetInitialGuess(int TWV, int TWA);
@@ -84,17 +84,17 @@ class VPPSolverBase {
 
 		/// Shared ptr holding the underlying NRSolver used to refine the
 		/// initial guess to be handed to the optimizer
-		boost::shared_ptr<NRSolver> nrSolver_;
+		std::shared_ptr<NRSolver> nrSolver_;
 
 		/// VPPGradient used to compute the gradient by finite differences
-		boost::shared_ptr<VPPGradient> pGradient_;
+		std::shared_ptr<VPPGradient> pGradient_;
 
 		/// lower and upper bounds for the state variables
 		std::vector<double> lowerBounds_,upperBounds_;
 
 		/// Ptr to the VPPItemFactory that contains all of the ingredients
 		/// required to compute the optimization constraints
-		static boost::shared_ptr<VPPItemFactory> pVppItemsContainer_;
+		static std::shared_ptr<VPPItemFactory> pVppItemsContainer_;
 
 		/// Ptr to the variableFileParser
 		VariableFileParser* pParser_;
@@ -103,7 +103,7 @@ class VPPSolverBase {
 		Eigen::VectorXd xp_;
 
 		/// Matrix of results, one result per wind velocity/angle
-		boost::shared_ptr<ResultContainer> pResults_;
+		std::shared_ptr<ResultContainer> pResults_;
 
 		/// Ptr to the wind item, used to retrieve the current twv, twa
 		WindItem* pWind_;

@@ -9,11 +9,11 @@ using namespace mathUtils;
 
 //// VPPSolverBase class  //////////////////////////////////////////////
 // Init static member
-boost::shared_ptr<VPPItemFactory> VPPSolverBase::pVppItemsContainer_;
+std::shared_ptr<VPPItemFactory> VPPSolverBase::pVppItemsContainer_;
 const Eigen::VectorXd VPPSolverBase::xp0_((Eigen::VectorXd(4) << .5, 0., 0., 1.).finished());
 
 // Constructor
-VPPSolverBase::VPPSolverBase(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
+VPPSolverBase::VPPSolverBase(std::shared_ptr<VPPItemFactory> VPPItemFactory):
 																				dimension_(xp0_.size()),
 																				subPbSize_(2),
 																				tol_(1.e-4) {
@@ -73,7 +73,7 @@ VPPSolverBase::~VPPSolverBase() {
 }
 
 // Reset the optimizer when reloading the initial data
-void VPPSolverBase::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
+void VPPSolverBase::reset(std::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Init the STATIC member vppItemsContainer
 	pVppItemsContainer_= VPPItemFactory;

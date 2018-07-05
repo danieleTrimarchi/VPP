@@ -4,7 +4,7 @@
 #include "VPPException.h"
 
 // Constructor
-VPPItem::VPPItem(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet) :
+VPPItem::VPPItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet) :
 pParser_(pParser),
 pSailSet_(pSailSet),
 V_(0),
@@ -25,7 +25,7 @@ VariableFileParser* VPPItem::getParser() const {
 }
 
 // Returns the SailSet
-boost::shared_ptr<SailSet> VPPItem::getSailSet() const {
+std::shared_ptr<SailSet> VPPItem::getSailSet() const {
 	return pSailSet_;
 }
 

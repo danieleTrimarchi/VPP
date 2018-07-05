@@ -250,7 +250,7 @@ class SettingsItemBounds : public SettingsItemGroup {
 		SettingsItemBounds(const SettingsItemBounds&);
 
 		/// Unit of this item
-		boost::shared_ptr<TUnit> pUnit_;
+		std::shared_ptr<TUnit> pUnit_;
 
 };
 
@@ -326,7 +326,7 @@ class SettingsItem : public SettingsItemBase {
 	private:
 
 		/// Unit of this item
-		boost::shared_ptr<TUnit> pUnit_;
+		std::shared_ptr<TUnit> pUnit_;
 };
 
 

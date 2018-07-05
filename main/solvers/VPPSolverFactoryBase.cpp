@@ -4,7 +4,7 @@
 namespace Optim {
 
 // Ctor
-VPPSolverFactoryBase::VPPSolverFactoryBase(boost::shared_ptr<VPPItemFactory> pVppItems) :
+VPPSolverFactoryBase::VPPSolverFactoryBase(std::shared_ptr<VPPItemFactory> pVppItems) :
 	pVppItems_(pVppItems) {
 
 }
@@ -22,7 +22,7 @@ VPPSolverFactoryBase::~VPPSolverFactoryBase() {
 //////////////////////////////////////////////////////////////
 
 // Ctor
-SolverFactory::SolverFactory(boost::shared_ptr<VPPItemFactory> pVppItems) :
+SolverFactory::SolverFactory(std::shared_ptr<VPPItemFactory> pVppItems) :
 				VPPSolverFactoryBase(pVppItems),
 				pSolver_(new VPPSolver(pVppItems) ){
 
@@ -48,7 +48,7 @@ void SolverFactory::run(int TWV, int TWA) {
 //////////////////////////////////////////////////////////////
 
 // Ctor
-NLOptSolverFactory::NLOptSolverFactory(boost::shared_ptr<VPPItemFactory> pVppItems) :
+NLOptSolverFactory::NLOptSolverFactory(std::shared_ptr<VPPItemFactory> pVppItems) :
 		VPPSolverFactoryBase(pVppItems),
 		pSolver_(new NLOptSolver(pVppItems) ){
 }
@@ -72,7 +72,7 @@ void NLOptSolverFactory::run(int TWV, int TWA) {
 //////////////////////////////////////////////////////////////
 
 // Ctor
-SAOASolverFactory::SAOASolverFactory(boost::shared_ptr<VPPItemFactory> pVppItems) :
+SAOASolverFactory::SAOASolverFactory(std::shared_ptr<VPPItemFactory> pVppItems) :
 				VPPSolverFactoryBase(pVppItems),
 				pSolver_(new SemiAnalyticalOptimizer(pVppItems) ) {
 
@@ -97,7 +97,7 @@ void SAOASolverFactory::run(int TWV, int TWA) {
 //////////////////////////////////////////////////////////////
 
 // Ctor
-IppOptSolverFactory::IppOptSolverFactory(boost::shared_ptr<VPPItemFactory> pVppItems) :
+IppOptSolverFactory::IppOptSolverFactory(std::shared_ptr<VPPItemFactory> pVppItems) :
 		VPPSolverFactoryBase(pVppItems),
 		pApp_(IpoptApplicationFactory()),
 		pSolver_(new VPP_NLP(pVppItems)) {

@@ -5,7 +5,6 @@
 #include <QWidget>
 #include <QtWidgets/QComboBox>
 #include <QtCore/QXmlStreamWriter>
-#include "boost/shared_ptr.hpp"
 #include "VppSettingsXmlWriter.h"
 #include "VppSettingsXmlReader.h"
 

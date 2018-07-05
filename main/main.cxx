@@ -10,7 +10,6 @@ using namespace std;
 #include <Eigen/Core>
 using namespace Eigen;
 
-#include "boost/shared_ptr.hpp"
 
 #include "VariableFileParser.h"
 #include "SailSet.h"

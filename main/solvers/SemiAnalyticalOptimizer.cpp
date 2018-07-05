@@ -17,7 +17,7 @@ int SemiAnalyticalOptimizer::optIterations_=0;
 //// SemiAnalyticalOptimizer class  //////////////////////////////////////////////
 
 // Constructor
-SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactory> VPPItemFactory):
+SemiAnalyticalOptimizer::SemiAnalyticalOptimizer(std::shared_ptr<VPPItemFactory> VPPItemFactory):
 		VPPSolverBase(VPPItemFactory),
 		saPbSize_(dimension_-subPbSize_) {
 
@@ -60,7 +60,7 @@ SemiAnalyticalOptimizer::~SemiAnalyticalOptimizer() {
 	// make nothing
 }
 
-void SemiAnalyticalOptimizer::reset(boost::shared_ptr<VPPItemFactory> VPPItemFactory) {
+void SemiAnalyticalOptimizer::reset(std::shared_ptr<VPPItemFactory> VPPItemFactory) {
 
 	// Decorator for the mother class method reset
 	VPPSolverBase::reset(VPPItemFactory);

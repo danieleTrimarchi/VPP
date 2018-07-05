@@ -1,7 +1,6 @@
 #include "VPPTest.h"
 #include "Regression.h"
 #include "VariableFileParser.h"
-#include "boost/shared_ptr.hpp"
 #include "SailSet.h"
 #include "VPPItemFactory.h"
 #include "NRSolver.h"
@@ -114,7 +113,7 @@ void TVPPTest::variableParseTest() {
 void TVPPTest::xmlIOTest() {
 
 	// Root of the model tree
-	boost::shared_ptr<SettingsItemRoot> pRootItem(new SettingsItemRoot);
+	std::shared_ptr<SettingsItemRoot> pRootItem(new SettingsItemRoot);
 
 	// Instantiate some VppSettingItems
 	SettingsItemGroup* pVPPSettings = new SettingsItemGroup("VPP Settings");
@@ -126,7 +125,7 @@ void TVPPTest::xmlIOTest() {
 	pVPPSettings->appendChild( new SettingsItemBounds<NoUnit>(Var::flatBounds_,0.4,1));
 
 	// Instantiate and populate a VariableFileParser
-	boost::shared_ptr<VariableFileParser> pVariableFileParser(new VariableFileParser(pRootItem.get()));
+	std::shared_ptr<VariableFileParser> pVariableFileParser(new VariableFileParser(pRootItem.get()));
 
 	// Define the buffer file
 	QString xmlFileName("testFiles/vppSettingsTest.xml");
@@ -139,14 +138,14 @@ void TVPPTest::xmlIOTest() {
 			std::cout<<"Cannot create output file: "<<xmlFileName.toStdString()<<std::endl;
 
 		//	 Instantiate a VppXmlWriter
-		boost::shared_ptr<VppSettingsXmlWriter> pXmlWriter(new VppSettingsXmlWriter(&outXml));
+		std::shared_ptr<VppSettingsXmlWriter> pXmlWriter(new VppSettingsXmlWriter(&outXml));
 		// Hand the writer to the items in the tree
 		VPPSettingsXmlWriterVisitor vw(pXmlWriter.get());
 		pRootItem->accept(vw);
 	}
 
 	// Instantiate a new root
-	boost::shared_ptr<SettingsItemRoot> pRootItemTwo(new SettingsItemRoot);
+	std::shared_ptr<SettingsItemRoot> pRootItemTwo(new SettingsItemRoot);
 
 	// Read the items back in from the xml and assign them to
 	// the brand new root
@@ -156,13 +155,13 @@ void TVPPTest::xmlIOTest() {
 			std::cout<<"Cannot read input file: "<<xmlFileName.toStdString()<<std::endl;
 
 		//	 Instantiate a VppXmlReader and use a visitor to hand it to the items
-	 	boost::shared_ptr<VppSettingsXmlReader> pXmlReader(new VppSettingsXmlReader(&inXml));
+	 	std::shared_ptr<VppSettingsXmlReader> pXmlReader(new VppSettingsXmlReader(&inXml));
 		VPPSettingsXmlReaderVisitor vr(pXmlReader.get());
 		pRootItemTwo->accept(vr);
 	}
 
 	// Get the variables to a new VariableFileParser
-	boost::shared_ptr<VariableFileParser> pVariableFileParserTwo(new VariableFileParser(pRootItemTwo.get()));
+	std::shared_ptr<VariableFileParser> pVariableFileParserTwo(new VariableFileParser(pRootItemTwo.get()));
 
 	// Compare the old and the new tree - they must match
 	CPPUNIT_ASSERT( *pRootItem == *pRootItemTwo );
@@ -180,11 +179,11 @@ void TVPPTest::itemComponentTest() {
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
-	boost::shared_ptr<SailSet> pSails;
+	std::shared_ptr<SailSet> pSails;
 
 	// Declare a container for all the items that
 	// constitute the VPP components (Wind, Resistance, RightingMoment...)
-	boost::shared_ptr<VPPItemFactory> pVppItems;
+	std::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Instantiate a parser with the variables
 	VariableFileParser parser;
@@ -510,11 +509,11 @@ void TVPPTest::jacobianTest() {
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
-	boost::shared_ptr<SailSet> pSails;
+	std::shared_ptr<SailSet> pSails;
 
 	// Declare a container for all the items that
 	// constitute the VPP components (Wind, Resistance, RightingMoment...)
-	boost::shared_ptr<VPPItemFactory> pVppItems;
+	std::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
 	parser.parse("testFiles/variableFile_test.txt");
@@ -558,11 +557,11 @@ void TVPPTest::gradientTest() {
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
-	boost::shared_ptr<SailSet> pSails;
+	std::shared_ptr<SailSet> pSails;
 
 	// Declare a container for all the items that
 	// constitute the VPP components (Wind, Resistance, RightingMoment...)
-	boost::shared_ptr<VPPItemFactory> pVppItems;
+	std::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
 	parser.parse("testFiles/variableFile_test.txt");
@@ -604,11 +603,11 @@ void TVPPTest::newtonRaphsonTest() {
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
-	boost::shared_ptr<SailSet> pSails;
+	std::shared_ptr<SailSet> pSails;
 
 	// Declare a container for all the items that
 	// constitute the VPP components (Wind, Resistance, RightingMoment...)
-	boost::shared_ptr<VPPItemFactory> pVppItems;
+	std::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
 	parser.parse("testFiles/variableFile_test.txt");
@@ -1101,11 +1100,11 @@ void TVPPTest::vppPointTest() {
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
-	boost::shared_ptr<SailSet> pSails;
+	std::shared_ptr<SailSet> pSails;
 
 	// Declare a container for all the items that
 	// constitute the VPP components (Wind, Resistance, RightingMoment...)
-	boost::shared_ptr<VPPItemFactory> pVppItems;
+	std::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
 	parser.parse("testFiles/variableFile_test.txt");
@@ -1248,11 +1247,11 @@ void TVPPTest::ipOptFullRunTest() {
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
-	boost::shared_ptr<SailSet> pSails;
+	std::shared_ptr<SailSet> pSails;
 
 	// Declare a container for all the items that
 	// constitute the VPP components (Wind, Resistance, RightingMoment...)
-	boost::shared_ptr<VPPItemFactory> pVppItems;
+	std::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
 	parser.parse("testFiles/variableFile_ipOptFullTest.txt");
@@ -1353,11 +1352,11 @@ void TVPPTest::vppResultIOTest() {
 
 	// Declare a ptr with the sail configuration
 	// This is based on the variables that have been read in
-	boost::shared_ptr<SailSet> pSails;
+	std::shared_ptr<SailSet> pSails;
 
 	// Declare a container for all the items that
 	// constitute the VPP components (Wind, Resistance, RightingMoment...)
-	boost::shared_ptr<VPPItemFactory> pVppItems;
+	std::shared_ptr<VPPItemFactory> pVppItems;
 
 	// Parse the variables file
 	parser.parse("testFiles/variableFile_small_test.txt");
@@ -1366,7 +1365,7 @@ void TVPPTest::vppResultIOTest() {
 	pSails.reset( SailSet::SailSetFactory(parser) );
 
 	// Instantiate the wind
-	boost::shared_ptr<WindItem> pWind(new WindItem(&parser,pSails));
+	std::shared_ptr<WindItem> pWind(new WindItem(&parser,pSails));
 
 	// Instantiate a result container
 	ResultContainer resWriteContainer(pWind.get());

@@ -82,7 +82,7 @@ class NRSolver {
 		Eigen::VectorXd xp_, xpBuf_;
 
 		/// Matrix of results, one result per wind velocity/angle
-		boost::shared_ptr<ResultContainer> pResults_;
+		std::shared_ptr<ResultContainer> pResults_;
 
 		/// Ptr to the wind item, used to retrieve the current twv, twa
 		WindItem* pWind_;

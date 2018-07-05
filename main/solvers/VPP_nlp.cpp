@@ -32,7 +32,7 @@ VPP_NLP::VPP_NLP():
 }
 
 // Constructor with ptr to then VPPItemFactory
-VPP_NLP::VPP_NLP(boost::shared_ptr<VPPItemFactory> pVppItemsContainer):
+VPP_NLP::VPP_NLP(std::shared_ptr<VPPItemFactory> pVppItemsContainer):
 		VPPSolverBase(pVppItemsContainer),
 				nEqualityConstraints_(2) {
 

@@ -27,7 +27,7 @@ class SemiAnalyticalOptimizer : public VPPSolverBase {
 		~SemiAnalyticalOptimizer();
 
 		/// Reset the SemiAnalyticalOptimizer when reloading the initial data
-		virtual void reset(boost::shared_ptr<VPPItemFactory>);
+		virtual void reset(std::shared_ptr<VPPItemFactory>);
 
 		/// Execute a VPP-like analysis - implements the pure virtual method
 		virtual void run(int TWV, int TWA);
@@ -40,7 +40,7 @@ class SemiAnalyticalOptimizer : public VPPSolverBase {
 
 		/// Private constructor - the class can only be instantiated using
 		/// a VPPSolverFactory
-		SemiAnalyticalOptimizer(boost::shared_ptr<VPPItemFactory>);
+		SemiAnalyticalOptimizer(std::shared_ptr<VPPItemFactory>);
 
 		/// Boat velocity objective function
 		static double VPP_speed(unsigned n, const double *x, double *grad, void *my_func_data);
@@ -54,7 +54,7 @@ class SemiAnalyticalOptimizer : public VPPSolverBase {
 		size_t saPbSize_; // --> v, phi
 
 		/// Shared ptr holding the underlying SemiAnalyticalOptimizer
-		boost::shared_ptr<nlopt::opt> opt_;
+		std::shared_ptr<nlopt::opt> opt_;
 
 		/// max iters allowed for the SemiAnalyticalOptimizer
 		static size_t maxIters_;

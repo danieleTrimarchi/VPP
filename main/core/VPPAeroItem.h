@@ -4,7 +4,6 @@
 #include "VPPItem.h"
 #include "SailSet.h"
 #include "Physics.h"
-#include "boost/shared_ptr.hpp"
 #include "VPPSailCoefficientIO.h"
 
 using namespace Physic;
@@ -18,7 +17,7 @@ class WindItem : public VPPItem {
 	public:
 
 		/// Constructor
-		WindItem(VariableFileParser*, boost::shared_ptr<SailSet>);
+		WindItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
 		virtual ~WindItem();
@@ -181,8 +180,8 @@ class SailCoefficientItem : public VPPItem {
 
 		/// Interpolator vectors -- store a cubic spline that interpolates
 		/// the values of the sail coefficients
-		vector< boost::shared_ptr<SplineInterpolator> > interpClVec_;
-		vector< boost::shared_ptr<SplineInterpolator> > interpCdVec_;
+		vector< std::shared_ptr<SplineInterpolator> > interpClVec_;
+		vector< std::shared_ptr<SplineInterpolator> > interpCdVec_;
 
 	private:
 
@@ -196,8 +195,8 @@ class SailCoefficientItem : public VPPItem {
 		/// These containers own the sail coeffs, but
 		/// they are able to read a sail-coeffs file
 		/// to override the initial values
-		boost::shared_ptr<VPP_CL_IO> pCl_;
-		boost::shared_ptr<VPP_CD_IO> pCd_;
+		std::shared_ptr<VPP_CL_IO> pCl_;
+		std::shared_ptr<VPP_CD_IO> pCd_;
 
 };
 

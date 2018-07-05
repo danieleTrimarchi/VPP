@@ -2,7 +2,7 @@
 #define VPP_SETTINGS_XML_WRITER_H
 
 #include <QtCore/QXmlStreamWriter>
-#include "boost/shared_ptr.hpp"
+
 
 /// Forward declarations
 class SettingsItemBase;

@@ -121,7 +121,7 @@ class VPP_NLP : public TNLP, public VPPSolverBase {
 
 		/// Private constructor - the class can only be instantiated using
 		/// a VPPSolverFactory
-		VPP_NLP(boost::shared_ptr<VPPItemFactory>);
+		VPP_NLP(std::shared_ptr<VPPItemFactory>);
 
 		///@name Methods to block default compiler methods.
 		/// The compiler automatically generates the following three methods.

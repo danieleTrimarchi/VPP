@@ -4,7 +4,6 @@
 #include <QTreeView>
 #include <QMainWindow>
 #include <QMenu>
-#include "boost/shared_ptr.hpp"
 
 #include "VppTabDockWidget.h"
 #include "VppTableModel.h"
@@ -31,8 +30,8 @@ public:
 private:
 
 	/// The VariableDockWidget contains a tree model with the variables
-	boost::shared_ptr<VppTableModel> pTableModel_;
-	boost::shared_ptr<QTableView> pTableView_;
+	std::shared_ptr<VppTableModel> pTableModel_;
+	std::shared_ptr<QTableView> pTableView_;
 
 	/// Ptr to the solver that stores the results
 	VPPSolverBase* pSolver_;

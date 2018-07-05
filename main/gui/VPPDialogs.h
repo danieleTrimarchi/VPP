@@ -5,7 +5,6 @@
 #include <QtWidgets/QDialogButtonBox>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QGridLayout>
-#include "boost/shared_ptr.hpp"
 #include <Eigen/Core>
 #include "VPPAeroItem.h"
 #include "SettingsModel.h"
@@ -31,7 +30,7 @@ class DialogBase : public QDialog {
 		void addOkCancelButtons(size_t);
 
 		/// Layout of the Dialog (place holders for the elements the dialog is made of)
-		boost::shared_ptr<QGridLayout> pGridLayout_;
+		std::shared_ptr<QGridLayout> pGridLayout_;
 
 };
 
@@ -65,7 +64,7 @@ class StateVectorDialog : public DialogBase {
 		/// Explicit protected Ctor
 		explicit StateVectorDialog(QWidget *parent = Q_NULLPTR);
 
-		boost::shared_ptr<QLineEdit> pV_Edit_, pPhi_Edit_, pCrew_Edit_, pFlat_Edit_;
+		std::shared_ptr<QLineEdit> pV_Edit_, pPhi_Edit_, pCrew_Edit_, pFlat_Edit_;
 
 };
 
@@ -120,7 +119,7 @@ class WindIndicesDialog : public DialogBase {
 		/// raw ptr to the wind
 		WindItem* pWind_;
 
-		boost::shared_ptr<QLineEdit> pTWV_Edit_, pTWA_Edit_;
+		std::shared_ptr<QLineEdit> pTWV_Edit_, pTWA_Edit_;
 
 };
 

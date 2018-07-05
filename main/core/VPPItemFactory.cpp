@@ -100,7 +100,7 @@ ThreeDDataContainer& ThreeDDataContainer::operator=(const ThreeDDataContainer& r
 ///////////////////////////////////////////////////
 
 // Constructor
-VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, boost::shared_ptr<SailSet> pSailSet):
+VPPItemFactory::VPPItemFactory(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
 pParser_(pParser),
 dF_(0),
 dM_(0) {
@@ -108,7 +108,7 @@ dM_(0) {
 	// -- INSTANTIATE THE AERO ITEMS
 
 	// Instantiate the wind and push it back to the children vector
-	boost::shared_ptr<WindItem> pWind(new WindItem(pParser_,pSailSet));
+	std::shared_ptr<WindItem> pWind(new WindItem(pParser_,pSailSet));
 	vppAeroItems_.push_back( pWind );
 
 	// Store a ptr to the wind

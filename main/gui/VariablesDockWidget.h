@@ -5,7 +5,6 @@
 #include <QtWidgets/QTreeView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
-#include "boost/shared_ptr.hpp"
 
 #include "VariableTreeModel.h"
 
@@ -42,8 +41,8 @@ public:
 private:
 
 	/// The VariableDockWidget contains a tree model with the variables
-	boost::shared_ptr<VariableTreeModel> pTreeModel_;
-	boost::shared_ptr<QTreeView> pTreeView_;
+	std::shared_ptr<VariableTreeModel> pTreeModel_;
+	std::shared_ptr<QTreeView> pTreeView_;
 
 };
 
