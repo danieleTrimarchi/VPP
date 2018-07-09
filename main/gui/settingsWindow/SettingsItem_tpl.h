@@ -35,17 +35,17 @@ SettingsItem<TUnit>::SettingsItem(	const QString& displayName,
 // Ctor from xml. Just call the other constructor
 template <class TUnit>
 SettingsItem<TUnit>::SettingsItem(const XmlAttributeSet& xmlAttSet):
-				SettingsItem<TUnit>(
-						xmlAttSet[displayNameTag.c_str()].toQString(),
-						xmlAttSet[Variable::variableNameTag_.c_str()].toQString(),
-						xmlAttSet[valueTag.c_str()].toQString(),
-						xmlAttSet[tooltipTag.c_str()].toQString() ){
+SettingsItem<TUnit>(
+		xmlAttSet[displayNameTag.c_str()].toQString(),
+		xmlAttSet[Variable::variableNameTag_.c_str()].toQString(),
+		xmlAttSet[valueTag.c_str()].toQString(),
+		xmlAttSet[tooltipTag.c_str()].toQString() ){
 }
 
 // Copy Ctor
 template <class TUnit>
 SettingsItem<TUnit>::SettingsItem(const SettingsItem<TUnit>& rhs) :
-					SettingsItemBase(rhs) {
+SettingsItemBase(rhs) {
 
 }
 
@@ -107,9 +107,9 @@ void SettingsItem<TUnit>::setModelData(	QWidget* editor,
 		QAbstractItemModel* model,
 		const QModelIndex& index) const {
 
-	QLineEdit* pQLineEdit = static_cast<QLineEdit*>(editor);
+		QLineEdit* pQLineEdit = static_cast<QLineEdit*>(editor);
 
-	model->setData(index, pQLineEdit->text(), Qt::EditRole);
+		model->setData(index, pQLineEdit->text(), Qt::EditRole);
 
 }
 
@@ -119,35 +119,35 @@ template <class TUnit>
 void SettingsItem<TUnit>::paint(QPainter* painter, const QStyleOptionViewItem &option,
 		const QModelIndex &index) const {
 
-	painter->save();
+		painter->save();
 
-	// If the element is editable we draw a background and a box around the text
-	if (index.model()->flags(index).testFlag(Qt::ItemIsEditable)) {
+		// If the element is editable we draw a background and a box around the text
+		if (index.model()->flags(index).testFlag(Qt::ItemIsEditable)) {
 
-		// Gets a rectangle to draw the background and adjust it
-		QRect boxRect(option.rect);
-		boxRect.adjust(1, 1, -1, -1);
+			// Gets a rectangle to draw the background and adjust it
+			QRect boxRect(option.rect);
+			boxRect.adjust(1, 1, -1, -1);
 
-		// Sets the color of the border depending on the selected or hovered state
-		if ( (option.state & QStyle::State_Selected) || (option.state & QStyle::State_MouseOver) )
-			painter->setPen(QApplication::palette().highlight().color());
-		else
-			painter->setPen(QPen(Qt::lightGray));
+			// Sets the color of the border depending on the selected or hovered state
+			if ( (option.state & QStyle::State_Selected) || (option.state & QStyle::State_MouseOver) )
+				painter->setPen(QApplication::palette().highlight().color());
+			else
+				painter->setPen(QPen(Qt::lightGray));
 
-		// Sets the brush depending on the selected state
-		if (option.state & QStyle::State_Selected)
-			painter->setBrush(QBrush(QApplication::palette().highlight().color(), Qt::Dense6Pattern));
-		else
-			painter->setBrush(QColor("white"));
+			// Sets the brush depending on the selected state
+			if (option.state & QStyle::State_Selected)
+				painter->setBrush(QBrush(QApplication::palette().highlight().color(), Qt::Dense6Pattern));
+			else
+				painter->setBrush(QColor("white"));
 
-		// Draws the rectangle around the text
-		painter->drawRect(boxRect);
-	}
+			// Draws the rectangle around the text
+			painter->drawRect(boxRect);
+		}
 
-	// Call base-class method
-	SettingsItemBase::paint(painter,option,index);
+		// Call base-class method
+		SettingsItemBase::paint(painter,option,index);
 
-	painter->restore();
+		painter->restore();
 }
 
 // Accept a visitor that will write this item to XML
@@ -170,7 +170,7 @@ void SettingsItem<TUnit>::accept( VPPSettingsXmlWriterVisitor& v ) {
 // Clone this item, which is basically equivalent to calling the copy ctor
 template <class TUnit>
 SettingsItem<TUnit>* SettingsItem<TUnit>::clone() const {
-	return new SettingsItem<TUnit>(*this);
+		return new SettingsItem<TUnit>(*this);
 }
 
 // Returns a copy of this item, the value of which
@@ -187,7 +187,7 @@ SettingsItemBase* SettingsItem<TUnit>::convertToSI() {
 template <class TUnit>
 QColor SettingsItem<TUnit>::getBackGroundColor(int iColumn) const {
 
-	return columns_[iColumn]->getBackGroundColor();
+		return columns_[iColumn]->getBackGroundColor();
 
 }
 
@@ -215,7 +215,7 @@ SettingsItemInt<TUnit>::SettingsItemInt(
 
 template <class TUnit>
 SettingsItemInt<TUnit>::SettingsItemInt(const XmlAttributeSet& xmlAttSet):
-	SettingsItem<TUnit>(xmlAttSet) {
+SettingsItem<TUnit>(xmlAttSet) {
 
 }
 
@@ -229,9 +229,9 @@ SettingsItemInt<TUnit>::SettingsItemInt(	const varData& data, 	//< Name visualiz
 // Copy ctor, called by clone()
 template <class TUnit>
 SettingsItemInt<TUnit>::SettingsItemInt(const SettingsItemInt<TUnit>& rhs) :
-						SettingsItem<TUnit>(rhs) {
-	// There is nothing else to do, as there are no owned class
-	// members
+SettingsItem<TUnit>(rhs) {
+		// There is nothing else to do, as there are no owned class
+		// members
 }
 
 // The item will give the Delegate the editor
@@ -239,15 +239,15 @@ SettingsItemInt<TUnit>::SettingsItemInt(const SettingsItemInt<TUnit>& rhs) :
 template <class TUnit>
 QWidget* SettingsItemInt<TUnit>::createEditor(QWidget *parent) {
 
-	QSpinBox* editor = new QSpinBox(parent);
-	editor->setFrame(false);
-	editor->setMinimum(0);
-	editor->setMaximum(1000);
+		QSpinBox* editor = new QSpinBox(parent);
+		editor->setFrame(false);
+		editor->setMinimum(0);
+		editor->setMaximum(1000);
 
-	editor->setStyleSheet(	"background-color: white;"
-			"selection-color: orange;");
+		editor->setStyleSheet(	"background-color: white;"
+				"selection-color: orange;");
 
-	return editor;
+		return editor;
 
 }
 
@@ -255,11 +255,11 @@ QWidget* SettingsItemInt<TUnit>::createEditor(QWidget *parent) {
 template <class TUnit>
 void SettingsItemInt<TUnit>::setEditorData(QWidget *editor,const QModelIndex& index) {
 
-	// Get the value stored in the model for this object
-	int value = index.model()->data(index, Qt::EditRole).toInt();
+		// Get the value stored in the model for this object
+		int value = index.model()->data(index, Qt::EditRole).toInt();
 
-	QSpinBox* pSpinBox = static_cast<QSpinBox*>(editor);
-	pSpinBox->setValue(value);
+		QSpinBox* pSpinBox = static_cast<QSpinBox*>(editor);
+		pSpinBox->setValue(value);
 
 }
 
@@ -268,20 +268,20 @@ void SettingsItemInt<TUnit>::setModelData(	QWidget *editor,
 		QAbstractItemModel *model,
 		const QModelIndex &index) const {
 
-	QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
-	spinBox->interpretText();
-	int value = spinBox->value();
+		QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
+		spinBox->interpretText();
+		int value = spinBox->value();
 
-	//std::cout<<"Setting \'"<<value<<"\' to item "<<this<<" ; model "<<model<<std::endl;
-	model->setData(index, value, Qt::EditRole);
+		//std::cout<<"Setting \'"<<value<<"\' to item "<<this<<" ; model "<<model<<std::endl;
+		model->setData(index, value, Qt::EditRole);
 }
 
 // Accept a visitor that will write this item to XML
 template <class TUnit>
 void SettingsItemInt<TUnit>::accept( VPPSettingsXmlWriterVisitor& v ) {
 
-	// Visit me
-	v.visit(this);
+		// Visit me
+		v.visit(this);
 }
 
 // Dtor
@@ -293,7 +293,7 @@ SettingsItemInt<TUnit>::~SettingsItemInt() {
 // Clone this item, which is basically equivalent to calling the copy ctor
 template <class TUnit>
 SettingsItemInt<TUnit>* SettingsItemInt<TUnit>::clone() const {
-	return new SettingsItemInt<TUnit>(*this);
+		return new SettingsItemInt<TUnit>(*this);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -324,19 +324,19 @@ SettingsItemComboBox<TUnit>::SettingsItemComboBox(
 // logics here should be displaced to the XmlReadVisitor!
 template <class TUnit>
 SettingsItemComboBox<TUnit>::SettingsItemComboBox(const XmlAttributeSet& xmlAttSet) :
-	SettingsItem<TUnit>(	xmlAttSet[displayNameTag.c_str()].toQString(),
-											xmlAttSet[Variable::variableNameTag_.c_str()].toQString(),
-											xmlAttSet["Option0"].toQString(),
-											xmlAttSet[tooltipTag.c_str()].toQString() ){
+SettingsItem<TUnit>(	xmlAttSet[displayNameTag.c_str()].toQString(),
+		xmlAttSet[Variable::variableNameTag_.c_str()].toQString(),
+		xmlAttSet["Option0"].toQString(),
+		xmlAttSet[tooltipTag.c_str()].toQString() ){
 
-	// Populate the options
-	for(size_t i=0; i<int((xmlAttSet[SettingsItemComboBox<TUnit>::numOptsTag_.c_str()]).getInt()); i++){
-		char msg[256];
-		sprintf(msg,"Option%zu",i);
-		opts_.push_back(xmlAttSet[string(msg)].toQString());
-	}
+		// Populate the options
+		for(size_t i=0; i<int((xmlAttSet[SettingsItemComboBox<TUnit>::numOptsTag_.c_str()]).getInt()); i++){
+			char msg[256];
+			sprintf(msg,"Option%zu",i);
+			opts_.push_back(xmlAttSet[string(msg)].toQString());
+		}
 
-	activeIndex_= xmlAttSet[activeIndexTag_.c_str()].getInt();
+		activeIndex_= xmlAttSet[activeIndexTag_.c_str()].getInt();
 
 }
 
@@ -353,54 +353,54 @@ SettingsItemComboBox<TUnit>::SettingsItemComboBox(const varData& data,	//< Data 
 template <class TUnit>
 QWidget* SettingsItemComboBox<TUnit>::createEditor(QWidget *parent) {
 
-	QComboBox* editor = new QComboBox(parent);
+		QComboBox* editor = new QComboBox(parent);
 
-	for(size_t i=0; i<opts_.size(); i++)
-		editor->addItem(opts_[i]);
+		for(size_t i=0; i<opts_.size(); i++)
+			editor->addItem(opts_[i]);
 
-	editor->setCurrentIndex(activeIndex_);
+		editor->setCurrentIndex(activeIndex_);
 
-	editor->setStyleSheet(	"background-color: white;"
-			"selection-color: orange;");
+		editor->setStyleSheet(	"background-color: white;"
+				"selection-color: orange;");
 
-	return editor;
+		return editor;
 }
 
 // Dtor
 template <class TUnit>
 SettingsItemComboBox<TUnit>::~SettingsItemComboBox() {
-	/* do nothing */
+		/* do nothing */
 }
 
 // Accept a visitor that will write this item to XML
 template <class TUnit>
 void SettingsItemComboBox<TUnit>::accept( VPPSettingsXmlWriterVisitor& v ) {
 
-	// Visit me
-	v.visit(this);
+		// Visit me
+		v.visit(this);
 }
 
 // Accept a visitor that will write this item to XML
 template <class TUnit>
 void SettingsItemComboBox<TUnit>::accept( VariableParserGetVisitor& v) {
 
-	// Visit me
-	v.visit(this);
+		// Visit me
+		v.visit(this);
 }
 
 // Clone this item, which is basically equivalent to calling the copy ctor
 template <class TUnit>
 SettingsItemComboBox<TUnit>* SettingsItemComboBox<TUnit>::clone() const {
-	return new SettingsItemComboBox<TUnit>(*this);
+		return new SettingsItemComboBox<TUnit>(*this);
 }
 
 // Edit the data in the editor
 template <class TUnit>
 void SettingsItemComboBox<TUnit>::setEditorData(QWidget *editor,const QModelIndex& index) {
 
-	// Set the data with the index of the selected option
-	QComboBox* pComboBox = static_cast<QComboBox*>(editor);
-	pComboBox->setCurrentIndex(activeIndex_);
+		// Set the data with the index of the selected option
+		QComboBox* pComboBox = static_cast<QComboBox*>(editor);
+		pComboBox->setCurrentIndex(activeIndex_);
 }
 
 // Set the data in the model - called by the Delegate
@@ -408,18 +408,18 @@ template <class TUnit>
 void SettingsItemComboBox<TUnit>::setModelData(QWidget *editor, QAbstractItemModel *model,
 		const QModelIndex &index) const {
 
-	// Get a handle on the combo box
-	QComboBox* pComboBox = static_cast<QComboBox*>(editor);
+		// Get a handle on the combo box
+		QComboBox* pComboBox = static_cast<QComboBox*>(editor);
 
-	// Get the selected text
-	QString value = pComboBox->currentText();
+		// Get the selected text
+		QString value = pComboBox->currentText();
 
-	// Set the active index. Note that activeIndex_ is declared
-	// mutable, as we need to set this inside a const method
-	activeIndex_ = pComboBox->currentIndex();
+		// Set the active index. Note that activeIndex_ is declared
+		// mutable, as we need to set this inside a const method
+		activeIndex_ = pComboBox->currentIndex();
 
-	// Set the underlying model
-	model->setData(index, value, Qt::EditRole);
+		// Set the underlying model
+		model->setData(index, value, Qt::EditRole);
 
 }
 
@@ -427,40 +427,40 @@ void SettingsItemComboBox<TUnit>::setModelData(QWidget *editor, QAbstractItemMod
 // other items
 template <class TUnit>
 size_t SettingsItemComboBox<TUnit>::getActiveIndex() const {
-	return activeIndex_;
+		return activeIndex_;
 }
 
 //  Returns the label of the active (selected) item
 // Called by the parent 'paint' method
 template <class TUnit>
 QString SettingsItemComboBox<TUnit>::getActiveText(const QModelIndex &index) const {
-	return opts_[activeIndex_];
+		return opts_[activeIndex_];
 }
 
 // How many options are available to this combo-box?
 template <class TUnit>
 size_t SettingsItemComboBox<TUnit>::getNumOpts() const {
-	return opts_.size();
+		return opts_.size();
 }
 
 // Get the i-th option for this Combo-Box
 template <class TUnit>
 QString SettingsItemComboBox<TUnit>::getOption(size_t i) const {
-	return opts_[i];
+		return opts_[i];
 }
 
 // Assignment operator
 template <class TUnit>
 const SettingsItemComboBox<TUnit>& SettingsItemComboBox<TUnit>::operator=(const SettingsItemComboBox& rhs) {
 
-	// Call the parent operator=
-	SettingsItem<TUnit>::operator=(rhs);
+		// Call the parent operator=
+		SettingsItem<TUnit>::operator=(rhs);
 
-	// Now copy own members
-	opts_= rhs.opts_;
-	activeIndex_= rhs.activeIndex_;
+		// Now copy own members
+		opts_= rhs.opts_;
+		activeIndex_= rhs.activeIndex_;
 
-	return *this;
+		return *this;
 }
 
 // Visual options - requested by the Delegate - this directly derives from MEMS+
@@ -469,55 +469,32 @@ template <class TUnit>
 void SettingsItemComboBox<TUnit>::paint(QPainter* painter, const QStyleOptionViewItem &option,
 		const QModelIndex &index) const {
 
-//	painter->save();
-//
-//	// If the element is editable we draw a background and a box around the text
-//	if (index.model()->flags(index).testFlag(Qt::ItemIsEditable)) {
-//
-//		// Gets a rectangle to draw the background and adjust it
-//		QRect boxRect(option.rect);
-//		boxRect.adjust(1, 1, -1, -1);
-//
-//		// Sets the color of the border depending on the selected or hovered state
-//		if ( (option.state & QStyle::State_MouseOver) ){
-//			std::cout<<"Hoovering over me..!\n";
-//				painter->setPen(QApplication::palette().highlight().color());
-//		}
-//		else {
-//			std::cout<<"NOT hoovering over me with state "<<option.state<<std::endl;
-//			painter->setPen(QPen(Qt::yellow));
-//		}
-//
-//		// Sets the brush depending on the selected state
-//		if (option.state & QStyle::State_Selected)
-//			painter->setBrush(QBrush(QApplication::palette().highlight().color(), Qt::Dense6Pattern));
-//		else
-//			painter->setBrush(QColor("red"));
-//
-//		// Draws the rectangle around the text
-//		painter->drawRect(boxRect);
-//	}
-//
-//	// Call base-class method
-//	SettingsItemBase::paint(painter,option,index);
-//
-//	painter->restore();
-		QStyleOptionComboBox comboboxoptions;
-		comboboxoptions.rect = option.rect;
-		comboboxoptions.state = QStyle::State_Active;
-		comboboxoptions.frame = true;
-		comboboxoptions.currentText = index.model()->data(index).toString();
-		QApplication::style()->drawComplexControl(QStyle::CC_ComboBox,&comboboxoptions,painter);
-		QApplication::style()->drawControl(QStyle::CE_ComboBoxLabel,&comboboxoptions,painter);
+		// For the data column of a combo-box paint the combo-box.
+		// treat normally the other columns
+		if(index.column()==colNames::value_.idx_){
 
+			QStyleOptionComboBox comboboxoptions;
+			comboboxoptions.rect = option.rect;
+			comboboxoptions.state = QStyle::State_Active;
+			comboboxoptions.frame = true;
+			comboboxoptions.currentText = index.model()->data(index).toString();
+			QApplication::style()->drawComplexControl(QStyle::CC_ComboBox,&comboboxoptions,painter);
+			QApplication::style()->drawControl(QStyle::CE_ComboBoxLabel,&comboboxoptions,painter);
+		}
+		else {			// Standard paint for visualizing the tree item as text
+
+			painter->save();
+			SettingsItemBase::paint(painter,option,index);
+			painter->restore();
+		}
 }
 
 // Copy Ctor
 template <class TUnit>
 SettingsItemComboBox<TUnit>::SettingsItemComboBox(const SettingsItemComboBox<TUnit>& rhs) :
-						SettingsItem<TUnit>(rhs),
-						opts_(rhs.opts_),
-						activeIndex_(rhs.activeIndex_){
+SettingsItem<TUnit>(rhs),
+opts_(rhs.opts_),
+activeIndex_(rhs.activeIndex_){
 
 }
 
@@ -550,14 +527,14 @@ template <class TUnit>
 SettingsItemBounds<TUnit>::SettingsItemBounds(const varData& data,	//< Data of the variable
 		double min,									//<	Min value of this variable bound
 		double max):									//<	Max value of this variable bound
-SettingsItemBounds(data.display_,data.name_,min,max,data.tootip_){
+		SettingsItemBounds(data.display_,data.name_,min,max,data.tootip_){
 
 }
 
 // Ctor from xml
 template <class TUnit>
 SettingsItemBounds<TUnit>::SettingsItemBounds(const XmlAttributeSet& xmlAttSet) :
-	SettingsItemGroup(xmlAttSet){
+SettingsItemGroup(xmlAttSet){
 
 		// Do not instantiate children, if requested they are instantiated on
 		// the fly while reading the rest of the xml
