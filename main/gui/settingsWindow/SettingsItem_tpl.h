@@ -463,6 +463,55 @@ const SettingsItemComboBox<TUnit>& SettingsItemComboBox<TUnit>::operator=(const 
 	return *this;
 }
 
+// Visual options - requested by the Delegate - this directly derives from MEMS+
+// Decorates the base class method paint
+template <class TUnit>
+void SettingsItemComboBox<TUnit>::paint(QPainter* painter, const QStyleOptionViewItem &option,
+		const QModelIndex &index) const {
+
+//	painter->save();
+//
+//	// If the element is editable we draw a background and a box around the text
+//	if (index.model()->flags(index).testFlag(Qt::ItemIsEditable)) {
+//
+//		// Gets a rectangle to draw the background and adjust it
+//		QRect boxRect(option.rect);
+//		boxRect.adjust(1, 1, -1, -1);
+//
+//		// Sets the color of the border depending on the selected or hovered state
+//		if ( (option.state & QStyle::State_MouseOver) ){
+//			std::cout<<"Hoovering over me..!\n";
+//				painter->setPen(QApplication::palette().highlight().color());
+//		}
+//		else {
+//			std::cout<<"NOT hoovering over me with state "<<option.state<<std::endl;
+//			painter->setPen(QPen(Qt::yellow));
+//		}
+//
+//		// Sets the brush depending on the selected state
+//		if (option.state & QStyle::State_Selected)
+//			painter->setBrush(QBrush(QApplication::palette().highlight().color(), Qt::Dense6Pattern));
+//		else
+//			painter->setBrush(QColor("red"));
+//
+//		// Draws the rectangle around the text
+//		painter->drawRect(boxRect);
+//	}
+//
+//	// Call base-class method
+//	SettingsItemBase::paint(painter,option,index);
+//
+//	painter->restore();
+		QStyleOptionComboBox comboboxoptions;
+		comboboxoptions.rect = option.rect;
+		comboboxoptions.state = QStyle::State_Active;
+		comboboxoptions.frame = true;
+		comboboxoptions.currentText = index.model()->data(index).toString();
+		QApplication::style()->drawComplexControl(QStyle::CC_ComboBox,&comboboxoptions,painter);
+		QApplication::style()->drawControl(QStyle::CE_ComboBoxLabel,&comboboxoptions,painter);
+
+}
+
 // Copy Ctor
 template <class TUnit>
 SettingsItemComboBox<TUnit>::SettingsItemComboBox(const SettingsItemComboBox<TUnit>& rhs) :

@@ -440,6 +440,12 @@ class SettingsItemComboBox : public SettingsItem<TUnit> {
 		/// Assignment operator
 		virtual const SettingsItemComboBox& operator=(const SettingsItemComboBox& rhs);
 
+		/// Visual options - requested by the Delegate - this directly derives from MEMS+
+		/// Decorates the base class method paint
+		virtual void paint(	QPainter* painter,
+				const QStyleOptionViewItem &option,
+				const QModelIndex &index) const;
+
 		/// Name of the class as a string. Used for XML i/o.
 		static const string className_;
 

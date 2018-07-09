@@ -133,9 +133,6 @@ void TreeTab::read(VppSettingsXmlReader* pReader){
 // revert the model: so that any change the user has
 // done is erased.
 void TreeTab::revert() {
-
-    pTreeModel_->print();
-    pTreeReferenceModel_->print();
     
 	if( *pTreeModel_ != *pTreeReferenceModel_ ){
 
