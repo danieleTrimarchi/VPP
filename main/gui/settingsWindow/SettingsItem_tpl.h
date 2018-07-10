@@ -355,6 +355,9 @@ QWidget* SettingsItemComboBox<TUnit>::createEditor(QWidget *parent) {
 
 		QComboBox* editor = new QComboBox(parent);
 
+		// Add the options and append some spaces - this is required to
+		// visualize the full option, that is otherwise covered by the
+		// combo-box double arrow on the right
 		for(size_t i=0; i<opts_.size(); i++)
 			editor->addItem(opts_[i]);
 
@@ -411,8 +414,10 @@ void SettingsItemComboBox<TUnit>::setModelData(QWidget *editor, QAbstractItemMod
 		// Get a handle on the combo box
 		QComboBox* pComboBox = static_cast<QComboBox*>(editor);
 
-		// Get the selected text
-		QString value = pComboBox->currentText();
+		// Get the selected text. Add spaces to fit the combo-box
+		// arrows on the right of the frame. This is a dirty hack
+		// to make the text visible. Not ideal, but it works
+		QString value = pComboBox->currentText()+ QString("        ");
 
 		// Set the active index. Note that activeIndex_ is declared
 		// mutable, as we need to set this inside a const method
@@ -420,7 +425,6 @@ void SettingsItemComboBox<TUnit>::setModelData(QWidget *editor, QAbstractItemMod
 
 		// Set the underlying model
 		model->setData(index, value, Qt::EditRole);
-
 }
 
 // Only meaningful for the combo-box item, returns zero for all the
@@ -434,7 +438,14 @@ size_t SettingsItemComboBox<TUnit>::getActiveIndex() const {
 // Called by the parent 'paint' method
 template <class TUnit>
 QString SettingsItemComboBox<TUnit>::getActiveText(const QModelIndex &index) const {
-		return opts_[activeIndex_];
+
+		// If this is the name column, give the name used to identify this
+		// variable. This is the named used to construct the combo-box and
+		// defined in EnumData, i.e: Var::mflb_ -> "MainBattens"
+		if(index.column()==colNames::name_.idx_)
+			return this->columns_[colNames::name_.idx_]->getData().toString();
+		else
+			return opts_[activeIndex_];
 }
 
 // How many options are available to this combo-box?
@@ -463,8 +474,8 @@ const SettingsItemComboBox<TUnit>& SettingsItemComboBox<TUnit>::operator=(const 
 		return *this;
 }
 
-// Visual options - requested by the Delegate - this directly derives from MEMS+
-// Decorates the base class method paint
+// Visual options - requested by the Delegate. Decorates the base class method paint
+// The appeareance of the combo-box comes from : https://forum.qt.io/topic/18175/qcombobox-in-qtreeview
 template <class TUnit>
 void SettingsItemComboBox<TUnit>::paint(QPainter* painter, const QStyleOptionViewItem &option,
 		const QModelIndex &index) const {

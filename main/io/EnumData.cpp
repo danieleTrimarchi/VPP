@@ -104,7 +104,7 @@ varData Var::sl_("SL","SL","m","Spinnaker length"); //> Spinnaker length
 varData Var::ehm_("EHM","EHM","m","Mast height above deck"); //> Mast height above deck
 varData Var::emdc_("EMDC","EMDC","m","Mast average diameter"); //> Mast average diameter
 //
-varData Var::mflb_("MainBattens","MFLB"," ","Battens configuration"); //> Full main battens in main
+varData Var::mflb_("Battens","MFLB"," ","Battens configuration"); //> Full main battens in main
 varData Var::sailSet_("SailSet","SAILSET"," ","Sail configuration"); //> Sail configuration
 //
 varData Var::an_("AN","AN","m^2","Nominal sail area");

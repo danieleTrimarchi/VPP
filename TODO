@@ -1,5 +1,3 @@
--> Need to add some more space to the tree item combo-box. The text does not entirely visualize!
-
 -> Set Settings values when loosing focus from the SettingsItemWindow cell
 	This is supposedly already implemented --WHERE-- but it does not work!
 
