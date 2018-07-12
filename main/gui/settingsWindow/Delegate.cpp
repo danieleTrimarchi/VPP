@@ -59,7 +59,7 @@ void SpinBoxDelegate::updateEditorGeometry(QWidget *editor,
 
 
 VPPSettingsDelegate::VPPSettingsDelegate(QObject *parent)
-: QStyledItemDelegate(parent){
+: QStyledItemDelegate(parent) {
 
 }
 
@@ -71,16 +71,40 @@ QWidget* VPPSettingsDelegate::createEditor(QWidget* parent,
 	if (index.isValid()) {
 		SettingsItemBase* pItem = static_cast<SettingsItemBase*>(index.internalPointer());
 		if(pItem){
-			QWidget* editor= pItem->createEditor(parent);
+			QLineEdit* pCurrentEditor= dynamic_cast<QLineEdit*>(pItem->createEditor(parent));
+			if(!pCurrentEditor)
+				throw VPPException(HERE,"cannot cast editor to QLineEdit!");
+
 			// This **should** guarantee that the text is registered into the model while
 			// typed in. No need to close the editor. From MEMS+ LineEditDelegateHelper::createEditor
-			connect(editor, SIGNAL(textChanged(QString)), this, SLOT(textEdited()));
-			return editor;
+			connect(pCurrentEditor, SIGNAL(textChanged(QString)), this, SLOT(textEdited(QString)));
+			return pCurrentEditor;
 		}
 	}
 
 	// This should never happen!
 	return new QWidget(parent);
+}
+
+void VPPSettingsDelegate::textEdited(QString dummy) {
+
+	QLineEdit* pCurrentEditor = static_cast<QLineEdit*>(sender());
+
+	// keep the position of the cursor
+	int cursorPosition = pCurrentEditor->cursorPosition();
+	emit commitData(pCurrentEditor);
+	//emit editorTextEdited();
+
+	QRect initialGeometry(pCurrentEditor->geometry());
+	if((pCurrentEditor->fontMetrics().width(pCurrentEditor->text()) +
+			pCurrentEditor->fontMetrics().width("0") -
+			initialGeometry.width())>0){
+		initialGeometry.setWidth(	pCurrentEditor->fontMetrics().width("0")+
+														pCurrentEditor->fontMetrics().width(pCurrentEditor->text()));
+	}
+
+	pCurrentEditor->setGeometry(initialGeometry);
+	pCurrentEditor->setCursorPosition(cursorPosition);
 }
 
 void VPPSettingsDelegate::setEditorData(QWidget *editor,const QModelIndex& index) const {

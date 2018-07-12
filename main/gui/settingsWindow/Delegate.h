@@ -55,6 +55,10 @@ class VPPSettingsDelegate : public QStyledItemDelegate {
 
 	private:
 
+	private Q_SLOTS:
+
+		void textEdited(QString);
+
 };
 
 #endif
