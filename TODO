@@ -1,9 +1,3 @@
--> variables do not appear in the variable tree anymore. Where and how did I break this?  
-
--> see Delegate.cpp, slot VPPSettingsDelegate::textEdited. 
-	there is a signal: editorTextEdited that I did not implement. What does it do? 
-	review MEMS+ LineEditDelegateHelper::createEditor
-
 -> Selectin blue the Settings value box  when getting mouse focus
 	This is supposedly already implemented but it does not work!
 	See SettingsItem<TUnit>::paint

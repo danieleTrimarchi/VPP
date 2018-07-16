@@ -94,7 +94,7 @@ void VarSet::print(FILE* outStream/*=stdout*/) {
 	fprintf( outStream, "%s\n", headerBegin_.c_str() );
 
 	// Print the variables
-	for(std::set<Variable>::iterator it= begin(); it==end(); it++)
+	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it)
 		fprintf(outStream, "%s  %8.6f \n", it->varName_.c_str(), it->val_ );
 
 	// Print the header end
@@ -106,7 +106,7 @@ void VarSet::print(FILE* outStream/*=stdout*/) {
 // visualize the variables in the UI
 void VarSet::populate(VariableTreeModel* pTreeModel) {
 
-	for(std::set<Variable>::iterator it= begin(); it==end(); it++)
+	for(std::set<Variable>::iterator it= begin(); it!=end(); ++it)
 		pTreeModel->append(it->varName_.c_str(),it->val_);
 
 }
