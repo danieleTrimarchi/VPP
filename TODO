@@ -1,10 +1,13 @@
--> Add a SailCoefficientFileReadTest. this is no different than the variableFileParserTest
-
--> Selectin blue the Settings value box  when getting mouse focus
-	This is supposedly already implemented but it does not work!
-	See SettingsItem<TUnit>::paint
-
 -> Export results to excel format
+
+-> Ask Stephane about the multiple environment warning 
+  	
+-> New definitions of the resistance with new version of the DYSHS
+
+-> Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 	mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
+	To be investigated on UML!
+
+-> Items should define a state vector, not a collection of variables!!
 
 ---
 
@@ -39,15 +42,8 @@ Questions:
 
 ---
 
--> parser print should work!
- 
-- Progression bar during runs…
-
-- Add a control to choose the solver NLOpt IPOpt NRSolver (2 dofs). 
-	This should go in Settings/General
 - Exception in pathUtils if this is not MACOSX 
-- Hide Variable tree by default
-- Print df/dm in RELATIVE terms - the curves of df/dm are of the same color!
+
 ————
 
 - …openCascade… Or other solid modelling tools?
@@ -58,15 +54,5 @@ Questions:
 - Compute the derivative of a cubic spline, thus removing the FDs
 - See RhinoAPI for getting LPP data
 
-—————
-
-- Ask Stephane about the multiple environment warning 
-  	
-- New definitions of the resistance with new version of the DYSHS
-
-- Excel integration to save directly the files in .xlsx format
-
-- Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 	mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
-	To be investigated on UML!
 
 

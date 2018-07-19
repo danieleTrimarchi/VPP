@@ -75,7 +75,7 @@ QWidget* VPPSettingsDelegate::createEditor(QWidget* parent,
 			if(!pCurrentEditor)
 				throw VPPException(HERE,"cannot cast editor to QLineEdit!");
 
-			// This **should** guarantee that the text is registered into the model while
+			// This guarantees that the text is registered into the model while
 			// typed in. No need to close the editor. From MEMS+ LineEditDelegateHelper::createEditor
 			connect(pCurrentEditor, SIGNAL(textChanged(QString)), this, SLOT(textEdited(QString)));
 			return pCurrentEditor;
