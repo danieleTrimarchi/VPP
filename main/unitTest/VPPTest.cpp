@@ -108,6 +108,101 @@ void TVPPTest::variableParseTest() {
 
 }
 
+
+// Attempt reading some sail coefficients from file
+void TVPPTest::sailCoeffsIOTest(){
+
+	// Instantiate a parser with the variables
+	VariableFileParser parser;
+
+	// Parse the variables file
+	parser.parse("testFiles/variableFile_test.txt");
+
+	// Instantiate the sailset
+	std::shared_ptr<SailSet> pSails( SailSet::SailSetFactory(parser) );
+
+	// Instantiate the items (Wind, Resistance, RightingMoment...)
+	std::shared_ptr<VPPItemFactory> pVppItems( new VPPItemFactory(&parser,pSails) );
+
+	// Get the sail coefficients
+	SailCoefficientItem* pSailCoeffItem= pVppItems->getSailCoefficientItem();
+
+	// The IO containers will parse the coeff file and override the current coeffs
+	pSailCoeffItem->getClIO()->parse( "testFiles/sailCoeffs.sailCoeff" );
+	pSailCoeffItem->getCdIO()->parse( "testFiles/sailCoeffs.sailCoeff" );
+
+	Eigen::Array<double,9,4> baselineCl;
+	baselineCl	<< 0, 	0,	0, 	0,
+							20, 1.3,	1.2,	0.02,
+							27, 	1.725,	1.5,	0.1,
+							50, 1.5,	0.5,	1.5,
+							60,	1.25	, 0.4,	1.25,
+							80,	0.95,	0.3,	1.0,
+							100, 0.85,	0.1,	0.85,
+							140,	0.2,	0.05,	0.2,
+							180,	0,	0, 	0;
+
+	Eigen::Array<double,8,4> baselineCd;
+	baselineCd	<< 0,	0,			0,   	0,
+							15	, 0.02,	0.005,	0.02,
+							27,	0.03,	0.02, 	0.05,
+							50, 	0.15,	0.25, 	0.25,
+							80, 	0.8, 	0.15, 	0.9,
+							100,	1.0, 	0.05, 	1.2,
+							140,	0.95, 	0.01, 	0.8,
+							180,	0.9, 	0.0, 	0.66;
+
+	// Get the coefficients for CL (main, jib and spi, see activeSail in SailSet)
+	const Eigen::ArrayXXd* clArray = pSailCoeffItem->getClIO()->getCoefficientMatrix();
+	const Eigen::ArrayXXd* cdArray = pSailCoeffItem->getCdIO()->getCoefficientMatrix();
+
+	CPPUNIT_ASSERT_EQUAL( baselineCl.rows(), clArray->rows() );
+	CPPUNIT_ASSERT_EQUAL( baselineCl.cols(), clArray->cols() );
+	CPPUNIT_ASSERT_EQUAL( baselineCd.rows(), cdArray->rows() );
+	CPPUNIT_ASSERT_EQUAL( baselineCd.cols(), cdArray->cols() );
+
+	// Transform the first column to radians
+	baselineCl.col(0) *= M_PI / 180.0;
+	baselineCd.col(0) *= M_PI / 180.0;
+
+	// Check the value for cl
+	for(size_t iRow=0;iRow<baselineCl.rows(); iRow++)
+		for(size_t iCol=0;iCol<baselineCl.cols(); iCol++)
+			CPPUNIT_ASSERT_DOUBLES_EQUAL( baselineCl(iRow,iCol),	clArray->coeff(iRow,iCol), 1.e-6 );
+
+	// Check the value for cd
+	for(size_t iRow=0;iRow<baselineCd.rows(); iRow++)
+		for(size_t iCol=0;iCol<baselineCd.cols(); iCol++)
+			CPPUNIT_ASSERT_DOUBLES_EQUAL( baselineCd(iRow,iCol),	cdArray->coeff(iRow,iCol), 1.e-6 );
+
+	// Now do the spline interpolation and query a couple of values on the x span of the
+	// coefficient definition
+	pSailCoeffItem->interpolateCoeffs();
+
+	// Get a value of x between the third and the fourth point (valid for
+	// both cl[9,4] and cd[8,4] )
+	double awa = 0.5 * ( baselineCl.coeff(3,0) + baselineCl.coeff(4,0) );
+
+	// Get a handle on the lift coeff interpolators
+	SplineInterpolator* pClMainInterp = pSailCoeffItem->getClInterpolators().at(activeSail::mainSail).get();
+	SplineInterpolator* pClJibInterp = pSailCoeffItem->getClInterpolators().at(activeSail::jib).get();
+	SplineInterpolator* pClSpiInterp = pSailCoeffItem->getClInterpolators().at(activeSail::spi).get();
+
+	// Get a handle on the drag coeff interpolators
+	SplineInterpolator* pCdMainInterp = pSailCoeffItem->getCdInterpolators().at(activeSail::mainSail).get();
+	SplineInterpolator* pCdJibInterp = pSailCoeffItem->getCdInterpolators().at(activeSail::jib).get();
+	SplineInterpolator* pCdSpiInterp = pSailCoeffItem->getCdInterpolators().at(activeSail::spi).get();
+
+	// Verify the values for the current awa
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.36442073907714,	pClMainInterp->interpolate(awa), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.409320644958579,	pClJibInterp->interpolate(awa), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.4268457968605,	pClSpiInterp->interpolate(awa), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.235833726439122,	pCdMainInterp->interpolate(awa), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.269016575476863,	pCdJibInterp->interpolate(awa), 1.e-6 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.337274865410882,	pCdSpiInterp->interpolate(awa), 1.e-6 );
+
+}
+
 // Instantiate some items, write to xml, read them
 // back and verify consistency
 void TVPPTest::xmlIOTest() {

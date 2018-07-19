@@ -1,8 +1,8 @@
+-> Add a SailCoefficientFileReadTest. this is no different than the variableFileParserTest
+
 -> Selectin blue the Settings value box  when getting mouse focus
 	This is supposedly already implemented but it does not work!
 	See SettingsItem<TUnit>::paint
-
--> Add a SailCoefficientFileReadTest. this is no different than the variableFileParserTest
 
 -> Export results to excel format
 

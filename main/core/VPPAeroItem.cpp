@@ -186,6 +186,16 @@ void SailCoefficientItem::interpolateCoeffs() {
 SailCoefficientItem::~SailCoefficientItem() {
 }
 
+// Get a handle on the interpolators for the lift coeffs
+vector< std::shared_ptr<SplineInterpolator> >& SailCoefficientItem::getClInterpolators() {
+	return interpClVec_;
+}
+
+// Get a handle on the interpolators for the drag coeffs
+vector< std::shared_ptr<SplineInterpolator> >& SailCoefficientItem::getCdInterpolators() {
+	return interpCdVec_	;
+}
+
 // Implement the pure virtual
 void SailCoefficientItem::update(int vTW, int aTW) {
 

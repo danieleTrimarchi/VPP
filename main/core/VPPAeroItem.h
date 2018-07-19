@@ -140,6 +140,14 @@ class SailCoefficientItem : public VPPItem {
 		/// The range is set 0-180deg
 		virtual void plot_D2_InterpolatedCoefficients( MultiplePlotWidget* ) const=0;
 
+		/// Get a handle on the interpolators for the lift coeffs.
+		/// Added for test sailCoeffsIOTest. Make good use of this method!
+		vector< std::shared_ptr<SplineInterpolator> >& getClInterpolators();
+
+		/// Get a handle on the interpolators for the drag coeffs
+		/// Added for test sailCoeffsIOTest. Make good use of this method!
+		vector< std::shared_ptr<SplineInterpolator> >& getCdInterpolators();
+
 	protected:
 
 		/// Update the item for the current step (wind velocity and angle),

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE vppSettings>
+<vppSettings version="1.0">
+    <vppSettingTree>
+        <Item Expanded="yes" InternalName="/" DisplayName="Name" VariableName="" ClassName="SettingsItemRoot" Unit="">
+            <Item Expanded="no" InternalName="/.VPP_Settings" DisplayName="VPP Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+                <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds" DisplayName="Velocity bounds" VariableName="V" ClassName="SettingsItemBounds" Unit="m/s">
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.Velocity_bounds_min" DisplayName="Velocity bounds_min" VariableName="V_MIN" ClassName="SettingsItem" Value="0" Unit="m/s" ToolTip="min value"/>
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.Velocity_bounds_max" DisplayName="Velocity bounds_max" VariableName="V_MAX" ClassName="SettingsItem" Value="15" Unit="m/s" ToolTip="max value"/>
+                </Item>
+                <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds" DisplayName="Heel angle bounds" VariableName="PHI" ClassName="SettingsItemBounds" Unit="deg">
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds.Heel_angle_bounds_min" DisplayName="Heel angle bounds_min" VariableName="PHI_MIN" ClassName="SettingsItem" Value="-1e-5" Unit="deg" ToolTip="min value"/>
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds.Heel_angle_bounds_max" DisplayName="Heel angle bounds_max" VariableName="PHI_MAX" ClassName="SettingsItem" Value="85" Unit="deg" ToolTip="max value"/>
+                </Item>
+                <Item Expanded="no" InternalName="/.VPP_Settings.Crew_position_bounds" DisplayName="Crew position bounds" VariableName="B" ClassName="SettingsItemBounds" Unit="m">
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Crew_position_bounds.Crew_position_bounds_min" DisplayName="Crew position bounds_min" VariableName="B_MIN" ClassName="SettingsItem" Value="0" Unit="m" ToolTip="min value"/>
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Crew_position_bounds.Crew_position_bounds_max" DisplayName="Crew position bounds_max" VariableName="B_MAX" ClassName="SettingsItem" Value="3" Unit="m" ToolTip="max value"/>
+                </Item>
+                <Item Expanded="no" InternalName="/.VPP_Settings.Flat_bounds" DisplayName="Flat bounds" VariableName="F" ClassName="SettingsItemBounds" Unit="">
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Flat_bounds.Flat_bounds_min" DisplayName="Flat bounds_min" VariableName="F_MIN" ClassName="SettingsItem" Value="0.4" Unit="" ToolTip="min value"/>
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Flat_bounds.Flat_bounds_max" DisplayName="Flat bounds_max" VariableName="F_MAX" ClassName="SettingsItem" Value="1" Unit="" ToolTip="max value"/>
+                </Item>
+            </Item>
+        </Item>
+    </vppSettingTree>
+</vppSettings>

@@ -50,11 +50,9 @@ bool VppGeneralTabXmlReader::read() {
 	// Verify this is suitable file (vppSettings v.1.0). Otherwise throw
 	while (pXmlReader_->readNextStartElement()) {
 
-		if(pXmlReader_->name()== vppGeneralSettingTag.c_str()){
-
-			std::cout<<"pXml_->name()= "<<pXmlReader_->name().toString().toStdString() <<std::endl;
+		if(pXmlReader_->name()== vppGeneralSettingTag.c_str())
 			readItems();
-		}
+
 	}
 
 	return !pXmlReader_->error();
