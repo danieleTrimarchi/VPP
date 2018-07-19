@@ -43,8 +43,9 @@ QWidget(myparent) {
 	pDelegate_ = new VPPSettingsDelegate(this);
 	pTreeView_->setItemDelegate(pDelegate_);
 
-	// Expand all the items.
-	// pTreeView_->expandAll();
+	// Set mouse tracking on for this widget. This will allow the delegate
+	// to detect when the mouse hovers over the various objects of the widget
+	pTreeView_->setMouseTracking(true);
 
 	// Assign the tree view to a VBoxLayout
 	QVBoxLayout* centralLayout = new QVBoxLayout(this);
