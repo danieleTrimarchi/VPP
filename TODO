@@ -1,13 +1,17 @@
--> Export results to excel format
+-> Export results to excel format. Simply use .csv formatting
+- Is it possible to write in multiple tabs? 
+ Ideally I would have vpp settings in the first tab, and the results in the second tab
+
+
+-> Items should define a state vector, not a collection of variables!!
+
+-> Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 	mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
+	To be investigated on UML!
 
 -> Ask Stephane about the multiple environment warning 
   	
 -> New definitions of the resistance with new version of the DYSHS
 
--> Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 	mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
-	To be investigated on UML!
-
--> Items should define a state vector, not a collection of variables!!
 
 ---
 
