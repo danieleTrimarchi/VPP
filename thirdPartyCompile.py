@@ -1,10 +1,28 @@
-import os
+import os, sys
 from shutil import copyfile
 from shutil import copytree
+from shutil import rmtree
 import subprocess
 import shutil
 import re
-import requests # Download files from the web
+
+try:    
+    import pip
+except ImportError, e:
+    print "Installing pip... "
+    p = subprocess.Popen("sudo easy_install pip",shell=True)
+    if not p.wait():
+        raise
+    import pip
+
+try:
+    import requests # Download files from the web
+except ImportError, e:
+    p = subprocess.Popen("sudo pip install requests",shell=True)
+    if not p.wait():
+        raise
+    import requests
+    
 import zipfile
 import StringIO
 
@@ -12,28 +30,34 @@ import StringIO
 
 class thirdPartyCompile(object):
 
-    # Name of this third_party. Actually this is the name of the 
-    # archive that is to be downloaded from the web - once extracted
-    self.__name__=""
-
-    # Define the URL from which IpOpt can be downloaded
-    # Note that this should be the complete path of the file
-    # to be downloaded (Including the filename!)
-    self.__url__=""
-    
-    self.__zipArchive__=""        
-
-    # Where will the downloaded third_party archives be placed to? 
-    self.__thirdPartySrcFolder__="/Users/dtrimarchi/third_party_src"
-
-    # Where will the downloaded third_party archives be placed to? 
-    self.__thirdPartyBuildFolder__="/Users/dtrimarchi/third_party_build"
-
-    # Where will the compiled packages will be placed to?
-    self.__thirdPartyPkgFolder__="/Users/dtrimarchi/third_party"
-    
     # Ctor
     def __init__(self):
+        
+                # Name of this third_party. Actually this is the name of the 
+        # archive that is to be downloaded from the web - once extracted
+        self.__name__=""
+    
+        # Define the URL from which IpOpt can be downloaded
+        # Note that this should be the complete path of the file
+        # to be downloaded (Including the filename!)
+        self.__url__=""
+        
+        # Define the name of the archive downloadeed from the web. A priori this is 
+        # simply the last entry of the url
+        self.__srcArchiveName__=""
+
+        # Src archive downloaded from the web
+        self.__zipArchive__=""        
+    
+        # Where will the downloaded third_party archives be placed to and 
+        # where will they be extracted  
+        self.__thirdPartySrcFolder__="/Users/dtrimarchi/third_party_src"
+    
+        # Where will the downloaded third_party archives be placed to? 
+        self.__thirdPartyBuildFolder__="/Users/dtrimarchi/third_party_build"
+    
+        # Where will the compiled packages will be placed to?
+        self.__thirdPartyPkgFolder__="/Users/dtrimarchi/third_party_pkg"
         
         # verify if the __thirdPartySrcFolder__ and the __thirdPartyPkgFolder__
         # exist. If they do not exist, make them
@@ -47,30 +71,34 @@ class thirdPartyCompile(object):
             os.makedirs(self.__thirdPartyPkgFolder__)
         
     # Wrapper method used to get, compile and test a third_party     
-    def get(self):
+    def get(self, download=True):
         
-        # Downlaod the required files from the web
-        self.__download__()
-        
-        # Extract the files - normally we download 
-        # compressed archives
-        self.__extract__()
-        
+        # Downlaod the required files from the web, if this is requested
+        # otherwise we skip the download, but this implies that we are 
+        # recompiling the third_party
+        if(download):
+            self.__download__()
+                
         # Compile the third party software
         self.__compile__()
         
         # Package the relevant pieces into a dedicated location        
         self.__package__()
         
+        # Test the third party   
+        self.__test__()
+        
     # To be implemented in child classes, describe where the 
     # source package can be downloaded
     def __download__(self):
         raise "thirdPartyCompile::__download__() should never be called"
 
-    # To be implemented in child classes, describe how to extract
-    # the package that has been downloaded
-    def __extract__(self):
-        raise "thirdPartyCompile::__extract__() should never be called"
+    # After extracting the third party, it might be the case that we need to 
+    # use some tools internal to the package to download some additional reqs. 
+    # This is for example the case for ipOpt, that provides scripts to download
+    # third parties such as blas, ASL...         
+    def __getAdditionalRequirements__(self):
+        raise "thirdPartyCompile::__getAdditionalRequirements__() should never be called"
         
     # How to compile the third party
     def __compile__(self):
@@ -88,15 +116,6 @@ class thirdPartyCompile(object):
         
 
 class IpOptCompile(thirdPartyCompile):
-
-    # Name of this third_party. Actually this is the name of the 
-    # archive that is to be downloaded from the web - once extracted
-    self.__name__="Ipopt-3.12.6"
-    
-    # Define the URL from which IpOpt can be downloaded
-    # Note that this should be the complete path of the file
-    # to be downloaded (Including the filename!)
-    self.__url__="www.something " todo!
     
     # Ctor
     def __init__(self):
@@ -104,46 +123,140 @@ class IpOptCompile(thirdPartyCompile):
         # Simply call mother-class init
         super(IpOptCompile,self).__init__()
 
-    def self.__download__(self):
+        # Name of this third_party. Actually this is the name of the 
+        # archive that is to be downloaded from the web - once extracted
+        self.__name__="Ipopt-3.12.6"
         
+        # Define the URL from which IpOpt can be downloaded
+        # Note that this should be the complete path of the file
+        # to be downloaded (Including the filename!)
+        self.__url__="https://www.coin-or.org/download/source/Ipopt/Ipopt-3.12.6.zip"
+
+        # Define the name of the archive downloadeed from the web. A priori this is 
+        # simply the last entry of the url
+        self.__srcArchiveName__="Ipopt-3.12.6.zip"
+        
+        # Define the name of the folder extracted from the archive downloadeed from the web. 
+        # A priori this is simply the srcArchiveName without the extension
+        self.__srcDirName__="Ipopt-3.12.6"
+
+    def __download__(self):
+        
+        print "beginning of __download__"
         # Go to the __thirdPartySrcFolder__. Its existence was 
         # assured in the init of the class
         os.chdir(self.__thirdPartySrcFolder__)
-         
+                 
+        # cleanup: remove a previous archive if present
+        shutil.rmtree(self.__srcArchiveName__,sys.exc_info())
+          
         # Todo : add a progression bar... 
         localArchive = requests.get(self.__url__, stream=True)
-        self.__zipArchive__ = zipfile.ZipFile(StringIO.StringIO(localArchive.content))
+        print "...downloading the archive... (this can take a while)"
+        z = zipfile.ZipFile(StringIO.StringIO(localArchive.content))
+        print "...extracting the archive..."
+        z.extractall()
+                     
+         # I can now use the scripts provided by ipOpt to download the 
+         # required third_party. 
+        self.__getAdditionalRequirements__()
 
-    def __extract__(self):       
+        # Now we have all the sources. We can now copy them to the build dir
+        # First, make sure we are in the right place
+        os.chdir(self.__thirdPartySrcFolder__)
+        shutil.copytree(self.__srcDirName__, 
+                        os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__))
 
-        # Extract the zip archive 
-        # Todo : add a progression bar... 
-        self.__zipArchive__.extractall()
+    # After extracting we use the script provided to download
+    # third parties such as blas, ASL...  
+    def __getAdditionalRequirements__(self):
+        
+        # IpOpt requires some pre-requisites. It offers utilities to download
+        # them from the web. 
+        # BLAS... 
+        os.chdir(os.path.join(self.__thirdPartySrcFolder__,
+                              self.__name__,
+                              "ThirdParty","Blas"))
 
-        todo:
-            this should be extracted to : __thirdPartyBuildFolder__
-                
+        # Make sure the script has 755 permissions
+        p = subprocess.Popen("chmod 755 get.Blas",shell=True)
+
+        # Execute the script        
+        p = subprocess.Popen("./get.Blas",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to get BLAS\n\n')
+        
+        # LAPACK... 
+        # Execute the script        
+        os.chdir(os.path.join(self.__thirdPartySrcFolder__,
+                              self.__name__,
+                              "ThirdParty","Lapack"))
+
+        # Make sure the script has 755 permissions
+        p = subprocess.Popen("chmod 755 get.Lapack",shell=True)
+
+        p= subprocess.Popen("./get.Lapack",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to get LAPACK\n\n')
+
+        # ASL... 
+        os.chdir(os.path.join(self.__thirdPartySrcFolder__,
+                               self.__name__,
+                               "ThirdParty","ASL"))
+         
+         # Make sure the script has 755 permissions
+        p = subprocess.Popen("chmod 755 get.ASL",shell=True)
+ 
+        p= subprocess.Popen("./get.ASL",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to get ASL\n\n')
+
+    def __stdcompileProcedure__(self,libName):
+        
+        p = subprocess.Popen("chmod 755 configure",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to change permissions to the configure script for %\n\n'.format(libName))
+        
+        # Standard compile procedure: configure + make 
+        p= subprocess.Popen("./configure",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to configure for %s\n\n'.format(libName))
+        
+        # Note that the generated libs will be stored in ./.libs
+        p= subprocess.Popen("make",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to compile %s\n\n'.format(libName))
+
     # Compile this package    
     def __compile__(self):
         
-        # Go to the buld folder
-        os.chdir(self.__thirdPartyBuildFolder__)
+        # Go to the ipOpt src folder
+        os.chdir(os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__))
 
-        # IpOpt requires some pre-requisites. It offers utilities to download
-        # them from the web
-        os.chdir(os.path.join(self.__thirdPartyBuildFolder__,
-                              self.__name__,
-                              "Third_Party","Blas")
+        # Make a build folder
+        os.mkdir("Build")
+        os.chdir("Build")
 
-        p= subprocess.Popen("./get.Blas",shell=True)
-        if !p.wait():
-            raise
+        p = subprocess.Popen("chmod 755 ../configure",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to change permissions to the configure script for IPOPT\n\n')
+
+        # Launch the configure script        
+        p= subprocess.Popen("../configure",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to configure for IPOPT\n\n')
+
+        # Launch the build    
+        p= subprocess.Popen("make",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to compile IPOPT\n\n')
+
+        # Make the tests    
+        p= subprocess.Popen("make test",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to test the IPOPT compile\n\n')
+
+    def __package__(self):
         
-
-        cd ../Lapack
-        ./get.Lapack
-        cd ../ASL
-        ./get.ASL  
         
-           
         
