@@ -161,12 +161,6 @@ class IpOptCompile(thirdPartyCompile):
          # required third_party. 
         self.__getAdditionalRequirements__()
 
-        # Now we have all the sources. We can now copy them to the build dir
-        # First, make sure we are in the right place
-        os.chdir(self.__thirdPartySrcFolder__)
-        shutil.copytree(self.__srcDirName__, 
-                        os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__))
-
     # After extracting we use the script provided to download
     # third parties such as blas, ASL...  
     def __getAdditionalRequirements__(self):
@@ -230,10 +224,20 @@ class IpOptCompile(thirdPartyCompile):
     # Compile this package    
     def __compile__(self):
         
-        # Go to the ipOpt src folder
+        # Cleanup previous build folder - if any
+        shutil.rmtree(os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__),
+                      sys.exc_info())
+
+        # Copy the sources to the build dir
+        # First, make sure we are in the right place
+        os.chdir(self.__thirdPartySrcFolder__)
+        shutil.copytree(self.__srcDirName__, 
+                        os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__))
+
+        # Go to the ipOpt build folder
         os.chdir(os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__))
 
-        # Make a build folder
+        # Make the build folder
         os.mkdir("Build")
         os.chdir("Build")
 
@@ -242,7 +246,10 @@ class IpOptCompile(thirdPartyCompile):
             raise ValueError('\n\nSomething went wrong when trying to change permissions to the configure script for IPOPT\n\n')
 
         # Launch the configure script        
-        p= subprocess.Popen("../configure",shell=True)
+        p= subprocess.Popen("../configure ADD_CFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
+                             "ADD_CXXFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
+                             "ADD_FFLAGS='-fexceptions -fbackslash'"
+                             "--prefix={}".format(os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__,"Build","lib")),shell=True)
         if p.wait():
             raise ValueError('\n\nSomething went wrong when trying to configure for IPOPT\n\n')
 
@@ -258,5 +265,12 @@ class IpOptCompile(thirdPartyCompile):
 
     def __package__(self):
         
+        # cleanup: remove a previous package folder if present
+        shutil.rmtree(self.__thirdPartyPkgFolder__,sys.exc_info())
+
+        # Make a package folder and enter it 
+        os.mkdir(self.__thirdPartyPkgFolder__)
+        os.chdir(self.__thirdPartyPkgFolder__)
+
         
         
