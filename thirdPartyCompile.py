@@ -140,6 +140,9 @@ class IpOptCompile(thirdPartyCompile):
         # A priori this is simply the srcArchiveName without the extension
         self.__srcDirName__="Ipopt-3.12.6"
 
+        # Override the package folder for this third_party
+        self.__thirdPartyPkgFolder__= os.path.join(self.__thirdPartyPkgFolder__,self.__srcDirName__)
+    
     def __download__(self):
         
         print "beginning of __download__"
@@ -245,6 +248,15 @@ class IpOptCompile(thirdPartyCompile):
         if p.wait():
             raise ValueError('\n\nSomething went wrong when trying to change permissions to the configure script for IPOPT\n\n')
 
+        p = subprocess.Popen("chmod 755 {}".format(os.path.join(
+                                                self.__thirdPartyBuildFolder__,
+                                                self.__srcDirName__,
+                                                "ThirdParty",
+                                                "ASL",
+                                                "install-sh")),shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to change permissions to the configure script for ASL\n\n')
+
         # Launch the configure script        
         p= subprocess.Popen("../configure ADD_CFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
                              "ADD_CXXFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
@@ -258,19 +270,67 @@ class IpOptCompile(thirdPartyCompile):
         if p.wait():
             raise ValueError('\n\nSomething went wrong when trying to compile IPOPT\n\n')
 
-        # Make the tests    
-        p= subprocess.Popen("make test",shell=True)
+        p = subprocess.Popen("chmod 755 {}".format(
+                                                os.path.join(
+                                                    self.__thirdPartyBuildFolder__,
+                                                    self.__srcDirName__,
+                                                    "ThirdParty",
+                                                    "Blas",
+                                                    "install-sh")),shell=True)
         if p.wait():
-            raise ValueError('\n\nSomething went wrong when trying to test the IPOPT compile\n\n')
+            raise ValueError('\n\nSomething went wrong when trying to change permissions to the install script for BLAS\n\n')
 
+        p = subprocess.Popen("chmod 755 {}".format(
+                                                os.path.join(
+                                                    self.__thirdPartyBuildFolder__,
+                                                    self.__srcDirName__,
+                                                    "ThirdParty",
+                                                    "Lapack",
+                                                    "install-sh")),shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to change permissions to the install script for Lapack\n\n')
+
+        p = subprocess.Popen("chmod 755 {}".format(
+                                                os.path.join(
+                                                    self.__thirdPartyBuildFolder__,
+                                                    self.__srcDirName__,
+                                                    "Ipopt",
+                                                    "install-sh")),shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to change permissions to the install script for IpOpt\n\n')
+
+        p = subprocess.Popen("chmod 755 {}".format(
+                                                os.path.join(
+                                                    self.__thirdPartyBuildFolder__,
+                                                    self.__srcDirName__,
+                                                    "install-sh")),shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to change permissions to the install script for IpOpt\n\n')
+
+        p= subprocess.Popen("make install",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to compile IPOPT\n\n')
+
+        p= subprocess.Popen("make install-doxydoc",shell=True)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to install the IPOPT documentation\n\n')
+
+        # Do NOT make the tests, see https://github.com/Homebrew/legacy-homebrew/issues/13617
+        # Will add a simple local test example that will use the basic functionalities
+        
     def __package__(self):
         
-        # cleanup: remove a previous package folder if present
+        # cleanup: remove a previous package folder if present. Remember that the 
+        # package folder was set relative to this third_party in the ctor
         shutil.rmtree(self.__thirdPartyPkgFolder__,sys.exc_info())
 
         # Make a package folder and enter it 
         os.mkdir(self.__thirdPartyPkgFolder__)
         os.chdir(self.__thirdPartyPkgFolder__)
 
-        
+        # Copy the content of include and lib
+        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__,"Build","include","coin"), 
+                        os.path.join(self.__thirdPartyPkgFolder__,"include"))
+        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__,"Build","lib"), 
+                        os.path.join(self.__thirdPartyPkgFolder__,"lib"))
         
