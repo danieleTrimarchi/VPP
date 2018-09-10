@@ -1,3 +1,12 @@
+-> Try recompiling the ipopt example using the functional ipOpt in third_party. 
+	If this works, the new ipOpt is not compiled quite correcly. 
+	I think this is true : see the size of the archives
+-> Try recompiling ipOpt with python compileTest.py. 
+	I have changed the compile flags to compile static libs. Will this be enough
+	to fix the compile? 
+
+
+
 -> Export results to excel format. Simply use .csv formatting
 - Is it possible to write in multiple tabs? 
  Ideally I would have vpp settings in the first tab, and the results in the second tab

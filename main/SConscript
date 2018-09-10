@@ -123,7 +123,7 @@ for subdir in subFolders :
 localEnv.Append( CPPPATH=myCppPath )
 
 # Copy the test input file (variableFile.txt) to the build folder
-localEnv.copyInputFileToFolderStructure
+localEnv.copyInputFileToFolderStructure()
 
 # -----------------------------------------------
 
