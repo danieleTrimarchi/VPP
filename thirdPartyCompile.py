@@ -456,8 +456,12 @@ env.Append( LIBPATH=["/Users/dtrimarchi/third_party_build/Ipopt-3.12.6/Build/lib
 env.Append( LIBS=["ipopt"] )
 env.Program('ipOptTest', Glob('*.cpp') )        
 ''')
+        Sconstruct.close()
+        
+        print "We are in folder: ", os.getcwd()
+                
         # Compile the example
-        self.__execute__("scons")
+        self.__execute__("scons -Q")
         
         # Execute the example
         self.__execute__("./ipOptTest")
