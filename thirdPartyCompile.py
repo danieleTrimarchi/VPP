@@ -442,31 +442,6 @@ class IpOptCompile(thirdPartyCompile):
         # Do NOT make the tests, see https://github.com/Homebrew/legacy-homebrew/issues/13617
         # Will add a simple local test example that will use the basic functionalities
 
-    def __compileTest__(self):
-        
-        # Also compile the c++ test, that will be run by __test__
-        os.chdir(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","examples","Cpp_example"))
-        
-        # Write a SConstruct 
-        Sconstruct=open("SConstruct","w")
-        Sconstruct.write('''import os
-env = Environment()  
-env.Append( CPPPATH=["/Users/dtrimarchi/third_party_build/Ipopt-3.12.6/Build/lib/include/coin"] )
-env.Append( LIBPATH=["/Users/dtrimarchi/third_party_build/Ipopt-3.12.6/Build/lib/lib"] )
-env.Append( LIBS=["ipopt"] )
-env.Program('ipOptTest', Glob('*.cpp') )        
-''')
-        Sconstruct.close()
-        
-        print "We are in folder: ", os.getcwd()
-                
-        # Compile the example
-        self.__execute__("scons -Q")
-        
-        # Execute the example
-        self.__execute__("./ipOptTest")
-
-     
     # Package the third party that was build   
     def __package__(self):
         
@@ -487,9 +462,32 @@ env.Program('ipOptTest', Glob('*.cpp') )
         shutil.copyfile(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","doc","documentation.pdf"), 
                         os.path.join(self.__thirdPartyPkgFolder__,"documentation.pdf"))
  
+        # Copy the example 
+        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","examples","Cpp_example"), 
+                        os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
+        
     # Run a simple test to check that the compile was successiful
     def __test__(self):
         
-        pass
+        # Also compile the c++ test, that will be run by __test__
+        os.chdir(os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
         
+        # Write a SConstruct 
+        Sconstruct=open("SConstruct","w")
+        Sconstruct.write('''import os
+env = Environment()  
+env.Append( CPPPATH=["{}/include"] )
+env.Append( LIBPATH=["{}/lib"] )
+env.Append( LIBS=["ipopt"] )
+env.Program('ipOptTest', Glob('*.cpp') )        
+'''.format(self.__thirdPartyPkgFolder__,self.__thirdPartyPkgFolder__))
+        Sconstruct.close()
+        
+        print "Executing the ipOpt test: we are in folder: ", os.getcwd()
+                
+        # Compile the example
+        self.__execute__("scons -Q")
+        
+        # Execute the example
+        self.__execute__("./ipOptTest")        
         

@@ -1,9 +1,9 @@
 import thirdPartyCompile as tp
 ipOpt= tp.IpOptCompile()
+ipOpt.get()
+
+
 #ipOpt.__download__()
-
 #ipOpt.__compile__()
-ipOpt.__compileTest__()
-
 #ipOpt.__package__()
-#ipOpt.test()
+#ipOpt.__test__()
