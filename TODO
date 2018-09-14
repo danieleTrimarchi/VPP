@@ -1,3 +1,9 @@
+-> download should handle both tar.gz and zip
+-> the download link of HSL is systematically requested. 
+	I want to instantiate a mechanism not to download 
+	systematically if the srcs are already in place
+
+
 -> Try recompiling the ipopt example using the functional ipOpt in third_party. 
 	If this works, the new ipOpt is not compiled quite correcly. 
 	I think this is true : see the size of the archives

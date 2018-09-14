@@ -59,6 +59,11 @@ class thirdPartyCompile(object):
         # Where will the compiled packages will be placed to?
         self.__thirdPartyPkgFolder__="/Users/dtrimarchi/third_party_pkg"
         
+        # Every third_party object can instantiate and fill this list with the 
+        # requirements (or sub-third_parties). Will loop over requirements when 
+        # required to download and compile the required packages
+        self.__requirements__ = [] 
+        
         # verify if the __thirdPartySrcFolder__ and the __thirdPartyPkgFolder__
         # exist. If they do not exist, make them
         if not os.path.exists( self.__thirdPartySrcFolder__ ):
@@ -101,7 +106,7 @@ class thirdPartyCompile(object):
         raise "thirdPartyCompile::__getAdditionalRequirements__() should never be called"
         
     # How to compile the third party
-    def __compile__(self):
+    def __compile__(self,dest=None):
         raise "thirdPartyCompile::__compile__() should never be called"
         
     # How to package the relevant components of this third_party
@@ -120,7 +125,187 @@ class thirdPartyCompile(object):
         if p.wait():
             raise ValueError('\n\nSomething went wrong when trying to execute: {}\n\n'.format(command))
 
+    # Download an archive from a given url and unzip it 
+    def __getCompressedArchive__(self,url):
+        
+        # Todo : add a progression bar...
+        localArchive = requests.get(url,stream=True)
+        print "...downloading the archive from...{} (this can take a while)".format(url)
+        z = zipfile.ZipFile(StringIO.StringIO(localArchive.content))
+        print "...extracting the archive..."
+        z.extractall()
 
+# Blas is a requirement for IpOopt, that offers utility scripts to download and 
+# compile blas with the right bindings
+class ipOptBlasCompile(thirdPartyCompile):
+
+    # Ctor
+    def __init__(self,ipOptBlasPath):
+    
+        # Simply call mother-class init
+        super(ipOptBlasCompile,self).__init__()
+
+        # Name of this third_party. 
+        self.__name__="BLAS"
+
+        # Store the location where ipOpt will download and 
+        # compile blas
+        self.__thirdPartySrcFolder__ = ipOptBlasPath
+        
+        # We do not need to fill other fileds, as this thirdParty is 
+        # entirely handled by IpOpt
+            
+    def __download__(self):
+        
+        # Use the IpOpt utilities to download BLAS from the web and compile
+        # Note that the __thirdPartySrcFolder__ has been set to the ipOpt/third_party/
+        # blas folder
+        os.chdir(self.__thirdPartySrcFolder__)
+
+        # Make sure the BLAS script has 755 permissions and execute it
+        self.__execute__("chmod 755 get.Blas")
+        self.__execute__("./get.Blas")
+
+    def __compile__(self,dest=None):
+        # Make nothing, BLAS will be compiled as part of IpOpt
+        pass 
+    
+# Lapack is a requirement for IpOopt, that offers utility scripts to download and 
+# compile blas with the right bindings
+class ipOptLapackCompile(thirdPartyCompile):
+
+    # Ctor
+    def __init__(self,ipOptLapackPath):
+    
+        # Simply call mother-class init
+        super(ipOptLapackCompile,self).__init__()
+
+        # Name of this third_party. 
+        self.__name__="LAPACK"
+
+        # Store the location where ipOpt will download and 
+        # compile blas
+        self.__thirdPartySrcFolder__ = ipOptLapackPath
+        
+        # We do not need to fill other fileds, as this thirdParty is 
+        # entirely handled by IpOpt
+            
+    def __download__(self):
+        
+        # Use the IpOpt utilities to download BLAS from the web and compile
+        # Note that the __thirdPartySrcFolder__ has been set to the ipOpt/third_party/
+        # blas folder
+        os.chdir(self.__thirdPartySrcFolder__)
+
+        # Make sure the BLAS script has 755 permissions and execute it
+        self.__execute__("chmod 755 get.Lapack")
+        self.__execute__("./get.Lapack")
+
+    def __compile__(self,dest=None):
+        # Make nothing, LAPACK will be compiled as part of IpOpt
+        pass 
+
+# ASL is a requirement for IpOopt, that offers utility scripts to download and 
+# compile blas with the right bindings
+class ipOptASLCompile(thirdPartyCompile):
+
+    # Ctor
+    def __init__(self,ipOptASLPath):
+    
+        # Simply call mother-class init
+        super(ipOptASLCompile,self).__init__()
+
+        # Name of this third_party. 
+        self.__name__="ASL"
+
+        # Store the location where ipOpt will download and 
+        # compile blas
+        self.__thirdPartySrcFolder__ = ipOptASLPath
+        
+        # We do not need to fill other fileds, as this thirdParty is 
+        # entirely handled by IpOpt
+            
+    def __compile__(self,dest=None):
+        # Make nothing, ASL will be compiled as part of IpOpt
+        pass 
+
+    def __download__(self):
+        
+        # Use the IpOpt utilities to download ASL from the web and compile
+        # Note that the __thirdPartySrcFolder__ has been set to the ipOpt/third_party/
+        # ASL folder
+        os.chdir(self.__thirdPartySrcFolder__)
+
+        # Make sure the ASL script has 755 permissions and execute it
+        self.__execute__("chmod 755 get.ASL")
+        self.__execute__("./get.ASL")
+
+# HSL is a requirement for IpOopt. The doownload link must be requested 
+# by the user, who will receive a download link by email. We explicitely
+#  request the download link to the user 
+class IpOptHSLCompile(thirdPartyCompile):
+    
+    # Ctor
+    def __init__(self):
+        
+        # Simply call mother-class init
+        super(IpOptHSLCompile,self).__init__()
+
+        # Name of this third_party. 
+        self.__name__="HSL"
+
+        # Define the URL from which IpOpt can be downloaded
+        # Note that this should be the complete path of the file
+        # to be downloaded (Including the filename!)
+        print "\n\nHSL cannot be automatically downloaded, please"
+        print "request a download link on : "
+        print "     http://www.hsl.rl.ac.uk/ipopt/ "
+        print "\nThe download link will be sent to you by email.\n"
+        self.__url__ = raw_input("Please enter the HSL download link...\n"); 
+
+        # Define the name of the archive downloadeed from the web.
+        self.__srcArchiveName__="tar.tar"
+
+        # Define the name of the folder extracted from the archive downloadeed from the web. 
+        # Often  this is simply the srcArchiveName without the extension, but not for HSL!
+        self.__srcDirName__="coinhsl-archive-2014.01.17"
+
+        # Override (specialize) the build folder. HSL only requires to be downloaded, and will
+        # be build by the ipOpt build system. So the build folder might be of no interest
+        #self.__thirdPartyBuildFolder__= os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__)
+
+        # Override (specialize) the package folder. HSL only requires to be downloaded, and will
+        # be build by the ipOpt build system. So the pkg folder might be of no interest
+        #self.__thirdPartyPkgFolder__= os.path.join(self.__thirdPartyPkgFolder__,self.__srcDirName__)
+        
+    def __download__(self):
+            
+        # Go to the __thirdPartySrcFolder__. Its existence was 
+        # assured in the init of the class
+        os.chdir(self.__thirdPartySrcFolder__)
+
+        # cleanup: remove a previous archive if present
+        shutil.rmtree(self.__srcArchiveName__,sys.exc_info())
+
+        # Get the sources from the web
+        self.__getCompressedArchive__(self.__url__)
+
+        # Also make sure the install-sh script has 755 permissions 
+        self.__execute__("chmod 755 {}".format(os.path.join(self.__srcDirName__,"install-sh")))
+    
+    def __compile__(self,dest=None):
+        
+        # Simply copy the sources from the source directory - where the sources have been 
+        # downloaded - to the dest directory given by dest
+        # Unlike the other ipOpt requirements, HSL works differently because the sources 
+        # are not automatically downloaded using the ipOpt scripts, we need to work harder
+        # and place the sources 'by hand' in ipOpt/Third_party/HSL/coinhsl for the 
+        # ipOpt build system to recognize the package
+        print "Copying: ", self.__srcDirName__,"\n  to: ",os.path.join(dest,self.__name__,'coinhsl')
+        shutil.copytree(self.__srcDirName__,os.path.join(dest,self.__name__,'coinhsl'))
+        
+        # Make nothing else, the build is taken over by my parent
+        
 class IpOptCompile(thirdPartyCompile):
     
     # Ctor
@@ -129,8 +314,7 @@ class IpOptCompile(thirdPartyCompile):
         # Simply call mother-class init
         super(IpOptCompile,self).__init__()
 
-        # Name of this third_party. Actually this is the name of the 
-        # archive that is to be downloaded from the web - once extracted
+        # Name of this third_party. 
         self.__name__="Ipopt-3.12.6"
         
         # Define the URL from which IpOpt can be downloaded
@@ -151,10 +335,30 @@ class IpOptCompile(thirdPartyCompile):
 
         # Override (specialize) the package folder 
         self.__thirdPartyPkgFolder__= os.path.join(self.__thirdPartyPkgFolder__,self.__srcDirName__)
+            
+        # Instantiate the requirements... BLAS
+        blasSrcFolder = os.path.join(self.__thirdPartySrcFolder__,
+                                     self.__srcDirName__,
+                                     "ThirdParty","Blas")
+        self.__requirements__.append( ipOptBlasCompile(blasSrcFolder))
+        
+        # Instantiate the requirements... LAPACK
+        lapackSrcFolder = os.path.join(self.__thirdPartySrcFolder__,
+                                       self.__srcDirName__,
+                                       "ThirdParty","Lapack")
+        self.__requirements__.append( ipOptLapackCompile(lapackSrcFolder))
+
+        # Instantiate the requirements... ASL
+        aslSrcFolder = os.path.join(self.__thirdPartySrcFolder__,
+                                       self.__srcDirName__,
+                                       "ThirdParty","ASL")
+        self.__requirements__.append( ipOptASLCompile(aslSrcFolder))
+        
+         # Instantiate the requirements... HSL
+        self.__requirements__.append( IpOptHSLCompile() )
     
     def __download__(self):
-        
-        print "beginning of __download__"
+            
         # Go to the __thirdPartySrcFolder__. Its existence was 
         # assured in the init of the class
         os.chdir(self.__thirdPartySrcFolder__)
@@ -162,49 +366,16 @@ class IpOptCompile(thirdPartyCompile):
         # cleanup: remove a previous archive if present
         shutil.rmtree(self.__srcArchiveName__,sys.exc_info())
           
-        # Todo : add a progression bar... 
-        localArchive = requests.get(self.__url__, stream=True)
-        print "...downloading the archive... (this can take a while)"
-        z = zipfile.ZipFile(StringIO.StringIO(localArchive.content))
-        print "...extracting the archive..."
-        z.extractall()
+        # Get the sources from the web
+        self.__getCompressedArchive__(self.__url__)
                      
          # I can now use the scripts provided by ipOpt to download the 
-         # required third_party. 
-        self.__getAdditionalRequirements__()
-
-    # After extracting we use the script provided to download
-    # third parties such as blas, ASL...  
-    def __getAdditionalRequirements__(self):
-        
-        # IpOpt requires some pre-requisites. It offers utilities to download
-        # them from the web. 
-        # BLAS... 
-        os.chdir(os.path.join(self.__thirdPartySrcFolder__,
-                              self.__srcDirName__,
-                              "ThirdParty","Blas"))
-        # Make sure the BLAS script has 755 permissions and execute it
-        self.__execute__("chmod 755 get.Blas")
-        self.__execute__("./get.Blas")
-        
-        # LAPACK... 
-        os.chdir(os.path.join(self.__thirdPartySrcFolder__,
-                              self.__srcDirName__,
-                              "ThirdParty","Lapack"))
-        # Make sure the LAPACK script has 755 permissions and execute it
-        self.__execute__("chmod 755 get.Lapack")
-        self.__execute__("./get.Lapack")
-
-        # ASL... 
-        os.chdir(os.path.join(self.__thirdPartySrcFolder__,
-                               self.__srcDirName__,
-                               "ThirdParty","ASL"))
-        # Make sure the LAPACK script has 755 permissions and execute it
-        self.__execute__("chmod 755 get.ASL")
-        self.__execute__("./get.ASL")
-         
+         # required third_party. Kq[gr]pe
+        for iReq in self.__requirements__:
+            iReq.__download__()
+            
     # Compile this package    
-    def __compile__(self):
+    def __compile__(self,dest=None):
         
         # Cleanup previous build folder - if any
         shutil.rmtree(self.__thirdPartyBuildFolder__,
@@ -215,6 +386,14 @@ class IpOptCompile(thirdPartyCompile):
         os.chdir(self.__thirdPartySrcFolder__)
         shutil.copytree(self.__srcDirName__,self.__thirdPartyBuildFolder__)
 
+        # What about the requirements? Actually this is a mis-use of the __compile__
+        # method, that does not compile for the requirements, because the ipOpt build 
+        # is able to handle compiling. So, for HSL only we move the sources to the 
+        # ThirdParty folder of ipOpt, so to complete the package 
+        for iReq in self.__requirements__:
+            iReq.__compile__(dest=os.path.join(self.__thirdPartyBuildFolder__,
+                                          "ThirdParty"))
+    
         # Go to the ipOpt build folder
         os.chdir(self.__thirdPartyBuildFolder__)
 
@@ -231,12 +410,12 @@ class IpOptCompile(thirdPartyCompile):
         self.__execute__("chmod 755 {}".format(os.path.join(
                                                 self.__thirdPartyBuildFolder__,
                                                 "install-sh")))
-        thirdParties = ["Blas","Lapack","ASL"] 
-        for thirdParty in thirdParties: 
+        # Make sure the install-sh scripts of the requirements are executable too
+        for iReq in self.__requirements__: 
             self.__execute__("chmod 755 {}".format(os.path.join(
                                                     self.__thirdPartyBuildFolder__,
                                                     "ThirdParty",
-                                                    thirdParty,
+                                                    iReq.__name__,
                                                     "install-sh")))
 
         # Launch the configure script with the macOS specific args 
@@ -257,8 +436,8 @@ class IpOptCompile(thirdPartyCompile):
         # configure script)
         self.__execute__("make install")
 
-        # Install the doxygen doc
-        self.__execute__("make install-doxydoc")
+        # Install the doxygen doc - is this really worthit?
+        #self.__execute__("make install-doxydoc")
 
         # Do NOT make the tests, see https://github.com/Homebrew/legacy-homebrew/issues/13617
         # Will add a simple local test example that will use the basic functionalities
@@ -272,12 +451,17 @@ class IpOptCompile(thirdPartyCompile):
         Sconstruct=open("SConstruct","w")
         Sconstruct.write('''import os
 env = Environment()  
-env.Append( CPPPATH=["/Users/dtrimarchi/third_party_build/Ipopt-3.12.6/Build/include/coin"] )
-env.Append( LIBPATH=["/Users/dtrimarchi/third_party_build/Ipopt-3.12.6/Build/lib"] )
+env.Append( CPPPATH=["/Users/dtrimarchi/third_party_build/Ipopt-3.12.6/Build/lib/include/coin"] )
+env.Append( LIBPATH=["/Users/dtrimarchi/third_party_build/Ipopt-3.12.6/Build/lib/lib"] )
 env.Append( LIBS=["ipopt"] )
 env.Program('ipOptTest', Glob('*.cpp') )        
 ''')
+        # Compile the example
+        self.__execute__("scons")
         
+        # Execute the example
+        self.__execute__("./ipOptTest")
+
      
     # Package the third party that was build   
     def __package__(self):
