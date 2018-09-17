@@ -23,9 +23,6 @@ except ImportError, e:
         raise
     import requests
     
-import zipfile
-import StringIO
-
 ''' Collection of recipes used to download, compile and mantain the third_parties'''
 
 class thirdPartyCompile(object):
@@ -126,15 +123,30 @@ class thirdPartyCompile(object):
             raise ValueError('\n\nSomething went wrong when trying to execute: {}\n\n'.format(command))
 
     # Download an archive from a given url and unzip it 
-    def __getCompressedArchive__(self,url):
-        
-        # Todo : add a progression bar...
-        localArchive = requests.get(url,stream=True)
-        print "...downloading the archive from...{} (this can take a while)".format(url)
-        z = zipfile.ZipFile(StringIO.StringIO(localArchive.content))
-        print "...extracting the archive..."
-        z.extractall()
+    def __getCompressedArchive__(self,url,saveAs="myArch"):
 
+        print "...downloading the archive from...{} (this can take a while)".format(url)
+
+        localArchive = requests.get(url,stream=True)
+        
+        # This is a zip archive... 
+        if ( localArchive.content.endswith(".zip") or
+             localArchive.content.endswith("/zip/") ) :
+            import zipfile
+            import StringIO
+            z = zipfile.ZipFile(StringIO.StringIO(localArchive.content))
+            z.extractall()
+            z.close()
+            
+        # This is a tar archive... 
+        elif  ( localArchive.content.endswith(".tar.gz") or
+             localArchive.content.endswith(".tgz") or 
+             localArchive.content.endswith("/tar/") ) :
+            import tarfile
+            tar= tarfile.open(mode='r|gz', fileobj=localArchive.raw)
+            tar.extractall()
+            tar.close()
+                                
 # Blas is a requirement for IpOopt, that offers utility scripts to download and 
 # compile blas with the right bindings
 class ipOptBlasCompile(thirdPartyCompile):
