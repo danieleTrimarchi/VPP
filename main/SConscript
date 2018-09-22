@@ -11,37 +11,6 @@ Import('releaseEnv')
 # Get the environement 
 localEnv = releaseEnv.Clone()
 
-# ------- Add the third_parties -----------------
-
-# Define a dictionary that will store the thirdParties
-thirdPartyDict={}
-
-import thirdParties
-thirdPartyDict['System']= thirdParties.System(localEnv)
-thirdPartyDict['Eigen'] = thirdParties.Eigen(localEnv) 
-thirdPartyDict['NLOpt'] = thirdParties.NLOpt(localEnv) 
-thirdPartyDict['IPOpt'] = thirdParties.IPOpt(localEnv) 
-thirdPartyDict['Boost'] = thirdParties.Boost(localEnv) 
-thirdPartyDict['Qt'] 	= thirdParties.Qt(localEnv) 
-
-# Give the list of the third_parties to the env, this way 
-# it will be possible to direcly use the methods defined 
-# in the third parties 
-localEnv.Append( THIRDPARTYDICT=thirdPartyDict )
-
-# ------- List the subFolders of the current project -----------------
-
-subFolders= ['qcustomplot',
-			 'gui',
-			 'gui/settingsWindow',
-			 'exceptions', 
-			 'core', 
-			 'io',
-			 'solvers', 
-			 'results',
-			 'utils',
-			 'versioning' ] 
-
 # -- 
 if 'run' in COMMAND_LINE_TARGETS:
 	
@@ -54,11 +23,12 @@ if 'help' in COMMAND_LINE_TARGETS:
  
 	print '=================================================='
 	print 'Available targets: '
-	print 'scons           : builds the program'
-	print 'scons run       : runs the executable' 		
-	print 'scons runTest   : runs the autotest'
-	print 'scons makeDocs  : makes the Doxygen documentation' 
-	print 'scons makeXCode : makes the xCode debug project' 	
+	print 'scons                 : builds the program'
+	print 'scons run             : runs the executable' 		
+	print 'scons runTest         : runs the autotest'
+	print 'scons makeDocs        : makes the Doxygen documentation' 
+	print 'scons makeXCode       : makes the xCode debug project' 	
+	print 'scons get_third_party : get and compile the required third parties'
 	print ' '
 	print 'Options: '
 	print 'scons <target> -Q debug=1 : compiles/executes debug' 		
@@ -102,6 +72,46 @@ if 'makeXCode' in COMMAND_LINE_TARGETS:
 
 # --- 
 
+if 'get_third_party' in COMMAND_LINE_TARGETS:
+
+	from thirdPartyManager import thirdPartyCompile as tp
+	ipOpt= tp.IpOptCompile()
+	ipOpt.get(download=False)
+	
+	Exit(2)
+
+
+# ------- List the subFolders of the current project -----------------
+
+subFolders= ['qcustomplot',
+			 'gui',
+			 'gui/settingsWindow',
+			 'exceptions', 
+			 'core', 
+			 'io',
+			 'solvers', 
+			 'results',
+			 'utils',
+			 'versioning' ] 
+
+# ------- Add the third_parties -----------------
+
+# Define a dictionary that will store the thirdParties
+thirdPartyDict={}
+
+from thirdPartyManager import thirdParties
+thirdPartyDict['System']= thirdParties.System(localEnv)
+thirdPartyDict['Eigen'] = thirdParties.Eigen(localEnv) 
+thirdPartyDict['NLOpt'] = thirdParties.NLOpt(localEnv) 
+thirdPartyDict['IPOpt'] = thirdParties.IPOpt(localEnv) 
+thirdPartyDict['Boost'] = thirdParties.Boost(localEnv) 
+thirdPartyDict['Qt'] 	= thirdParties.Qt(localEnv) 
+
+# Give the list of the third_parties to the env, this way 
+# it will be possible to direcly use the methods defined 
+# in the third parties 
+localEnv.Append( THIRDPARTYDICT=thirdPartyDict )
+
 #Compile Debug mode
 #env.Append(CCFLAGS= '-g')
 #env.Append(CPPFLAGS ='-Wc++11-extensions')
@@ -121,9 +131,6 @@ for subdir in subFolders :
 
 # Add the subfolder path to the CPPPATH of the localEnv
 localEnv.Append( CPPPATH=myCppPath )
-
-# Copy the test input file (variableFile.txt) to the build folder
-localEnv.copyInputFileToFolderStructure()
 
 # -----------------------------------------------
 

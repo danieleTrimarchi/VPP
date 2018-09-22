@@ -12,7 +12,7 @@ allObjects= localEnv['objList']
 #      C++11 extension [-Wc++11-extensions]
 
 # ------- Add cppunit to the third_parties -----------------
-import thirdParties
+from thirdPartyManager import thirdParties
 thirdPartyDict= localEnv['THIRDPARTYDICT']
 thirdPartyDict['CppUnit']= thirdParties.CppUnit(localEnv)
 

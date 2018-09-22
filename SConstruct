@@ -3,7 +3,8 @@ from shutil import copyfile
 from shutil import copytree
 import subprocess
 import shutil
-import thirdParties
+    
+from thirdPartyManager import thirdParties
 
 # Define a common build environment
 common_env = Environment()
@@ -286,19 +287,6 @@ def fixDynamicLibPathTest(self,source,target,env):
         p.wait()
         
 releaseEnv.AddMethod(fixDynamicLibPathTest, 'fixDynamicLibPathTest')
-
-# ---------------------------------------------------------------
-
-
-# Also copy the input file 'variableFile.txt' to the build folder
-def copyInputFileToFolderStructure(self):
-    
-    srcFile= str(File('variableFile.txt').srcnode())
-    destFile=  self['root_dir'] + '/' + self['variant_dir'] +'/variableFile.txt'
-    copyfile(srcFile,destFile)
-
-releaseEnv.AddMethod(copyInputFileToFolderStructure, 'copyInputFileToFolderStructure')
-
 
 # ---------------------------------------------------------------
 

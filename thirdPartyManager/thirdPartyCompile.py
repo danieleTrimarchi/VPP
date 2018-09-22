@@ -5,11 +5,12 @@ from shutil import rmtree
 import subprocess
 import shutil
 import re
+from email.test.test_email import openfile
 
 try:    
     import pip
-except ImportError, e:
-    print "Installing pip... "
+except ImportError as error:
+    print "Installing pip... ", error.message
     p = subprocess.Popen("sudo easy_install pip",shell=True)
     if not p.wait():
         raise
@@ -23,17 +24,24 @@ except ImportError, e:
         raise
     import requests
     
+''' Static identifiers '''
+__includepathFlag__ = "INCLUDEPATH"    
+__libpathFlag__ = "LIBPATH"         
+__docpathFlag__ = "DOCPATH"
+__libsFlag__ = "LIBS"     
+    
 ''' Collection of recipes used to download, compile and mantain the third_parties'''
-
 class thirdPartyCompile(object):
 
     # Ctor
     def __init__(self):
         
-                # Name of this third_party. Actually this is the name of the 
-        # archive that is to be downloaded from the web - once extracted
+        # Name of this third_party. 
         self.__name__=""
-    
+
+        # version of this third_aprty
+        self.__version__=""
+        
         # Define the URL from which IpOpt can be downloaded
         # Note that this should be the complete path of the file
         # to be downloaded (Including the filename!)
@@ -56,6 +64,15 @@ class thirdPartyCompile(object):
         # Where will the compiled packages will be placed to?
         self.__thirdPartyPkgFolder__="/Users/dtrimarchi/third_party_pkg"
         
+        # Include Path. To be filled
+        self.__buildInfo__={__includepathFlag__:"",
+                            __libpathFlag__:"",
+                            __docpathFlag__:"",
+                            __libsFlag__:""}
+            
+        # Abs path of the file info file, featuring all the info required for compiling VPP
+        self.__thirdPartyInfoFile__ = os.path.join(self.__thirdPartyPkgFolder__,"third_party_info")
+        
         # Every third_party object can instantiate and fill this list with the 
         # requirements (or sub-third_parties). Will loop over requirements when 
         # required to download and compile the required packages
@@ -71,7 +88,7 @@ class thirdPartyCompile(object):
 
         if not os.path.exists( self.__thirdPartyPkgFolder__ ):
             os.makedirs(self.__thirdPartyPkgFolder__)
-        
+                        
     # Wrapper method used to get, compile and test a third_party     
     def get(self, download=True):
         
@@ -89,6 +106,46 @@ class thirdPartyCompile(object):
         
         # Test the third party   
         self.__test__()
+        
+    # Reads the buildInfo file and returns a dictionary 
+    # with all the entries 
+    def getInfo_full(self):
+        
+        def readIt():
+            
+            if not os.path.isfile(self.__thirdPartyInfoFile__):
+                msg = "\n==============================================================="
+                msg += "\nFile " + self.__thirdPartyInfoFile__ + " not found.\nPlease run \'scons third_party_compile\' first\n"
+                msg += "===============================================================\n\n"
+                raise ValueError(msg)
+
+            with open(self.__thirdPartyInfoFile__) as fIn:
+                return dict(line.strip().split(' : ') for line in fIn)
+
+        return readIt()
+
+    def getInfo(self):
+        
+        # Filter the full dictionary using the name of this third_party
+        # So, it returns a dictionary containing only the entries for the current 
+        # third_party : i.e: {'ipOpt_LIBS': 'lib1 lib2 lib3', 'ipOpt_DOCPATH': 'doc', ...
+        return {key:value for key,value in self.getInfo_full().items() if self.__name__ in  key}
+
+    def getIncludePath(self):
+        
+        return self.getInfo()[self.__name__+"_"+__includepathFlag__]
+    
+    def getLibPath(self):
+        
+        return self.getInfo()[self.__name__+"_"+__libpathFlag__]
+    
+    def getLibs(self):
+        
+        return self.getInfo()[self.__name__+"_"+__libsFlag__]
+
+    def getDocPath(self):
+        
+        return self.getInfo()[self.__name__+"_"+__docpathFlag__]
         
     # To be implemented in child classes, describe where the 
     # source package can be downloaded
@@ -115,6 +172,20 @@ class thirdPartyCompile(object):
     def __test__(self):
         raise "thirdPartyCompile::__test__() should never be called"
         
+    # Write the build info to file. This will be used
+    # by the build system to compile and link the program
+    def __writeInfo__(self) : 
+
+        # Open the thirdPartyInfo file for append write
+        fOut = open(self.__thirdPartyInfoFile__,"a+")
+                  
+        # write the dict
+        for iEntry in self.__buildInfo__:
+            fOut.write( "{}_{} : {}\n".format(self.__name__,iEntry, self.__buildInfo__[iEntry]))    
+         
+        # close the file
+        fOut.close()
+                    
     # Wraps a call to subprocess and the required diagnostics
     def __execute__(self,command):
         
@@ -146,7 +217,8 @@ class thirdPartyCompile(object):
             tar= tarfile.open(mode='r|gz', fileobj=localArchive.raw)
             tar.extractall()
             tar.close()
-                                
+
+         
 # Blas is a requirement for IpOopt, that offers utility scripts to download and 
 # compile blas with the right bindings
 class ipOptBlasCompile(thirdPartyCompile):
@@ -158,7 +230,7 @@ class ipOptBlasCompile(thirdPartyCompile):
         super(ipOptBlasCompile,self).__init__()
 
         # Name of this third_party. 
-        self.__name__="BLAS"
+        self.__name__="Blas"
 
         # Store the location where ipOpt will download and 
         # compile blas
@@ -193,7 +265,7 @@ class ipOptLapackCompile(thirdPartyCompile):
         super(ipOptLapackCompile,self).__init__()
 
         # Name of this third_party. 
-        self.__name__="LAPACK"
+        self.__name__="Lapack"
 
         # Store the location where ipOpt will download and 
         # compile blas
@@ -327,7 +399,10 @@ class IpOptCompile(thirdPartyCompile):
         super(IpOptCompile,self).__init__()
 
         # Name of this third_party. 
-        self.__name__="Ipopt-3.12.6"
+        self.__name__="Ipopt"
+        
+        # Version of this third_party
+        self.__version__="3.12.6"
         
         # Define the URL from which IpOpt can be downloaded
         # Note that this should be the complete path of the file
@@ -457,6 +532,17 @@ class IpOptCompile(thirdPartyCompile):
     # Package the third party that was build   
     def __package__(self):
         
+        # Define the build info. Will use these to copy the components (includes, libs...) to 
+        # the package folder
+        self.__buildInfo__["INCLUDEPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"include")
+        self.__buildInfo__["LIBPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"lib")
+        self.__buildInfo__["DOCPATH"] = self.__thirdPartyPkgFolder__
+        self.__buildInfo__["LIBS"] = "ipopt"
+        
+        # Write the build info to file. This will be used
+        # by the build system to compile and link the program
+        self.__writeInfo__()   
+
         # cleanup: remove a previous package folder if present. Remember that the 
         # package folder was set relative to this third_party in the ctor
         shutil.rmtree(self.__thirdPartyPkgFolder__,sys.exc_info())
@@ -466,18 +552,19 @@ class IpOptCompile(thirdPartyCompile):
 
         # Copy the content of include and lib
         shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib","include","coin"), 
-                        os.path.join(self.__thirdPartyPkgFolder__,"include"))
+                        self.__buildInfo__["INCLUDEPATH"])
+                
         shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib","lib"), 
-                        os.path.join(self.__thirdPartyPkgFolder__,"lib"))
+                        self.__buildInfo__["LIBPATH"])
 
         # Also copy the documentation
         shutil.copyfile(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","doc","documentation.pdf"), 
-                        os.path.join(self.__thirdPartyPkgFolder__,"documentation.pdf"))
+                        os.path.join(self.__buildInfo__["DOCPATH"],"documentation.pdf"))
  
         # Copy the example 
         shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","examples","Cpp_example"), 
                         os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
-        
+                                     
     # Run a simple test to check that the compile was successiful
     def __test__(self):
         
@@ -502,4 +589,5 @@ env.Program('ipOptTest', Glob('*.cpp') )
         
         # Execute the example
         self.__execute__("./ipOptTest")        
+        
         
