@@ -74,9 +74,14 @@ if 'makeXCode' in COMMAND_LINE_TARGETS:
 
 if 'get_third_party' in COMMAND_LINE_TARGETS:
 
-	from thirdPartyManager import thirdPartyCompile as tp
-	ipOpt= tp.IpOptCompile()
-	ipOpt.get(download=False)
+#	from thirdPartyManager import thirdPartyCompile as tp
+# 	ipOpt= tp.IpOptCompile()
+# 	ipOpt.get(download=False)
+
+	from thirdPartyManager import BoostCompile as bc
+	boost= bc.BoostCompile()
+	boost.get(download=True)
+
 	
 	Exit(2)
 

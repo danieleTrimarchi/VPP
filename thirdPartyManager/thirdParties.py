@@ -382,8 +382,8 @@ class IPOpt( thirdParty ) :
         
         # Instantiate the thirdPartyCompile object
         print "IpOpt constructor"
-        import thirdPartyCompile as tp
-        ipOptPkg= tp.IpOptCompile()
+        from ipOptCompile import IpOptCompile
+        ipOptPkg= IpOptCompile()
 
         # Get the name of the third_party
         self.__name__= ipOptPkg.__name__
