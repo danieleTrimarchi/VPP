@@ -56,9 +56,13 @@ class BoostCompile(thirdPartyCompile):
     # Compile this package    
     def __compile__(self,dest=None):
         
+        print "Cleaning up..."
+
         # Cleanup previous build folder - if any
         shutil.rmtree(self.__thirdPartyBuildFolder__,
                       sys.exc_info())
+
+        print "Copying srcs to the build folder..."
 
         # Copy the sources to the build dir
         # First, make sure we are in the right place
@@ -79,26 +83,29 @@ class BoostCompile(thirdPartyCompile):
         # Make the build folder
         os.mkdir("Build")
 
-        self.__execute__("./bootstrap.sh --prefix={} "
-                         "--exec-prefix={} "
-                         "--libdir={} "
-                         "--includedir={} "
-                         "--with-libraries=filesystem,system".format(
-                             os.path.join(self.__thirdPartyBuildFolder__,"Build"),
-                             os.path.join(self.__thirdPartyBuildFolder__,"Build"),
-                             os.path.join(self.__thirdPartyBuildFolder__,"Build","lib"),
-                             os.path.join(self.__thirdPartyBuildFolder__,"include")
-                             ))
+        # Execute bootstrap...
+        self.__execute__("./bootstrap.sh "
+                         "--with-libraries=filesystem,system")
+
+        # Execute b2, which will build the requested libs
+        self.__execute__("./b2")
+
+        # Note, I could set the prefix and run 'b2 install'. This leads to a lot of
+        # duplicated code. I do not want to create the package here, so I will copy
+        # selected elements 'by hand' when packaging
+        # The includes are already in ./boost
+        # The compiled libss are in ./stage/lib
+         
 
     # Package the third party that was build   
     def __package__(self):
         
         # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
-        self.__buildInfo__["INCLUDEPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"include")
-        self.__buildInfo__["LIBPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"lib")
-        self.__buildInfo__["DOCPATH"] = self.__thirdPartyPkgFolder__
-        self.__buildInfo__["LIBS"] = "boost_system","boost_filesystem"
+        self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
+        self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
+        self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
+        self.__buildInfo__["LIBS"] = ["boost_system","boost_filesystem"]
         
         # Write the build info to file. This will be used
         # by the build system to compile and link the program
@@ -111,21 +118,20 @@ class BoostCompile(thirdPartyCompile):
         # Make a package folder and enter it 
         os.mkdir(self.__thirdPartyPkgFolder__)
 
-        # Copy the content of include and lib
-        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Build","include"), 
-                        self.__buildInfo__["INCLUDEPATH"])
+        # Copy the content of include
+        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"boost"), 
+                        os.path.join(self.__buildInfo__["INCLUDEPATH"][0],"boost"))
                 
-        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib"), 
-                        self.__buildInfo__["LIBPATH"])
+        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"stage","lib"), 
+                        self.__buildInfo__["LIBPATH"][0])
 
         # Also copy the documentation
-#        shutil.copyfile(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","doc","documentation.pdf"), 
-#                        os.path.join(self.__buildInfo__["DOCPATH"],"documentation.pdf"))
- 
-        # Copy the example 
-#        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","examples","Cpp_example"), 
-#                        os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
-                                     
+        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"doc","html"), 
+                        self.__buildInfo__["DOCPATH"][0])
+                              
+        # Finally, prepare the test folder 
+        os.mkdir(os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
+        
     # Run a simple test to check that the compile was successiful
     def __test__(self):
         
@@ -141,24 +147,27 @@ int main(int argc, char** argv) {
     boost::shared_ptr<int> myPtr; 
 }       
 ''')
+        Source.close()
             
         # Write a SConstruct 
         Sconstruct=open("SConstruct","w")
         Sconstruct.write('''import os
 env = Environment()  
-env.Append( CPPPATH=["{}"] )
-env.Append( LIBPATH=["{}"] )
-env.Append( LIBS=[""] )
+env.Append( CPPPATH={} )
+env.Append( LIBPATH={} )
+env.Append( LIBS={} )
 env.Program('boostTest', Glob('*.cpp') )        
 '''.format(self.__buildInfo__["INCLUDEPATH"],
            self.__buildInfo__["LIBPATH"],
            self.__buildInfo__["LIBS"]))
         Sconstruct.close()
         
-        print "Executing the boost test: we are in folder: ", os.getcwd()
+        print "Compiling the boost test: we are in folder: ", os.getcwd()
                 
         # Compile the example
         self.__execute__("scons -Q")
+
+        print "Executing the boost test "
         
         # Execute the example
         self.__execute__("./boostTest")        
