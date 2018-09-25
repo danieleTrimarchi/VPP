@@ -105,6 +105,22 @@ class BoostCompile(thirdPartyCompile):
         # The compiled libss are in ./stage/lib
          
 
+    def __copySelectedDocs__(self):
+        
+        # Loop on the modules we seek to compile 
+        for iLib in self.__buildInfo__["LIBS"] :
+            # Boost libs are named boost_something. Here we only seek the 'something'
+            cleanName = iLib.replace("boost_","")
+            # Define the doc directory as pkgDir/doc/libDir
+            docDir = os.path.join(self.__buildInfo__["DOCPATH"][0],cleanName)
+            # Make the doc directory
+            os.makedirs(docDir)
+            # Copy
+            shutil.copy(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"index.html"), 
+                    docDir)
+            shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"doc"), 
+                            os.path.join(docDir,"doc"))
+
     # Package the third party that was build   
     def __package__(self):
                 
@@ -126,9 +142,8 @@ class BoostCompile(thirdPartyCompile):
         shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"stage","lib"), 
                         self.__buildInfo__["LIBPATH"][0])
 
-        # Also copy the documentation
-        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"doc","html"), 
-                        self.__buildInfo__["DOCPATH"][0])
+        # Also copy the documentation of the modules we are compiling
+        self.__copySelectedDocs__()
                               
         # Finally, prepare the test folder 
         os.mkdir(os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
@@ -151,8 +166,18 @@ class BoostCompile(thirdPartyCompile):
 #include <iostream>
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/system/error_code.hpp>
+#include <boost/core/lightweight_test.hpp>
+#include <cerrno>
 using std::cout;
 using namespace boost::filesystem;
+using namespace boost::system;
+
+static error_code e1( 1, system_category() );
+static std::string m1 = e1.message();
+
+static error_code e2( ENOENT, generic_category() );
+static std::string m2 = e2.message();
 
 int main(int argc, char** argv) {
 

@@ -226,6 +226,13 @@ class IpOptCompile(thirdPartyCompile):
          # Instantiate the requirements... HSL
         self.__requirements__.append( IpOptHSLCompile() )
     
+        # Define the build info. Will use these to copy the components (includes, libs...) to 
+        # the package folder
+        self.__buildInfo__["INCLUDEPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"include")
+        self.__buildInfo__["LIBPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"lib")
+        self.__buildInfo__["DOCPATH"] = self.__thirdPartyPkgFolder__
+        self.__buildInfo__["LIBS"] = "ipopt"
+
     def __download__(self):
             
         # Go to the __thirdPartySrcFolder__. Its existence was 
@@ -313,14 +320,7 @@ class IpOptCompile(thirdPartyCompile):
 
     # Package the third party that was build   
     def __package__(self):
-        
-        # Define the build info. Will use these to copy the components (includes, libs...) to 
-        # the package folder
-        self.__buildInfo__["INCLUDEPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"include")
-        self.__buildInfo__["LIBPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"lib")
-        self.__buildInfo__["DOCPATH"] = self.__thirdPartyPkgFolder__
-        self.__buildInfo__["LIBS"] = "ipopt"
-        
+                
         # Write the build info to file. This will be used
         # by the build system to compile and link the program
         self.__writeInfo__()   
