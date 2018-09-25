@@ -147,6 +147,9 @@ class thirdPartyCompile(object):
         
         return self.getInfo()[self.__name__+"_"+__docpathFlag__]
         
+    def getFullLibName(self,shortLibName):
+        return "lib"+shortLibName+".dylib"
+    
     # To be implemented in child classes, describe where the 
     # source package can be downloaded
     def __download__(self):
@@ -187,9 +190,9 @@ class thirdPartyCompile(object):
         fOut.close()
                     
     # Wraps a call to subprocess and the required diagnostics
-    def __execute__(self,command):
+    def __execute__(self,command,myEnv=os.environ):
         
-        p = subprocess.Popen(command,shell=True)
+        p = subprocess.Popen(command,shell=True,env=myEnv)
         if p.wait():
             raise ValueError('\n\nSomething went wrong when trying to execute: {}\n\n'.format(command))
 

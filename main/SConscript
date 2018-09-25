@@ -81,7 +81,7 @@ if 'get_third_party' in COMMAND_LINE_TARGETS:
 	from thirdPartyManager import BoostCompile as bc
 	boost= bc.BoostCompile()
 	#boost.get(download=False)
-	boost.__package__()
+	#boost.__package__()
 	boost.__test__()
 	
 	Exit(2)

@@ -1,10 +1,11 @@
--> download should handle both tar.gz and zip
--> try the full procedure with the tar.gz
+-> End the boost example. LD_LIBRARY_PATH? 
+-> can I use shared in the VPP package? 
+-> Harmonize the use of BoostCompile in thirdParties.py
+-> Harmonize the format of the compile info for ipOpt as for Boost
 
-
-
-
-
+-> Python how to download from sourgeforce? 
+-> https://sourceforge.net/projects/cppunit/files/latest/download
+	but need to wait... not sure if my code does this. 
 
 -> Export results to excel format. Simply use .csv formatting
 - Is it possible to write in multiple tabs? 

@@ -33,9 +33,17 @@ class BoostCompile(thirdPartyCompile):
 
         # Override (specialize) the package folder 
         self.__thirdPartyPkgFolder__= os.path.join(self.__thirdPartyPkgFolder__,self.__srcDirName__)
-         
-         # No requirements for Boost (no Python by now)
+
+        # Instantiate no requirements - Boost only has Python for BoostPython, which we do not want        
+
+        # Define the build info. Will use these to copy the components (includes, libs...) to 
+        # the package folder
+        self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
+        self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
+        self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
+        self.__buildInfo__["LIBS"] = ["boost_system","boost_filesystem"]
     
+
     def __download__(self):
             
         # Go to the __thirdPartySrcFolder__. Its existence was 
@@ -99,14 +107,7 @@ class BoostCompile(thirdPartyCompile):
 
     # Package the third party that was build   
     def __package__(self):
-        
-        # Define the build info. Will use these to copy the components (includes, libs...) to 
-        # the package folder
-        self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
-        self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
-        self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = ["boost_system","boost_filesystem"]
-        
+                
         # Write the build info to file. This will be used
         # by the build system to compile and link the program
         self.__writeInfo__()   
@@ -135,16 +136,38 @@ class BoostCompile(thirdPartyCompile):
     # Run a simple test to check that the compile was successiful
     def __test__(self):
         
+        exampleFolder= os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example")
+
+        # cleanup
+        shutil.rmtree(exampleFolder)
+        os.mkdir(exampleFolder)
+        
         # Go to the example folder
-        os.chdir(os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
+        os.chdir(exampleFolder)
 
         # Write the boost example 
         Source=open("main.cpp","w")
         Source.write('''
+#include <iostream>
 #include <boost/shared_ptr.hpp>
+#include <boost/filesystem.hpp>
+using std::cout;
+using namespace boost::filesystem;
 
 int main(int argc, char** argv) {
+
+    // Test instantiating a shared ptr
     boost::shared_ptr<int> myPtr; 
+
+    // 
+    path p (argv[1]);
+    
+    try {
+        if (exists(p))
+            cout<<\"Ok!\\n\";
+    } catch (const filesystem_error& ex) {
+        cout << ex.what() << \"\\n\";
+    }
 }       
 ''')
         Source.close()
@@ -166,10 +189,14 @@ env.Program('boostTest', Glob('*.cpp') )
                 
         # Compile the example
         self.__execute__("scons -Q")
-
-        print "Executing the boost test "
+        
+        # Before execution, add symbolic links to the dylibs. Why cannot I 
+        # just set LD_LIBRARY_PATH..? Weird. Looks like MacOS security stuff.
+        for iLib in self.__buildInfo__["LIBS"]:
+            os.symlink(os.path.join(self.__buildInfo__["LIBPATH"][0],self.getFullLibName(iLib)), 
+                       self.getFullLibName(iLib) )
         
         # Execute the example
-        self.__execute__("./boostTest")        
+        self.__execute__("./boostTest {}".format(os.getcwd()))        
         
         
