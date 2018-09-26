@@ -38,9 +38,9 @@ class BoostCompile(thirdPartyCompile):
 
         # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
-        self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
-        self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
-        self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
+        self.__buildInfo__["INCLUDEPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"include")
+        self.__buildInfo__["LIBPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"lib")
+        self.__buildInfo__["DOCPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"doc")
         self.__buildInfo__["LIBS"] = ["boost_system","boost_filesystem"]
     
 
@@ -112,7 +112,7 @@ class BoostCompile(thirdPartyCompile):
             # Boost libs are named boost_something. Here we only seek the 'something'
             cleanName = iLib.replace("boost_","")
             # Define the doc directory as pkgDir/doc/libDir
-            docDir = os.path.join(self.__buildInfo__["DOCPATH"][0],cleanName)
+            docDir = os.path.join(self.__buildInfo__["DOCPATH"],cleanName)
             # Make the doc directory
             os.makedirs(docDir)
             # Copy
@@ -137,10 +137,10 @@ class BoostCompile(thirdPartyCompile):
 
         # Copy the content of include
         shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"boost"), 
-                        os.path.join(self.__buildInfo__["INCLUDEPATH"][0],"boost"))
+                        os.path.join(self.__buildInfo__["INCLUDEPATH"],"boost"))
                 
         shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"stage","lib"), 
-                        self.__buildInfo__["LIBPATH"][0])
+                        self.__buildInfo__["LIBPATH"])
 
         # Also copy the documentation of the modules we are compiling
         self.__copySelectedDocs__()
@@ -201,8 +201,8 @@ int main(int argc, char** argv) {
         Sconstruct=open("SConstruct","w")
         Sconstruct.write('''import os
 env = Environment()  
-env.Append( CPPPATH={} )
-env.Append( LIBPATH={} )
+env.Append( CPPPATH=["{}"] )
+env.Append( LIBPATH=["{}"] )
 env.Append( LIBS={} )
 env.Program('boostTest', Glob('*.cpp') )        
 '''.format(self.__buildInfo__["INCLUDEPATH"],
@@ -218,7 +218,7 @@ env.Program('boostTest', Glob('*.cpp') )
         # Before execution, add symbolic links to the dylibs. Why cannot I 
         # just set LD_LIBRARY_PATH..? Weird. Looks like MacOS security stuff.
         for iLib in self.__buildInfo__["LIBS"]:
-            os.symlink(os.path.join(self.__buildInfo__["LIBPATH"][0],self.getFullLibName(iLib)), 
+            os.symlink(os.path.join(self.__buildInfo__["LIBPATH"],self.getFullLibName(iLib)), 
                        self.getFullLibName(iLib) )
         
         # Execute the example

@@ -182,9 +182,14 @@ class thirdPartyCompile(object):
         # Open the thirdPartyInfo file for append write
         fOut = open(self.__thirdPartyInfoFile__,"a+")
                   
-        # write the dict
+        # write the entries. Note that we do not want to write lists, but the plain entries
         for iEntry in self.__buildInfo__:
-            fOut.write( "{}_{} : {}\n".format(self.__name__,iEntry, self.__buildInfo__[iEntry]))    
+            if isinstance(self.__buildInfo__[iEntry],list) :
+                fOut.write( "{}_{}: ".format(self.__name__,iEntry))  
+                for jEntry in self.__buildInfo__[iEntry]: fOut.write( "{} ".format(jEntry) )
+                fOut.write("\n")
+            else:
+                fOut.write( "{}_{} : {}\n".format(self.__name__,iEntry, self.__buildInfo__[iEntry]))    
          
         # close the file
         fOut.close()
