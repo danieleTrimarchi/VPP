@@ -272,6 +272,10 @@ class thirdParty(object) :
     def libPath(self):
         return self.__libpath__
     
+    # Return the name of this thirdParty
+    def getName(self):
+        return self.__name__
+    
     # Return the list of frameworks (to be overwritten by child classes)         
     def getFrameworks(self):
         return self.__frameworks__
@@ -281,6 +285,30 @@ class thirdParty(object) :
         if(len(self.__frameworksPaths__)>1):
             raise "The build system must be modified to comply with len(__frameworksPaths__)>1!"
         return self.__frameworksPaths__
+
+    # Method required to fix the MACOSx app bundle. I hate to be obliged to do this... 
+    # Use this method to fix the references of the (VPP) executable to the dynamic libs 
+    # and the cross references betweeen the dynamic libs. Invoke install_name_tool to 
+    # act directly on the compiled files.
+    def fixDynamicLibPath(self,dst,dstRelativeToBin):   
+        #raise ValueError( "thirdParties::fixExecutablePath() should never be called" ) 
+        print "fixDynamicLibPath for ", self.getName(), " not implemented"
+    # Return the name of the dynamic lib, given the name of the library. 
+
+    # So, given "ipopt", return "libipopt.dylib"
+    # Warning: this method is duplicated in thirdPartyCompile.py.
+    # Classes need to merge. todo dtrimarchi
+    def getFullDynamicLibName(self,libName):
+        return "lib"+libName+".dylib"
+    
+    # Wraps a call to subprocess and the required diagnostics
+    # Warning: this method is duplicated in thirdPartyCompile.py.
+    # Classes need to merge. todo dtrimarchi
+    def __execute__(self,command,myEnv=os.environ):
+        
+        p = subprocess.Popen(command,shell=True,env=myEnv)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to execute: {}\n\n'.format(command))
 
 # --- 
 
@@ -323,24 +351,42 @@ class Boost( thirdParty ) :
         
         self.__version__ = boostPkg.__version__
 
-        # Declare class members, to be filled by the children
         self.__includePath__= boostPkg.getIncludePath()
-        #[ os.path.join( self.__rootDir__,'boost_'+self.__version__) ]
-        
+                
         self.__libpath__= boostPkg.getLibPath()
-        #[ os.path.join( self.__rootDir__,'boost_'+self.__version__,
-         #                                 "bin.v2","libs","system","build","darwin-4.2.1",
-          #                                "release","link-static","threading-multi"),
-           #                os.path.join( self.__rootDir__,'boost_'+self.__version__,
-            #                              "bin.v2","libs","fileSystem","build","darwin-4.2.1",
-             #                             "release","link-static","threading-multi")                            
-              #             ]
         
-        self.__libs__= boostPkg.getLibs()
-        #["boost_system","boost_filesystem"]
-    
+        self.__libs__= boostPkg.getLibs() 
+            
         self.__addTo__(env)
 
+    # Method required to fix the MACOSx app bundle. I hate to be obliged to do this... 
+    # Use this method to fix the references of the (VPP) executable to the dynamic libs 
+    # and the cross references betweeen the dynamic libs. Invoke install_name_tool to 
+    # act directly on the compiled files.
+    # dstRelativeToBin is the relative path between dest (the framewoks folder) and the 
+    # bin folder, meaning 
+    def fixDynamicLibPath(self,dst,dstRelativeToBin):   
+
+        print "In fixDynamicLibPath, getcwd() ", os.getcwd()
+         
+        # Fix the libraries belonging to this third party
+        for jLib in self.__libs__:
+            for iLib in self.__libs__: 
+                
+                if jLib==iLib:
+                    continue
+                
+                ilibFullName = self.getFullDynamicLibName(iLib)
+                jlibAbsPath = os.path.join(dst,self.getFullDynamicLibName(jLib))
+                print "Executing : install_name_tool -change {} @executable_path/{} {}".format(
+                                                            ilibFullName,
+                                                            ilibFullName,
+                                                            jlibAbsPath)
+                self.__execute__("install_name_tool -change {} @executable_path/{} {}".format(
+                                                            ilibFullName,
+                                                            ilibFullName,
+                                                            jlibAbsPath))
+          
 # -- 
 
 class CppUnit( thirdParty ) :

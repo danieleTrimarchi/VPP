@@ -154,21 +154,27 @@ releaseEnv.AddMethod(getAppInstallDir, 'getAppInstallDir')
 #            VPP.exe
 #        Resources/
 #            VPP.icns
+#        Frameworks/
+#             All Frameworks (Qt)
+#        PlugIns/
+#            LibraryName/
+#                library.dylib
 def makeAppFolderStructure(self, thirdPartyDict):
     
     print "===>>>>  makeAppFolderStructure!  <<<<<================"
     
+    # info.plist file...
     if not os.path.exists( self.getAppContentsDir() ):
         os.makedirs(self.getAppContentsDir())
         copyfile( os.path.join( self.getSrcTreeRoot(),"gui/Info.pList"), os.path.join( self.getAppContentsDir(),"Info.pList") )
  
-    if not os.path.exists(self.getAppResourcesDir() ):
-         
+    # Resources directory...
+    if not os.path.exists(self.getAppResourcesDir() ):     
         os.makedirs(self.getAppResourcesDir() )
         copyfile( os.path.join( self.getSrcTreeRoot(), "Icons/VPP.icns"), os.path.join(self.getAppResourcesDir(),"VPP.icns") )
 
+    # Framework directory...
     if not os.path.exists( self.getAppFrameworksDir() ): 
-
         os.makedirs( self.getAppFrameworksDir() )
 
         frameworkRoot= thirdPartyDict['Qt'].getFrameworkRoot()[0]
@@ -196,8 +202,38 @@ def makeAppFolderStructure(self, thirdPartyDict):
             p = subprocess.Popen('chmod -R 755 {}'.format( 
                                                           os.path.join( self.getAppFrameworksDir(), iFramework + ".framework" ) ), 
                                  shell=True)
-            p.wait()        
+            p.wait()     
+            
+    # Plugin directory... Copy here all the required .dylibs         
+    if not os.path.exists( self.getAppPlugInsDir() ): 
+        os.makedirs( self.getAppPlugInsDir() )
 
+    # Loop on all the third parties 
+    print "thirdPartyDict= ", thirdPartyDict
+    for iTh in thirdPartyDict :         
+        
+        # Get the i-th third party
+        iThirdParty = thirdPartyDict[iTh]
+
+        # Does the plugins folder for this third party exist in the app bundle?     
+        if not os.path.exists( os.path.join(self.getAppPlugInsDir(),iThirdParty.getName()) ): 
+            os.makedirs( os.path.join(self.getAppPlugInsDir(),iThirdParty.getName()) )
+
+            # Assume we have a unique libpath. If we have none, just continue 
+            # to the next third_party
+            try:
+                srcLibPath= iThirdParty.libPath() 
+            except:
+                continue
+
+            for iLib in iThirdParty.getLibs():
+                try:
+                    dyLibName= iThirdParty.getDynamicLibName(iLib)
+                    shutil.copyfile(os.path.join(srcLibPath,dyLibName), 
+                                    os.path.join(self.getAppPlugInsDir(),iThirdParty.getName(),dyLibName))
+                except:
+                    continue
+                
 releaseEnv.AddMethod(makeAppFolderStructure, 'makeAppFolderStructure')
 
 # ---------------------------------------------------------------
@@ -234,6 +270,12 @@ def fixDynamicLibPath(self,source,target,env):
                                              ), 
                              shell=True )
         p.wait()
+        
+        # Now call the method defined in the thirdPartyCompile
+        for iTh in self['THIRDPARTYDICT'] :
+            iThirdParty = self['THIRDPARTYDICT'][iTh]
+            print "iThirdParty= ", iThirdParty
+            iThirdParty.fixDynamicLibPath(os.path.join(self.getAppPlugInsDir(),iThirdParty.getName()),"../PlugIns")
         
 releaseEnv.AddMethod(fixDynamicLibPath, 'fixDynamicLibPath')
 

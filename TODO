@@ -1,11 +1,19 @@
--> End the boost example. LD_LIBRARY_PATH? 
--> can I use shared in the VPP package? 
--> Harmonize the use of BoostCompile in thirdParties.py
--> Harmonize the format of the compile info for ipOpt as for Boost
 
--> Python how to download from sourgeforce? 
+-> How to use shared in the VPP package? 
+
+- 
+install_name_tool -change libboost_system.dylib @executable_path/libboost_system.dylib /Users/dtrimarchi/VPP/build/default/release/VPP.app/Contents/MacOS/libboost_filesystem.dylib 
+
+install_name_tool -change libboost_filesystem.dylib @executable_path/libboost_filesystem.dylib /Users/dtrimarchi/VPP/build/default/release/VPP.app/Contents/MacOS/VPP
+
+install_name_tool -change libboost_system.dylib @executable_path/libboost_system.dylib /Users/dtrimarchi/VPP/build/default/release/VPP.app/Contents/MacOS/VPP
+- 
+
+
+-> how to download from sourgeforce via Python script? 
 -> https://sourceforge.net/projects/cppunit/files/latest/download
 	but need to wait... not sure if my code does this. 
+
 
 -> Export results to excel format. Simply use .csv formatting
 - Is it possible to write in multiple tabs? 

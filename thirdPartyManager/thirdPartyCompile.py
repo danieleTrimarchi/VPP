@@ -107,73 +107,80 @@ class thirdPartyCompile(object):
         # Test the third party   
         self.__test__()
         
-    # Reads the buildInfo file and returns a dictionary 
-    # with all the entries 
-    def getInfo_full(self):
-        
-        def readIt():
-            
-            if not os.path.isfile(self.__thirdPartyInfoFile__):
-                msg = "\n==============================================================="
-                msg += "\nFile " + self.__thirdPartyInfoFile__ + " not found.\nPlease run \'scons third_party_compile\' first\n"
-                msg += "===============================================================\n\n"
-                raise ValueError(msg)
-
-            with open(self.__thirdPartyInfoFile__) as fIn:
-                return dict(line.strip().split(' : ') for line in fIn)
-
-        return readIt()
-
-    def getInfo(self):
-        
-        # Filter the full dictionary using the name of this third_party
-        # So, it returns a dictionary containing only the entries for the current 
-        # third_party : i.e: {'ipOpt_LIBS': 'lib1 lib2 lib3', 'ipOpt_DOCPATH': 'doc', ...
-        return {key:value for key,value in self.getInfo_full().items() if self.__name__ in  key}
+#     # Reads the buildInfo file and returns a dictionary 
+#     # with all the entries 
+#     def getInfo_full(self):
+#         
+#         def readIt():
+#             
+#             if not os.path.isfile(self.__thirdPartyInfoFile__):
+#                 msg = "\n==============================================================="
+#                 msg += "\nFile " + self.__thirdPartyInfoFile__ + " not found.\nPlease run \'scons third_party_compile\' first\n"
+#                 msg += "===============================================================\n\n"
+#                 raise ValueError(msg)
+# 
+#             with open(self.__thirdPartyInfoFile__) as fIn:
+#                 #return dict(line.strip().split(' : ') for line in fIn)
+#                 outDict={}
+#                 for line in fIn: 
+#                     myList= line.strip().split(" : ")
+#                     print "myList= ", myList
+#                     outDict[ myList[0] ]=myList[1]
+#                 return outDict
+#             
+#         return readIt()
+# 
+#     def getInfo(self):
+#         
+#         # Filter the full dictionary using the name of this third_party
+#         # So, it returns a dictionary containing only the entries for the current 
+#         # third_party : i.e: {'ipOpt_LIBS': 'lib1 lib2 lib3', 'ipOpt_DOCPATH': 'doc', ...
+#         return {key:value for key,value in self.getInfo_full().items() if self.__name__ in  key}
 
     def getIncludePath(self):
         
-        return self.getInfo()[self.__name__+"_"+__includepathFlag__]
+        return self.__buildInfo__[__includepathFlag__]
     
     def getLibPath(self):
         
-        return self.getInfo()[self.__name__+"_"+__libpathFlag__]
+        return self.__buildInfo__[__libpathFlag__]
     
     def getLibs(self):
         
-        return self.getInfo()[self.__name__+"_"+__libsFlag__]
+        return self.__buildInfo__[__libsFlag__]
 
     def getDocPath(self):
         
-        return self.getInfo()[self.__name__+"_"+__docpathFlag__]
+        return self.__buildInfo__[__docpathFlag__]
         
-    def getFullLibName(self,shortLibName):
+    # Warning: this method is duplicated in thirdParties.py. Classes need to merge
+    def getFullDynamicLibName(self,shortLibName):
         return "lib"+shortLibName+".dylib"
     
     # To be implemented in child classes, describe where the 
     # source package can be downloaded
     def __download__(self):
-        raise "thirdPartyCompile::__download__() should never be called"
+        raise ValueError( "thirdPartyCompile::__download__() should never be called" )
 
     # After extracting the third party, it might be the case that we need to 
     # use some tools internal to the package to download some additional reqs. 
     # This is for example the case for ipOpt, that provides scripts to download
     # third parties such as blas, ASL...         
     def __getAdditionalRequirements__(self):
-        raise "thirdPartyCompile::__getAdditionalRequirements__() should never be called"
+        raise ValueError( "thirdPartyCompile::__getAdditionalRequirements__() should never be called" )
         
     # How to compile the third party
     def __compile__(self,dest=None):
-        raise "thirdPartyCompile::__compile__() should never be called"
+        raise ValueError( "thirdPartyCompile::__compile__() should never be called" ) 
         
     # How to package the relevant components of this third_party
     def __package__(self):
-        raise "thirdPartyCompile::__package__() should never be called"
+        raise ValueError( "thirdPartyCompile::__package__() should never be called" ) 
         
     # Run some test to make sure this third party was compiled 
     # properly
     def __test__(self):
-        raise "thirdPartyCompile::__test__() should never be called"
+        raise ValueError( "thirdPartyCompile::__test__() should never be called" )
         
     # Write the build info to file. This will be used
     # by the build system to compile and link the program
@@ -185,7 +192,7 @@ class thirdPartyCompile(object):
         # write the entries. Note that we do not want to write lists, but the plain entries
         for iEntry in self.__buildInfo__:
             if isinstance(self.__buildInfo__[iEntry],list) :
-                fOut.write( "{}_{}: ".format(self.__name__,iEntry))  
+                fOut.write( "{}_{} : ".format(self.__name__,iEntry))  
                 for jEntry in self.__buildInfo__[iEntry]: fOut.write( "{} ".format(jEntry) )
                 fOut.write("\n")
             else:
@@ -227,5 +234,18 @@ class thirdPartyCompile(object):
             tar= tarfile.open(mode='r|gz', fileobj=localArchive.raw)
             tar.extractall()
             tar.close()
-    
+
+    # Import the dynamic libraries from third party to the dest folder (in this case
+    # this will be in the app bundle VPP.app/Contents/Frameworks/
+    def importDynamicLibs(self,dstFolder):
+        raise ValueError( "thirdPartyCompile::fixExecutablePath() should never be called" ) 
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
