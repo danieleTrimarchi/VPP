@@ -209,7 +209,6 @@ def makeAppFolderStructure(self, thirdPartyDict):
         os.makedirs( self.getAppPlugInsDir() )
 
     # Loop on all the third parties 
-    print "thirdPartyDict= ", thirdPartyDict
     for iTh in thirdPartyDict :         
         
         # Get the i-th third party
@@ -228,7 +227,9 @@ def makeAppFolderStructure(self, thirdPartyDict):
 
             for iLib in iThirdParty.getLibs():
                 try:
-                    dyLibName= iThirdParty.getDynamicLibName(iLib)
+                    dyLibName= iThirdParty.getFullDynamicLibName(iLib)
+#                    print "Copying ", os.path.join(srcLibPath,dyLibName)
+#                    print "to... ", os.path.join(self.getAppPlugInsDir(),iThirdParty.getName(),dyLibName)
                     shutil.copyfile(os.path.join(srcLibPath,dyLibName), 
                                     os.path.join(self.getAppPlugInsDir(),iThirdParty.getName(),dyLibName))
                 except:
@@ -274,8 +275,8 @@ def fixDynamicLibPath(self,source,target,env):
         # Now call the method defined in the thirdPartyCompile
         for iTh in self['THIRDPARTYDICT'] :
             iThirdParty = self['THIRDPARTYDICT'][iTh]
-            print "iThirdParty= ", iThirdParty
-            iThirdParty.fixDynamicLibPath(os.path.join(self.getAppPlugInsDir(),iThirdParty.getName()),"../PlugIns")
+            iThirdParty.fixDynamicLibPath(os.path.join(self.getAppPlugInsDir(),iThirdParty.getName()),
+                                          "../PlugIns",self.getAppInstallDir())
         
 releaseEnv.AddMethod(fixDynamicLibPath, 'fixDynamicLibPath')
 

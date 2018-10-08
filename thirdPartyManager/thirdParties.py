@@ -290,7 +290,7 @@ class thirdParty(object) :
     # Use this method to fix the references of the (VPP) executable to the dynamic libs 
     # and the cross references betweeen the dynamic libs. Invoke install_name_tool to 
     # act directly on the compiled files.
-    def fixDynamicLibPath(self,dst,dstRelativeToBin):   
+    def fixDynamicLibPath(self,dst,dstRelativeToBin,appInstallDir):   
         #raise ValueError( "thirdParties::fixExecutablePath() should never be called" ) 
         print "fixDynamicLibPath for ", self.getName(), " not implemented"
     # Return the name of the dynamic lib, given the name of the library. 
@@ -364,12 +364,11 @@ class Boost( thirdParty ) :
     # and the cross references betweeen the dynamic libs. Invoke install_name_tool to 
     # act directly on the compiled files.
     # dstRelativeToBin is the relative path between dest (the framewoks folder) and the 
-    # bin folder, meaning 
-    def fixDynamicLibPath(self,dst,dstRelativeToBin):   
-
-        print "In fixDynamicLibPath, getcwd() ", os.getcwd()
+    # bin folder, meaning something like ../Plugins/<libName>/<dyLibName>
+    # Remember how to inspect binaries: otool -l <binaryFile>
+    def fixDynamicLibPath(self,dst,dstRelativeToBin,appInstallDir):   
          
-        # Fix the libraries belonging to this third party
+        # Fix the cross refereences of the libraries belonging to this third party
         for jLib in self.__libs__:
             for iLib in self.__libs__: 
                 
@@ -380,13 +379,27 @@ class Boost( thirdParty ) :
                 jlibAbsPath = os.path.join(dst,self.getFullDynamicLibName(jLib))
                 print "Executing : install_name_tool -change {} @executable_path/{} {}".format(
                                                             ilibFullName,
-                                                            ilibFullName,
+                                                            os.path.join(dstRelativeToBin,self.getName(),ilibFullName),
                                                             jlibAbsPath)
                 self.__execute__("install_name_tool -change {} @executable_path/{} {}".format(
                                                             ilibFullName,
-                                                            ilibFullName,
+                                                            os.path.join(dstRelativeToBin,self.getName(),ilibFullName),
                                                             jlibAbsPath))
-          
+
+        # Now fix the references to the libraries directly in the VPP executable
+        for iLib in self.__libs__: 
+            
+            ilibFullName = self.getFullDynamicLibName(iLib)
+
+            print "Executing : install_name_tool -change {} @executable_path/{} {}/VPP".format(
+                                                            ilibFullName,
+                                                            os.path.join(dstRelativeToBin,self.getName(),ilibFullName),
+                                                            appInstallDir)
+            self.__execute__("install_name_tool -change {} @executable_path/{} {}/VPP".format(
+                                                            ilibFullName,
+                                                            os.path.join(dstRelativeToBin,self.getName(),ilibFullName),
+                                                            appInstallDir))
+            
 # -- 
 
 class CppUnit( thirdParty ) :
