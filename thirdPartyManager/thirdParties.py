@@ -372,7 +372,7 @@ class Eigen( thirdParty ) :
         self.__addTo__(env)
 
 # --- 
-        
+                
 class IPOpt( thirdParty ) :
 
     def __init__(self, env):
@@ -380,32 +380,19 @@ class IPOpt( thirdParty ) :
         # Call mother-class constructor
         super(IPOpt,self).__init__()
         
-        # Instantiate the thirdPartyCompile object
-        print "IpOpt constructor"
-        import thirdPartyCompile as tp
-        ipOptPkg= tp.IpOptCompile()
+        self.__name__= "IPOpt"
 
-        # Get the name of the third_party
-        self.__name__= ipOptPkg.__name__
+        self.__version__ = "3.12.6"
 
-        # Get the version of the third_party
-        self.__version__ = ipOptPkg.__version__
-        
         # Declare class members, to be filled by the children
-        self.__includePath__= ipOptPkg.getIncludePath()
-# WARNING : this was the old include def. Is this still actual? 
-#        self.__includePath__= [os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'Ipopt/src/Interfaces'),
-#                               os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'include/coin') ]
- 
-        self.__libpath__= ipOptPkg.getLibPath()
-        #[ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
+        self.__includePath__= [os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'Ipopt/src/Interfaces'),
+                               os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'include/coin') ]
+        self.__libpath__= [ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
         
-        self.__frameworksPaths__= ipOptPkg.getLibPath()
-        # [ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
+        self.__frameworksPaths__= [ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
 
         # Define the list of libs
-        self.__libs__= ipOptPkg.getLibs()
-        #['ipopt']
+        self.__libs__= ['ipopt']
         
         # Define the list of frameworks         
         #self.__frameworks__= [
@@ -415,7 +402,7 @@ class IPOpt( thirdParty ) :
         #                    ]
     
         self.__addTo__(env)
-        
+                
 # -- 
 
 class NLOpt( thirdParty ) :
