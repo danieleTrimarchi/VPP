@@ -38,9 +38,9 @@ class BoostCompile(thirdPartyCompile):
 
         # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
-        self.__buildInfo__["INCLUDEPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"include")
-        self.__buildInfo__["LIBPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"lib")
-        self.__buildInfo__["DOCPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"doc")
+        self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
+        self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
+        self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
         self.__buildInfo__["LIBS"] = ["boost_system","boost_filesystem"]
     
 
@@ -75,7 +75,7 @@ class BoostCompile(thirdPartyCompile):
         # Copy the sources to the build dir
         # First, make sure we are in the right place
         os.chdir(self.__thirdPartySrcFolder__)
-        shutil.copytree(self.__srcDirName__,self.__thirdPartyBuildFolder__)
+        self.__copytree__(self.__srcDirName__,self.__thirdPartyBuildFolder__)
 
         # What about the requirements? Actually this is a mis-use of the __compile__
         # method, that does not compile for the requirements, because the ipOpt build 
@@ -111,15 +111,20 @@ class BoostCompile(thirdPartyCompile):
         for iLib in self.__buildInfo__["LIBS"] :
             # Boost libs are named boost_something. Here we only seek the 'something'
             cleanName = iLib.replace("boost_","")
-            # Define the doc directory as pkgDir/doc/libDir
-            docDir = os.path.join(self.__buildInfo__["DOCPATH"],cleanName)
+
+            # Verify the object we get is in the form we need            
+            # and define the doc directory as pkgDir/doc/libDir
+            checkListOfSizeOne(self.__buildInfo__["DOCPATH"],"DocPath")             
+            
             # Make the doc directory
+            docDir = os.path.join(self.__buildInfo__["DOCPATH"][0],cleanName)
             os.makedirs(docDir)
-            # Copy
+
+            # Copy the files to the doc directory
             shutil.copy(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"index.html"), 
                     docDir)
-            shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"doc"), 
-                            os.path.join(docDir,"doc"))
+            self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"doc"), 
+                              os.path.join(docDir,"doc"))
 
     # Package the third party that was build   
     def __package__(self):
@@ -136,11 +141,11 @@ class BoostCompile(thirdPartyCompile):
         os.mkdir(self.__thirdPartyPkgFolder__)
 
         # Copy the content of include
-        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"boost"), 
-                        os.path.join(self.__buildInfo__["INCLUDEPATH"],"boost"))
-                
-        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"stage","lib"), 
-                        self.__buildInfo__["LIBPATH"])
+        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"boost"), 
+                          os.path.join(self.__buildInfo__["INCLUDEPATH"],"boost"))
+
+        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"stage","lib"), 
+                          self.__buildInfo__["LIBPATH"])
 
         # Also copy the documentation of the modules we are compiling
         self.__copySelectedDocs__()

@@ -286,14 +286,78 @@ class thirdParty(object) :
             raise "The build system must be modified to comply with len(__frameworksPaths__)>1!"
         return self.__frameworksPaths__
 
+    # --- 
+
+    # Copy all the dynamic library of this thirdparty to some dest folder
+    def copyDynamicLibs(self,dest):
+
+        print "In copyDynamicLibs for third_party ", self.getName()
+        print "                  ",self.getLibs() 
+        for iLibPath in self.libPath():
+            for iLib in self.getLibs():
+                print "In try for ",self.getName()
+                dyLibName= self.getFullDynamicLibName(iLib)
+                print "dyLibName= ",dyLibName
+                print "libpath=", iLibPath
+                print "Copying:", os.path.join(iLibPath,dyLibName)
+                print "to:", os.path.join(dest,dyLibName)
+                try:
+                    shutil.copyfile(os.path.join(iLibPath,dyLibName), 
+                                    os.path.join(dest,dyLibName))
+                except IOError:
+                    print "\n\n===>>>  IOError!\n\n"
+                except OSError:
+                    print "\n\n===>>>  OSError!\n\n"
+                except SpecialFileError:
+                    print "\n\n===>>>  SpecialFileError!\n\n"
+                except: 
+                    print "\n\n===>>>  General Exception!\n\n"
+
+    # --- 
+
     # Method required to fix the MACOSx app bundle. I hate to be obliged to do this... 
     # Use this method to fix the references of the (VPP) executable to the dynamic libs 
     # and the cross references betweeen the dynamic libs. Invoke install_name_tool to 
     # act directly on the compiled files.
+    # dstRelativeToBin is the relative path between dest (the framewoks folder) and the 
+    # bin folder, meaning something like ../Plugins/<libName>/<dyLibName>
+    # Remember how to inspect binaries: otool -l <binaryFile>
     def fixDynamicLibPath(self,dst,dstRelativeToBin,appInstallDir):   
-        #raise ValueError( "thirdParties::fixExecutablePath() should never be called" ) 
-        print "fixDynamicLibPath for ", self.getName(), " not implemented"
-    # Return the name of the dynamic lib, given the name of the library. 
+         
+        # Fix the cross refereences of the libraries belonging to this third party
+        for jLib in self.__libs__:
+            for iLib in self.__libs__: 
+                
+                if jLib==iLib:
+                    continue
+                
+                ilibFullName = self.getFullDynamicLibName(iLib)
+                relPathName = os.path.join(dstRelativeToBin,self.getName(),ilibFullName)
+                jlibAbsPath = os.path.join(dst,self.getFullDynamicLibName(jLib))
+                self.__execute__("install_name_tool -change {} @executable_path/{} {}".format(
+                                                            ilibFullName,
+                                                            relPathName,
+                                                            jlibAbsPath))
+
+        # Now loop on the libs and fix the references to the libraries directly in the VPP executable
+        for iLib in self.__libs__: 
+            
+            ilibFullName = self.getFullDynamicLibName(iLib)
+            relPathName = os.path.join(dstRelativeToBin,self.getName(),ilibFullName)
+            self.__execute__("install_name_tool -change {} @executable_path/{} {}/VPP".format(
+                                                            ilibFullName,
+                                                            relPathName,
+                                                            appInstallDir))
+            
+        # Still we need to fix the frameworks. This can only work on the a 
+        # third_party specific basis
+        self.__fixFrameworksPath__(appInstallDir)
+    
+    # -- 
+    
+    def __fixFrameworksPath__(self,appInstallDir):
+        # do nothing 
+        return 
 
     # So, given "ipopt", return "libipopt.dylib"
     # Warning: this method is duplicated in thirdPartyCompile.py.
@@ -306,9 +370,18 @@ class thirdParty(object) :
     # Classes need to merge. todo dtrimarchi
     def __execute__(self,command,myEnv=os.environ):
         
+        print "Executing command: {}".format(command)
+        
         p = subprocess.Popen(command,shell=True,env=myEnv)
         if p.wait():
             raise ValueError('\n\nSomething went wrong when trying to execute: {}\n\n'.format(command))
+
+
+    def __printEnv__(self):
+        print "\n----------------\nEnv= "
+        for param in os.environ.keys():
+                print "%20s %s" % (param,os.environ[param])
+        print "\n----------------\n"
 
 # --- 
 
@@ -358,48 +431,7 @@ class Boost( thirdParty ) :
         self.__libs__= boostPkg.getLibs() 
             
         self.__addTo__(env)
-
-    # Method required to fix the MACOSx app bundle. I hate to be obliged to do this... 
-    # Use this method to fix the references of the (VPP) executable to the dynamic libs 
-    # and the cross references betweeen the dynamic libs. Invoke install_name_tool to 
-    # act directly on the compiled files.
-    # dstRelativeToBin is the relative path between dest (the framewoks folder) and the 
-    # bin folder, meaning something like ../Plugins/<libName>/<dyLibName>
-    # Remember how to inspect binaries: otool -l <binaryFile>
-    def fixDynamicLibPath(self,dst,dstRelativeToBin,appInstallDir):   
-         
-        # Fix the cross refereences of the libraries belonging to this third party
-        for jLib in self.__libs__:
-            for iLib in self.__libs__: 
-                
-                if jLib==iLib:
-                    continue
-                
-                ilibFullName = self.getFullDynamicLibName(iLib)
-                jlibAbsPath = os.path.join(dst,self.getFullDynamicLibName(jLib))
-                print "Executing : install_name_tool -change {} @executable_path/{} {}".format(
-                                                            ilibFullName,
-                                                            os.path.join(dstRelativeToBin,self.getName(),ilibFullName),
-                                                            jlibAbsPath)
-                self.__execute__("install_name_tool -change {} @executable_path/{} {}".format(
-                                                            ilibFullName,
-                                                            os.path.join(dstRelativeToBin,self.getName(),ilibFullName),
-                                                            jlibAbsPath))
-
-        # Now fix the references to the libraries directly in the VPP executable
-        for iLib in self.__libs__: 
-            
-            ilibFullName = self.getFullDynamicLibName(iLib)
-
-            print "Executing : install_name_tool -change {} @executable_path/{} {}/VPP".format(
-                                                            ilibFullName,
-                                                            os.path.join(dstRelativeToBin,self.getName(),ilibFullName),
-                                                            appInstallDir)
-            self.__execute__("install_name_tool -change {} @executable_path/{} {}/VPP".format(
-                                                            ilibFullName,
-                                                            os.path.join(dstRelativeToBin,self.getName(),ilibFullName),
-                                                            appInstallDir))
-            
+    
 # -- 
 
 class CppUnit( thirdParty ) :
@@ -458,27 +490,16 @@ class IPOpt( thirdParty ) :
         
         # Declare class members, to be filled by the children
         self.__includePath__= ipOptPkg.getIncludePath()
-# WARNING : this was the old include def. Is this still actual? 
-#        self.__includePath__= [os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'Ipopt/src/Interfaces'),
-#                               os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'include/coin') ]
  
+        # set libpath
         self.__libpath__= ipOptPkg.getLibPath()
-        #[ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
-        
-        self.__frameworksPaths__= ipOptPkg.getLibPath()
-        # [ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
 
+        # onfuse frameworks and libs        
+        self.__frameworksPaths__= ipOptPkg.getLibPath()
+        
         # Define the list of libs
         self.__libs__= ipOptPkg.getLibs()
-        #['ipopt']
-        
-        # Define the list of frameworks         
-        #self.__frameworks__= [
-        #                      'libipopt.1.dylib', 
-        #                      'libcoinmumps.1.dylib', 
-        #                      'libcoinmetis.1.dylib'
-        #                    ]
-    
+            
         self.__addTo__(env)
         
 # -- 
@@ -559,3 +580,17 @@ class Qt( thirdParty ) :
 
         self.__addTo__(env)
         
+    # -- 
+    
+    # Fix the cross references of the Qt frameworks using install_name_tool.
+    # This is required for the MACOSx bundle
+    def __fixFrameworksPath__(self,appInstallDir):
+        
+        for iFramework in self.getFrameworks(): 
+            self.__execute__('install_name_tool -change '
+                             '@rpath/{}.framework/Versions/5/{} '
+                             '@executable_path/../Frameworks/{}.framework/Versions/Current/{} '
+                             '{}/VPP'.format( 
+                                        iFramework,iFramework,
+                                        iFramework,iFramework,
+                                        appInstallDir )) 

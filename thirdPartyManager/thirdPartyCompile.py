@@ -65,10 +65,10 @@ class thirdPartyCompile(object):
         self.__thirdPartyPkgFolder__="/Users/dtrimarchi/third_party_pkg"
         
         # Include Path. To be filled
-        self.__buildInfo__={__includepathFlag__:"",
-                            __libpathFlag__:"",
-                            __docpathFlag__:"",
-                            __libsFlag__:""}
+        self.__buildInfo__={__includepathFlag__:[""],
+                            __libpathFlag__:[""],
+                            __docpathFlag__:[""],
+                            __libsFlag__:[""]}
             
         # Abs path of the file info file, featuring all the info required for compiling VPP
         self.__thirdPartyInfoFile__ = os.path.join(self.__thirdPartyPkgFolder__,"third_party_info")
@@ -239,13 +239,29 @@ class thirdPartyCompile(object):
     # this will be in the app bundle VPP.app/Contents/Frameworks/
     def importDynamicLibs(self,dstFolder):
         raise ValueError( "thirdPartyCompile::fixExecutablePath() should never be called" ) 
-        
-        
-        
-        
-        
-        
-        
-        
+                    
+    # Decorates copytree of shutil, with some minimal logics to handle lists 
+    def __copytree__(self,src,dst):
+    
+        # Case 1 : src and dst are lists
+        if(isinstance(src,list) and isinstance(dst,list)):
+            for iSrc in src:
+                for iDst in dst:
+                    shutil.copytree(iSrc,iDst)
+
+        # Case 2 : src is list but dst is not 
+        elif (isinstance(src,list) and not isinstance(dst,list)):
+            for iSrc in src:
+                shutil.copytree(iSrc,dst)
+
+        # Case 3 : src is not list but dst is  
+        elif (not isinstance(src,list) and isinstance(dst,list)):
+            for iDst in dst:
+                shutil.copytree(src,iDst)
+            
+        # Case 4 : no lists
+        else:
+            shutil.copytree(src,dst)
+            
         
         
