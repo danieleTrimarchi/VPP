@@ -228,9 +228,9 @@ class IpOptCompile(thirdPartyCompile):
     
         # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
-        self.__buildInfo__["INCLUDEPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"include")
-        self.__buildInfo__["LIBPATH"] = os.path.join(self.__thirdPartyPkgFolder__,"lib")
-        self.__buildInfo__["DOCPATH"] = self.__thirdPartyPkgFolder__
+        self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
+        self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
+        self.__buildInfo__["DOCPATH"] = [self.__thirdPartyPkgFolder__]
         self.__buildInfo__["LIBS"] = ["ipopt"]
 
     def __download__(self):
