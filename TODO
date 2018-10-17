@@ -1,5 +1,7 @@
+-> Fix the permissions of /Users/dtrimarchi/VPP/xCodeBuild/qrcVPP.cpp. This appears to break the xCode build - Why? 
+It might be that I need to refresh the generated source list. Not sure where this lives but it was out sync, and removing the list seems to help
 
--> How to use shared in the VPP package? 
+-> Also there is a problem with loading the dyLib, as the xCode project does not know about the DYLD_LIBRARY_PATH. Shit. 
 
 - 
 install_name_tool -change libboost_system.dylib @executable_path/libboost_system.dylib /Users/dtrimarchi/VPP/build/default/release/VPP.app/Contents/MacOS/libboost_filesystem.dylib 
