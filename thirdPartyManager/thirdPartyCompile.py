@@ -507,13 +507,14 @@ class IpOptCompile(thirdPartyCompile):
 
         # Launch the configure script with the macOS specific args 
         # (see pdf docs 2.8.2 Adjusting configuration and build of Ipopt)     
-        self.__execute__("../configure --disable-linear-solver-loader "
-                         "ADD_CFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
-                         "ADD_CXXFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
-                         "ADD_FFLAGS='-fexceptions -fbackslash' "
+        self.__execute__("../configure "
                          "--prefix={}".format(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib"))) 
 
-#--with-blas='-framework vecLib' --with-lapack='-framework vecLib'
+#--disable-linear-solver-loader "
+#                         "--disable-shared --with-pic "
+#                         "ADD_CFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
+#                         "ADD_CXXFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
+#                         "ADD_FFLAGS='-fexceptions -fbackslash' "#--with-blas='-framework vecLib' --with-lapack='-framework vecLib'
 #--disable-shared --with-pic "
 
         # Launch the build    

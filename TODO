@@ -1,9 +1,13 @@
+Compila IPOPT  SENZA FLAGS!!!
+verifica di avere solo static compile 
+Compila VPP
+test
+
+
+-> Try compiling ipOpt statically. Would this fix the tests? Will return to dylib later
+
 -> download should handle both tar.gz and zip
 -> try the full procedure with the tar.gz
-
-
-
-
 
 
 -> Export results to excel format. Simply use .csv formatting

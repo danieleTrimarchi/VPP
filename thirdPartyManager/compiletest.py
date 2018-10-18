@@ -1,7 +1,6 @@
 import thirdPartyCompile as tp
 ipOpt= tp.IpOptCompile()
-ipOpt.get()
-
+ipOpt.get(False)
 
 #ipOpt.__download__()
 #ipOpt.__compile__()
