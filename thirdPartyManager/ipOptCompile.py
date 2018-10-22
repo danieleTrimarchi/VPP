@@ -120,7 +120,7 @@ class IpOptHSLCompile(thirdPartyCompile):
         # Name of this third_party. 
         self.__name__="HSL"
 
-        # Define the name of the archive downloadeed from the web.
+        # Define the name of the archive downloaded from the web.
         self.__srcArchiveName__="tar.tar"
 
         # Define the name of the folder extracted from the archive downloadeed from the web. 
@@ -171,6 +171,42 @@ class IpOptHSLCompile(thirdPartyCompile):
         shutil.copytree(self.__srcDirName__,os.path.join(dest,self.__name__,'coinhsl'))
         
         # Make nothing else, the build is taken over by my parent
+        
+# Lapack is a requirement for IpOopt, that offers utility scripts to download and 
+# compile blas with the right bindings
+class ipOptMumpsCompile(thirdPartyCompile):
+
+    # Ctor
+    def __init__(self,ipOptMumpsPath):
+    
+        # Simply call mother-class init
+        super(ipOptMumpsCompile,self).__init__()
+
+        # Name of this third_party. 
+        self.__name__="Mumps"
+
+        # Store the location where ipOpt will download and 
+        # compile blas
+        self.__thirdPartySrcFolder__ = ipOptMumpsPath
+        
+        # We do not need to fill other fileds, as this thirdParty is 
+        # entirely handled by IpOpt
+            
+    def __download__(self):
+        
+        # Use the IpOpt utilities to download BLAS from the web and compile
+        # Note that the __thirdPartySrcFolder__ has been set to the ipOpt/third_party/
+        # blas folder
+        os.chdir(self.__thirdPartySrcFolder__)
+
+        # Make sure the get.Mumps script has 755 permissions and execute it
+        self.__execute__("chmod 755 get.Mumps")
+        self.__execute__("./get.Mumps")
+
+    def __compile__(self,dest=None):
+        # Make nothing, MUMPS will be compiled as part of IpOpt
+        pass 
+
         
 class IpOptCompile(thirdPartyCompile):
     
@@ -223,9 +259,15 @@ class IpOptCompile(thirdPartyCompile):
                                        "ThirdParty","ASL")
         self.__requirements__.append( ipOptASLCompile(aslSrcFolder))
         
-         # Instantiate the requirements... HSL
-        self.__requirements__.append( IpOptHSLCompile() )
+        # Instantiate the requirements... HSL <-- Instead, use MUMPS!
+        #self.__requirements__.append( IpOptHSLCompile() )
     
+        # Instantiate the requirements... MUMPS
+        mumpsSrcFolder = os.path.join(self.__thirdPartySrcFolder__,
+                                       self.__srcDirName__,
+                                       "ThirdParty","Mumps")
+        self.__requirements__.append( ipOptMumpsCompile(aslSrcFolder))
+
         # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
