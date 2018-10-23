@@ -1,5 +1,7 @@
 from thirdPartyCompile import thirdPartyCompile
 import os
+import shutil
+import sys 
 
 # Blas is a requirement for IpOopt, that offers utility scripts to download and 
 # compile blas with the right bindings
@@ -266,7 +268,7 @@ class IpOptCompile(thirdPartyCompile):
         mumpsSrcFolder = os.path.join(self.__thirdPartySrcFolder__,
                                        self.__srcDirName__,
                                        "ThirdParty","Mumps")
-        self.__requirements__.append( ipOptMumpsCompile(aslSrcFolder))
+        self.__requirements__.append( ipOptMumpsCompile(mumpsSrcFolder))
 
         # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
