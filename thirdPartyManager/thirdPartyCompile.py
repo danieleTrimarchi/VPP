@@ -222,6 +222,7 @@ class thirdPartyCompile(object):
             import StringIO
             print 'extracting a zip file...'
             z = zipfile.ZipFile(StringIO.StringIO(localArchive.content))
+            print "Downloaded! "
             z.extractall()
             z.close()
             
@@ -263,5 +264,28 @@ class thirdPartyCompile(object):
         else:
             shutil.copytree(src,dst)
             
+    # Patch the file specified in 'filename' substituting the strings. THis
+    # works like a 'sed'
+    def __patch__(self,pattern,replace,srcFile) : 
+
+        # open the srcFile
+        fin = open(srcFile, 'r')
+
+        # open a tmp file and write     
+        tmpFileName = "tmpFile"   
+        tmpFile = open(tmpFileName,'w')
+        for line in fin:
+            tmpFile.write(re.sub(pattern, replace, line))
+ 
+        # close the files
+        tmpFile.close()
+        fin.close()
+
+        # Replace tmpFile with the srcFile
+        os.remove(srcFile)
+        os.rename(tmpFileName, srcFile)
+        
+        
+        
         
         

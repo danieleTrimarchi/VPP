@@ -155,6 +155,17 @@ SYMROOT= ../xCodeBuild\n\n'''
 
     # -- 
 
+    # Populates 'line' with the specs returned by a function - specified 
+    # in 'functionName'. Prepends and appends prefix, suffix to each spec. 
+    # i.e: self.__write__(  line="INCLUDEPATH += ",
+    #                       functionName="getIncludePath", 
+    #                       prefix="\"", suffix="\"", 
+    #                       excludePackages=["Qt"] )
+    # Will write each include path (except for Qt) in quotes (""):
+    #  INCLUDEPATH +=  \ 
+    # "/Users/dtrimarchi/third_party/nlopt-2.4.2/api" \ 
+    # "/Users/dtrimarchi/third_party/eigen-3.3.4"
+    # Finally, writes 'line' to the project file
     def __write__(self, line, functionName, prefix, suffix, excludePackages ):
         
         # Loop on the third_parties in the dictionary

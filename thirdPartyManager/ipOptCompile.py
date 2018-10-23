@@ -200,6 +200,10 @@ class ipOptMumpsCompile(thirdPartyCompile):
         # Note that the __thirdPartySrcFolder__ has been set to the ipOpt/third_party/
         # blas folder
         os.chdir(self.__thirdPartySrcFolder__)
+        
+        # Patch the script to use curl instead of ftp - which is not installed on 
+        # my machine. Why should I use a different command than the other scripts? 
+        self.__patch__("wgetcmd=ftp","wgetcmd=\"curl -L -k -O\"","get.Mumps")
 
         # Make sure the get.Mumps script has 755 permissions and execute it
         self.__execute__("chmod 755 get.Mumps")
@@ -287,7 +291,9 @@ class IpOptCompile(thirdPartyCompile):
         shutil.rmtree(self.__srcArchiveName__,sys.exc_info())
           
         # Get the sources from the web
+        print "Downloading the ipOpt sources..."
         self.__getCompressedArchive__(self.__url__)
+        print "Downloaded the ipOpt sources!"
                      
          # I can now use the scripts provided by ipOpt to download the 
          # required third_party. Kq[gr]pe
