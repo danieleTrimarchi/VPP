@@ -384,14 +384,14 @@ class IpOptCompile(thirdPartyCompile):
 
         # Copy the content of include and lib
         shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib","include","coin"), 
-                        self.__buildInfo__["INCLUDEPATH"])
+                        self.__buildInfo__["INCLUDEPATH"][0])
                 
         shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib","lib"), 
-                        self.__buildInfo__["LIBPATH"])
+                        self.__buildInfo__["LIBPATH"][0])
 
         # Also copy the documentation
         shutil.copyfile(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","doc","documentation.pdf"), 
-                        os.path.join(self.__buildInfo__["DOCPATH"],"documentation.pdf"))
+                        os.path.join(self.__buildInfo__["DOCPATH"][0],"documentation.pdf"))
  
         # Copy the example 
         shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","examples","Cpp_example"), 

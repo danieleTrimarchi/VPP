@@ -157,6 +157,11 @@ class thirdPartyCompile(object):
     def getFullDynamicLibName(self,shortLibName):
         return "lib"+shortLibName+".dylib"
     
+    # Import the dynamic libraries from third party to the dest folder (in this case
+    # this will be in the app bundle VPP.app/Contents/Frameworks/
+    def importDynamicLibs(self,dstFolder):
+        raise ValueError( "thirdPartyCompile::fixExecutablePath() should never be called" ) 
+
     # To be implemented in child classes, describe where the 
     # source package can be downloaded
     def __download__(self):
@@ -235,11 +240,6 @@ class thirdPartyCompile(object):
             tar= tarfile.open(mode='r|gz', fileobj=localArchive.raw)
             tar.extractall()
             tar.close()
-
-    # Import the dynamic libraries from third party to the dest folder (in this case
-    # this will be in the app bundle VPP.app/Contents/Frameworks/
-    def importDynamicLibs(self,dstFolder):
-        raise ValueError( "thirdPartyCompile::fixExecutablePath() should never be called" ) 
                     
     # Decorates copytree of shutil, with some minimal logics to handle lists 
     def __copytree__(self,src,dst):

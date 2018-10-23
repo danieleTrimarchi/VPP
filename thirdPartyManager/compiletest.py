@@ -4,7 +4,7 @@ ipOpt= IpOptCompile()
 #ipOpt.get()
 
 
-ipOpt.__download__()
+#ipOpt.__download__()
 #ipOpt.__compile__()
-#ipOpt.__package__()
-#ipOpt.__test__()
+ipOpt.__package__()
+ipOpt.__test__()
