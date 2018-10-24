@@ -266,24 +266,27 @@ class thirdPartyCompile(object):
             
     # Patch the file specified in 'filename' substituting the strings. THis
     # works like a 'sed'
-    def __patch__(self,pattern,replace,srcFile) : 
+    def __patch__(self,pattern,replace,srcFileName) : 
 
         # open the srcFile
-        fin = open(srcFile, 'r')
+        fin = open(srcFileName, 'r')
 
         # open a tmp file and write     
         tmpFileName = "tmpFile"   
         tmpFile = open(tmpFileName,'w')
+
+        # Process the lines of the src file and write the 
+        # results to the tmpFile
         for line in fin:
             tmpFile.write(re.sub(pattern, replace, line))
  
-        # close the files
+        # close both files
         tmpFile.close()
         fin.close()
 
         # Replace tmpFile with the srcFile
-        os.remove(srcFile)
-        os.rename(tmpFileName, srcFile)
+        os.remove(srcFileName)
+        os.rename(tmpFileName, srcFileName)
         
         
         

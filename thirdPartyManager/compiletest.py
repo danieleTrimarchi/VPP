@@ -5,6 +5,6 @@ ipOpt= IpOptCompile()
 
 
 #ipOpt.__download__()
-#ipOpt.__compile__()
+ipOpt.__compile__()
 ipOpt.__package__()
 ipOpt.__test__()

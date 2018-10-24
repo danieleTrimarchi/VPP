@@ -213,6 +213,45 @@ class ipOptMumpsCompile(thirdPartyCompile):
         # Make nothing, MUMPS will be compiled as part of IpOpt
         pass 
 
+# Lapack is a requirement for IpOopt, that offers utility scripts to download and 
+# compile blas with the right bindings
+class ipOptMetisCompile(thirdPartyCompile):
+
+    # Ctor
+    def __init__(self,ipOptMetisPath):
+    
+        # Simply call mother-class init
+        super(ipOptMetisCompile,self).__init__()
+
+        # Name of this third_party. 
+        self.__name__="Metis"
+
+        # Store the location where ipOpt will download and 
+        # compile metis
+        self.__thirdPartySrcFolder__ = ipOptMetisPath
+        
+        # We do not need to fill other fileds, as this thirdParty is 
+        # entirely handled by IpOpt
+            
+    def __download__(self):
+        
+        # Use the IpOpt utilities to download BLAS from the web and compile
+        # Note that the __thirdPartySrcFolder__ has been set to the ipOpt/third_party/
+        # blas folder
+        os.chdir(self.__thirdPartySrcFolder__)
+        
+        # Patch the script to use curl instead of ftp - which is not installed on 
+        # my machine. Why should I use a different command than the other scripts? 
+        self.__patch__("wgetcmd=ftp","wgetcmd=\"curl -L -k -O\"","get.Metis")
+
+        # Make sure the get.Mumps script has 755 permissions and execute it
+        self.__execute__("chmod 755 get.Metis")
+        self.__execute__("./get.Metis")
+
+    def __compile__(self,dest=None):
+        # Make nothing, MUMPS will be compiled as part of IpOpt
+        pass 
+    
         
 class IpOptCompile(thirdPartyCompile):
     
@@ -274,6 +313,13 @@ class IpOptCompile(thirdPartyCompile):
                                        "ThirdParty","Mumps")
         self.__requirements__.append( ipOptMumpsCompile(mumpsSrcFolder))
 
+
+        # Instantiate the requirements... METIS
+        metisSrcFolder = os.path.join(self.__thirdPartySrcFolder__,
+                                       self.__srcDirName__,
+                                       "ThirdParty","Metis")
+        self.__requirements__.append( ipOptMetisCompile(metisSrcFolder))
+        
         # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
@@ -346,13 +392,13 @@ class IpOptCompile(thirdPartyCompile):
 
         # Launch the configure script with the macOS specific args 
         # (see pdf docs 2.8.2 Adjusting configuration and build of Ipopt)     
-        self.__execute__("../configure --disable-linear-solver-loader "
-                         "ADD_CFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
-                         "ADD_CXXFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
-                         "ADD_FFLAGS='-fexceptions -fbackslash' "
+        self.__execute__("../configure "
                          "--prefix={}".format(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib"))) 
 
-#--with-blas='-framework vecLib' --with-lapack='-framework vecLib'
+# --disable-linear-solver-loader "
+#                         "ADD_CFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
+#                         "ADD_CXXFLAGS='-fno-common -fexceptions -no-cpp-precomp' "
+#                         "ADD_FFLAGS='-fexceptions -fbackslash'#--with-blas='-framework vecLib' --with-lapack='-framework vecLib'
 #--disable-shared --with-pic "
 
         # Launch the build    
