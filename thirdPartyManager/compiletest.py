@@ -1,10 +1,9 @@
 import thirdPartyCompile as tp
-from ipOptCompile import IpOptCompile 
-ipOpt= IpOptCompile()
-#ipOpt.get()
+#from ipOptCompile import IpOptCompile 
+#ipOpt= IpOptCompile()
+#ipOpt.get(download=False)
 
-
-#ipOpt.__download__()
-ipOpt.__compile__()
-ipOpt.__package__()
-ipOpt.__test__()
+from CppUnitCompile import CppUnitCompile
+cppUnit = CppUnitCompile()
+#cppUnit.__download__()
+cppUnit.__compile__()

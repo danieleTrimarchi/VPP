@@ -326,25 +326,6 @@ class IpOptCompile(thirdPartyCompile):
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["DOCPATH"] = [self.__thirdPartyPkgFolder__]
         self.__buildInfo__["LIBS"] = ["ipopt"]
-
-    def __download__(self):
-            
-        # Go to the __thirdPartySrcFolder__. Its existence was 
-        # assured in the init of the class
-        os.chdir(self.__thirdPartySrcFolder__)
-                 
-        # cleanup: remove a previous archive if present
-        shutil.rmtree(self.__srcArchiveName__,sys.exc_info())
-          
-        # Get the sources from the web
-        print "Downloading the ipOpt sources..."
-        self.__getCompressedArchive__(self.__url__)
-        print "Downloaded the ipOpt sources!"
-                     
-         # I can now use the scripts provided by ipOpt to download the 
-         # required third_party. Kq[gr]pe
-        for iReq in self.__requirements__:
-            iReq.__download__()
             
     # Compile this package    
     def __compile__(self,dest=None):

@@ -165,7 +165,21 @@ class thirdPartyCompile(object):
     # To be implemented in child classes, describe where the 
     # source package can be downloaded
     def __download__(self):
-        raise ValueError( "thirdPartyCompile::__download__() should never be called" )
+        
+        # Go to the __thirdPartySrcFolder__. Its existence was 
+        # assured in the init of the class
+        os.chdir(self.__thirdPartySrcFolder__)
+                 
+        # cleanup: remove a previous archive if present
+        shutil.rmtree(self.__srcArchiveName__,sys.exc_info())
+          
+        # Get the sources from the web
+        self.__getCompressedArchive__(self.__url__)
+                     
+         # I can now use the scripts provided by ipOpt to download the 
+         # required third_party. Kq[gr]pe
+        for iReq in self.__requirements__:
+            iReq.__download__()
 
     # After extracting the third party, it might be the case that we need to 
     # use some tools internal to the package to download some additional reqs. 
@@ -236,7 +250,7 @@ class thirdPartyCompile(object):
                 url.endswith(".tgz") or 
                 url.endswith("/tar/") ) :
             import tarfile
-            print 'extracting a tar file...'
+            print 'extracting a tar.gz file...'
             tar= tarfile.open(mode='r|gz', fileobj=localArchive.raw)
             tar.extractall()
             tar.close()
