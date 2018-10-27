@@ -6,4 +6,6 @@ import thirdPartyCompile as tp
 from CppUnitCompile import CppUnitCompile
 cppUnit = CppUnitCompile()
 #cppUnit.__download__()
-cppUnit.__compile__()
+#cppUnit.__compile__()
+#cppUnit.__package__()
+cppUnit.__test__()

@@ -81,11 +81,10 @@ class CppUnitCompile(thirdPartyCompile):
         # Make the build folder
         os.mkdir("Build")
 
-        # Execute configure...
-        self.__execute__("./configure --prefix={}".format(os.path.join(self.__thirdPartyBuildFolder__,"Build")))
+        # Execute configure... Pre-define that the dest folder is the package
+        self.__execute__("./configure --prefix={}".format(self.__thirdPartyPkgFolder__))
         self.__execute__("make")
-        self.__execute__("make check")
-        
+        self.__execute__("make check")        
 
     # Package the third party that was build   
     def __package__(self):
@@ -101,19 +100,8 @@ class CppUnitCompile(thirdPartyCompile):
         # Make a package folder and enter it 
         os.mkdir(self.__thirdPartyPkgFolder__)
 
-        # Copy the content of include
-        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"include"opwjwpij), 
-                          os.path.join(self.__buildInfo__["INCLUDEPATH"],"boost"))
-# 
-#        ... self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"stage","lib"), 
-#                           self.__buildInfo__["LIBPATH"])
-
-        # Copy the documentation 
-        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"doc"), 
-                          self.__buildInfo__["DOCPATH"])       
-                   
-        # Finally, prepare the test folder 
-        os.mkdir(os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
+        # install to the package folder, as defined when configuring with the --prefix
+        self.__execute__("make install")
         
     # Run a simple test to check that the compile was successiful
     def __test__(self):
@@ -127,67 +115,66 @@ class CppUnitCompile(thirdPartyCompile):
         # Go to the example folder
         os.chdir(exampleFolder)
 
-        # Write the boost example 
-#  ...       Source=open("main.cpp","w")
-# ...        Source.write('''
-# #include <iostream>
-# #include <boost/shared_ptr.hpp>
-# #include <boost/filesystem.hpp>
-# #include <boost/system/error_code.hpp>
-# #include <boost/core/lightweight_test.hpp>
-# #include <cerrno>
-# using std::cout;
-# using namespace boost::filesystem;
-# using namespace boost::system;
-# 
-# static error_code e1( 1, system_category() );
-# static std::string m1 = e1.message();
-# 
-# static error_code e2( ENOENT, generic_category() );
-# static std::string m2 = e2.message();
-# 
-# int main(int argc, char** argv) {
-# 
-#     // Test instantiating a shared ptr
-#     boost::shared_ptr<int> myPtr; 
-# 
-#     // 
-#     path p (argv[1]);
-#     
-#     try {
-#         if (exists(p))
-#             cout<<\"Ok!\\n\";
-#     } catch (const filesystem_error& ex) {
-#         cout << ex.what() << \"\\n\";
-#     }
-# }       
-# ''')
-#         Source.close()
-#             
-#         # Write a SConstruct 
-#         Sconstruct=open("SConstruct","w")
-#         Sconstruct.write('''import os
-# env = Environment()  
-# env.Append( CPPPATH=["{}"] )
-# env.Append( LIBPATH=["{}"] )
-# env.Append( LIBS={} )
-# env.Program('boostTest', Glob('*.cpp') )        
-# '''.format(self.__buildInfo__["INCLUDEPATH"],
-#            self.__buildInfo__["LIBPATH"],
-#            self.__buildInfo__["LIBS"]))
-#         Sconstruct.close()
-#                         
-#         # Compile the example
-#         self.__execute__("scons -Q")
-#         
+        # Write the cppunit example 
+        Source=open("main.cpp","w")
+        Source.write('''
+#include <iostream>
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/ui/text/TestRunner.h>
+
+using namespace std;
+
+class Test : public CppUnit::TestFixture {
+
+  CPPUNIT_TEST_SUITE(Test);
+
+  /// Test the variables parsed in the variablefile
+  CPPUNIT_TEST(testThisTest);
+
+  CPPUNIT_TEST_SUITE_END();
+
+public:
+
+    void testThisTest() {
+        CPPUNIT_ASSERT_EQUAL( 1., 1. );
+    };
+};
+
+int main(int argc, char *argv[]) {
+
+  CppUnit::TextUi::TestRunner runner;
+  runner.addTest(Test::suite());
+  int returnValue = !runner.run();
+
+  return returnValue;
+}''')
+        Source.close()
+             
+        # Write a SConstruct
+        Sconstruct=open("SConstruct","w")
+        Sconstruct.write('''import os
+env = Environment()  
+env.Append( CPPPATH=["{}"] )
+env.Append( LIBPATH=["{}"] )
+env.Append( LIBS={} )
+env.Program('cppUnitTest', Glob('*.cpp') )        
+'''.format(self.__buildInfo__["INCLUDEPATH"],
+            self.__buildInfo__["LIBPATH"],
+            self.__buildInfo__["LIBS"]))
+        Sconstruct.close()
+                         
+        # Compile the example
+        self.__execute__("scons -Q")
+         
 #         # Before execution, add symbolic links to the dylibs. Why cannot I 
 #         # just set LD_LIBRARY_PATH..? Weird. Looks like MacOS security stuff.
 #         for iLib in self.__buildInfo__["LIBS"]:
 #             os.symlink(os.path.join(self.__buildInfo__["LIBPATH"],self.getFullDynamicLibName(iLib)), 
 #                        self.getFullDynamicLibName(iLib) )
 #         
-#         # Execute the example
-#        ... self.__execute__("./boostTest {}".format(os.getcwd()))        
+        # Execute the example
+        self.__execute__("./cppUnitTest {}".format(os.getcwd()))        
 
     # Import the dynamic libraries from third party to the dest folder (in this case
     # this will be in the app bundle VPP.app/Contents/Frameworks/
