@@ -1,29 +1,29 @@
 from thirdPartyCompile import thirdPartyCompile
 import os, shutil, sys
 
-class CppUnitCompile(thirdPartyCompile):
+class EigenCompile(thirdPartyCompile):
     
     # Ctor
     def __init__(self):
             
         # Simply call mother-class init
-        super(CppUnitCompile,self).__init__()
+        super(EigenCompile,self).__init__()
 
         # Name of this third_party. 
-        self.__name__="CppUnit"
+        self.__name__="Eigen"
         
         # Version of this third_party
-        self.__version__="1.13.2"
+        self.__version__="3.3.5"
         
         # Define the URL from which cppUnit can be downloaded
-        self.__url__="http://dev-www.libreoffice.org/src/cppunit-1.13.2.tar.gz"
+        self.__url__="http://bitbucket.org/eigen/eigen/get/3.3.5.tar.gz"
 
         # Define the name of the archive downloadeed from the web.
-        self.__srcArchiveName__="cppunit-1.13.2.tar.gz"
+        self.__srcArchiveName__="eigen-eigen-b3f3d4950030.tar"
         
         # Define the name of the folder extracted from the archive downloadeed from the web. 
         # A priori this is simply the srcArchiveName without the extension
-        self.__srcDirName__="cppunit-1.13.2"
+        self.__srcDirName__="eigen-eigen-b3f3d4950030"
         
         # Override (specialize) the build folder 
         self.__thirdPartyBuildFolder__= os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__)
@@ -38,38 +38,28 @@ class CppUnitCompile(thirdPartyCompile):
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = ["libcppunit"]
+        self.__buildInfo__["LIBS"] = []
             
+#     # Download an archive from a given url and unzip it 
+#     # Overwrite the method defined in thirdPartyCompile 
+#     # to specialize this for the tar.bz2 format to be downloaded
+#     # from sourgeforce. At some point this needs to be refactored 
+#     def __getCompressedArchive__(self,url,saveAs="myArch"):
+# 
+#        # download the archive
+#        self.__execute__("curl {} -L -k -o {}".format(self.__url__,self.__srcDirName__))
+# 
+#        # Then unzip and go...  for a tar.bz2...
+#        import tarfile
+#        tar= tarfile.open(mode='r|bz2', fileobj=self.__srcDirName__)
+#        tar.extractall()
+#        tar.close()
+
     # Compile this package    
     def __compile__(self,dest=None):
-        
-        # Cleanup previous build folder - if any
-        shutil.rmtree(self.__thirdPartyBuildFolder__,
-                      sys.exc_info())
-
-        # Copy the sources to the build dir
-        # First, make sure we are in the right place
-        os.chdir(self.__thirdPartySrcFolder__)
-        self.__copytree__(self.__srcDirName__,self.__thirdPartyBuildFolder__)
-
-        # What about the requirements? Actually this is a mis-use of the __compile__
-        # method, that does not compile for the requirements, because the ipOpt build 
-        # is able to handle compiling. So, for HSL only we move the sources to the 
-        # ThirdParty folder of ipOpt, so to complete the package 
-        for iReq in self.__requirements__:
-            iReq.__compile__(dest=os.path.join(self.__thirdPartyBuildFolder__,
-                                          "ThirdParty"))
     
-        # Go to the cppUnit build folder
-        os.chdir(self.__thirdPartyBuildFolder__)
-
-        # Make the build folder
-        os.mkdir("Build")
-
-        # Execute configure... Pre-define that the dest folder is the package
-        self.__execute__("./configure --prefix={}".format(self.__thirdPartyPkgFolder__))
-        self.__execute__("make")
-        self.__execute__("make check")        
+        # Eigen does not require to be compiled!     
+        pass     
 
     # Package the third party that was build   
     def __package__(self):
@@ -84,12 +74,16 @@ class CppUnitCompile(thirdPartyCompile):
 
         # Make a package folder and enter it 
         os.mkdir(self.__thirdPartyPkgFolder__)
+        
+         Compile with CMAKE to get the docs
 
-        # install to the package folder, as defined when configuring with the --prefix
-        self.__execute__("make install")
+         Copy the 'Eigen' folder to the include 
+        
         
     # Run a simple test to check that the compile was successiful
     def __test__(self):
+        
+        TODO
         
         exampleFolder= os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example")
 
@@ -151,7 +145,23 @@ env.Program('cppUnitTest', Glob('*.cpp') )
                          
         # Compile the example
         self.__execute__("scons -Q")
-
+         
+#         # Before execution, add symbolic links to the dylibs. Why cannot I 
+#         # just set LD_LIBRARY_PATH..? Weird. Looks like MacOS security stuff.
+#         for iLib in self.__buildInfo__["LIBS"]:
+#             os.symlink(os.path.join(self.__buildInfo__["LIBPATH"],self.getFullDynamicLibName(iLib)), 
+#                        self.getFullDynamicLibName(iLib) )
+#         
         # Execute the example
         self.__execute__("./cppUnitTest {}".format(os.getcwd()))        
+
+#     # Import the dynamic libraries from third party to the dest folder (in this case
+#     # this will be in the app bundle VPP.app/Contents/Frameworks/
+#     def importDynamicLibs(self,dst):
+#     
+#         # Copy the lib to the dest folder
+#         for iLib in self.__buildInfo__["LIBS"]: 
+#             shutil.copyfile(self.getFullDynamicLibName(iLib), 
+#                             os.path.join(dst,self.getFullDynamicLibName(iLib)))
+#                     
         
