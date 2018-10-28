@@ -176,13 +176,13 @@ env.Program('cppUnitTest', Glob('*.cpp') )
         # Execute the example
         self.__execute__("./cppUnitTest {}".format(os.getcwd()))        
 
-    # Import the dynamic libraries from third party to the dest folder (in this case
-    # this will be in the app bundle VPP.app/Contents/Frameworks/
-    def importDynamicLibs(self,dst):
-    
-        # Copy the lib to the dest folder
-        for iLib in self.__buildInfo__["LIBS"]: 
-            shutil.copyfile(self.getFullDynamicLibName(iLib), 
-                            os.path.join(dst,self.getFullDynamicLibName(iLib)))
-                    
+#     # Import the dynamic libraries from third party to the dest folder (in this case
+#     # this will be in the app bundle VPP.app/Contents/Frameworks/
+#     def importDynamicLibs(self,dst):
+#     
+#         # Copy the lib to the dest folder
+#         for iLib in self.__buildInfo__["LIBS"]: 
+#             shutil.copyfile(self.getFullDynamicLibName(iLib), 
+#                             os.path.join(dst,self.getFullDynamicLibName(iLib)))
+#                     
         

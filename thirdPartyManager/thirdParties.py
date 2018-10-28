@@ -452,14 +452,17 @@ class CppUnit( thirdParty ) :
         # Call mother-class constructor
         super(CppUnit,self).__init__()
 
-        self.__name__= "CppUnit"
+        from CppUnitCompile import CppUnitCompile
+        cppUnitPkg= CppUnitCompile()
 
-        self.__version__ = "1.13.2"
+        self.__name__= cppUnitPkg.__name__
+
+        self.__version__ = cppUnitPkg.__version__
 
         # Declare class members, to be filled by the children
-        self.__includePath__= [ os.path.join(self.__rootDir__,'cppunit-'+self.__version__,'build/include') ]
-        self.__libpath__= [ os.path.join(self.__rootDir__,'cppunit-'+self.__version__,'build/lib') ]
-        self.__libs__= ['cppunit']
+        self.__includePath__= cppUnitPkg.getIncludePath()
+        self.__libpath__= cppUnitPkg.getLibPath()
+        self.__libs__= cppUnitPkg.getLibs()
     
         self.__addTo__(env)
 
