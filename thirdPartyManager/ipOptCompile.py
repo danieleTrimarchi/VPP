@@ -324,32 +324,19 @@ class IpOptCompile(thirdPartyCompile):
         # the package folder
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
+        self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
         self.__buildInfo__["DOCPATH"] = [self.__thirdPartyPkgFolder__]
         self.__buildInfo__["LIBS"] = ["ipopt"]
             
     # Compile this package    
     def __compile__(self,dest=None):
         
-        # Cleanup previous build folder - if any
-        shutil.rmtree(self.__thirdPartyBuildFolder__,
-                      sys.exc_info())
-
-        # Copy the sources to the build dir
-        # First, make sure we are in the right place
-        os.chdir(self.__thirdPartySrcFolder__)
-        shutil.copytree(self.__srcDirName__,self.__thirdPartyBuildFolder__)
-
+        # Decorates the mother class __compile__ method
         # What about the requirements? Actually this is a mis-use of the __compile__
         # method, that does not compile for the requirements, because the ipOpt build 
-        # is able to handle compiling. So, for HSL only we move the sources to the 
-        # ThirdParty folder of ipOpt, so to complete the package 
-        for iReq in self.__requirements__:
-            iReq.__compile__(dest=os.path.join(self.__thirdPartyBuildFolder__,
-                                          "ThirdParty"))
+        # is able to handle compiling.
+        super(IpOptCompile,self).__compile__()
     
-        # Go to the ipOpt build folder
-        os.chdir(self.__thirdPartyBuildFolder__)
-
         # Make the build folder
         os.mkdir("Build")
         os.chdir("Build")
@@ -398,16 +385,8 @@ class IpOptCompile(thirdPartyCompile):
     # Package the third party that was build   
     def __package__(self):
                 
-        # Write the build info to file. This will be used
-        # by the build system to compile and link the program
-        self.__writeInfo__()   
-
-        # cleanup: remove a previous package folder if present. Remember that the 
-        # package folder was set relative to this third_party in the ctor
-        shutil.rmtree(self.__thirdPartyPkgFolder__,sys.exc_info())
-
-        # Make a package folder and enter it 
-        os.mkdir(self.__thirdPartyPkgFolder__)
+        # Decorate the mother class __package__ method
+        super(IpOptCompile,self).__package__()
 
         # Copy the content of include and lib
         shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib","include","coin"), 
@@ -427,8 +406,8 @@ class IpOptCompile(thirdPartyCompile):
     # Run a simple test to check that the compile was successiful
     def __test__(self):
         
-        # Also compile the c++ test, that will be run by __test__
-        os.chdir(os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
+         # Decorate the mother class __test__ method
+        super(IpOptCompile,self).__test__()
         
         # Write a SConstruct 
         Sconstruct=open("SConstruct","w")

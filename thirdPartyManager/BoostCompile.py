@@ -47,30 +47,9 @@ class BoostCompile(thirdPartyCompile):
     # Compile this package    
     def __compile__(self,dest=None):
         
-        print "Cleaning up..."
-
-        # Cleanup previous build folder - if any
-        shutil.rmtree(self.__thirdPartyBuildFolder__,
-                      sys.exc_info())
-
-        print "Copying srcs to the build folder..."
-
-        # Copy the sources to the build dir
-        # First, make sure we are in the right place
-        os.chdir(self.__thirdPartySrcFolder__)
-        self.__copytree__(self.__srcDirName__,self.__thirdPartyBuildFolder__)
-
-        # What about the requirements? Actually this is a mis-use of the __compile__
-        # method, that does not compile for the requirements, because the ipOpt build 
-        # is able to handle compiling. So, for HSL only we move the sources to the 
-        # ThirdParty folder of ipOpt, so to complete the package 
-        for iReq in self.__requirements__:
-            iReq.__compile__(dest=os.path.join(self.__thirdPartyBuildFolder__,
-                                          "ThirdParty"))
+        # Decorate the mother class __package__ method
+        super(BoostCompile,self).__compile__()
     
-        # Go to the ipOpt build folder
-        os.chdir(self.__thirdPartyBuildFolder__)
-
         # Make the build folder
         os.mkdir("Build")
 
@@ -111,42 +90,25 @@ class BoostCompile(thirdPartyCompile):
 
     # Package the third party that was build   
     def __package__(self):
+              
+        # Decorate the mother class __package__ method
+        super(BoostCompile,self).__package__()
                 
-        # Write the build info to file. This will be used
-        # by the build system to compile and link the program
-        self.__writeInfo__()   
-
-        # cleanup: remove a previous package folder if present. Remember that the 
-        # package folder was set relative to this third_party in the ctor
-        shutil.rmtree(self.__thirdPartyPkgFolder__,sys.exc_info())
-
-        # Make a package folder and enter it 
-        os.mkdir(self.__thirdPartyPkgFolder__)
-
         # Copy the content of include
         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"boost"), 
-                          os.path.join(self.__buildInfo__["INCLUDEPATH"],"boost"))
+                          os.path.join(self.__buildInfo__["INCLUDEPATH"][0],"boost"))
 
         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"stage","lib"), 
-                          self.__buildInfo__["LIBPATH"])
+                          self.__buildInfo__["LIBPATH"][0])
 
         # Also copy the documentation of the modules we are compiling
         self.__copySelectedDocs__()
-                              
-        # Finally, prepare the test folder 
-        os.mkdir(os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
-        
+                                      
     # Run a simple test to check that the compile was successiful
     def __test__(self):
-        
-        exampleFolder= os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example")
 
-        # cleanup
-        shutil.rmtree(exampleFolder)
-        os.mkdir(exampleFolder)
-        
-        # Go to the example folder
-        os.chdir(exampleFolder)
+        # Decorate the mother class __test__ method
+        super(BoostCompile,self).__test__()
 
         # Write the boost example 
         Source=open("main.cpp","w")

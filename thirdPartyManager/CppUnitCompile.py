@@ -43,26 +43,9 @@ class CppUnitCompile(thirdPartyCompile):
     # Compile this package    
     def __compile__(self,dest=None):
         
-        # Cleanup previous build folder - if any
-        shutil.rmtree(self.__thirdPartyBuildFolder__,
-                      sys.exc_info())
-
-        # Copy the sources to the build dir
-        # First, make sure we are in the right place
-        os.chdir(self.__thirdPartySrcFolder__)
-        self.__copytree__(self.__srcDirName__,self.__thirdPartyBuildFolder__)
-
-        # What about the requirements? Actually this is a mis-use of the __compile__
-        # method, that does not compile for the requirements, because the ipOpt build 
-        # is able to handle compiling. So, for HSL only we move the sources to the 
-        # ThirdParty folder of ipOpt, so to complete the package 
-        for iReq in self.__requirements__:
-            iReq.__compile__(dest=os.path.join(self.__thirdPartyBuildFolder__,
-                                          "ThirdParty"))
+        # Decorates the mother class __compile__ method
+        super(CppUnitCompile,self).__package__()
     
-        # Go to the cppUnit build folder
-        os.chdir(self.__thirdPartyBuildFolder__)
-
         # Make the build folder
         os.mkdir("Build")
 
@@ -74,16 +57,8 @@ class CppUnitCompile(thirdPartyCompile):
     # Package the third party that was build   
     def __package__(self):
                 
-        # Write the build info to file. This will be used
-        # by the build system to compile and link the program
-        self.__writeInfo__()   
-
-        # cleanup: remove a previous package folder if present. Remember that the 
-        # package folder was set relative to this third_party in the ctor
-        shutil.rmtree(self.__thirdPartyPkgFolder__,sys.exc_info())
-
-        # Make a package folder and enter it 
-        os.mkdir(self.__thirdPartyPkgFolder__)
+        # Decorate the mother class __package__ method
+        super(CppUnitCompile,self).__package__()
 
         # install to the package folder, as defined when configuring with the --prefix
         self.__execute__("make install")
@@ -91,14 +66,8 @@ class CppUnitCompile(thirdPartyCompile):
     # Run a simple test to check that the compile was successiful
     def __test__(self):
         
-        exampleFolder= os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example")
-
-        # cleanup
-        shutil.rmtree(exampleFolder)
-        os.mkdir(exampleFolder)
-        
-        # Go to the example folder
-        os.chdir(exampleFolder)
+        # Decorate the mother class __test__ method
+        super(CppUnitCompile,self).__test__()
 
         # Write the cppunit example 
         Source=open("main.cpp","w")

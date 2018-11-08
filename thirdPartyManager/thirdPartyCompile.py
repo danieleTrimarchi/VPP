@@ -27,6 +27,7 @@ except ImportError, e:
 ''' Static identifiers '''
 __includepathFlag__ = "INCLUDEPATH"    
 __libpathFlag__ = "LIBPATH"         
+__binpathFlag__ = "BINPATH"         
 __docpathFlag__ = "DOCPATH"
 __libsFlag__ = "LIBS"     
     
@@ -67,6 +68,7 @@ class thirdPartyCompile(object):
         # Include Path. To be filled
         self.__buildInfo__={__includepathFlag__:[""],
                             __libpathFlag__:[""],
+                            __binpathFlag__:[""],
                             __docpathFlag__:[""],
                             __libsFlag__:[""]}
             
@@ -190,16 +192,61 @@ class thirdPartyCompile(object):
         
     # How to compile the third party
     def __compile__(self,dest=None):
-        raise ValueError( "thirdPartyCompile::__compile__() should never be called" ) 
+        
+        # Cleanup previous build folder - if any
+        shutil.rmtree(self.__thirdPartyBuildFolder__,
+                      sys.exc_info())
+
+        # Copy the sources to the build dir
+        # First, make sure we are in the right place
+        os.chdir(self.__thirdPartySrcFolder__)
+        self.__copytree__(self.__srcDirName__,self.__thirdPartyBuildFolder__)
+
+        # Compile the requrements, if any
+        for iReq in self.__requirements__:
+            iReq.__compile__(dest=os.path.join(self.__thirdPartyBuildFolder__,
+                                          "ThirdParty"))
+
+        # Go to the build folder
+        os.chdir(self.__thirdPartyBuildFolder__)
+
         
     # How to package the relevant components of this third_party
     def __package__(self):
-        raise ValueError( "thirdPartyCompile::__package__() should never be called" ) 
+
+        # Write the build info to file. This will be used
+        # by the build system to compile and link the program
+        self.__writeInfo__()   
+
+        # cleanup: remove a previous package folder if present. Remember that the 
+        # package folder was set relative to this third_party in the ctor
+        shutil.rmtree(self.__thirdPartyPkgFolder__,sys.exc_info())
+
+        # Make a package folder and enter it 
+        os.mkdir(self.__thirdPartyPkgFolder__)
+
+        # Create the folders include, bin, lib, doc. The paths to 
+        # these folders are defined in the ctor of the child classes
+        os.mkdir(self.__buildInfo__["INCLUDEPATH"][0])
+        os.mkdir(self.__buildInfo__["LIBPATH"][0])
+        os.mkdir(self.__buildInfo__["BINPATH"][0])
+        os.mkdir(self.__buildInfo__["DOCPATH"][0])
         
     # Run some test to make sure this third party was compiled 
     # properly
     def __test__(self):
-        raise ValueError( "thirdPartyCompile::__test__() should never be called" )
+
+        exampleFolder= os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example")
+
+        # cleanup
+        try:
+            shutil.rmtree(exampleFolder)
+        except:
+            pass
+        os.mkdir(exampleFolder)
+            
+        # Go to the example folder
+        os.chdir(exampleFolder)
         
     # Write the build info to file. This will be used
     # by the build system to compile and link the program

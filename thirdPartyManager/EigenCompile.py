@@ -37,6 +37,7 @@ class EigenCompile(thirdPartyCompile):
         # the package folder
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
+        self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
         self.__buildInfo__["LIBS"] = []
             
@@ -58,75 +59,61 @@ class EigenCompile(thirdPartyCompile):
     # Compile this package    
     def __compile__(self,dest=None):
     
-        # Eigen does not require to be compiled!     
-        pass     
+        # Decorate the mother class __compile__ method
+        super(EigenCompile,self).__compile__()
+
+        # Eigen does not require to be compiled. However, 
+        # we compile with cMake to get the docs. We compile 
+        # with cmake as explained in the INSTALL file. We assume
+        # that cmake is installed and accessible on the machine, 
+        # which is not a too strong assumption 
+        
+        # Make the build folder and access it
+        os.mkdir("Build")
+        os.chdir("Build")
+
+        self.__execute__("cmake {} -DCMAKE_INSTALL_PREFIX={} -DINCLUDE_INSTALL_DIR={}".format(
+                                    self.__thirdPartyBuildFolder__,
+                                    os.getcwd(),
+                                    self.__buildInfo__["INCLUDEPATH"]))
+        self.__execute__("make doc")
 
     # Package the third party that was build   
     def __package__(self):
-                
-        # Write the build info to file. This will be used
-        # by the build system to compile and link the program
-        self.__writeInfo__()   
+                   
+        # Decorate the mother class __package__ method
+        super(EigenCompile,self).__package__()
+                     
+        # Get back to the Eigen Build folder if we are not still there
+        os.chdir(os.path.join(self.__thirdPartyBuildFolder__,"Build"))
 
-        # cleanup: remove a previous package folder if present. Remember that the 
-        # package folder was set relative to this third_party in the ctor
-        shutil.rmtree(self.__thirdPartyPkgFolder__,sys.exc_info())
-
-        # Make a package folder and enter it 
-        os.mkdir(self.__thirdPartyPkgFolder__)
+        # install to the package folder, as defined when configuring with the --prefix
+        self.__execute__("make install")
         
-         Compile with CMAKE to get the docs
-
-         Copy the 'Eigen' folder to the include 
-        
-        
+        # Copy the docs that are in __thirdPartyBuildFolder__/build/doc/html
+        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Build","doc","html"), 
+                        os.path.join(self.__buildInfo__["DOCPATH"][0],"html"), symlinks=True)
+                        
     # Run a simple test to check that the compile was successiful
     def __test__(self):
-        
-        TODO
-        
-        exampleFolder= os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example")
-
-        # cleanup
-        shutil.rmtree(exampleFolder)
-        os.mkdir(exampleFolder)
-        
-        # Go to the example folder
-        os.chdir(exampleFolder)
+                
+        # Decorate the mother class __test__ method
+        super(EigenCompile,self).__test__()
 
         # Write the cppunit example 
         Source=open("main.cpp","w")
         Source.write('''
 #include <iostream>
-#include <cppunit/TestFixture.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/ui/text/TestRunner.h>
+#include <Eigen/Core>
 
 using namespace std;
 
-class Test : public CppUnit::TestFixture {
-
-  CPPUNIT_TEST_SUITE(Test);
-
-  /// Test the variables parsed in the variablefile
-  CPPUNIT_TEST(testThisTest);
-
-  CPPUNIT_TEST_SUITE_END();
-
-public:
-
-    void testThisTest() {
-        CPPUNIT_ASSERT_EQUAL( 1., 1. );
-    };
-};
-
 int main(int argc, char *argv[]) {
 
-  CppUnit::TextUi::TestRunner runner;
-  runner.addTest(Test::suite());
-  int returnValue = !runner.run();
-
-  return returnValue;
+    Eigen::VectorXd v(4);
+    v << 1.0, 2.1, 3.2, 4.3;
+    std::cout<<"Eigen Vector:"<<v.transpose()<<std::endl;
+    return 0;
 }''')
         Source.close()
              
@@ -136,32 +123,15 @@ int main(int argc, char *argv[]) {
 env = Environment()  
 env.Append( CPPPATH=["{}"] )
 env.Append( LIBPATH=["{}"] )
-env.Append( LIBS={} )
 env.Program('cppUnitTest', Glob('*.cpp') )        
-'''.format(self.__buildInfo__["INCLUDEPATH"],
-            self.__buildInfo__["LIBPATH"],
-            self.__buildInfo__["LIBS"]))
+'''.format(self.__buildInfo__["INCLUDEPATH"][0],
+            self.__buildInfo__["LIBPATH"][0]))
         Sconstruct.close()
                          
         # Compile the example
         self.__execute__("scons -Q")
          
-#         # Before execution, add symbolic links to the dylibs. Why cannot I 
-#         # just set LD_LIBRARY_PATH..? Weird. Looks like MacOS security stuff.
-#         for iLib in self.__buildInfo__["LIBS"]:
-#             os.symlink(os.path.join(self.__buildInfo__["LIBPATH"],self.getFullDynamicLibName(iLib)), 
-#                        self.getFullDynamicLibName(iLib) )
-#         
         # Execute the example
         self.__execute__("./cppUnitTest {}".format(os.getcwd()))        
-
-#     # Import the dynamic libraries from third party to the dest folder (in this case
-#     # this will be in the app bundle VPP.app/Contents/Frameworks/
-#     def importDynamicLibs(self,dst):
-#     
-#         # Copy the lib to the dest folder
-#         for iLib in self.__buildInfo__["LIBS"]: 
-#             shutil.copyfile(self.getFullDynamicLibName(iLib), 
-#                             os.path.join(dst,self.getFullDynamicLibName(iLib)))
-#                     
+            
         
