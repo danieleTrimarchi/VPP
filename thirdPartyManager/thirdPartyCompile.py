@@ -12,7 +12,7 @@ try:
 except ImportError as error:
     print "Installing pip... ", error.message
     p = subprocess.Popen("sudo easy_install pip",shell=True)
-    if not p.wait():
+    if p.wait():
         raise
     import pip
 
@@ -20,7 +20,7 @@ try:
     import requests # Download files from the web
 except ImportError, e:
     p = subprocess.Popen("sudo pip install requests",shell=True)
-    if not p.wait():
+    if p.wait():
         raise
     import requests
     
@@ -156,8 +156,8 @@ class thirdPartyCompile(object):
         return self.__buildInfo__[__docpathFlag__]
         
     # Warning: this method is duplicated in thirdParties.py. Classes need to merge
-    def getFullDynamicLibName(self,shortLibName):
-        return "lib"+shortLibName+".dylib"
+    def getFullDynamicLibName(self,shortLibName,additions=""):
+        return "lib"+shortLibName+additions+".dylib"
     
     # Import the dynamic libraries from third party to the dest folder (in this case
     # this will be in the app bundle VPP.app/Contents/Frameworks/

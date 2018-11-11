@@ -167,12 +167,12 @@ env.Program('boostTest', Glob('*.cpp') )
         
         # Before execution, add symbolic links to the dylibs. Why cannot I 
         # just set LD_LIBRARY_PATH..? Weird. Looks like MacOS security stuff.
-        for iLib in self.__buildInfo__["LIBS"]:
-            os.symlink(os.path.join(self.__buildInfo__["LIBPATH"],self.getFullDynamicLibName(iLib)), 
-                       self.getFullDynamicLibName(iLib) )
+        #for iLib in self.__buildInfo__["LIBS"]:
+        #    os.symlink(os.path.join(self.__buildInfo__["LIBPATH"],self.getFullDynamicLibName(iLib)), 
+        #               self.getFullDynamicLibName(iLib) )
         
         # Execute the example
-        self.__execute__("./boostTest {}".format(os.getcwd()))        
+        self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./boostTest {}".format(self.__buildInfo__["LIBPATH"][0],os.getcwd()))        
 
     # Import the dynamic libraries from third party to the dest folder (in this case
     # this will be in the app bundle VPP.app/Contents/Frameworks/
