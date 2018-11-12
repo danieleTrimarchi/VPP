@@ -525,15 +525,18 @@ class NLOpt( thirdParty ) :
         # Call mother-class constructor
         super(NLOpt,self).__init__()
         
-        self.__name__= "NLOpt"
+        from NlOptCompile import NlOptCompile
+        nlOptCompile= NlOptCompile()
+
+        self.__name__= nlOptCompile.__name__
         
-        self.__version__ = "2.4.2"
+        self.__version__ = nlOptCompile.__version__
 
         # Declare class members, to be filled by the children
-        self.__includePath__= [ os.path.join( self.__rootDir__,'nlopt-' + self.__version__,'api') ]
-        self.__libpath__= [ os.path.join( self.__rootDir__,'nlopt-' + self.__version__,'libs')]
-        self.__libs__= ['nlopt']
-    
+        self.__includePath__= nlOptCompile.getIncludePath()
+        self.__libpath__= nlOptCompile.getLibPath()
+        self.__libs__= nlOptCompile.getLibs()
+        
         self.__addTo__(env)
     
 # -- 

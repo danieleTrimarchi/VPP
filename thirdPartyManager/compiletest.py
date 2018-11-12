@@ -18,6 +18,6 @@ import thirdPartyCompile as tp
 
 from NlOptCompile import NlOptCompile
 nlOpt= NlOptCompile()
-#nlOpt.__compile__()
-#nlOpt.__package__()
+nlOpt.__compile__()
+nlOpt.__package__()
 nlOpt.__test__()

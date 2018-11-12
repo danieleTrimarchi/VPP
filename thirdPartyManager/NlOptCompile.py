@@ -49,7 +49,7 @@ class NlOptCompile(thirdPartyCompile):
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = ["nlopt"]
+        self.__buildInfo__["LIBS"] = ["nlopt","nlopt.0","nlopt.0.9.0"]
         
         # Also verify that the package mkdocs is available. This is used to
         # generate the nlOpt documentation 

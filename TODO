@@ -1,4 +1,4 @@
--> recompile with MUMPS-based ipOpt. The current version is HSL based, which apparently does not perform as well as MUMPS. In any case, the ipOpt test will fail. 
+-> Add a 'clean' target to cleanup the build space
 
 -> the jacobian plot is broken, and it segv
 
