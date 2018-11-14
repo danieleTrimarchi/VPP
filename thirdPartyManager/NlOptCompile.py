@@ -37,15 +37,10 @@ class NlOptCompile(thirdPartyCompile):
         
         # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
-#         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
-#         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
-#         self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
-#         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-#         self.__buildInfo__["LIBS"] = ["nlopt"]
-        self.__buildInfo__["INCLUDEPATH"] = "/Users/dtrimarchi/third_party/nlopt-2.4.2_copy/libs/include"
-        self.__buildInfo__["LIBPATH"] = "/Users/dtrimarchi/third_party/nlopt-2.4.2_copy/libs/lib"
-        self.__buildInfo__["BINPATH"] = ""
-        self.__buildInfo__["DOCPATH"] = ""
+        self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
+        self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
+        self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
+        self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
         self.__buildInfo__["LIBS"] = ["nlopt"]
         
     # Compile this package    

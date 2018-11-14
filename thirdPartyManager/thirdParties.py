@@ -521,21 +521,23 @@ class IPOpt( thirdParty ) :
 class NLOpt( thirdParty ) :
 
     def __init__(self, env):
-        
+                
         # Call mother-class constructor
         super(NLOpt,self).__init__()
         
-        self.__name__= "NLOpt"
+        from NlOptCompile import NlOptCompile
+        nlOptCompile= NlOptCompile()
+
+        self.__name__= nlOptCompile.__name__
         
-        self.__version__ = "2.4.2"
+        self.__version__ = nlOptCompile.__version__
 
         # Declare class members, to be filled by the children
-        self.__includePath__= ['/Users/dtrimarchi/third_party_pkg/nlopt-2.4.2/include' ]
-        self.__libpath__= ['/Users/dtrimarchi/third_party_pkg/nlopt-2.4.2/lib']
-        self.__libs__= ['nlopt']
-    
-        self.__addTo__(env)
-    
+        self.__includePath__= nlOptCompile.getIncludePath()
+        self.__libpath__= nlOptCompile.getLibPath()
+        self.__libs__= nlOptCompile.getLibs()
+        
+        self.__addTo__(env)    
 # -- 
 
 class Qt( thirdParty ) :
