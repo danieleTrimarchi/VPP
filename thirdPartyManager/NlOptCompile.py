@@ -2,15 +2,6 @@ from thirdPartyCompile import thirdPartyCompile
 import os, shutil, sys
 import subprocess
 
-# Import markdown which is used for the documentation
-try:
-    import markdown
-except:
-    p = subprocess.Popen("pip install python-markdown-math",shell=True)
-    if p.wait():
-        raise NameError('Something went wrong while installing python-markdown-math')
-    import markdown
-
 class NlOptCompile(thirdPartyCompile):
     
     # Ctor
@@ -23,17 +14,18 @@ class NlOptCompile(thirdPartyCompile):
         self.__name__="NLOpt"
         
         # Version of this third_party
-        self.__version__="2.5.0"
+        self.__version__="2.4.2"
         
         # Define the URL from which cppUnit can be downloaded
-        self.__url__="https://github.com/stevengj/nlopt/archive/v2.5.0.tar.gz"
+        
+        self.__url__="https://github.com/stevengj/nlopt/releases/download/nlopt-2.4.2/nlopt-2.4.2.tar.gz"
 
         # Define the name of the archive downloadeed from the web.
-        self.__srcArchiveName__="nlopt-2.5.0.tar"
+        self.__srcArchiveName__="nlopt-2.4.2.tar"
         
         # Define the name of the folder extracted from the archive downloadeed from the web. 
         # A priori this is simply the srcArchiveName without the extension
-        self.__srcDirName__="nlopt-2.5.0"
+        self.__srcDirName__="nlopt-2.4.2"
         
         # Override (specialize) the build folder 
         self.__thirdPartyBuildFolder__= os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__)
@@ -45,35 +37,26 @@ class NlOptCompile(thirdPartyCompile):
         
         # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
-        self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
-        self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
-        self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
-        self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = ["nlopt","nlopt.0","nlopt.0.9.0"]
+#         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
+#         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
+#         self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
+#         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
+#         self.__buildInfo__["LIBS"] = ["nlopt"]
+        self.__buildInfo__["INCLUDEPATH"] = "/Users/dtrimarchi/third_party/nlopt-2.4.2_copy/libs/include"
+        self.__buildInfo__["LIBPATH"] = "/Users/dtrimarchi/third_party/nlopt-2.4.2_copy/libs/lib"
+        self.__buildInfo__["BINPATH"] = ""
+        self.__buildInfo__["DOCPATH"] = ""
+        self.__buildInfo__["LIBS"] = ["nlopt"]
         
-        # Also verify that the package mkdocs is available. This is used to
-        # generate the nlOpt documentation 
-        try:
-            self.__execute__("mkdocs --version")
-        except:
-            p = subprocess.Popen("sudo pip install mkdocs",shell=True)
-            if p.wait():
-                raise NameError('Something went wrong while installing mkdocs')
-
     # Compile this package    
     def __compile__(self,dest=None):
 
         # Decorates the mother class __compile__ method
         super(NlOptCompile,self).__compile__()
-    
-        # Make the build folder
-        os.mkdir("Build")
-        os.chdir("Build")
 
-        # Execute cmake...
-        self.__execute__("cmake -DCMAKE_INSTALL_PREFIX={} -DNLOPT_PYTHON=OFF -DNLOPT_OCTAVE=OFF -DNLOPT_MATLAB=OFF -DNLOPT_GUILE=OFF -DNLOPT_SWIG=OFF -DNLOPT_LINK_PYTHON=OFF ..".format(self.__thirdPartyPkgFolder__))
+        # Build
+        self.__execute__("./configure  --prefix={}".format(self.__thirdPartyPkgFolder__))
         self.__execute__("make")        
-
         
     # Package the third party that was build   
     def __package__(self):
@@ -82,13 +65,11 @@ class NlOptCompile(thirdPartyCompile):
         super(NlOptCompile,self).__package__()
 
         # Make sure to be in the right place, for instance the Build folder 
-        os.chdir(os.path.join(self.__thirdPartyBuildFolder__,"Build"))
+        os.chdir(self.__thirdPartyBuildFolder__)
         
         # install to the package folder, as defined when configuring with the --prefix
         self.__execute__("make install")
-        
-        # Also package the docs
-        
+            
         
     # Run a simple test to check that the compile was successiful
     def __test__(self):

@@ -530,8 +530,8 @@ class NLOpt( thirdParty ) :
         self.__version__ = "2.4.2"
 
         # Declare class members, to be filled by the children
-        self.__includePath__= ['/Users/dtrimarchi/third_party/nlopt-2.4.2_copy/libs/include' ]
-        self.__libpath__= ['/Users/dtrimarchi/third_party/nlopt-2.4.2_copy/libs/lib']
+        self.__includePath__= ['/Users/dtrimarchi/third_party_pkg/nlopt-2.4.2/include' ]
+        self.__libpath__= ['/Users/dtrimarchi/third_party_pkg/nlopt-2.4.2/lib']
         self.__libs__= ['nlopt']
     
         self.__addTo__(env)
