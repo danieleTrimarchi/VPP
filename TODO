@@ -1,3 +1,13 @@
+-> TONIGHT : download qt offline and compile only the modules we require!
+                              'QtCore',
+                              'QtGui',
+                              'QtWidgets',
+                              'QtDataVisualization', 
+                              'QtPrintSupport'
+-> Recompile full Eigen with the docs and verify all tests still pass 
+
+-> the test of ipOpt does not take advantage of the buildInfo. Correct!
+
 -> Add a 'clean' target to cleanup the build space
 
 -> the jacobian plot is broken, and it segv

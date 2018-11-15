@@ -155,13 +155,11 @@ env.Append( CPPPATH=["{}"] )
 env.Append( LIBPATH=["{}"] )
 env.Append( LIBS={} )
 env.Program('boostTest', Glob('*.cpp') )        
-'''.format(self.__buildInfo__["INCLUDEPATH"],
-           self.__buildInfo__["LIBPATH"],
+'''.format(self.__buildInfo__["INCLUDEPATH"][0],
+           self.__buildInfo__["LIBPATH"][0],
            self.__buildInfo__["LIBS"]))
         Sconstruct.close()
-        
-        print "Compiling the boost test: we are in folder: ", os.getcwd()
-                
+                        
         # Compile the example
         self.__execute__("scons -Q")
         

@@ -2,6 +2,8 @@ from thirdPartyCompile import thirdPartyCompile
 import os
 import shutil
 import sys 
+import glob
+from bundlebuilder import symlink
 
 # Blas is a requirement for IpOopt, that offers utility scripts to download and 
 # compile blas with the right bindings
@@ -325,7 +327,7 @@ class IpOptCompile(thirdPartyCompile):
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
-        self.__buildInfo__["DOCPATH"] = [self.__thirdPartyPkgFolder__]
+        self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
         self.__buildInfo__["LIBS"] = ["ipopt"]
             
     # Compile this package    
@@ -388,42 +390,47 @@ class IpOptCompile(thirdPartyCompile):
         # Decorate the mother class __package__ method
         super(IpOptCompile,self).__package__()
 
+        from distutils.dir_util import copy_tree 
+        
         # Copy the content of include and lib
-        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib","include","coin"), 
-                        self.__buildInfo__["INCLUDEPATH"][0], symlinks=True)
+        copy_tree(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib","include","coin"), 
+                        os.path.join(self.__buildInfo__["INCLUDEPATH"][0]))
                 
-        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib","lib"), 
-                        self.__buildInfo__["LIBPATH"][0], symlinks=True)
+        copy_tree(os.path.join(self.__thirdPartyBuildFolder__,"Build","lib","lib"), 
+                        self.__buildInfo__["LIBPATH"][0])
 
         # Also copy the documentation
         shutil.copyfile(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","doc","documentation.pdf"), 
                         os.path.join(self.__buildInfo__["DOCPATH"][0],"documentation.pdf"))
- 
-        # Copy the example 
-        shutil.copytree(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","examples","Cpp_example"), 
-                        os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
-                                     
+                                      
     # Run a simple test to check that the compile was successiful
     def __test__(self):
         
          # Decorate the mother class __test__ method
         super(IpOptCompile,self).__test__()
-        
+ 
+         # Copy the example files
+        for file in glob.glob(r'{}'.format(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","examples","Cpp_example","*"))):
+            shutil.copy(file,os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
+               
         # Write a SConstruct 
         Sconstruct=open("SConstruct","w")
         Sconstruct.write('''import os
 env = Environment()  
-env.Append( CPPPATH=["{}/include"] )
-env.Append( LIBPATH=["{}/lib"] )
-env.Append( LIBS=["ipopt"] )
+env.Append( CPPPATH=["{}"] )
+env.Append( LIBPATH=["{}"] )
+env.Append( LIBS={} )
 env.Program('ipOptTest', Glob('*.cpp') )        
-'''.format(self.__thirdPartyPkgFolder__,self.__thirdPartyPkgFolder__))
+'''.format(self.__buildInfo__["INCLUDEPATH"][0],
+           self.__buildInfo__["LIBPATH"][0],
+           self.__buildInfo__["LIBS"]))
         Sconstruct.close()
-        
-        print "Executing the ipOpt test: we are in folder: ", os.getcwd()
-                
+                        
         # Compile the example
         self.__execute__("scons -Q")
+        
+        # Execute the example
+        self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./ipOptTest {}".format(self.__buildInfo__["LIBPATH"][0],os.getcwd()))        
         
         # Execute the example
         self.__execute__("./ipOptTest")        
