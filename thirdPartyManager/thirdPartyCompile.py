@@ -349,7 +349,29 @@ class thirdPartyCompile(object):
         os.remove(srcFileName)
         os.rename(tmpFileName, srcFileName)
         
+    # Compile and run the test
+    def __makeTest__(self):
+          
+        # Write a SConstruct 
+        Sconstruct=open("SConstruct","w")
+        Sconstruct.write('''import os
+env = Environment()  
+env.Append( CPPPATH=["{}"] )
+env.Append( LIBPATH=["{}"] )
+env.Append( LIBS={} )
+env.Program('{}_test', Glob('*.cpp') )        
+'''.format(self.__buildInfo__["INCLUDEPATH"][0],
+           self.__buildInfo__["LIBPATH"][0],
+           self.__buildInfo__["LIBS"],
+           self.__name__
+           ))
+        Sconstruct.close()
+                        
+        # Compile the example
+        self.__execute__("scons -Q")
         
-        
+        # Execute the example
+        self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./{}_test {}".format(self.__buildInfo__["LIBPATH"][0],self.__name__,os.getcwd()))        
+                
         
         

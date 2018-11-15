@@ -104,23 +104,8 @@ int main(int argc, char *argv[]) {
   return returnValue;
 }''')
         Source.close()
-             
-        # Write a SConstruct
-        Sconstruct=open("SConstruct","w")
-        Sconstruct.write('''import os
-env = Environment()  
-env.Append( CPPPATH=["{}"] )
-env.Append( LIBPATH=["{}"] )
-env.Append( LIBS={} )
-env.Program('cppUnitTest', Glob('*.cpp') )        
-'''.format(self.__buildInfo__["INCLUDEPATH"],
-            self.__buildInfo__["LIBPATH"],
-            self.__buildInfo__["LIBS"]))
-        Sconstruct.close()
-                         
-        # Compile the example
-        self.__execute__("scons -Q")
-
-        # Execute the example
-        self.__execute__("./cppUnitTest {}".format(os.getcwd()))        
-        
+       
+        # Compile and run the test
+        self.__makeTest__()
+    
+            

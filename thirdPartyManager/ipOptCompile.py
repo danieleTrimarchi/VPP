@@ -413,26 +413,7 @@ class IpOptCompile(thirdPartyCompile):
         for file in glob.glob(r'{}'.format(os.path.join(self.__thirdPartyBuildFolder__,"Ipopt","examples","Cpp_example","*"))):
             shutil.copy(file,os.path.join(self.__thirdPartyPkgFolder__,"Cpp_example"))
                
-        # Write a SConstruct 
-        Sconstruct=open("SConstruct","w")
-        Sconstruct.write('''import os
-env = Environment()  
-env.Append( CPPPATH=["{}"] )
-env.Append( LIBPATH=["{}"] )
-env.Append( LIBS={} )
-env.Program('ipOptTest', Glob('*.cpp') )        
-'''.format(self.__buildInfo__["INCLUDEPATH"][0],
-           self.__buildInfo__["LIBPATH"][0],
-           self.__buildInfo__["LIBS"]))
-        Sconstruct.close()
-                        
-        # Compile the example
-        self.__execute__("scons -Q")
-        
-        # Execute the example
-        self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./ipOptTest {}".format(self.__buildInfo__["LIBPATH"][0],os.getcwd()))        
-        
-        # Execute the example
-        self.__execute__("./ipOptTest")        
-        
+        # Compile and run the test
+        self.__makeTest__()
+            
         

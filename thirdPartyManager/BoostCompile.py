@@ -147,31 +147,11 @@ int main(int argc, char** argv) {
 ''')
         Source.close()
             
-        # Write a SConstruct 
-        Sconstruct=open("SConstruct","w")
-        Sconstruct.write('''import os
-env = Environment()  
-env.Append( CPPPATH=["{}"] )
-env.Append( LIBPATH=["{}"] )
-env.Append( LIBS={} )
-env.Program('boostTest', Glob('*.cpp') )        
-'''.format(self.__buildInfo__["INCLUDEPATH"][0],
-           self.__buildInfo__["LIBPATH"][0],
-           self.__buildInfo__["LIBS"]))
-        Sconstruct.close()
-                        
-        # Compile the example
-        self.__execute__("scons -Q")
+        # Compile and run the test
+        self.__makeTest__()
         
-        # Before execution, add symbolic links to the dylibs. Why cannot I 
-        # just set LD_LIBRARY_PATH..? Weird. Looks like MacOS security stuff.
-        #for iLib in self.__buildInfo__["LIBS"]:
-        #    os.symlink(os.path.join(self.__buildInfo__["LIBPATH"],self.getFullDynamicLibName(iLib)), 
-        #               self.getFullDynamicLibName(iLib) )
-        
-        # Execute the example
-        self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./boostTest {}".format(self.__buildInfo__["LIBPATH"][0],os.getcwd()))        
-
+    # -- 
+            
     # Import the dynamic libraries from third party to the dest folder (in this case
     # this will be in the app bundle VPP.app/Contents/Frameworks/
     def importDynamicLibs(self,dst):

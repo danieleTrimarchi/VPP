@@ -1,11 +1,11 @@
 import thirdPartyCompile as tp
 
-#from ipOptCompile import IpOptCompile 
-#ipOpt= IpOptCompile()
+# from ipOptCompile import IpOptCompile 
+# ipOpt= IpOptCompile()
 # ipOpt.get()
  
-#from BoostCompile import BoostCompile 
-#boost= BoostCompile()
+# from BoostCompile import BoostCompile 
+# boost= BoostCompile()
 # boost.get()
 
 # from CppUnitCompile import CppUnitCompile
@@ -18,6 +18,8 @@ import thirdPartyCompile as tp
 
 # from NlOptCompile import NlOptCompile
 # nlOpt= NlOptCompile()
-# nlOpt.__compile__()
-# nlOpt.__package__()
-# nlOpt.__test__()
+# nlOpt.get()
+
+# from QtCompile import QtCompile
+# qt= QtCompile()
+# qt.get()
