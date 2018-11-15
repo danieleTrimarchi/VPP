@@ -12,12 +12,14 @@ import thirdPartyCompile as tp
 # cppUnit = CppUnitCompile()
 # cppUnit.get()
 # 
-# from EigenCompile import EigenCompile
-# eigen = EigenCompile()
-# eigen.get()
+from EigenCompile import EigenCompile
+eigen = EigenCompile()
+eigen.__compile__()
+eigen.__package__()
+eigen.__test__()
 
-from NlOptCompile import NlOptCompile
-nlOpt= NlOptCompile()
-nlOpt.__compile__()
-nlOpt.__package__()
-nlOpt.__test__()
+# from NlOptCompile import NlOptCompile
+# nlOpt= NlOptCompile()
+# nlOpt.__compile__()
+# nlOpt.__package__()
+# nlOpt.__test__()

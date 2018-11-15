@@ -13,17 +13,17 @@ class EigenCompile(thirdPartyCompile):
         self.__name__="Eigen"
         
         # Version of this third_party
-        self.__version__="3.3.5"
+        self.__version__="3.3.4"
         
         # Define the URL from which cppUnit can be downloaded
-        self.__url__="http://bitbucket.org/eigen/eigen/get/3.3.5.tar.gz"
+        self.__url__="http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz"
 
         # Define the name of the archive downloadeed from the web.
-        self.__srcArchiveName__="eigen-eigen-b3f3d4950030.tar"
+        self.__srcArchiveName__="eigen-eigen-5a0156e40feb.tar"
         
         # Define the name of the folder extracted from the archive downloadeed from the web. 
         # A priori this is simply the srcArchiveName without the extension
-        self.__srcDirName__="eigen-eigen-b3f3d4950030"
+        self.__srcDirName__="eigen-eigen-5a0156e40feb"
         
         # Override (specialize) the build folder 
         self.__thirdPartyBuildFolder__= os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__)
@@ -75,7 +75,7 @@ class EigenCompile(thirdPartyCompile):
         self.__execute__("cmake {} -DCMAKE_INSTALL_PREFIX={} -DINCLUDE_INSTALL_DIR={}".format(
                                     self.__thirdPartyBuildFolder__,
                                     os.getcwd(),
-                                    self.__buildInfo__["INCLUDEPATH"]))
+                                    self.__buildInfo__["INCLUDEPATH"][0]))
         self.__execute__("make doc")
 
     # Package the third party that was build   

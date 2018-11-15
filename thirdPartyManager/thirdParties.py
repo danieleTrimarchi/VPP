@@ -475,11 +475,15 @@ class Eigen( thirdParty ) :
         # Call mother-class constructor
         super(Eigen,self).__init__()
         
-        self.__name__= "Eigen"
+        from EigenCompile import EigenCompile
+        eigen= EigenCompile()
 
-        self.__version__ = "3.3.4"
+        self.__name__= eigen.__name__
+
+        self.__version__ = eigen.__version__
+        
         # Declare class members, to be filled by the children
-        self.__includePath__= [ os.path.join(self.__rootDir__, 'eigen-' + self.__version__) ]
+        self.__includePath__= eigen.getIncludePath()
     
         self.__addTo__(env)
 
