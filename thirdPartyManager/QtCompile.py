@@ -18,15 +18,15 @@ class QtCompile(thirdPartyCompile):
         # Define the URL from which IpOpt can be downloaded
         # Note that this should be the complete path of the file
         # to be downloaded (Including the filename!)
-        self.__url__=todo
+        self.__url__="http://download.qt.io/official_releases/qt/5.11/5.11.2/single/qt-everywhere-src-5.11.2.tar.xz"
 
         # Define the name of the archive downloadeed from the web. A priori this is 
         # simply the last entry of the url
-        self.__srcArchiveName__=todo
+        self.__srcArchiveName__="qt-everywhere-src-5.11.2.tar.xz"
         
         # Define the name of the folder extracted from the archive downloadeed from the web. 
         # A priori this is simply the srcArchiveName without the extension
-        self.__srcDirName__=todo
+        self.__srcDirName__="qt-everywhere-src-5.11.2"
         
         # Override (specialize) the build folder 
         self.__thirdPartyBuildFolder__= os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__)
@@ -41,7 +41,7 @@ class QtCompile(thirdPartyCompile):
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = todo
+        self.__buildInfo__["LIBS"] = ['']
           
     # Compile this package    
     def __compile__(self,dest=None):
@@ -144,7 +144,7 @@ env.Program('qtTest', Glob('*.cpp') )
     # Import the dynamic libraries from third party to the dest folder (in this case
     # this will be in the app bundle VPP.app/Contents/Frameworks/
     def importDynamicLibs(self,dst):
-        verify what this does!
+        #verify what this does!
         # Copy the lib to the dest folder
         for iLib in self.__buildInfo__["LIBS"]: 
             shutil.copyfile(self.getFullDynamicLibName(iLib), 

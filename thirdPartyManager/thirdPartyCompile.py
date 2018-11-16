@@ -24,6 +24,14 @@ except ImportError, e:
         raise
     import requests
     
+try:
+    import lzma # Download files from the web
+except ImportError, e:
+    p = subprocess.Popen("pip install pyliblzma",shell=True)
+    if p.wait():
+        raise
+    import lzma
+    
 ''' Static identifiers '''
 __includepathFlag__ = "INCLUDEPATH"    
 __libpathFlag__ = "LIBPATH"         
@@ -277,16 +285,16 @@ class thirdPartyCompile(object):
     # Download an archive from a given url and unzip it 
     def __getCompressedArchive__(self,url,saveAs="myArch"):
 
-        print "...downloading the archive from: {} (this can take a while)".format(url)
+        print "...downloading the archive from: {}".format(url)
 
         localArchive = requests.get(url,stream=True)
-        
+ 
         # This is a zip archive... 
         if ( url.endswith(".zip") or
              url.endswith("/zip/") ) :
             import zipfile
             import StringIO
-            print 'extracting a zip file...'
+            print 'extracting a zip file... (this can take a while)'
             z = zipfile.ZipFile(StringIO.StringIO(localArchive.content))
             print "Downloaded! "
             z.extractall()
@@ -297,11 +305,20 @@ class thirdPartyCompile(object):
                 url.endswith(".tgz") or 
                 url.endswith("/tar/") ) :
             import tarfile
-            print 'extracting a tar.gz file...'
+            print 'extracting a tar.gz file... (this can take a while)'
             tar= tarfile.open(mode='r|gz', fileobj=localArchive.raw)
             tar.extractall()
             tar.close()
-                    
+
+        # This is a tar archive... 
+        elif  ( url.endswith(".tar.xz") ) :
+            print 'extracting a tar.xz file... (this can take a while)'
+            tmpFile=open("tmp.tar.xz","w")
+            tmpFile.write(localArchive.content)
+            tmpFile.close()
+            self.__execute__("tar -xf tmp.tar.xz")
+            os.remove("tmp.tar.xz")
+            
     # Decorates copytree of shutil, with some minimal logics to handle lists 
     def __copytree__(self,src,dst):
     
