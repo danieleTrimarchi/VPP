@@ -1,5 +1,6 @@
 from thirdPartyCompile import thirdPartyCompile
 import os, shutil, sys
+import multiprocessing
 
 class QtCompile(thirdPartyCompile):
     
@@ -41,46 +42,62 @@ class QtCompile(thirdPartyCompile):
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = ['']
+        self.__buildInfo__["LIBS"] = ['QtCore','QtGui',
+                                      'QtWidgets',
+                                      #'QtDataVisualization', 
+                                      'QtPrintSupport']
           
     # Compile this package    
-    def __compile__(self,dest=None):
+    def __compile__(self,dest=None) : 
+
+        # Decorate the mother class __package__ method
+        super(QtCompile,self).__compile__()
         
-        pass
-#         # Decorate the mother class __package__ method
-#         super(QtCompile,self).__compile__()
-#     
-#         # Make the build folder
-#         os.mkdir("Build")
-# 
-#         # Execute bootstrap...
-#         self.__execute__("./bootstrap.sh "
-#                          "--with-libraries=filesystem,system")
-# 
-#         # Execute b2, which will build the requested libs
-#         self.__execute__("./b2")         
+        # todo:
+        # patch qtbase/configure.pri to avoid requesting for the license type
+        
+        # Configure the build 
+        self.__execute__("./configure "
+                         "-prefix {} "                      # Prefix
+                         "-release "                        # Build release
+                         "-no-debug-and-release "           # Do NOT build release AND debug
+                         "-opensource -confirm-license "    # Get the opensource licensing
+                         "-no-dbus -no-gstreamer "
+                         "-nomake tests -nomake examples".format(   # Do not bother with tests and examples 
+                            self.__thirdPartyPkgFolder__))
 
-#     def __copySelectedDocs__(self):
-#         
-#         # Loop on the modules we seek to compile 
-#         for iLib in self.__buildInfo__["LIBS"] :
-#             # Boost libs are named boost_something. Here we only seek the 'something'
-#             cleanName = iLib.replace("boost_","")
-# 
-#             # Verify the object we get is in the form we need            
-#             # and define the doc directory as pkgDir/doc/libDir
-#             checkListOfSizeOne(self.__buildInfo__["DOCPATH"],"DocPath")             
-#             
-#             # Make the doc directory
-#             docDir = os.path.join(self.__buildInfo__["DOCPATH"][0],cleanName)
-#             os.makedirs(docDir)
-# 
-#             # Copy the files to the doc directory
-#             shutil.copy(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"index.html"), 
-#                     docDir)
-#             self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"doc"), 
-#                               os.path.join(docDir,"doc"))
+#         'QtCore',                -> module qtbase
+#         'QtGui',                 -> module qtbase
+#         'QtWidgets',             -> module qtbase
+#         'QtDataVisualization',   -> module qtdatavis3d
+#         'QtPrintSupport'         -> module qtbase
 
+        # Modules to be compiled: 
+        # TEST : Add qttools to get qtattributionsscanner
+        # required for the target: make docs in the hope this
+        # fixes the build. If this is the case, this is a bug 
+        # in the qt build system...
+        compileModules= ['qtbase','qtdatavis3d','qttools']
+#???????????????????????????????????????????????????????????????????????????????????
+# modules that have been compiled - though they were not explicitely requested. Why? 
+#         qtdeclarative
+#         qtmultimedia
+#         qtsvg
+#         qtxmlpatterns        
+#???????????????????????????????????????????????????????????????????????????????????
+    
+        # Multi-threaded compile for selected modules
+        for iModule in compileModules:
+            self.__execute__("make -j {} module-{}".format(multiprocessing.cpu_count(),iModule))
+
+        # Install the compile code in the -prefix location : the __package__ folder
+        self.__execute__("sudo make -j 1 install") 
+
+        # Also make the documentation
+        self.__execute__("make docs")
+        self.__execute__("make install_docs")
+      
+                
     # Package the third party that was build   
     def __package__(self):
               

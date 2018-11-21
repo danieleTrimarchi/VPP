@@ -1,4 +1,4 @@
-prefix=/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64
+prefix=/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2
 exec_prefix=${prefix}
 libdir=${prefix}/lib
 includedir=${prefix}/include
@@ -6,9 +6,9 @@ includedir=${prefix}/include
 
 Name: Qt5 Concurrent
 Description: Qt Concurrent module
-Version: 5.9.1
+Version: 5.11.2
 Libs: -F${libdir} -framework QtConcurrent 
-Libs.private: -F/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -framework QtCore -framework DiskArbitration -framework IOKit   
+Libs.private: -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2/lib -framework QtCore -framework DiskArbitration -framework IOKit   
 Cflags: -I${includedir}/QtConcurrent -I${includedir}
 Requires: Qt5Core
 

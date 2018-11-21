@@ -1,4 +1,4 @@
-prefix=/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64
+prefix=/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2
 exec_prefix=${prefix}
 libdir=${prefix}/lib
 includedir=${prefix}/include
@@ -8,8 +8,8 @@ qt_config=minimal-config small-config medium-config large-config full-config c++
 
 Name: Qt5 Core
 Description: Qt Core module
-Version: 5.9.1
+Version: 5.11.2
 Libs: -F${libdir} -framework QtCore 
-Libs.private: -framework DiskArbitration -framework IOKit -lz -L/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -lqtpcre -lm -framework Foundation -framework CoreServices -framework AppKit -framework ApplicationServices -framework CoreFoundation  
+Libs.private: -framework DiskArbitration -framework IOKit -lz -L/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2/lib -lqtpcre -lm -framework Foundation -framework CoreServices -framework AppKit -framework ApplicationServices -framework CoreFoundation  
 Cflags: -I${includedir}/QtCore -I${includedir}
 

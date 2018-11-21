@@ -22,5 +22,4 @@ import thirdPartyCompile as tp
 
 from QtCompile import QtCompile
 qt= QtCompile()
-# qt.get()
-qt.__download__()
+qt.__compile__()

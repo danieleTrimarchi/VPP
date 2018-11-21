@@ -208,8 +208,11 @@ class thirdPartyCompile(object):
         # Copy the sources to the build dir
         # First, make sure we are in the right place
         os.chdir(self.__thirdPartySrcFolder__)
+        
+        print "Copying ", self.__srcDirName__," to ", self.__thirdPartyBuildFolder__,"..."
         self.__copytree__(self.__srcDirName__,self.__thirdPartyBuildFolder__)
-
+        print "Copy done!"
+        
         # Compile the requrements, if any
         for iReq in self.__requirements__:
             iReq.__compile__(dest=os.path.join(self.__thirdPartyBuildFolder__,

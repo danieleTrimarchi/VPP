@@ -551,48 +551,39 @@ class Qt( thirdParty ) :
         # Call mother-class constructor
         super(Qt,self).__init__()
 
-        self.__name__= "Qt"
+        from QtCompile import QtCompile
+        qt= QtCompile()
+
+        self.__name__= qt.__name__
         
-        self.__version__ = "5.9.1"
+        self.__version__ = qt.__version__
 
         # Overrride rootDir that is different for Qt as it is installed via homebrew
-        self.__rootDir__ = os.path.join(self.__rootDir__,'Qt',self.__version__)
-        #self.__rootDir__ = os.path.join("/usr/local/Cellar/qt5",self.__version__)
+        self.__rootDir__ = qt.__thirdPartyPkgFolder__
 
         # Linkline is treated specially by the Qt5 module. Do not add the frameworks 
         self.__addFrameworkLinkLine__= False
 
-        # Define the list of the libs (frameworks in this case)         
-        self.__frameworks__= [
-                              'QtCore',
-                              'QtGui',
-                              'QtWidgets',
-                              'QtDataVisualization', 
-                              'QtPrintSupport'
-                              ]
-
         # Direcly customize the env for the package config
         env['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(self.__VPPprogramSrcDir__,'site_scons','qtPkgConfig') ]    
         
-        env['ENV']['PATH'] += ':/opt/local/bin:'+os.path.join(self.__rootDir__,'clang_64')
+        env['ENV']['PATH'] += ':/opt/local/bin:'+qt.__thirdPartyPkgFolder__
 
         # Remember rootDir is overwritten for Qt!
-        env.Append( QT5DIR = os.path.join(self.__rootDir__, 'clang_64') )
+        env.Append( QT5DIR = os.path.join(qt.__thirdPartyPkgFolder__) )
         
         # This is for http://stackoverflow.com/questions/37897209/qt-requires-c11-support-make-error
         env.Append( CXXFLAGS =  ['-std=c++11'] )
 
         env.Tool('qt5')
 
-        env.EnableQt5Modules( self.__frameworks__ )
-
-        self.__frameworksPaths__ = [ os.path.join(self.__rootDir__, 'clang_64', 'lib') ]
+        env.EnableQt5Modules( qt.getLibs() )
         
         self.__includePath__= [
                                # Framework-wise include for SCons
-                               os.path.join(self.__frameworksPaths__[0],'QtCore.framework/Versions/Current/Headers'),
-                               os.path.join(self.__frameworksPaths__[0],'QtWidgets.framework/Versions/Current/Headers'),
-                               os.path.join(self.__frameworksPaths__[0],'QtGui.framework/Versions/Current/Headers')
+                               os.path.join(qt.getLibPath()[0],'QtCore.framework/Versions/Current/Headers'),
+                               os.path.join(qt.getLibPath()[0],'QtWidgets.framework/Versions/Current/Headers'),
+                               os.path.join(qt.getLibPath()[0],'QtGui.framework/Versions/Current/Headers')
                                ]
         
         # Returns the absolute path of the Qt Framework folder

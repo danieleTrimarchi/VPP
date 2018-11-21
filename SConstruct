@@ -177,8 +177,8 @@ def makeAppFolderStructure(self, thirdPartyDict):
     if not os.path.exists( self.getAppFrameworksDir() ): 
         os.makedirs( self.getAppFrameworksDir() )
 
-        frameworkRoot= thirdPartyDict['Qt'].getFrameworkRoot()[0]
-        frameworkList= thirdPartyDict['Qt'].getFrameworks()
+        frameworkRoot= thirdPartyDict['Qt'].getLibPath()[0]
+        frameworkList= thirdPartyDict['Qt'].getLibs()
     
         # Copy the Qt frameworks to the APP bundle 
         # Note that at this point what we do is silly, as we do copy over for each build
