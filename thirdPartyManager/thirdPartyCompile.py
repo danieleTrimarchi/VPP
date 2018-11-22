@@ -45,6 +45,10 @@ class thirdPartyCompile(object):
     # Ctor
     def __init__(self):
         
+        # Check if the caller is admin. If we do not have admin privileges, 
+        # there are a number of operations that won't be allowed
+        self.__checkAmIAdmin__()
+
         # Name of this third_party. 
         self.__name__=""
 
@@ -201,6 +205,8 @@ class thirdPartyCompile(object):
     # How to compile the third party
     def __compile__(self,dest=None):
         
+        print "We are currently in folder: ", os.getcwd()
+
         # Cleanup previous build folder - if any
         shutil.rmtree(self.__thirdPartyBuildFolder__,
                       sys.exc_info())
@@ -392,6 +398,21 @@ env.Program('{}_test', Glob('*.cpp') )
         
         # Execute the example
         self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./{}_test {}".format(self.__buildInfo__["LIBPATH"][0],self.__name__,os.getcwd()))        
-                
-        
+
+    # We require the thirdPartyCompile to be instantiated with admin privileges (sudo). 
+    # This allows for the flexibility in manipulating files and installs. 
+    def __checkAmIAdmin__(self):
+        import ctypes
+        try:
+            is_admin = os.getuid() == 0 
+        except AttributeError:
+            is_admin = ctypes.windll.shell32.IsUserAnAdmin()
+    
+        if not is_admin:
+            raise ValueError('\n-----------------------------------------------------------------\n'
+                             'thirdPartyCompile must be executed with administrator privileges.\n'
+                             'Please re-execute the command pre-pended by \"sudo\"\n'
+                             '-----------------------------------------------------------------\n')
+
+
         

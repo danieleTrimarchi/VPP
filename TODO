@@ -1,10 +1,6 @@
--> TONIGHT : download qt offline and compile only the modules we require!
-                              'QtCore',
-                              'QtGui',
-                              'QtWidgets',
-                              'QtDataVisualization', 
-                              'QtPrintSupport'
--> Recompile full Eigen with the docs and verify all tests still pass 
+-> Note that the QtDataVisualisation framework has been compiled indeed. 
+	for some reason it has not been copied to the pkg folder -- I really 
+	need to fix the Qt build! 
 
 -> Add a 'clean' target to cleanup the build space
 
