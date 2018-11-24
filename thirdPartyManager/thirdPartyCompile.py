@@ -205,8 +205,6 @@ class thirdPartyCompile(object):
     # How to compile the third party
     def __compile__(self,dest=None):
         
-        print "We are currently in folder: ", os.getcwd()
-
         # Cleanup previous build folder - if any
         shutil.rmtree(self.__thirdPartyBuildFolder__,
                       sys.exc_info())

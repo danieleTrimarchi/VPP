@@ -53,18 +53,33 @@ class QtCompile(thirdPartyCompile):
         # Decorate the mother class __package__ method
         super(QtCompile,self).__compile__()
         
+        # Remove the qtWebEngine module that causes failure on macosx Sierra
+        # See https://forum.qt.io/topic/94943/qt-5-11-2-fails-to-build-on-macos/4
+        shutil.rmtree(os.path.join(self.__thirdPartyBuildFolder__,"qtwebengine"),
+                      sys.exc_info())
+
         # todo:
         # patch qtbase/configure.pri to avoid requesting for the license type
         
         # Configure the build 
         self.__execute__("./configure "
-                         "-prefix {} "                      # Prefix
-                         "-release "                        # Build release
-                         "-no-debug-and-release "           # Do NOT build release AND debug
-                         "-opensource -confirm-license "    # Get the opensource licensing
+                         "-prefix {pkg_folder} "         # Prefix
+                         "-release "                     # Build release
+                         "-no-debug-and-release "        # Do NOT build release AND debug
+                         "-platform macx-clang QMAKE_APPLE_DEVICE_ARCHS=x86_64 " # See http://doc.qt.io/qt-5/osx.html
+                         "-opensource -confirm-license " # Get the opensource licensing
                          "-no-dbus -no-gstreamer "
                          "-nomake tests -nomake examples".format(   # Do not bother with tests and examples 
-                            self.__thirdPartyPkgFolder__))
+                            pkg_folder=self.__thirdPartyPkgFolder__))
+
+                     #"-system-zlib -system-libjpeg -system-libpng "
+                     #'-platform linux-g++ '
+                     # unknown command "-no-webkit "                   # from: https://github.com/voidlinux/void-packages/issues/4748
+#                         "-no-declarative "
+#                         "-no-script "
+#                         "-no-scripttools "
+#                         "-no-declarative-debug "
+#                         "-no-javascript-jit "
 
 #         'QtCore',                -> module qtbase
 #         'QtGui',                 -> module qtbase
@@ -77,7 +92,7 @@ class QtCompile(thirdPartyCompile):
         # required for the target: make docs in the hope this
         # fixes the build. If this is the case, this is a bug 
         # in the qt build system...
-        compileModules= ['qtbase','qtdatavis3d','QtDataVisualization','qttools']
+        compileModules= ['qtbase','qtdatavis3d','qttools','qtlocation','qtdeclarative','qtvirtualkeyboard']
 #???????????????????????????????????????????????????????????????????????????????????
 # modules that have been compiled - though they were not explicitely requested. Why? 
 #         qtdeclarative
@@ -86,18 +101,20 @@ class QtCompile(thirdPartyCompile):
 #         qtxmlpatterns        
 #???????????????????????????????????????????????????????????????????????????????????
     
+
         # Multi-threaded compile for selected modules
         for iModule in compileModules:
-            self.__execute__("make -j {} module-{}".format(multiprocessing.cpu_count(),iModule))
+            self.__execute__("make -j {} module-{}".format(multiprocessing.cpu_count(),iModule))    
+#        self.__execute__("make -j {}".format(multiprocessing.cpu_count()))    
 
         # Install the compile code in the -prefix location : the __package__ folder
         self.__execute__("sudo make -j 1 install") 
 
         # Also make the documentation
-        self.__execute__("make docs")
-        self.__execute__("make install_docs")
+        #self.__execute__("make docs")
+        #self.__execute__("make install_docs")
       
-                
+                      
     # Package the third party that was build   
     def __package__(self):
               
