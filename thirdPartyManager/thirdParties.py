@@ -280,7 +280,7 @@ class thirdParty(object) :
         return self.__includePath__
 
     # Retutrn the list of lib paths        
-    def libPath(self):
+    def getLibPath(self):
         return self.__libpath__
     
     # Return the name of this thirdParty

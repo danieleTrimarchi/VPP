@@ -45,10 +45,6 @@ class thirdPartyCompile(object):
     # Ctor
     def __init__(self):
         
-        # Check if the caller is admin. If we do not have admin privileges, 
-        # there are a number of operations that won't be allowed
-        self.__checkAmIAdmin__()
-
         # Name of this third_party. 
         self.__name__=""
 
@@ -205,6 +201,10 @@ class thirdPartyCompile(object):
     # How to compile the third party
     def __compile__(self,dest=None):
         
+        # Check if the caller is admin. If we do not have admin privileges, 
+        # there are a number of operations that won't be allowed
+        self.__checkAmIAdmin__()
+
         # Cleanup previous build folder - if any
         shutil.rmtree(self.__thirdPartyBuildFolder__,
                       sys.exc_info())

@@ -44,7 +44,7 @@ class QtCompile(thirdPartyCompile):
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
         self.__buildInfo__["LIBS"] = ['QtCore','QtGui',
                                       'QtWidgets',
-                                      #'QtDataVisualization', 
+                                      'QtDataVisualization', 
                                       'QtPrintSupport']
           
     # Compile this package    
@@ -92,7 +92,7 @@ class QtCompile(thirdPartyCompile):
         # required for the target: make docs in the hope this
         # fixes the build. If this is the case, this is a bug 
         # in the qt build system...
-        compileModules= ['qtbase','qtdatavis3d','qttools','qtlocation','qtdeclarative','qtvirtualkeyboard']
+        compileModules= ['qtbase','qtdatavis3d','qttools','qtlocation','qtdeclarative','qtvirtualkeyboard','qtdoc']
 #???????????????????????????????????????????????????????????????????????????????????
 # modules that have been compiled - though they were not explicitely requested. Why? 
 #         qtdeclarative
