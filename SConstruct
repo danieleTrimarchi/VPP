@@ -177,8 +177,8 @@ def makeAppFolderStructure(self, thirdPartyDict):
     if not os.path.exists( self.getAppFrameworksDir() ): 
         os.makedirs( self.getAppFrameworksDir() )
 
-        frameworkRoot= thirdPartyDict['Qt'].getLibPath()[0]
-        frameworkList= thirdPartyDict['Qt'].getLibs()
+        frameworkRoot= thirdPartyDict['Qt'].getFrameworkRoot()[0]
+        frameworkList= thirdPartyDict['Qt'].getFrameworks()
     
         # Copy the Qt frameworks to the APP bundle 
         # Note that at this point what we do is silly, as we do copy over for each build
@@ -274,12 +274,6 @@ def fixDynamicLibPathTest(self,source,target,env):
 
     print '==>>' , self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
     
-    # Not ideal, but it does the job by now. getFrameworkRoot returns a list, 
-    # because potentially we have mutliple paths. I do not know how to behave in 
-    # that case, which is only theoretical by now. So if this is the case I stop
-    # the execution. So I am simply post-poning the problem to later on...
-    if(len(self['THIRDPARTYDICT']['Qt'].getFrameworkRoot())>1):
-        error("Too many framework roots, this is not implemented!")
     QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()[0]
 
     QtFrameworkList= self['THIRDPARTYDICT']['Qt'].getFrameworks()

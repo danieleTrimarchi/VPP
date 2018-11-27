@@ -304,7 +304,8 @@ class thirdParty(object) :
 
         print "In copyDynamicLibs for third_party ", self.getName()
         print "                  ",self.getLibs() 
-        for iLibPath in self.libPath():
+        print "                  ",self.getLibPath()
+        for iLibPath in self.getLibPath():
             for iLib in self.getLibs():
                 print "In try for ",self.getName()
                 dyLibName= self.getFullDynamicLibName(iLib)
@@ -579,16 +580,18 @@ class Qt( thirdParty ) :
 
         env.EnableQt5Modules( qt.getLibs() )
         
-        self.__includePath__= [
-                               # Framework-wise include for SCons
-                               os.path.join(qt.getLibPath()[0],'QtCore.framework/Versions/Current/Headers'),
-                               os.path.join(qt.getLibPath()[0],'QtWidgets.framework/Versions/Current/Headers'),
-                               os.path.join(qt.getLibPath()[0],'QtGui.framework/Versions/Current/Headers')
-                               ]
+        self.__includePath__= qt.getIncludePath()
         
-        # Returns the absolute path of the Qt Framework folder
-        self.__libpath__= []
+        self.__libpath__= qt.getLibPath()
 
+        # Confuse framework path and lib path as the qt package
+        # places everything in the same place     
+        self.__frameworksPaths__= qt.getLibPath()
+
+        # Confuse the frameworks and the libs too (required for 
+        # self.__fixFrameworksPath__()
+        self.__frameworks__ = qt.getLibs()
+        
         self.__addTo__(env)
         
     # -- 
@@ -599,9 +602,9 @@ class Qt( thirdParty ) :
         
         for iFramework in self.getFrameworks(): 
             self.__execute__('install_name_tool -change '
-                             '@rpath/{}.framework/Versions/5/{} '
-                             '@executable_path/../Frameworks/{}.framework/Versions/Current/{} '
-                             '{}/VPP'.format( 
-                                        iFramework,iFramework,
-                                        iFramework,iFramework,
-                                        appInstallDir )) 
+                             '@rpath/{iFmwk}.framework/Versions/5/{jFmwk} '
+                             '@executable_path/../Frameworks/{kFmwk}.framework/Versions/Current/{lFmwk} '
+                             '{exePath}/VPP'.format( 
+                                        iFmwk=iFramework,jFmwk=iFramework,
+                                        kFmwk=iFramework,lFmwk=iFramework,
+                                        exePath=appInstallDir )) 

@@ -38,7 +38,7 @@ class CppUnitCompile(thirdPartyCompile):
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = ["libcppunit"]
+        self.__buildInfo__["LIBS"] = ["cppunit"]
             
     # Compile this package    
     def __compile__(self,dest=None):

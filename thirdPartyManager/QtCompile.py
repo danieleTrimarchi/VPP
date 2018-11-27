@@ -39,9 +39,13 @@ class QtCompile(thirdPartyCompile):
 
         # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
-        self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
+        self.__buildInfo__["INCLUDEPATH"] = [
+                               os.path.join(self.getLibPath()[0],'QtCore.framework/Versions/Current/Headers'),
+                               os.path.join(self.getLibPath()[0],'QtWidgets.framework/Versions/Current/Headers'),
+                               os.path.join(self.getLibPath()[0],'QtGui.framework/Versions/Current/Headers')
+                               ]
         self.__buildInfo__["LIBS"] = ['QtCore','QtGui',
                                       'QtWidgets',
                                       'QtDataVisualization', 
