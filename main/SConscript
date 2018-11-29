@@ -58,9 +58,11 @@ if 'help' in COMMAND_LINE_TARGETS:
 	print 'scons                 : builds the program'
 	print 'scons run             : runs the executable' 		
 	print 'scons runTest         : runs the autotest'
+	print 'scons clean			 : removes the current executable(s)'
+	print 'scons clobber		 : removes the whole build tree'
 	print 'scons makeDocs        : makes the Doxygen documentation' 
 	print 'scons makeXCode       : makes the xCode debug project' 	
-	print 'scons get_third_party : get and compile the required third parties'
+	print 'scons get_third_party : get and compiles all the required third parties'
 	print ' '
 	print 'Options: '
 	print 'scons <target> -Q debug=1 : compiles/executes debug' 		
@@ -117,6 +119,26 @@ if 'get_third_party' in COMMAND_LINE_TARGETS:
 	boost.__package__()
 	boost.__test__()
 	
+	Exit(2)
+
+# --- 
+# Light clean: just remove the executable(s) and the app bundle
+if 'clean' in COMMAND_LINE_TARGETS:
+
+	# Remove the program executable
+	os.remove(os.path.join(localEnv["variantDirAbsPath"],localEnv.getExecutableName()))
+	
+	# Remove the app bundle
+	shutil.rmtree( localEnv.getAppPath(),ignore_errors=True )
+	
+	Exit(2)
+
+# --- 
+
+# Heavy clean: removes the whole build tree
+if 'clobber' in COMMAND_LINE_TARGETS:
+	print "Removing build tree for branch: ", localEnv["variantDirAbsPath"]
+	shutil.rmtree( localEnv["variantDirAbsPath"],ignore_errors=True )
 	Exit(2)
 
 #Compile Debug mode

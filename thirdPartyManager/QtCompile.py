@@ -1,5 +1,5 @@
 from thirdPartyCompile import thirdPartyCompile
-import os, shutil, sys
+import os, shutil, sys, glob, fnmatch
 import multiprocessing
 
 class QtCompile(thirdPartyCompile):
@@ -46,7 +46,8 @@ class QtCompile(thirdPartyCompile):
                                os.path.join(self.getLibPath()[0],'QtWidgets.framework/Versions/Current/Headers'),
                                os.path.join(self.getLibPath()[0],'QtGui.framework/Versions/Current/Headers')
                                ]
-        self.__buildInfo__["LIBS"] = ['QtCore','QtGui',
+        self.__buildInfo__["LIBS"] = ['QtCore',
+                                      'QtGui',
                                       'QtWidgets',
                                       'QtDataVisualization', 
                                       'QtPrintSupport']
@@ -61,9 +62,15 @@ class QtCompile(thirdPartyCompile):
         # See https://forum.qt.io/topic/94943/qt-5-11-2-fails-to-build-on-macos/4
         shutil.rmtree(os.path.join(self.__thirdPartyBuildFolder__,"qtwebengine"),
                       sys.exc_info())
-
-        # todo:
-        # patch qtbase/configure.pri to avoid requesting for the license type
+        
+        # Patch the whole project: add the spec CONFIG += create_pc create_prl no_install_prl
+        # to get the .pc files we need to build with SCons. See 
+        #https://stackoverflow.com/questions/6823862/qmake-creating-a-pc-file    
+#         for root, dirNames, fileNames in os.walk("."):                       
+#             for fileName in fnmatch.filter(fileNames,"*.pro"):
+#                 patch(r'(CONFIG \+\= )',r"\g<0> create_pc create_prl no_install_prl ",os.path.join(root, fileName))
+        # Actually, is it enough to patch the src .pro file only? 
+        patch(r'(CONFIG \+\= )',r"\g<0> create_pc create_prl no_install_prl ","qt.pro")                
         
         # Configure the build 
         self.__execute__("./configure "
@@ -76,95 +83,110 @@ class QtCompile(thirdPartyCompile):
                          "-nomake tests -nomake examples".format(   # Do not bother with tests and examples 
                             pkg_folder=self.__thirdPartyPkgFolder__))
 
-                     #"-system-zlib -system-libjpeg -system-libpng "
-                     #'-platform linux-g++ '
-                     # unknown command "-no-webkit "                   # from: https://github.com/voidlinux/void-packages/issues/4748
-#                         "-no-declarative "
-#                         "-no-script "
-#                         "-no-scripttools "
-#                         "-no-declarative-debug "
-#                         "-no-javascript-jit "
-
-#         'QtCore',                -> module qtbase
-#         'QtGui',                 -> module qtbase
-#         'QtWidgets',             -> module qtbase
-#         'QtDataVisualization',   -> module qtdatavis3d
-#         'QtPrintSupport'         -> module qtbase
-
         # Modules to be compiled: 
         # TEST : Add qttools to get qtattributionsscanner
         # required for the target: make docs in the hope this
         # fixes the build. If this is the case, this is a bug 
         # in the qt build system...
         compileModules= ['qtbase','qtdatavis3d','qttools','qtlocation','qtdeclarative','qtvirtualkeyboard','qtdoc']
-#???????????????????????????????????????????????????????????????????????????????????
-# modules that have been compiled - though they were not explicitely requested. Why? 
-#         qtdeclarative
-#         qtmultimedia
-#         qtsvg
-#         qtxmlpatterns        
-#???????????????????????????????????????????????????????????????????????????????????
-    
 
         # Multi-threaded compile for selected modules
         for iModule in compileModules:
             self.__execute__("make -j {} module-{}".format(multiprocessing.cpu_count(),iModule))    
-#        self.__execute__("make -j {}".format(multiprocessing.cpu_count()))    
 
-        # Install the compile code in the -prefix location : the __package__ folder
-        self.__execute__("sudo make -j 1 install") 
-
-        # Also make the documentation
+        # Also make the documentation. I cannot get this to build properly but 
+        # really this is not a big deal...
         #self.__execute__("make docs")
         #self.__execute__("make install_docs")
-      
-                      
+                          
     # Package the third party that was build   
     def __package__(self):
               
-        pass
-#         # Decorate the mother class __package__ method
-#         super(QtCompile,self).__package__()
-#                 
-#         # Copy the content of include
-#         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"boost"), 
-#                           os.path.join(self.__buildInfo__["INCLUDEPATH"][0],"boost"))
-# 
-#         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"stage","lib"), 
-#                           self.__buildInfo__["LIBPATH"][0])
-# 
-#         # Also copy the documentation of the modules we are compiling
-#         self.__copySelectedDocs__()
-                                      
+        # Decorate the mother class __package__ method
+        super(QtCompile,self).__package__()
+
+        # Install the compile code in the -prefix location : the __package__ folder
+        self.__execute__("sudo make -j 1 install") 
+                        
     # Run a simple test to check that the compile was successiful
     def __test__(self):
 
         # Decorate the mother class __test__ method
         super(QtCompile,self).__test__()
 
-        # Write the boost example 
+        # Write the qt example from NestedLayout
         Source=open("main.cpp","w")
         Source.write('''
-#include <iostream>
+#include <QtWidgets>
 using std::cout;
 
-int main(int argc, char** argv) {
-    return 0; 
-}       
-''')
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+    QWidget window;
+
+    QLabel *queryLabel = new QLabel(
+        QApplication::translate("nestedlayouts", "Query:")
+    );
+
+    QLineEdit *queryEdit = new QLineEdit();
+    QTableView *resultView = new QTableView();
+
+    QHBoxLayout* queryLayout = new QHBoxLayout();
+    queryLayout->addWidget(queryLabel);
+    queryLayout->addWidget(queryEdit);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout();
+    mainLayout->addLayout(queryLayout);
+    mainLayout->addWidget(resultView);
+    window.setLayout(mainLayout);
+
+    // Set up the model and configure the view...
+//! [first part]
+
+//! [set up the model]
+    QStandardItemModel model;
+    model.setHorizontalHeaderLabels(
+        QStringList() << QApplication::translate("nestedlayouts", "Name")
+                      << QApplication::translate("nestedlayouts", "Office"));
+
+    QList<QStringList> rows = QList<QStringList>()
+        << (QStringList() << "Verne Nilsen" << "123")
+        << (QStringList() << "Carlos Tang" << "77")
+        << (QStringList() << "Bronwyn Hawcroft" << "119");
+
+    foreach (QStringList row, rows) {
+        QList<QStandardItem *> items;
+        foreach (QString text, row)
+            items.append(new QStandardItem(text));
+        model.appendRow(items);
+    }
+
+    resultView->setModel(&model);
+    resultView->verticalHeader()->hide();
+    resultView->horizontalHeader()->setStretchLastSection(true);
+//! [set up the model]
+//! [last part]
+    window.setWindowTitle(
+        QApplication::translate("nestedlayouts", "Nested layouts"));
+    window.show();
+    return app.exec();
+}''')
         Source.close()
             
         # Write a SConstruct 
         Sconstruct=open("SConstruct","w")
         Sconstruct.write('''import os
-env = Environment()  
-env.Append( CPPPATH=["{}"] )
-env.Append( LIBPATH=["{}"] )
-env.Append( LIBS={} )
+env = Environment()
+env['QT5DIR']={pkgFolder} 
+env['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(qtdir,'lib/pkgconfig') ]
+env.Append( CPPPATH=["{includePath}"] )
+env.Append( LIBPATH=["{libPath}"] )
+env.Append( LIBS={libs} )
 env.Program('qtTest', Glob('*.cpp') )        
-'''.format(self.__buildInfo__["INCLUDEPATH"],
-           self.__buildInfo__["LIBPATH"],
-           self.__buildInfo__["LIBS"]))
+'''.format(pkgFolder= self.__thirdPartyPkgFolder__,
+           includePath= self.__buildInfo__["INCLUDEPATH"],
+           libPath= self.__buildInfo__["LIBPATH"],
+           libs= self.__buildInfo__["LIBS"]))
         Sconstruct.close()
                         
         # Compile the example

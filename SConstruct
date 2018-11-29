@@ -177,7 +177,7 @@ def makeAppFolderStructure(self, thirdPartyDict):
     if not os.path.exists( self.getAppFrameworksDir() ): 
         os.makedirs( self.getAppFrameworksDir() )
 
-        frameworkRoot= thirdPartyDict['Qt'].getFrameworkRoot()[0]
+        frameworkRoot= thirdPartyDict['Qt'].getFrameworkPath()[0]
         frameworkList= thirdPartyDict['Qt'].getFrameworks()
     
         # Copy the Qt frameworks to the APP bundle 
@@ -272,9 +272,9 @@ def fixDynamicLibPathTest(self,source,target,env):
     
     # THIS PART IS TO BE REMOVED I THINK, As we do not need Qt for compiling the test
 
-    print '==>>' , self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
+    print '==>>' , self['THIRDPARTYDICT']['Qt'].getFrameworkPath()
     
-    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()[0]
+    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkPath()[0]
 
     QtFrameworkList= self['THIRDPARTYDICT']['Qt'].getFrameworks()
 

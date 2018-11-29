@@ -49,7 +49,7 @@ class xCode(object):
         self.__write__("LIBS += ","getFrameworks","-framework ","",[] )
         
         # Write : QMAKE-LFLAGS+=-F/PATH/TO/FRAMEWORK/dir
-        self.__write__("QMAKE-LFLAGS+= ","getFrameworkRoot","-F","",[] )
+        self.__write__("QMAKE-LFLAGS+= ","getFrameworkPath","-F","",[] )
         
         # Write the source and header file paths
         self.__writeFiles__(VPPsubFolders)
@@ -292,7 +292,7 @@ class thirdParty(object) :
         return self.__frameworks__
 
     # Retutrn the LIST of framework paths        
-    def getFrameworkRoot(self):
+    def getFrameworkPath(self):
         if(len(self.__frameworksPaths__)>1):
             raise "The build system must be modified to comply with len(__frameworksPaths__)>1!"
         return self.__frameworksPaths__

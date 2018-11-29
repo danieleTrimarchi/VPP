@@ -1,12 +1,19 @@
--> Note that the QtDataVisualisation framework has been compiled indeed. 
-	for some reason it has not been copied to the pkg folder -- I really 
-	need to fix the Qt build! 
+-> Try rebuilding Qt : is it enough to patch the src tree qt.pro file? 
+	Otherwise, try patching the whole project! 
 
--> Add a 'clean' target to cleanup the build space
+-> Finish the Qt recepy : I still need to cleanup and end writing the test (for which I need the .pro files!
+
+-> remove the .pro files in the src tree, under site_scons. Site_scons becomes a dependency
+
+-> Remove the homeBrew qt in /usr/local/Cellar...
+
+-> Fix the XCode project with the newly generated third_parties
+
+-> Fix the target 'get_third_party' in main/SConscript with the content from the compileTest
+
+-> fix the runTest target and make this dependent on the VPP program (assure up-to-dateness)
 
 -> the jacobian plot is broken, and it segv
-
--> Can I plot the Jacobian for awv, awa > initial? Apparently there is a nice segv... 
 
 -> try run without settings. We get a number of errors (I think the solver keeps going) This is stupid: on Input error we should be stopping after the first one
 
@@ -15,24 +22,10 @@
 -> Fix the permissions of /Users/dtrimarchi/VPP/xCodeBuild/qrcVPP.cpp. This appears to break the xCode build - Why? 
 It might be that I need to refresh the generated source list. Not sure where this lives but it was out sync, and removing the list seems to help
 
-- 
-install_name_tool -change libboost_system.dylib @executable_path/libboost_system.dylib /Users/dtrimarchi/VPP/build/default/release/VPP.app/Contents/MacOS/libboost_filesystem.dylib 
-
-install_name_tool -change libboost_filesystem.dylib @executable_path/libboost_filesystem.dylib /Users/dtrimarchi/VPP/build/default/release/VPP.app/Contents/MacOS/VPP
-
-install_name_tool -change libboost_system.dylib @executable_path/libboost_system.dylib /Users/dtrimarchi/VPP/build/default/release/VPP.app/Contents/MacOS/VPP
-- 
-
-
--> how to download from sourgeforce via Python script? 
--> https://sourceforge.net/projects/cppunit/files/latest/download
-	but need to wait... not sure if my code does this. 
-
 
 -> Export results to excel format. Simply use .csv formatting
 - Is it possible to write in multiple tabs? 
  Ideally I would have vpp settings in the first tab, and the results in the second tab
-
 
 -> Items should define a state vector, not a collection of variables!!
 
