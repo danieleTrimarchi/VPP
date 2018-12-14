@@ -22,5 +22,6 @@ import thirdPartyCompile as tp
 
 from QtCompile import QtCompile
 qt= QtCompile()
-qt.__compile__()
-
+#qt.__compile__()
+#qt.__package__()
+qt.__test__()

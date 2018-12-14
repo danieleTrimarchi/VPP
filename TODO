@@ -13,8 +13,6 @@
 
 -> fix the runTest target and make this dependent on the VPP program (assure up-to-dateness)
 
--> the jacobian plot is broken, and it segv
-
 -> try run without settings. We get a number of errors (I think the solver keeps going) This is stupid: on Input error we should be stopping after the first one
 
 -> the analysis count (solving step n of m) is broken : m is not the right number

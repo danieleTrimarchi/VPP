@@ -40,7 +40,7 @@ class xCode(object):
                        excludePackages=["Qt"] )
 
         # Write the lib path of all third parties present in the dict
-        self.__write__("LIBPATH += ", "libPath", "\"", "\"",[] )
+        self.__write__("LIBPATH += ", "getLibPath", "\"", "\"",[] )
 
         # Write the libs of all third parties present in the dict
         self.__write__("LIBS += ","getLibs", "-l", "",[] )

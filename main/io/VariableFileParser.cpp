@@ -227,7 +227,7 @@ void VariableFileParser::check() {
 	// been defined in the input file
 	for(size_t iVar=0; iVar<requiredVariables_.size(); iVar++) {
 
-		std::set<Variable>::iterator it;
+		VarSet::iterator it;
 		it=variables_.find(requiredVariables_[iVar]);
 		if(it == variables_.end()) {
 			char msg[256];

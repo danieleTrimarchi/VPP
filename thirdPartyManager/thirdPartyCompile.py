@@ -6,6 +6,8 @@ import subprocess
 import shutil
 import re
 from email.test.test_email import openfile
+from pip._internal.cmdoptions import src
+from scipy.fftpack.realtransforms import dst
 
 try:    
     import pip
@@ -66,13 +68,18 @@ class thirdPartyCompile(object):
         # Where will the downloaded third_party archives be placed to and 
         # where will they be extracted  
         self.__thirdPartySrcFolder__="/Users/dtrimarchi/third_party_src"
-    
+
         # Where will the downloaded third_party archives be placed to? 
         self.__thirdPartyBuildFolder__="/Users/dtrimarchi/third_party_build"
     
         # Where will the compiled packages will be placed to?
-        self.__thirdPartyPkgFolder__="/Users/dtrimarchi/third_party_pkg"
-        
+        self.__thirdPartyPkgFolder__="/Users/dtrimarchi/third_party_pkg"                
+
+        # Store the src tree for the Vpp program
+        self.__VppSrcTreeFolder__="/Users/dtrimarchi/VPP"
+        if not os.path.isdir(self.__VppSrcTreeFolder__):
+            raise ValueError("VppSrcTreeFolder folder not found!")
+
         # Include Path. To be filled
         self.__buildInfo__={__includepathFlag__:[""],
                             __libpathFlag__:[""],
@@ -233,20 +240,18 @@ class thirdPartyCompile(object):
         # by the build system to compile and link the program
         self.__writeInfo__()   
 
+        # Make a package folder and enter it 
         # cleanup: remove a previous package folder if present. Remember that the 
         # package folder was set relative to this third_party in the ctor
-        shutil.rmtree(self.__thirdPartyPkgFolder__,sys.exc_info())
+        self.__makedirs__(self.__thirdPartyPkgFolder__)
 
-        # Make a package folder and enter it 
-        os.mkdir(self.__thirdPartyPkgFolder__)
-
-        # Create the folders include, bin, lib, doc. The paths to 
+        # RE-Create the folders include, bin, lib, doc. The paths to 
         # these folders are defined in the ctor of the child classes
-        os.mkdir(self.__buildInfo__["INCLUDEPATH"][0])
-        os.mkdir(self.__buildInfo__["LIBPATH"][0])
-        os.mkdir(self.__buildInfo__["BINPATH"][0])
-        os.mkdir(self.__buildInfo__["DOCPATH"][0])
-        
+        self.__makedirs__(self.__buildInfo__["INCLUDEPATH"][0])
+        self.__makedirs__(self.__buildInfo__["LIBPATH"][0])
+        self.__makedirs__(self.__buildInfo__["BINPATH"][0])
+        self.__makedirs__(self.__buildInfo__["DOCPATH"][0])
+            
     # Run some test to make sure this third party was compiled 
     # properly
     def __test__(self):
@@ -325,10 +330,26 @@ class thirdPartyCompile(object):
             tmpFile.close()
             self.__execute__("tar -xf tmp.tar.xz")
             os.remove("tmp.tar.xz")
+    
+    # Makes a dir (decorates os.makedirs). Handles different cases such as
+    # the presence of a previous folder, and checks the meaningfulness of 
+    # the folder name : no nathing if pathName=""
+    def __makedirs__(self,pathName,overwrite=True):
+        
+        if(overwrite):
+            print " Deleting ", pathName
+            shutil.rmtree(pathName,sys.exc_info())
+        if not pathName=="":
+            print " Creating ", pathName
+            try: 
+                os.makedirs(pathName)
+            except:
+                print "Exception caught in __makedirs"
+                raise
             
     # Decorates copytree of shutil, with some minimal logics to handle lists 
     def __copytree__(self,src,dst):
-    
+            
         # Case 1 : src and dst are lists
         if(isinstance(src,list) and isinstance(dst,list)):
             for iSrc in src:

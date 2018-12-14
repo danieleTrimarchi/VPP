@@ -438,7 +438,12 @@ void MainWindow::run() {
 			}
 		}
 		// outer try-catch block
-	}	catch(...) { /* do nothing */ }
+	}
+	catch(VPPException& e){
+		std::cout<<e.what();
+		return;
+	}
+	catch(...) { /* do nothing */ }
 }
 
 void MainWindow::saveResults() {

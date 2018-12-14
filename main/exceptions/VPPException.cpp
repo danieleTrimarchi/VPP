@@ -17,6 +17,7 @@ VPPException::VPPException(const char* inFile, int inLine, const char* inFunctio
 	QMessageBox msgBox;
 	msgBox.setText(QString(what()));
 	msgBox.setIcon(QMessageBox::Critical);
+	msgBox.setWindowTitle("Error");
 	msgBox.exec();
 }
 
@@ -34,6 +35,7 @@ VPPException::VPPException(const char* inFile, int inLine, const char* inFunctio
 	QMessageBox msgBox;
 	msgBox.setText(QString(what()));
 	msgBox.setIcon(QMessageBox::Critical);
+	msgBox.setWindowTitle("Error");
 	msgBox.exec();
 
 }
