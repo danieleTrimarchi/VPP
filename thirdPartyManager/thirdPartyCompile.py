@@ -6,8 +6,6 @@ import subprocess
 import shutil
 import re
 from email.test.test_email import openfile
-from pip._internal.cmdoptions import src
-from scipy.fftpack.realtransforms import dst
 
 try:    
     import pip

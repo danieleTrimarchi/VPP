@@ -20,8 +20,6 @@ import thirdPartyCompile as tp
 # nlOpt= NlOptCompile()
 # nlOpt.get()
 
-from QtCompile import QtCompile
-qt= QtCompile()
-#qt.__compile__()
-#qt.__package__()
-qt.__test__()
+#from QtCompile import QtCompile
+#qt= QtCompile()
+#qt.get()
