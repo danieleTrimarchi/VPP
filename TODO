@@ -1,13 +1,10 @@
--> Try rebuilding Qt : is it enough to patch the src tree qt.pro file? 
-	Otherwise, try patching the whole project! 
+-> there are a bunch of warnings about files out of sync. Should I worry at all? 
 
--> Finish the Qt recepy : I still need to cleanup and end writing the test (for which I need the .pro files!
+-> fix the xCode project that needs dylibs
+-> qcustomplot as a thirdParty
+-> shall I include doxygen? 
 
--> remove the .pro files in the src tree, under site_scons. Site_scons becomes a dependency
-
--> Remove the homeBrew qt in /usr/local/Cellar...
-
--> Fix the XCode project with the newly generated third_parties
+-> Remove the homeBrew qt in /usr/local/Cellar and free space...
 
 -> Fix the target 'get_third_party' in main/SConscript with the content from the compileTest
 

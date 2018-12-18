@@ -334,6 +334,15 @@ class thirdParty(object) :
     # dstRelativeToBin is the relative path between dest (the framewoks folder) and the 
     # bin folder, meaning something like ../Plugins/<libName>/<dyLibName>
     # Remember how to inspect binaries: otool -l <binaryFile>
+    # A note about install_name_tool : after the update to Mojave I found two instances of 
+    # install_name_tool, in /opt/local/bin/ and /usr/bin/
+    # Using pkgutil --file-info it turned out that the updated version was the one in /usr/bin
+    # while the version in /opt/local/bin was some leftout from some previous install (?). 
+    # So, I have renamed the instance in /opt/local/bin to install_name_tool_old to avoid the error:
+    # -----------------------------------------------------------------------------------------------------------
+    # install_name_tool: object: /Users/dtrimarchi/VPP/build/thirdPartyManager/release/VPP.app/Contents/MacOS/VPP 
+    # malformed object (unknown load command 9)
+    # -----------------------------------------------------------------------------------------------------------
     def fixDynamicLibPath(self,dst,dstRelativeToBin,appInstallDir):   
          
         # Fix the cross refereences of the libraries belonging to this third party

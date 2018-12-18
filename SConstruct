@@ -293,6 +293,7 @@ def fixDynamicLibPathTest(self,source,target,env):
             )
 
         # Change the reference to the frameworks from @rpath to @executable_path
+        # NOTE : this is not a third_party, we do not have the method self.__execute__() !
         p = subprocess.Popen('install_name_tool -change '
                              '@rpath/{}.framework/Versions/5/{} '
                              '{}/{}.framework/Versions/Current/{} '
