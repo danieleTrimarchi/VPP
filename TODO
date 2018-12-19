@@ -1,5 +1,10 @@
 -> there are a bunch of warnings about files out of sync. Should I worry at all? 
 
+1_
+ld: warning: text-based stub file /System/Library/Frameworks//CoreFoundation.framework/CoreFoundation.tbd and library file /System/Library/Frameworks//CoreFoundation.framework/CoreFoundation are out of sync. Falling back to library file for linking.
+
+2_
+
 -> fix the xCode project that needs dylibs
 -> qcustomplot as a thirdParty
 -> shall I include doxygen? 
