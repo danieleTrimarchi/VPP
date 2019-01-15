@@ -6,22 +6,12 @@ iWv=0 iWa=0 iCmp=2
 If Yes : the system update has changed something -> update baselines and shut up
 If No  : Something wrong has been introduced by the Qt update. But what and HOW? 
 
--> there are a bunch of warnings about files out of sync. Should I worry at all? 
-
-1_
-ld: warning: text-based stub file /System/Library/Frameworks//CoreFoundation.framework/CoreFoundation.tbd and library file /System/Library/Frameworks//CoreFoundation.framework/CoreFoundation are out of sync. Falling back to library file for linking.
-
-2_
- 
--> fix the xCode project that needs dylibs
-
--> qcustomplot as a thirdParty
-
--> shall I include doxygen? 
 
 -> Remove the homeBrew qt in /usr/local/Cellar and free space...
 
 -> Fix the target 'get_third_party' in main/SConscript with the content from the compileTest
+
+-> Allow the GUI to load variableFiles such as the one we use for testing 
 
 -> fix the runTest target and make this dependent on the VPP program (assure up-to-dateness)
 

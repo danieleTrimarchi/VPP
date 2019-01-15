@@ -72,8 +72,11 @@ if 'help' in COMMAND_LINE_TARGETS:
 
 if 'makeDocs' in COMMAND_LINE_TARGETS:
 	print 'Generating doxygen documentation...'
-	p= subprocess.Popen(['doxygen', 'doxiConfig'], cwd='/Users/dtrimarchi/VPP/main')
-	p.wait()
+	try:
+		p= subprocess.Popen(['doxygen', 'doxiConfig'], cwd='/Users/dtrimarchi/VPP/main')
+		p.wait()
+	except: 
+		print "Something went wrong when generating the documentation : is doxygen installed?"
 	Exit(2)
 
 # --
