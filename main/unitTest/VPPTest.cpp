@@ -1398,7 +1398,6 @@ void TVPPTest::ipOptFullRunTest() {
 	for(size_t iWv=0; iWv<baselineResults.windVelocitySize(); iWv++)
 		for(size_t iWa=0; iWa<baselineResults.windAngleSize(); iWa++) {
 			for(size_t iCmp=0; iCmp<solverFactory.get()->getDimension(); iCmp++){
-				std::cout<<"iWv="<<iWv<<" iWa="<<iWa<<" iCmp="<<iCmp<<std::endl;
 				CPPUNIT_ASSERT_DOUBLES_EQUAL(
 						baselineResults.get(iWv,iWa).getX()->coeffRef(iCmp),
 						pCurrentResults->get(iWv,iWa).getX()->coeffRef(iCmp),
