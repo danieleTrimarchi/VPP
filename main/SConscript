@@ -83,17 +83,33 @@ if 'makeDocs' in COMMAND_LINE_TARGETS:
 
 if 'get_third_party' in COMMAND_LINE_TARGETS:
 
-#	from thirdPartyManager import thirdPartyCompile as tp
-# 	ipOpt= tp.IpOptCompile()
-# 	ipOpt.get(download=False)
-
-	from thirdPartyManager import BoostCompile as bc
-	boost= bc.BoostCompile()
-	#boost.get(download=False)
-	boost.__package__()
-	boost.__test__()
+	# Instantiate a list of required third_parties 
+# 	thirdPartyList=[]
+# 
+# 	from thirdPartyManager import BoostCompile
+# 	thirdPartyList.append(BoostCompile.BoostCompile())
+# 
+# 	from thirdPartyManager import CppUnitCompile
+# 	thirdPartyList.append(CppUnitCompile.CppUnitCompile())
+# 
+# 	from thirdPartyManager import EigenCompile
+# 	thirdPartyList.append(EigenCompile.EigenCompile())
+# 
+# 	from thirdPartyManager import IpOptCompile
+#  	thirdPartyList.append(IpOptCompile.IpOptCompile())
+# 
+# 	from thirdPartyManager import NlOptCompile
+# 	thirdPartyList.append(NlOptCompile.NlOptCompile())
+# 
+# 	from thirdPartyManager import QtCompile
+# 	thirdPartyList.append(QtCompile.QtCompile())
+# 
+#  	# Now execute the method get, which will download, compile 
+#  	# and package the thirdparty
+#  	for i in thirdPartyList:
+#  		i.get()
 	
-	Exit(2)
+ 	Exit(2)
 
 # --- 
 # Light clean: just remove the executable(s) and the app bundle

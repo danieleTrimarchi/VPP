@@ -1,17 +1,4 @@
--> restore Qt 5.9.1 and rebuild @rev660. Verify I get the same failure of ipOptFullRunTest:
-iWv=0 iWa=0 iCmp=2
-- Expected: 0.6860146
-- Actual  : 0.68601120148518
-- Delta   : 1e-06
-If Yes : the system update has changed something -> update baselines and shut up
-If No  : Something wrong has been introduced by the Qt update. But what and HOW? 
-
-
--> Remove the homeBrew qt in /usr/local/Cellar and free space...
-
--> Fix the target 'get_third_party' in main/SConscript with the content from the compileTest
-
--> Allow the GUI to load variableFiles such as the one we use for testing 
+-> RE-Allow the GUI to load variableFiles such as the one we use for testing 
 
 -> fix the runTest target and make this dependent on the VPP program (assure up-to-dateness)
 
