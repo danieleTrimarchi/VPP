@@ -160,6 +160,9 @@ class thirdPartyCompile(object):
         
         return self.__buildInfo__[__libpathFlag__]
     
+    def getBinPath(self):
+        return self.__buildInfo__[__binpathFlag__]
+    
     def getLibs(self):
         
         return self.__buildInfo__[__libsFlag__]

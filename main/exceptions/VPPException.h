@@ -9,7 +9,7 @@ using namespace std;
 /// Define the macro here used to identify the function that throws
 #define HERE __FILE__, __LINE__, __PRETTY_FUNCTION__
 
-class VPPException : public std::exception {
+class VPPException : public exception {
 
 	public:
 
@@ -27,14 +27,14 @@ class VPPException : public std::exception {
 
 	protected:
 
-		std::string msg_;
+		string msg_;
 
 };
 
 // This exception is a copy of VPPException. I need to have a different type to discriminate
 // what is a non-convergence exception and continue on non-convergence error. It is exactly like
 // a goto statement
-class NonConvergedException : public std::exception {
+class NonConvergedException : public exception {
 
 	public:
 
@@ -49,7 +49,7 @@ class NonConvergedException : public std::exception {
 
 	protected:
 
-		std::string msg_;
+		string msg_;
 
 };
 
@@ -58,7 +58,7 @@ class NonConvergedException : public std::exception {
 /// find a previous converged step, while computing an initial guess of
 /// the solution. It is exactly like a goto statement used to stop guessing
 /// the result
-class NoPreviousConvergedException : public std::exception {
+class NoPreviousConvergedException : public exception {
 
 	public:
 
@@ -73,7 +73,7 @@ class NoPreviousConvergedException : public std::exception {
 
 	protected:
 
-		std::string msg_;
+		string msg_;
 
 };
 

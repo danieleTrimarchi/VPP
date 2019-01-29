@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include <QMainWindow>
-#include <QToolBar>
+#include <QtWidgets/QMainWindow.h>
+#include <QtWidgets/qtoolbar.h>
 #include "LogWindow.h"
 #include "VariablesDockWidget.h"
 #include "LogDockWidget.h"
@@ -19,7 +19,7 @@ class VPPItemFactory;
 
 QT_FORWARD_DECLARE_CLASS(QMenu)
 
-/* Main window of the V++ application. This class direcly
+/* Main window of the V++ application. This class directly
  * derives from the Qt example : MainWindow
  */
 class MainWindow : public QMainWindow

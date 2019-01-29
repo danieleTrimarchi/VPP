@@ -434,6 +434,10 @@ void MainWindow::run() {
 					statusProgress++;
 
 				}
+				catch(VPPException& e){
+					std::cout<<e.what()<<std::endl;
+					break;
+				}
 				catch(...){ /* do nothing and keep going */ }
 			}
 		}

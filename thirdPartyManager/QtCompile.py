@@ -31,8 +31,6 @@ class qt5SconsTool(thirdPartyCompile):
         # Override (specialize) the build folder 
         self.__thirdPartyBuildFolder__= os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__)
     
-        print "__thirdPartyBuildFolder__ in Ctor : ", self.__thirdPartyBuildFolder__
-
         # Override (specialize) the package folder 
         self.__thirdPartyPkgFolder__= os.path.join(self.__thirdPartyPkgFolder__,self.__srcDirName__)
 

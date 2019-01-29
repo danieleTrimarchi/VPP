@@ -13,7 +13,7 @@ pParser_(&parser) {
 	sailVariables_.insert( Variable(Var::am_, 0.5 * v[Var::p_] * v[Var::e_] * v[Var::mroach_] ) );
 
 	// Compute the Jib area AJ =  0.5 * sqrt( I^2 + J^2) * LPG
-	sailVariables_.insert( Variable(Var::aj_, 0.5 * std::sqrt( v[Var::i_] * v[Var::i_] + v[Var::j_] * v[Var::j_] ) * v["LPG"] ) );
+	sailVariables_.insert( Variable(Var::aj_, 0.5 * sqrt( v[Var::i_] * v[Var::i_] + v[Var::j_] * v[Var::j_] ) * v["LPG"] ) );
 
 	// Compute the Spinnaker area AS = 1.15 * SL * J;
 	sailVariables_.insert( Variable(Var::as_, 1.15 * v[Var::sl_] * v[Var::sl_] ) );
@@ -66,7 +66,7 @@ SailSet::~SailSet() {
 }
 
 // Get the value of a variable
-double SailSet::get(std::string varName) {
+double SailSet::get(string varName) {
 	return sailVariables_[varName];
 }
 

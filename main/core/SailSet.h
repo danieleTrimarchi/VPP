@@ -3,6 +3,7 @@
 
 #include "VariableFileParser.h"
 #include "Variables.h"
+#include <string>
 
 using namespace std;
 
@@ -46,7 +47,7 @@ class SailSet {
 		virtual size_t getType()=0;
 
 		/// Get the value of a variable
-		double get(std::string);
+		double get(string);
 
 		/// Make a new SailCoefficientItem of the type required for
 		/// this sailSet

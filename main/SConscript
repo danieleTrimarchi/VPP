@@ -62,6 +62,7 @@ if 'help' in COMMAND_LINE_TARGETS:
 	print 'scons clobber		 : removes the whole build tree'
 	print 'scons makeDocs        : makes the Doxygen documentation' 
 	print 'scons get_third_party : get and compiles all the required third parties'
+	print 'scons makeXCode       : makes the xCode debug project'
 	print ' '
 	print 'Options: '
 	print 'scons <target> -Q debug=1 : compiles/executes debug' 		
@@ -80,6 +81,35 @@ if 'makeDocs' in COMMAND_LINE_TARGETS:
 	Exit(2)
 
 # --
+
+if 'makeXCode' in COMMAND_LINE_TARGETS:
+	print 'Making xCode project...'
+	
+	# Remember where we start and need to go back
+	intialDir= os.getcwd()
+
+	# 1_ cd to main and call qmake to generate a new xcode project	
+	os.chdir(os.path.join(localEnv['root_dir' ],'main'))
+  
+	# 2_ Cleanup. Add try-except block in case the files are not present 
+	try: 
+		shutil.rmtree( os.path.join('..','xCodeBuild'),ignore_errors=True )
+		shutil.rmtree('VPP.xcodeproj',ignore_errors=True)
+		os.remove(".qmake.stash")
+	except:
+		pass
+ 
+  	# 3_ --> Write the file VPP.pro 
+	from thirdPartyManager import thirdParties
+	xcode= thirdParties.xCode(thirdPartyDict)
+  	xcode.makeProjectFile(subFolders)
+  	
+	# 4_ get back to the original folder
+	os.chdir(intialDir)
+
+	Exit(2)
+
+# --- 
 
 if 'get_third_party' in COMMAND_LINE_TARGETS:
 
