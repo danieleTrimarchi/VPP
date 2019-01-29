@@ -403,7 +403,7 @@ void MainWindow::run() {
 		// count to update the bar progression
 		QProgressDialog progressDialog(this);
 		size_t maxVal=
-				pVariableFileParser_->get(Var::nta_);
+				pVariableFileParser_->get(Var::nta_) *
 				pVariableFileParser_->get(Var::ntw_);
 		progressDialog.setRange(0,maxVal);
 		progressDialog.setCancelButtonText(tr("&Cancel"));
@@ -418,9 +418,10 @@ void MainWindow::run() {
 			if (progressDialog.wasCanceled())
 				break;
 
-			for(int vTW=0; vTW<pVariableFileParser_->get(Var::ntw_); vTW++){
+			try{
 
-				try{
+				for(int vTW=0; vTW<pVariableFileParser_->get(Var::ntw_); vTW++){
+
 
 					// Run the optimizer for the current wind speed/angle
 					pSolverFactory_->run(vTW,aTW);
@@ -432,14 +433,14 @@ void MainWindow::run() {
 					progressDialog.setLabelText(tr("_ Solving case number %1 of %n...", 0, maxVal).arg(statusProgress));
 
 					statusProgress++;
-
 				}
-				catch(VPPException& e){
-					std::cout<<e.what()<<std::endl;
-					break;
-				}
-				catch(...){ /* do nothing and keep going */ }
 			}
+			catch(VPPException& e){
+				std::cout<<e.what()<<std::endl;
+				break;
+			}
+			catch(...){ /* do nothing and keep going */ }
+
 		}
 		// outer try-catch block
 	}
