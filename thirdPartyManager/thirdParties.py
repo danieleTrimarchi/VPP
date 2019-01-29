@@ -5,7 +5,6 @@ import subprocess
 import shutil
 import re
 
-
 class xCode(object):
     
     def __init__(self, thirdPartyDict):
@@ -40,7 +39,7 @@ class xCode(object):
                        excludePackages=["Qt"] )
 
         # Write the lib path of all third parties present in the dict
-        self.__write__("LIBPATH += ", "libPath", "\"", "\"",[] )
+        self.__write__("LIBPATH += ", "getLibPath", "\"", "\"",[] )
 
         # Write the libs of all third parties present in the dict
         self.__write__("LIBS += ","getLibs", "-l", "",[] )
@@ -49,13 +48,20 @@ class xCode(object):
         self.__write__("LIBS += ","getFrameworks","-framework ","",[] )
         
         # Write : QMAKE-LFLAGS+=-F/PATH/TO/FRAMEWORK/dir
-        self.__write__("QMAKE-LFLAGS+= ","getFrameworkRoot","-F","",[] )
+        self.__write__("QMAKE-LFLAGS+= ","getFrameworkPath","-F","",[] )
         
         # Write the source and header file paths
         self.__writeFiles__(VPPsubFolders)
 
         # Close the VPP.pro project file
         self.__projectFile__.close()
+        
+        # Instantiate the
+        from QtCompile import QtCompile
+        qt = QtCompile()
+
+        # Add the qt bin folder to the path
+        os.environ['PATH'] += os.pathsep + qt.getBinPath()[0] 
         
         # Call qmake and generate an xcode project 
         p= subprocess.Popen("qmake -spec macx-xcode VPP.pro",shell=True)
@@ -115,7 +121,7 @@ class xCode(object):
         self.__projectFile__.write(line)
 
     # -- 
-    
+
     def __writeSettings__(self) :
         
         line= "TARGET = VPP \n\n"
@@ -155,6 +161,17 @@ SYMROOT= ../xCodeBuild\n\n'''
 
     # -- 
 
+    # Populates 'line' with the specs returned by a function - specified 
+    # in 'functionName'. Prepends and appends prefix, suffix to each spec. 
+    # i.e: self.__write__(  line="INCLUDEPATH += ",
+    #                       functionName="getIncludePath", 
+    #                       prefix="\"", suffix="\"", 
+    #                       excludePackages=["Qt"] )
+    # Will write each include path (except for Qt) in quotes (""):
+    #  INCLUDEPATH +=  \ 
+    # "/Users/dtrimarchi/third_party/nlopt-2.4.2/api" \ 
+    # "/Users/dtrimarchi/third_party/eigen-3.3.4"
+    # Finally, writes 'line' to the project file
     def __write__(self, line, functionName, prefix, suffix, excludePackages ):
         
         # Loop on the third_parties in the dictionary
@@ -218,7 +235,6 @@ SYMROOT= ../xCodeBuild\n\n'''
      
 
 # ----------------------------------------
-
 class thirdParty(object) : 
     
     def __init__(self):
@@ -269,18 +285,129 @@ class thirdParty(object) :
         return self.__includePath__
 
     # Retutrn the list of lib paths        
-    def libPath(self):
+    def getLibPath(self):
         return self.__libpath__
+    
+    # Return the name of this thirdParty
+    def getName(self):
+        return self.__name__
     
     # Return the list of frameworks (to be overwritten by child classes)         
     def getFrameworks(self):
         return self.__frameworks__
 
     # Retutrn the LIST of framework paths        
-    def getFrameworkRoot(self):
+    def getFrameworkPath(self):
         if(len(self.__frameworksPaths__)>1):
             raise "The build system must be modified to comply with len(__frameworksPaths__)>1!"
         return self.__frameworksPaths__
+
+    # --- 
+
+    # Copy all the dynamic library of this thirdparty to some dest folder
+    def copyDynamicLibs(self,dest):
+
+        print "In copyDynamicLibs for third_party ", self.getName()
+        print "                  ",self.getLibs() 
+        print "                  ",self.getLibPath()
+        for iLibPath in self.getLibPath():
+            for iLib in self.getLibs():
+                print "In try for ",self.getName()
+                dyLibName= self.getFullDynamicLibName(iLib)
+                print "dyLibName= ",dyLibName
+                print "libpath=", iLibPath
+                print "Copying:", os.path.join(iLibPath,dyLibName)
+                print "to:", os.path.join(dest,dyLibName)
+                try:
+                    shutil.copyfile(os.path.join(iLibPath,dyLibName), 
+                                    os.path.join(dest,dyLibName))
+                except IOError:
+                    print "\n\n===>>>  IOError!\n\n"
+                except OSError:
+                    print "\n\n===>>>  OSError!\n\n"
+                except SpecialFileError:
+                    print "\n\n===>>>  SpecialFileError!\n\n"
+                except: 
+                    print "\n\n===>>>  General Exception!\n\n"
+
+    # --- 
+
+    # Method required to fix the MACOSx app bundle. I hate to be obliged to do this... 
+    # Use this method to fix the references of the (VPP) executable to the dynamic libs 
+    # and the cross references betweeen the dynamic libs. Invoke install_name_tool to 
+    # act directly on the compiled files.
+    # dstRelativeToBin is the relative path between dest (the framewoks folder) and the 
+    # bin folder, meaning something like ../Plugins/<libName>/<dyLibName>
+    # Remember how to inspect binaries: otool -l <binaryFile>
+    # A note about install_name_tool : after the update to Mojave I found two instances of 
+    # install_name_tool, in /opt/local/bin/ and /usr/bin/
+    # Using pkgutil --file-info it turned out that the updated version was the one in /usr/bin
+    # while the version in /opt/local/bin was some leftout from some previous install (?). 
+    # So, I have renamed the instance in /opt/local/bin to install_name_tool_old to avoid the error:
+    # -----------------------------------------------------------------------------------------------------------
+    # install_name_tool: object: /Users/dtrimarchi/VPP/build/thirdPartyManager/release/VPP.app/Contents/MacOS/VPP 
+    # malformed object (unknown load command 9)
+    # -----------------------------------------------------------------------------------------------------------
+    def fixDynamicLibPath(self,dst,dstRelativeToBin,appInstallDir):   
+         
+        # Fix the cross refereences of the libraries belonging to this third party
+        for jLib in self.__libs__:
+            for iLib in self.__libs__: 
+                
+                if jLib==iLib:
+                    continue
+                
+                ilibFullName = self.getFullDynamicLibName(iLib)
+                relPathName = os.path.join(dstRelativeToBin,self.getName(),ilibFullName)
+                jlibAbsPath = os.path.join(dst,self.getFullDynamicLibName(jLib))
+                self.__execute__("install_name_tool -change {} @executable_path/{} {}".format(
+                                                            ilibFullName,
+                                                            relPathName,
+                                                            jlibAbsPath))
+
+        # Now loop on the libs and fix the references to the libraries directly in the VPP executable
+        for iLib in self.__libs__: 
+            
+            ilibFullName = self.getFullDynamicLibName(iLib)
+            relPathName = os.path.join(dstRelativeToBin,self.getName(),ilibFullName)
+            self.__execute__("install_name_tool -change {} @executable_path/{} {}/VPP".format(
+                                                            ilibFullName,
+                                                            relPathName,
+                                                            appInstallDir))
+            
+        # Still we need to fix the frameworks. This can only work on the a 
+        # third_party specific basis
+        self.__fixFrameworksPath__(appInstallDir)
+    
+    # -- 
+    
+    def __fixFrameworksPath__(self,appInstallDir):
+        # do nothing 
+        return 
+
+    # So, given "ipopt", return "libipopt.dylib"
+    # Warning: this method is duplicated in thirdPartyCompile.py.
+    # Classes need to merge. todo dtrimarchi
+    def getFullDynamicLibName(self,libName):
+        return "lib"+libName+".dylib"
+    
+    # Wraps a call to subprocess and the required diagnostics
+    # Warning: this method is duplicated in thirdPartyCompile.py.
+    # Classes need to merge. todo dtrimarchi
+    def __execute__(self,command,myEnv=os.environ):
+        
+        print "Executing command: {}".format(command)
+        
+        p = subprocess.Popen(command,shell=True,env=myEnv)
+        if p.wait():
+            raise ValueError('\n\nSomething went wrong when trying to execute: {}\n\n'.format(command))
+
+
+    def __printEnv__(self):
+        print "\n----------------\nEnv= "
+        for param in os.environ.keys():
+                print "%20s %s" % (param,os.environ[param])
+        print "\n----------------\n"
 
 # --- 
 
@@ -316,24 +443,21 @@ class Boost( thirdParty ) :
         # Call mother-class constructor
         super(Boost,self).__init__()
         
-        self.__name__= "Boost"
+        from BoostCompile import BoostCompile
+        boostPkg= BoostCompile()
 
-        self.__version__ = "1_60_0"
-
-        # Declare class members, to be filled by the children
-        self.__includePath__= [ os.path.join( self.__rootDir__,'boost_'+self.__version__) ]
-        self.__libpath__= [ os.path.join( self.__rootDir__,'boost_'+self.__version__,
-                                          "bin.v2","libs","system","build","darwin-4.2.1",
-                                          "release","link-static","threading-multi"),
-                           os.path.join( self.__rootDir__,'boost_'+self.__version__,
-                                          "bin.v2","libs","fileSystem","build","darwin-4.2.1",
-                                          "release","link-static","threading-multi")                            
-                           ]
+        self.__name__= boostPkg.__name__
         
-        self.__libs__= ["boost_system","boost_filesystem"]
-    
-        self.__addTo__(env)
+        self.__version__ = boostPkg.__version__
 
+        self.__includePath__= boostPkg.getIncludePath()
+                
+        self.__libpath__= boostPkg.getLibPath()
+        
+        self.__libs__= boostPkg.getLibs() 
+            
+        self.__addTo__(env)
+    
 # -- 
 
 class CppUnit( thirdParty ) :
@@ -343,14 +467,17 @@ class CppUnit( thirdParty ) :
         # Call mother-class constructor
         super(CppUnit,self).__init__()
 
-        self.__name__= "CppUnit"
+        from CppUnitCompile import CppUnitCompile
+        cppUnitPkg= CppUnitCompile()
 
-        self.__version__ = "1.13.2"
+        self.__name__= cppUnitPkg.__name__
+
+        self.__version__ = cppUnitPkg.__version__
 
         # Declare class members, to be filled by the children
-        self.__includePath__= [ os.path.join(self.__rootDir__,'cppunit-'+self.__version__,'build/include') ]
-        self.__libpath__= [ os.path.join(self.__rootDir__,'cppunit-'+self.__version__,'build/lib') ]
-        self.__libs__= ['cppunit']
+        self.__includePath__= cppUnitPkg.getIncludePath()
+        self.__libpath__= cppUnitPkg.getLibPath()
+        self.__libs__= cppUnitPkg.getLibs()
     
         self.__addTo__(env)
 
@@ -363,11 +490,15 @@ class Eigen( thirdParty ) :
         # Call mother-class constructor
         super(Eigen,self).__init__()
         
-        self.__name__= "Eigen"
+        from EigenCompile import EigenCompile
+        eigen= EigenCompile()
 
-        self.__version__ = "3.3.4"
+        self.__name__= eigen.__name__
+
+        self.__version__ = eigen.__version__
+        
         # Declare class members, to be filled by the children
-        self.__includePath__= [ os.path.join(self.__rootDir__, 'eigen-' + self.__version__) ]
+        self.__includePath__= eigen.getIncludePath()
     
         self.__addTo__(env)
 
@@ -381,9 +512,8 @@ class IPOpt( thirdParty ) :
         super(IPOpt,self).__init__()
         
         # Instantiate the thirdPartyCompile object
-        print "IpOpt constructor"
-        import thirdPartyCompile as tp
-        ipOptPkg= tp.IpOptCompile()
+        from ipOptCompile import IpOptCompile
+        ipOptPkg= IpOptCompile()
 
         # Get the name of the third_party
         self.__name__= ipOptPkg.__name__
@@ -393,27 +523,16 @@ class IPOpt( thirdParty ) :
         
         # Declare class members, to be filled by the children
         self.__includePath__= ipOptPkg.getIncludePath()
-# WARNING : this was the old include def. Is this still actual? 
-#        self.__includePath__= [os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'Ipopt/src/Interfaces'),
-#                               os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'include/coin') ]
  
+        # set libpath
         self.__libpath__= ipOptPkg.getLibPath()
-        #[ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
-        
-        self.__frameworksPaths__= ipOptPkg.getLibPath()
-        # [ os.path.join(self.__rootDir__,'Ipopt-'+self.__version__,'lib') ]
 
+        # onfuse frameworks and libs        
+        self.__frameworksPaths__= ipOptPkg.getLibPath()
+        
         # Define the list of libs
         self.__libs__= ipOptPkg.getLibs()
-        #['ipopt']
-        
-        # Define the list of frameworks         
-        #self.__frameworks__= [
-        #                      'libipopt.1.dylib', 
-        #                      'libcoinmumps.1.dylib', 
-        #                      'libcoinmetis.1.dylib'
-        #                    ]
-    
+            
         self.__addTo__(env)
         
 # -- 
@@ -421,21 +540,23 @@ class IPOpt( thirdParty ) :
 class NLOpt( thirdParty ) :
 
     def __init__(self, env):
-        
+                
         # Call mother-class constructor
         super(NLOpt,self).__init__()
         
-        self.__name__= "NLOpt"
+        from NlOptCompile import NlOptCompile
+        nlOptCompile= NlOptCompile()
+
+        self.__name__= nlOptCompile.__name__
         
-        self.__version__ = "2.4.2"
+        self.__version__ = nlOptCompile.__version__
 
         # Declare class members, to be filled by the children
-        self.__includePath__= [ os.path.join( self.__rootDir__,'nlopt-' + self.__version__,'api') ]
-        self.__libpath__= [ os.path.join( self.__rootDir__,'nlopt-' + self.__version__,'libs')]
-        self.__libs__= ['nlopt']
-    
-        self.__addTo__(env)
-    
+        self.__includePath__= nlOptCompile.getIncludePath()
+        self.__libpath__= nlOptCompile.getLibPath()
+        self.__libs__= nlOptCompile.getLibs()
+        
+        self.__addTo__(env)    
 # -- 
 
 class Qt( thirdParty ) :
@@ -445,52 +566,59 @@ class Qt( thirdParty ) :
         # Call mother-class constructor
         super(Qt,self).__init__()
 
-        self.__name__= "Qt"
+        from QtCompile import QtCompile
+        qt= QtCompile()
+
+        self.__name__= qt.__name__
         
-        self.__version__ = "5.9.1"
+        self.__version__ = qt.__version__
 
         # Overrride rootDir that is different for Qt as it is installed via homebrew
-        self.__rootDir__ = os.path.join(self.__rootDir__,'Qt',self.__version__)
-        #self.__rootDir__ = os.path.join("/usr/local/Cellar/qt5",self.__version__)
+        self.__rootDir__ = qt.__thirdPartyPkgFolder__
 
         # Linkline is treated specially by the Qt5 module. Do not add the frameworks 
         self.__addFrameworkLinkLine__= False
 
-        # Define the list of the libs (frameworks in this case)         
-        self.__frameworks__= [
-                              'QtCore',
-                              'QtGui',
-                              'QtWidgets',
-                              'QtDataVisualization', 
-                              'QtPrintSupport'
-                              ]
-
         # Direcly customize the env for the package config
         env['ENV']['PKG_CONFIG_PATH'] = [ os.path.join(self.__VPPprogramSrcDir__,'site_scons','qtPkgConfig') ]    
         
-        env['ENV']['PATH'] += ':/opt/local/bin:'+os.path.join(self.__rootDir__,'clang_64')
+        env['ENV']['PATH'] += ':/opt/local/bin:'+qt.__thirdPartyPkgFolder__
 
         # Remember rootDir is overwritten for Qt!
-        env.Append( QT5DIR = os.path.join(self.__rootDir__, 'clang_64') )
+        env.Append( QT5DIR = os.path.join(qt.__thirdPartyPkgFolder__) )
         
         # This is for http://stackoverflow.com/questions/37897209/qt-requires-c11-support-make-error
         env.Append( CXXFLAGS =  ['-std=c++11'] )
 
         env.Tool('qt5')
 
-        env.EnableQt5Modules( self.__frameworks__ )
-
-        self.__frameworksPaths__ = [ os.path.join(self.__rootDir__, 'clang_64', 'lib') ]
+        env.EnableQt5Modules( qt.getLibs() )
         
-        self.__includePath__= [
-                               # Framework-wise include for SCons
-                               os.path.join(self.__frameworksPaths__[0],'QtCore.framework/Versions/Current/Headers'),
-                               os.path.join(self.__frameworksPaths__[0],'QtWidgets.framework/Versions/Current/Headers'),
-                               os.path.join(self.__frameworksPaths__[0],'QtGui.framework/Versions/Current/Headers')
-                               ]
+        self.__includePath__= qt.getIncludePath()
         
-        # Returns the absolute path of the Qt Framework folder
-        self.__libpath__= []
+        self.__libpath__= qt.getLibPath()
 
+        # Confuse framework path and lib path as the qt package
+        # places everything in the same place     
+        self.__frameworksPaths__= qt.getLibPath()
+
+        # Confuse the frameworks and the libs too (required for 
+        # self.__fixFrameworksPath__()
+        self.__frameworks__ = qt.getLibs()
+        
         self.__addTo__(env)
         
+    # -- 
+    
+    # Fix the cross references of the Qt frameworks using install_name_tool.
+    # This is required for the MACOSx bundle
+    def __fixFrameworksPath__(self,appInstallDir):
+        
+        for iFramework in self.getFrameworks(): 
+            self.__execute__('install_name_tool -change '
+                             '@rpath/{iFmwk}.framework/Versions/5/{jFmwk} '
+                             '@executable_path/../Frameworks/{kFmwk}.framework/Versions/Current/{lFmwk} '
+                             '{exePath}/VPP'.format( 
+                                        iFmwk=iFramework,jFmwk=iFramework,
+                                        kFmwk=iFramework,lFmwk=iFramework,
+                                        exePath=appInstallDir )) 

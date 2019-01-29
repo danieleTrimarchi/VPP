@@ -1,4 +1,4 @@
-prefix=/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64
+prefix=/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2
 exec_prefix=${prefix}
 libdir=${prefix}/lib
 includedir=${prefix}/include
@@ -6,9 +6,9 @@ includedir=${prefix}/include
 
 Name: Qt5 3DQuickInput
 Description: Qt 3DQuickInput module
-Version: 5.9.1
+Version: 5.11.2
 Libs: -F${libdir} -framework Qt3DQuickInput 
-Libs.private: -F/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -F/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -F/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -F/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64/lib -framework Qt3DInput -framework Qt3DCore -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtGamepad -framework Qt3DQuick -framework QtQuick -framework QtQml -framework QtNetwork -framework OpenGL -framework AGL  
+Libs.private: -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2/lib -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2/lib -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2/lib -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2/lib -framework Qt3DInput -framework Qt3DCore -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtGamepad -framework Qt3DQuick -framework QtQuick -framework QtQml -framework QtNetwork -framework OpenGL -framework AGL  
 Cflags: -I${includedir}/Qt3DQuickInput -I${includedir}
 Requires: Qt5Core Qt5Gui Qt5Qml Qt53DCore Qt53DInput Qt53DQuick
 

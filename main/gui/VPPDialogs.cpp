@@ -38,20 +38,23 @@ StateVectorDialog::StateVectorDialog(QWidget *parent)
 	QLocale localSettings = QLocale::c();
 	localSettings.setNumberOptions(QLocale::RejectGroupSeparator | QLocale::OmitGroupSeparator);
 
+	// How many decimals can be entered into the QLineEdit?
+	size_t decimals=14;
+
 	// Set all the line edit with double validators
-	QDoubleValidator* velocityValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pV_Edit_.get() );
+	QDoubleValidator* velocityValueValidator= new QDoubleValidator(-999.0, 999.0, decimals, pV_Edit_.get() );
 	velocityValueValidator->setLocale(localSettings);
 	pV_Edit_->setValidator(velocityValueValidator);
 
-	QDoubleValidator* phiValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pPhi_Edit_.get() );
+	QDoubleValidator* phiValueValidator= new QDoubleValidator(-999.0, 999.0, decimals, pPhi_Edit_.get() );
 	phiValueValidator->setLocale(localSettings);
 	pPhi_Edit_->setValidator(phiValueValidator);
 
-	QDoubleValidator* crewValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pCrew_Edit_.get() );
+	QDoubleValidator* crewValueValidator= new QDoubleValidator(-999.0, 999.0, decimals, pCrew_Edit_.get() );
 	crewValueValidator->setLocale(localSettings);
 	pCrew_Edit_->setValidator(crewValueValidator);
 
-	QDoubleValidator* flatValueValidator= new QDoubleValidator(-999.0, 999.0, 2, pFlat_Edit_.get() );
+	QDoubleValidator* flatValueValidator= new QDoubleValidator(-999.0, 999.0, decimals, pFlat_Edit_.get() );
 	flatValueValidator->setLocale(localSettings);
 	pFlat_Edit_->setValidator(flatValueValidator);
 
@@ -148,6 +151,9 @@ WindIndicesDialog::WindIndicesDialog(WindItem* pWind, QWidget* parent)
 	// Set local settings for the validators
 	QLocale localSettings = QLocale::c();
 	localSettings.setNumberOptions(QLocale::RejectGroupSeparator | QLocale::OmitGroupSeparator);
+
+	std::cout<<"NTW="<<pWind->getWVSize()<<std::endl;
+	std::cout<<"NTA="<<pWind->getWASize()<<std::endl;
 
 	// Set all the line edit with double validators
 	QIntValidator* twvValueValidator= new QIntValidator(0, pWind->getWVSize(), pTWV_Edit_.get() );

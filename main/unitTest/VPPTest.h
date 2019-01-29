@@ -17,7 +17,7 @@ class TVPPTest : public CppUnit::TestFixture{
   CPPUNIT_TEST(variableParseTest);
 
   /// Test the sail coeff IO
-  		CPPUNIT_TEST(sailCoeffsIOTest);
+  CPPUNIT_TEST(sailCoeffsIOTest);
 
   /// Instantiate some items, write to xml, read them
   /// back and verify consistency

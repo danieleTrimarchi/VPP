@@ -11,6 +11,7 @@ Warning::Warning(string msg) {
 	QMessageBox msgBox;
 	msgBox.setText(QString(msg.c_str()));
 	msgBox.setIcon(QMessageBox::Warning);
+	msgBox.setWindowTitle("Warning");
 	msgBox.exec();
 
 }

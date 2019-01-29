@@ -1,17 +1,16 @@
--> download should handle both tar.gz and zip
--> try the full procedure with the tar.gz
+-> Fix Eclipse: add pyDev
 
+-> increase the min size of the 'value' column in the VppSettings tab so that it does not partially hide the header
+ 
+-> fix the runTest target and make this dependent on the VPP program (assure up-to-dateness)
 
-
-
-
+-> RE-Allow the GUI to load variableFiles.txt (such as the one we use for testing)
 
 -> Export results to excel format. Simply use .csv formatting
 - Is it possible to write in multiple tabs? 
  Ideally I would have vpp settings in the first tab, and the results in the second tab
 
-
--> Items should define a state vector, not a collection of variables!!
+-> Items should define a state vector, not a collection of variables!! See for example VppItem::updateSolution(int,int,Eigen::Vector&x)
 
 -> Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 	mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
 	To be investigated on UML!

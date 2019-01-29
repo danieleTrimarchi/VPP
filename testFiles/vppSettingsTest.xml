@@ -9,7 +9,7 @@
                     <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.Velocity_bounds_max" DisplayName="Velocity bounds_max" VariableName="V_MAX" ClassName="SettingsItem" Value="15" Unit="m/s" ToolTip="max value"/>
                 </Item>
                 <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds" DisplayName="Heel angle bounds" VariableName="PHI" ClassName="SettingsItemBounds" Unit="deg">
-                    <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds.Heel_angle_bounds_min" DisplayName="Heel angle bounds_min" VariableName="PHI_MIN" ClassName="SettingsItem" Value="-1e-5" Unit="deg" ToolTip="min value"/>
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds.Heel_angle_bounds_min" DisplayName="Heel angle bounds_min" VariableName="PHI_MIN" ClassName="SettingsItem" Value="-1e-05" Unit="deg" ToolTip="min value"/>
                     <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds.Heel_angle_bounds_max" DisplayName="Heel angle bounds_max" VariableName="PHI_MAX" ClassName="SettingsItem" Value="85" Unit="deg" ToolTip="max value"/>
                 </Item>
                 <Item Expanded="no" InternalName="/.VPP_Settings.Crew_position_bounds" DisplayName="Crew position bounds" VariableName="B" ClassName="SettingsItemBounds" Unit="m">

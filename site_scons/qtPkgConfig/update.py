@@ -1,8 +1,8 @@
 import os, shutil, glob
 
 # Define current QtRoot and version
-QtRoot = "/Users/dtrimarchi/third_party/Qt/5.9.1/clang_64"
-QtVersion = "5.9.1"
+QtRoot = "/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2"
+QtVersion = "5.11.2"
 
 # Loop on the pc files present in the folder
 os.chdir("templates")

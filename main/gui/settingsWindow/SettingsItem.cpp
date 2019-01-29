@@ -1,7 +1,4 @@
 #include "SettingsItem.h"
-//#include <QtWidgets/QLineEdit>
-//#include <QtWidgets/QSpinBox>
-//#include <QtGui/QColor>
 #include <iostream>
 #include "VppSettingsXmlWriter.h"
 #include "VppSettingsXmlReader.h"

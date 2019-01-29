@@ -26,7 +26,15 @@ using namespace Eigen;
 #include "MainWindow.h"
 
 // MAIN
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
+
+  // Add "--stop" in function call to attach a debugger
+  if (argc > 1) {
+    if (std::string(argv[1]) == "--stop") {
+      std::cout << "Waiting...press a key to continue\n";
+      std::cin.ignore();
+    }
+  }
 
 	// Instantiate the utilities to get the external resources such
 	// as the icons

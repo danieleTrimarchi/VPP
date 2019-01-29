@@ -21,7 +21,7 @@ class VPPResultIO : public FileParserBase {
 		~VPPResultIO();
 
 		/// Write results to file
-		void write(string fileName=string("vppResults.vpp"));
+		void write(string fileName=string("vppResults.vpp"), string writeMode=string("a") );
 
 		/// Declare the macro to allow for fixed size vector support
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW

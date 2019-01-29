@@ -2,6 +2,7 @@
 #define SETTINGS_ITEM_H
 
 /* This class implements the itemTree for the settings window */
+#include <qglobal.h>
 #include <QtGui/QPainter>
 #include <QtWidgets>
 

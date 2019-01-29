@@ -1378,7 +1378,7 @@ void TVPPTest::ipOptFullRunTest() {
 
 	// Save the results (useful for debugging)
 	VPPResultIO writer(&parser, solverFactory.get()->getResults());
-	writer.write("testFiles/vppRunTest_curResults.vpp");
+	writer.write("testFiles/vppRunTest_curResults.vpp","w");
 
 	// Now import some baseline results
 	ResultContainer baselineResults(pVppItems->getWind());
@@ -1397,13 +1397,13 @@ void TVPPTest::ipOptFullRunTest() {
 	// Now compare each result using CPPUnit comparators
 	for(size_t iWv=0; iWv<baselineResults.windVelocitySize(); iWv++)
 		for(size_t iWa=0; iWa<baselineResults.windAngleSize(); iWa++) {
-
-			for(size_t iCmp=0; iCmp<solverFactory.get()->getDimension(); iCmp++)
+			for(size_t iCmp=0; iCmp<solverFactory.get()->getDimension(); iCmp++){
 				CPPUNIT_ASSERT_DOUBLES_EQUAL(
 						baselineResults.get(iWv,iWa).getX()->coeffRef(iCmp),
 						pCurrentResults->get(iWv,iWa).getX()->coeffRef(iCmp),
 						1.e-6
 				);
+			}
 		}
 }
 

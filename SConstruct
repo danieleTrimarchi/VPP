@@ -154,24 +154,30 @@ releaseEnv.AddMethod(getAppInstallDir, 'getAppInstallDir')
 #            VPP.exe
 #        Resources/
 #            VPP.icns
+#        Frameworks/
+#             All Frameworks (Qt)
+#        PlugIns/
+#            LibraryName/
+#                library.dylib
 def makeAppFolderStructure(self, thirdPartyDict):
     
     print "===>>>>  makeAppFolderStructure!  <<<<<================"
     
+    # info.plist file...
     if not os.path.exists( self.getAppContentsDir() ):
         os.makedirs(self.getAppContentsDir())
         copyfile( os.path.join( self.getSrcTreeRoot(),"gui/Info.pList"), os.path.join( self.getAppContentsDir(),"Info.pList") )
  
-    if not os.path.exists(self.getAppResourcesDir() ):
-         
+    # Resources directory...
+    if not os.path.exists(self.getAppResourcesDir() ):     
         os.makedirs(self.getAppResourcesDir() )
         copyfile( os.path.join( self.getSrcTreeRoot(), "Icons/VPP.icns"), os.path.join(self.getAppResourcesDir(),"VPP.icns") )
 
+    # Framework directory...
     if not os.path.exists( self.getAppFrameworksDir() ): 
-
         os.makedirs( self.getAppFrameworksDir() )
 
-        frameworkRoot= thirdPartyDict['Qt'].getFrameworkRoot()[0]
+        frameworkRoot= thirdPartyDict['Qt'].getFrameworkPath()[0]
         frameworkList= thirdPartyDict['Qt'].getFrameworks()
     
         # Copy the Qt frameworks to the APP bundle 
@@ -196,67 +202,79 @@ def makeAppFolderStructure(self, thirdPartyDict):
             p = subprocess.Popen('chmod -R 755 {}'.format( 
                                                           os.path.join( self.getAppFrameworksDir(), iFramework + ".framework" ) ), 
                                  shell=True)
-            p.wait()        
+            p.wait()     
+            
+    # Plugin directory... Copy here all the required .dylibs         
+    if not os.path.exists( self.getAppPlugInsDir() ): 
+        os.makedirs( self.getAppPlugInsDir() )
 
+    # Loop on all the third parties 
+    for iTh in thirdPartyDict :         
+        
+        # Get the i-th third party
+        iThirdParty = thirdPartyDict[iTh]
+
+        # Name of the third party dest folder
+        iThirdPartyDestFolder = os.path.join(self.getAppPlugInsDir(),iThirdParty.getName())
+        
+        # Does the plugins folder for this third party exist in the app bundle?     
+        if not os.path.exists( iThirdPartyDestFolder ): 
+            os.makedirs( iThirdPartyDestFolder )
+            
+            # Ask the third party to copy the dynamic libs (if any) to the dedicated location
+            try: 
+                iThirdParty.copyDynamicLibs(iThirdPartyDestFolder)
+            except:
+                continue
+            
 releaseEnv.AddMethod(makeAppFolderStructure, 'makeAppFolderStructure')
 
 # ---------------------------------------------------------------
 
+# Modify the executable in order to change @rpath -> @executable_path thus making 
+# it executable. This is required for generating MACOSx bundles 
 def fixDynamicLibPath(self,source,target,env):
-    
-    print "==>>  fixDynamicLibPath <<=="
-
-    # Modify the executable in order to change @rpath -> @executable_path thus making 
-    # it executable. Not sure why @rpath would not work though... 
-        
-    # Loop on the frameworks
-    for iFramework in self['THIRDPARTYDICT']['Qt'].getFrameworks(): 
-
-        print "RUNNING : "
-        print ('install_name_tool -change '
-               '@rpath/{}.framework/Versions/5/{} '
-               '@executable_path/../Frameworks/{}.framework/Versions/Current/{} '
-               '{}/VPP'.format( 
-                        iFramework,iFramework,
-                        iFramework,iFramework,
-                        self.getAppInstallDir()
-                        )
-            )
-
-        # Also change the reference to the frameworks from @rpath to @executable_path
-        p = subprocess.Popen('install_name_tool -change '
-                             '@rpath/{}.framework/Versions/5/{} '
-                             '@executable_path/../Frameworks/{}.framework/Versions/Current/{} '
-                             '{}/VPP'.format( 
-                                             iFramework,iFramework,
-                                             iFramework,iFramework,
-                                             self.getAppInstallDir()
-                                             ), 
-                             shell=True )
-        p.wait()
-        
+                    
+    # Ask each third party to modify the installed dynamic libs and frameworks - and their refs 
+    # in the executable - in order for the app bundle to find all the necessary bits
+    for iTh in self['THIRDPARTYDICT'] :
+        iThirdParty = self['THIRDPARTYDICT'][iTh]
+        iThirdParty.fixDynamicLibPath(os.path.join(self.getAppPlugInsDir(),iThirdParty.getName()),
+                                      "../PlugIns",self.getAppInstallDir())
+            
 releaseEnv.AddMethod(fixDynamicLibPath, 'fixDynamicLibPath')
 
 # ---------------------------------------------------------------
 
+# Accomplish three tasks: 
+# 1_ Make sure the test folder contains the required dynamic libs. 
+# 2_ Add the variable DYLD_LIBRARY_PATH= to the env, pointing to the place where dyLibs have been stored
+# 3_ Correct the references to the libs -if required- using install_name_tool. Actually I think this should 
+#    not be necessary. The references I am fixing are those of Qt - but I don't want the VPP test to depend
+#    upon Qt!  
 def fixDynamicLibPathTest(self,source,target,env):
     
     print "==>>  fixDynamicLibPathTest <<=="
+    
+    # Where does the test executable live? 
+    testExecutable= self['TEST_EXE']
+    testExecutablePath= self['TEST_EXE_PATH']    
 
-    # Modify the executable in order to change @rpath -> @executable_path thus making 
-    # it executable. Not sure why @rpath would not work though... 
-    testExecutablePath= self['TEST_EXE_PATH']
+    # Does the test lib folder exists?
+    testLibFolder = os.path.join(testExecutablePath,"lib") 
+    if not os.path.exists(testLibFolder): 
+        os.makedirs(testLibFolder)
+        
+        # Loop on the third_party and copy all the dynamic libs to "lib"
+        for iTh in self['THIRDPARTYDICT'] :
+            iThirdParty = self['THIRDPARTYDICT'][iTh]
+            iThirdParty.copyDynamicLibs(testLibFolder)
     
+    # THIS PART IS TO BE REMOVED I THINK, As we do not need Qt for compiling the test
+
+    print '==>>' , self['THIRDPARTYDICT']['Qt'].getFrameworkPath()
     
-    print '==>>' , self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()
-    
-    # Not ideal, but it does the job by now. getFrameworkRoot returns a list, 
-    # because potentially we have mutliple paths. I do not know how to behave in 
-    # that case, which is only theoretical by now. So if this is the case I stop
-    # the execution. So I am simply post-poning the problem to later on...
-    if(len(self['THIRDPARTYDICT']['Qt'].getFrameworkRoot())>1):
-        error("Too many framework roots, this is not implemented!")
-    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkRoot()[0]
+    QtFrameworkRoot= self['THIRDPARTYDICT']['Qt'].getFrameworkPath()[0]
 
     QtFrameworkList= self['THIRDPARTYDICT']['Qt'].getFrameworks()
 
@@ -270,19 +288,20 @@ def fixDynamicLibPathTest(self,source,target,env):
                '{}'.format( 
                         iFramework,iFramework,
                         QtFrameworkRoot,iFramework,iFramework,
-                        testExecutablePath
+                        testExecutable
                         )
             )
 
-        # Also change the reference to the frameworks from @rpath to @executable_path
+        # Change the reference to the frameworks from @rpath to @executable_path
+        # NOTE : this is not a third_party, we do not have the method self.__execute__() !
         p = subprocess.Popen('install_name_tool -change '
                              '@rpath/{}.framework/Versions/5/{} '
                              '{}/{}.framework/Versions/Current/{} '
                              '{}'.format( 
-                                             iFramework,iFramework,
-                                             QtFrameworkRoot,iFramework,iFramework,
-                                             testExecutablePath
-                                             ), 
+                                        iFramework,iFramework,
+                                        QtFrameworkRoot,iFramework,iFramework,
+                                        testExecutable
+                                        ), 
                              shell=True )
         p.wait()
         

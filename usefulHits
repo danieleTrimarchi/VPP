@@ -29,6 +29,9 @@ Resolve std c++ Eclipse includes:
 
 Project Properties-> C++ General -> Preprocessor Include Paths... -> Providers
 Select CDT Cross GCC Build-in Compiler Settings
+Select CDT GCC Build-in Compiler Settings
 
+Right click on the project/Index/Search For Unresolved includes
+	this gives a list that can be easily searched 
 ################################
 
