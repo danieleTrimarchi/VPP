@@ -17,7 +17,7 @@ res_(0){
 void ResistanceItem::update(int vTW, int aTW) {
 
 	// Update the Froude number using the state variable boat velocity
-	fN_= convertToFn( x_(0) );
+	fN_= convertToFn( x_(stateVars::u) );
 	if(isNotValid(fN_)) throw VPPException(HERE,"fN_ is Nan");
 
 //		if(fN_ > 0.6) {
@@ -126,9 +126,9 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 	//std::cout<<"Teffective= \n"<<Teffective<<std::endl;
 
 	// Properly interpolate then values of TeD for the current value
-	// of the state variable x_(1) (heeling angle)
+	// of the state variable x_(stateVars::phi) (heeling angle)
 	SplineInterpolator interpolator(phiD_,Teffective);
-	double Te= interpolator.interpolate(x_(1));
+	double Te= interpolator.interpolate(x_(stateVars::phi));
 
 	//  std::cout<<"phiDArr= "<<phiD_<<std::endl;
 	//  std::cout<<"TeD= "<<TeD<<std::endl;
@@ -143,21 +143,21 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 
 	// Get the aerodynamic side force. See DSYHS99 p 129. AeroForcesItem is supposedly up to
 	// date because it is stored in the aeroItems vector that is updated before the hydroItemsVector
-	double fHeel= pAeroForcesItem_->getFSide() / cos(x_(1));
+	double fHeel= pAeroForcesItem_->getFSide() / cos(x_(stateVars::phi));
 
 	// Compute the induced resistance Ri = Fheel^2 / (0.5 * rho_w * pi * Te^2 * V^2)
-	if(x_(0)>0) {
+	if(x_(stateVars::u)>0) {
 
 		// The velocity used in the denominator explodes the value of the induced resistance
-		// for small values of x_(0). We limit then the value of res by bounding the lower value
+		// for small values of x_(stateVars::u). We limit then the value of res by bounding the lower value
 		// of the velocity with a parabola. This happens to preserve c1 continuity at the velocity
 		// corresponding to Fn=0.1
-		if( x_(0)<vf_)
-			x_(0)= a_ * x_(0) * x_(0) + c_;
+		if( x_(stateVars::u)<vf_)
+			x_(stateVars::u)= a_ * x_(stateVars::u) * x_(stateVars::u) + c_;
 		else
-			x_(0)= x_(0);
+			x_(stateVars::u)= x_(stateVars::u);
 
-		res_ = ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * x_(0) * x_(0));
+		res_ = ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * x_(stateVars::u) * x_(stateVars::u));
 
 		// Superpose a further smoothing using a step function for  Fn=0-0.2
 		res_ *= pSf_->f( fN_ );
@@ -181,14 +181,14 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 	std::vector<VppXYCustomPlotWidget*> retVec;
 
 	// Fill state vector
-	x_(2)=sd->getCrew();
-	x_(3)=sd->getFlat();
+	x_(stateVars::b)=sd->getCrew();
+	x_(stateVars::f)=sd->getFlat();
 
 	// buffer the velocity that is going to be modified by the plot
-	double bufferV= x_(0);
-	double bufferPHI= x_(1);
-	double bufferb= x_(2);
-	double bufferf= x_(3);
+	double bufferV= x_(stateVars::u);
+	double bufferPHI= x_(stateVars::phi);
+	double bufferb= x_(stateVars::b);
+	double bufferf= x_(stateVars::f);
 
 	// Define the number of velocities and angles (+=4!!)
 	size_t nVelocities=40, nAngles=20;
@@ -199,8 +199,8 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 	// Loop on the heel angles
 	for(int i=0; i<nAngles; i+=5){
 
-		x_(1)= mathUtils::toRad( i - 5 );
-		//std::cout<<"PHI= "<<x_(1)<<std::endl;
+		x_(stateVars::phi)= mathUtils::toRad( i - 5 );
+		//std::cout<<"PHI= "<<x_(stateVars::phi)<<std::endl;
 
 		// declare some tmp containers
 		QVector<double> fn, res;
@@ -209,10 +209,10 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			x_(0)= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
+			x_(stateVars::u)= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 			Eigen::VectorXd x(pbSize_);
-			x << x_(0), x_(1), x_(2), x_(3);
+			x << x_(stateVars::u), x_(stateVars::phi), x_(stateVars::b), x_(stateVars::f);
 
 			// Update the aeroForceItems
 			pAeroForcesItem_->getWindItem()->updateSolution(wd->getTWV(),wd->getTWA(),x);
@@ -232,7 +232,7 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 		indRes.push_back(res);
 
 		char msg[256];
-		sprintf(msg,"%3.1fº", toDeg(x_(1)));
+		sprintf(msg,"%3.1fº", toDeg(x_(stateVars::phi)));
 		curveLabels.push_back(msg);
 
 	}
@@ -263,7 +263,7 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 	for(size_t i=0; i<nAngles; i+=4){
 
 		// Compute the heel angle [Rad]
-		x_(1)= ( 1./nAngles * (i+1) ) * M_PI/4;
+		x_(stateVars::phi)= ( 1./nAngles * (i+1) ) * M_PI/4;
 
 		// Solution-buffer vectors
 		QVector<double> fh2, ri;
@@ -272,10 +272,10 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 		for(size_t v=0; v<nVelocities-7; v++){
 
 			// Set a fictitious velocity (Fn=0-1)
-			x_(0)= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
+			x_(stateVars::u)= ( 1./nVelocities * (v+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 			Eigen::VectorXd x(pbSize_);
-			x << x_(0), x_(1), x_(2), x_(3);
+			x << x_(stateVars::u), x_(stateVars::phi), x_(stateVars::b), x_(stateVars::f);
 
 			// Update the aeroForceItems
 			pAeroForcesItem_->getWindItem()->updateSolution(wd->getTWV(),wd->getTWA(),x);
@@ -286,7 +286,7 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 			update(wd->getTWV(),wd->getTWA());
 
 			// Compute the heeling force
-			double fh= pAeroForcesItem_->getFSide() / cos(x_(1));
+			double fh= pAeroForcesItem_->getFSide() / cos(x_(stateVars::phi));
 
 			// Push the squared heeling force to its buffer vector
 			fh2.push_back(fh*fh);
@@ -300,7 +300,7 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 		indRes.push_back(ri);
 
 		char msg[256];
-		sprintf(msg,"%3.1f [º]", toDeg(x_(1)));
+		sprintf(msg,"%3.1f [º]", toDeg(x_(stateVars::phi)));
 		curveLabels.push_back(msg);
 
 	}
@@ -323,8 +323,8 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 
 
 	// Restore the values of the variables
-	x_(0)=bufferV;
-	x_(1)=bufferPHI;
+	x_(stateVars::u)=bufferV;
+	x_(stateVars::phi)=bufferPHI;
 
 	// Ask the user: do you want to plot Te ?
 	//	if(io.askUserBool(" Would you like to plot the effective draugh Te ? "))
@@ -349,9 +349,9 @@ void InducedResistanceItem::plotTe(int twv, int twa) {
 	Eigen::ArrayXd Teffective = pParser_->get(Var::t_) * Tegeo_ * TeFn;
 
 	// Properly interpolate then values of TeD for the current value
-	// of the state variable x_(1) (heeling angle)
+	// of the state variable x_(stateVars::phi) (heeling angle)
 	SplineInterpolator interpolator(phiD_,Teffective);
-	double Te= interpolator.interpolate(x_(1));
+	double Te= interpolator.interpolate(x_(stateVars::phi));
 
 	//  std::cout<<"phiDArr= "<<phiD_<<std::endl;
 	//std::cout<<"Teffective= \n"<<Teffective<<std::endl;
@@ -530,7 +530,7 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 	// RrhH = RrhH20 .* 6 .* ( phi ).^1.7;
 	// No matter the sign of phi, this is a positive resistance item and I want to
 	// make sure that negative angles increase the total resistance
-	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( std::fabs(x_(1)),1.7) ;
+	res_ = pInterpolator_->interpolate(fN_) * 6. * std::pow( std::fabs(x_(stateVars::phi)),1.7) ;
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
@@ -541,8 +541,8 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistance_HeelItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd/*=0*/) {
 
 	// Init the state vector
-	x_(2)= sd->getCrew();
-	x_(3)= sd->getFlat();
+	x_(stateVars::b)= sd->getCrew();
+	x_(stateVars::f)= sd->getFlat();
 
 	size_t nVelocities=40, maxAngleDeg=30;
 
@@ -555,7 +555,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistance_HeelItem::plot(Win
 	for(size_t iAngle=0; iAngle<maxAngleDeg+1; iAngle+=5){
 
 		// Compute the value of PHI
-		x_(1) = mathUtils::toRad(iAngle);
+		x_(stateVars::phi) = mathUtils::toRad(iAngle);
 
 		// declare some tmp containers
 		QVector<double> fn, res;
@@ -564,13 +564,13 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistance_HeelItem::plot(Win
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			x_(0)= ( 0 + ( .6 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
+			x_(stateVars::u)= ( 0 + ( .6 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
 			update(wd->getTWV(),wd->getTWA());
 
 			// Fill the vectors to be plot
-			fn.push_back( x_(0)/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
+			fn.push_back( x_(stateVars::u)/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
 			res.push_back( get() );
 
 		}
@@ -579,7 +579,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistance_HeelItem::plot(Win
 		totRes.push_back(res);
 
 		char msg[256];
-		sprintf(msg,"%3.1fº", mathUtils::toDeg(x_(1)));
+		sprintf(msg,"%3.1fº", mathUtils::toDeg(x_(stateVars::phi)));
 		curveLabels.push_back(msg);
 
 	}
@@ -728,7 +728,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 
 	// Compute the resistance
 	// RrkH = (geom.DVK.*phys.rho_w.*phys.g.*Ch)*Fn.^2.*phi*pi/180;
-	res_= Ch_ * fN_ * fN_ * x_(1);
+	res_= Ch_ * fN_ * fN_ * x_(stateVars::phi);
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
@@ -738,8 +738,8 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 // to visualize itself in a plot
 std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistanceKeel_HeelItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
 	// Init the state vector
-	x_(2)= sd->getCrew();
-	x_(3)= sd->getFlat();
+	x_(stateVars::b)= sd->getCrew();
+	x_(stateVars::f)= sd->getFlat();
 
 	size_t nVelocities=40, maxAngleDeg=30;
 
@@ -752,7 +752,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistanceKeel_HeelItem::plot
 	for(size_t iAngle=0; iAngle<maxAngleDeg+1; iAngle+=5){
 
 		// Compute the value of PHI
-		x_(1) = mathUtils::toRad(iAngle);
+		x_(stateVars::phi) = mathUtils::toRad(iAngle);
 
 		// declare some tmp containers
 		QVector<double> fn, res;
@@ -761,13 +761,13 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistanceKeel_HeelItem::plot
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.3-0.7)
-			x_(0)= ( ( 0.7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
+			x_(stateVars::u)= ( ( 0.7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
 			update(wd->getTWV(),wd->getTWA());
 
 			// Fill the vectors to be plot
-			fn.push_back( x_(0)/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
+			fn.push_back( x_(stateVars::u)/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
 			res.push_back( get() );
 
 		}
@@ -776,7 +776,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistanceKeel_HeelItem::plot
 		totRes.push_back(res);
 
 		char msg[256];
-		sprintf(msg,"%3.1fº", mathUtils::toDeg(x_(1)));
+		sprintf(msg,"%3.1fº", mathUtils::toDeg(x_(stateVars::phi)));
 		curveLabels.push_back(msg);
 
 	}
@@ -824,21 +824,21 @@ void ViscousResistanceItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(x_(0)<=0) {
+	if(x_(stateVars::u)<=0) {
 		res_=0.;
 		return;
 	}
 
 	// Compute the Reynolds number
 	// Rn = geom.LWL .* 0.7 .* V ./ phys.ni_w;
-	double rN = rN0_ * x_(0);
+	double rN = rN0_ * x_(stateVars::u);
 
 	// Compute the Frictional coefficient
 	double cF = 0.075 / std::pow( (std::log10(rN) - 2), 2);
 
 	// Compute the Viscous resistance of the bare hull
 	// Rfh = 1/2 .* phys.rho_w .* V.^2 .* geom.SC .* Cf;
-	double rfh = rfh0_ * x_(0) * x_(0) * cF;
+	double rfh = rfh0_ * x_(stateVars::u) * x_(stateVars::u) * cF;
 
 	// Compute the frictional resistance
 	res_ = rfh * pParser_->get(Var::hullff_);
@@ -852,7 +852,7 @@ void ViscousResistanceItem::update(int vTW, int aTW) {
 std::vector<VppXYCustomPlotWidget*> ViscousResistanceItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
 
 	// buffer the velocity that is going to be modified by the plot
-	double bufferV= x_(0);
+	double bufferV= x_(stateVars::u);
 
 	int nVals=20;
 	QVector<double> fN(nVals), y(nVals);
@@ -860,7 +860,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceItem::plot(WindIndicesDialo
 	for(size_t i=0; i<nVals; i++) {
 
 		// Set a fictitious velocity (Fn=0-1)
-		x_(0)= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
+		x_(stateVars::u)= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 		// Update the item
 		update(0,0);
@@ -872,7 +872,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceItem::plot(WindIndicesDialo
 	}
 
 	// Restore the initial buffered values
-	x_(0)= bufferV;
+	x_(stateVars::u)= bufferV;
 	update(0,0);
 
 	// Instantiate a plotter and plot the curves
@@ -951,27 +951,27 @@ void Delta_ViscousResistance_HeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values and the heeling angles -> defined by the DHYS
-	//if(x_(0)<=0. || x_(1) < mathUtils::toRad(5) ) {
-	if(x_(0)<=0.){
+	//if(x_(stateVars::u)<=0. || x_(stateVars::phi) < mathUtils::toRad(5) ) {
+	if(x_(stateVars::u)<=0.){
 		res_=0.;
 		return;
 	}
 
 	// Compute the Reynolds number
 	// Rn = geom.LWL .* 0.7 .* V ./ phys.ni_w;
-	double rN = rN0_ * x_(0);
+	double rN = rN0_ * x_(stateVars::u);
 
 	// Compute the Frictional coefficient
 	double cF = 0.075 / std::pow( (std::log10(rN) - 2), 2);
 
 	// Compute the interpolated value of the change in wetted area wrt PHI [rad]
-	double SCphi = pInterpolator_->interpolate(x_(1));
+	double SCphi = pInterpolator_->interpolate(x_(stateVars::phi));
 
 	// Compute the change in Viscous resistance using the delta of wetted surface
 	// Apart for the def. of the surface, the viscous resistance uses the std definition
 	// see DSYHS99 3.2.1.1 p119
 	// Rfh = 1/2 .* phys.rho_w .* V.^2 .* Cf .* ( S - S0 );
-	double rfhH = 0.5 * Physic::rho_w * x_(0) * x_(0) * cF * ( SCphi - pParser_->get(Var::sc_) );
+	double rfhH = 0.5 * Physic::rho_w * x_(stateVars::u) * x_(stateVars::u) * cF * ( SCphi - pParser_->get(Var::sc_) );
 
 	// todo dtrimarchi: does it make sense to use the same hull form factor both for the upright and the heeled hull?
 	// See DSYHS99 p119, where the form factor is also defined. Here we ask the user to prompt a value
@@ -1007,7 +1007,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_ViscousResistance_HeelItem::plot(WindI
 	for(int iAngle=0; iAngle<maxAngleDeg+1; iAngle+=10){
 
 		// Compute the value of PHI
-		x_(1) = mathUtils::toRad(iAngle-10);
+		x_(stateVars::phi) = mathUtils::toRad(iAngle-10);
 
 		// declare some tmp containers
 		QVector<double> fn, res;
@@ -1016,12 +1016,12 @@ std::vector<VppXYCustomPlotWidget*> Delta_ViscousResistance_HeelItem::plot(WindI
 		for(size_t v=0; v<nVelocities; v++){
 
 			// Set a fictitious velocity (Fn=-0.-0.7)
-			x_(0)= ( ( .7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
+			x_(stateVars::u)= ( ( .7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 			update(wd->getTWV(),wd->getTWA());
 
 			// Fill the vectors to be plot
-			fn.push_back( x_(0)/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
+			fn.push_back( x_(stateVars::u)/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
 			res.push_back( get() );
 
 		}
@@ -1030,7 +1030,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_ViscousResistance_HeelItem::plot(WindI
 		totRes.push_back(res);
 
 		char msg[256];
-		sprintf(msg,"%3.1fº", mathUtils::toDeg(x_(1)));
+		sprintf(msg,"%3.1fº", mathUtils::toDeg(x_(stateVars::phi)));
 		curveLabels.push_back(msg);
 
 	}
@@ -1072,7 +1072,7 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(x_(0)<=0.) {
+	if(x_(stateVars::u)<=0.) {
 		res_=0.;
 		return;
 	}
@@ -1080,9 +1080,9 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 	// Define the Reynolds number using the mean chord length of the keel,
 	// this is a value provided by the user. The viscous resistance is
 	// defined in the std way, see DSYHS99 3.2.1.1 p 119
-	double rN = pParser_->get(Var::chmek_) * x_(0) / Physic::ni_w;
+	double rN = pParser_->get(Var::chmek_) * x_(stateVars::u) / Physic::ni_w;
 	double cf = 0.075 / std::pow((std::log10(rN) - 2),2);
-	double rfk= 0.5 * Physic::rho_w * x_(0) * x_(0) * pParser_->get(Var::sk_) * cf;
+	double rfk= 0.5 * Physic::rho_w * x_(stateVars::u) * x_(stateVars::u) * pParser_->get(Var::sk_) * cf;
 
 	// todo dtrimarchi : this form factor can be computed from the
 	// Keel geometry (see DSYHS99) Ch.3.2.11
@@ -1097,7 +1097,7 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 std::vector<VppXYCustomPlotWidget*> ViscousResistanceKeelItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* /*=0*/) {
 
 	// buffer the velocity that is going to be modified by the plot
-	double bufferV= x_(0);
+	double bufferV= x_(stateVars::u);
 
 	int nVals=10;
 	QVector<double> x(nVals), y(nVals);
@@ -1105,7 +1105,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceKeelItem::plot(WindIndicesD
 	for(size_t i=0; i<nVals; i++) {
 
 		// Set a fictitious velocity
-		x_(0)= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
+		x_(stateVars::u)= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 		// Update the item
 		update(0,0);
@@ -1117,7 +1117,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceKeelItem::plot(WindIndicesD
 	}
 
 	// Restore the initial buffered values
-	x_(0)= bufferV;
+	x_(stateVars::u)= bufferV;
 	update(0,0);
 
 	// Instantiate a VppXYCustomPlotWidget and plot the resistance. We new with a raw ptr,
@@ -1150,7 +1150,7 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 	ResistanceItem::update(vTW,aTW);
 
 	// Limit the computations to positive values
-	if(x_(0)<=0.) {
+	if(x_(stateVars::u)<=0.) {
 		res_=0.;
 		return;
 	}
@@ -1158,9 +1158,9 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 	// Define the Reynolds number using the mean chord length of the rudder,
 	// this is a value provided by the user. The viscous resistance is
 	// defined in the std way, see DSYHS99 3.2.1.1 p 119
-	double rN = pParser_->get(Var::chmer_) * x_(0) / Physic::ni_w;
+	double rN = pParser_->get(Var::chmer_) * x_(stateVars::u) / Physic::ni_w;
 	double cf = 0.075 / std::pow((std::log10(rN) - 2),2);
-	double rfr= 0.5 * Physic::rho_w * x_(0) * x_(0) * pParser_->get(Var::sr_) * cf;
+	double rfr= 0.5 * Physic::rho_w * x_(stateVars::u) * x_(stateVars::u) * pParser_->get(Var::sr_) * cf;
 
 	// todo dtrimarchi : this form factor can be computed from the
 	// Rudder geometry (see DSYHS99) Ch.3.2.11
@@ -1175,7 +1175,7 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 std::vector<VppXYCustomPlotWidget*> ViscousResistanceRudderItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* /*=0*/) {
 
 	// buffer the velocity that is going to be modified by the plot
-	double bufferV= x_(0);
+	double bufferV= x_(stateVars::u);
 
 	int nVals=10;
 	QVector<double> x(nVals), y(nVals);
@@ -1183,7 +1183,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceRudderItem::plot(WindIndice
 	for(size_t i=0; i<nVals; i++) {
 
 		// Set a fictitious velocity
-		x_(0)= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
+		x_(stateVars::u)= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 		// Update the item
 		update(0,0);
@@ -1195,7 +1195,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceRudderItem::plot(WindIndice
 	}
 
 	// Restore the initial buffered values
-	x_(0)= bufferV;
+	x_(stateVars::u)= bufferV;
 	update(0,0);
 
 	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
@@ -1229,8 +1229,8 @@ void NegativeResistanceItem::update(int vTW, int aTW) {
 
 	// Limit the computations to negative values. In this case
 	// define negative resistance as v^3
-	if(x_(0)<0.)
-		res_=x_(0)*x_(0)*x_(0);
+	if(x_(stateVars::u)<0.)
+		res_=x_(stateVars::u)*x_(stateVars::u)*x_(stateVars::u);
 	else
 		res_=0;
 
@@ -1242,7 +1242,7 @@ void NegativeResistanceItem::update(int vTW, int aTW) {
 std::vector<VppXYCustomPlotWidget*> NegativeResistanceItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
 
 	// buffer the velocity that is going to be modified by the plot
-	double bufferV= x_(0);
+	double bufferV= x_(stateVars::u);
 
 	int nVals=10;
 	QVector<double> x(nVals), y(nVals);
@@ -1250,7 +1250,7 @@ std::vector<VppXYCustomPlotWidget*> NegativeResistanceItem::plot(WindIndicesDial
 	for(size_t i=0; i<nVals; i++) {
 
 		// Set a fictitious -negative- velocity
-		x_(0)= - ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
+		x_(stateVars::u)= - ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
 
 		// Update the item
 		update(0,0);
@@ -1262,7 +1262,7 @@ std::vector<VppXYCustomPlotWidget*> NegativeResistanceItem::plot(WindIndicesDial
 	}
 
 	// Restore the initial buffered values
-	x_(0)= bufferV;
+	x_(stateVars::u)= bufferV;
 	update(0,0);
 
 	// Instantiate a plotter and plot the curves

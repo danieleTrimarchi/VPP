@@ -1,7 +1,9 @@
--> Fix Eclipse: add pyDev
+-> Fix Eclipse: the references to vector and to std::shared_ptr and string are skewed!
 
 -> increase the min size of the 'value' column in the VppSettings tab so that it does not partially hide the header
  
+-> there is a ton of duplicated code in VppHydroItem, see all the plots!
+
 -> fix the runTest target and make this dependent on the VPP program (assure up-to-dateness)
 
 -> RE-Allow the GUI to load variableFiles.txt (such as the one we use for testing)

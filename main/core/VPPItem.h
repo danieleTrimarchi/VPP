@@ -14,6 +14,13 @@ using namespace Eigen;
 /// Forward declarations
 class SailSet;
 
+enum stateVars {
+	u,    // Velocity [m/s]
+	phi,	// Angle [Rad]
+	b,		// Crew position [m]
+	f			// Flat [-]
+};
+
 /// Generic base class for all the VPP items
 class VPPItem {
 

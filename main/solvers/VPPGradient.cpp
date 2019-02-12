@@ -109,7 +109,7 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 
 		// Vary Phi from 0 to p/4 and record its value to the plotting
 		LinSpace space(0,M_PI/4,n);
-		x_(1)= space.get( iStep );
+		x_(stateVars::phi)= space.get( iStep );
 
 		// Set the subPbSize to 1 for this Pb as Phi remains fixed (iVar is
 		// consistently =1), so we are only interested into du as phi evolves.
@@ -123,8 +123,8 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 
 		// Store the values into the buffer vectors
 		// These buffers will be used to plot(phi,u)
-		phi[iStep] = x_(1);
-		u[iStep] = x_(0);
+		phi[iStep] = x_(stateVars::phi);
+		u[iStep] = x_(stateVars::u);
 
 		// Now run the vppGradient
 		run(wd.getTWV(),wd.getTWA());
@@ -132,7 +132,7 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences. But here we use d./dPhi
 		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
-		if(x_(1)) eps *= std::fabs(x_(1));
+		if(x_(stateVars::phi)) eps *= std::fabs(x_(stateVars::phi));
 
 		// x-component of the gradient vector du/dPhi
 		dPhi[iStep] = eps;
@@ -166,7 +166,7 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 
 		// Vary the crew position b 0 to 3 and record its value to the plotting
 		LinSpace space(0,3,n);
-		x_(2)= space.get(iStep);
+		x_(stateVars::b)= space.get(iStep);
 
 		pSolver_->setSubPbSize(2);
 
@@ -175,8 +175,8 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 
 		// Store the values into the buffer vectors
 		// These buffers will be used to plot(phi,u)
-		b[iStep] = x_(2);
-		u[iStep] = x_(0);
+		b[iStep] = x_(stateVars::b);
+		u[iStep] = x_(stateVars::u);
 
 		// Now run the vppGradient
 		run(wd.getTWV(),wd.getTWA());
@@ -184,7 +184,7 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences. But here we use d./dPhi
 		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
-		if(x_(2)) eps *= std::fabs(x_(2));
+		if(x_(stateVars::b)) eps *= std::fabs(x_(stateVars::b));
 
 		// x-component of the gradient vector du/dPhi
 		db[iStep] = eps;
@@ -217,7 +217,7 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 		// Vary flat from 0 to 1 and record its value to the plotting
 		// todo: enhance this condition which is not robust enough!
 		LinSpace space(.3,1,n);
-		x_(3)= space.get(iStep);
+		x_(stateVars::f)= space.get(iStep);
 
 		pSolver_->setSubPbSize(2);
 
@@ -226,8 +226,8 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 
 		// Store the values into the buffer vectors
 		// These buffers will be used to plot(phi,u)
-		f[iStep] = x_(3);
-		u[iStep] = x_(0);
+		f[iStep] = x_(stateVars::f);
+		u[iStep] = x_(stateVars::u);
 
 		// Now run the vppGradient
 		run(wd.getTWV(),wd.getTWA());
@@ -235,7 +235,7 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 		// x-component of the jacobian derivative d./dx - the 'optimal' dx for
 		// finite differences. But here we use d./dPhi
 		double eps=std::sqrt( std::numeric_limits<double>::epsilon() );
-		if(x_(3)) eps *= std::fabs(x_(2));
+		if(x_(stateVars::f)) eps *= std::fabs(x_(stateVars::b));
 
 		// x-component of the gradient vector du/dPhi
 		df[iStep] = eps;

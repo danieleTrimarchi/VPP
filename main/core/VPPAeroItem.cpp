@@ -76,7 +76,7 @@ void WindItem::update(int vTW, int aTW) {
 	if(mathUtils::isNotValid(twa_)) throw VPPException(HERE,"twa_ is NAN!");
 
 	// Update the apparent wind velocity vector
-	awv_(0)= x_(0) + twv_ * cos( twa_ );
+	awv_(0)= x_(stateVars::u) + twv_ * cos( twa_ );
 	if(mathUtils::isNotValid(awv_(0))) throw VPPException(HERE,"awv_(0) is NAN!");
 
 	awv_(1)= twv_ * sin( twa_ );
@@ -232,7 +232,7 @@ void SailCoefficientItem::update(int vTW, int aTW) {
 void SailCoefficientItem::postUpdate() {
 
 	// Reduce cl with the flattening factor of the state vector
-	cl_ *= x_(3);
+	cl_ *= x_(stateVars::f);
 	if(mathUtils::isNotValid(cl_)) throw VPPException(HERE,"cl_ is nan");
 
 	// Compute the induced resistance
@@ -837,13 +837,13 @@ void AeroForcesItem::update(int vTW, int aTW) {
 	// Updates Lift = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cl;
 	// Note that the nominal area AN was scaled with cos( PHI ) and it
 	// takes the meaning of a projected surface
-	lift_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get(Var::an_) * cos( x_(1) ) * pSailCoeffs_->getCl();
+	lift_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get(Var::an_) * cos( x_(stateVars::phi) ) * pSailCoeffs_->getCl();
 	if(mathUtils::isNotValid(lift_)) throw VPPException(HERE,"lift_ is NAN!");
 
 	// Updates Drag = 0.5 * phys.rho_a * V_eff.^2 .* AN .* Cd;
 	// Note that the nominal area AN was scaled with cos( PHI ) and it
 	// takes the meaning of a projected surface
-	drag_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get(Var::an_) * cos( x_(1) ) * pSailCoeffs_->getCd();
+	drag_ = 0.5 * Physic::rho_a * awv * awv * pSailSet_->get(Var::an_) * cos( x_(stateVars::phi) ) * pSailCoeffs_->getCd();
 	if(mathUtils::isNotValid(drag_)) throw VPPException(HERE,"drag_ is NAN!");
 
 	// Updates Fdrive = lift_ * sin(awa) - D * cos(awa);
@@ -856,7 +856,7 @@ void AeroForcesItem::update(int vTW, int aTW) {
 
 	// The righting moment arm is set as the distance between the center of sail effort and
 	// the hydrodynamic center, scaled with cos(PHI)
-	mHeel_ = fSide_ * ( 0.45 * pParser_->get(Var::t_) + pParser_->get(Var::avgfreb_) + pSailSet_->get(Var::zce_) ) * cos( x_(1) );
+	mHeel_ = fSide_ * ( 0.45 * pParser_->get(Var::t_) + pParser_->get(Var::avgfreb_) + pSailSet_->get(Var::zce_) ) * cos( x_(stateVars::phi) );
 	if(mathUtils::isNotValid(mHeel_)) throw VPPException(HERE,"mHeel_ is NAN!");
 
 }
@@ -874,11 +874,11 @@ void AeroForcesItem::plot(MultiplePlotWidget* pMultiPlotWidget ) {
 
 	// Buffer the current solution
 	Eigen::VectorXd xbuf(4);
-	xbuf << x_(0),x_(1),x_(2),x_(3);
+	xbuf << x_(stateVars::u),x_(stateVars::phi),x_(stateVars::b),x_(stateVars::f);
 
-	// Now fix the value of x_(2) and x_(3)
-	x_(2)= 0.01;
-	x_(3)= 0.99;
+	// Now fix the value of x_(stateVars::b) and x_(stateVars::f)
+	x_(stateVars::b)= 0.01;
+	x_(stateVars::f)= 0.99;
 
 	// Declare containers for the velocity and angle-wise data
 	std::vector<QVector<double> > fN, Lift, Drag, fDrive, fSide, mHeel;
@@ -890,7 +890,7 @@ void AeroForcesItem::plot(MultiplePlotWidget* pMultiPlotWidget ) {
 	for(int hAngle=-20; hAngle<90; hAngle+=15){
 
 		// Convert the heeling angle into radians
-		x_(1)= toRad(hAngle);
+		x_(stateVars::phi)= toRad(hAngle);
 		// vectors with the current boat velocity, the drive force
 		// and heeling moment values
 		QVector<double> x_fN, lift, drag, f_v, fs_v, m_v;
@@ -906,11 +906,11 @@ void AeroForcesItem::plot(MultiplePlotWidget* pMultiPlotWidget ) {
 
 			// Set the value for the state variable boat velocity
 			// Linearly from -1 to 1 m/s
-			x_(0) = -1 + double(iTwv) / (nVelocities-1) * 2;
+			x_(stateVars::u) = -1 + double(iTwv) / (nVelocities-1) * 2;
 
 			// Declare a state vector to give the windItem
 			VectorXd stateVector(4);
-			stateVector << x_(0),x_(1),x_(2),x_(3);
+			stateVector << x_(stateVars::u),x_(stateVars::phi),x_(stateVars::b),x_(stateVars::f);
 
 			// Update the wind. For the moment fix the apparent wind velocity and angle
 			// to the first values contained in the variableFiles.
@@ -923,7 +923,7 @@ void AeroForcesItem::plot(MultiplePlotWidget* pMultiPlotWidget ) {
 			update(dg.getTWV(), dg.getTWA());
 
 			// Store velocity-wise data:
-			x_fN[iTwv]= x_(0) / sqrt( Physic::g * pParser_->get(Var::lwl_) );	// Fn...
+			x_fN[iTwv]= x_(stateVars::u) / sqrt( Physic::g * pParser_->get(Var::lwl_) );	// Fn...
 
 			if(iTwv==0)
 				fNmin=x_fN[iTwv];
@@ -1015,10 +1015,10 @@ void AeroForcesItem::plot(MultiplePlotWidget* pMultiPlotWidget ) {
 	pMultiPlotWidget->addChart(pMPlot,2,0);
 
 	// Restore the current solution
-	x_(0)  = xbuf(0);
-	x_(1)= xbuf(1);
-	x_(2)  = xbuf(2);
-	x_(3)  = xbuf(3);
+	x_(stateVars::u)  = xbuf(0);
+	x_(stateVars::phi)= xbuf(1);
+	x_(stateVars::b)  = xbuf(2);
+	x_(stateVars::f)  = xbuf(3);
 
 }
 
