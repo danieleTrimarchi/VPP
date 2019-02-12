@@ -43,17 +43,8 @@ class VPPItem {
 
 	protected:
 
-		/// Velocity value in the state vector
-		double V_;
-
-		/// Heeling angle value in the state vector in RADIANS
-		double PHI_;
-
-		/// b value in the sate vector (Crew position)
-		double b_;
-
-		/// Flat value in the state vector
-		double f_;
+		/// State vector (v,phi,b,f)
+		Eigen::VectorXd x_;
 
 		/// Size of the pb, or the number of state variables
 		size_t pbSize_;

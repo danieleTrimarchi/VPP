@@ -7,11 +7,12 @@
 VPPItem::VPPItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet) :
 pParser_(pParser),
 pSailSet_(pSailSet),
-V_(0),
-PHI_(0), // Note that PHI is in deg
-b_(0),
-f_(0),
+//V_(0),
+//PHI_(0), // Note that PHI is in deg
+//b_(0),
+//f_(0),
 pbSize_(4){
+	x_ = Eigen::VectorXd::Zero(pbSize_);
 }
 
 // Destructor
@@ -39,11 +40,10 @@ void VPPItem::updateSolution(int vTW, int aTW, const double* x) {
 	if(mathUtils::isNotValid(x[3])) throw VPPException(HERE,"x[3] is NAN!");
 
 	// Update the local copy of the state variables
-	V_=   x[0];
-	PHI_= x[1]; // Note that PHI_ is in rad
-	b_=   x[2];
-	f_=   x[3];
-
+	x_(0)=  x[0];
+	x_(1)= 	x[1]; // Note that PHI_ is in rad
+	x_(2)=  x[2];
+	x_(3)=  x[3];
 
 	// Now call the implementation of the pure virtual update(int,int)
 	// for every child
@@ -64,11 +64,7 @@ void VPPItem::updateSolution(int vTW, int aTW, Eigen::VectorXd& x) {
 		}
 
 	// Update the local copy of the state variables
-	V_= x(0);
-	PHI_= x(1); // Note that PHI_ is in deg
-	b_= x(2);
-	f_= x(3);
-
+	x_=x;
 
 	// Now call the implementation of the pure virtual update(int,int)
 	// for every child

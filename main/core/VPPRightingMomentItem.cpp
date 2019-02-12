@@ -37,7 +37,7 @@ void RightingMomentItem::update(int vTW, int aTW) {
 	// TODO : this is a dirty fix for a mismatch in the sign of PHI. Normally PHI and
 	// the righting moment should be negative, here we fix the sign when computing the
 	// residuals.
-	val_ = m10_ * std::sin( PHI_ ) + m20_ * b_ * std::cos( PHI_ ) ;
+	val_ = m10_ * std::sin( x_(1) ) + m20_ * x_(2) * std::cos( x_(1) ) ;
 	if(mathUtils::isNotValid(val_)) throw VPPException(HERE,"Righting moment is NAN");
 
 }
