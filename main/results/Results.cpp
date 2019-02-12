@@ -4,6 +4,8 @@
 
 using namespace mathUtils;
 
+namespace Results {
+
 ///////// Result Class ///////////////////////////////
 
 const string Result::headerBegin_=string("==RESULTS==");
@@ -784,3 +786,6 @@ void ResultContainer::printBounds() {
 	std::cout<<"---------------------------------------------------------------"<<std::endl;
 
 }
+
+}
+

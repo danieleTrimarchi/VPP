@@ -11,6 +11,7 @@
 #include "Results.h"
 
 using namespace std;
+using namespace Results;
 
 /// Newton-Raphson solver class.
 /// TODO dtrimarchi: this class is to be inserted in

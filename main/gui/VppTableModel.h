@@ -4,6 +4,8 @@
 #include <QAbstractTableModel>
 #include "Results.h"
 
+using namespace Results;
+
 /* Class defining the model underlying table view.
  * This is mainly used to visualize results
  */

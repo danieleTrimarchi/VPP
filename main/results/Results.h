@@ -11,6 +11,8 @@
 
 using namespace std;
 
+namespace Results {
+
 /// Enum used to table the results to the VPPTableModel.
 /// We describe here the rows of the table, the cell-values
 /// of which are to be returned by method get(ResultTableType)
@@ -251,5 +253,7 @@ class ResultContainer {
 		vector<vector<Result> > resMat_;
 
 };
+
+} // End namespace Results
 
 #endif

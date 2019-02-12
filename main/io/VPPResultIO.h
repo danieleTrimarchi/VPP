@@ -7,6 +7,7 @@
 #include "Results.h"
 
 using namespace std;
+using namespace Results;
 
 /// Class used to read and write VPP results
 /// from and to file. Establish the file format .vpp
