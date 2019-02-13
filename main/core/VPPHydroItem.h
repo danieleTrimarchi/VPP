@@ -213,7 +213,36 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 //=================================================================
 
 // For the definition of the Viscous Resistance see Keuning 2.1 p108
-class ViscousResistanceItem : public ResistanceItem {
+class ViscousResistanceItemBase : public ResistanceItem {
+
+	public:
+
+		/// Constructor
+		ViscousResistanceItemBase(VariableFileParser*, std::shared_ptr<SailSet>);
+
+		/// Destructor
+		~ViscousResistanceItemBase();
+
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
+
+	protected:
+
+		std::string plotTitle_;
+
+	private:
+
+		/// Implement pure virtual method of the parent class
+		virtual void update(int vTW, int aTW)=0;
+
+};
+
+//=================================================================
+
+// For the definition of the Viscous Resistance see Keuning 2.1 p108
+class ViscousResistanceItem : public ViscousResistanceItemBase {
 
 	public:
 
@@ -222,11 +251,6 @@ class ViscousResistanceItem : public ResistanceItem {
 
 		/// Destructor
 		~ViscousResistanceItem();
-
-		/// Implement pure virtual of the parent class
-		/// Each resistance component knows how to generate a widget
-		/// to visualize itself in a plot
-		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -275,7 +299,7 @@ class Delta_ViscousResistance_HeelItem : public ResistanceItem {
 
 //=================================================================
 
-class ViscousResistanceKeelItem : public ResistanceItem {
+class ViscousResistanceKeelItem : public ViscousResistanceItemBase {
 
 	public:
 
@@ -284,11 +308,6 @@ class ViscousResistanceKeelItem : public ResistanceItem {
 
 		/// Destructor
 		~ViscousResistanceKeelItem();
-
-		/// Implement pure virtual of the parent class
-		/// Each resistance component knows how to generate a widget
-		/// to visualize itself in a plot
-		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -299,7 +318,7 @@ class ViscousResistanceKeelItem : public ResistanceItem {
 
 //=================================================================
 
-class ViscousResistanceRudderItem : public ResistanceItem {
+class ViscousResistanceRudderItem : public ViscousResistanceItemBase {
 
 	public:
 
@@ -308,11 +327,6 @@ class ViscousResistanceRudderItem : public ResistanceItem {
 
 		/// Destructor
 		~ViscousResistanceRudderItem();
-
-		/// Implement pure virtual of the parent class
-		/// Each resistance component knows how to generate a widget
-		/// to visualize itself in a plot
-		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -324,7 +338,7 @@ class ViscousResistanceRudderItem : public ResistanceItem {
 //=================================================================
 // Class that returns a ficticious negative resistance in the case
 // of negative velocities. Used to stabilize the computations (NRSolver)
-class NegativeResistanceItem : public ResistanceItem {
+class NegativeResistanceItem : public ViscousResistanceItemBase {
 
 	public:
 
@@ -334,11 +348,6 @@ class NegativeResistanceItem : public ResistanceItem {
 		/// Destructor
 		~NegativeResistanceItem();
 
-		/// Implement pure virtual of the parent class
-		/// Each resistance component knows how to generate a widget
-		/// to visualize itself in a plot
-		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
-
 	private:
 
 		/// Implement pure virtual method of the parent class
@@ -347,4 +356,5 @@ class NegativeResistanceItem : public ResistanceItem {
 };
 
 //=================================================================
+
 #endif

@@ -799,16 +799,70 @@ std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistanceKeel_HeelItem::plot
 }
 
 //=================================================================
+
+ViscousResistanceItemBase::ViscousResistanceItemBase(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
+								ResistanceItem(pParser,pSailSet) {
+
+}
+
+// Destructor
+ViscousResistanceItemBase::~ViscousResistanceItemBase() {
+
+}
+
+// Implement pure virtual of the parent class
+// Each resistance component knows how to generate a widget
+// to visualize itself in a plot
+std::vector<VppXYCustomPlotWidget*> ViscousResistanceItemBase::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
+
+	// buffer the velocity that is going to be modified by the plot
+	double bufferV= x_(stateVars::u);
+
+	int nVals=20;
+	QVector<double> fN(nVals), y(nVals);
+
+	for(size_t i=0; i<nVals; i++) {
+
+		// Set a fictitious velocity (Fn=0-1)
+		x_(stateVars::u)= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
+
+		// Update the item
+		update(0,0);
+
+		// Fill the vectors to be plot
+		fN[i]= fN_;
+		y[i]= res_;
+
+	}
+
+	// Restore the initial buffered values
+	x_(stateVars::u)= bufferV;
+	update(0,0);
+
+	// Instantiate a plotter and plot the curves
+	VppXYCustomPlotWidget* pViscousResistancePlot= new VppXYCustomPlotWidget("Viscous Hull","Fn [-]","Resistance [N]");
+	pViscousResistancePlot->addData(fN,y,plotTitle_.c_str());
+	pViscousResistancePlot->rescaleAxes();
+
+	return std::vector<VppXYCustomPlotWidget*>(1,pViscousResistancePlot);
+
+}
+
+
+//=================================================================
 // For the definition of the Frictional Resistance see DSYHS99 2.1 p108
 // Constructor
 ViscousResistanceItem::ViscousResistanceItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-						ResistanceItem(pParser,pSailSet) {
+				ViscousResistanceItemBase(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_
 	rN0_= pParser->get(Var::lwl_) * 0.7 / Physic::ni_w;
 
 	// Pre-compute the velocity independent part of rF_
 	rfh0_= 0.5 * Physic::rho_w * pParser_->get(Var::sc_);
+
+	// Set the title for plotting
+	plotTitle_= "Viscous Resistance";
 
 }
 
@@ -843,44 +897,6 @@ void ViscousResistanceItem::update(int vTW, int aTW) {
 	// Compute the frictional resistance
 	res_ = rfh * pParser_->get(Var::hullff_);
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
-
-}
-
-// Implement pure virtual of the parent class
-// Each resistance component knows how to generate a widget
-// to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> ViscousResistanceItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
-
-	// buffer the velocity that is going to be modified by the plot
-	double bufferV= x_(stateVars::u);
-
-	int nVals=20;
-	QVector<double> fN(nVals), y(nVals);
-
-	for(size_t i=0; i<nVals; i++) {
-
-		// Set a fictitious velocity (Fn=0-1)
-		x_(stateVars::u)= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
-
-		// Update the item
-		update(0,0);
-
-		// Fill the vectors to be plot
-		fN[i]= fN_;
-		y[i]= res_;
-
-	}
-
-	// Restore the initial buffered values
-	x_(stateVars::u)= bufferV;
-	update(0,0);
-
-	// Instantiate a plotter and plot the curves
-	VppXYCustomPlotWidget* pViscousResistancePlot= new VppXYCustomPlotWidget("Viscous Hull","Fn [-]","Resistance [N]");
-	pViscousResistancePlot->addData(fN,y,"Viscous Resistance");
-	pViscousResistancePlot->rescaleAxes();
-
-	return std::vector<VppXYCustomPlotWidget*>(1,pViscousResistancePlot);
 
 }
 
@@ -1057,7 +1073,11 @@ std::vector<VppXYCustomPlotWidget*> Delta_ViscousResistance_HeelItem::plot(WindI
 // Constructor
 ViscousResistanceKeelItem::ViscousResistanceKeelItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-												ResistanceItem(pParser,pSailSet) {
+				ViscousResistanceItemBase(pParser,pSailSet) {
+
+	// Set the title for plotting
+	plotTitle_= "Viscous Resistance Keel";
+
 }
 
 // Destructor
@@ -1091,51 +1111,16 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 
 }
 
-// Implement pure virtual of the parent class
-// Each resistance component knows how to generate a widget
-// to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> ViscousResistanceKeelItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* /*=0*/) {
-
-	// buffer the velocity that is going to be modified by the plot
-	double bufferV= x_(stateVars::u);
-
-	int nVals=10;
-	QVector<double> x(nVals), y(nVals);
-
-	for(size_t i=0; i<nVals; i++) {
-
-		// Set a fictitious velocity
-		x_(stateVars::u)= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
-
-		// Update the item
-		update(0,0);
-
-		// Fill the vectors to be plot
-		x[i]= fN_;
-		y[i]= res_;
-
-	}
-
-	// Restore the initial buffered values
-	x_(stateVars::u)= bufferV;
-	update(0,0);
-
-	// Instantiate a VppXYCustomPlotWidget and plot the resistance. We new with a raw ptr,
-	// then the ownership will be assigned to the multiPlotWidget when adding the chart
-	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget("Viscous Resistance Keel","Fn [-]","Resistance [N]");
-	pResPlot->addData(x,y,"Viscous Resistance Keel");
-	pResPlot->rescaleAxes();
-	//multiPlotWidget->addChart(pResPlot,posx,posy);
-
-	return std::vector<VppXYCustomPlotWidget*>(1,pResPlot);
-}
-
 //=================================================================
 
 // Constructor
 ViscousResistanceRudderItem::ViscousResistanceRudderItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-																		ResistanceItem(pParser,pSailSet) {
+				ViscousResistanceItemBase(pParser,pSailSet) {
+
+	// Set the title for plotting
+	plotTitle_= "Viscous Resistance Rudder";
+
 }
 
 // Destructor
@@ -1169,51 +1154,16 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 
 }
 
-// Implement pure virtual of the parent class
-// Each resistance component knows how to generate a widget
-// to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> ViscousResistanceRudderItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* /*=0*/) {
-
-	// buffer the velocity that is going to be modified by the plot
-	double bufferV= x_(stateVars::u);
-
-	int nVals=10;
-	QVector<double> x(nVals), y(nVals);
-
-	for(size_t i=0; i<nVals; i++) {
-
-		// Set a fictitious velocity
-		x_(stateVars::u)= ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
-
-		// Update the item
-		update(0,0);
-
-		// Fill the vectors to be plot
-		x[i]= fN_;
-		y[i]= res_;
-
-	}
-
-	// Restore the initial buffered values
-	x_(stateVars::u)= bufferV;
-	update(0,0);
-
-	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
-	// then the ownership will be assigned to the multiPlotWidget when adding the chart
-	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget("Viscous Resistance Rudder","Fn [-]","Resistance [N]");
-	pResPlot->addData(x,y,"Viscous Resistance Rudder");
-	pResPlot->rescaleAxes();
-	//multiPlotWidget->addChart(pResPlot,posx,posy);
-
-	return std::vector<VppXYCustomPlotWidget*>(1,pResPlot);
-}
-
 //=================================================================
 
 // Constructor
 NegativeResistanceItem::NegativeResistanceItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-																		ResistanceItem(pParser,pSailSet) {
+				ViscousResistanceItemBase(pParser,pSailSet) {
+
+	// Set the title for plotting
+	plotTitle_= "Negative Resistance";
+
 }
 
 // Destructor
@@ -1236,41 +1186,4 @@ void NegativeResistanceItem::update(int vTW, int aTW) {
 
 }
 
-// Implement pure virtual of the parent class
-// Each resistance component knows how to generate a widget
-// to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> NegativeResistanceItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
-
-	// buffer the velocity that is going to be modified by the plot
-	double bufferV= x_(stateVars::u);
-
-	int nVals=10;
-	QVector<double> x(nVals), y(nVals);
-
-	for(size_t i=0; i<nVals; i++) {
-
-		// Set a fictitious -negative- velocity
-		x_(stateVars::u)= - ( 1./nVals * (i+1) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
-
-		// Update the item
-		update(0,0);
-
-		// Fill the vectors to be plot
-		x[i]= fN_;
-		y[i]= res_;
-
-	}
-
-	// Restore the initial buffered values
-	x_(stateVars::u)= bufferV;
-	update(0,0);
-
-	// Instantiate a plotter and plot the curves
-	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget("Negative Resistance","Fn [-]","Resistance [N]");
-	pResPlot->addData(x,y,"Negative Resistance");
-	pResPlot->rescaleAxes();
-	//multiPlotWidget->addChart(pResPlot,0,0);
-
-	return std::vector<VppXYCustomPlotWidget*>(1,pResPlot);
-}
 
