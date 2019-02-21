@@ -24,7 +24,7 @@ VppTableDockWidget::~VppTableDockWidget() {
 
 }
 
-// Get the toggle view action to be added to the menubar
+// Get the toggle view action to be added to the menu bar
 QAction* VppTableDockWidget::getMenuToggleViewAction() {
 
 	// This menu entry drives the visibility of the

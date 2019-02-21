@@ -354,6 +354,9 @@ void MainWindow::udpateVariableTree() {
 	// The variable file parser populates the variable item tree
 	pVariableFileParser_->populate( pVariablesWidget_->getTreeModel() );
 
+	// print variables
+	pVariableFileParser_->print();
+
 	// Expand the items in the variable tree view, in order to see all the variables
 	pVariablesWidget_->getView()->expandAll();
 
@@ -422,6 +425,7 @@ void MainWindow::run() {
 
 				for(int vTW=0; vTW<pVariableFileParser_->get(Var::ntw_); vTW++){
 
+					std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
 
 					// Run the optimizer for the current wind speed/angle
 					pSolverFactory_->run(vTW,aTW);
@@ -436,11 +440,11 @@ void MainWindow::run() {
 				}
 			}
 			catch(VPPException& e){
+				// Print the message and keep going...
 				std::cout<<e.what()<<std::endl;
-				break;
+
 			}
 			catch(...){ /* do nothing and keep going */ }
-
 		}
 		// outer try-catch block
 	}
@@ -1149,8 +1153,6 @@ void MainWindow::plotGradient() {
 		if (sd.exec() == QDialog::Rejected)
 			return;
 
-		std::cout<<"Plotting Gradient..."<<std::endl;
-
 		VectorXd x = sd.getStateVector();
 
 		// Instantiate a Gradient
@@ -1162,7 +1164,7 @@ void MainWindow::plotGradient() {
 		pGradientPlotWidget_= new MultiplePlotWidget(this,"VPP Gradient");
 
 		// Get all of the plots the Gradient is up to draw
-		std::vector<VppXYCustomPlotWidget*> gPlotVector( G.plot(wd) );
+		std::vector<VppXYCustomPlotWidget*> gPlotVector( G.plot(wd,sd) );
 
 		// Send the plots to the widget and arrange them in 2xn ordering
 		size_t dx=0, dy=0;
@@ -1222,7 +1224,7 @@ void MainWindow::plotJacobian() {
 		pJacobianPlotWidget_= new MultiplePlotWidget(this,"VPP Jacobian");
 
 		// Get all of the plots the Jacobian is up to draw
-		std::vector<VppXYCustomPlotWidget*> jPlotVector( J.plot(wd) );
+		std::vector<VppXYCustomPlotWidget*> jPlotVector( J.plot(wd,sd) );
 
 		// Send the plots to the widget and arrange them in 2xn ordering
 		size_t dx=0, dy=0;

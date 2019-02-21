@@ -152,9 +152,6 @@ WindIndicesDialog::WindIndicesDialog(WindItem* pWind, QWidget* parent)
 	QLocale localSettings = QLocale::c();
 	localSettings.setNumberOptions(QLocale::RejectGroupSeparator | QLocale::OmitGroupSeparator);
 
-	std::cout<<"NTW="<<pWind->getWVSize()<<std::endl;
-	std::cout<<"NTA="<<pWind->getWASize()<<std::endl;
-
 	// Set all the line edit with double validators
 	QIntValidator* twvValueValidator= new QIntValidator(0, pWind->getWVSize(), pTWV_Edit_.get() );
 	twvValueValidator->setLocale(localSettings);

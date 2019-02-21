@@ -4,8 +4,8 @@
 #include <QtCore/QFile>
 #include <QtWidgets/QWidget>
 #include "SettingsModel.h"
-#include "SettingsWindowView.h"
 #include "Delegate.h"
+#include "SettingsWindowView.h"
 
 /// Forward Declarations
 class MainWindow;

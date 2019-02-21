@@ -24,6 +24,10 @@ extdiff =
 
 ################################
 
+Create a MakeFile project from existing code (not a scons project!)
+	with MacosGCC toolchain
+	configure python as /usr/bin/python
+
 
 Resolve std c++ Eclipse includes: 
 

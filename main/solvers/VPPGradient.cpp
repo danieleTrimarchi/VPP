@@ -88,7 +88,7 @@ void VPPGradient::run(int twv, int twa) {
 
 // Produces a plot for a range of values of the state variables
 // in order to test for the coherence of the values that have been computed
-std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
+std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd,FullStateVectorDialog& sd) {
 
 	// Instantiate a vector with the plot widgets to return
 	std::vector<VppXYCustomPlotWidget*> retVector;
@@ -108,8 +108,8 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 	for(int iStep=0; iStep<n; iStep++) {
 
 		// Vary Phi from 0 to p/4 and record its value to the plotting
-		LinSpace space(0,M_PI/4,n);
-		x_(stateVars::phi)= space.get( iStep );
+		LinSpace space(-M_PI/8,M_PI/8,n);
+		x_(stateVars::phi)= space.get( iStep ) + sd.getPhi();
 
 		// Set the subPbSize to 1 for this Pb as Phi remains fixed (iVar is
 		// consistently =1), so we are only interested into du as phi evolves.
@@ -165,8 +165,8 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 	for(int iStep=0; iStep<n; iStep++) {
 
 		// Vary the crew position b 0 to 3 and record its value to the plotting
-		LinSpace space(0,3,n);
-		x_(stateVars::b)= space.get(iStep);
+		LinSpace space(-1.5,1.5,n);
+		x_(stateVars::b)= space.get(iStep) + sd.getCrew();
 
 		pSolver_->setSubPbSize(2);
 
@@ -216,8 +216,8 @@ std::vector<VppXYCustomPlotWidget*> VPPGradient::plot(WindIndicesDialog& wd) {
 
 		// Vary flat from 0 to 1 and record its value to the plotting
 		// todo: enhance this condition which is not robust enough!
-		LinSpace space(.3,1,n);
-		x_(stateVars::f)= space.get(iStep);
+		LinSpace space(-.5,.5,n);
+		x_(stateVars::f)= space.get(iStep) + sd.getFlat();
 
 		pSolver_->setSubPbSize(2);
 

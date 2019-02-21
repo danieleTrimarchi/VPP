@@ -1,4 +1,5 @@
 #include "SettingsWindowView.h"
+
 #include <QtCore/QAbstractItemModel>
 #include <iostream>
 

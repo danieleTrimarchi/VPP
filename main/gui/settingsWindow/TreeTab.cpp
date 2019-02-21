@@ -4,10 +4,10 @@
 #include "VppSettingsXmlWriter.h"
 #include <QtCore/QFile>
 #include <QtWidgets/QMessageBox>
+#include "../MainWindow.h"
 
 #include "GetItemVisitor.h"
 #include "VppSettingsXmlReader.h"
-#include "MainWindow.h"
 #include "VppTags.h"
 
 //---------------------------------------------------------------

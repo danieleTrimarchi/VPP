@@ -2,7 +2,7 @@
 #define VPPPLOTWIDGET_H
 
 #include <QtWidgets/QWidget>
-#include <QDockWidget>
+#include <QtWidgets/QDockWidget>
 
 /// Mother class for all the plot widgets of the VPP program
 class VppTabDockWidget : public QDockWidget {

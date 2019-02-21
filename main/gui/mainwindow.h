@@ -115,9 +115,9 @@ public slots:
 
 	/// Plot the Jacobian of the solution, defined as:
 	/// J = | dF/du dF/dPhi |
-	///	   | dM/du dM/dPhi |
+	///	    | dM/du dM/dPhi |
 	/// so that 	|dF| = J 	|du  |
-	///					|dM|			  |dPhi|
+	///					  |dM|			|dPhi|
 	void plotJacobian();
 
 	/// print out the software info

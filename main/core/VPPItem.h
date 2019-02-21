@@ -40,7 +40,7 @@ class VPPItem {
 		/// Update the parent VPPItem for the current step (wind velocity and angle),
 		/// the value of the state vector x computed by the optimizer. Then, call the
 		/// update method for the children in the vppItems_ vector
-		void updateSolution(int vTW, int aTW, Eigen::VectorXd& x);
+		void updateSolution(int vTW, int aTW, VectorXd& x);
 
 		/// Returns a ptr to the parser
 		VariableFileParser* getParser() const;
@@ -51,7 +51,7 @@ class VPPItem {
 	protected:
 
 		/// State vector (v,phi,b,f)
-		Eigen::VectorXd x_;
+		VectorXd x_;
 
 		/// Size of the pb, or the number of state variables
 		size_t pbSize_;

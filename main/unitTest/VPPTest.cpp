@@ -1357,7 +1357,9 @@ void TVPPTest::ipOptFullRunTest() {
 	// Instantiate the items
 	pVppItems.reset( new VPPItemFactory(&parser,pSails) );
 
+	// Instantiate a solver
 	Optim::IppOptSolverFactory solverFactory(pVppItems);
+
 
 	// Loop on the wind ANGLES and VELOCITIES
 	for(size_t aTW=0; aTW<parser.get("N_TWA"); aTW++)

@@ -68,9 +68,19 @@ void VPPJacobian::run(int twv, int twa) {
 
 }
 
+/// Compute my conditioning number
+double VPPJacobian::conditioning() const {
+
+	// Compute the Jacobi SVD decomposition of this matrix and return the conditioning
+	// as max/min eigenValue
+	JacobiSVD<MatrixXd> svd(*this);
+	return svd.singularValues()(0) / svd.singularValues()(svd.singularValues().size()-1);
+
+}
+
 // Produces a plot for a range of values of the state variables
 // in order to test for the coherence of the values that have been computed
-std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
+std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd,FullStateVectorDialog& sd) {
 
 	// Instantiate a vector with the plot widgets to return
 	std::vector<VppXYCustomPlotWidget*> retVector;
@@ -91,8 +101,9 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 	for(size_t i=0; i<n; i++){
 
 		// Vary the first state variable and record its value to the plotting
-		// buffer vector (half negative)
-		x_(0)=	0.1 * ( (i+1) - 0.5 * n );
+		// buffer vector (half negative). Center on the velocity requested by
+		// the user
+		x_(0)=	0.1 * ( (i+1) - 0.5 * n ) + sd.getV();
 
 		x[i]= x_(0);
 
@@ -148,7 +159,7 @@ std::vector<VppXYCustomPlotWidget*> VPPJacobian::plot(WindIndicesDialog& wd) {
 
 		// Vary the first state variable and record its value to the plotting
 		// buffer vector
-		x_(1) = mathUtils::toRad( (i + 1 ) * 0.1 ) - 0.5 * mathUtils::toRad( n * 0.1 );
+		x_(1) = mathUtils::toRad( (i + 1 ) * 0.1 ) - 0.5 * mathUtils::toRad( n * 0.1 ) + sd.getPhi();
 		x[i]= x_(1);
 
 		// Store the force value for this plot
