@@ -40,6 +40,8 @@
 #include "VppToolbarAction.h"
 #include "GeneralTab.h"
 
+#include "VPPJobRunner.h"
+
 // Stream used to redirect cout to the log window
 // This object is explicitly deleted in the destructor
 // of MainWindow
@@ -400,57 +402,15 @@ void MainWindow::run() {
 			throw std::logic_error(msg);
 		}
 
+		QProgressDialog progressDialog(this);
+
 		std::cout<<"Running the VPP analysis... "<<std::endl;
 
-		// Instantiate a progress dialog. Also instantiate a
-		// count to update the bar progression
-		QProgressDialog progressDialog(this);
-		size_t maxVal=
-				pVariableFileParser_->get(Var::nta_) *
-				pVariableFileParser_->get(Var::ntw_);
-		progressDialog.setRange(0,maxVal);
-		progressDialog.setCancelButtonText(tr("&Cancel"));
-		progressDialog.setWindowTitle(tr("Running VPP analysis..."));
+		VPPJobRunner(pSolverFactory_.get(),
+									pVariableFileParser_->get(Var::nta_),
+										pVariableFileParser_->get(Var::ntw_), this);
 
-		int statusProgress=0;
-
-		// Loop on the wind ANGLES and VELOCITIES
-		for(int aTW=0; aTW<pVariableFileParser_->get(Var::nta_); aTW++) {
-
-			// exit the outer loop if the user pressed the 'cancel' button
-			if (progressDialog.wasCanceled())
-				break;
-
-			try{
-
-				for(int vTW=0; vTW<pVariableFileParser_->get(Var::ntw_); vTW++){
-
-					std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
-
-					// Run the optimizer for the current wind speed/angle
-					pSolverFactory_->run(vTW,aTW);
-
-					// Refresh the UI -> update the progress bar and the log
-					QCoreApplication::processEvents();
-
-					progressDialog.setValue(statusProgress);
-					progressDialog.setLabelText(tr("_ Solving case number %1 of %n...", 0, maxVal).arg(statusProgress));
-
-					statusProgress++;
-				}
-			}
-			catch(VPPException& e){
-				// Print the message and keep going...
-				std::cout<<"A VPPException was catched..."<<std::endl;
-				std::cout<<e.what()<<std::endl;
-
-			}
-			catch(...){ /* do nothing and keep going */ }
-				std::cout<<"An unknown exception was catched..."<<std::endl;
-		}
-		// outer try-catch block
-	}
-	catch(VPPException& e){
+	} catch(VPPException& e){
 		std::cout<<e.what();
 		return;
 	}

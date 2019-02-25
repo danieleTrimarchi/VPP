@@ -16,6 +16,8 @@
 #include "VPPSolverFactoryBase.h"
 #include "hs071_nlp.h"
 
+#include "VPPJobRunner.h"
+
 namespace Test {
 
 /// Test the variables parsed in the variable file
@@ -1360,23 +1362,8 @@ void TVPPTest::ipOptFullRunTest() {
 	// Instantiate a solver
 	Optim::IpOptSolverFactory solverFactory(pVppItems);
 
-
-	// Loop on the wind ANGLES and VELOCITIES
-	for(size_t aTW=0; aTW<parser.get("N_TWA"); aTW++)
-		for(size_t vTW=0; vTW<parser.get("NTW"); vTW++){
-
-			std::cout<<"vTW="<<vTW<<"  "<<"aTW="<<aTW<<std::endl;
-
-			try{
-
-				// Run the optimizer for the current wind speed/angle
-				solverFactory.run(vTW,aTW);
-
-			}
-			catch(...){
-				//do nothing and keep going
-			}
-		}
+	// Run
+	VPPJobRunner(&solverFactory,parser.get("N_TWA"),parser.get("NTW"));
 
 	// Save the results (useful for debugging)
 	VPPResultIO writer(&parser, solverFactory.get()->getResults());
