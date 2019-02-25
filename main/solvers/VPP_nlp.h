@@ -19,7 +19,7 @@ using namespace Ipopt;
 namespace Optim {
 
 // forward declaration
-class IppOptSolverFactory;
+class IpOptSolverFactory;
 
 /// VPP application for solving the optimization problem with IPOPT
 ///  The class is directly inspired by hs071_nlp, which implements a
@@ -117,7 +117,7 @@ class VPP_NLP : public TNLP, public VPPSolverBase {
 
 		/// This class is to be instantiated using a NLOptSolverFactory.
 		/// The friendship allows the factory to call the private constructor
-		friend class IppOptSolverFactory;
+		friend class IpOptSolverFactory;
 
 		/// Private constructor - the class can only be instantiated using
 		/// a VPPSolverFactory

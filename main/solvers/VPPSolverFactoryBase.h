@@ -137,15 +137,15 @@ class SAOASolverFactory : public VPPSolverFactoryBase {
 //////////////////////////////////////////////////////////////
 
 /// Wraps up the ipOpt integration
-class IppOptSolverFactory : public VPPSolverFactoryBase {
+class IpOptSolverFactory : public VPPSolverFactoryBase {
 
 	public:
 
 		/// Ctor
-		IppOptSolverFactory(std::shared_ptr<VPPItemFactory>);
+		IpOptSolverFactory(std::shared_ptr<VPPItemFactory>);
 
 		/// Virtual Dtor
-		virtual ~IppOptSolverFactory();
+		virtual ~IpOptSolverFactory();
 
 		/// Implement pure virtual declared in the mother class
 		/// Returns a reference to the underlying problem representation

@@ -386,7 +386,7 @@ void MainWindow::run() {
 			pSolverFactory_.reset( new Optim::NLOptSolverFactory(pVppItems_) );
 			break;
 		case solverChoice::ipOpt :
-			pSolverFactory_.reset( new Optim::IppOptSolverFactory(pVppItems_) );
+			pSolverFactory_.reset( new Optim::IpOptSolverFactory(pVppItems_) );
 			break;
 		case solverChoice::noOpt :
 			pSolverFactory_.reset( new Optim::SolverFactory(pVppItems_) );
@@ -441,10 +441,12 @@ void MainWindow::run() {
 			}
 			catch(VPPException& e){
 				// Print the message and keep going...
+				std::cout<<"A VPPException was catched..."<<std::endl;
 				std::cout<<e.what()<<std::endl;
 
 			}
 			catch(...){ /* do nothing and keep going */ }
+				std::cout<<"An unknown exception was catched..."<<std::endl;
 		}
 		// outer try-catch block
 	}

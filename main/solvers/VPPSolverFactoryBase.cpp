@@ -97,7 +97,7 @@ void SAOASolverFactory::run(int TWV, int TWA) {
 //////////////////////////////////////////////////////////////
 
 // Ctor
-IppOptSolverFactory::IppOptSolverFactory(std::shared_ptr<VPPItemFactory> pVppItems) :
+IpOptSolverFactory::IpOptSolverFactory(std::shared_ptr<VPPItemFactory> pVppItems) :
 		VPPSolverFactoryBase(pVppItems),
 		pApp_(IpoptApplicationFactory()),
 		pSolver_(new VPP_NLP(pVppItems)) {
@@ -129,18 +129,18 @@ IppOptSolverFactory::IppOptSolverFactory(std::shared_ptr<VPPItemFactory> pVppIte
 }
 
 // Dtor
-IppOptSolverFactory::~IppOptSolverFactory() {
+IpOptSolverFactory::~IpOptSolverFactory() {
 
 }
 
 // Dereference the smart ptr and return a reference
 // to the underlying problem representation
-VPP_NLP* IppOptSolverFactory::get() const {
+VPP_NLP* IpOptSolverFactory::get() const {
 	return &(*pSolver_);
 }
 
 // Implement pure virtual used to execute a VPP-like analysis
-void IppOptSolverFactory::run(int vTW, int aTW) {
+void IpOptSolverFactory::run(int vTW, int aTW) {
 
 	// Set the wind indexes
 	pSolver_->run(vTW,aTW);

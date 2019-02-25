@@ -2,6 +2,7 @@
 	VppTest AND UI : ipOpt fails to converge for WTV=9 , WTA=0
 	the UI goes to vTW=0  aTW=1
 	the test goes to vTW=10  aTW=0
+	Reproduce it: 
 
 
 -> I throw a VPPException in VppGradient. This should be catched as VPPException in mainWindow::run, but it is catched as (...). Why..? Potentially ask Olivier! 
