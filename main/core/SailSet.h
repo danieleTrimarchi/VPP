@@ -8,16 +8,16 @@
 using namespace std;
 
 	enum sailConfig {
-		mainOnly=1,
-		mainAndJib=3,
-		mainAndSpi=5,
-		mainJibAndSpi=7
+		mainOnly,
+		mainAndJib,
+		mainAndSpi,
+		mainJibAndSpi
 	};
 
 	enum activeSail {
-		mainSail=0,
-		jib=1,
-		spi=2
+		mainSail,
+		jib,
+		spi
 	};
 
 /// forward declarations

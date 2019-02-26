@@ -92,7 +92,7 @@ void TVPPTest::variableParseTest() {
 	CPPUNIT_ASSERT_EQUAL( parser.get("RUDDFF"), 1. );
 
 	// SAILS
-	CPPUNIT_ASSERT_EQUAL( parser.get("SAILSET"), 3. );
+	CPPUNIT_ASSERT_EQUAL( parser.get("SAILSET"), 1. );
 	CPPUNIT_ASSERT_EQUAL( parser.get("P"), 8.9 );
 	CPPUNIT_ASSERT_EQUAL( parser.get("E"), 4.084 );
 	CPPUNIT_ASSERT_EQUAL( parser.get("MROACH"), 1.3 );

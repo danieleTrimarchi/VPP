@@ -1,42 +1,36 @@
--> The problem might be due to how the exceptions are catched.
-	VppTest AND UI : ipOpt fails to converge for WTV=9 , WTA=0
-	the UI goes to vTW=0  aTW=1
-	the test goes to vTW=10  aTW=0
-	Reproduce it: 
-
-
--> I throw a VPPException in VppGradient. This should be catched as VPPException in mainWindow::run, but it is catched as (...). Why..? Potentially ask Olivier! 
-
 -> MFLB (Full battens in main) takes values 1 or 3, while it should be 0 or 1. WHY???
 	Because I am completely dumm. See 	VariableParserGetVisitor::visit(SettingsItemComboBox<TUnit>* pItem)
 	where I have set the 2n+1 for sailConfig. But this wouldn't work for MFLB, to be corrected! 
 implications: in the UI I always run with FB, while in the tests I am not
 Can I get the test to pass with FB=1? Still not...
 
+-> resolve the warning for the case of the MainWindow!
+
 -> Something is wrong in the vppsettings while trying to prompt comma separated values. 
 
 -> Fix the import of the (old, deprecated) variableFile.txt. This way I can interactively 
 	load the variableFile_ipOptFullTest and see what happens when the jacobian computation goes wrong. 
 
--> See how things go wrong
+-> Improve the heavyside function
 
 -> PERHAPS : Introduce some scaling. The problem is extremely badly scaled thus any minor change in the computation (see VppHydroItem) is able to make Newton fail. Not acceptable. This is something rather cool! 
 
--> Fix Eclipse: the references to vector and to std::shared_ptr and string are skewed!
-
 -> increase the min size of the 'value' column in the VppSettings tab so that it does not partially hide the header
  
--> there is a ton of duplicated code in VppHydroItem, see all the plots!
+-> there is a ton of duplicated code in VppHydroItem, see all the plots!	
+	I think this is fixed!
 
 -> fix the runTest target and make this dependent on the VPP program (assure up-to-dateness)
 
 -> RE-Allow the GUI to load variableFiles.txt (such as the one we use for testing)
 
 -> Export results to excel format. Simply use .csv formatting
-- Is it possible to write in multiple tabs? 
- Ideally I would have vpp settings in the first tab, and the results in the second tab
+
+- Is it possible to write in multiple xcel tabs? 
+  Ideally I would have vpp settings in the first tab, and the results in the second tab
 
 -> Items should define a state vector, not a collection of variables!! See for example VppItem::updateSolution(int,int,Eigen::Vector&x)
+	-> done 
 
 -> Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 	mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
 	To be investigated on UML!

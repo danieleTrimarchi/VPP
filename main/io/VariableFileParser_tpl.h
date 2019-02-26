@@ -34,7 +34,7 @@ void VariableParserGetVisitor::visit(SettingsItemComboBox<TUnit>* pItem) {
 	// combo-box to the value specified in SailConfig - see SailSet.h
 	SettingsItemBase* SIItem( pItem->convertToSI() );
 
-	pParser_->insert(SIItem->getVariableName(), 2*SIItem->getActiveIndex()+1);
+	pParser_->insert(SIItem->getVariableName(), SIItem->getActiveIndex());
 
 	// Loop on the tree
 	for(size_t iChild=0; iChild<pItem->childCount(); iChild++){

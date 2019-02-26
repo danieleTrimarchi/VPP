@@ -37,7 +37,7 @@ pParser_(&parser) {
 /// Factory method
 SailSet* SailSet::SailSetFactory(VariableFileParser& parser){
 
-	// SAILSET VALUES: 1: main only; 3 - main & jib; 5 - main & spi; 7 - main, jib, & spinnaker;
+	// SAILSET VALUES:
 	switch( int(parser.get(Var::sailSet_)) )
 	{
 	case sailConfig::mainOnly :

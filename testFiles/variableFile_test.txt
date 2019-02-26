@@ -63,8 +63,8 @@ DELTTR  0      % [m]  Mean thikness ratio of rudder section
 RUDDFF  1      % [m]  Rudder?s form factor
 %%%%%%% SAILS %%%%%%%%
 %sailset - sails used in THIS calculation
-% 1 - main only; 3 - main & jib; 5 - main & spi; 7 - main, jib, & spinnaker; 
-SAILSET 3
+% 0 - main only; 1 - main & jib; 2 - main & spi; 3 - main, jib, & spinnaker; 
+SAILSET 1
 P       8.900  % [m]  Mainsail heigth
 E       4.084  % [m]  Mainsail base
 MROACH  1.3    % [-]  Correction for mainsail roach [-] 

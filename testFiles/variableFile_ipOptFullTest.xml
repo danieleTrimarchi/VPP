@@ -89,7 +89,7 @@
                 <Item Expanded="no" InternalName="/.Sail_Settings.SL" DisplayName="SL" VariableName="SL" ClassName="SettingsItem" Value="8.077" Unit="m" ToolTip="Spinnaker length"/>
                 <Item Expanded="no" InternalName="/.Sail_Settings.EHM" DisplayName="EHM" VariableName="EHM" ClassName="SettingsItem" Value="9.754" Unit="m" ToolTip="Mast height above deck"/>
                 <Item Expanded="no" InternalName="/.Sail_Settings.EMDC" DisplayName="EMDC" VariableName="EMDC" ClassName="SettingsItem" Value="0.254" Unit="m" ToolTip="Mast average diameter"/>
-                <Item Expanded="no" InternalName="/.Sail_Settings.Battens" DisplayName="Battens" VariableName="MFLB" ClassName="SettingsItemComboBox" numOpts="2" Option0="Standard battens" Option1="Full battens" ActiveIndex="1" Unit="" ToolTip="Battens configuration"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.Battens" DisplayName="Battens" VariableName="MFLB" ClassName="SettingsItemComboBox" numOpts="2" Option0="Standard battens" Option1="Full battens" ActiveIndex="0" Unit="" ToolTip="Battens configuration"/>
                 <Item Expanded="no" InternalName="/.Sail_Settings.SailSet" DisplayName="SailSet" VariableName="SAILSET" ClassName="SettingsItemComboBox" numOpts="4" Option0="Main only" Option1="Main and jib" Option2="Main and spinnaker" Option3="Main, jib and spinnaker" ActiveIndex="1" Unit="" ToolTip="Sail configuration"/>
             </Item>
         </Item>
