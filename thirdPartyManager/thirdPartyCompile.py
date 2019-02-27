@@ -227,8 +227,7 @@ class thirdPartyCompile(object):
         
         # Compile the requrements, if any
         for iReq in self.__requirements__:
-            iReq.__compile__(dest=os.path.join(self.__thirdPartyBuildFolder__,
-                                          "ThirdParty"))
+            iReq.__compile__(os.path.join(self.__thirdPartyBuildFolder__,"ThirdParty"))
 
         # Go to the build folder
         os.chdir(self.__thirdPartyBuildFolder__)

@@ -42,7 +42,7 @@ class qt5SconsTool(thirdPartyCompile):
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
         self.__buildInfo__["LIBS"] = []
 
-    def __compile__(self):
+    def __compile__(self,dest=None):
         
         # Decorate the mother class __package__ method
         super(qt5SconsTool,self).__compile__()
@@ -83,20 +83,20 @@ class QtCompile(thirdPartyCompile):
         self.__name__="Qt"
         
         # Version of this third_party
-        self.__version__="5.9.1"
+        self.__version__="5.12.1"
         
         # Define the URL from which IpOpt can be downloaded
         # Note that this should be the complete path of the file
         # to be downloaded (Including the filename!)
-        self.__url__="http://download.qt.io/official_releases/qt/5.11/5.11.2/single/qt-everywhere-src-5.11.2.tar.xz"
+        self.__url__="http://download.qt.io/official_releases/qt/5.12/5.12.1/single/qt-everywhere-src-5.12.1.tar.xz"
 
         # Define the name of the archive downloadeed from the web. A priori this is 
         # simply the last entry of the url
-        self.__srcArchiveName__="qt-everywhere-src-5.11.2.tar.xz"
+        self.__srcArchiveName__="qt-everywhere-src-5.12.1.tar.xz"
         
         # Define the name of the folder extracted from the archive downloadeed from the web. 
         # A priori this is simply the srcArchiveName without the extension
-        self.__srcDirName__="qt-everywhere-src-5.11.2"
+        self.__srcDirName__="qt-everywhere-src-5.12.1"
         
         # Override (specialize) the build folder 
         self.__thirdPartyBuildFolder__= os.path.join(self.__thirdPartyBuildFolder__,self.__srcDirName__)
@@ -159,8 +159,8 @@ class QtCompile(thirdPartyCompile):
 
         # Also make the documentation. I cannot get this to build properly but 
         # really this is not a big deal...
-        #self.__execute__("make docs")
-        #self.__execute__("make install_docs")
+        self.__execute__("make docs")
+        self.__execute__("make install_docs")
                           
     # Package the third party that was build   
     def __package__(self):

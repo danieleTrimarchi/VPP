@@ -26,7 +26,7 @@ QWidget(myparent) {
 
 	// Instantiate the model that will be visualized in the
 	// tab as a clone of the reference model
-	pTreeModel_= new SettingsModel; //(*pTreeReferenceModel_);
+	pTreeModel_= new SettingsModel;
 
 	// Now populate the model with some items
 	pTreeModel_->setupModelData();
@@ -129,7 +129,6 @@ void TreeTab::read(VppSettingsXmlReader* pReader){
 		throw VPPException(HERE,"Reference model root not found");
 
 	// Copy the reference model to the current one
-	// Restore this code!
 	revert();
 }
 

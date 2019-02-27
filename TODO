@@ -1,12 +1,4 @@
--> MFLB (Full battens in main) takes values 1 or 3, while it should be 0 or 1. WHY???
-	Because I am completely dumm. See 	VariableParserGetVisitor::visit(SettingsItemComboBox<TUnit>* pItem)
-	where I have set the 2n+1 for sailConfig. But this wouldn't work for MFLB, to be corrected! 
-implications: in the UI I always run with FB, while in the tests I am not
-Can I get the test to pass with FB=1? Still not...
-
--> resolve the warning for the case of the MainWindow!
-
--> Something is wrong in the vppsettings while trying to prompt comma separated values. 
+-> Something is wrong in the vppsettings while trying to prompt comma-separated values. 
 
 -> Fix the import of the (old, deprecated) variableFile.txt. This way I can interactively 
 	load the variableFile_ipOptFullTest and see what happens when the jacobian computation goes wrong. 
