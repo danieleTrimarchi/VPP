@@ -46,12 +46,17 @@ bool DataColumn::operator!=(const DataColumn& rhs){
 	return !(*this==rhs);
 }
 
+std::string DataColumn::getDisplayName() const {
+	return columnDisplayName_;
+}
+
 
 //-----------------------------------------
 
 // Ctor
 NameColumn::NameColumn() :
 			DataColumn() {
+			columnDisplayName_= colNames::name_.label_;
 }
 
 // Value Ctor
@@ -88,6 +93,7 @@ Qt::ItemFlag NameColumn::editable() const {
 // Ctor
 ValueColumn::ValueColumn() :
 			DataColumn() {
+			columnDisplayName_= colNames::value_.label_;
 }
 
 // Value Ctor
@@ -129,7 +135,7 @@ QColor ValueColumn::getBackGroundColor() const {
 // Ctor
 UnitColumn::UnitColumn() :
 			DataColumn() {
-
+	columnDisplayName_=colNames::unit_.label_;
 }
 
 // Copy Ctor

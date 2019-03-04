@@ -25,6 +25,8 @@ class DataColumn {
 		/// the copy ctor from here. So I am obliged to issue the job to child classes
 		virtual DataColumn* clone() const=0;
 
+		std::string getDisplayName() const;
+
 		/// Get the data stored in this column
 		QVariant getData(const int role=0) const;
 
@@ -52,7 +54,11 @@ class DataColumn {
 		/// Container that stores the actual data to be visualized
 		QVariant data_;
 
-	private:
+	protected:
+
+		/// Name of the column as it is visualized in the
+		/// settingsWindow
+		std::string columnDisplayName_;
 
 };
 
