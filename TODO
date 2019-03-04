@@ -1,5 +1,4 @@
--> increase the min size of the 'value' column in the VppSettings tab so that it does not partially hide the header
-	possibly SetttingsWindowView::resizeColumnToContents(...)
+-> why in TreeTab setMouseTracking and setEditTriggers are commented out?
 
 -> I need the thirdPartyManager to assure that the .pc files are properly updated each time the Qt version is changed. Probably thirdPartyQt does change the .pc file in the program tree when executing the package. 
 

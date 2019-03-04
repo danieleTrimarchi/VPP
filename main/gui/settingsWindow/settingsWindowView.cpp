@@ -16,6 +16,11 @@ SettingsWindowView::SettingsWindowView(SettingsModel* pModel, QWidget *parent) :
 	setFrameStyle(QFrame::NoFrame);
 	setLineWidth(10);
 
+	// This is not ideal but it allows not covering the
+	// headers. It is not dynamic but the header titles
+	// are not either
+	header()->setMinimumSectionSize(50);
+
 }
 
 
