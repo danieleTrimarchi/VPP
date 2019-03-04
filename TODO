@@ -1,12 +1,13 @@
+-> increase the min size of the 'value' column in the VppSettings tab so that it does not partially hide the header
+
 -> Something is wrong in the vppsettings while trying to prompt comma-separated values. 
-	I conjecture this might be caused by Qt, that I have compiled for macos Sierra. Is this still fully compatible with Mojave? Finish recompiling Qt5.12 and hopefully the problem will magically disappear. 
+	The pb is linked to the call to commitData while typing (see VPPSettingsDelegate::createEditor and the implementation of the connected slot VPPSettingsDelegate::textEdited). 
+It appears that the slot is called twice, and the second time the text contained in the qlineEdit is purged of the decimal separator. See minimal test in /Users/dtrimarchi/third_party/homebrew_qt57_patches/qtTests/settingsWindow_minimal 	
 
 -> Fix the import of the (old, deprecated) variableFile.txt. This way I can interactively 
 	load the variableFile_ipOptFullTest and see what happens when the jacobian computation goes wrong. 
 
 -> Improve the heavyside function
-
--> increase the min size of the 'value' column in the VppSettings tab so that it does not partially hide the header
  
 -> there is a ton of duplicated code in VppHydroItem, see all the plots!	
 	fixed for the viscousResistanceItem components, but for the other components

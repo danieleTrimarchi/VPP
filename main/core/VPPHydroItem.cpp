@@ -80,6 +80,7 @@ InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
 	phiD_ << 0, 10, 20, 30;
 	phiD_ *= ( M_PI / 180.0);
 
+
 	// Draft of the canoe body
 	double tCan = pParser_->get(Var::tcan_);
 	// Total Draft
@@ -153,11 +154,11 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 		// of the velocity with a parabola. This happens to preserve c1 continuity at the velocity
 		// corresponding to Fn=0.1
 		if( x_(stateVars::u)<vf_)
-			x_(stateVars::u)= a_ * x_(stateVars::u) * x_(stateVars::u) + c_;
+			v_= a_ * x_(stateVars::u) * x_(stateVars::u) + c_;
 		else
-			x_(stateVars::u)= x_(stateVars::u);
+			v_= x_(stateVars::u);
 
-		res_ = ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * x_(stateVars::u) * x_(stateVars::u));
+		res_ = ( fHeel * fHeel ) / ( 0.5 * Physic::rho_w * M_PI * Te * Te * v_ * v_);
 
 		// Superpose a further smoothing using a step function for  Fn=0-0.2
 		res_ *= pSf_->f( fN_ );
@@ -333,36 +334,53 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 	return retVec;
 }
 
-// Plot the effective T
-void InducedResistanceItem::plotTe(int twv, int twa) {
+//=================================================================
+
+// Constructor
+ResiduaryResistanceItemBase::ResiduaryResistanceItemBase(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
+	ResistanceItem(pParser, pSailSet) {
+	// make nothing
+}
+
+// Destructor
+ResiduaryResistanceItemBase::~ResiduaryResistanceItemBase(){
+}
+
+/// Implement pure virtual method of the parent class
+void ResiduaryResistanceItemBase::update(int vTW, int aTW) {
 
 	// Call the parent class update to update the Froude number
-	ResistanceItem::update(twv,twa);
+	ResistanceItem::update(vTW,aTW);
 
-	Eigen::VectorXd vectB(2);
-	vectB << 1, fN_;
-
-	// coeffB(4x2) * vectB(2x1) => TeFn(4x1)
-	Eigen::ArrayXd TeFn = coeffB_ * vectB;
-
-	// Note that this is a coefficient-wise operation Tegeo(4x1) * TeFn(4x1) -> Teffective(4x1)
-	Eigen::ArrayXd Teffective = pParser_->get(Var::t_) * Tegeo_ * TeFn;
-
-	// Properly interpolate then values of TeD for the current value
-	// of the state variable x_(stateVars::phi) (heeling angle)
-	SplineInterpolator interpolator(phiD_,Teffective);
-	double Te= interpolator.interpolate(x_(stateVars::phi));
-
-	//  std::cout<<"phiDArr= "<<phiD_<<std::endl;
-	//std::cout<<"Teffective= \n"<<Teffective<<std::endl;
+	// Compute the residuary resistance for the current froude number
+	res_ = pInterpolator_->interpolate(fN_);
+	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
 }
 
+// Implement pure virtual of the parent class
+// Each resistance component knows how to generate a widget
+// to visualize itself in a plot
+std::vector<VppXYCustomPlotWidget*> ResiduaryResistanceItemBase::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* /*=0*/) {
+
+	// Make sure data are up to date
+	ResistanceItem::update(wd->getTWV(),wd->getTWA());
+	res_ = pInterpolator_->interpolate(fN_);
+
+	// Make a check plot for the residuary resistance
+	VppXYCustomPlotWidget* pPlot = new VppXYCustomPlotWidget("Residuary Resistance Hull","Fn [-]","Resistance [N]");
+	pInterpolator_->plot(pPlot, 0, 2*convertToVelocity(fN_),50 );
+	//multiPlotWidget->addChart(pPlot,0,0);
+
+	return std::vector<VppXYCustomPlotWidget*>(1,pPlot);
+}
+
 //=================================================================
+
 // Residuary Resistance: see DSYHS99 3.1.1.2 p112
 // Constructor
 ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-						ResistanceItem(pParser, pSailSet) {
+		ResiduaryResistanceItemBase(pParser, pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(12,9);
@@ -424,42 +442,12 @@ ResiduaryResistanceItem::~ResiduaryResistanceItem() {
 	// make nothing
 }
 
-/// Implement pure virtual method of the parent class
-void ResiduaryResistanceItem::update(int vTW, int aTW) {
-
-	// Call the parent class update to update the Froude number
-	ResistanceItem::update(vTW,aTW);
-
-	// Compute the residuary resistance for the current froude number
-	res_ = pInterpolator_->interpolate(fN_);
-	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
-
-}
-
-
-// Implement pure virtual of the parent class
-// Each resistance component knows how to generate a widget
-// to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> ResiduaryResistanceItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
-
-	ResistanceItem::update(wd->getTWV(),wd->getTWA());
-
-	res_ = pInterpolator_->interpolate(fN_);
-
-	// Make a check plot for the residuary resistance
-	VppXYCustomPlotWidget* pPlot = new VppXYCustomPlotWidget("Residuary Resistance Hull","Fn [-]","Resistance [N]");
-	pInterpolator_->plot(pPlot, 0,.6,50 );
-	//multiPlotWidget->addChart(pPlot,0,0);
-
-	return std::vector<VppXYCustomPlotWidget*>(1,pPlot);
-}
-
 //=================================================================
 // For the change in Residuary Resistance due to heel see DSYHS99 ch3.1.2.2 p116
 // Constructor
 Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet) :
-						ResistanceItem(pParser,pSailSet) {
+				DeltaResistanceItemBase(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(7,6);
@@ -535,78 +523,11 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 
 }
 
-// Implement pure virtual of the parent class
-// Each resistance component knows how to generate a widget
-// to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistance_HeelItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd/*=0*/) {
-
-	// Init the state vector
-	x_(stateVars::b)= sd->getCrew();
-	x_(stateVars::f)= sd->getFlat();
-
-	size_t nVelocities=40, maxAngleDeg=30;
-
-	// Instantiate containers for the curve labels, the
-	// Fn and the resistance
-	std::vector<QString> curveLabels;
-	std::vector<QVector<double> > froudeNb, totRes;
-
-	// Loop on the heel angles
-	for(size_t iAngle=0; iAngle<maxAngleDeg+1; iAngle+=5){
-
-		// Compute the value of PHI
-		x_(stateVars::phi) = mathUtils::toRad(iAngle);
-
-		// declare some tmp containers
-		QVector<double> fn, res;
-
-		// Loop on the velocities
-		for(size_t v=0; v<nVelocities; v++){
-
-			// Set a fictitious velocity (Fn=-0.3-0.7)
-			x_(stateVars::u)= ( 0 + ( .6 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
-
-			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
-			update(wd->getTWV(),wd->getTWA());
-
-			// Fill the vectors to be plot
-			fn.push_back( x_(stateVars::u)/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
-			res.push_back( get() );
-
-		}
-
-		froudeNb.push_back(fn);
-		totRes.push_back(res);
-
-		char msg[256];
-		sprintf(msg,"%3.1fº", mathUtils::toDeg(x_(stateVars::phi)));
-		curveLabels.push_back(msg);
-
-	}
-
-	char msg[256];
-	sprintf(msg,"Delta Residuary Resistance due to Heel - "
-			"twv=%2.2f [m/s], twa=%2.2fº",
-			wd->getWind()->getTWV(wd->getTWV()),
-			mathUtils::toDeg(wd->getWind()->getTWA(wd->getTWA())) );
-
-	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
-	// then the ownership will be assigned to the multiPlotWidget when adding the chart
-	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Resistance [N]");
-	for(size_t i=0; i<froudeNb.size(); i++)
-		pResPlot->addData(froudeNb[i],totRes[i],curveLabels[i]);
-	pResPlot->rescaleAxes();
-
-	return std::vector<VppXYCustomPlotWidget*>(1,pResPlot);
-
-	//pMultiPlotWidget->addChart(pResPlot,posx,posy);
-}
-
 //=================================================================
 // For the definition of the Residuary Resistance of the Keel see DSYHS99 3.2.1.2 p.120 and following
 // Constructor
 ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-						ResistanceItem(pParser,pSailSet) {
+		ResiduaryResistanceItemBase(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(11,4);
@@ -655,29 +576,81 @@ ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pPa
 ResiduaryResistanceKeelItem::~ResiduaryResistanceKeelItem() {
 }
 
-// Implement pure virtual method of the parent class
-void ResiduaryResistanceKeelItem::update(int vTW, int aTW) {
+//=================================================================
 
-	// Call the parent class update to update the Froude number
-	ResistanceItem::update(vTW,aTW);
+DeltaResistanceItemBase::DeltaResistanceItemBase(
+		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
+						ResistanceItem(pParser,pSailSet) {
+}
 
-	// Updates the value of the Residuary Resistance due to the Keel
-	res_= pInterpolator_->interpolate(fN_);
-	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
+// Virtual Dtor
+DeltaResistanceItemBase::~DeltaResistanceItemBase() {
 
 }
 
 // Implement pure virtual of the parent class
 // Each resistance component knows how to generate a widget
 // to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> ResiduaryResistanceKeelItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* /*=0*/) {
+std::vector<VppXYCustomPlotWidget*> DeltaResistanceItemBase::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
 
-	// Make a check plot for the Residuary resistance of the keel
-	VppXYCustomPlotWidget* pPlot = new VppXYCustomPlotWidget("Residuary Resistance Keel","Fn [-]","Resistance [N]");
-	pInterpolator_->plot(pPlot, 0,.6,50 );
-//multiPlotWidget->addChart(pPlot,posx,posy);
+	// Init the state vector
+	x_(stateVars::b)= sd->getCrew();
+	x_(stateVars::f)= sd->getFlat();
 
-	return std::vector<VppXYCustomPlotWidget*>(1,pPlot);
+	size_t nVelocities=40, maxAngleDeg=40;
+
+	// Instantiate containers for the curve labels, the
+	// Fn and the resistance
+	std::vector<QString> curveLabels;
+	std::vector<QVector<double> > froudeNb, totRes;
+
+	// Loop on the heel angles
+	for(int iAngle=0; iAngle<maxAngleDeg+1; iAngle+=10){
+
+		// Compute the value of PHI
+		x_(stateVars::phi) = mathUtils::toRad(iAngle-10);
+
+		// declare some tmp containers
+		QVector<double> fn, res;
+
+		// Loop on the velocities
+		for(size_t v=0; v<nVelocities; v++){
+
+			// Set a fictitious velocity (Fn=-0.-0.7)
+			x_(stateVars::u)= ( ( .7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
+
+			update(wd->getTWV(),wd->getTWA());
+
+			// Fill the vectors to be plot
+			fn.push_back( x_(stateVars::u)/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
+			res.push_back( get() );
+
+		}
+
+		froudeNb.push_back(fn);
+		totRes.push_back(res);
+
+		char msg[256];
+		sprintf(msg,"%3.1fº", mathUtils::toDeg(x_(stateVars::phi)));
+		curveLabels.push_back(msg);
+
+	}
+
+	char msg[256];
+	sprintf(msg,"plot Delta Viscous Resistance due to Heel - "
+			"twv=%2.2f [m/s], twa=%2.2fº",
+			wd->getWind()->getTWV(wd->getTWV()),
+			mathUtils::toDeg(wd->getWind()->getTWA(wd->getTWA())) );
+
+	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
+	// then the ownership will be assigned to the multiPlotWidget when adding the chart
+	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Resistance [N]");
+	for(size_t i=0; i<froudeNb.size(); i++)
+		pResPlot->addData(froudeNb[i],totRes[i],curveLabels[i]);
+	pResPlot->rescaleAxes();
+
+	return std::vector<VppXYCustomPlotWidget*>(1,pResPlot);
+
 }
 
 //=================================================================
@@ -687,7 +660,7 @@ std::vector<VppXYCustomPlotWidget*> ResiduaryResistanceKeelItem::plot(WindIndice
 // Constructor
 Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-						ResistanceItem(pParser,pSailSet) {
+				DeltaResistanceItemBase(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::VectorXd coeff(4);
@@ -731,71 +704,6 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 	res_= Ch_ * fN_ * fN_ * x_(stateVars::phi);
 	if(isNotValid(res_)) throw VPPException(HERE,"res_ is Nan");
 
-}
-
-// Implement pure virtual of the parent class
-// Each resistance component knows how to generate a widget
-// to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> Delta_ResiduaryResistanceKeel_HeelItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
-	// Init the state vector
-	x_(stateVars::b)= sd->getCrew();
-	x_(stateVars::f)= sd->getFlat();
-
-	size_t nVelocities=40, maxAngleDeg=30;
-
-	// Instantiate containers for the curve labels, the
-	// Fn and the resistance
-	std::vector<QString> curveLabels;
-	std::vector<QVector<double> > froudeNb, totRes;
-
-	// Loop on the heel angles
-	for(size_t iAngle=0; iAngle<maxAngleDeg+1; iAngle+=5){
-
-		// Compute the value of PHI
-		x_(stateVars::phi) = mathUtils::toRad(iAngle);
-
-		// declare some tmp containers
-		QVector<double> fn, res;
-
-		// Loop on the velocities
-		for(size_t v=0; v<nVelocities; v++){
-
-			// Set a fictitious velocity (Fn=-0.3-0.7)
-			x_(stateVars::u)= ( ( 0.7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
-
-			// Update all the Items - not just the hydro as indRes requires up-to-date fHeel!
-			update(wd->getTWV(),wd->getTWA());
-
-			// Fill the vectors to be plot
-			fn.push_back( x_(stateVars::u)/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
-			res.push_back( get() );
-
-		}
-
-		froudeNb.push_back(fn);
-		totRes.push_back(res);
-
-		char msg[256];
-		sprintf(msg,"%3.1fº", mathUtils::toDeg(x_(stateVars::phi)));
-		curveLabels.push_back(msg);
-
-	}
-
-	char msg[256];
-	sprintf(msg,"plot Delta Residuary Resistance of the keel due to Heel - "
-			"twv=%2.2f [m/s], twa=%2.2fº",
-			wd->getWind()->getTWV(wd->getTWV()),
-			mathUtils::toDeg(wd->getWind()->getTWA(wd->getTWA())) );
-
-	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
-	// then the ownership will be assigned to the multiPlotWidget when adding the chart
-	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Resistance [N]");
-	for(size_t i=0; i<froudeNb.size(); i++)
-		pResPlot->addData(froudeNb[i],totRes[i],curveLabels[i]);
-	pResPlot->rescaleAxes();
-
-	return std::vector<VppXYCustomPlotWidget*>(1,pResPlot);
-	//pMultiPlotWidget->addChart(pResPlot,posx,posy);
 }
 
 //=================================================================
@@ -909,7 +817,7 @@ void ViscousResistanceItem::update(int vTW, int aTW) {
 // Constructor
 Delta_ViscousResistance_HeelItem::Delta_ViscousResistance_HeelItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-								ResistanceItem(pParser,pSailSet) {
+				DeltaResistanceItemBase(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_. The definition of the Rn
 	// is given by DSYHS99, p109. 0.7 is an arbitrary factor used to reduce the lwl
@@ -1004,67 +912,6 @@ std::vector<VppXYCustomPlotWidget*> Delta_ViscousResistance_HeelItem::plot_delta
 	pInterpolator_->plot(pPlot, 0,0.6,20);
 
 	return std::vector<VppXYCustomPlotWidget*>(1,pPlot);
-
-}
-
-/// Implement pure virtual of the parent class
-/// Each resistance component knows how to generate a widget
-/// to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> Delta_ViscousResistance_HeelItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
-
-	size_t nVelocities=40, maxAngleDeg=40;
-
-	// Instantiate containers for the curve labels, the
-	// Fn and the resistance
-	std::vector<QString> curveLabels;
-	std::vector<QVector<double> > froudeNb, totRes;
-
-	// Loop on the heel angles
-	for(int iAngle=0; iAngle<maxAngleDeg+1; iAngle+=10){
-
-		// Compute the value of PHI
-		x_(stateVars::phi) = mathUtils::toRad(iAngle-10);
-
-		// declare some tmp containers
-		QVector<double> fn, res;
-
-		// Loop on the velocities
-		for(size_t v=0; v<nVelocities; v++){
-
-			// Set a fictitious velocity (Fn=-0.-0.7)
-			x_(stateVars::u)= ( ( .7 / nVelocities * v ) ) * sqrt(Physic::g * pParser_->get(Var::lwl_));
-
-			update(wd->getTWV(),wd->getTWA());
-
-			// Fill the vectors to be plot
-			fn.push_back( x_(stateVars::u)/sqrt(Physic::g * pParser_->get(Var::lwl_) ) );
-			res.push_back( get() );
-
-		}
-
-		froudeNb.push_back(fn);
-		totRes.push_back(res);
-
-		char msg[256];
-		sprintf(msg,"%3.1fº", mathUtils::toDeg(x_(stateVars::phi)));
-		curveLabels.push_back(msg);
-
-	}
-
-	char msg[256];
-	sprintf(msg,"plot Delta Viscous Resistance due to Heel - "
-			"twv=%2.2f [m/s], twa=%2.2fº",
-			wd->getWind()->getTWV(wd->getTWV()),
-			mathUtils::toDeg(wd->getWind()->getTWA(wd->getTWA())) );
-
-	// Instantiate a VppXYCustomPlotWidget and plot Total Resistance. We new with a raw ptr,
-	// then the ownership will be assigned to the multiPlotWidget when adding the chart
-	VppXYCustomPlotWidget* pResPlot= new VppXYCustomPlotWidget(msg,"Fn [-]","Resistance [N]");
-	for(size_t i=0; i<froudeNb.size(); i++)
-		pResPlot->addData(froudeNb[i],totRes[i],curveLabels[i]);
-	pResPlot->rescaleAxes();
-
-	return std::vector<VppXYCustomPlotWidget*>(1,pResPlot);
 
 }
 

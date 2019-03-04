@@ -15,7 +15,6 @@ class StateVectorDialog;
 
 // TODO dtrimarchi : we are not considering the resistance
 // contribution of the rudder. Add it!
-
 class ResistanceItem : public VPPItem {
 
 	public:
@@ -72,9 +71,6 @@ class InducedResistanceItem : public ResistanceItem {
 		/// to visualize itself in a plot
 		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
-		/// Plot the effective T
-		void plotTe(int twv, int twa);
-
 	private:
 
 		/// Implement pure virtual method of the parent class
@@ -99,8 +95,37 @@ class InducedResistanceItem : public ResistanceItem {
 };
 
 //=================================================================
+// Residuary Resistance Base: see Keuning 3.1.1.2 p112
+class ResiduaryResistanceItemBase : public ResistanceItem {
+
+	public:
+
+		/// Constructor
+		ResiduaryResistanceItemBase(VariableFileParser*, std::shared_ptr<SailSet>);
+
+		/// Destructor
+		~ResiduaryResistanceItemBase();
+
+		/// Implement pure virtual of the parent class
+		/// Each resistance component knows how to generate a widget
+		/// to visualize itself in a plot
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
+
+	protected:
+
+		/// Interpolator that stores the residuary resistance curve for all froude numbers
+		std::shared_ptr<SplineInterpolator> pInterpolator_;
+
+	private:
+
+		/// Implement pure virtual method of the parent class
+		virtual void update(int vTW, int aTW);
+
+};
+
+//=================================================================
 // Residuary Resistance: see Keuning 3.1.1.2 p112
-class ResiduaryResistanceItem : public ResistanceItem {
+class ResiduaryResistanceItem : public ResiduaryResistanceItemBase {
 
 	public:
 
@@ -110,24 +135,34 @@ class ResiduaryResistanceItem : public ResistanceItem {
 		/// Destructor
 		~ResiduaryResistanceItem();
 
+
+};
+
+//=================================================================
+
+/// Express the change in Appendage Resistance due to Heel.
+/// See Keuning 3.2.2 p 126
+class DeltaResistanceItemBase : public ResistanceItem {
+
+	public:
+
+		/// Constructor
+		DeltaResistanceItemBase(VariableFileParser*, std::shared_ptr<SailSet>);
+
+		/// Destructor
+		virtual ~DeltaResistanceItemBase();
+
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget
 		/// to visualize itself in a plot
 		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
-	private:
-
-		/// Implement pure virtual method of the parent class
-		virtual void update(int vTW, int aTW);
-
-		/// Interpolator that stores the residuary resistance curve for all froude numbers
-		std::shared_ptr<SplineInterpolator> pInterpolator_;
 };
 
 /// =================================================================
 /// For the definition of the change in Residuary Resistance due to heel
 /// see DSYHS99 ch3.1.2.2 p116
-class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
+class Delta_ResiduaryResistance_HeelItem : public DeltaResistanceItemBase {
 
 	public:
 
@@ -135,12 +170,7 @@ class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 		Delta_ResiduaryResistance_HeelItem(VariableFileParser*, std::shared_ptr<SailSet>);
 
 		/// Destructor
-		~Delta_ResiduaryResistance_HeelItem();
-
-		/// Implement pure virtual of the parent class
-		/// Each resistance component knows how to generate a widget
-		/// to visualize itself in a plot
-		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
+		virtual ~Delta_ResiduaryResistance_HeelItem();
 
 	private:
 
@@ -156,7 +186,7 @@ class Delta_ResiduaryResistance_HeelItem : public ResistanceItem {
 /// For the definition of the Residuary Resistance of the Keel see
 /// DSYHS99 3.2.1.2 p.120 and following
 
-class ResiduaryResistanceKeelItem : public ResistanceItem {
+class ResiduaryResistanceKeelItem : public ResiduaryResistanceItemBase {
 
 	public:
 
@@ -166,26 +196,13 @@ class ResiduaryResistanceKeelItem : public ResistanceItem {
 		/// Destructor
 		~ResiduaryResistanceKeelItem();
 
-		/// Implement pure virtual of the parent class
-		/// Each resistance component knows how to generate a widget
-		/// to visualize itself in a plot
-		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
-
-	private:
-
-		/// Implement pure virtual method of the parent class
-		virtual void update(int vTW, int aTW);
-
-		/// Interpolator that stores the residuary resistance curve for all froude numbers
-		std::shared_ptr<SplineInterpolator> pInterpolator_;
-
 };
 
 //=================================================================
 
 /// Express the change in Appendage Resistance due to Heel.
 /// See Keuning 3.2.2 p 126
-class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
+class Delta_ResiduaryResistanceKeel_HeelItem : public DeltaResistanceItemBase {
 
 	public:
 
@@ -194,11 +211,6 @@ class Delta_ResiduaryResistanceKeel_HeelItem : public ResistanceItem {
 
 		/// Destructor
 		~Delta_ResiduaryResistanceKeel_HeelItem();
-
-		/// Implement pure virtual of the parent class
-		/// Each resistance component knows how to generate a widget
-		/// to visualize itself in a plot
-		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
@@ -266,7 +278,7 @@ class ViscousResistanceItem : public ViscousResistanceItemBase {
 
 // For the definition of the Change in Viscous Resistance due to heel
 // see Keuning 3.1.2.1 p115-116
-class Delta_ViscousResistance_HeelItem : public ResistanceItem {
+class Delta_ViscousResistance_HeelItem : public DeltaResistanceItemBase {
 
 	public:
 
@@ -278,11 +290,6 @@ class Delta_ViscousResistance_HeelItem : public ResistanceItem {
 
 		/// Plot the Viscous Resistance due to heel vs Fn curve
 		std::vector<VppXYCustomPlotWidget*> plot_deltaWettedArea_heel();
-
-		/// Implement pure virtual of the parent class
-		/// Each resistance component knows how to generate a widget
-		/// to visualize itself in a plot
-		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
 
 	private:
 
