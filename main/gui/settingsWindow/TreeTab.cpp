@@ -45,10 +45,10 @@ QWidget(myparent) {
 
 	// Set mouse tracking on for this widget. This will allow the delegate
 	// to detect when the mouse hovers over the various objects of the widget
-	//pTreeView_->setMouseTracking(true);
+	pTreeView_->setMouseTracking(true);
 
 	// Select on single click
-	//pTreeView_->setEditTriggers(QAbstractItemView::AllEditTriggers);
+	pTreeView_->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
 	// Assign the tree view to a VBoxLayout
 	QVBoxLayout* centralLayout = new QVBoxLayout(this);

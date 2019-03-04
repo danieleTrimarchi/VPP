@@ -1,5 +1,3 @@
--> why in TreeTab setMouseTracking and setEditTriggers are commented out?
-
 -> I need the thirdPartyManager to assure that the .pc files are properly updated each time the Qt version is changed. Probably thirdPartyQt does change the .pc file in the program tree when executing the package. 
 
 -> OLIVIER! Something is wrong in the vppsettings while trying to prompt comma-separated values. The pb is linked to the call to commitData while typing (see VPPSettingsDelegate::createEditor and the implementation of the connected slot VPPSettingsDelegate::textEdited). 
