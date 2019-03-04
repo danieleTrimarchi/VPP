@@ -1,34 +1,22 @@
 -> increase the min size of the 'value' column in the VppSettings tab so that it does not partially hide the header
 
--> Something is wrong in the vppsettings while trying to prompt comma-separated values. 
-	The pb is linked to the call to commitData while typing (see VPPSettingsDelegate::createEditor and the implementation of the connected slot VPPSettingsDelegate::textEdited). 
+-> I need the thirdPartyManager to assure that the .pc files are properly updated each time the Qt version is changed. Probably thirdPartyQt does change the .pc file in the program tree when executing the package. 
+
+-> OLIVIER! Something is wrong in the vppsettings while trying to prompt comma-separated values. The pb is linked to the call to commitData while typing (see VPPSettingsDelegate::createEditor and the implementation of the connected slot VPPSettingsDelegate::textEdited). 
 It appears that the slot is called twice, and the second time the text contained in the qlineEdit is purged of the decimal separator. See minimal test in /Users/dtrimarchi/third_party/homebrew_qt57_patches/qtTests/settingsWindow_minimal 	
 
 -> Fix the import of the (old, deprecated) variableFile.txt. This way I can interactively 
-	load the variableFile_ipOptFullTest and see what happens when the jacobian computation goes wrong. 
+	load the variableFile_ipOptFullTest and see what happens when the jacobian 	
+	computation goes wrong. 
 
 -> Improve the heavyside function
  
--> there is a ton of duplicated code in VppHydroItem, see all the plots!	
-	fixed for the viscousResistanceItem components, but for the other components
-
-
-DeltaResistanceBase
-	Delta_ResiduaryResistance_HeelItem
-	Delta_ResiduaryResistanceKeel_HeelItem
-	Delta_ViscousResistance_HeelItem
-
--> fix the runTest target and make this dependent on the VPP program (assure up-to-dateness)
-
 -> RE-Allow the GUI to load variableFiles.txt (such as the one we use for testing)
 
 -> Export results to excel format. Simply use .csv formatting
 
 - Is it possible to write in multiple xcel tabs? 
   Ideally I would have vpp settings in the first tab, and the results in the second tab
-
--> Items should define a state vector, not a collection of variables!! See for example VppItem::updateSolution(int,int,Eigen::Vector&x)
-	-> done 
 
 -> Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 	mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
 	To be investigated on UML!

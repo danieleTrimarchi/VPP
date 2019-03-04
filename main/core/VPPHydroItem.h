@@ -155,7 +155,7 @@ class DeltaResistanceItemBase : public ResistanceItem {
 		/// Implement pure virtual of the parent class
 		/// Each resistance component knows how to generate a widget
 		/// to visualize itself in a plot
-		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd =0, StateVectorDialog* =0);
+		virtual std::vector<VppXYCustomPlotWidget*> plot(WindIndicesDialog* wd, StateVectorDialog*);
 
 };
 

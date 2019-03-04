@@ -20,12 +20,12 @@ void ResistanceItem::update(int vTW, int aTW) {
 	fN_= convertToFn( x_(stateVars::u) );
 	if(isNotValid(fN_)) throw VPPException(HERE,"fN_ is Nan");
 
-//		if(fN_ > 0.6) {
-//			char msg[256];
-//			sprintf(msg,"The value of the Froude Number %f exceeds the limit value 0.6! "
-//					"Results might be incorrect.",fN_);
-//			Warning warning(msg);
-//		}
+	//		if(fN_ > 0.6) {
+	//			char msg[256];
+	//			sprintf(msg,"The value of the Froude Number %f exceeds the limit value 0.6! "
+	//					"Results might be incorrect.",fN_);
+	//			Warning warning(msg);
+	//		}
 }
 
 // Destructor
@@ -56,12 +56,12 @@ double ResistanceItem::convertToVelocity( double fN ) {
 // For the definition of the Induced Resistance see DSYHS99 ch4 p128
 // Constructor
 InducedResistanceItem::InducedResistanceItem(AeroForcesItem* pAeroForcesItem) :
-						ResistanceItem(pAeroForcesItem->getParser(), pAeroForcesItem->getSailSet()),
-						pAeroForcesItem_(pAeroForcesItem),
-						vf_(0.4 * sqrt(Physic::g * pParser_->get(Var::lwl_) )),
-						a_(1./(2*vf_)),
-						c_(vf_/2),
-						v_(0) {
+								ResistanceItem(pAeroForcesItem->getParser(), pAeroForcesItem->getSailSet()),
+								pAeroForcesItem_(pAeroForcesItem),
+								vf_(0.4 * sqrt(Physic::g * pParser_->get(Var::lwl_) )),
+								a_(1./(2*vf_)),
+								c_(vf_/2),
+								v_(0) {
 
 	coeffA_.resize(4,4);
 	coeffA_ << 	3.7455,	-3.6246,	0.0589,	-0.0296,
@@ -178,18 +178,14 @@ void InducedResistanceItem::update(int vTW, int aTW) {
 /// to visualize itself in a plot
 std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
 
+	Eigen::VectorXd xBuffer(x_);
+
 	// Prepare the vector to be returned
 	std::vector<VppXYCustomPlotWidget*> retVec;
 
 	// Fill state vector
 	x_(stateVars::b)=sd->getCrew();
 	x_(stateVars::f)=sd->getFlat();
-
-	// buffer the velocity that is going to be modified by the plot
-	double bufferV= x_(stateVars::u);
-	double bufferPHI= x_(stateVars::phi);
-	double bufferb= x_(stateVars::b);
-	double bufferf= x_(stateVars::f);
 
 	// Define the number of velocities and angles (+=4!!)
 	size_t nVelocities=40, nAngles=20;
@@ -322,10 +318,8 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 	// Push the chart to the buffer vector to be returned
 	retVec.push_back(pResPlot);
 
-
-	// Restore the values of the variables
-	x_(stateVars::u)=bufferV;
-	x_(stateVars::phi)=bufferPHI;
+	// Restore the state vector
+	x_ = xBuffer;
 
 	// Ask the user: do you want to plot Te ?
 	//	if(io.askUserBool(" Would you like to plot the effective draugh Te ? "))
@@ -338,7 +332,7 @@ std::vector<VppXYCustomPlotWidget*> InducedResistanceItem::plot(WindIndicesDialo
 
 // Constructor
 ResiduaryResistanceItemBase::ResiduaryResistanceItemBase(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-	ResistanceItem(pParser, pSailSet) {
+			ResistanceItem(pParser, pSailSet) {
 	// make nothing
 }
 
@@ -380,7 +374,7 @@ std::vector<VppXYCustomPlotWidget*> ResiduaryResistanceItemBase::plot(WindIndice
 // Residuary Resistance: see DSYHS99 3.1.1.2 p112
 // Constructor
 ResiduaryResistanceItem::ResiduaryResistanceItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-		ResiduaryResistanceItemBase(pParser, pSailSet) {
+				ResiduaryResistanceItemBase(pParser, pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(12,9);
@@ -447,17 +441,17 @@ ResiduaryResistanceItem::~ResiduaryResistanceItem() {
 // Constructor
 Delta_ResiduaryResistance_HeelItem::Delta_ResiduaryResistance_HeelItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet) :
-				DeltaResistanceItemBase(pParser,pSailSet) {
+						DeltaResistanceItemBase(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(7,6);
 	coeff << -0.0268, -0.0014, -0.0057, 0.0016, -0.0070, -0.0017,
-					  0.6628, -0.0632, -0.0699, 0.0069,  0.0459, -0.0004,
-						1.6433, -0.2144, -0.1640, 0.0199, -0.0540, -0.0268,
-					 -0.8659, -0.0354,  0.2226, 0.0188, -0.5800, -0.1133,
-					 -3.2715,	 0.1372,  0.5547, 0.0268, -1.0064, -0.2026,
-					 -0.1976, -0.1480, -0.6593, 0.1862, -0.7489, -0.1648,
-					  1.5873, -0.3749, -0.7105, 0.2146, -0.4818, -0.1174;
+			0.6628, -0.0632, -0.0699, 0.0069,  0.0459, -0.0004,
+			1.6433, -0.2144, -0.1640, 0.0199, -0.0540, -0.0268,
+			-0.8659, -0.0354,  0.2226, 0.0188, -0.5800, -0.1133,
+			-3.2715,	 0.1372,  0.5547, 0.0268, -1.0064, -0.2026,
+			-0.1976, -0.1480, -0.6593, 0.1862, -0.7489, -0.1648,
+			1.5873, -0.3749, -0.7105, 0.2146, -0.4818, -0.1174;
 
 	// Divided the coefficients by 10^3, as stated in the article table6
 	coeff /= 1000.;
@@ -527,7 +521,7 @@ void Delta_ResiduaryResistance_HeelItem::update(int vTW, int aTW) {
 // For the definition of the Residuary Resistance of the Keel see DSYHS99 3.2.1.2 p.120 and following
 // Constructor
 ResiduaryResistanceKeelItem::ResiduaryResistanceKeelItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-		ResiduaryResistanceItemBase(pParser,pSailSet) {
+				ResiduaryResistanceItemBase(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::MatrixXd coeff(11,4);
@@ -580,7 +574,7 @@ ResiduaryResistanceKeelItem::~ResiduaryResistanceKeelItem() {
 
 DeltaResistanceItemBase::DeltaResistanceItemBase(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-						ResistanceItem(pParser,pSailSet) {
+								ResistanceItem(pParser,pSailSet) {
 }
 
 // Virtual Dtor
@@ -591,7 +585,7 @@ DeltaResistanceItemBase::~DeltaResistanceItemBase() {
 // Implement pure virtual of the parent class
 // Each resistance component knows how to generate a widget
 // to visualize itself in a plot
-std::vector<VppXYCustomPlotWidget*> DeltaResistanceItemBase::plot(WindIndicesDialog* wd /*=0*/, StateVectorDialog* sd /*=0*/) {
+std::vector<VppXYCustomPlotWidget*> DeltaResistanceItemBase::plot(WindIndicesDialog* wd, StateVectorDialog* sd) {
 
 	// Init the state vector
 	x_(stateVars::b)= sd->getCrew();
@@ -660,7 +654,7 @@ std::vector<VppXYCustomPlotWidget*> DeltaResistanceItemBase::plot(WindIndicesDia
 // Constructor
 Delta_ResiduaryResistanceKeel_HeelItem::Delta_ResiduaryResistanceKeel_HeelItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-				DeltaResistanceItemBase(pParser,pSailSet) {
+						DeltaResistanceItemBase(pParser,pSailSet) {
 
 	// Define an array of coefficients and instantiate an interpolator over it
 	Eigen::VectorXd coeff(4);
@@ -709,7 +703,7 @@ void Delta_ResiduaryResistanceKeel_HeelItem::update(int vTW, int aTW) {
 //=================================================================
 
 ViscousResistanceItemBase::ViscousResistanceItemBase(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-								ResistanceItem(pParser,pSailSet) {
+										ResistanceItem(pParser,pSailSet) {
 
 }
 
@@ -761,7 +755,7 @@ std::vector<VppXYCustomPlotWidget*> ViscousResistanceItemBase::plot(WindIndicesD
 // For the definition of the Frictional Resistance see DSYHS99 2.1 p108
 // Constructor
 ViscousResistanceItem::ViscousResistanceItem(VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-				ViscousResistanceItemBase(pParser,pSailSet) {
+						ViscousResistanceItemBase(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_
 	rN0_= pParser->get(Var::lwl_) * 0.7 / Physic::ni_w;
@@ -817,7 +811,7 @@ void ViscousResistanceItem::update(int vTW, int aTW) {
 // Constructor
 Delta_ViscousResistance_HeelItem::Delta_ViscousResistance_HeelItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-				DeltaResistanceItemBase(pParser,pSailSet) {
+						DeltaResistanceItemBase(pParser,pSailSet) {
 
 	// Pre-compute the velocity independent part of rN_. The definition of the Rn
 	// is given by DSYHS99, p109. 0.7 is an arbitrary factor used to reduce the lwl
@@ -829,9 +823,9 @@ Delta_ViscousResistance_HeelItem::Delta_ViscousResistance_HeelItem(
 			-4.112,  0.054, -0.027,	6.329,
 			-4.522, -0.132, -0.077,	8.738,
 			-3.291, -0.389, -0.118,	8.949,
-			 1.850, -1.200, -0.109,	5.364,
-			 6.510, -2.305, -0.066,	3.443,
-      12.334, -3.911,	 0.024,	1.767,
+			1.850, -1.200, -0.109,	5.364,
+			6.510, -2.305, -0.066,	3.443,
+			12.334, -3.911,	 0.024,	1.767,
 			14.648, -5.182,	 0.102,	3.497;
 
 	// Define the vector with the physical quantities multiplying the
@@ -920,7 +914,7 @@ std::vector<VppXYCustomPlotWidget*> Delta_ViscousResistance_HeelItem::plot_delta
 // Constructor
 ViscousResistanceKeelItem::ViscousResistanceKeelItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-				ViscousResistanceItemBase(pParser,pSailSet) {
+						ViscousResistanceItemBase(pParser,pSailSet) {
 
 	// Set the title for plotting
 	plotTitle_= "Viscous Resistance Keel";
@@ -963,7 +957,7 @@ void ViscousResistanceKeelItem::update(int vTW, int aTW) {
 // Constructor
 ViscousResistanceRudderItem::ViscousResistanceRudderItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-				ViscousResistanceItemBase(pParser,pSailSet) {
+						ViscousResistanceItemBase(pParser,pSailSet) {
 
 	// Set the title for plotting
 	plotTitle_= "Viscous Resistance Rudder";
@@ -1006,7 +1000,7 @@ void ViscousResistanceRudderItem::update(int vTW, int aTW) {
 // Constructor
 NegativeResistanceItem::NegativeResistanceItem(
 		VariableFileParser* pParser, std::shared_ptr<SailSet> pSailSet):
-				ViscousResistanceItemBase(pParser,pSailSet) {
+						ViscousResistanceItemBase(pParser,pSailSet) {
 
 	// Set the title for plotting
 	plotTitle_= "Negative Resistance";

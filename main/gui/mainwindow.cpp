@@ -892,6 +892,10 @@ void MainWindow::plotDelta_ViscousResistance_Heel() {
 		if (dg.exec() == QDialog::Rejected)
 			return;
 
+		OptimVarsStateVectorDialog sd;
+		if (sd.exec() == QDialog::Rejected)
+			return;
+
 		if(p_dFrictRes_HeelPlotWidget_)
 			delete p_dFrictRes_HeelPlotWidget_;
 
@@ -905,7 +909,7 @@ void MainWindow::plotDelta_ViscousResistance_Heel() {
 
 		// Add the plot for the Delta Viscous Resistance due to Heel
 		p_dFrictRes_HeelPlotWidget_->addChart(
-				pVppItems_->getDelta_ViscousResistance_HeelItem()->plot(&dg)[0],
+				pVppItems_->getDelta_ViscousResistance_HeelItem()->plot(&dg,&sd)[0],
 				1,0);
 
 		// Add the xy plot view to the left of the app window
