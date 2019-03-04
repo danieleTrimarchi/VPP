@@ -1,4 +1,4 @@
-prefix=/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2
+prefix=/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1
 exec_prefix=${prefix}
 libdir=${prefix}/lib
 includedir=${prefix}/include
@@ -6,9 +6,9 @@ includedir=${prefix}/include
 
 Name: Qt5 Quick
 Description: Qt Quick module
-Version: 5.11.2
+Version: 5.12.1
 Libs: -F${libdir} -framework QtQuick 
-Libs.private: -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2/lib -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2/lib -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQml -framework QtNetwork -framework QtNetwork -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2/lib -framework QtCore -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL  
+Libs.private: -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1/lib -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1/lib -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQml -framework QtNetwork -framework QtNetwork -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1/lib -framework QtCore -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL  
 Cflags: -I${includedir}/QtQuick -I${includedir}
 Requires: Qt5Core Qt5Gui Qt5Qml
 

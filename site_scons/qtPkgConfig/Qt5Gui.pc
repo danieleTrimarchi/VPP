@@ -1,4 +1,4 @@
-prefix=/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2
+prefix=/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1
 exec_prefix=${prefix}
 libdir=${prefix}/lib
 includedir=${prefix}/include
@@ -6,9 +6,9 @@ includedir=${prefix}/include
 
 Name: Qt5 Gui
 Description: Qt Gui module
-Version: 5.11.2
+Version: 5.12.1
 Libs: -F${libdir} -framework QtGui 
-Libs.private: -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2/lib -framework QtCore -framework DiskArbitration -framework IOKit -framework AppKit -framework Foundation -L/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.11.2/lib -lqtharfbuzzng -framework ApplicationServices -lz -framework OpenGL -framework AGL  
+Libs.private: -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1/lib -framework QtCore -framework DiskArbitration -framework IOKit -framework AppKit -framework Foundation -L/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1/lib -lqtharfbuzzng -framework ApplicationServices -lz -framework OpenGL -framework AGL  
 Cflags: -I${includedir}/QtGui -I${includedir}
 Requires: Qt5Core
 
