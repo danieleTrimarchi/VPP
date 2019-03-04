@@ -1,16 +1,21 @@
 -> Something is wrong in the vppsettings while trying to prompt comma-separated values. 
+	I conjecture this might be caused by Qt, that I have compiled for macos Sierra. Is this still fully compatible with Mojave? Finish recompiling Qt5.12 and hopefully the problem will magically disappear. 
 
 -> Fix the import of the (old, deprecated) variableFile.txt. This way I can interactively 
 	load the variableFile_ipOptFullTest and see what happens when the jacobian computation goes wrong. 
 
 -> Improve the heavyside function
 
--> PERHAPS : Introduce some scaling. The problem is extremely badly scaled thus any minor change in the computation (see VppHydroItem) is able to make Newton fail. Not acceptable. This is something rather cool! 
-
 -> increase the min size of the 'value' column in the VppSettings tab so that it does not partially hide the header
  
 -> there is a ton of duplicated code in VppHydroItem, see all the plots!	
-	I think this is fixed!
+	fixed for the viscousResistanceItem components, but for the other components
+
+
+DeltaResistanceBase
+	Delta_ResiduaryResistance_HeelItem
+	Delta_ResiduaryResistanceKeel_HeelItem
+	Delta_ViscousResistance_HeelItem
 
 -> fix the runTest target and make this dependent on the VPP program (assure up-to-dateness)
 

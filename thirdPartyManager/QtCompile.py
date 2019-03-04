@@ -129,12 +129,12 @@ class QtCompile(thirdPartyCompile):
 
         # Decorate the mother class __package__ method
         super(QtCompile,self).__compile__()
-        
+         
         # Remove the qtWebEngine module that causes failure on macosx Sierra
         # See https://forum.qt.io/topic/94943/qt-5-11-2-fails-to-build-on-macos/4
         shutil.rmtree(os.path.join(self.__thirdPartyBuildFolder__,"qtwebengine"),
                       sys.exc_info())
-        
+         
         # Configure the build 
         self.__execute__("./configure "
                          "-prefix {pkg_folder} "         # Prefix
@@ -145,25 +145,23 @@ class QtCompile(thirdPartyCompile):
                          "-no-dbus -no-gstreamer "
                          "-nomake tests -nomake examples".format(   # Do not bother with tests and examples 
                             pkg_folder=self.__thirdPartyPkgFolder__))
-
+ 
         # Modules to be compiled: 
         # TEST : Add qttools to get qtattributionsscanner
         # required for the target: make docs in the hope this
         # fixes the build. If this is the case, this is a bug 
         # in the qt build system...
         compileModules= ['qtbase','qtdatavis3d','qttools','qtlocation','qtdeclarative','qtvirtualkeyboard','qtdoc']
-
+ 
         # Multi-threaded compile for selected modules
         for iModule in compileModules:
             self.__execute__("make -j {} module-{}".format(multiprocessing.cpu_count(),iModule))    
-
-        # Also make the documentation. I cannot get this to build properly but 
-        # really this is not a big deal...
-        self.__execute__("make docs")
-        self.__execute__("make install_docs")
                           
     # Package the third party that was build   
     def __package__(self):
+
+        # Make sure to start in the build folder
+        os.chdir(self.__thirdPartyBuildFolder__)
               
         # Decorate the mother class __package__ method
         super(QtCompile,self).__package__()
@@ -192,6 +190,12 @@ class QtCompile(thirdPartyCompile):
                             pkgLibPath=os.path.join(self.__thirdPartyPkgFolder__,"lib"))): 
             os.symlink(os.path.join(iFramework,"Headers"), 
                        os.path.join(self.getIncludePath()[0],os.path.basename(iFramework).replace(".framework","")) )
+        
+        # Everything else is done. Now get back to the build directory and execute make docs
+        # Note that this cannot be done before having a valid package, or some of the components wont be found
+#        os.chdir(self.__thirdPartyBuildFolder__)
+#        self.__execute__("make docs")
+#        self.__execute__("make install_docs")
         
     # Run a simple test to check that the compile was successiful
     def __test__(self):

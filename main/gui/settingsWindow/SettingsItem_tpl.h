@@ -61,9 +61,10 @@ SettingsItem<TUnit>::SettingsItem(const varData& data,	//< Variable data
 template <class TUnit>
 QWidget* SettingsItem<TUnit>::createEditor(QWidget *parent) {
 
-		// Set local settings for the validators
+		// Set local settings for the validators. The c() method is used to automatically
+		// detect the local settings
 		QLocale localSettings = QLocale::c();
-		localSettings.setNumberOptions(QLocale::RejectGroupSeparator | QLocale::OmitGroupSeparator);
+		//localSettings.setNumberOptions(QLocale::RejectGroupSeparator | QLocale::OmitGroupSeparator);
 
 		QLineEdit *editor = new QLineEdit(parent);
 		QDoubleValidator* doubleValidator= new QDoubleValidator(0.000, 999999.000, 3, editor);

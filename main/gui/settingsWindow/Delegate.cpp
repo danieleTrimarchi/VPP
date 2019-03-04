@@ -71,14 +71,14 @@ QWidget* VPPSettingsDelegate::createEditor(QWidget* parent,
 	if (index.isValid()) {
 		SettingsItemBase* pItem = static_cast<SettingsItemBase*>(index.internalPointer());
 		if(pItem){
-			QLineEdit* pCurrentEditor= dynamic_cast<QLineEdit*>(pItem->createEditor(parent));
-			if(pCurrentEditor){
-
-				// This guarantees that the text is registered into the model while
-				// typed in. No need to close the editor. From MEMS+ LineEditDelegateHelper::createEditor
-				connect(pCurrentEditor, SIGNAL(textChanged(QString)), this, SLOT(textEdited(QString)));
-				return pCurrentEditor;
-			} else
+//			QLineEdit* pCurrentEditor= dynamic_cast<QLineEdit*>(pItem->createEditor(parent));
+//			if(pCurrentEditor){
+//
+//				// This guarantees that the text is registered into the model while
+//				// typed in. No need to close the editor. From MEMS+ LineEditDelegateHelper::createEditor
+//				connect(pCurrentEditor, SIGNAL(textChanged(QString)), this, SLOT(textEdited(QString)));
+//				return pCurrentEditor;
+//			} else
 				return pItem->createEditor(parent);
 		}
 	}
@@ -86,26 +86,26 @@ QWidget* VPPSettingsDelegate::createEditor(QWidget* parent,
 	return new QWidget(parent);
 }
 
-void VPPSettingsDelegate::textEdited(QString dummy) {
-
-	QLineEdit* pCurrentEditor = static_cast<QLineEdit*>(sender());
-
-	// keep the position of the cursor
-	int cursorPosition = pCurrentEditor->cursorPosition();
-	emit commitData(pCurrentEditor);
-	//emit editorTextEdited();
-
-	QRect initialGeometry(pCurrentEditor->geometry());
-	if((pCurrentEditor->fontMetrics().width(pCurrentEditor->text()) +
-			pCurrentEditor->fontMetrics().width("0") -
-			initialGeometry.width())>0){
-		initialGeometry.setWidth(	pCurrentEditor->fontMetrics().width("0")+
-														pCurrentEditor->fontMetrics().width(pCurrentEditor->text()));
-	}
-
-	pCurrentEditor->setGeometry(initialGeometry);
-	pCurrentEditor->setCursorPosition(cursorPosition);
-}
+//void VPPSettingsDelegate::textEdited(QString dummy) {
+//
+//	QLineEdit* pCurrentEditor = static_cast<QLineEdit*>(sender());
+//
+//	// keep the position of the cursor
+//	int cursorPosition = pCurrentEditor->cursorPosition();
+//	emit commitData(pCurrentEditor);
+//	//emit editorTextEdited();
+//
+//	QRect initialGeometry(pCurrentEditor->geometry());
+//	if((pCurrentEditor->fontMetrics().width(pCurrentEditor->text()) +
+//			pCurrentEditor->fontMetrics().width("0") -
+//			initialGeometry.width())>0){
+//		initialGeometry.setWidth(	pCurrentEditor->fontMetrics().width("0")+
+//														pCurrentEditor->fontMetrics().width(pCurrentEditor->text()));
+//	}
+//
+//	pCurrentEditor->setGeometry(initialGeometry);
+//	pCurrentEditor->setCursorPosition(cursorPosition);
+//}
 
 void VPPSettingsDelegate::setEditorData(QWidget *editor,const QModelIndex& index) const {
 
