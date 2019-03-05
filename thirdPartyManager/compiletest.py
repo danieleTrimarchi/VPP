@@ -1,7 +1,7 @@
 import thirdPartyCompile as tp
 
-# from ipOptCompile import IpOptCompile 
-# ipOpt= IpOptCompile()
+from ipOptCompile import IpOptCompile 
+ipOpt= IpOptCompile()
 # ipOpt.get()
  
 # from BoostCompile import BoostCompile 
@@ -23,4 +23,4 @@ import thirdPartyCompile as tp
 from QtCompile import QtCompile
 qt= QtCompile()
 #qt.get(False)
-qt.__package__()
+#qt.__package__()

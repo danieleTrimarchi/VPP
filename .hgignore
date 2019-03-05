@@ -32,3 +32,4 @@ main/.qmake.stash
 *VPP.app/*
 *.vpp
 *.pyc
+thirdPartyManager/localPaths.py

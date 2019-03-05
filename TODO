@@ -1,28 +1,23 @@
--> I need the thirdPartyManager to assure that the .pc files are properly updated each time the Qt version is changed. Probably thirdPartyQt does change the .pc file in the program tree when executing the package. 
-
 -> OLIVIER! Something is wrong in the vppsettings while trying to prompt comma-separated values. The pb is linked to the call to commitData while typing (see VPPSettingsDelegate::createEditor and the implementation of the connected slot VPPSettingsDelegate::textEdited). 
 It appears that the slot is called twice, and the second time the text contained in the qlineEdit is purged of the decimal separator. See minimal test in /Users/dtrimarchi/third_party/homebrew_qt57_patches/qtTests/settingsWindow_minimal 	
 
--> Fix the import of the (old, deprecated) variableFile.txt. This way I can interactively 
-	load the variableFile_ipOptFullTest and see what happens when the jacobian 	
-	computation goes wrong. 
-
--> Improve the heavyside function
- 
--> RE-Allow the GUI to load variableFiles.txt (such as the one we use for testing)
-
--> Export results to excel format. Simply use .csv formatting
-
 - Is it possible to write in multiple xcel tabs? 
   Ideally I would have vpp settings in the first tab, and the results in the second tab
+	https://libxlsxwriter.github.io/index.html
 
--> Items (resistance, wind, sails… ) are contained into vectors, the sync is only 		assured by the position of the items in the vector. Better would be a 	mechanism of dependencies, where each item updates its dependency. Not sure 	how to deal with multiple items depending on one item (i.e: InducedResistance 	and HeelingMoment both depend on AeroForce — we might end up updating some 		items twice. 
-	To be investigated on UML!
+-> Fix the import of the (old, deprecated) variableFile.txt. This way I can interactively 
+	load the variableFile_ipOptFullTest and see what happens when the jacobian 	
+	computation goes wrong.  
 
 -> Ask Stephane about the multiple environment warning 
   	
 -> New definitions of the resistance with new version of the DYSHS
 
+-> create a cubic spline class and allow for recursively compute the derivatives. With this, I should be able to remove the FDs
+
+-> compile OpenCascade
+	- Get pre-requisites : file:///Users/dtrimarchi/third_party/opencascade-7.1.0/doc/overview/html/occt_dev_guides__building_3rdparty_osx.html
+	-> Tcl 8.5 : from http://www.tcl.tk/software/tcltk/download.html
 
 ---
 
@@ -61,13 +56,7 @@ Questions:
 
 ————
 
-- …openCascade… Or other solid modelling tools?
-	- Get pre-requisites : file:///Users/dtrimarchi/third_party/opencascade-7.1.0/doc/overview/html/occt_dev_guides__building_3rdparty_osx.html
-	-> Tcl 8.5 : from http://www.tcl.tk/software/tcltk/download.html
-	-> 
 
-- Compute the derivative of a cubic spline, thus removing the FDs
-- See RhinoAPI for getting LPP data
 
 
 

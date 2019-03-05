@@ -7,6 +7,8 @@ import shutil
 import re
 from email.test.test_email import openfile
 
+import localPaths
+
 try:    
     import pip
 except ImportError as error:
@@ -65,16 +67,16 @@ class thirdPartyCompile(object):
     
         # Where will the downloaded third_party archives be placed to and 
         # where will they be extracted  
-        self.__thirdPartySrcFolder__="/Users/dtrimarchi/third_party_src"
+        self.__thirdPartySrcFolder__= localPaths.thirdPartySrcFolder
 
         # Where will the downloaded third_party archives be placed to? 
-        self.__thirdPartyBuildFolder__="/Users/dtrimarchi/third_party_build"
+        self.__thirdPartyBuildFolder__= localPaths.thirdPartyBuildFolder
     
         # Where will the compiled packages will be placed to?
-        self.__thirdPartyPkgFolder__="/Users/dtrimarchi/third_party_pkg"                
+        self.__thirdPartyPkgFolder__= localPaths.thirdPartyPkgFolder              
 
         # Store the src tree for the Vpp program
-        self.__VppSrcTreeFolder__="/Users/dtrimarchi/VPP"
+        self.__VppSrcTreeFolder__= localPaths.VppSrcTreeFolder
         if not os.path.isdir(self.__VppSrcTreeFolder__):
             raise ValueError("VppSrcTreeFolder folder not found!")
 

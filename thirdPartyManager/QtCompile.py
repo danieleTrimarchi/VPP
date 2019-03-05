@@ -82,7 +82,11 @@ class QtCompile(thirdPartyCompile):
         # Name of this third_party. 
         self.__name__="Qt"
         
-        # Version of this third_party
+        # ----------------------------------------------------------------
+        # /!\ WARNING : when changing version remember to als update the  
+        #     .pc file updator in ../site_scons/qtPkgConfig/update.py
+        # ----------------------------------------------------------------
+        # Version of this third_party. 
         self.__version__="5.12.1"
         
         # Define the URL from which IpOpt can be downloaded
@@ -193,6 +197,9 @@ class QtCompile(thirdPartyCompile):
         
         # Everything else is done. Now get back to the build directory and execute make docs
         # Note that this cannot be done before having a valid package, or some of the components wont be found
+# Prerequisite: LLVM, see
+# https://doc.qt.io/qt-5.11/qdoc-guide-clang.html
+# Installing llvm : https://llvm.org/docs/GettingStarted.html#overview
 #        os.chdir(self.__thirdPartyBuildFolder__)
 #        self.__execute__("make docs")
 #        self.__execute__("make install_docs")
