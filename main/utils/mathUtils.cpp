@@ -13,7 +13,10 @@ SmoothedStepFunction::SmoothedStepFunction(double xMin, double xMax) :
 	// Declare matrix A
 	Eigen::Matrix2d A;
 
-	// Fill matrix A
+	// Fill matrix A:
+	// Set f(x1)=eps ; f(x2)=1-eps
+	// compute : x1 = a - b ln(1/eps -1) ; x2 = a - b ln(eps/(1-eps))
+	// write in matrix form : x = A b_ and invert to compute the coefficients vector b_
 	A(0,0) = 1;
 	A(0,1) = - log((1-eps_)/eps_);
 	A(1,0) = 1;
