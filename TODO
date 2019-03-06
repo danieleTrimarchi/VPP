@@ -1,3 +1,6 @@
+-> I have templatized the settings items on the unit. This generates the huge list in SettingsItemBase::settingsItemFactory. Not good. The unit should be an attribute of the settingsItem. 
+The refactoring will end up with items having unit combo-boxes 
+
 -> OLIVIER! Something is wrong in the vppsettings while trying to prompt comma-separated values. The pb is linked to the call to commitData while typing (see VPPSettingsDelegate::createEditor and the implementation of the connected slot VPPSettingsDelegate::textEdited). 
 It appears that the slot is called twice, and the second time the text contained in the qlineEdit is purged of the decimal separator. See minimal test in /Users/dtrimarchi/third_party/homebrew_qt57_patches/qtTests/settingsWindow_minimal 	
 
