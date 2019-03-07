@@ -1,7 +1,7 @@
-import thirdPartyCompile as tp
+import thirdPartyCompile
 
-from ipOptCompile import IpOptCompile 
-ipOpt= IpOptCompile()
+#from ipOptCompile import IpOptCompile 
+#ipOpt= IpOptCompile()
 # ipOpt.get()
  
 # from BoostCompile import BoostCompile 
@@ -20,7 +20,12 @@ ipOpt= IpOptCompile()
 # nlOpt= NlOptCompile()
 # nlOpt.get()
 
-from QtCompile import QtCompile
-qt= QtCompile()
+#from QtCompile import QtCompile
+#qt= QtCompile()
 #qt.get(False)
 #qt.__package__()
+
+from OpenCascadeCompile import TclCompile
+tcl = TclCompile()
+#tcl.__download__()
+tcl.__compile__()
