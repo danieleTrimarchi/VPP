@@ -292,6 +292,7 @@ class thirdPartyCompile(object):
     # Wraps a call to subprocess and the required diagnostics
     def __execute__(self,command,myEnv=os.environ):
         
+        print "Command= ",command
         p = subprocess.Popen(command,shell=True,env=myEnv)
         if p.wait():
             raise ValueError('\n\nSomething went wrong when trying to execute: {}\n\n'.format(command))
@@ -372,6 +373,20 @@ class thirdPartyCompile(object):
         else:
             shutil.copytree(src,dst)
             
+    # overwrite shutil.move
+    def __move__(self,srcFile,dstFile):
+        shutil.move(srcFile,dstFile)
+
+    def __copy__(self,srcFile,dstFile):
+        shutil.copyfile(srcFile,dstFile)
+                
+    # Remove a named directory
+    def __remove__(self,folder):
+        try:
+            shutil.rmtree(folder)
+        except:
+            print "could not remove ", folder
+
     # Patch the file specified in 'filename' substituting the strings. THis
     # works like a 'sed'
     def __patch__(self,pattern,replace,srcFileName) : 

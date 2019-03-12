@@ -23,9 +23,8 @@ import thirdPartyCompile
 #from QtCompile import QtCompile
 #qt= QtCompile()
 #qt.get(False)
-#qt.__package__()
 
-from OpenCascadeCompile import TclCompile
-tcl = TclCompile()
-#tcl.__download__()
-tcl.__compile__()
+#from OpenCascadeCompile import TclCompile
+#tcl = TclCompile()
+#tcl.get(False)
+
