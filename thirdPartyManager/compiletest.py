@@ -28,3 +28,9 @@ import thirdPartyCompile
 #tcl = TclCompile()
 #tcl.get(False)
 
+from OpenCascadeCompile import FreeTypeCompile
+ftc = FreeTypeCompile()
+#ftc.__compile__()
+ftc.__package__()
+
+

@@ -298,6 +298,9 @@ class thirdPartyCompile(object):
             raise ValueError('\n\nSomething went wrong when trying to execute: {}\n\n'.format(command))
 
     # Download an archive from a given url and unzip it 
+    # Should we add support for sourgeforce, we need to use the 
+    # instructions contained in this page:
+    #     https://sourceforge.net/p/forge/documentation/Downloading%20files%20via%20the%20command%20line/
     def __getCompressedArchive__(self,url,saveAs="myArch"):
 
         print "...downloading the archive from: {}".format(url)
