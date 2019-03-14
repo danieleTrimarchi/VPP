@@ -148,7 +148,7 @@ class FreeTypeCompile(thirdPartyCompile):
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = [""]
+        self.__buildInfo__["LIBS"] = ["freetype"]
                     
     # Follow instructions from OpenCascade in : 
     # opencascade-7.1.0/doc/overview/html/occt_dev_guides__building_3rdparty_osx.html
@@ -183,7 +183,154 @@ class FreeTypeCompile(thirdPartyCompile):
     
     def __test__(self):
         
-        pass
+        # Decorate the mother class __test__ method
+        super(FreeTypeCompile,self).__test__()
+
+        # Write the cppunit example. This comes from the tutorial section of the docs: 
+        # https://www.freetype.org/freetype2/docs/tutorial/step1.html#section-1
+        Source=open("main.cpp","w")
+        Source.write('''
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+#define WIDTH   120
+#define HEIGHT  60
+
+/* origin is the upper left corner */
+unsigned char image[HEIGHT][WIDTH];
+
+/* Replace this function with something useful. */
+void draw_bitmap( FT_Bitmap*  bitmap,
+                 FT_Int      x,
+                 FT_Int      y) {
+    FT_Int  i, j, p, q;
+    FT_Int  x_max = x + bitmap->width;
+    FT_Int  y_max = y + bitmap->rows;
+
+    /* for simplicity, we assume that `bitmap->pixel_mode' */
+    /* is `FT_PIXEL_MODE_GRAY' (i.e., not a bitmap font)   */
+
+    for ( i = x, p = 0; i < x_max; i++, p++ ) {
+        for ( j = y, q = 0; j < y_max; j++, q++ ) {
+            if ( i < 0      || j < 0       ||
+                   i >= WIDTH || j >= HEIGHT )
+                continue;
+
+        image[j][i] |= bitmap->buffer[q * bitmap->width + p];
+    }
+  }
+}
+
+void show_image( void ) {
+  int  i, j;
+
+  for ( i = 0; i < HEIGHT; i++ ) {
+    for ( j = 0; j < WIDTH; j++ )
+      putchar( image[i][j] == 0 ? \' \'
+                                : image[i][j] < 128 ? \'+\'
+                                                    : \'*\' );
+    putchar( \'\\n\' );
+  }
+}
+
+int main( int argc, char**  argv ) {
+  FT_Library    library;
+  FT_Face       face;
+
+  FT_GlyphSlot  slot;
+  FT_Matrix     matrix;                 /* transformation matrix */
+  FT_Vector     pen;                    /* untransformed origin  */
+  FT_Error      error;
+
+  char*         filename;
+  char*         text;
+
+  double        angle;
+  int           target_height;
+  int           n, num_chars;
+
+  if ( argc != 3 ) {
+    fprintf ( stderr, \"usage: %s font sample-text\\n\", argv[0] );
+    exit( 1 );
+  }
+
+  filename      = argv[1];                           /* first argument     */
+  text          = argv[2];                           /* second argument    */
+  num_chars     = strlen( text );
+  //angle         = ( 25.0 / 360 ) * 3.14159 * 2;      /* use 25 degrees     */
+  angle         = 0;
+  target_height = HEIGHT;
+
+  error = FT_Init_FreeType( &library );              /* initialize library */
+  /* error handling omitted */
+
+  error = FT_New_Face( library, filename, 0, &face );/* create face object */
+  /* error handling omitted */
+
+  /* use 50pt at 100dpi */
+  int char_width=320, char_height=50;
+  int horz_resolution=1000, vert_resolution=5000;
+  
+  error = FT_Set_Char_Size( face, char_width, char_height, horz_resolution, vert_resolution );                /* set character size */
+
+  /* error handling omitted */
+
+  /* cmap selection omitted;                                        */
+  /* for simplicity we assume that the font contains a Unicode cmap */
+
+  slot = face->glyph;
+
+  /* set up matrix */
+  matrix.xx = (FT_Fixed)( cos( angle ) * 0x10000L );
+  matrix.xy = (FT_Fixed)(-sin( angle ) * 0x10000L );
+  matrix.yx = (FT_Fixed)( sin( angle ) * 0x10000L );
+  matrix.yy = (FT_Fixed)( cos( angle ) * 0x10000L );
+
+  /* the pen position in 26.6 cartesian space coordinates; */
+  /* start at (0,500) relative to the upper left corner  */
+  pen.x = 0;
+  pen.y = 500;
+
+  for ( n = 0; n < num_chars; n++ ) {
+    // set transformation 
+    FT_Set_Transform( face, &matrix, &pen );
+
+    // load glyph image into the slot (erase previous one) 
+    error = FT_Load_Char( face, text[n], FT_LOAD_RENDER );
+    if ( error )
+      continue;                 // ignore errors 
+
+    // now, draw to our target surface (convert position) 
+    draw_bitmap( &slot->bitmap,
+                 slot->bitmap_left,
+                 target_height - slot->bitmap_top );
+
+    // increment pen position 
+    pen.x += slot->advance.x;
+    pen.y += slot->advance.y;
+  }
+  
+  show_image();
+
+  FT_Done_Face    ( face );
+  FT_Done_FreeType( library );
+
+  return 0;
+}''')
+        
+        Source.close()
+             
+        # Compile and run the test. This will work if the chosen 
+        # font style *.ttf file exists
+        #fontFile="/Library/Fonts/Arial.ttf"
+        fontFile="/Library/Fonts/Herculanum.ttf"
+        self.__makeTest__("{} vpp".format(fontFile))
+
 # ------------------------------------------------------------------------
 
 class OpenCascadeCompile(thirdPartyCompile):

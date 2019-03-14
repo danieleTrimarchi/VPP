@@ -31,6 +31,6 @@ import thirdPartyCompile
 from OpenCascadeCompile import FreeTypeCompile
 ftc = FreeTypeCompile()
 #ftc.__compile__()
-ftc.__package__()
+ftc.__test__()
 
 

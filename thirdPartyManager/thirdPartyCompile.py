@@ -415,7 +415,7 @@ class thirdPartyCompile(object):
         os.rename(tmpFileName, srcFileName)
         
     # Compile and run the test
-    def __makeTest__(self):
+    def __makeTest__(self, args=""):
           
         # Write a SConstruct 
         Sconstruct=open("SConstruct","w")
@@ -436,7 +436,10 @@ env.Program('{}_test', Glob('*.cpp') )
         self.__execute__("scons -Q")
         
         # Execute the example
-        self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./{}_test {}".format(self.__buildInfo__["LIBPATH"][0],self.__name__,os.getcwd()))        
+        if(args==""):
+            self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./{}_test {}".format(self.__buildInfo__["LIBPATH"][0],self.__name__,os.getcwd()))        
+        else:
+            self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./{}_test {}".format(self.__buildInfo__["LIBPATH"][0],self.__name__,args))        
 
     # We require the thirdPartyCompile to be instantiated with admin privileges (sudo). 
     # This allows for the flexibility in manipulating files and installs. 
