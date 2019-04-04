@@ -8,6 +8,8 @@ import re
 from email.test.test_email import openfile
 
 import localPaths
+from pip._internal import req
+from test.test_decimal import directory
 
 try:    
     import pip
@@ -380,9 +382,16 @@ class thirdPartyCompile(object):
     def __move__(self,srcFile,dstFile):
         shutil.move(srcFile,dstFile)
 
+    # Copy files and folders 
     def __copy__(self,srcFile,dstFile):
-        shutil.copyfile(srcFile,dstFile)
-                
+        
+        if(os.path.isfile(srcFile)):
+            shutil.copyfile(srcFile,dstFile)
+        elif(os.path.isdir(srcFile)):
+            self.__copytree__(srcFile,dstFile)
+        else:
+            raise ValueError('__copy__ can only handle files and directories!')
+            
     # Remove a named directory
     def __remove__(self,folder):
         try:
@@ -414,6 +423,15 @@ class thirdPartyCompile(object):
         os.remove(srcFileName)
         os.rename(tmpFileName, srcFileName)
         
+    # Patch the file specified in 'filename' substituting the strings. This
+    # works like a 'sed'
+    def __append__(self,text,srcFileName) : 
+
+        # open the srcFile
+        fin = open(srcFileName, 'a')
+        fin.write(text)
+        fin.close()
+
     # Compile and run the test
     def __makeTest__(self, args=""):
           
@@ -456,5 +474,20 @@ env.Program('{}_test', Glob('*.cpp') )
                              'Please re-execute the command pre-pended by \"sudo\"\n'
                              '-----------------------------------------------------------------\n')
 
+    # Loop on the requirements and return the requirement by name
+    # throw if no requirement was found   
+    def __getReqByName__(self,reqName):
 
+        for iReq in self.__requirements__:
+        
+            if iReq.__name__ == reqName:
+                return iReq
+
+            req = iReq.__getReqByName__(reqName)             
+            if isinstance(req, thirdPartyCompile):
+                return req
+            else:
+                return ""
+
+        return "" 
         

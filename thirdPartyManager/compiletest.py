@@ -24,13 +24,14 @@ import thirdPartyCompile
 #qt= QtCompile()
 #qt.get(False)
 
-#from OpenCascadeCompile import TclCompile
-#tcl = TclCompile()
-#tcl.get(False)
-
-from OpenCascadeCompile import FreeTypeCompile
-ftc = FreeTypeCompile()
+from OpenCascadeCompile import TclCompile
+tcl = TclCompile()
+tcl.__compile__()
+tcl.__package__()
+# tcl.__package__()
+# from OpenCascadeCompile import FreeTypeCompile
+# ftc = FreeTypeCompile()
 #ftc.__compile__()
-ftc.__test__()
+#ftc.__test__()
 
 

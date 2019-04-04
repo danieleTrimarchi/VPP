@@ -1,3 +1,27 @@
+OpenCascade :
+
+	cd build/opencascade
+	cmake -s . -B build
+
++	Set the lib name and libpaths :
++		 
++	patch adm/cmake/occt_csf.cmake : 3RDPARTY_TCL_LIBRARY_VERSION "8.6" -> 8.7
++					 3RDPARTY_TK_LIBRARY_VERSION "8.6" -> 8.7
++	patch CMakeLists.txt : 
++				if(APPLE)
++					set( CMAKE_MACOSX_RPATH 1)
++				endif()
+	patch CMakeCache.txt to set variables such as: 
++ 3RDPARTY_TCL_INCLUDE_DIR:FILEPATH=/Users/dtrimarchi/third_party_pkg/tcl8.7a1/Library/Frameworks/Tcl.framework/Versions/8.7/Headers
++ //The directory containing TCL library
+3RDPARTY_TCL_LIBRARY_DIR:FILEPATH=/Users/dtrimarchi/third_party_pkg/tcl8.7a1
++
++	configure 
++	generate
++	goto buildDir (~/third_party_build/opencascade-7.1.0/build) 
++	make
++
+
 -> I have templatized the settings items on the unit. This generates the huge list in SettingsItemBase::settingsItemFactory. Not good. The unit should be an attribute of the settingsItem. 
 The refactoring will end up with items having unit combo-boxes 
 
