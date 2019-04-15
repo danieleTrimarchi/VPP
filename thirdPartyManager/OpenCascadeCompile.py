@@ -42,12 +42,17 @@ class TclCompile(thirdPartyCompile):
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = [""]
+        self.__buildInfo__["LIBS"] = ["tclstub8.7"]
                     
     def __compile__(self,dest=None):
 
         # Decorates the mother class __compile__ method
         super(TclCompile,self).__compile__()
+
+        # Cleanup previous package folder - if any. I need to do this here
+        # because I will be sending the compiled directly to the pkg folder.
+        # So I need to cleanup before the build starts 
+        shutil.rmtree(self.__thirdPartyPkgFolder__,sys.exc_info())
 
         # Follow the instructions in file:///Users/dtrimarchi/third_party/opencascade-7.1.0/doc/overview/html/occt_dev_guides__building_3rdparty_osx.html
 
@@ -88,6 +93,10 @@ class TclCompile(thirdPartyCompile):
         # to the lib folder
         self.__copy__(os.path.join(self.__thirdPartyBuildFolder__,"library","init.tcl"),
                       os.path.join(self.__buildInfo__["LIBPATH"][0],"init.tcl"))
+
+        # Make a symbolic link from pkg/lib to pkg/lib/Tck.framework/Versions/8.7/libtclstub8.7.a to pkg/lib/libtclstub8.7.a
+        os.symlink(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtclstub8.7.a"), 
+                   os.path.join(self.__buildInfo__["LIBPATH"][0],"libtclstub8.7.a") )
 
         # Make an include dir and set a link to the includes in the framework
         self.__copy__(os.path.join(self.__thirdPartyPkgFolder__,"lib","Tcl.framework","Headers"),
@@ -146,7 +155,7 @@ class TkCompile(thirdPartyCompile):
         
         # Instantiate requirements, in this case Tcl
         self.__requirements__.append( TclCompile() )
-
+        
         # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
@@ -159,6 +168,11 @@ class TkCompile(thirdPartyCompile):
 
         # Decorates the mother class __compile__ method
         super(TkCompile,self).__compile__()
+
+        # Cleanup previous package folder - if any. I need to do this here
+        # because I will be sending the compiled directly to the pkg folder.
+        # So I need to cleanup before the build starts 
+        shutil.rmtree(self.__thirdPartyPkgFolder__,sys.exc_info())
 
         # Follow the instructions in file:///Users/dtrimarchi/third_party/opencascade-7.1.0/doc/overview/html/occt_dev_guides__building_3rdparty_osx.html
 
@@ -197,6 +211,9 @@ class TkCompile(thirdPartyCompile):
                             os.path.join(self.__thirdPartyPkgFolder__,self.__buildInfo__["BINPATH"][0]))
         self.__remove__(os.path.join(self.__thirdPartyPkgFolder__,"usr"))   
          
+        # Make an include dir and set a link to the includes in the framework
+        self.__copy__(os.path.join(self.__thirdPartyPkgFolder__,"lib","Tk.framework","Headers"),
+                      self.__buildInfo__["INCLUDEPATH"][0])
 
     def __test__(self):
         pass
