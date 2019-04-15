@@ -162,7 +162,7 @@ class TkCompile(thirdPartyCompile):
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = [""]
+        self.__buildInfo__["LIBS"] = ["libtkstub8.7.a"]
                     
     def __compile__(self,dest=None):
 
@@ -210,6 +210,10 @@ class TkCompile(thirdPartyCompile):
         self.__move__(os.path.join(self.__thirdPartyPkgFolder__,"usr","local","bin"),
                             os.path.join(self.__thirdPartyPkgFolder__,self.__buildInfo__["BINPATH"][0]))
         self.__remove__(os.path.join(self.__thirdPartyPkgFolder__,"usr"))   
+         
+        # Make a symbolic link from pkg/lib to pkg/lib/Tk.framework/Versions/8.7/libtkstub8.7.a to pkg/lib/libtkstub8.7.a
+        os.symlink(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtkstub8.7.a"), 
+                   os.path.join(self.__buildInfo__["LIBPATH"][0],"libtkstub8.7.a") )
          
         # Make an include dir and set a link to the includes in the framework
         self.__copy__(os.path.join(self.__thirdPartyPkgFolder__,"lib","Tk.framework","Headers"),

@@ -211,7 +211,7 @@ class thirdPartyCompile(object):
         raise ValueError( "thirdPartyCompile::__getAdditionalRequirements__() should never be called" )
         
     # How to compile the third party
-    def __compile__(self,dest=None):
+    def __compile__(self,dest=None,makeRequirements=True):
         
         # Check if the caller is admin. If we do not have admin privileges, 
         # there are a number of operations that won't be allowed
@@ -229,9 +229,10 @@ class thirdPartyCompile(object):
         self.__copytree__(self.__srcDirName__,self.__thirdPartyBuildFolder__)
         print "Copy done!"
         
-        # Compile the requrements, if any
-        for iReq in self.__requirements__:
-            iReq.__compile__(os.path.join(self.__thirdPartyBuildFolder__,"ThirdParty"))
+        # Compile the requrements, if any and if requested
+        if makeRequirements:
+            for iReq in self.__requirements__:
+                iReq.__compile__(os.path.join(self.__thirdPartyBuildFolder__,"ThirdParty"))
 
         # Go to the build folder
         os.chdir(self.__thirdPartyBuildFolder__)

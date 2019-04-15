@@ -24,10 +24,10 @@ import thirdPartyCompile
 #qt= QtCompile()
 #qt.get(False)
 
-from OpenCascadeCompile import TclCompile
-tcl=TclCompile()
-tcl.__compile__()
-tcl.__package__()
+from OpenCascadeCompile import TkCompile
+tk=TkCompile()
+tk.__compile__(makeRequirements=False)
+tk.__package__()
 # from OpenCascadeCompile import OpenCascadeCompile
 # occ = OpenCascadeCompile()
 # occ.__compile__()
