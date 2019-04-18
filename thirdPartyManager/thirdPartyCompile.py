@@ -174,6 +174,9 @@ class thirdPartyCompile(object):
     def getDocPath(self):
         
         return self.__buildInfo__[__docpathFlag__]
+
+    def getFullStaticLibName(self,shortLibName,additions=""):
+        return "lib"+shortLibName+additions+".a"
         
     # Warning: this method is duplicated in thirdParties.py. Classes need to merge
     def getFullDynamicLibName(self,shortLibName,additions=""):

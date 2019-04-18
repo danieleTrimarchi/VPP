@@ -94,9 +94,9 @@ class TclCompile(thirdPartyCompile):
         self.__copy__(os.path.join(self.__thirdPartyBuildFolder__,"library","init.tcl"),
                       os.path.join(self.__buildInfo__["LIBPATH"][0],"init.tcl"))
 
-        # Make a symbolic link from pkg/lib to pkg/lib/Tck.framework/Versions/8.7/libtclstub8.7.a to pkg/lib/libtclstub8.7.a
-        os.symlink(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtclstub8.7.a"), 
-                   os.path.join(self.__buildInfo__["LIBPATH"][0],"libtclstub8.7.a") )
+        # copy the library from pkg/lib/Tck.framework/Versions/8.7/libtclstub8.7.a to pkg/lib/libtclstub8.7.a
+        self.__copy__(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtclstub8.7.a"), 
+                      os.path.join(self.__buildInfo__["LIBPATH"][0],"libtclstub8.7.a") )
 
         # Make an include dir and set a link to the includes in the framework
         self.__copy__(os.path.join(self.__thirdPartyPkgFolder__,"lib","Tcl.framework","Headers"),
@@ -162,7 +162,7 @@ class TkCompile(thirdPartyCompile):
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = ["libtkstub8.7.a"]
+        self.__buildInfo__["LIBS"] = ["tkstub8.7"]
                     
     def __compile__(self,dest=None):
 
@@ -211,9 +211,9 @@ class TkCompile(thirdPartyCompile):
                             os.path.join(self.__thirdPartyPkgFolder__,self.__buildInfo__["BINPATH"][0]))
         self.__remove__(os.path.join(self.__thirdPartyPkgFolder__,"usr"))   
          
-        # Make a symbolic link from pkg/lib to pkg/lib/Tk.framework/Versions/8.7/libtkstub8.7.a to pkg/lib/libtkstub8.7.a
-        os.symlink(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtkstub8.7.a"), 
-                   os.path.join(self.__buildInfo__["LIBPATH"][0],"libtkstub8.7.a") )
+        # Copy pkg/lib/Tk.framework/Versions/8.7/libtkstub8.7.a to pkg/lib/libtkstub8.7.a
+        os.__copy__(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtkstub8.7.a"), 
+                    os.path.join(self.__buildInfo__["LIBPATH"][0],"libtkstub8.7.a") )
          
         # Make an include dir and set a link to the includes in the framework
         self.__copy__(os.path.join(self.__thirdPartyPkgFolder__,"lib","Tk.framework","Headers"),
@@ -505,7 +505,8 @@ class OpenCascadeCompile(thirdPartyCompile):
          
         buildFolderName= "Build"
       
-        # Make the build folder
+        # Delete and remake the build folder
+        shutil.rmtree(buildFolderName)
         os.mkdir(buildFolderName)
  
         # Patch CMakeLists.txt
@@ -519,22 +520,28 @@ class OpenCascadeCompile(thirdPartyCompile):
         self.__execute__('cmake -s . -B {buildDir} '
 '-D 3RDPARTY_DIR:PATH={thirdPartyDir} '
 '-D 3RDPARTY_TCL_DIR:PATH={tclDir} '
-'-D 3RDPARTY_TCL_INCLUDE_DIR:FILEPATH={tclIncludeDir} '
-'-D 3RDPARTY_TCL_LIBRARY:FILEPATH={tclLib} '
-'-D 3RDPARTY_TCL_LIBRARY_DIR:FILEPATH={tclLibDir} '
+'-D 3RDPARTY_TCL_INCLUDE_DIR:PATH={tclIncludeDir} '
+'-D 3RDPARTY_TCL_LIBRARY:FILE={tclLib} '
+'-D 3RDPARTY_TCL_LIBRARY_DIR:PATH={tclLibDir} '
 '-D 3RDPARTY_TK_DIR:PATH={tkDir} ' 
-'-D 3RDPARTY_TK_INCLUDE_DIR:FILEPATH={tkIncludeDir} '
-'-D 3RDPARTY_TK_LIBRARY:FILEPATH={tkLib} '
-'-D 3RDPARTY_TK_LIBRARY_DIR:FILEPATH={tkLibDir}'.format(
+'-D 3RDPARTY_TK_INCLUDE_DIR:PATH={tkIncludeDir} '
+'-D 3RDPARTY_TK_LIBRARY:FILE={tkLib} '
+'-D 3RDPARTY_TK_LIBRARY_DIR:PATH={tkLibDir}'.format(
                              buildDir= buildFolderName,
                              thirdPartyDir=os.path.join(self.__thirdPartyPkgFolder__,".."),
                              tclDir= tcl.__thirdPartyPkgFolder__,
                              tclIncludeDir= tcl.getIncludePath()[0],
-                             tclLib= tcl.getLibs()[0],
+                             tclLib= os.path.join(
+                                 tcl.getLibPath()[0],
+                                 self.getFullStaticLibName(tcl.getLibs()[0])
+                                 ),
                              tclLibDir= tcl.getLibPath()[0],
                              tkDir= tk.__thirdPartyPkgFolder__,
                              tkIncludeDir= tk.getIncludePath()[0],
-                             tkLib= tk.getLibs()[0],
+                             tkLib= os.path.join(
+                                 tk.getLibPath()[0],
+                                 self.getFullStaticLibName(tk.getLibs()[0])
+                                 ),
                              tkLibDir= tk.getLibPath()[0]
                              )
                          )
