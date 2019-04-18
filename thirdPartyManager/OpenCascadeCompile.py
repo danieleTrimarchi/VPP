@@ -500,16 +500,14 @@ class OpenCascadeCompile(thirdPartyCompile):
     def __compile__(self,dest=None):
         
         # Decorate the mother class __package__ method
-        #super(OpenCascadeCompile,self).__compile__()
-        os.chdir(self.__thirdPartyBuildFolder__)
-         
+        super(OpenCascadeCompile,self).__compile__()
+               
+        # Delete and remake the Build folder
         buildFolderName= "Build"
-      
-        # Delete and remake the build folder
-        shutil.rmtree(buildFolderName)
+        self.__remove__(buildFolderName)
         os.mkdir(buildFolderName)
  
-        # Patch CMakeLists.txt
+        # Patch CMakeLists.txt for MACOSX
         self.__append__("\nif(APPLE)\nset( CMAKE_MACOSX_RPATH 1)\nendif()\n",os.path.join(self.__thirdPartyBuildFolder__,"CMakeLists.txt"))
  
         # Get the requirements : tcl and tk
@@ -547,7 +545,7 @@ class OpenCascadeCompile(thirdPartyCompile):
                          )
         
         # Now opencascade can be made
-        self.__execute__("make")
+        #self.__execute__("make")
         
 #     def __copySelectedDocs__(self):
 #         

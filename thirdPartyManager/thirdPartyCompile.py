@@ -232,11 +232,13 @@ class thirdPartyCompile(object):
         self.__copytree__(self.__srcDirName__,self.__thirdPartyBuildFolder__)
         print "Copy done!"
         
-        # Compile the requrements, if any and if requested
+        # Compile and package the requrements, if any and if requested. 
+        # Also Package as I need to use them right away
         if makeRequirements:
             for iReq in self.__requirements__:
                 iReq.__compile__(os.path.join(self.__thirdPartyBuildFolder__,"ThirdParty"))
-
+                iReq.__package__()
+                
         # Go to the build folder
         os.chdir(self.__thirdPartyBuildFolder__)
 
@@ -381,7 +383,7 @@ class thirdPartyCompile(object):
         # Case 4 : no lists
         else:
             shutil.copytree(src,dst)
-            
+                
     # overwrite shutil.move
     def __move__(self,srcFile,dstFile):
         shutil.move(srcFile,dstFile)
