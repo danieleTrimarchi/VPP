@@ -94,8 +94,8 @@ class TclCompile(thirdPartyCompile):
         self.__copy__(os.path.join(self.__thirdPartyBuildFolder__,"library","init.tcl"),
                       os.path.join(self.__buildInfo__["LIBPATH"][0],"init.tcl"))
 
-        # copy the library from pkg/lib/Tck.framework/Versions/8.7/libtclstub8.7.a to pkg/lib/libtclstub8.7.a
-        self.__copy__(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtclstub8.7.a"), 
+        # make a symbolic link the library from pkg/lib/Tck.framework/Versions/8.7/libtclstub8.7.a to pkg/lib/libtclstub8.7.a
+        self.__symlink__(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtclstub8.7.a"), 
                       os.path.join(self.__buildInfo__["LIBPATH"][0],"libtclstub8.7.a") )
 
         # Make an include dir and set a link to the includes in the framework
@@ -208,12 +208,12 @@ class TkCompile(thirdPartyCompile):
         #                self.__thirdPartyPkgFolder__/usr/local/bin 
         #                to: bin
         self.__move__(os.path.join(self.__thirdPartyPkgFolder__,"usr","local","bin"),
-                            os.path.join(self.__thirdPartyPkgFolder__,self.__buildInfo__["BINPATH"][0]))
+                      os.path.join(self.__thirdPartyPkgFolder__,self.__buildInfo__["BINPATH"][0]))
         self.__remove__(os.path.join(self.__thirdPartyPkgFolder__,"usr"))   
          
-        # Copy pkg/lib/Tk.framework/Versions/8.7/libtkstub8.7.a to pkg/lib/libtkstub8.7.a
-        os.__copy__(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtkstub8.7.a"), 
-                    os.path.join(self.__buildInfo__["LIBPATH"][0],"libtkstub8.7.a") )
+        # Make a symbolic link pkg/lib/Tk.framework/Versions/8.7/libtkstub8.7.a to pkg/lib/libtkstub8.7.a
+        os.__symlink__(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtkstub8.7.a"), 
+                       os.path.join(self.__buildInfo__["LIBPATH"][0],"libtkstub8.7.a") )
          
         # Make an include dir and set a link to the includes in the framework
         self.__copy__(os.path.join(self.__thirdPartyPkgFolder__,"lib","Tk.framework","Headers"),
@@ -516,7 +516,7 @@ class OpenCascadeCompile(thirdPartyCompile):
         tcl= self.__getReqByName__("Tcl")
         tk = self.__getReqByName__("Tk")
         
-        # Execute Cmake
+        # Execute the Cmake configuration
         self.__execute__('cmake -s . -B {buildDir} '
 '-D 3RDPARTY_DIR:PATH={thirdPartyDir} '
 '-D 3RDPARTY_TCL_DIR:PATH={tclDir} '
@@ -546,98 +546,101 @@ class OpenCascadeCompile(thirdPartyCompile):
                              )
                          )
         
-    def __copySelectedDocs__(self):
+        # Now opencascade can be made
+        self.__execute__("make")
         
-        # Loop on the modules we seek to compile 
-        for iLib in self.__buildInfo__["LIBS"] :
-            # Boost libs are named boost_something. Here we only seek the 'something'
-            cleanName = iLib.replace("boost_","")
+#     def __copySelectedDocs__(self):
+#         
+#         # Loop on the modules we seek to compile 
+#         for iLib in self.__buildInfo__["LIBS"] :
+#             # Boost libs are named boost_something. Here we only seek the 'something'
+#             cleanName = iLib.replace("boost_","")
+# 
+#             # Verify the object we get is in the form we need            
+#             # and define the doc directory as pkgDir/doc/libDir
+#             checkListOfSizeOne(self.__buildInfo__["DOCPATH"],"DocPath")             
+#             
+#             # Make the doc directory
+#             docDir = os.path.join(self.__buildInfo__["DOCPATH"][0],cleanName)
+#             os.makedirs(docDir)
+# 
+#             # Copy the files to the doc directory
+#             shutil.copy(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"index.html"), 
+#                     docDir)
+#             self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"doc"), 
+#                               os.path.join(docDir,"doc"))
 
-            # Verify the object we get is in the form we need            
-            # and define the doc directory as pkgDir/doc/libDir
-            checkListOfSizeOne(self.__buildInfo__["DOCPATH"],"DocPath")             
-            
-            # Make the doc directory
-            docDir = os.path.join(self.__buildInfo__["DOCPATH"][0],cleanName)
-            os.makedirs(docDir)
-
-            # Copy the files to the doc directory
-            shutil.copy(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"index.html"), 
-                    docDir)
-            self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"doc"), 
-                              os.path.join(docDir,"doc"))
-
-    # Package the third party that was build   
-    def __package__(self):
-              
-        # Decorate the mother class __package__ method
-        super(OpenCascadeCompile,self).__package__()
-                
-        # Copy the content of include
-        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"boost"), 
-                          os.path.join(self.__buildInfo__["INCLUDEPATH"][0],"boost"))
-
-        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"stage","lib"), 
-                          self.__buildInfo__["LIBPATH"][0])
-
-        # Also copy the documentation of the modules we are compiling
-        self.__copySelectedDocs__()
+#     # Package the third party that was build   
+#     def __package__(self):
+#               
+#         # Decorate the mother class __package__ method
+#         super(OpenCascadeCompile,self).__package__()
+#                 
+#         # Copy the content of include
+#         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"boost"), 
+#                           os.path.join(self.__buildInfo__["INCLUDEPATH"][0],"boost"))
+# 
+#         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"stage","lib"), 
+#                           self.__buildInfo__["LIBPATH"][0])
+# 
+#         # Also copy the documentation of the modules we are compiling
+#         self.__copySelectedDocs__()
                                       
-    # Run a simple test to check that the compile was successiful
-    def __test__(self):
-
-        # Decorate the mother class __test__ method
-        super(OpenCascadeCompile,self).__test__()
-
-        # Write the boost example 
-        Source=open("main.cpp","w")
-        Source.write('''
-#include <iostream>
-#include <boost/shared_ptr.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/system/error_code.hpp>
-#include <boost/core/lightweight_test.hpp>
-#include <cerrno>
-using std::cout;
-using namespace boost::filesystem;
-using namespace boost::system;
-
-static error_code e1( 1, system_category() );
-static std::string m1 = e1.message();
-
-static error_code e2( ENOENT, generic_category() );
-static std::string m2 = e2.message();
-
-int main(int argc, char** argv) {
-
-    // Test instantiating a shared ptr
-    boost::shared_ptr<int> myPtr; 
-
-    // 
-    path p (argv[1]);
-    
-    try {
-        if (exists(p))
-            cout<<\"Ok!\\n\";
-    } catch (const filesystem_error& ex) {
-        cout << ex.what() << \"\\n\";
-    }
-}       
-''')
-        Source.close()
-            
-        # Compile and run the test
-        self.__makeTest__()
-        
+#     # Run a simple test to check that the compile was successiful
+#     def __test__(self):
+# 
+#         # Decorate the mother class __test__ method
+#         super(OpenCascadeCompile,self).__test__()
+# 
+#         # Write the boost example 
+#         Source=open("main.cpp","w")
+#         Source.write('''
+# #include <iostream>
+# #include <boost/shared_ptr.hpp>
+# #include <boost/filesystem.hpp>
+# #include <boost/system/error_code.hpp>
+# #include <boost/core/lightweight_test.hpp>
+# #include <cerrno>
+# using std::cout;
+# using namespace boost::filesystem;
+# using namespace boost::system;
+# 
+# static error_code e1( 1, system_category() );
+# static std::string m1 = e1.message();
+# 
+# static error_code e2( ENOENT, generic_category() );
+# static std::string m2 = e2.message();
+# 
+# int main(int argc, char** argv) {
+# 
+#     // Test instantiating a shared ptr
+#     boost::shared_ptr<int> myPtr; 
+# 
+#     // 
+#     path p (argv[1]);
+#     
+#     try {
+#         if (exists(p))
+#             cout<<\"Ok!\\n\";
+#     } catch (const filesystem_error& ex) {
+#         cout << ex.what() << \"\\n\";
+#     }
+# }       
+# ''')
+#         Source.close()
+#             
+#         # Compile and run the test
+#         self.__makeTest__()
+   
     # -- 
             
-    # Import the dynamic libraries from third party to the dest folder (in this case
-    # this will be in the app bundle VPP.app/Contents/Frameworks/
-    def importDynamicLibs(self,dst):
-    
-        # Copy the lib to the dest folder
-        for iLib in self.__buildInfo__["LIBS"]: 
-            shutil.copyfile(self.getFullDynamicLibName(iLib), 
-                            os.path.join(dst,self.getFullDynamicLibName(iLib)))
-                    
+#     # Import the dynamic libraries from third party to the dest folder (in this case
+#     # this will be in the app bundle VPP.app/Contents/Frameworks/
+#     def importDynamicLibs(self,dst):
+#     
+#         # Copy the lib to the dest folder
+#         for iLib in self.__buildInfo__["LIBS"]: 
+#             shutil.copyfile(self.getFullDynamicLibName(iLib), 
+#                             os.path.join(dst,self.getFullDynamicLibName(iLib)))
+#                     
         
