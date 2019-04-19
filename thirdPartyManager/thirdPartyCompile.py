@@ -396,7 +396,9 @@ class thirdPartyCompile(object):
         elif(os.path.isdir(srcFile)):
             self.__copytree__(srcFile,dstFile)
         else:
-            raise ValueError('__copy__ can only handle files and directories!')
+            print "Trying to copy: ",srcFile
+            print "       to ... : ",dstFile
+            raise ValueError("In __copy__ : {} was not found!".format(srcFile))
             
     # Remove a named directory
     def __remove__(self,folder):

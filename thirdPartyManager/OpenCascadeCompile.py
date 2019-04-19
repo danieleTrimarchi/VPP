@@ -36,7 +36,7 @@ class TclCompile(thirdPartyCompile):
         # Override (specialize) the package folder 
         self.__thirdPartyPkgFolder__= os.path.join(self.__thirdPartyPkgFolder__,self.__srcDirName__)
         
-                # Define the build info. Will use these to copy the components (includes, libs...) to 
+        # Define the build info. Will use these to copy the components (includes, libs...) to 
         # the package folder
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
@@ -89,13 +89,13 @@ class TclCompile(thirdPartyCompile):
                       os.path.join(self.__thirdPartyPkgFolder__,self.__buildInfo__["BINPATH"][0]))
         self.__remove__(os.path.join(self.__thirdPartyPkgFolder__,"usr"))   
              
-        # Copy the init.tcl file from /Users/dtrimarchi/third_party_build/tcl8.7a1/library 
+        # Copy the init.tcl file from thirdPartyBuildFolder/tcl8.7a1/library 
         # to the lib folder
         self.__copy__(os.path.join(self.__thirdPartyBuildFolder__,"library","init.tcl"),
                       os.path.join(self.__buildInfo__["LIBPATH"][0],"init.tcl"))
 
         # make a symbolic link the library from pkg/lib/Tck.framework/Versions/8.7/libtclstub8.7.a to pkg/lib/libtclstub8.7.a
-        self.__symlink__(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtclstub8.7.a"), 
+        self.__copy__(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tcl.framework","Versions","8.7","libtclstub8.7.a"), 
                       os.path.join(self.__buildInfo__["LIBPATH"][0],"libtclstub8.7.a") )
 
         # Make an include dir and set a link to the includes in the framework
@@ -195,8 +195,7 @@ class TkCompile(thirdPartyCompile):
                       
         # Do not call the motherclass __pakcage__ method that 
         # woud erase the components installed! So call the requirements package by hand
-        for iReq in self.__requirements__:
-            iReq.__package__()
+        # The requirements must be already packaged when compiling, otherwise it is not possible to compile!
 
         # Make the lib folder and move the framework. Remove the folder 'Library'
         self.__makedirs__(self.__buildInfo__["LIBPATH"][0])
@@ -212,8 +211,8 @@ class TkCompile(thirdPartyCompile):
         self.__remove__(os.path.join(self.__thirdPartyPkgFolder__,"usr"))   
          
         # Make a symbolic link pkg/lib/Tk.framework/Versions/8.7/libtkstub8.7.a to pkg/lib/libtkstub8.7.a
-        os.__symlink__(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tck.framework","Versions","8.7","libtkstub8.7.a"), 
-                       os.path.join(self.__buildInfo__["LIBPATH"][0],"libtkstub8.7.a") )
+        self.__copy__(os.path.join(self.__buildInfo__["LIBPATH"][0],"Tk.framework","Versions","8.7","libtkstub8.7.a"), 
+                      os.path.join(self.__buildInfo__["LIBPATH"][0],"libtkstub8.7.a") )
          
         # Make an include dir and set a link to the includes in the framework
         self.__copy__(os.path.join(self.__thirdPartyPkgFolder__,"lib","Tk.framework","Headers"),
@@ -501,19 +500,19 @@ class OpenCascadeCompile(thirdPartyCompile):
         
         # Decorate the mother class __package__ method
         super(OpenCascadeCompile,self).__compile__()
-               
+                
         # Delete and remake the Build folder
         buildFolderName= "Build"
         self.__remove__(buildFolderName)
         os.mkdir(buildFolderName)
- 
+  
         # Patch CMakeLists.txt for MACOSX
         self.__append__("\nif(APPLE)\nset( CMAKE_MACOSX_RPATH 1)\nendif()\n",os.path.join(self.__thirdPartyBuildFolder__,"CMakeLists.txt"))
- 
+  
         # Get the requirements : tcl and tk
         tcl= self.__getReqByName__("Tcl")
         tk = self.__getReqByName__("Tk")
-        
+         
         # Execute the Cmake configuration
         self.__execute__('cmake -s . -B {buildDir} '
 '-D 3RDPARTY_DIR:PATH={thirdPartyDir} '
@@ -544,8 +543,11 @@ class OpenCascadeCompile(thirdPartyCompile):
                              )
                          )
         
+        # Go to the build folder
+        os.chdir(buildFolderName)
+
         # Now opencascade can be made
-        #self.__execute__("make")
+        self.__execute__("make")
         
 #     def __copySelectedDocs__(self):
 #         
