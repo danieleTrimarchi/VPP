@@ -244,23 +244,24 @@ class thirdPartyCompile(object):
 
         
     # How to package the relevant components of this third_party
-    def __package__(self):
+    def __package__(self,makeDirs=True):
 
         # Write the build info to file. This will be used
         # by the build system to compile and link the program
         self.__writeInfo__()   
 
-        # Make a package folder and enter it 
-        # cleanup: remove a previous package folder if present. Remember that the 
-        # package folder was set relative to this third_party in the ctor
-        self.__makedirs__(self.__thirdPartyPkgFolder__)
-
-        # RE-Create the folders include, bin, lib, doc. The paths to 
-        # these folders are defined in the ctor of the child classes
-        self.__makedirs__(self.__buildInfo__["INCLUDEPATH"][0])
-        self.__makedirs__(self.__buildInfo__["LIBPATH"][0])
-        self.__makedirs__(self.__buildInfo__["BINPATH"][0])
-        self.__makedirs__(self.__buildInfo__["DOCPATH"][0])
+        if makeDirs: 
+            # Make a package folder and enter it 
+            # cleanup: remove a previous package folder if present. Remember that the 
+            # package folder was set relative to this third_party in the ctor
+            self.__makedirs__(self.__thirdPartyPkgFolder__)
+    
+            # RE-Create the folders include, bin, lib, doc. The paths to 
+            # these folders are defined in the ctor of the child classes
+            self.__makedirs__(self.__buildInfo__["INCLUDEPATH"][0])
+            self.__makedirs__(self.__buildInfo__["LIBPATH"][0])
+            self.__makedirs__(self.__buildInfo__["BINPATH"][0])
+            self.__makedirs__(self.__buildInfo__["DOCPATH"][0])
             
     # Run some test to make sure this third party was compiled 
     # properly

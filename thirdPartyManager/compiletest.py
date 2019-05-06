@@ -30,7 +30,7 @@ import thirdPartyCompile
 #tcl.__package__()
 from OpenCascadeCompile import OpenCascadeCompile
 occ = OpenCascadeCompile()
-occ.__compile__()
+occ.__package__()
 
 # from OpenCascadeCompile import FreeTypeCompile
 # ftc = FreeTypeCompile()

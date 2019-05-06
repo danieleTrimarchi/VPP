@@ -491,6 +491,7 @@ class OpenCascadeCompile(thirdPartyCompile):
         # the package folder
         self.__buildInfo__["INCLUDEPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"include")]
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
+        self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
         self.__buildInfo__["LIBS"] = [] 
         
@@ -549,43 +550,33 @@ class OpenCascadeCompile(thirdPartyCompile):
         # Now opencascade can be made
         self.__execute__("make")
         
-#     def __copySelectedDocs__(self):
-#         
-#         # Loop on the modules we seek to compile 
-#         for iLib in self.__buildInfo__["LIBS"] :
-#             # Boost libs are named boost_something. Here we only seek the 'something'
-#             cleanName = iLib.replace("boost_","")
-# 
-#             # Verify the object we get is in the form we need            
-#             # and define the doc directory as pkgDir/doc/libDir
-#             checkListOfSizeOne(self.__buildInfo__["DOCPATH"],"DocPath")             
-#             
-#             # Make the doc directory
-#             docDir = os.path.join(self.__buildInfo__["DOCPATH"][0],cleanName)
-#             os.makedirs(docDir)
-# 
-#             # Copy the files to the doc directory
-#             shutil.copy(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"index.html"), 
-#                     docDir)
-#             self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"libs",cleanName,"doc"), 
-#                               os.path.join(docDir,"doc"))
+    # Package the third party that was build   
+    def __package__(self):
+               
+        # Decorate the mother class __package__ method. Do not make directories 
+        # as we are handling this direcly here
+        super(OpenCascadeCompile,self).__package__(makeDirs=False)
+                 
+        # Cleanup and copy the content of include
+        shutil.rmtree(self.__buildInfo__["INCLUDEPATH"][0],sys.exc_info())
+        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"Build","inc"), 
+                          self.__buildInfo__["INCLUDEPATH"][0])
+ 
+        # Clenanup and copy the libs 
+        shutil.rmtree(self.__buildInfo__["LIBPATH"][0],sys.exc_info())
+        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"Build","mac64","clang","lib"), 
+                          self.__buildInfo__["LIBPATH"][0])
 
-#     # Package the third party that was build   
-#     def __package__(self):
-#               
-#         # Decorate the mother class __package__ method
-#         super(OpenCascadeCompile,self).__package__()
-#                 
-#         # Copy the content of include
-#         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"boost"), 
-#                           os.path.join(self.__buildInfo__["INCLUDEPATH"][0],"boost"))
-# 
-#         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"stage","lib"), 
-#                           self.__buildInfo__["LIBPATH"][0])
-# 
-#         # Also copy the documentation of the modules we are compiling
-#         self.__copySelectedDocs__()
-                                      
+        # Cleanup and copy the binaries 
+        shutil.rmtree(self.__buildInfo__["BINPATH"][0],sys.exc_info())
+        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"Build","mac64","clang","bin"), 
+                          self.__buildInfo__["BINPATH"][0])
+
+        # Cleanup and copy the documentation  
+        shutil.rmtree(self.__buildInfo__["DOCPATH"][0],sys.exc_info())
+        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"Build","doc","overview"), 
+                          self.__buildInfo__["DOCPATH"][0])
+
 #     # Run a simple test to check that the compile was successiful
 #     def __test__(self):
 # 
