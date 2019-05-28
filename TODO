@@ -1,3 +1,11 @@
+
+1_ otool -l DRAWEXE-7.1.0 
+	
+	/opt/local/lib/libtcl8.6.dylib 
+	install_name_tool -change OLD NEW where
+
+2_ 
+
 OpenCascade :
 
 	cd build/opencascade

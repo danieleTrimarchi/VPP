@@ -219,7 +219,18 @@ class TkCompile(thirdPartyCompile):
                       self.__buildInfo__["INCLUDEPATH"][0])
 
     def __test__(self):
+
         pass
+        # A test target is provided. Go into the build folder of tk and run 
+        # make test
+        # The test suite appears to hang, I am not sure ewhat is wron so I  
+        # comment out for the moment
+
+#         # Go to the build folder
+#         os.chdir(os.path.join(self.__thirdPartyBuildFolder__,'macosx'))
+#         
+#         # Run a couple of test targets
+#         self.__execute__("make test")
     
 # ------------------------------------------------------------------------
            
@@ -577,61 +588,35 @@ class OpenCascadeCompile(thirdPartyCompile):
         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"Build","doc","overview"), 
                           self.__buildInfo__["DOCPATH"][0])
 
-#     # Run a simple test to check that the compile was successiful
-#     def __test__(self):
-# 
-#         # Decorate the mother class __test__ method
-#         super(OpenCascadeCompile,self).__test__()
-# 
-#         # Write the boost example 
-#         Source=open("main.cpp","w")
-#         Source.write('''
-# #include <iostream>
-# #include <boost/shared_ptr.hpp>
-# #include <boost/filesystem.hpp>
-# #include <boost/system/error_code.hpp>
-# #include <boost/core/lightweight_test.hpp>
-# #include <cerrno>
-# using std::cout;
-# using namespace boost::filesystem;
-# using namespace boost::system;
-# 
-# static error_code e1( 1, system_category() );
-# static std::string m1 = e1.message();
-# 
-# static error_code e2( ENOENT, generic_category() );
-# static std::string m2 = e2.message();
-# 
-# int main(int argc, char** argv) {
-# 
-#     // Test instantiating a shared ptr
-#     boost::shared_ptr<int> myPtr; 
-# 
-#     // 
-#     path p (argv[1]);
-#     
-#     try {
-#         if (exists(p))
-#             cout<<\"Ok!\\n\";
-#     } catch (const filesystem_error& ex) {
-#         cout << ex.what() << \"\\n\";
-#     }
-# }       
-# ''')
-#         Source.close()
-#             
-#         # Compile and run the test
-#         self.__makeTest__()
+     # Run a simple test to check that the compile was successiful
+    def __test__(self):
+ 
+         # Decorate the mother class __test__ method
+         super(OpenCascadeCompile,self).__test__()
+ 
+         # Write the test code 
+         Source=open("main.cpp","w")
+         Source.write('''
+#include <iostream>
+#include <gp_Pnt.hxx>
+
+using std::cout;
+ 
+int main(int argc, char** argv) {
+     
+    try {
+        double myWidth=20;
+        gp_Pnt aPnt1(-myWidth / 2., 0, 0);
+    } catch (std::exception& e) {
+         cout << e.what() << \"\\n\";
+    } catch (...) {
+         cout << "Unknown exception caught" << \"\\n\";
+    }
+
+}       
+''')
+         Source.close()
+             
+         # Compile and run the test
+         self.__makeTest__()
    
-    # -- 
-            
-#     # Import the dynamic libraries from third party to the dest folder (in this case
-#     # this will be in the app bundle VPP.app/Contents/Frameworks/
-#     def importDynamicLibs(self,dst):
-#     
-#         # Copy the lib to the dest folder
-#         for iLib in self.__buildInfo__["LIBS"]: 
-#             shutil.copyfile(self.getFullDynamicLibName(iLib), 
-#                             os.path.join(dst,self.getFullDynamicLibName(iLib)))
-#                     
-        

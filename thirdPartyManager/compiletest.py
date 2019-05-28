@@ -29,8 +29,8 @@ import thirdPartyCompile
 #tcl.__compile__()
 #tcl.__package__()
 from OpenCascadeCompile import OpenCascadeCompile
-occ = OpenCascadeCompile()
-occ.__package__()
+ooc = OpenCascadeCompile()
+ooc.__test__()
 
 # from OpenCascadeCompile import FreeTypeCompile
 # ftc = FreeTypeCompile()
