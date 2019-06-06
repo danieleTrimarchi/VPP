@@ -39,3 +39,5 @@ Right click on the project/Index/Search For Unresolved includes
 	this gives a list that can be easily searched 
 ################################
 
+Get symbols in libs: 
+for LIB in * ; do echo $LIB; nm -vU $LIB | grep __SYMBOL__ ; done

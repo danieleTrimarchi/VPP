@@ -1,3 +1,4 @@
+1_ Make sure the tutorial pdf lives in the docs and document this into the example!
 
 1_ otool -l DRAWEXE-7.1.0 
 	

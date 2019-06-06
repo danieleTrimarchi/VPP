@@ -451,6 +451,7 @@ env = Environment()
 env.Append( CPPPATH=["{}"] )
 env.Append( LIBPATH=["{}"] )
 env.Append( LIBS={} )
+env.Append( CXXFLAGS="-std=c++11" )
 env.Program('{}_test', Glob('*.cpp') )        
 '''.format(self.__buildInfo__["INCLUDEPATH"][0],
            self.__buildInfo__["LIBPATH"][0],
