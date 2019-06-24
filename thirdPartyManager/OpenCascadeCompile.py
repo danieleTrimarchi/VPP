@@ -504,9 +504,16 @@ class OpenCascadeCompile(thirdPartyCompile):
         self.__buildInfo__["LIBPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"lib")]
         self.__buildInfo__["BINPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"bin")]
         self.__buildInfo__["DOCPATH"] = [os.path.join(self.__thirdPartyPkgFolder__,"doc")]
-        self.__buildInfo__["LIBS"] = ['TKBO','TKBRep','TKFillet','TKGeomBase',
-                                      'TKG2d','TKG3d','TKernel','TKMath',
-                                      'TKOffset','TKPrim','TKTopAlgo'] 
+        self.__buildInfo__["LIBS"] = ['TKBin','TKBO','TKBool','TKBRep',
+                                      'TKernel',
+                                      'TKFillet',
+                                      'TKGeomBase','TKG2d','TKG3d',
+                                      'TKMath',
+                                      'TKOffset','TKOpenGl',                                
+                                      'TKPrim',
+                                      'TKService',
+                                      'TKTopAlgo',
+                                      'TKV3d'] 
           
     # Compile this package    
     def __compile__(self,dest=None):
@@ -571,19 +578,19 @@ class OpenCascadeCompile(thirdPartyCompile):
                  
         # Cleanup and copy the content of include
         shutil.rmtree(self.__buildInfo__["INCLUDEPATH"][0],sys.exc_info())
-        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"Build","inc"), 
+        self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"inc"), 
                           self.__buildInfo__["INCLUDEPATH"][0])
  
         # Clenanup and copy the libs 
         shutil.rmtree(self.__buildInfo__["LIBPATH"][0],sys.exc_info())
         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"Build","mac64","clang","lib"), 
                           self.__buildInfo__["LIBPATH"][0])
-
+ 
         # Cleanup and copy the binaries 
         shutil.rmtree(self.__buildInfo__["BINPATH"][0],sys.exc_info())
         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"Build","mac64","clang","bin"), 
                           self.__buildInfo__["BINPATH"][0])
-
+ 
         # Cleanup and copy the documentation  
         shutil.rmtree(self.__buildInfo__["DOCPATH"][0],sys.exc_info())
         self.__copytree__(os.path.join(self.__thirdPartyBuildFolder__,"Build","doc","overview"), 
@@ -854,7 +861,7 @@ int main(int argc, char** argv) {
         aBuilder.Add (aRes, myBody);
         aBuilder.Add (aRes, myThreading);
 
-        std::cout<<"\n\nOpenCascade test succeeded!\n\n"<<std::endl;
+        std::cout<<"\\nOpenCascade test succeeded!\\n"<<std::endl;
         
     } catch (std::exception& e) {
          cout << e.what() << \"\\n\";

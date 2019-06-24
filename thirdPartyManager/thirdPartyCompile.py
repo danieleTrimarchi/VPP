@@ -5,6 +5,7 @@ from shutil import rmtree
 import subprocess
 import shutil
 import re
+import glob
 from email.test.test_email import openfile
 
 import localPaths
@@ -109,13 +110,15 @@ class thirdPartyCompile(object):
             os.makedirs(self.__thirdPartyPkgFolder__)
                         
     # Wrapper method used to get, compile and test a third_party     
-    def get(self, download=True):
+    # Note the download flags. download is used for the current third party
+    # wile recursiveDownload is used for the requirements. 
+    def get(self, download=True, recursiveDownload=True):
         
         # Downlaod the required files from the web, if this is requested
         # otherwise we skip the download, but this implies that we are 
         # recompiling the third_party
         if(download):
-            self.__download__()
+            self.__download__(recursiveDownload)
                 
         # Compile the third party software
         self.__compile__()
@@ -182,6 +185,10 @@ class thirdPartyCompile(object):
     def getFullDynamicLibName(self,shortLibName,additions=""):
         return "lib"+shortLibName+additions+".dylib"
     
+    # Return the name of this third party
+    def getName(self):
+        return __name__; 
+    
     # Import the dynamic libraries from third party to the dest folder (in this case
     # this will be in the app bundle VPP.app/Contents/Frameworks/
     def importDynamicLibs(self,dstFolder):
@@ -189,7 +196,7 @@ class thirdPartyCompile(object):
 
     # To be implemented in child classes, describe where the 
     # source package can be downloaded
-    def __download__(self):
+    def __download__(self,recursiveDownload=True):
         
         # Go to the __thirdPartySrcFolder__. Its existence was 
         # assured in the init of the class
@@ -203,8 +210,9 @@ class thirdPartyCompile(object):
                      
          # I can now use the scripts provided by ipOpt to download the 
          # required third_party. Kq[gr]pe
-        for iReq in self.__requirements__:
-            iReq.__download__()
+        if recursiveDownload:
+            for iReq in self.__requirements__:
+                iReq.__download__()
 
     # After extracting the third party, it might be the case that we need to 
     # use some tools internal to the package to download some additional reqs. 
@@ -385,6 +393,19 @@ class thirdPartyCompile(object):
         else:
             shutil.copytree(src,dst)
                 
+    def __copyFiles__(self,srcDir,dstDir,wildCard="*"):
+        
+        for item in glob.glob(os.path.join(srcDir,wildCard)):
+            print "item in copyFiles: ", item
+            if(os.path.isfile(item)):
+                dst = os.path.join(dstDir,os.path.basename(item))
+                print "copying to: ", dst
+                shutil.copy(item,dst)
+            elif(os.path.isdir(item)):
+                dst = os.path.join(dstDir,os.path.basename(item))
+                print "copying to: ", dst
+                self.__copytree__(item,dst)
+                
     # overwrite shutil.move
     def __move__(self,srcFile,dstFile):
         shutil.move(srcFile,dstFile)
@@ -410,8 +431,14 @@ class thirdPartyCompile(object):
 
     # Patch the file specified in 'filename' substituting the strings. THis
     # works like a 'sed'
-    def __patch__(self,pattern,replace,srcFileName) : 
+    def __patch__(self,pattern,replace,srcFileName, formatPattern=True) : 
 
+        # The pattern must be modified in order to be a correct regexp
+        # So ( must be substututed by \( and ) by \)
+        if formatPattern :
+            pattern= pattern.replace("(","\(")
+            pattern= pattern.replace(")","\)")
+        
         # open the srcFile
         fin = open(srcFileName, 'r')
 
@@ -452,7 +479,7 @@ env.Append( CPPPATH=["{}"] )
 env.Append( LIBPATH=["{}"] )
 env.Append( LIBS={} )
 env.Append( CXXFLAGS="-std=c++11" )
-env.Program('{}_test', Glob('*.cpp') )        
+env.Program('{}_test', Glob('*.cpp') + Glob('*.qrc') )        
 '''.format(self.__buildInfo__["INCLUDEPATH"][0],
            self.__buildInfo__["LIBPATH"][0],
            self.__buildInfo__["LIBS"],
@@ -490,14 +517,31 @@ env.Program('{}_test', Glob('*.cpp') )
 
         for iReq in self.__requirements__:
         
+            #print "=+ reqName= ",reqName," Attempting with requirement ", iReq.__name__
             if iReq.__name__ == reqName:
                 return iReq
 
-            req = iReq.__getReqByName__(reqName)             
+            # Recurse on requirements
+            req = iReq.__getReqByName__(reqName)     
             if isinstance(req, thirdPartyCompile):
                 return req
-            else:
-                return ""
 
         return "" 
+
+    def stringify(self,list,separator=":"):
         
+        #print "List in stringify: ", list
+        ret=""
+        for iItem in list:  
+            ret += separator + iItem
+        return ret 
+    
+    # Given a list of paths, returns a rpath in the shape: 
+    # -Wl,-rpath,_LibPath1_,-rpath,_Libpath2_,-rpath,...
+    def makeRPath(self,libPathList):
+        
+        ret="-Wl"
+        rpath=",-rpath,"
+        for iPath in libPathList:
+            ret += rpath + iPath
+        return ret

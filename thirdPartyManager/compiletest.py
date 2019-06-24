@@ -20,21 +20,24 @@ import thirdPartyCompile
 # nlOpt= NlOptCompile()
 # nlOpt.get()
 
-#from QtCompile import QtCompile
-#qt= QtCompile()
-#qt.get(False)
+# from QtCompile import QtCompile
+# qt= QtCompile()
+# #qt.get(False)
+# qt.__test__()
 
 #from OpenCascadeCompile import TclCompile
 #tcl = TclCompile()
 #tcl.__compile__()
 #tcl.__package__()
-from OpenCascadeCompile import OpenCascadeCompile
-ooc = OpenCascadeCompile()
-ooc.__test__()
 
 # from OpenCascadeCompile import FreeTypeCompile
 # ftc = FreeTypeCompile()
 #ftc.__compile__()
 #ftc.__test__()
+
+from OccQtCompile import OccQtCompile
+occqt = OccQtCompile()
+#occqt.__package__()
+occqt.__test__()
 
 
