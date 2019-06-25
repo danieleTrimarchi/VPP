@@ -1,11 +1,13 @@
 from thirdPartyCompile import thirdPartyCompile
 import os, shutil, sys, glob, fnmatch
 import multiprocessing
+
 from qt5SconsTool import qt5SconsTool
 from QtCompileBase import QtCompileBase
 from QtCompile import QtCompile
 from OpenCascadeCompile import OpenCascadeCompile
-    
+
+import patch
         
 # This is not a full third_party. Actually it is a simple usage example 
 # of how to use OpenCascade with Qt and create a visualizer. We indeed 
@@ -172,8 +174,16 @@ QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
                        replace="#include <QtOpenGL/QGLWidget>",
                        srcFileName="OccView.h")                        
 
-        os.rename("occqt.qrc", "OccQt.qrc")
+        # Now apply the patch file occViewPatch.patch that is stored in 
+        # the directory where this file (OccQtCompile) lives
+        pathOfThisFile= os.path.dirname( os.path.realpath(__file__) )
+        patchFile= os.path.join( pathOfThisFile, "occViewPatch.patch")
         
+        print "Trying to patch using : ", patchFile
+        patchtool = patch.fromfile(patchFile)
+        patchtool.apply()
+        
+        os.rename("occqt.qrc", "OccQt.qrc")
         # Execute qmake on the .pro file            
         self.__execute__("{qmake} -o Makefile occQt.pro".format(
                             qmake=os.path.join(qt.getBinPath()[0],"qmake")))

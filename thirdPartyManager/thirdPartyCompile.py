@@ -37,6 +37,15 @@ except ImportError, e:
         raise
     import lzma
     
+try:
+    import patch # allows applying patches 
+except ImportError, e:
+    p = subprocess.Popen("sudo pip install patch==1.16",shell=True)
+    if p.wait():
+        raise
+    import patch
+
+
 ''' Static identifiers '''
 __includepathFlag__ = "INCLUDEPATH"    
 __libpathFlag__ = "LIBPATH"         
@@ -396,14 +405,14 @@ class thirdPartyCompile(object):
     def __copyFiles__(self,srcDir,dstDir,wildCard="*"):
         
         for item in glob.glob(os.path.join(srcDir,wildCard)):
-            print "item in copyFiles: ", item
+            #print "item in copyFiles: ", item
             if(os.path.isfile(item)):
                 dst = os.path.join(dstDir,os.path.basename(item))
-                print "copying to: ", dst
+                #print "copying to: ", dst
                 shutil.copy(item,dst)
             elif(os.path.isdir(item)):
                 dst = os.path.join(dstDir,os.path.basename(item))
-                print "copying to: ", dst
+                #print "copying to: ", dst
                 self.__copytree__(item,dst)
                 
     # overwrite shutil.move
