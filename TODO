@@ -1,3 +1,5 @@
+-> remove the use of install_name_tool where possible in favor of -Wl,-rpath,...
+
 -> I have templatized the settings items on the unit. This generates the huge list in SettingsItemBase::settingsItemFactory. Not good. The unit should be an attribute of the settingsItem. 
 The refactoring will end up with items having unit combo-boxes 
 

@@ -5,9 +5,12 @@ from shutil import rmtree
 import subprocess
 import shutil
 import re
+import glob
 from email.test.test_email import openfile
 
 import localPaths
+from pip._internal import req
+from test.test_decimal import directory
 
 try:    
     import pip
@@ -34,6 +37,15 @@ except ImportError, e:
         raise
     import lzma
     
+try:
+    import patch # allows applying patches 
+except ImportError, e:
+    p = subprocess.Popen("sudo pip install patch==1.16",shell=True)
+    if p.wait():
+        raise
+    import patch
+
+
 ''' Static identifiers '''
 __includepathFlag__ = "INCLUDEPATH"    
 __libpathFlag__ = "LIBPATH"         
@@ -107,13 +119,15 @@ class thirdPartyCompile(object):
             os.makedirs(self.__thirdPartyPkgFolder__)
                         
     # Wrapper method used to get, compile and test a third_party     
-    def get(self, download=True):
+    # Note the download flags. download is used for the current third party
+    # wile recursiveDownload is used for the requirements. 
+    def get(self, download=True, recursiveDownload=True):
         
         # Downlaod the required files from the web, if this is requested
         # otherwise we skip the download, but this implies that we are 
         # recompiling the third_party
         if(download):
-            self.__download__()
+            self.__download__(recursiveDownload)
                 
         # Compile the third party software
         self.__compile__()
@@ -172,10 +186,17 @@ class thirdPartyCompile(object):
     def getDocPath(self):
         
         return self.__buildInfo__[__docpathFlag__]
+
+    def getFullStaticLibName(self,shortLibName,additions=""):
+        return "lib"+shortLibName+additions+".a"
         
     # Warning: this method is duplicated in thirdParties.py. Classes need to merge
     def getFullDynamicLibName(self,shortLibName,additions=""):
         return "lib"+shortLibName+additions+".dylib"
+    
+    # Return the name of this third party
+    def getName(self):
+        return __name__; 
     
     # Import the dynamic libraries from third party to the dest folder (in this case
     # this will be in the app bundle VPP.app/Contents/Frameworks/
@@ -184,7 +205,7 @@ class thirdPartyCompile(object):
 
     # To be implemented in child classes, describe where the 
     # source package can be downloaded
-    def __download__(self):
+    def __download__(self,recursiveDownload=True):
         
         # Go to the __thirdPartySrcFolder__. Its existence was 
         # assured in the init of the class
@@ -198,8 +219,9 @@ class thirdPartyCompile(object):
                      
          # I can now use the scripts provided by ipOpt to download the 
          # required third_party. Kq[gr]pe
-        for iReq in self.__requirements__:
-            iReq.__download__()
+        if recursiveDownload:
+            for iReq in self.__requirements__:
+                iReq.__download__()
 
     # After extracting the third party, it might be the case that we need to 
     # use some tools internal to the package to download some additional reqs. 
@@ -209,7 +231,7 @@ class thirdPartyCompile(object):
         raise ValueError( "thirdPartyCompile::__getAdditionalRequirements__() should never be called" )
         
     # How to compile the third party
-    def __compile__(self,dest=None):
+    def __compile__(self,dest=None,makeRequirements=True):
         
         # Check if the caller is admin. If we do not have admin privileges, 
         # there are a number of operations that won't be allowed
@@ -227,32 +249,36 @@ class thirdPartyCompile(object):
         self.__copytree__(self.__srcDirName__,self.__thirdPartyBuildFolder__)
         print "Copy done!"
         
-        # Compile the requrements, if any
-        for iReq in self.__requirements__:
-            iReq.__compile__(os.path.join(self.__thirdPartyBuildFolder__,"ThirdParty"))
-
+        # Compile and package the requrements, if any and if requested. 
+        # Also Package as I need to use them right away
+        if makeRequirements:
+            for iReq in self.__requirements__:
+                iReq.__compile__(os.path.join(self.__thirdPartyBuildFolder__,"ThirdParty"))
+                iReq.__package__()
+                
         # Go to the build folder
         os.chdir(self.__thirdPartyBuildFolder__)
 
         
     # How to package the relevant components of this third_party
-    def __package__(self):
+    def __package__(self,makeDirs=True):
 
         # Write the build info to file. This will be used
         # by the build system to compile and link the program
         self.__writeInfo__()   
 
-        # Make a package folder and enter it 
-        # cleanup: remove a previous package folder if present. Remember that the 
-        # package folder was set relative to this third_party in the ctor
-        self.__makedirs__(self.__thirdPartyPkgFolder__)
-
-        # RE-Create the folders include, bin, lib, doc. The paths to 
-        # these folders are defined in the ctor of the child classes
-        self.__makedirs__(self.__buildInfo__["INCLUDEPATH"][0])
-        self.__makedirs__(self.__buildInfo__["LIBPATH"][0])
-        self.__makedirs__(self.__buildInfo__["BINPATH"][0])
-        self.__makedirs__(self.__buildInfo__["DOCPATH"][0])
+        if makeDirs: 
+            # Make a package folder and enter it 
+            # cleanup: remove a previous package folder if present. Remember that the 
+            # package folder was set relative to this third_party in the ctor
+            self.__makedirs__(self.__thirdPartyPkgFolder__)
+    
+            # RE-Create the folders include, bin, lib, doc. The paths to 
+            # these folders are defined in the ctor of the child classes
+            self.__makedirs__(self.__buildInfo__["INCLUDEPATH"][0])
+            self.__makedirs__(self.__buildInfo__["LIBPATH"][0])
+            self.__makedirs__(self.__buildInfo__["BINPATH"][0])
+            self.__makedirs__(self.__buildInfo__["DOCPATH"][0])
             
     # Run some test to make sure this third party was compiled 
     # properly
@@ -292,11 +318,15 @@ class thirdPartyCompile(object):
     # Wraps a call to subprocess and the required diagnostics
     def __execute__(self,command,myEnv=os.environ):
         
+        print "Command= ",command
         p = subprocess.Popen(command,shell=True,env=myEnv)
         if p.wait():
             raise ValueError('\n\nSomething went wrong when trying to execute: {}\n\n'.format(command))
 
     # Download an archive from a given url and unzip it 
+    # Should we add support for sourgeforce, we need to use the 
+    # instructions contained in this page:
+    #     https://sourceforge.net/p/forge/documentation/Downloading%20files%20via%20the%20command%20line/
     def __getCompressedArchive__(self,url,saveAs="myArch"):
 
         print "...downloading the archive from: {}".format(url)
@@ -371,11 +401,53 @@ class thirdPartyCompile(object):
         # Case 4 : no lists
         else:
             shutil.copytree(src,dst)
+                
+    def __copyFiles__(self,srcDir,dstDir,wildCard="*"):
+        
+        for item in glob.glob(os.path.join(srcDir,wildCard)):
+            #print "item in copyFiles: ", item
+            if(os.path.isfile(item)):
+                dst = os.path.join(dstDir,os.path.basename(item))
+                #print "copying to: ", dst
+                shutil.copy(item,dst)
+            elif(os.path.isdir(item)):
+                dst = os.path.join(dstDir,os.path.basename(item))
+                #print "copying to: ", dst
+                self.__copytree__(item,dst)
+                
+    # overwrite shutil.move
+    def __move__(self,srcFile,dstFile):
+        shutil.move(srcFile,dstFile)
+
+    # Copy files and folders 
+    def __copy__(self,srcFile,dstFile):
+        
+        if(os.path.isfile(srcFile)):
+            shutil.copyfile(srcFile,dstFile)
+        elif(os.path.isdir(srcFile)):
+            self.__copytree__(srcFile,dstFile)
+        else:
+            print "Trying to copy: ",srcFile
+            print "       to ... : ",dstFile
+            raise ValueError("In __copy__ : {} was not found!".format(srcFile))
             
+    # Remove a named directory
+    def __remove__(self,folder):
+        try:
+            shutil.rmtree(folder)
+        except:
+            print "could not remove ", folder
+
     # Patch the file specified in 'filename' substituting the strings. THis
     # works like a 'sed'
-    def __patch__(self,pattern,replace,srcFileName) : 
+    def __patch__(self,pattern,replace,srcFileName, formatPattern=True) : 
 
+        # The pattern must be modified in order to be a correct regexp
+        # So ( must be substututed by \( and ) by \)
+        if formatPattern :
+            pattern= pattern.replace("(","\(")
+            pattern= pattern.replace(")","\)")
+        
         # open the srcFile
         fin = open(srcFileName, 'r')
 
@@ -396,8 +468,17 @@ class thirdPartyCompile(object):
         os.remove(srcFileName)
         os.rename(tmpFileName, srcFileName)
         
+    # Patch the file specified in 'filename' substituting the strings. This
+    # works like a 'sed'
+    def __append__(self,text,srcFileName) : 
+
+        # open the srcFile
+        fin = open(srcFileName, 'a')
+        fin.write(text)
+        fin.close()
+
     # Compile and run the test
-    def __makeTest__(self):
+    def __makeTest__(self, args=""):
           
         # Write a SConstruct 
         Sconstruct=open("SConstruct","w")
@@ -406,7 +487,8 @@ env = Environment()
 env.Append( CPPPATH=["{}"] )
 env.Append( LIBPATH=["{}"] )
 env.Append( LIBS={} )
-env.Program('{}_test', Glob('*.cpp') )        
+env.Append( CXXFLAGS="-std=c++11" )
+env.Program('{}_test', Glob('*.cpp') + Glob('*.qrc') )        
 '''.format(self.__buildInfo__["INCLUDEPATH"][0],
            self.__buildInfo__["LIBPATH"][0],
            self.__buildInfo__["LIBS"],
@@ -418,7 +500,10 @@ env.Program('{}_test', Glob('*.cpp') )
         self.__execute__("scons -Q")
         
         # Execute the example
-        self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./{}_test {}".format(self.__buildInfo__["LIBPATH"][0],self.__name__,os.getcwd()))        
+        if(args==""):
+            self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./{}_test {}".format(self.__buildInfo__["LIBPATH"][0],self.__name__,os.getcwd()))        
+        else:
+            self.__execute__("export DYLD_LIBRARY_PATH=\"{}\"; ./{}_test {}".format(self.__buildInfo__["LIBPATH"][0],self.__name__,args))        
 
     # We require the thirdPartyCompile to be instantiated with admin privileges (sudo). 
     # This allows for the flexibility in manipulating files and installs. 
@@ -435,5 +520,37 @@ env.Program('{}_test', Glob('*.cpp') )
                              'Please re-execute the command pre-pended by \"sudo\"\n'
                              '-----------------------------------------------------------------\n')
 
+    # Loop on the requirements and return the requirement by name
+    # throw if no requirement was found   
+    def __getReqByName__(self,reqName):
 
+        for iReq in self.__requirements__:
         
+            #print "=+ reqName= ",reqName," Attempting with requirement ", iReq.__name__
+            if iReq.__name__ == reqName:
+                return iReq
+
+            # Recurse on requirements
+            req = iReq.__getReqByName__(reqName)     
+            if isinstance(req, thirdPartyCompile):
+                return req
+
+        return "" 
+
+    def stringify(self,list,separator=":"):
+        
+        #print "List in stringify: ", list
+        ret=""
+        for iItem in list:  
+            ret += separator + iItem
+        return ret 
+    
+    # Given a list of paths, returns a rpath in the shape: 
+    # -Wl,-rpath,_LibPath1_,-rpath,_Libpath2_,-rpath,...
+    def makeRPath(self,libPathList):
+        
+        ret="-Wl"
+        rpath=",-rpath,"
+        for iPath in libPathList:
+            ret += rpath + iPath
+        return ret

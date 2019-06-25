@@ -1,7 +1,7 @@
-import thirdPartyCompile as tp
+import thirdPartyCompile
 
-from ipOptCompile import IpOptCompile 
-ipOpt= IpOptCompile()
+# from ipOptCompile import IpOptCompile 
+# ipOpt= IpOptCompile()
 # ipOpt.get()
  
 # from BoostCompile import BoostCompile 
@@ -11,7 +11,7 @@ ipOpt= IpOptCompile()
 # from CppUnitCompile import CppUnitCompile
 # cppUnit = CppUnitCompile()
 # cppUnit.get()
-# 
+
 # from EigenCompile import EigenCompile
 # eigen = EigenCompile()
 # eigen.get()
@@ -20,7 +20,15 @@ ipOpt= IpOptCompile()
 # nlOpt= NlOptCompile()
 # nlOpt.get()
 
-from QtCompile import QtCompile
-qt= QtCompile()
-#qt.get(False)
-#qt.__package__()
+# from QtCompile import QtCompile
+# qt= QtCompile()
+# qt.get()
+
+# from OpenCascadeCompile import OpenCascadeCompile
+# occ = OpenCascadeCompile()
+# occ.get()
+
+from OccQtCompile import OccQtCompile
+occqt = OccQtCompile()
+# occqt.get()
+occqt.__test__()
