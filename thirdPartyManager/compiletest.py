@@ -28,7 +28,11 @@ import thirdPartyCompile
 # occ = OpenCascadeCompile()
 # occ.get()
 
-from OccQtCompile import OccQtCompile
-occqt = OccQtCompile()
+#from OccQtCompile import OccQtCompile
+#occqt = OccQtCompile()
 # occqt.get()
-occqt.__test__()
+#occqt.__test__()
+
+from OpenNURBSCompile import OpenNURBSCompile
+onc = OpenNURBSCompile()
+onc.__test__()
