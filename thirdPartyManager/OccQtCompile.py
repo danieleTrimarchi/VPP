@@ -177,7 +177,7 @@ QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
         # Now apply the patch file occViewPatch.patch that is stored in 
         # the directory where this file (OccQtCompile) lives
         pathOfThisFile= os.path.dirname( os.path.realpath(__file__) )
-        patchFile= os.path.join( pathOfThisFile, "occViewPatch.patch")
+        patchFile= os.path.join( pathOfThisFile,"resources","occViewPatch.patch")
         
         print "Trying to patch using : ", patchFile
         patchtool = patch.fromfile(patchFile)
