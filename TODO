@@ -1,3 +1,9 @@
+1_ -> from the surface.3dm instantiate a surface in OpenNURBS : DONE
+2_ -> convert the surface to an OpenCascade object
+3_ -> visualize the surface in the OpenCascade test viz
+
+----------------------
+
 -> remove the use of install_name_tool where possible in favor of -Wl,-rpath,...
 
 -> I have templatized the settings items on the unit. This generates the huge list in SettingsItemBase::settingsItemFactory. Not good. The unit should be an attribute of the settingsItem. 

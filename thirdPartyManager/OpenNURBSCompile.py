@@ -101,434 +101,232 @@ class OpenNURBSCompile(thirdPartyCompile):
          # opennurbs source archive : example_read.cpp
          Source=open("main.cpp","w")
          Source.write('''
-/* $NoKeywords: $ */
-/*
-//
-// Copyright (c) 1993-2011 Robert McNeel & Associates. All rights reserved.
-// OpenNURBS, Rhinoceros, and Rhino3D are registered trademarks of Robert
-// McNeel & Assoicates.
-//
-// THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT EXPRESS OR IMPLIED WARRANTY.
-// ALL IMPLIED WARRANTIES OF FITNESS FOR ANY PARTICULAR PURPOSE AND OF
-// MERCHANTABILITY ARE HEREBY DISCLAIMED.
-//                
-// For complete openNURBS copyright information see <http://www.opennurbs.org>.
-//
-////////////////////////////////////////////////////////////////
-*/        
-
-////////////////////////////////////////////////////////////////
-//
-//  example_read.cpp  
+//  simplified version of : example_write.cpp / example_read.cpp
 // 
-//  Example program using the Rhino file IO toolkit.  The program reads in  
-//  a Rhino 3dm model file and describes its contents.  The program is a 
-//  console application that takes a filename as a command line argument.
-//
-////////////////////////////////////////////////////////////////////////
+//  Example program using the Rhino file IO toolkit.  The program writes
+//     and reads back in a simple .3dm file with a NURBS surface
 
 #include "opennurbs_public_examples.h"
-
 #include "example_ud.h"
+#include <iostream>
 
-static bool Dump3dmFileHelper( 
-        const wchar_t* sFileName, // full name of file
-        ON_TextLog& dump
-        )
+#define INTERNAL_INITIALIZE_MODEL(model) Internal_SetExampleModelProperties(model,OPENNURBS__FUNCTION__,__FILE__)
+
+
+static void Internal_SetExampleModelProperties(
+        ONX_Model& model,
+        const char* function_name,
+        const char* source_file_name
+)
 {
-  dump.Print("====== FILENAME: %ls\\n",sFileName);
-  ON_Workspace ws;
-  FILE* fp = ws.OpenFile( sFileName, L"rb" ); // file automatically closed by ~ON_Workspace()
-  if ( !fp ) {
-    dump.Print("**ERROR** Unable to open file.\\n");
-    return false;
-  }
+    const bool bHaveFunctionName = (nullptr != function_name && 0 != function_name[0]);
+    if ( !bHaveFunctionName )
+        function_name = "";
 
-  ON_BinaryFile file( ON::archive_mode::read3dm, fp );
+    const bool bHaveFileName = (nullptr != source_file_name && 0 != source_file_name[0]);
+    if (!bHaveFileName)
+        source_file_name = "";
 
-  int version = 0;
-  ON_String comment_block;
-  bool rc = file.Read3dmStartSection( &version, comment_block );
-  if (!rc) {
-    dump.Print("**ERROR** Read3dmStartSection() failed\\n");
-    return false;
-  }
-  dump.Print("====== VERSION: %d\\n",version );
-  dump.Print("====== COMMENT BLOCK:\\n",version );
-  dump.PushIndent();
-  dump.Print(comment_block);
-  dump.PopIndent();
-  dump.Print("====== CHUNKS:\\n",version );
-  unsigned int typecode;
-  while ( !file.AtEnd() ) {
-    typecode = file.Dump3dmChunk( dump, 0 );
-    if ( !typecode )
-      break;
-    if ( typecode == TCODE_ENDOFFILE )
-      break;
-  }
-  dump.Print("====== FINISHED: %ls\\n",sFileName);
+    model.m_sStartSectionComments = "This was file created by OpenNURBS toolkit example code.";
 
-  return true;
+    // set application information
+    const ON_wString wide_function_name(function_name);
+    const ON_wString wide_source_file_name(source_file_name);
+    model.m_properties.m_Application.m_application_name
+    = bHaveFunctionName
+    ? ON_wString::FormatToString(L"OpenNURBS toolkit Example: %ls() function", static_cast<const wchar_t*>(wide_function_name))
+    : ON_wString(L"OpenNURBS Examples");
+
+    model.m_properties.m_Application.m_application_URL = L"http://www.opennurbs.org";
+    model.m_properties.m_Application.m_application_details
+    = bHaveFileName
+    ? ON_wString::FormatToString(L"Opennurbs examples are in the file %ls.", static_cast<const wchar_t*>(wide_source_file_name))
+    : ON_wString::FormatToString(L"Opennurbs examples are example_*.cpp files.");
+
+    // some notes
+    if (bHaveFunctionName && bHaveFileName)
+    {
+        model.m_properties.m_Notes.m_notes
+        = ON_wString::FormatToString(
+                L"This .3dm file was made with the OpenNURBS toolkit example function %s() defined in source code file %ls.",
+                static_cast<const wchar_t*>(wide_function_name),
+                static_cast<const wchar_t*>(wide_source_file_name));
+        model.m_properties.m_Notes.m_bVisible = model.m_properties.m_Notes.m_notes.IsNotEmpty();
+    }
+
+    // set revision history information
+    model.m_properties.m_RevisionHistory.NewRevision();
 }
 
-/*
-Returns:
-  True if .3dm file was successfully read into an ONX_Model class.
-*/
-static bool ReadFileHelper( 
-  const wchar_t* sFileName,
-  bool bVerboseTextDump,
-  bool bChunkDump,
-  ON_TextLog& dump
-  )
-{
-  if ( bChunkDump )
-  {
-    return Dump3dmFileHelper(sFileName,dump);
-  }
+static bool Internal_WriteExampleModel(
+        const ONX_Model& model,
+        const wchar_t* filename,
+        ON_TextLog& error_log ) {
 
-  ONX_Model model;
+    int version = 0;
 
-  dump.Print("\\nOpenNURBS Archive File:  %ls\\n", sFileName );
+    // writes model to archive
+    return model.Write( filename, version, &error_log );
+}
 
-  // open file containing opennurbs archive
-  FILE* archive_fp = ON::OpenFile( sFileName, L"rb");
-  if ( !archive_fp ) 
-  {
-    dump.Print("  Unable to open file.\\n" );
-    return false;
-  }
+// This comes from example_write.cpp : write_surfaces_example
+bool write(const ON_wString& fileName) {
 
-  dump.PushIndent();
+    ONX_Model model;
+    INTERNAL_INITIALIZE_MODEL(model);
 
-  // create achive object from file pointer
-  ON_BinaryFile archive( ON::archive_mode::read3dm, archive_fp );
+    // The code between the comment bands has nothing to do with I/O.
+    // It is simply an easy way to get a NURBS surface to write.
+    const int bIsRational = false;
+    const int dim = 3;
+    const int u_degree = 2;
+    const int v_degree = 3;
+    const int u_cv_count = 3;
+    const int v_cv_count = 5;
 
-  // read the contents of the file into "model"
-  bool rc = model.Read( archive, &dump );
+    // The knot vectors do NOT have the 2 superfluous knots
+    // at the start and end of the knot vector.  If you are
+    // coming from a system that has the 2 superfluous knots,
+    // just ignore them when writing a 3dm file.
+    double u_knot[ u_cv_count + u_degree - 1 ];
+    double v_knot[ v_cv_count + v_degree - 1 ];
 
-  // close the file
-  ON::CloseFile( archive_fp );
+    // make up a quadratic knot vector with no interior knots
+    u_knot[0] = u_knot[1] = 0.0;
+    u_knot[2] = u_knot[3] = 1.0;
 
-  // print diagnostic
-  if ( rc )
-    dump.Print("Successfully read.\\n");
-  else
-    dump.Print("Errors during reading.\\n");
+    // make up a cubic knot vector with one simple interior knot
+    v_knot[0] = v_knot[1] = v_knot[2] = 0.0;
+    v_knot[3] = 1.5;
+    v_knot[4] = v_knot[5] = v_knot[6] = 2.0;
 
-  // create a text dump of the model
-  if ( bVerboseTextDump )
-  {
+    // Rational control points can be in either homogeneous
+    // or euclidean form. Non-rational control points do not
+    // need to specify a weight.
+    ON_3dPoint CV[u_cv_count][v_cv_count];
+
+    int i, j;
+    for ( i = 0; i < u_cv_count; i++ ) {
+        for ( j = 0; j < v_cv_count; j++ ) {
+            CV[i][j].x = i;
+            CV[i][j].y = j;
+            CV[i][j].z = i-j;
+        }
+    }
+
+    // write a line on the default layer
+    ON_NurbsSurface nurbs_surface( dim, bIsRational,
+            u_degree+1, v_degree+1,
+            u_cv_count, v_cv_count );
+
+    for ( i = 0; i < nurbs_surface.KnotCount(0); i++ )
+        nurbs_surface.SetKnot( 0, i, u_knot[i] );
+
+    for ( j = 0; j < nurbs_surface.KnotCount(1); j++ )
+        nurbs_surface.SetKnot( 1, j, v_knot[j] );
+
+    for ( i = 0; i < nurbs_surface.CVCount(0); i++ ) {
+        for ( j = 0; j < nurbs_surface.CVCount(1); j++ ) {
+            nurbs_surface.SetCV( i, j, CV[i][j] );
+        }
+    }
+
+    model.AddModelGeometryComponent(&nurbs_surface, nullptr);
+    //   model.AddDefaultLayer(L"NURBS surface", ON_Color::UnsetColor);
+
+    // errors printed to stdout
+    ON_TextLog error_log;
+
+    return Internal_WriteExampleModel(model, fileName, error_log);
+}
+
+void read(const ON_wString& fileName) {
+
+    // Default dump is to stdout
+    ON_TextLog dump;
+    dump.SetIndentSize(2);
+
+    // Placeholder for the model to be read
+    ONX_Model model;
+
+    dump.Print("\\nOpenNURBS Archive File:  %s ", &fileName );
+
+    // File to be read
+    FILE* archive_fp = ON::OpenFile( fileName, L"rb");
+    if ( !archive_fp )
+    {
+        dump.Print("  Unable to open file.\\n" );
+    }
+
+    // create achive object from file pointer
+    ON_BinaryFile archive( ON::archive_mode::read3dm, archive_fp );
+
+    // read the contents of the file into "model"
+    bool rc = model.Read( archive, &dump );
+
+    // close the file
+    ON::CloseFile( archive_fp );
+
+    // print diagnostic
+    if ( rc )
+        dump.Print("Successfully read.\\n");
+    else
+        dump.Print("Errors during reading.\\n");
+
+    // Try getting the surface from the file
+    //    ON_NurbsSurface surf = model.
+
+    // Iterate on the geom entities of this file
+    // See https://developer.rhino3d.com/guides/opennurbs/reading-render-meshes/
+    ONX_ModelComponentIterator it(model, ON_ModelComponent::Type::ModelGeometry);
+    const ON_ModelComponent* model_component = nullptr;
+    for (model_component = it.FirstComponent(); nullptr != model_component; model_component = it.NextComponent()) {
+        const ON_ModelGeometryComponent* model_geometry = ON_ModelGeometryComponent::Cast(model_component);
+        if(nullptr != model_geometry ){
+            std::cout<<"-->> Model Component Name= "<<model_geometry->Name()<<std::endl;
+
+            const ON_NurbsSurface* surf = ON_NurbsSurface::Cast(model_geometry->Geometry(nullptr));
+            if (nullptr != surf)
+            {
+                std::cout<<"Found NURBS surface of dimension : "<< surf->Dimension()<<std::endl;
+                std::cout<<"Found NURBS surface of u degree : "<< surf->Degree(0)<<std::endl;
+                std::cout<<"Found NURBS surface of v degree : "<< surf->Degree(1)<<std::endl;
+                std::cout<<"Found NURBS u knots : "<< surf->KnotCount(0)<<std::endl;
+                std::cout<<"Found NURBS v knots : "<< surf->KnotCount(1)<<std::endl;
+                std::cout<<"u knots values: "<<std::endl;
+                for(int iKnot=0; iKnot<surf->KnotCount(0); iKnot++)
+                    std::cout<<surf->Knot(0,iKnot)<<std::endl;
+                std::cout<<"v knots values: "<<std::endl;
+                for(int jKnot=0; jKnot<surf->KnotCount(1); jKnot++)
+                    std::cout<<surf->Knot(1,jKnot)<<std::endl;
+                // Rational control points...
+                std::cout<<"Rational control pts: "<<std::endl;
+                for(int i=0; i<surf->CVCount(0); i++)
+                    for(int j=0; j<surf->CVCount(1); j++)
+                        std::cout<<surf->CV(i,j)[0]<<" "<<surf->CV(i,j)[1]<<" "<<surf->CV(i,j)[2]<<std::endl;
+            }
+
+        }
+    }
+
+    // create a text dump of the model
     dump.PushIndent();
     model.Dump(dump);
     dump.PopIndent();
-  }
-
-  dump.PopIndent();
-
-  return rc;
+    dump.PopIndent();
 }
 
-/*
-Returns:
-  Number of files read.
-*/
-static int ReadDirectoryHelper( 
-  int directory_depth,
-  int maximum_directory_depth,
-  const wchar_t* directory_name,
-  const wchar_t* file_name_filter,
-  bool bVerboseTextDump,
-  bool bChunkDump,
-  ON_TextLog& dump
-  )
-{
-  int file_count = 0;
-  if ( directory_depth <= maximum_directory_depth )
-  {
-    if ( 0 == file_name_filter || 0 == file_name_filter[0] )
-      file_name_filter = L"*.3dm";
+int main( int argc, const char *argv[] ) {
 
-    // read files in this directory
-    ON_FileIterator file_it;
-    bool bFoundDirectory = false;
-    for ( bool bHaveFileSystemItem = (file_it.Initialize( directory_name, file_name_filter ) && file_it.FirstItem());
-          bHaveFileSystemItem;
-          bHaveFileSystemItem = file_it.NextItem()
-        )
-    {
-      if (file_it.CurrentItemIsDirectory())
-      {
-        bFoundDirectory = true;
-        continue;
-      }
+    // Set the fileName to be used for I/O
+    ON_wString fileName("my_surfaces_fromCode.3dm");
 
-      if ( false == file_it.CurrentItemIsFile() )
-        continue;      
-      
-      if ( file_it.CurrentItemIsHidden() )
-        continue;
+    write(fileName);
 
-      ON_wString full_path(file_it.CurrentItemFullPathName());
-      if ( full_path.IsEmpty() )
-        continue;
-      
-      if ( !ON::IsOpenNURBSFile(full_path) )
-        continue;
-
-      if ( ReadFileHelper(full_path,bVerboseTextDump,bChunkDump,dump) )
-        file_count++;
-    }
-
-    // read files in subdirectories
-    if ( bFoundDirectory && directory_depth < maximum_directory_depth )
-    {
-      ON_FileIterator dir_it;
-      for ( bool bHaveFileSystemItem = (dir_it.Initialize( directory_name, nullptr ) && dir_it.FirstItem());
-            bHaveFileSystemItem;
-            bHaveFileSystemItem = dir_it.NextItem()
-          )
-      {
-        if ( false == dir_it.CurrentItemIsDirectory() )
-          continue;
-
-        if ( dir_it.CurrentItemIsHidden() )
-          continue;
-
-        ON_wString full_path(dir_it.CurrentItemFullPathName());
-        if ( full_path.IsEmpty() )
-          continue;
-      
-        file_count += ReadDirectoryHelper(
-                            directory_depth + 1,
-                            maximum_directory_depth,
-                            full_path,
-                            file_name_filter,
-                            bVerboseTextDump,
-                            bChunkDump,
-                            dump
-                            );
-      }
-    }
-  }
-
-  return file_count;
-}
+    read(fileName);
 
 
-static void print_help(const char* example_read_exe_name)
-{
-  if ( 0 == example_read_exe_name || 0 == example_read_exe_name[0])
-    example_read_exe_name = "example_read";
-
-  printf("\\n");
-  printf("SYNOPSIS:\\n");
-  printf("  %s [-out:outputfilename.txt] [-c] [-r] <file or directory names>\\n",example_read_exe_name );
-  printf("\\n");
-  printf("DESCRIPTION:\\n");
-  printf("  If a file is listed, it is read as an opennurbs model file.\\n");
-  printf("  If a directory is listed, all .3dm files in that directory\\n");
-  printf("  are read as opennurbs model files.\\n");
-  printf("\\n");
-  printf("  Available options:\\n");
-  printf("    -out:outputfilename.txt\\n");
-  printf("      The output is written to the named file.\\n");
-  printf("    -chunkdump\\n");
-  printf("      Does a chunk dump instead of reading the file's contents.\\n");
-  printf("    -recursive\\n");
-  printf("      Recursivly reads files in subdirectories.\\n");
-  printf("\\n");
-  printf("EXAMPLE:\\n");
-  printf("  %s -out:list.txt -resursive .../example_files\\n",example_read_exe_name);
-  printf("  with read all the opennurbs .3dm files in the\\n"); 
-  printf("  example_files/ directory and subdirectories.\\n");
-}
-
-
-#if defined(ON_COMPILER_MSC)
-
-// When you run a C program, you can use either of the two wildcards
-// the question mark (?) and the asterisk (*) to specify filename
-// and path arguments on the command line.
-// By default, wildcards are not expanded in command-line arguments. 
-// You can replace the normal argument vector argv loading routine with 
-// a version that does expand wildcards by linking with the setargv.obj or wsetargv.obj file. 
-// If your program uses a main function, link with setargv.obj. 
-// If your program uses a wmain function, link with wsetargv.obj. 
-// Both of these have equivalent behavior.
-// To link with setargv.obj or wsetargv.obj, use the /link option. 
-//
-// For example:
-// cl example.c /link setargv.obj
-// The wildcards are expanded in the same manner as operating system commands.
-// (See your operating system user's guide if you are unfamiliar with wildcards.)
-
-// example_read.vcxproj linkin options include setargv.obj.
-
-#endif
-
-int main( int argc, const char *argv[] )
-{
-  // If you are using OpenNURBS as a Windows DLL, then you MUST use
-  // ON::OpenFile() to open the file.  If you are not using OpenNURBS
-  // as a Windows DLL, then you may use either ON::OpenFile() or fopen()
-  // to open the file.
-
-  const char* example_read_exe_name = 0;
-  if ( argc >= 1 && 0 != argv && 0 != argv[0] && 0 != argv[0][0] )
-  {
-    on_splitpath(
-      argv[0],
-      nullptr, // drive
-      nullptr, // director,
-      &example_read_exe_name,
-      nullptr // extension
-      );
-  }
-
-  if ( 0 == example_read_exe_name || 0 == example_read_exe_name[0] )
-  {
-#if defined(ON_OS_WINDOWS)
-    example_read_exe_name = "example_read.exe";
-#else
-    example_read_exe_name = "example_read";
-#endif
-  }
-
-  int argi;
-  if ( argc < 2 ) 
-  {
-    print_help(example_read_exe_name);
     return 0;
-  }
-
-  // Call once in your application to initialze opennurbs library
-  ON::Begin();
-
-  // default dump is to stdout
-  ON_TextLog dump_to_stdout;
-  dump_to_stdout.SetIndentSize(2);
-  ON_TextLog* dump = &dump_to_stdout;
-  FILE* dump_fp = 0;
-  
-  bool bVerboseTextDump = true;
-
-  bool bChunkDump = false;
-
-
-  int maximum_directory_depth = 0;
-
-  int file_count = 0;
-
-  for ( argi = 1; argi < argc; argi++ ) 
-  {
-    const char* arg = argv[argi];
-
-    // check for -out or /out option
-    if ( (    0 == strncmp(arg,"-out:",5) || 0 == strncmp(arg,"-out:",5)
-#if defined(ON_OS_WINDOWS)
-           || 0 == strncmp(arg,"/out:",5) 
-#endif
-         ) 
-         && arg[5] )
-    {
-      // change destination of dump file
-      if ( dump != &dump_to_stdout )
-      {
-        delete dump;
-        dump = 0;
-      }
-      if ( dump_fp )
-      {
-        ON::CloseFile(dump_fp);
-      }
-
-      const ON_wString sDumpFilename = ON_FileSystemPath::ExpandUser(arg + 5);
-      FILE* text_fp = ON::OpenFile(sDumpFilename,L"w");
-      if ( text_fp )
-      {
-        dump_fp = text_fp;
-        dump = new ON_TextLog(dump_fp);
-        dump->SetIndentSize(2);
-      }
-
-      if ( 0 == dump )
-        dump = &dump_to_stdout;
-
-      continue;
-    }
-
-    // check for -chunkdump or /chunkdump option
-    if (    0 == strcmp(arg,"-C") 
-         || 0 == strcmp(arg,"-c") 
-         || 0 == strcmp(arg,"-chunk") 
-         || 0 == strcmp(arg,"-chunkdump") 
-#if defined(ON_OS_WINDOWS)
-         || 0 == strcmp(arg,"/C") 
-         || 0 == strcmp(arg,"/c") 
-         || 0 == strcmp(arg,"/chunk") 
-         || 0 == strcmp(arg,"/chunkdump") 
-#endif
-         )
-    {
-      bChunkDump = true;
-      continue;
-    }
-
-    // check for -recursive or /recursive option
-    if (    0 == strcmp(arg,"-R") 
-         || 0 == strcmp(arg,"-r") 
-         || 0 == strcmp(arg,"-recurse") 
-         || 0 == strcmp(arg,"-recursive") 
-#if defined(ON_OS_WINDOWS)
-         || 0 == strcmp(arg,"/R") 
-         || 0 == strcmp(arg,"/r") 
-         || 0 == strcmp(arg,"/recurse") 
-         || 0 == strcmp(arg,"/recursive") 
-#endif
-         )
-    {
-      maximum_directory_depth = 32;
-      continue;
-    }
-
-    ON_wString ws_arg = ON_FileSystemPath::ExpandUser(arg);
-    const wchar_t* wchar_arg = ws_arg;
-
-    if ( ON::IsDirectory(wchar_arg) )
-    {
-      file_count += ReadDirectoryHelper( 0, maximum_directory_depth, wchar_arg, 0, bVerboseTextDump, bChunkDump, *dump );
-    }
-    else
-    {
-      if ( ReadFileHelper( wchar_arg, bVerboseTextDump, bChunkDump, *dump ) )
-        file_count++;
-    }    
-
-  }
-
-  dump->Print("%s read %d opennurbs model files.\\n",example_read_exe_name,file_count);
-  if ( dump != &dump_to_stdout )
-  {
-    delete dump;
-    dump = 0;
-  }
-
-  if ( dump_fp )
-  {
-    // close the text dump file
-    ON::CloseFile( dump_fp );
-    dump_fp = 0;
-  }
-  
-  // OPTIONAL: Call just before your application exits to clean
-  //           up opennurbs class definition information.
-  //           Opennurbs will not work correctly after ON::End()
-  //           is called.
-  ON::End();
-
-  return 0;
 }
 ''')
          Source.close()
