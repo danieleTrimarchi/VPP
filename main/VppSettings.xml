@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE vppSettings>
+<vppSettings version="1.0">
+    <vppSettingTree>
+        <Item Expanded="yes" InternalName="/" DisplayName="Name" VariableName="" ClassName="SettingsItemRoot" Unit="">
+            <Item Expanded="no" InternalName="/.VPP_Settings" DisplayName="VPP Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+                <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds" DisplayName="Velocity bounds" VariableName="" ClassName="SettingsItemBounds" Unit="m/s">
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.Velocity_bounds_min" DisplayName="Velocity bounds_min" VariableName="V_MIN" ClassName="SettingsItem" Value="0" Unit="m/s" ToolTip="min value"/>
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Velocity_bounds.Velocity_bounds_max" DisplayName="Velocity bounds_max" VariableName="V_MAX" ClassName="SettingsItem" Value="15" Unit="m/s" ToolTip="max value"/>
+                </Item>
+                <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds" DisplayName="Heel angle bounds" VariableName="" ClassName="SettingsItemBounds" Unit="deg">
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds.Heel_angle_bounds_min" DisplayName="Heel angle bounds_min" VariableName="PHI_MIN" ClassName="SettingsItem" Value="-1e-5" Unit="deg" ToolTip="min value"/>
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Heel_angle_bounds.Heel_angle_bounds_max" DisplayName="Heel angle bounds_max" VariableName="PHI_MAX" ClassName="SettingsItem" Value="85" Unit="deg" ToolTip="max value"/>
+                </Item>
+                <Item Expanded="no" InternalName="/.VPP_Settings.Crew_position_bounds" DisplayName="Crew position bounds" VariableName="" ClassName="SettingsItemBounds" Unit="m">
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Crew_position_bounds.Crew_position_bounds_min" DisplayName="Crew position bounds_min" VariableName="B_MIN" ClassName="SettingsItem" Value="0" Unit="m" ToolTip="min value"/>
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Crew_position_bounds.Crew_position_bounds_max" DisplayName="Crew position bounds_max" VariableName="B_MAX" ClassName="SettingsItem" Value="3" Unit="m" ToolTip="max value"/>
+                </Item>
+                <Item Expanded="no" InternalName="/.VPP_Settings.Flat_bounds" DisplayName="Flat bounds" VariableName="" ClassName="SettingsItemBounds" Unit="">
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Flat_bounds.Flat_bounds_min" DisplayName="Flat bounds_min" VariableName="F_MIN" ClassName="SettingsItem" Value="0.4" Unit="" ToolTip="min value"/>
+                    <Item Expanded="no" InternalName="/.VPP_Settings.Flat_bounds.Flat_bounds_max" DisplayName="Flat bounds_max" VariableName="F_MAX" ClassName="SettingsItem" Value="1" Unit="" ToolTip="max value"/>
+                </Item>
+            </Item>
+            <Item Expanded="no" InternalName="/.Wind_Settings" DisplayName="Wind Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+                <Item Expanded="no" InternalName="/.Wind_Settings.Wind_speed_bounds" DisplayName="Wind speed bounds" VariableName="" ClassName="SettingsItemBounds" Unit="m/s">
+                    <Item Expanded="no" InternalName="/.Wind_Settings.Wind_speed_bounds.Wind_speed_bounds_min" DisplayName="Wind speed bounds_min" VariableName="VTW_MIN" ClassName="SettingsItem" Value="2" Unit="m/s" ToolTip="min value"/>
+                    <Item Expanded="no" InternalName="/.Wind_Settings.Wind_speed_bounds.Wind_speed_bounds_max" DisplayName="Wind speed bounds_max" VariableName="VTW_MAX" ClassName="SettingsItem" Value="6" Unit="m/s" ToolTip="max value"/>
+                </Item>
+                <Item Expanded="no" InternalName="/.Wind_Settings.n_twv" DisplayName="n_twv" VariableName="NTW" ClassName="SettingsItemInt" Value="5" Unit="" ToolTip="Number of wind speed points"/>
+                <Item Expanded="no" InternalName="/.Wind_Settings.Wind_angle_bounds" DisplayName="Wind angle bounds" VariableName="" ClassName="SettingsItemBounds" Unit="deg">
+                    <Item Expanded="no" InternalName="/.Wind_Settings.Wind_angle_bounds.Wind_angle_bounds_min" DisplayName="Wind angle bounds_min" VariableName="TWA_MIN" ClassName="SettingsItem" Value="35" Unit="deg" ToolTip="min value"/>
+                    <Item Expanded="no" InternalName="/.Wind_Settings.Wind_angle_bounds.Wind_angle_bounds_max" DisplayName="Wind angle bounds_max" VariableName="TWA_MAX" ClassName="SettingsItem" Value="179" Unit="deg" ToolTip="max value"/>
+                </Item>
+                <Item Expanded="no" InternalName="/.Wind_Settings.n_alpha_tw" DisplayName="n_alpha_tw" VariableName="N_TWA" ClassName="SettingsItemInt" Value="10" Unit="" ToolTip="Number of wind speed points"/>
+            </Item>
+            <Item Expanded="no" InternalName="/.Hull_Settings" DisplayName="Hull Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+                <Item Expanded="no" InternalName="/.Hull_Settings.LWL" DisplayName="LWL" VariableName="LWL" ClassName="SettingsItem" Value="6.096" Unit="m" ToolTip="Design waterline length"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.BWL" DisplayName="BWL" VariableName="BWL" ClassName="SettingsItem" Value="1.737" Unit="m" ToolTip="Design waterline beam"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.B" DisplayName="B" VariableName="B" ClassName="SettingsItem" Value="2.591" Unit="m" ToolTip="Design maximum beam"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.T" DisplayName="T" VariableName="T" ClassName="SettingsItem" Value="1.372" Unit="m" ToolTip="Total draft"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.DIVCAN" DisplayName="DIVCAN" VariableName="DIVCAN" ClassName="SettingsItem" Value="1.549" Unit="m^3" ToolTip="Displaced volume of canoe body"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.AVGFREB" DisplayName="AVGFREB" VariableName="AVGFREB" ClassName="SettingsItem" Value="0.853" Unit="m" ToolTip="Average freeboard"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.XFB" DisplayName="XFB" VariableName="XFB" ClassName="SettingsItem" Value="3.483" Unit="m" ToolTip="Longitudinal center of buoyancy LCB from fpp"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.XFF" DisplayName="XFF" VariableName="XFF" ClassName="SettingsItem" Value="3.483" Unit="m" ToolTip="Longitudinal center of flotation LCF from fpp"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.CPL" DisplayName="CPL" VariableName="CPL" ClassName="SettingsItem" Value="0.55" Unit="" ToolTip="Longitudinal prismatic coefficient"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.HULLFF" DisplayName="HULLFF" VariableName="HULLFF" ClassName="SettingsItem" Value="1" Unit="" ToolTip="Hull form factor"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.AW" DisplayName="AW" VariableName="AW" ClassName="SettingsItem" Value="6.503" Unit="m^2" ToolTip="Design waterplane area"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.SC" DisplayName="SC" VariableName="SC" ClassName="SettingsItem" Value="7.432" Unit="m^2" ToolTip="Wetted surface area of canoe body"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.CMS" DisplayName="CMS" VariableName="CMS" ClassName="SettingsItem" Value="0.710" Unit="" ToolTip="Midship section coefficient"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.TCAN" DisplayName="TCAN" VariableName="TCAN" ClassName="SettingsItem" Value="0.305" Unit="m" ToolTip="Draft of canoe body"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.ALT" DisplayName="ALT" VariableName="ALT" ClassName="SettingsItem" Value="5.528" Unit="m^2" ToolTip="Total lateral area of yacht"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.KG" DisplayName="KG" VariableName="KG" ClassName="SettingsItem" Value="0.305" Unit="m" ToolTip="Center of gravity above moulded base or keel"/>
+                <Item Expanded="no" InternalName="/.Hull_Settings.KM" DisplayName="KM" VariableName="KM" ClassName="SettingsItem" Value="2.511" Unit="m" ToolTip="Transverse metacentre above moulded base or keel"/>
+            </Item>
+            <Item Expanded="no" InternalName="/.Crew_Settings" DisplayName="Crew Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+                <Item Expanded="no" InternalName="/.Crew_Settings.MMVBLCRW" DisplayName="MMVBLCRW" VariableName="MMVBLCRW" ClassName="SettingsItem" Value="228" Unit="Kg" ToolTip="Movable Crew Mass"/>
+            </Item>
+            <Item Expanded="no" InternalName="/.Keel_Settings" DisplayName="Keel Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+                <Item Expanded="no" InternalName="/.Keel_Settings.DVK" DisplayName="DVK" VariableName="DVK" ClassName="SettingsItem" Value="0.046" Unit="m^3" ToolTip="Displaced volume of keel"/>
+                <Item Expanded="no" InternalName="/.Keel_Settings.APK" DisplayName="APK" VariableName="APK" ClassName="SettingsItem" Value="1.007" Unit="m^2" ToolTip="Keel planform area"/>
+                <Item Expanded="no" InternalName="/.Keel_Settings.ASK" DisplayName="ASK" VariableName="ASK" ClassName="SettingsItem" Value="0.850" Unit="m^2" ToolTip="Keel Aspect Ratio"/>
+                <Item Expanded="no" InternalName="/.Keel_Settings.SK" DisplayName="SK" VariableName="SK" ClassName="SettingsItem" Value="2.014" Unit="m^2" ToolTip="Keel Wetted Surface"/>
+                <Item Expanded="no" InternalName="/.Keel_Settings.ZCBK" DisplayName="ZCBK" VariableName="ZCBK" ClassName="SettingsItem" Value="0.653" Unit="m" ToolTip="Keel Vertical Center of Buoyancy"/>
+                <Item Expanded="no" InternalName="/.Keel_Settings.CHMEK" DisplayName="CHMEK" VariableName="CHMEK" ClassName="SettingsItem" Value="0.925" Unit="m" ToolTip="Mean chord length"/>
+                <Item Expanded="no" InternalName="/.Keel_Settings.CHRTK" DisplayName="CHRTK" VariableName="CHRTK" ClassName="SettingsItem" Value="1.197" Unit="m" ToolTip="Root chord length"/>
+                <Item Expanded="no" InternalName="/.Keel_Settings.CHTPK" DisplayName="CHTPK" VariableName="CHTPK" ClassName="SettingsItem" Value="0.653" Unit="m" ToolTip="Tip chord length"/>
+                <Item Expanded="no" InternalName="/.Keel_Settings.KEELFF" DisplayName="KEELFF" VariableName="KEELFF" ClassName="SettingsItem" Value="1" Unit="m" ToolTip="Keel's form factor"/>
+                <Item Expanded="no" InternalName="/.Keel_Settings.DELTTK" DisplayName="DELTTK" VariableName="DELTTK" ClassName="SettingsItem" Value="0" Unit="" ToolTip="Mean thickness ratio of keel section"/>
+                <Item Expanded="no" InternalName="/.Keel_Settings.TAK" DisplayName="TAK" VariableName="TAK" ClassName="SettingsItem" Value="0.545" Unit="" ToolTip="Taper ratio of keel (CHRTK/CHTPK)"/>
+            </Item>
+            <Item Expanded="no" InternalName="/.Rudder_Settings" DisplayName="Rudder Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+                <Item Expanded="no" InternalName="/.Rudder_Settings.DVR" DisplayName="DVR" VariableName="DVR" ClassName="SettingsItem" Value="0" Unit="m^3" ToolTip="Rudder displaced volume"/>
+                <Item Expanded="no" InternalName="/.Rudder_Settings.APR" DisplayName="APR" VariableName="APR" ClassName="SettingsItem" Value="0.480" Unit="m^2" ToolTip="Rudder planform area"/>
+                <Item Expanded="no" InternalName="/.Rudder_Settings.SR" DisplayName="SR" VariableName="SR" ClassName="SettingsItem" Value="0.960" Unit="m^2" ToolTip="Rudder wetted surface"/>
+                <Item Expanded="no" InternalName="/.Rudder_Settings.CHMER" DisplayName="CHMER" VariableName="CHMER" ClassName="SettingsItem" Value="0.490" Unit="m" ToolTip="Mean chord length"/>
+                <Item Expanded="no" InternalName="/.Rudder_Settings.CHRTR" DisplayName="CHRTR" VariableName="CHRTR" ClassName="SettingsItem" Value="0.544" Unit="m" ToolTip="Root chord length"/>
+                <Item Expanded="no" InternalName="/.Rudder_Settings.CHTPR" DisplayName="CHTPR" VariableName="CHTPR" ClassName="SettingsItem" Value="0.435" Unit="m" ToolTip="Tip chord length"/>
+                <Item Expanded="no" InternalName="/.Rudder_Settings.DELTTR" DisplayName="DELTTR" VariableName="DELTTR" ClassName="SettingsItem" Value="0" Unit="m" ToolTip="Mean thickness ratio of rudder section"/>
+                <Item Expanded="no" InternalName="/.Rudder_Settings.RUDDFF" DisplayName="RUDDFF" VariableName="RUDDFF" ClassName="SettingsItem" Value="1" Unit="" ToolTip="Rudder form factor"/>
+            </Item>
+            <Item Expanded="no" InternalName="/.Sail_Settings" DisplayName="Sail Settings" VariableName="" ClassName="SettingsItemGroup" Unit="">
+                <Item Expanded="no" InternalName="/.Sail_Settings.P" DisplayName="P" VariableName="P" ClassName="SettingsItem" Value="8.900" Unit="m" ToolTip="Main height"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.E" DisplayName="E" VariableName="E" ClassName="SettingsItem" Value="4.084" Unit="m" ToolTip="Main base"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.MROACH" DisplayName="MROACH" VariableName="MROACH" ClassName="SettingsItem" Value="1.3" Unit="" ToolTip="Correction for mainsail roach"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.BAD" DisplayName="BAD" VariableName="BAD" ClassName="SettingsItem" Value="0.610" Unit="m" ToolTip="Boom height above deck"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.I" DisplayName="I" VariableName="I" ClassName="SettingsItem" Value="8.626" Unit="m" ToolTip="Fore Triangle height"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.J" DisplayName="J" VariableName="J" ClassName="SettingsItem" Value="1.890" Unit="m" ToolTip="Fore Triangle base"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.LPG" DisplayName="LPG" VariableName="LPG" ClassName="SettingsItem" Value="4.115" Unit="m" ToolTip="Perpendicular of longest jib"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.SL" DisplayName="SL" VariableName="SL" ClassName="SettingsItem" Value="8.077" Unit="m" ToolTip="Spinnaker length"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.EHM" DisplayName="EHM" VariableName="EHM" ClassName="SettingsItem" Value="9.754" Unit="m" ToolTip="Mast height above deck"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.EMDC" DisplayName="EMDC" VariableName="EMDC" ClassName="SettingsItem" Value="0.254" Unit="m" ToolTip="Mast average diameter"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.MainBattens" DisplayName="MainBattens" VariableName="MFLB" ClassName="SettingsItemComboBox" numOpts="2" Option0="Standard battens" Option1="Full battens" ActiveIndex="0" Unit="" ToolTip="Battens configuration"/>
+                <Item Expanded="no" InternalName="/.Sail_Settings.SailSet" DisplayName="SailSet" VariableName="SAILSET" ClassName="SettingsItemComboBox" numOpts="4" Option0="Main only" Option1="Main and jib" Option2="Main and spinnaker" Option3="Main, jib and spinnaker" ActiveIndex="1" Unit="" ToolTip="Sail configuration"/>
+            </Item>
+        </Item>
+    </vppSettingTree>
+    <vppGeneralSettings>
+        <Item Solver="ipOpt" ActiveIndex="1"/>
+    </vppGeneralSettings>
+</vppSettings>

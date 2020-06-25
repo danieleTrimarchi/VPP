@@ -1,0 +1,14 @@
+prefix=$QTROOT$
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 Designer
+Description: Qt Designer module
+Version: $QTVERSION$
+Libs: -F${libdir} -framework QtDesigner 
+Libs.private: -F$QTROOT$/lib -F$QTROOT$/lib -framework QtWidgets -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtXml -framework QtWidgets -F$QTROOT$/lib -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtDesigner -I${includedir}
+Requires: Qt5Core Qt5Gui Qt5Widgets Qt5Xml Qt5UiPlugin
+

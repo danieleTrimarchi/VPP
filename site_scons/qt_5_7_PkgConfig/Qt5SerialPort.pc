@@ -1,0 +1,14 @@
+prefix=/usr/local/Cellar/qt5/5.7.0
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 SerialPort
+Description: Qt SerialPort module
+Version: 5.7.0
+Libs: -F${libdir} -framework QtSerialPort 
+Libs.private: -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtCore -framework DiskArbitration -framework IOKit -framework IOKit -framework CoreFoundation  
+Cflags: -I${includedir}/QtSerialPort -I${includedir}
+Requires: Qt5Core
+

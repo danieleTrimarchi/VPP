@@ -1,0 +1,14 @@
+prefix=/usr/local/Cellar/qt5/5.7.0
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 Help
+Description: Qt Help module
+Version: 5.7.0
+Libs: -F${libdir} -framework QtHelp 
+Libs.private: -F/usr/local/Cellar/qt5/5.7.0/lib -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtWidgets -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtNetwork -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtCore -framework DiskArbitration -framework IOKit -framework QtSql -framework QtCLucene -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtHelp -I${includedir}
+Requires: Qt5Core Qt5Gui Qt5Widgets
+

@@ -1,0 +1,73 @@
+1_ -> from the surface.3dm instantiate a surface in OpenNURBS : DONE
+2_ -> convert the surface to an OpenCascade object
+3_ -> visualize the surface in the OpenCascade test viz
+
+----------------------
+
+-> remove the use of install_name_tool where possible in favor of -Wl,-rpath,...
+
+-> I have templatized the settings items on the unit. This generates the huge list in SettingsItemBase::settingsItemFactory. Not good. The unit should be an attribute of the settingsItem. 
+The refactoring will end up with items having unit combo-boxes 
+
+-> OLIVIER! Something is wrong in the vppsettings while trying to prompt comma-separated values. The pb is linked to the call to commitData while typing (see VPPSettingsDelegate::createEditor and the implementation of the connected slot VPPSettingsDelegate::textEdited). 
+It appears that the slot is called twice, and the second time the text contained in the qlineEdit is purged of the decimal separator. See minimal test in /Users/dtrimarchi/third_party/homebrew_qt57_patches/qtTests/settingsWindow_minimal 	
+
+- Is it possible to write in multiple xcel tabs? 
+  Ideally I would have vpp settings in the first tab, and the results in the second tab
+	https://libxlsxwriter.github.io/index.html
+
+-> Fix the import of the (old, deprecated) variableFile.txt. This way I can interactively 
+	load the variableFile_ipOptFullTest and see what happens when the jacobian 	
+	computation goes wrong.  
+
+-> Ask Stephane about the multiple environment warning 
+  	
+-> New definitions of the resistance with new version of the DYSHS
+
+-> create a cubic spline class and allow for recursively compute the derivatives. With this, I should be able to remove the FDs
+
+-> compile OpenCascade
+	- Get pre-requisites : file:///Users/dtrimarchi/third_party/opencascade-7.1.0/doc/overview/html/occt_dev_guides__building_3rdparty_osx.html
+	-> Tcl 8.5 : from http://www.tcl.tk/software/tcltk/download.html
+
+---
+
+Questions: 
+	See :
+		SettingsItemBase* SettingsItemBounds::getItemMin() {
+		return dynamic_cast<SettingsItemBase*>(child(0));
+		}
+	child is a method of Item, returning an Item. But the child is derived from
+	SettingsItemBase, thus it has other methods I want to use, See for instance
+	VariableParserGetVisitor::visit(SettingsItemBounds* pItem)
+	wher I need to call getVariableName. This is a method for SettingsItemBase,
+	not for Item. 
+	Is there a better structure than dynamic_cast? 
+
+	Also: 
+		SettingsItemBase* SettingsModel::getRoot() const {
+		return dynamic_cast<SettingsItemBase*>(VppItemModel::getRoot());
+		}
+
+	Also: 
+		SettingsItemBase::settingsItemFactory
+		Refactor the factory!
+		I need to learn how to do a reasonable factory, this code is crap!
+		
+	Also: 
+		I have chosen to templatize the items on their unit. This creates a lot 
+		of problems when trying to convert the unit of an item. To do so I need 
+		to instantiate a new item, which is akward. See for instance 
+		SettingsItemBase* SettingsItem<Degrees>::convertToSI()
+		Can I make a lighter design, with a non template item holding any unit?
+
+---
+
+- Exception in pathUtils if this is not MACOSX 
+
+————
+
+
+
+
+

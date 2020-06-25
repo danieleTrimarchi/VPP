@@ -1,0 +1,14 @@
+prefix=/usr/local/Cellar/qt5/5.7.0
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 Gui
+Description: Qt Gui module
+Version: 5.7.0
+Libs: -F${libdir} -framework QtGui 
+Libs.private: -F/usr/local/Cellar/qt5/5.7.0/lib -framework QtCore -framework DiskArbitration -framework IOKit -framework AppKit -framework Foundation -L/usr/local/Cellar/qt5/5.7.0/lib -lqtharfbuzzng -framework ApplicationServices -lz -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtGui -I${includedir}
+Requires: Qt5Core
+

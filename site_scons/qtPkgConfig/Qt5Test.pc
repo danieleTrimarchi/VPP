@@ -1,0 +1,14 @@
+prefix=/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 Test
+Description: Qt Unit Testing Library
+Version: 5.12.1
+Libs: -F${libdir} -framework QtTest 
+Libs.private: -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1/lib -framework Security -framework ApplicationServices -framework IOKit -framework QtCore -framework DiskArbitration   
+Cflags: -I${includedir}/QtTest -I${includedir}
+Requires: Qt5Core
+

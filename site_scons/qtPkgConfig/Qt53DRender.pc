@@ -1,0 +1,14 @@
+prefix=/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 3DRender
+Description: Qt 3DRender module
+Version: 5.12.1
+Libs: -F${libdir} -framework Qt3DRender 
+Libs.private: -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1/lib -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1/lib -framework Qt3DCore -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtConcurrent -L/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1/lib -lQt5OpenGLExtensions -F/Users/dtrimarchi/third_party_pkg/qt-everywhere-src-5.12.1/lib -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/Qt3DRender -I${includedir}
+Requires: Qt5Core Qt5Gui Qt53DCore
+

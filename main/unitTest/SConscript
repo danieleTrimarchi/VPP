@@ -1,0 +1,55 @@
+import os
+from numpy.distutils.misc_util import get_mathlibs
+			
+# Import and clone the environement
+Import('testEnv')
+localEnv=testEnv.Clone()
+
+# Get from the env the list of all objects used to 
+# make the VPP
+allObjects= localEnv['objList']
+
+# Warning: use of enumeration in a nested name specifier is a
+#      C++11 extension [-Wc++11-extensions]
+
+# ------- Add cppunit to the third_parties -----------------
+from thirdPartyManager import thirdParties
+thirdPartyDict= localEnv['THIRDPARTYDICT']
+thirdPartyDict['CppUnit']= thirdParties.CppUnit(localEnv)
+
+# ----------------------------------------------
+autotestsProgram= localEnv.Program('unitTest', Glob('*.cpp') +
+							allObjects
+							)
+
+#$ From : https://stackoverflow.com/questions/4513799/how-to-set-the-runtime-path-rpath-of-an-executable-with-gcc-under-mac-osx
+#$ otool -L shows you the install name of the linked libraries. 
+#$ To get @rpath to work, you need to change the install name of the library:
+#$ gcc -dynamiclib blah.o -install_name @rpath/t/libblah.dylib -o libblah.dylib
+#$ mkdir t ; mv libblah.dylib t/
+#$ gcc main.c -lblah -L`pwd`/t -Xlinker -rpath -Xlinker `pwd`
+
+# # Add the path of the program to the env
+localEnv.Append( TEST_EXE= autotestsProgram[0].abspath)
+localEnv.Append( TEST_EXE_PATH= os.path.dirname(autotestsProgram[0].abspath) )
+
+# As the exe has been installed, modify it to use the local Qt frameworks
+fixDynamicLibPath_commandTest = Command('fixDynamicLibPathTest', [], localEnv.fixDynamicLibPathTest)
+Depends( fixDynamicLibPath_commandTest, autotestsProgram )
+Default( fixDynamicLibPath_commandTest )
+
+# When running autotest, we need to export dyld_library_path to make sure the dynamic libs are found
+dyldExport= "export DYLD_LIBRARY_PATH={};".format( os.path.join(os.path.dirname(autotestsProgram[0].abspath),"lib"))
+
+# Add a target 'runTest' that will ensure that it's built before running the test suite
+# add the --stop flag in the case of debug build to stop the execution of the program while 
+# triggering an infinite loop. We will be able to attach a debugger then 
+if ARGUMENTS.get('debug',0):
+	test_alias = localEnv.Alias('runTest', [autotestsProgram], dyldExport + str(autotestsProgram[0].path) + " --stop")
+else:
+	test_alias = localEnv.Alias('runTest', [autotestsProgram], dyldExport + str(autotestsProgram[0].path) )
+
+Depends( test_alias, fixDynamicLibPath_commandTest) 
+
+# Simply required.  Without it, 'test' is never considered out of date.
+AlwaysBuild(test_alias)

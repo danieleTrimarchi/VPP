@@ -1,0 +1,14 @@
+prefix=$QTROOT$
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 Location
+Description: Qt Location module
+Version: $QTVERSION$
+Libs: -F${libdir} -framework QtLocation 
+Libs.private: -F$QTROOT$/lib -F$QTROOT$/lib -F$QTROOT$/lib -framework QtPositioning -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQuick -framework QtGui -framework QtQml -framework QtNetwork -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtLocation -I${includedir}
+Requires: Qt5Core Qt5Positioning Qt5Gui Qt5Quick
+

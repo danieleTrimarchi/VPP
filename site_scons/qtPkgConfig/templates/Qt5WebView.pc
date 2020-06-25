@@ -1,0 +1,13 @@
+prefix=$QTROOT$
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 WebView
+Description: Qt WebView module
+Version: $QTVERSION$
+Libs: -F${libdir} -framework QtWebView 
+Libs.private: -F$QTROOT$/lib -F$QTROOT$/lib -F$QTROOT$/lib -F$QTROOT$/lib -F$QTROOT$/lib -framework QtQuick -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQml -framework QtNetwork -framework QtWebEngine -F$QTROOT$/lib -F$QTROOT$/lib -F$QTROOT$/lib -F$QTROOT$/lib -F$QTROOT$/lib -framework QtWebEngineCore -framework QtQuick -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtQml -framework QtNetwork -framework QtWebChannel -framework QtPositioning -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/QtWebView -I${includedir}
+

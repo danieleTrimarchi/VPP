@@ -1,0 +1,14 @@
+prefix=$QTROOT$
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+
+Name: Qt5 3DQuickRender
+Description: Qt 3DQuickRender module
+Version: $QTVERSION$
+Libs: -F${libdir} -framework Qt3DQuickRender 
+Libs.private: -F$QTROOT$/lib -F$QTROOT$/lib -F$QTROOT$/lib -framework Qt3DRender -framework Qt3DCore -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework QtConcurrent -framework Qt3DQuick -framework QtQuick -framework QtQml -framework QtNetwork -framework OpenGL -framework AGL  
+Cflags: -I${includedir}/Qt3DQuickRender -I${includedir}
+Requires: Qt5Core Qt5Gui Qt5Qml Qt53DCore Qt53DRender Qt53DQuick
+
