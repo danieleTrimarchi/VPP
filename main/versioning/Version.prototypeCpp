@@ -1,7 +1,0 @@
-#include "Version.h"
-
-const char * currentBranch = "currentBranch_stringVar";
-const char * currentRevNumber = "currentRevNumber_stringVar";
-const char * currentHash = "currentHash_stringVar";
-const char * buildDate = "buildDate_stringVar";
-

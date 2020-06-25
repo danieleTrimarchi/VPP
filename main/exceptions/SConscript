@@ -1,8 +1,0 @@
-# Import the environement
-Import('env')
-
-# Produce and return the objects to be used to link the main program
-obj = env.Object( Glob('*.cpp') )
-Return('obj')
-
-
